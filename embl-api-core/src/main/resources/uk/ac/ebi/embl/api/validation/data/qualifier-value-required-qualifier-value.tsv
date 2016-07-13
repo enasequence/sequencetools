@@ -1,0 +1,4 @@
+#Qualifier {0} must have one of values {1} when qualifier {2} has value {3}.
+#{0}=Qualifier  {1}=Qualifier Value {2}=Dependant Qualifier {3}=Dependant Qualifier Value(s)
+cell_type	epithelial	cell_line	HT-29
+cell_type	endothelial,stromal	tissue_type	heart

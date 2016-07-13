@@ -1,0 +1,81 @@
+ID   AJ749901; SV 2; circular; genomic DNA; STD; VRL; 987 BP.
+XX
+AC   AJ749901;
+XX
+DT   07-JAN-2010 (Rel. 103, Created)
+DT   07-SEP-2010 (Rel. 106, Last updated, Version 2)
+XX
+DE   Faba bean necrotic stunt virus segment DNA-U4, complete sequence
+XX
+KW   hypothetical protein; U4 gene.
+XX
+OS   Faba bean necrotic stunt virus
+OC   Viruses; ssDNA viruses; Nanoviridae; Nanovirus.
+XX
+RN   [1]
+RC   revised by author [04-JAN-2010]
+RP   1-987
+RA   Katul L.;
+RT   ;
+RL   Submitted (24-JUN-2004) to the EMBL/GenBank/DDBJ databases.
+RL   Katul L., Inst. Plant Virol.,Microbiol.& Biosafety, Fed. Biol. Res. Ctr. f.
+RL   Agr. & Forestry, Messeweg 11-12, Braunschweig 38104, GERMANY.
+XX
+RN   [2]
+RX   DOI; 10.1128/JVI.00607-10.
+RX   PUBMED; 20592071.
+RA   Grigoras I., Timchenko T., Grande-Perez A., Katul L., Vetten H.J.,
+RA   Gronenborn B.;
+RT   "High variability and rapid evolution of a nanovirus";
+RL   J. Virol. 84(18):9105-9117(2010).
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..987
+FT                   /organism="Faba bean necrotic stunt virus"
+FT                   /segment="DNA-U4"
+FT                   /host="Vicia faba"
+FT                   /isolate="JKI-1998/99"
+FT                   /mol_type="genomic DNA"
+FT                   /country="Ethiopia:Holetta"
+FT                   /db_xref="taxon:283824"
+FT   TATA_signal     285..291
+FT                   /gene="U4"
+FT   CDS             364..684
+FT                   /gene="U4"
+FT                   /product="hypothetical protein"
+FT                   /db_xref="UniProtKB/TrEMBL:C7DLN9"
+FT                   /protein_id="CAG77484.1"
+FT                   /translation="MECRFFISIILFVVLLNPSLIINMVLGYVLGSLFRSNYSRLKKLL
+FT                   SGNKNENREEEDEHISQMKNPFEDAESDVLQHLKTLGLETKVEGDDLEYLQRLWESMSS
+FT                   KK"
+FT   CDS             433..684
+FT                   /gene="U4"
+FT                   /product="hypothetical protein"
+FT                   /db_xref="UniProtKB/TrEMBL:D2N106"
+FT                   /protein_id="CAG77485.1"
+FT                   /translation="MVLGYVLGSLFRSNYSRLKKLLSGNKNENREEEDEHISQMKNPFE
+FT                   DAESDVLQHLKTLGLETKVEGDDLEYLQRLWESMSSKK"
+FT   polyA_signal    680..685
+FT                   /gene="U4"
+FT                   /note="short variant"
+XX
+SQ   Sequence 987 BP; 282 A; 173 C; 203 G; 329 T; 0 other;
+     acccccgccc caggttcagc ggagtcattg agactccatc tcagccgttc attaaatgga        60
+     cacgtgtaca atcaggatct gtgattcgtg aagcgaatct gacggaagat tgtacacttt       120
+     atctcttcac gcgttttgaa gctactgttg attatgcaag tggacgatgg tccccacata       180
+     tatatttaaa acgacaacag ctgtatacag ctgtattgat gtgacgtata taattaaata       240
+     attatttaat tatgaggatt gtcctgcacg cttatgttgt cgtctataaa accttctcta       300
+     ctgaagaacc tgtctctgaa tttactttct ctctcttctg tgtagaagag agataagcag       360
+     gttatggaat gtaggttctt catctctatt attttattcg tcgtgctgct gaatccttct       420
+     ctgataatta atatggttct cgggtatgtt cttggctctt tattcagaag taattattcc       480
+     agattaaaga agttactgtc aggtaataag aacgagaacc gcgaagaaga agacgaacat       540
+     atatcccaga tgaagaatcc gttcgaggat gctgaatcag atgtattgca acatctaaag       600
+     actctgggtc tggaaacaaa ggttgaaggc gatgatcttg aatatttaca gcgattgtgg       660
+     gaatctatga gtagtaagaa ataaatatgt ttacccaagt aattgtaaat aggtaataac       720
+     agctcacgtc atgcttcatt cctattggtc agtctattgg gccttgagag caattgggcc       780
+     tattaagccc attaagtcag tcagatatat tgtatttgta atattgttaa tcagtcaata       840
+     aatattaatt atttttcatt tactccgcgt agcggtatgt taaatatttt attgccatat       900
+     atacccttca ttaatgaagg ggtaatgtct attttgtcct tgtgacgtca tttgatcccg       960
+     tgctgagctg gggcggggct tagtatt                                           987
+//

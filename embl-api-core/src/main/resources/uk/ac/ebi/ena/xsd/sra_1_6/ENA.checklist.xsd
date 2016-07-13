@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- INSDC Sequence Read Archive resource Run (SRR/ERR/DRR) object XML specification -->
+<!-- $Id: ENA.checklist.xsd,v 1.5 2015/02/02 12:52:13 rasko Exp $ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:com="SRA.common">
+    <xs:import schemaLocation="SRA.common.xsd" namespace="SRA.common"/>
+
+    <xs:complexType name="ChecklistType">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="AUTHORITY" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The checklist authority. Was CHECKLIST_AUTHORITY. Maps to CV_CHECKLIST.CHECKLIST_AUTHORITY.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" name="LABEL" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>A unique immutable label for the checklist used for referencing purposes.  Was CHECKLIST_NAME. Maps to CV_CHECKLIST.CHECKLIST_LABEL.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" name="NAME" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The name of the checklist used for display purposes.  Maps to CV_CHECKLIST.CHECKLIST_NAME.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="DESCRIPTION" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The description of the checklist used for display purposes.  Was CHECKLIST_DESCRIPTION. Maps to CV_CHECKLIST.CHECKLIST_DESCRIPTION.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="VERSION" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The checklist version. Was CHECKLIST_VERSION. CONSIDER REMOVING TO MAKE DEPLOYMENT TIME COMPARISIONS EASIER.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="1" name="CHECKLIST_TYPE">
+                <xs:annotation>
+                    <xs:documentation>The type of the checklist. Maps to CV_CHECKLIST.CHECKLIST_TYPE.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="sample"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" name="CHECKLIST_GROUP">
+                <xs:annotation>
+                    <xs:documentation>Order defined by CV_CHECKLIST_FIELD_GROUP.CHECKLIST_FIELD_GROUP_ORDER.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="NAME" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The name of the checklist group. Maps to CV_CHECKLIST_FIELD_GROUP.CHECKLIST_FIELD_GROUP_NAME.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element maxOccurs="1" minOccurs="0" name="DESCRIPTION" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The description of the checklist group. Maps to CV_CHECKLIST_FIELD_GROUP.CHECKLIST_FIELD_GROUP_DESCR.
+                                            </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="CHECKLIST_FIELD" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>Was CHECKLIST_ATTRIBUTE. Order defined by CV_CHECKLIST_FIELD.CHECKLIST_FIELD_ORDER.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="LABEL"
+                                        type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>A unique immutable label for the field for referencing purposes. Was TAG. Maps to CV_CHECKLIST_FIELD. CHECKLIST_FIELD_LABEL.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="NAME"
+                                        type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>The name of the field for display purposes. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_NAME.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="0" name="DESCRIPTION"
+                                        type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>The description of the field for display purposes. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_LABEL.
+                                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element minOccurs="0" name="UNITS">
+                                        <xs:annotation>
+                                            <xs:documentation>The allowed units. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_UNIT.</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:sequence maxOccurs="1">
+                                                <xs:element maxOccurs="unbounded" name="UNIT"
+                                                  type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation/>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element minOccurs="0" name="FIELD_TYPE">
+                                        <xs:annotation>
+                                            <xs:documentation>The field type. Was VALUE. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_TYPE.</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:choice>
+                                                <xs:element name="TEXT_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A single-line text value.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="FIELD_RESTRICTION">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="MIN_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Mininum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MIN_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element minOccurs="0" name="MAX_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Maximum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MAX_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element name="ONTOLOGY">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element maxOccurs="1" minOccurs="1"
+                                                  name="LABEL" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A unique immutable label for the ontology for referencing purposes. Maps to CV_CHECKLIST_FIELD_ONTOLOGY.CHECKLIST_FIELD_ONTOLOGY_LABEL.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element maxOccurs="1" minOccurs="1"
+                                                  name="NAME" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>The name of the ontology for display purposes. Maps to CV_CHECKLIST_FIELD_ONTOLOGY.CHECKLIST_FIELD_ONTOLOGY_NAME.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element maxOccurs="1" minOccurs="0"
+                                                  name="DESCRIPTION" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>The description of the ontology for display purposes.CV_CHECKLIST_FIELD_ONTOLOGY.CHECKLIST_FIELD_ONTOLOGY_DESCRIPTION.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="TEXT_AREA_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A multi-line text value.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="FIELD_RESTRICTION">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="MIN_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Mininum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MIN_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element minOccurs="0" name="MAX_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Maximum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MAX_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="TEXT_CHOICE_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A text value from a controlled list.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence maxOccurs="1">
+                                                  <xs:element name="FIELD_RESTRICTION">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element maxOccurs="unbounded"
+                                                  name="TEXT_VALUE" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Allowed text value. Maps to CV_CHECKLIST_FIELD_VALUE. CHECKLIST_FIELD_VALUE.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="REGEX_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A text value controlled by a regular expression.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element name="REGEX" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>The regular expression. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_REGEX.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element minOccurs="0" name="FIELD_RESTRICTION">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="MIN_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Mininum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MIN_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element minOccurs="0" name="MAX_LENGTH"
+                                                  type="xs:positiveInteger">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Maximum string length. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_MAX_LENGTH.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element maxOccurs="unbounded" minOccurs="1"
+                                                  name="REGEX_GROUP">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A regex group associated with a list of permitted values.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element maxOccurs="unbounded"
+                                                  name="TEXT_VALUE" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Allowed text value associated with a regular expression group. Maps to CV_CHECKLIST_REGEX_VALUE.CHECKLIST_FIELD_VALUE.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  <xs:attribute name="group" type="xs:integer"
+                                                  use="required">
+                                                  <xs:annotation>
+                                                  <xs:documentation>The regex group. Maps to CV_CHECKLIST_REGEX_VALUE.CHECKLIST_FIELD_REGEX_GROUP.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:attribute>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element maxOccurs="unbounded"
+                                                  name="TEXT_VALUE" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Allowed text value in addition to the regex. Maps to CV_CHECKLIST_FIELD_VALUE. CHECKLIST_FIELD_VALUE.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="BOOLEAN_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>The field either exists or not.</xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TAXON_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A taxon value.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="0" name="FIELD_RESTRICTION">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element minOccurs="1"
+                                                  name="TAXON_RESTRICTION_TYPE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Taxa ( incl. sub-trees ) are either included or excluded. Maps to CV_CHECKLIST_FIELD.CHECKLIST_FIELD_TAXON_LIST_TYPE.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:simpleType>
+                                                  <xs:restriction base="xs:string">
+                                                  <xs:enumeration value="inclusive"/>
+                                                  <xs:enumeration value="exclusive"/>
+                                                  </xs:restriction>
+                                                  </xs:simpleType>
+                                                  </xs:element>
+                                                  <xs:element maxOccurs="unbounded" minOccurs="1"
+                                                  name="TAXON" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Maps to a comma separated list in CV_CHECKLIST_FIELD.CHECKLIST_FIELD_TAXON_LIST.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  </xs:complexType>
+                                                </xs:element>
+                                            </xs:choice>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="0" name="MANDATORY">
+                                        <xs:annotation>
+                                            <xs:documentation>Defines if the field is mandatory, recommended or optional. Maps to CV_CHECKLIST_CONTENT.CHECKLIST_FIELD_MANDATORY and
+Maps to CV_CHECKLIST_CONTENT.CHECKLIST_FIELD_RECOMMENDED. </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="mandatory">
+                                                  <xs:annotation>
+                                                  <xs:documentation>
+                                                                        Random sequencing of the whole genome.
+                                                                    </xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:enumeration>
+                                                <xs:enumeration value="recommended">
+                                                  <xs:annotation>
+                                                  <xs:documentation>
+                                                                        Random sequencing of exonic regions selected from the genome.
+                                                                    </xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:enumeration>
+                                                <xs:enumeration value="optional">
+                                                  <xs:annotation>
+                                                  <xs:documentation>
+                                                                        Random sequencing of whole transcriptome.
+                                                                    </xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:enumeration>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element minOccurs="0" name="MULTIPLICITY">
+                                        <xs:annotation>
+                                            <xs:documentation>Defines is the field can appear once or any number of times. Maps to CV_CHECKLIST_CONTENT.CHECKLIST_FIELD_SINGLE.
+</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="single"/>
+                                                <xs:enumeration value="multiple"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="CHECKLIST_CONDITION">
+                <xs:annotation>
+                    <xs:documentation>Checklist condition. Mapped to CV_CHECKLIST_CONDITION and CV_CHECKLIST_CONDITION_VALUE tables.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CONDITION_TYPE">
+                            <xs:annotation>
+                                <xs:documentation>The checklist condition type. Maps to CV_CHECKLIST_CONDITION.CHECKLIST_CONDITION_TYPE.</xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="excluded">
+                                        <xs:annotation>
+                                            <xs:documentation>Conditional field is excluded ( not permitted ) in certain circumstances.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:enumeration>
+                                    <xs:enumeration value="permitted">
+                                        <xs:annotation>
+                                            <xs:documentation>Conditional field is permitted only in certain circumstances.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:enumeration>
+                                    <xs:enumeration value="required">
+                                        <xs:annotation>
+                                            <xs:documentation>Conditional field is required in certain circumstances.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:enumeration>
+                                    <xs:enumeration value=""/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="CHECKLIST_FIELD">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="LABEL"
+                                        type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>A field label in this checklist.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="0" name="REGEX_GROUP">
+                                        <xs:annotation>
+                                            <xs:documentation>A regular expression group.</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:attribute name="group" type="xs:integer"
+                                                use="required">
+                                                <xs:annotation>
+                                                  <xs:documentation>The regex group. Maps to CV_CHECKLIST_CONDITION.REGEX_GROUP.
+
+</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="CONDITIONAL_FIELD">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="LABEL"
+                                        type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>A field label in this checklist.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="0" name="REGEX_GROUP">
+                                        <xs:annotation>
+                                            <xs:documentation>A regular expression group.</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:attribute name="group" type="xs:integer"
+                                                use="required">
+                                                <xs:annotation>
+                                                  <xs:documentation>The regex group. Maps to CV_CHECKLIST_CONDITION.CONDITIONAL_REGEX_GROUP.
+
+</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="CONDITION_VALUE">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="CHECKLIST_VALUE">
+                                        <xs:complexType>
+                                            <xs:choice>
+                                                <xs:element name="TEXT_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A field value. Maps to CV_CHECKLIST_CONDITION_VALUE.TEXT_VALUE.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="REGEXP_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A field value. Maps to CV_CHECKLIST_CONDITION_VALUE.REGEX_VALUE.
+</xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                            </xs:choice>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element maxOccurs="1" minOccurs="1" name="CONDITIONAL_VALUE">
+                                        <xs:complexType>
+                                            <xs:choice>
+                                                <xs:element name="TEXT_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A conditional field value. Maps to CV_CHECKLIST_CONDITION_VALUE. CONDITIONAL_TEXT_VALUE.
+
+</xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="REGEXP_VALUE">
+                                                  <xs:annotation>
+                                                  <xs:documentation>A conditional field value. Maps to CV_CHECKLIST_CONDITION_VALUE. CONDITIONAL_REGEX_VALUE.
+</xs:documentation>
+                                                  </xs:annotation>
+                                                </xs:element>
+                                            </xs:choice>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ChecklistSetType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="CHECKLIST" type="ChecklistType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="CHECKLIST_SET" type="ChecklistSetType">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+
+    </xs:element>
+
+    <xs:element name="CHECKLIST" type="ChecklistType"/>
+</xs:schema>

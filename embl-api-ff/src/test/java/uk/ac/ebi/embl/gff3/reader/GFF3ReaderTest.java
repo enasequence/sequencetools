@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * Copyright 2012 EMBL-EBI, Hinxton outstation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package uk.ac.ebi.embl.gff3.reader;
+
+import junit.framework.TestCase;
+import uk.ac.ebi.embl.api.gff3.GFF3RecordSet;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
+public abstract class GFF3ReaderTest extends TestCase {
+
+	protected GFF3RecordSet entry;
+	protected LineReader lineReader;
+
+	protected void setUp() throws Exception {
+		super.setUp();
+        ValidationMessageManager.addBundle(FlatFileValidations.GFF3_FLAT_FILE_BUNDLE);
+		entry = new GFF3RecordSet();
+	}
+
+	protected void initLineReader(String string) throws IOException {
+		lineReader = new LineReader(new BufferedReader(new StringReader(string)));
+		lineReader.readLine();
+	}
+
+	protected void initLineReader(String string, String fileId) throws IOException {
+		lineReader = new LineReader(new BufferedReader(new StringReader(string)), fileId);
+		lineReader.readLine();
+	}
+}

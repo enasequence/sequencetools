@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JaxEMBL">
+    <!--TODO: EBI L&F-->
+    <bannerLeft>
+        <name>EBI</name>
+        <src>/images/ebi_logo.png</src>
+        <href>http://www.ebi.ac.uk</href>
+    </bannerLeft>
+
+<!--
+    <bannerRight>
+        <src>http://www.ebi.ac.uk/services/images/ebi_banner_2b.jpg</src>
+        <href>http://www.ebi.ac.uk</href>
+    </bannerRight>
+-->
+    <body>
+        <links>
+            <item name="EMBL API" href="http://www.ebi.ac.uk/seqdb/confluence/display/SUB/EMBL+API"/>
+            <item name="New Webin" href="http://www.ebi.ac.uk/seqdb/confluence/display/SUB/Webin2"/>
+            <item name="Maven" href="http://maven.apache.org/"/>
+        </links>
+
+        <menu name="EMBL API">
+<!--
+            <item name="Introduction" href="introduction.html"/>
+            <item name="Download" href="download.html"/>
+            <item name="How to Use" href="howto.html"/>
+-->            
+            <!--<item name="Release Notes" href="release-notes.html"/>-->
+            <!--<item name="General Information" href="about.html"/>-->
+            <!--<item name="For Maven 1.0 Users" href="maven1.html"/>-->
+            <!--<item name="Road Map" href="roadmap.html"/>-->
+        </menu>
+
+        ${reports}
+
+    </body>
+</project>

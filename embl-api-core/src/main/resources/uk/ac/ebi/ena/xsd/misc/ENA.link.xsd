@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:ebi="http://www.ebi.ac.uk/embl/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified" elementFormDefault="qualified" version="1.1">
+	<xs:element name="LINK_SET">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="LINKS" type="LinkType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="LinkType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="LINK">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="1" name="DB" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>The linked database. 
+					</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element maxOccurs="1" minOccurs="1" name="ID" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>The linked identifier.
+					</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="accession" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>An ENA accession number.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

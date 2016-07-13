@@ -1,0 +1,3 @@
+#Any of Qualifiers {0} must exist in Source feature if Molecule Type matches the Value {1}
+tissue_type,dev_stage,isolation_source,collection_date,host,lab_host,sex,mating_type,haplotype,cultivar,ecotype,variety,breed,isolate,strain,clone,country,lat_lon,specimen_voucher,culture_collection,biomaterial,PCR_primers	mRNA
+

@@ -1,0 +1,7 @@
+#Qualifier {0} is only permitted when organism belongs to {1}.
+organelle	Eukaryota
+cultivar	Fungi/Metazoa group,Viridiplantae
+virion	Viruses,Viroids
+proviral	Viruses,Viroids,Retroviridae,Caudovirales,Dependoparvovirus
+sex	Metazoa,Embryophyta,Rhodophyta,Phaeophyceae
+mating_type	Bacteria,Archaea,Fungi

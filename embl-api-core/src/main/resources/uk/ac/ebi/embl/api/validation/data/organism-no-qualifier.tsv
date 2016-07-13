@@ -1,0 +1,4 @@
+#Qualifier {0} must not exist when organism belongs to {1}.	
+serotype	Archaea
+serotype	Bacteria
+plasmid	artificial sequences

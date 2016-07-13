@@ -1,0 +1,15 @@
+#Feature {0} transformed into {1} feature with \"{2}\" qualiifer value {3}
+
+attenuator	regulatory	regulatory_class	attenuator
+CAAT_signal	regulatory	regulatory_class	CAAT_signal
+enhancer	regulatory	regulatory_class	enhancer
+GC_signal	regulatory	regulatory_class	GC_signal
+-10_signal	regulatory	regulatory_class	minus_10_signal
+-35_signal	regulatory	regulatory_class	minus_35_signal
+polyA_signal	regulatory	regulatory_class	polyA_signal_sequence
+promoter	regulatory	regulatory_class	promoter
+RBS	regulatory	regulatory_class	ribosome_binding_site
+TATA_signal	regulatory	regulatory_class	TATA_box
+terminator	regulatory	regulatory_class	terminator
+LTR	repeat_region	rtp_type	LONG_TERMINAL_REPEAT
+misc_signal	regulatory	regulatory_class	other

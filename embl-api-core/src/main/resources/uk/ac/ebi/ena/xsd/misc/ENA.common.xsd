@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- INSDC Sequence Read Archive resource Common object XML specification -->
+<!-- $Id: ENA.common.xsd,v 1.1 2010/12/02 15:44:36 rasko Exp $ -->
+<xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:com="ENA.common" targetNamespace="ENA.common">
+
+
+    <xsd:attributeGroup name="AccessionType">
+        <xsd:attribute name="accession" type="xs:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>An INSDC sequence or assembly accession.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute form="unqualified" name="version" type="xs:positiveInteger" use="required">
+            <xsd:annotation>
+                <xsd:documentation>An INSDC sequence or assembly version.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+    <xsd:attributeGroup name="PlacementType">
+        <xsd:attribute name="begin" type="xs:integer" use="required">
+            <xsd:annotation>
+                <xsd:documentation>Begin position of the sequence placement.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="end" type="xs:integer" use="required">
+            <xsd:annotation>
+                <xsd:documentation>End position of the sequence placement.
+
+</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+    <xsd:complexType name="XrefType">
+        <xsd:attribute name="db" type="xs:string" use="required"/>
+        <xsd:attribute name="id" type="xs:string" use="required"/>
+        <xsd:attribute name="secondaryId" type="xs:string" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="TaxonType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="lineage">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="unbounded" minOccurs="1" name="taxon">
+                            <xsd:complexType>
+                                <xsd:attribute name="scientificName" type="xs:string" use="required"
+                                />
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="scientificName" type="xs:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>The scientific name for the source organism.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="commonName" type="xs:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The common name for the source organism.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="taxId" type="xs:integer">
+            <xsd:annotation>
+                <xsd:documentation>The taxon identifier for the source organism.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="RangeType">
+        <xs:attributeGroup ref="com:AccessionType"/>
+        <xs:attributeGroup ref="com:PlacementType"/>
+        <xsd:attribute name="primaryBegin" type="xs:integer" use="required">
+            <xsd:annotation>
+                <xsd:documentation>Start position of the sequence being placed.
+</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="primaryEnd" type="xs:integer" use="required">
+            <xsd:annotation>
+                <xsd:documentation>End position of the sequence being placed.
+</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="false" name="complement" type="xs:boolean" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>Sequence strand.
+
+</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="GapType">
+        <xs:attributeGroup ref="com:PlacementType"/>
+        <xsd:attribute name="length" type="xs:integer" use="required">
+            <xsd:annotation>
+                <xsd:documentation>Gap length.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

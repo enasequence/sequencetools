@@ -1,0 +1,3 @@
+<module rename-to='EmblApiCore'>
+	<source path='validation' includes="ValidationMessage.java,Origin.java,Severity.java,ValidationMessageManager.java" />
+</module>
