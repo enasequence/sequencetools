@@ -1,0 +1,6 @@
+archivesBaseName = 'embl-api-ff'
+
+dependencies {
+  compile project(':embl-api-core')
+  compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
+}

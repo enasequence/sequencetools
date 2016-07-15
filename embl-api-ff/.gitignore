@@ -4,5 +4,6 @@ target
 .classpath
 embl-api-ff.iml
 .gradle
+build
 build.number
 gradlew.bat
