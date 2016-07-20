@@ -1,1 +1,31 @@
-# sequence tools
+# Sequencetools
+
+SequenceTools is a set of Java tools and APIs for working with sequence data including EMBL-Bank and NCBI flat file parsers and writers and validation and fixing functionality. 
+
+# License
+
+Copyright 2015 EMBL - European Bioinformatics Institute Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License. 
+You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+# Download
+
+https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence
+
+[embl-api-ff](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-ff) : Flatfile Parser and writer
+[embl-api-core](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-core) : Flatfile Validator and Fixer
+
+# Usage
+
+[example](https://github.com/enasequence/sequencetools/blob/master/embl-api-ff/src/main/java/uk/ac/ebi/embl/flatfile/example/FlatfileValidatorExample.java)
+
+
+
+
+
+
+
+
+
+
