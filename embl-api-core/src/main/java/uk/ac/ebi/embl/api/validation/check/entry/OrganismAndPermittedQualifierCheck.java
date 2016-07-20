@@ -66,6 +66,8 @@ public class OrganismAndPermittedQualifierCheck extends EntryValidationCheck {
 		}
         
         SourceFeature source=entry.getPrimarySourceFeature();
+        if(source==null)
+        	return result;
 
 		Qualifier organismQualifier = source.getSingleQualifier(Qualifier.ORGANISM_QUALIFIER_NAME);
         for (DataRow dataRow : dataSet.getRows()) {

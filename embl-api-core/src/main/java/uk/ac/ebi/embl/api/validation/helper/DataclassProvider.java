@@ -60,9 +60,9 @@ public class DataclassProvider {
 			    {
 			    	dataclass= prefixDataclass.get(prefix);
 			    }
-			    else
+			    else if(entryDaoUtils!=null)
 			    {
-			        dataclass=entryDaoUtils.getAccessionDataclass(prefix);
+			    	dataclass=entryDaoUtils.getAccessionDataclass(prefix);
 			    }
 		   }
 	 return dataclass;

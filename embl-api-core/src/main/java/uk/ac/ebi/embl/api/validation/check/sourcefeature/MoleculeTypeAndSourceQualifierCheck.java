@@ -101,15 +101,16 @@ public class MoleculeTypeAndSourceQualifierCheck extends EntryValidationCheck {
 		//"mol_type must have value \"{0}\" when qualifier \"{1}\" exists"
 		List<Qualifier> sourceQualifiers= SequenceEntryUtils.getSourceQualifiers(entry);
 		List<String> sourceQualifierNames= new ArrayList<String>(); 
-		for(Qualifier sourceQualifier:sourceQualifiers)
-		{
-			sourceQualifierNames.add(sourceQualifier.getName());
-		}
-		
 		if(sourceQualifiers==null||sourceQualifiers.size()==0)
 		{
 			return result;
 		}
+		
+		for(Qualifier sourceQualifier:sourceQualifiers)
+		{
+			sourceQualifierNames.add(sourceQualifier.getName());
+		}
+			
 		for (DataRow row : dataSet.getRows())
 		{
 			String requiredmolType_value=row.getString(0);
