@@ -4,8 +4,10 @@ dependencies {
   compile 'commons-collections:commons-collections:3.2.1'
   compile 'commons-dbutils:commons-dbutils:1.5'
   compile 'commons-lang:commons-lang:2.6'
-  compile 'com.oracle.oc4j:ucp:11'
-  compile 'com.oracle.oc4j:ojdbc6:11'
+  compile files('lib/ojdbc6.jar')
+  compile files('lib/osdt_cert.jar')
+  compile files('lib/osdt_core.jar')
+  compile files('lib/owm-3_0.jar')
   compile 'com.beust:jcommander:1.7'
   compile 'org.json:json:20131018'
   testCompile 'org.easymock:easymock:3.1'

@@ -1,11 +1,11 @@
  allprojects 
  {
-    ext.version_base = '1.1.126'
+    ext.version_base = '1.1.129'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
 
- if (JavaVersion.current().isJava8Compatible()) 
+ if (JavaVersion.current().isJava6Compatible()) 
   {
     allprojects 
     {
@@ -28,7 +28,6 @@
   repositories 
    {
     mavenLocal()
-    maven{ url "http://ves-ebi-de:8081/artifactory/gradle" }
     mavenCentral()
    }
 
@@ -38,14 +37,14 @@
     testCompile "junit:junit:4.11"
   }
   
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
 
  task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from 'build/docs/javadoc'
  }
- task sourcesJar(type: Jar) {
+ task sourcesJar(type: Jar)  {
     from sourceSets.main.allSource
     classifier = 'sources'
  }
