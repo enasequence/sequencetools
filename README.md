@@ -11,14 +11,19 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 # Download
 
-https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence
+[sequencetools] (https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence) <br />
 
-[embl-api-ff](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-ff) : Flatfile Parser and writer
-[embl-api-core](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-core) : Flatfile Validator and Fixer
+[embl-api-ff](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-ff) : Flatfile Parser and writer <br /> 
+
+[embl-api-core](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-core) : Flatfile Validator and fixer <br />
+
+[embl-api-validator](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-validator) : 
+Flatfile validator/fixer client <br />
+
 
 # Usage
 
-[example](https://github.com/enasequence/sequencetools/blob/master/embl-api-ff/src/main/java/uk/ac/ebi/embl/flatfile/example/FlatfileValidatorExample.java)
+[Follow these instructions](http://www.ebi.ac.uk/ena/software/flat-file-validator)
 
 
 
