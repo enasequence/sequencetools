@@ -21,7 +21,6 @@
    apply plugin: 'maven'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
-   apply plugin: 'signing'
 
   group = 'uk.ac.ebi.ena.sequence'
 
@@ -54,11 +53,6 @@
     archives jar
     archives javadocJar
     archives sourcesJar
- }
-
- signing 
- {
-    sign configurations.archives
  }
 
   task wrapper(type: Wrapper) { gradleVersion = '1.12' 
