@@ -66,9 +66,9 @@ public class FeatureLengthCheckTest
 		Feature exonFeature = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
 		Order<Location> intronFeatureLocation = new Order<Location>();
 		LocationFactory locationFactory = new LocationFactory();
-		intronFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 109l));
+		intronFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 108l));
 		Order<Location> exonFeatureLocation = new Order<Location>();
-		exonFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+		exonFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 113l));
 		intronFeature.setLocations(intronFeatureLocation);
 		exonFeature.setLocations(exonFeatureLocation);
 		ValidationResult intronResult = check.check(intronFeature);

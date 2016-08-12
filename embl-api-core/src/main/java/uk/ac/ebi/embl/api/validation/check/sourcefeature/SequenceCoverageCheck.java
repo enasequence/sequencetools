@@ -51,6 +51,8 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 	private final static String MESSAGE_ID_NO_LOCATIONS = "SequenceCoverageCheck-4";
 	private final static String MESSAGE_ID_GAPS_IN_LOCATIONS = "SequenceCoverageCheck-5";
 	private final static String MESSAGE_ID_INVALID_CONTIG_LOCATIONS = "SequenceCoverageCheck-6";
+	private final static String MESSAGE_ID_TRANSGENIC_SEQUENCE_COVERAGE = "SequenceCoverageCheck-7";
+
 
 	/**
 	 * Checks the coverage of sequence by source features' locations.
@@ -88,6 +90,8 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		//collection sources' locations
 		List<Location> sourceLocations = new ArrayList<Location>();
 		Map<Location, Feature> locationMap = new HashMap<Location, Feature>();
+		boolean isSourceFocuswithFullSequenceCoverage=false;
+		
 		for (SourceFeature source : sources) {
 			List<Location> locations = source.getLocations().getLocations();
 //            Origin sourceOrigin = source.getOrigin();
@@ -96,6 +100,16 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 				sourceLocations.add(singleLocation);
 				locationMap.put(singleLocation, source);
 			}
+    		//sourcefeature with transgenic has to cover whole sequence
+            if(source.isTransgenic()&&sequenceSize>source.getLength())
+            {
+            	reportError(source.getOrigin(),MESSAGE_ID_TRANSGENIC_SEQUENCE_COVERAGE );
+            }
+            
+            if(source.isFocus()&&sequenceSize==source.getLength())
+            {
+            	isSourceFocuswithFullSequenceCoverage=true;
+            }
 		}
 
         /**
@@ -148,14 +162,14 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 			return result;
 		}
 			
+		
 		//check further locations
 		Long[] lastLocationPositions = null;
 		for (; locationIter.hasNext();) {
 			location = (Location) locationIter.next();
-			
-			lastLocationPositions = checkLocation(location);
+						lastLocationPositions = checkLocation(location);
 
-			if ((firstLocation[1].longValue() + 1) != lastLocationPositions[0]){
+			if ((firstLocation[1].longValue() + 1) != lastLocationPositions[0]&&!isSourceFocuswithFullSequenceCoverage){
 				reportCoverageError(result, firstSourceOrigin, MESSAGE_ID_GAPS_IN_LOCATIONS, 0, sequenceSize);
 				return result;
             }

@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
@@ -155,5 +156,43 @@ public class SourceFeatureQualifierCheckTest {
 				"Any of the qualifiers \"strain, isolate, clone\" must exist in the Source feature if there is an rRNA gene.",
 				messages.iterator().next().getMessage());
 	}
-
+	
+	@Test
+	public void testCheck_multipleFocus() {
+		feature = featureFactory.createFeature("gene");
+		feature.addQualifier("gene", "10S rRNA");
+		entry.addFeature(feature);
+		source.addQualifier("strain");
+		source.addQualifier(Qualifier.FOCUS_QUALIFIER_NAME);
+		source.addQualifier(Qualifier.FOCUS_QUALIFIER_NAME);
+		ValidationResult result = check.check(entry);
+		assertEquals(1,
+				result.count("SourceFeatureQualifierCheck3", Severity.ERROR));
+		}
+	
+	@Test
+	public void testCheck_multipleTransgenic() {
+		feature = featureFactory.createFeature("gene");
+		feature.addQualifier("gene", "10S rRNA");
+		entry.addFeature(feature);
+		source.addQualifier("strain");
+		source.addQualifier(Qualifier.TRANSGENIC_QUALIFIER_NAME);
+		source.addQualifier(Qualifier.TRANSGENIC_QUALIFIER_NAME);
+		ValidationResult result = check.check(entry);
+		assertEquals(1,
+				result.count("SourceFeatureQualifierCheck4", Severity.ERROR));
+		}
+	
+	@Test
+	public void testCheck_withTransgenicandFocus() {
+		feature = featureFactory.createFeature("gene");
+		feature.addQualifier("gene", "10S rRNA");
+		entry.addFeature(feature);
+		source.addQualifier("strain");
+		source.addQualifier(Qualifier.FOCUS_QUALIFIER_NAME);
+		source.addQualifier(Qualifier.TRANSGENIC_QUALIFIER_NAME);
+		ValidationResult result = check.check(entry);
+		assertEquals(1,
+				result.count("SourceFeatureQualifierCheck5", Severity.ERROR));
+		}
 }

@@ -391,7 +391,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		}
 		if (maxPosition != null && minPosition != null)
 		{
-			return maxPosition - minPosition;
+			return maxPosition - minPosition+1;
 		}
 		
 		return null;

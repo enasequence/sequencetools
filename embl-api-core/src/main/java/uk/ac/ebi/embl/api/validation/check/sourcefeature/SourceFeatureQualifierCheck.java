@@ -41,6 +41,13 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	private boolean sflag = false;
 	private final static String MESSAGE_ID = "SourceFeatureQualifierCheck1";
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";
+	private final static String MULTIPLE_FOCUS_MESSAGE_ID = "SourceFeatureQualifierCheck3";
+	private final static String MULTIPLE_TRANSEGENIC_MESSAGE_ID = "SourceFeatureQualifierCheck4";
+	private final static String FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID = "SourceFeatureQualifierCheck5";
+	private final static String TRANSEGENIC_SOURCE_MESSAGE_ID = "SourceFeatureQualifierCheck6";
+
+
+
 
 	public SourceFeatureQualifierCheck() {
 	}
@@ -89,7 +96,10 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			 
 			String reqSourceQualifierStr = Utils
 					.paramArrayToString(requiredSourceQualifiers);
+			int focus=0;
+			int transgenic=0;
 			for (Feature feature : sources) {
+				SourceFeature source = (SourceFeature) feature;
 				if (SequenceEntryUtils.isQualifierAvailable(
 						Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
                     Qualifier orgQualifier = SequenceEntryUtils.getQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, feature);
@@ -106,6 +116,34 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				if (!sflag)
 					reportError(feature.getOrigin(), MESSAGE_ID,
 							reqSourceQualifierStr);
+				if(source.isFocus())
+				{
+					focus=source.getQualifiers(Qualifier.FOCUS_QUALIFIER_NAME).size();
+				}
+				if(source.isTransgenic())
+					transgenic=source.getQualifiers(Qualifier.TRANSGENIC_QUALIFIER_NAME).size();
+               }
+			
+			if(focus>0||transgenic>0)
+			{//focus not allowed when /transgenic is used
+				reportError(entry.getOrigin(), FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID);
+			}
+			
+			if(sources.size()<2&&transgenic>0)
+			{
+				//entries with /transgenic must have at least 2 source features
+				reportError(entry.getOrigin(), TRANSEGENIC_SOURCE_MESSAGE_ID);
+			}
+			if(focus>1)
+			{
+				//multiple /focus qualifiers not allowed
+				reportError(entry.getOrigin(), MULTIPLE_FOCUS_MESSAGE_ID);
+				
+			}
+			if(transgenic>1)
+			{
+				//multiple /transgenic qualifiers not allowed
+				reportError(entry.getOrigin(), MULTIPLE_TRANSEGENIC_MESSAGE_ID);
 
 			}
 			

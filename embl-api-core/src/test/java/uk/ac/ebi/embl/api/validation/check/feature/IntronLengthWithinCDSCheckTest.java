@@ -103,7 +103,7 @@ public class IntronLengthWithinCDSCheckTest
 	}
 	
 	@Test
-	public void testCheck_InvalidIntronAssembly() throws SQLException
+	public void testCheck_InvalidIntronAssemblywithArtificialLocation() throws SQLException
 	{
 		Join<Location> locationJoin = new Join<Location>();
 		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
@@ -113,6 +113,23 @@ public class IntronLengthWithinCDSCheckTest
 		check.setEmblEntryValidationPlanProperty(property);
 		feature.setLocations(locationJoin);
 		feature.addQualifier("artificial_location","low-quality sequence region");
+		ValidationResult validationResult = check.check(feature);
+		assertTrue(validationResult.isValid());
+		assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1",
+				Severity.ERROR));
+	}
+	
+	@Test
+	public void testCheck_InvalidIntronAssemblywithRibosomalSlippage() throws SQLException
+	{
+		Join<Location> locationJoin = new Join<Location>();
+		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+		locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
+		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
+		property.isAssembly.set(true);
+		check.setEmblEntryValidationPlanProperty(property);
+		feature.setLocations(locationJoin);
+		feature.addQualifier("ribosomal_slippage","low-quality sequence region");
 		ValidationResult validationResult = check.check(feature);
 		assertTrue(validationResult.isValid());
 		assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1",

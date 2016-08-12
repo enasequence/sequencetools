@@ -38,7 +38,8 @@ public class IntronLengthWithinCDSCheck extends FeatureValidationCheck
 			CdsFeature cdsFeature = (CdsFeature) feature;
 			Location prevLocation = null;
 			boolean hasArtificialLocation=SequenceEntryUtils.isQualifierAvailable(Qualifier.ARTIFICIAL_LOCATION, cdsFeature);
-			if(hasArtificialLocation&&getEmblEntryValidationPlanProperty().isAssembly.get())
+			boolean hasribosomal_slippage=SequenceEntryUtils.isQualifierAvailable(Qualifier.RIBOSOMAL_SLIPPAGE_QUALIFIER_NAME, cdsFeature);
+			if((hasArtificialLocation||hasribosomal_slippage)&&getEmblEntryValidationPlanProperty().isAssembly.get())
 			{
 				return result;
 			}
