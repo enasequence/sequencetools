@@ -1,6 +1,6 @@
  allprojects 
  {
-    ext.version_base = '1.1.129'
+    ext.version_base = '1.1.130'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -56,14 +56,21 @@
     archives sourcesJar
  }
 
- signing 
- {
-    sign configurations.archives
- }
-
-  task wrapper(type: Wrapper) { gradleVersion = '1.12' 
+ task wrapper(type: Wrapper) { gradleVersion = '1.12' 
  }
   
+ 
+ if (gradle.startParameter.taskNames.contains("uploadArchives")) {
+        signing {
+            required true
+            sign configurations.archives
+        }
+    } else {
+        task signArchives {
+            // do nothing
+        }
+    }
+    
  uploadArchives 
   {
     repositories 
