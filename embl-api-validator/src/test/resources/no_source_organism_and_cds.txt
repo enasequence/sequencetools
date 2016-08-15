@@ -1,0 +1,16 @@
+ID   unknown; SV 1; linear; unassigned DNA; STD; UNC; 120 BP.
+XX
+AC   unknown;
+XX
+DE   Triticum aestivum BAC contig ctg0011b of chromosome 3B
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..120
+FT                   /clone="TaaCsp3BFhA_0042J02"
+FT   CDS             1..9
+XX
+SQ   Sequence 60 BP; 345630 A; 279157 C; 286110 G; 351080 T; 4101 other;
+     ggggcgggtt ttaacgaatt tcgcccttca tgcatgcagt gagaagttga gcacactggt        60
+     ggggcgggtt ttaacgaatt tcgcccttca tgcatgcagt gagaagttga gcacactggt        120
+//

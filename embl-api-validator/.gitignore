@@ -1,0 +1,12 @@
+/.gradle/
+.settings
+target
+.project
+.classpath
+embl-api-ff.iml
+.gradle
+build
+build.number
+gradlew.bat
+bin
+gradle

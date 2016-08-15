@@ -1,0 +1,7 @@
+archivesBaseName = 'embl-api-validator'
+
+dependencies {
+    compile project(':embl-api-ff')
+    compile project(':embl-api-core')
+    testCompile 'junit:junit:4.11'
+}
