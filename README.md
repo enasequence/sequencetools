@@ -24,6 +24,7 @@ Flatfile validator/fixer client for execution <br />
 # Usage
 
 Source code build instructions are given [Here](https://github.com/enasequence/sequencetools/wiki/Build-Instructions)
+
 Validator download and execution instructions are given [Here](http://www.ebi.ac.uk/ena/software/flat-file-validator)
 
 
