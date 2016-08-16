@@ -137,7 +137,7 @@ project(':embl-api-validator') {
     }
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.130",
+                     "Implementation-Version":"1.1.131",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())

@@ -18,12 +18,14 @@ Unless required by applicable law or agreed to in writing, software distributed 
 [embl-api-core](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-core) : Flatfile Validator and fixer <br />
 
 [embl-api-validator](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-validator) : 
-Flatfile validator/fixer client <br />
+Flatfile validator/fixer client for execution <br />
 
 
 # Usage
 
-[Follow these instructions](http://www.ebi.ac.uk/ena/software/flat-file-validator)
+Source code build instructions are given [Here](https://github.com/enasequence/sequencetools/wiki/Build-Instructions)
+Validator download and execution instructions are given [Here](http://www.ebi.ac.uk/ena/software/flat-file-validator)
+
 
 
 
