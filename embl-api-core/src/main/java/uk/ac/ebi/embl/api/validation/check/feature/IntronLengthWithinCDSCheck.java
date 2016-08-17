@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
@@ -43,7 +44,8 @@ public class IntronLengthWithinCDSCheck extends FeatureValidationCheck
 			{
 				return result;
 			}
-			for (Location location : cdsFeature.getLocations().getLocations())
+			CompoundLocation<Location> cdsLocations=cdsFeature.getLocations().getSortedLocations();
+			for (Location location : cdsLocations.getLocations())
 			{
 				if (prevLocation == null)
 				{

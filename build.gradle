@@ -1,6 +1,6 @@
  allprojects 
  {
-    ext.version_base = '1.1.131'
+    ext.version_base = '1.1.132'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -79,20 +79,19 @@ if (gradle.startParameter.taskNames.contains("uploadArchives")) {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
           }
 
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") 
+       if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) 
+       {
+        
+          repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") 
           {
-
-          authentication(userName: hasProperty('ossrhUsername')?ossrhUsername:'', password: hasProperty('ossrhPassword')?ossrhPassword:'')
-          
+                authentication(userName: ossrhUsername, password: ossrhPassword)
           }
 
-        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") 
+          snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") 
           {
-          
-          authentication(userName: hasProperty('ossrhUsername')?ossrhUsername:'', password: hasProperty('ossrhPassword')?ossrhPassword:'')
-          
+               authentication(userName: ossrhUsername, password: ossrhPassword)
           }
-
+       }
         pom.project 
           {
                name 'sequencetools'
@@ -141,7 +140,7 @@ project(':embl-api-validator') {
     }
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.131",
+                     "Implementation-Version":"1.1.132",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())
