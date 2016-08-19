@@ -77,12 +77,12 @@ public class EC_numberCheckTest
 	{
 		
 		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.15");
-		expect(entryDAOUtils.isEcnumberValid("3.6.1.15")).andReturn(false);
+		expect(entryDAOUtils.isEcnumberValid("3.6.1.15")).andReturn("N");
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult result=check.check(feature);
-		assertTrue(!result.isValid());
-		assertEquals(1, result.count("EC_numberCheck_1", Severity.ERROR));
+		assertTrue(result.isValid());
+		assertEquals(1, result.count("EC_numberCheck_1", Severity.WARNING));
 
 	}
 	
@@ -90,12 +90,25 @@ public class EC_numberCheckTest
 	public void testCheck_validEcnumber() throws SQLException, ValidationEngineException
 	{
 		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.15");
-		expect(entryDAOUtils.isEcnumberValid("3.6.1.15")).andReturn(true);
+		expect(entryDAOUtils.isEcnumberValid("3.6.1.15")).andReturn("Y");
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult result=check.check(feature);
 		assertTrue(result.isValid());
-		assertEquals(0, result.count("EC_numberCheck_1", Severity.ERROR));
+		assertEquals(0, result.count("EC_numberCheck_1", Severity.WARNING));
+		
+	}
+	
+	@Test
+	public void testCheck_notExistEcnumber() throws SQLException, ValidationEngineException
+	{
+		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.15");
+		expect(entryDAOUtils.isEcnumberValid("3.6.1.15")).andReturn(null);
+		replay(entryDAOUtils);
+		check.setEntryDAOUtils(entryDAOUtils);
+		ValidationResult result=check.check(feature);
+		assertTrue(!result.isValid());
+		assertEquals(1, result.count("EC_numberCheck_2", Severity.ERROR));
 		
 	}
 	

@@ -661,7 +661,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	}
 	
 	@Override
-	public boolean isEcnumberValid(String ecNumber) throws SQLException
+	public String isEcnumberValid(String ecNumber) throws SQLException
 	{
 		ResultSet rs = null;
 		PreparedStatement ps = null;
@@ -672,10 +672,10 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			rs = ps.executeQuery();
 			if (rs.next())
 			{
-				return (rs.getString(1).equals("Y")?true:false);
+				return rs.getString(1);
 			}
 			else
-				return false;
+				return null;
 		} finally
 		{
 			DbUtils.closeQuietly(rs);

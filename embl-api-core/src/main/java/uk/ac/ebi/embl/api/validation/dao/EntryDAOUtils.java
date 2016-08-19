@@ -57,7 +57,7 @@ public interface EntryDAOUtils
 	
 	Entry getMasterEntry(String analysisId) throws SQLException;
 
-	boolean isEcnumberValid(String ecNumber) throws SQLException;
+	public String isEcnumberValid(String ecNumber) throws SQLException;
 
 	Entry getEntryInfo(String primaryAcc) throws SQLException;
 	

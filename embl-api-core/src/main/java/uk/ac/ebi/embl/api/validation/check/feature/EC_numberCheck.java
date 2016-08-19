@@ -22,10 +22,13 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@Description("non_existent/illegal EC number : \"{0}\" ")
+@Description("Invalid EC number : \"{0}\" "
+		+ " Non existent EC number : \"{0}\"  ")
 public class EC_numberCheck extends FeatureValidationCheck
 {
-	private static final String EC_numberCheck_ID = "EC_numberCheck_1";
+	private static final String EC_numberCheck_Warning_ID = "EC_numberCheck_1";
+	private static final String EC_numberCheck_Error_ID = "EC_numberCheck_2";
+
 		
 	public EC_numberCheck()
 	{
@@ -34,7 +37,7 @@ public class EC_numberCheck extends FeatureValidationCheck
 	{
 		result = new ValidationResult();
 		
-		if (feature == null)
+		if (feature == null||getEntryDAOUtils()==null)
 		{
 			return result;
 		}
@@ -44,8 +47,13 @@ public class EC_numberCheck extends FeatureValidationCheck
 			 return result; 
 				
 		String ecNumberValue = SequenceEntryUtils.getQualifierValue(Qualifier.EC_NUMBER_QUALIFIER_NAME, feature);
-		if(!getEntryDAOUtils().isEcnumberValid(ecNumberValue))
-		 reportError(feature.getOrigin(), EC_numberCheck_ID,ecNumberValue);
+		String result=getEntryDAOUtils().isEcnumberValid(ecNumberValue);
+		
+		if(result==null)
+			reportError(feature.getOrigin(),EC_numberCheck_Error_ID , ecNumberValue);
+		if("N".equals(result))
+		    reportWarning(feature.getOrigin(), EC_numberCheck_Warning_ID,ecNumberValue);
+		
 		} catch(Exception e)
 		{
 			throw new ValidationEngineException(e);
