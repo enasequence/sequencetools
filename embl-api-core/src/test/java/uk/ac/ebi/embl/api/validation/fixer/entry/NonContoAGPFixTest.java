@@ -35,6 +35,8 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
@@ -126,6 +128,8 @@ public class NonContoAGPFixTest {
 		assertEquals("+",row1.getOrientation());
 		assertEquals(new Integer(1),row1.getPart_number());
 		
+		List<String> linkage_evidences= new ArrayList<String>();
+		linkage_evidences.add("paired-ends");
 		//second
 		assertEquals("nonconentry", row2.getObject());
 		assertEquals("AC0001.1", row2.getObject_acc());
@@ -138,7 +142,7 @@ public class NonContoAGPFixTest {
 		assertEquals("N", row2.getComponent_type_id());
 		assertEquals(new Long(10), row2.getGap_length());
 		assertEquals("scaffold", row2.getGap_type());
-		assertEquals("paired-ends", row2.getLinkageevidence());
+		assertEquals(linkage_evidences, row2.getLinkageevidence());
 		assertEquals(true, row2.isGap());
 		assertEquals(null, row2.getOrientation());
 		assertEquals(new Integer(2), row2.getPart_number());
@@ -205,7 +209,9 @@ public class NonContoAGPFixTest {
 		assertEquals("N", row2.getComponent_type_id());
 		assertEquals(new Long(10), row2.getGap_length());
 		assertEquals("scaffold", row2.getGap_type());
-		assertEquals("paired-ends", row2.getLinkageevidence());
+		List<String> linkage_evidences= new ArrayList<String>();
+		linkage_evidences.add("paired-ends");
+		assertEquals(linkage_evidences, row2.getLinkageevidence());
 		assertEquals(true, row2.isGap());
 		assertEquals(null, row2.getOrientation());
 		assertEquals(new Integer(2), row2.getPart_number());
@@ -241,7 +247,7 @@ public class NonContoAGPFixTest {
 		assertEquals("N", row4.getComponent_type_id());
 		assertEquals(new Long(7), row4.getGap_length());
 		assertEquals("scaffold", row4.getGap_type());
-		assertEquals("paired-ends", row4.getLinkageevidence());
+		assertEquals(linkage_evidences, row4.getLinkageevidence());
 		assertEquals(null, row4.getOrientation());
 		assertEquals(new Integer(4), row4.getPart_number());
 		assertTrue(row4.isGap());

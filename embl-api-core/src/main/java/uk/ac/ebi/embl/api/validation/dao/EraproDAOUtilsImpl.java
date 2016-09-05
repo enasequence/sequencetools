@@ -5,10 +5,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
@@ -20,6 +25,8 @@ import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
 	private Connection connection;
+	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
+
 	public EraproDAOUtilsImpl (Connection connection)
 	{
 		this.connection=connection;
@@ -28,6 +35,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	@Override
 	public Reference getSubmitterReference(String analysisId) throws SQLException, UnsupportedEncodingException
     {
+		if(submitterReferenceCache.get(analysisId)!=null)
+    	{
+    		return submitterReferenceCache.get(analysisId);
+    	}
     	Publication publication = new Publication();
 		ReferenceFactory referenceFactory = new ReferenceFactory();
 		Reference reference = referenceFactory.createReference();
@@ -58,8 +69,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				Person person =null;
 				
 				person = referenceFactory.createPerson(
-						EntryUtils.concat(" ", EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("surname")),  EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("middle_initials"))),
-						EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("first_name")));
+						EntryUtils.concat(" ",WordUtils.capitalizeFully(EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("surname")),'-',' '),  EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("middle_initials"))),
+						getFirstName(EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("first_name"))));
 				
 				publication.addAuthor(person);
 				reference.setAuthorExists(true);
@@ -98,4 +109,31 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 		return reference;
 	}
+	
+	private String getFirstName(String firstName)
+	{
+		StringBuilder nameBuilder= new StringBuilder();
+		if(StringUtils.containsNone(firstName,"@")&&StringUtils.contains(firstName, "-"))
+		{
+			String[] names=StringUtils.split(firstName,"-");
+			List<String> fnames=Arrays.asList(names);
+			int i=0;
+			for(String n: fnames)
+			{
+				i++;
+				nameBuilder.append(WordUtils.initials(n).toUpperCase());
+				if(i==fnames.size())
+					nameBuilder.append(".");
+				else
+					nameBuilder.append(".-");
+			}
+	   }
+		else
+		{
+			nameBuilder.append(firstName.toUpperCase().charAt(0));
+			nameBuilder.append(".");
+		}
+		return nameBuilder.toString();
+	}
+	
 }

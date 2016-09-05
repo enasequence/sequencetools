@@ -38,6 +38,7 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.easymock.EasyMock.createMock;
@@ -53,6 +54,7 @@ public class AgptoConFixTest {
 	public EntryFactory entryFactory;
 	public EntryDAOUtils entryDAOUtils;
 	public EmblEntryValidationPlanProperty planProperty;
+	public List<String> linkageEvidences;
 
 	@Before
 	public void setUp() {
@@ -65,6 +67,9 @@ public class AgptoConFixTest {
 		check = new AgptoConFix();
 		entryDAOUtils = createMock(EntryDAOUtils.class);
 		planProperty=new EmblEntryValidationPlanProperty();
+		linkageEvidences= new ArrayList<String>();
+		linkageEvidences.add("paired-ends");
+		
 	}
 
 	@Test
@@ -92,7 +97,6 @@ public class AgptoConFixTest {
 		Componentrow.setComponent_end(330l);
 		Componentrow.setOrientation("+");
 		Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
-
 		gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
 		gaprow.setObject_beg(331);
 		gaprow.setObject_end(354l);
@@ -100,7 +104,7 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
-		gaprow.setLinkageevidence("paired-ends");
+		gaprow.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(Componentrow);
 		entry.addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
@@ -134,7 +138,6 @@ public class AgptoConFixTest {
 		Componentrow.setOrientation("+");
 		Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
 
-
 		gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
 		gaprow.setObject_beg(331);
 		gaprow.setObject_end(354l);
@@ -142,7 +145,7 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
-		gaprow.setLinkageevidence("paired-ends");
+		gaprow.setLinkageevidence(linkageEvidences);
 		
 		entry.addAgpRow(Componentrow);
 		entry.addAgpRow(gaprow);
@@ -222,7 +225,7 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
-		gaprow.setLinkageevidence("paired-ends");
+		gaprow.setLinkageevidence(linkageEvidences);
 		
 		entry.addAgpRow(Componentrow);
 		entry.addAgpRow(gaprow);

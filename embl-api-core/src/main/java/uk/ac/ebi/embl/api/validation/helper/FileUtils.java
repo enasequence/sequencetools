@@ -18,6 +18,10 @@ package uk.ac.ebi.embl.api.validation.helper;
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.lang.StringUtils;
+
+import uk.ac.ebi.embl.api.validation.FileType;
+
 /**
  * Created by IntelliJ IDEA.
  * User: lbower
@@ -25,6 +29,13 @@ import java.util.zip.GZIPInputStream;
  * Time: 16:08:06
  */
 public class FileUtils {
+	
+	public static final String embl_filetoken = "ID";
+	public static final String genbank_filetoken = "LOCUS";
+	public static final String gff_filetoken = "##gff-version 3";
+	public static final String fasta_filetoken = ">";
+	private static final String[] AssemblyFileToken = { "assembly","chromosome", "unlocalised", "unplaced", "placed" };
+
 
     public static void copyFile(File src,
                                 File dst) throws IOException, FileNotFoundException, SecurityException {
@@ -122,6 +133,35 @@ public class FileUtils {
 		zis.close();
 		
 		return tempFile.getAbsolutePath();
+	}
+	
+	public static FileType getFileType(File formatFile) throws IOException
+	{
+		BufferedReader fileFormatReader = new BufferedReader(new FileReader(formatFile));
+		// FINDING THE TYPE OF FILE BY READING THE FIRST LINE OF THE FILE
+		String firstLineofFile = fileFormatReader.readLine();
+		fileFormatReader.close();
+		if (firstLineofFile.startsWith(embl_filetoken))
+			{
+				return FileType.EMBL;
+			}
+	   else if (firstLineofFile.startsWith(genbank_filetoken))
+			{
+			  return FileType.GENBANK;
+			}
+	  else if (firstLineofFile.startsWith(gff_filetoken))
+			{
+			 return FileType.GFF3;
+			}
+	  else if (StringUtils.indexOfAny(	formatFile.getName(),AssemblyFileToken) != -1)
+			{
+			 return FileType.GENOMEASSEMBLY;
+			}
+	 else if (firstLineofFile.startsWith(fasta_filetoken))
+			{
+			return FileType.FASTA;
+			}
+		return null;
 	}
 
 }

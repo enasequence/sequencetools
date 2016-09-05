@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +44,7 @@ public class AGPValidationCheckTest
 	private AGPValidationCheck check;
 	private EntryDAOUtils entryDAOUtils;
 	private EmblEntryValidationPlanProperty planProperty;
+	List<String> linkageEvidences;
 
 	@Before
 	public void setUp() throws SQLException
@@ -52,6 +55,8 @@ public class AGPValidationCheckTest
 		entry = entryFactory.createEntry();
 		check = new AGPValidationCheck();
 		entryDAOUtils = createMock(EntryDAOUtils.class);
+		linkageEvidences= new ArrayList<String>();
+		linkageEvidences.add("paired-ends");
 	}
 	
 	@Test
@@ -93,7 +98,7 @@ public class AGPValidationCheckTest
 		validGaprow1.setComponent_type_id("N");
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
-		validGaprow1.setLinkageevidence("paired-ends");
+		validGaprow1.setLinkageevidence(linkageEvidences);
 		ContigSequenceInfo sequenceInfo=new ContigSequenceInfo();
 		sequenceInfo.setSequenceLength(400);
 		entry.addAgpRow(validComponentrow1);
@@ -173,7 +178,8 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setComponent_type_id("N");
 		inValidGaprow1.setGap_length(23l);
 		inValidGaprow1.setGap_type("scaffol");
-		inValidGaprow1.setLinkageevidence("paired-nds");
+		linkageEvidences.add("paired-nds");
+		inValidGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
 		entry.addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
@@ -208,7 +214,7 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setComponent_type_id("N");
 		inValidGaprow1.setGap_length(24l);
 		inValidGaprow1.setGap_type("scaffold");
-		inValidGaprow1.setLinkageevidence("paired-ends");
+		inValidGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
 		entry.addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
@@ -242,7 +248,7 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setComponent_type_id("N");
 		inValidGaprow1.setGap_length(21l);
 		inValidGaprow1.setGap_type("scaffold");
-		inValidGaprow1.setLinkageevidence("paired-ends");
+		inValidGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
 		entry.addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);

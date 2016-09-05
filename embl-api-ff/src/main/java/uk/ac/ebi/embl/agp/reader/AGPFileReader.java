@@ -1,8 +1,11 @@
 package uk.ac.ebi.embl.agp.reader;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -27,9 +30,10 @@ public class AGPFileReader extends FlatFileEntryReader
 
 	private boolean isEntry;
 	private Entry entry;
-	private final static String SCREGEX = "\\s";
+	private final static String SCREGEX = "\\s+";
     protected int currentEntryLine = 1;
 	private static final int NUMBER_OF_COLUMNS = 9;
+	private String[] linkageArray={"YES","NO"};
 
 	private static final int OBJECT = 0;
 	private static final int OBJECT_BEG = 1;
@@ -193,19 +197,15 @@ public class AGPFileReader extends FlatFileEntryReader
 			{
 				error("MissingLinkageCheck");
 			}
-			else if (fields[LINKAGE].equals("yes"))
-			{
-				//
-			}
-			else if (fields[LINKAGE].equals("no"))
-			{
-				//
-			}
-			else
+			else if(!ArrayUtils.contains(linkageArray, fields[LINKAGE].toUpperCase()))
 			{
 				error("InvalidLinkageCheck");
 			}
-			
+			else 
+			{
+				agpRow.setLinkage(fields[LINKAGE]);
+			}
+						
 			// LINKAGE_EVIDENCE
 			
 			if (fields[LINKAGEEVIDENCE] == null || fields[LINKAGEEVIDENCE].isEmpty())
@@ -214,7 +214,8 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 			else
 			{
-				agpRow.setLinkageevidence(fields[LINKAGEEVIDENCE]);
+				String linkageEvidence=fields[LINKAGEEVIDENCE];
+			    agpRow.setLinkageevidence(Arrays.asList(linkageEvidence.split(";")));
 			}
 		}
 		else if (fields[COMPONENT_TYPE_ID] != null && !fields[COMPONENT_TYPE_ID].equals("A") && !fields[COMPONENT_TYPE_ID].equals("D")

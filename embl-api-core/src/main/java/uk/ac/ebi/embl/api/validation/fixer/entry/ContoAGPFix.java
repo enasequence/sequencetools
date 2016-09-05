@@ -54,7 +54,7 @@ public class ContoAGPFix extends EntryValidationCheck
 		gapType.put("repeat within scaffold","repeat");
 		gapType.put("unknown","unknown");
 		gapType.put("repeat between scaffolds","repeat");
-		linkageEvidence.put("na","na");
+		linkageEvidence.put("unspecified","na");
 		linkageEvidence.put("paired-ends","paired-ends");
 		linkageEvidence.put("align genus","align_genus");
 		linkageEvidence.put("align xgenus","align_xgenus");
@@ -157,6 +157,7 @@ public class ContoAGPFix extends EntryValidationCheck
 	 AgpRow generateGapAgpRow(Feature gapFeature,AgpRow gapRow) 
 	{
 	  List<Qualifier> qualifiers=gapFeature.getQualifiers();
+	  List<String> linkageEvidences= new ArrayList<String>();
 		
 		for(int i=0;i<qualifiers.size();i++)
 		{
@@ -164,8 +165,7 @@ public class ContoAGPFix extends EntryValidationCheck
 		  			
 			if(qualifier.getName().equals(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME))
 			{
-				gapRow.setLinkageevidence(linkageEvidence.get(qualifier.getValue()));
-			
+				linkageEvidences.add(linkageEvidence.get(qualifier.getValue()));
 			}
 			
 			if(qualifier.getName().equals(Qualifier.GAP_TYPE_QUALIFIER_NAME))
@@ -187,6 +187,8 @@ public class ContoAGPFix extends EntryValidationCheck
 				}
 			}
 		}
+		gapRow.setLinkageevidence(linkageEvidences);
+
 	
 		return gapRow;
 	}

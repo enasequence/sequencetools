@@ -16,6 +16,9 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import java.sql.SQLException;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
@@ -26,7 +29,12 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 @Description("")
 public class AGPValidationCheck extends EntryValidationCheck
 {
+	String[] componentTypeArray={"A","D","F","G","O","P","W","N","U"};
+	String[] gapTypeArray={"scaffold","contig","centromere","short_arm","heterochromatin","telomere","repeat"};
+	String[] orientationArray= {"+","plus","-","minus","?","0","unknown","na","irrelevant"};
+	String[] linkageEvidenceArray= {"na","paired-ends","align_genus","align_xgenus","align_trnscpt","within_clone","clone_contig","map","strobe","unspecified"};
 
+	
 	private final static String MESSAGE_KEY_OBJECT_NAME_ERROR = "AGPValidationCheck-1";
 	private final static String MESSAGE_KEY_PART_NUMBER_ERROR = "AGPValidationCheck-2";
 	private final static String MESSAGE_KEY_COMPONENT_TYPE_ID_ERROR = "AGPValidationCheck-3";
@@ -40,6 +48,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 	private final static String MESSAGE_KEY_COMPONENT_COORDINATE_ERROR="AGPValidationCheck-11";
 	private final static String MESSAGE_KEY_COMPONENT_RANGE_ERROR="AGPValidationCheck-12";
 	private final static String MESSAGE_KEY_INVALID_ROW_ERROR="AGPValidationCheck-13";
+	private final static String MESSAGE_KEY_INVALID_LINKAGE_ERROR="AGPValidationCheck-14";
 
 
 
@@ -83,7 +92,8 @@ public class AGPValidationCheck extends EntryValidationCheck
 			String orientation=agpRow.getOrientation();
 			Long gap_length=agpRow.getGap_length();
 			String gap_type=agpRow.getGap_type();
-			String linkageEvidence=agpRow.getLinkageevidence();
+			boolean hasLinkage = agpRow.hasLinkage();
+			List<String> linkageEvidences=agpRow.getLinkageevidence();
 			String component_acc=null;
 
 			if(agpRow==null||!agpRow.isValid())
@@ -148,16 +158,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			else
 			{
 				component_type_id = component_type_id.toUpperCase();
-				if (
-					!component_type_id.equals("A") &&
-					!component_type_id.equals("D") &&
-					!component_type_id.equals("F") &&
-					!component_type_id.equals("G") &&
-					!component_type_id.equals("O") &&
-					!component_type_id.equals("P") &&
-					!component_type_id.equals("W") &&
-					!component_type_id.equals("N") &&
-					!component_type_id.equals("U"))
+				if (!ArrayUtils.contains(componentTypeArray,component_type_id))
 				{
 					 reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_TYPE_ID_ERROR, agpRow.getComponent_id());
 				}
@@ -175,14 +176,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			else
 			{
 				gap_type = gap_type.toLowerCase();
-				if (
-					!gap_type.equals("scaffold") &&
-					!gap_type.equals("contig") &&
-					!gap_type.equals("centromere") &&
-					!gap_type.equals("short_arm") &&
-					!gap_type.equals("heterochromatin") &&
-					!gap_type.equals("telomere") &&
-					!gap_type.equals("repeat"))
+				if (!ArrayUtils.contains(gapTypeArray,gap_type))
 				{
 					reportError(agpRow.getOrigin(),
 								MESSAGE_KEY_GAP_TYPE_ERROR,
@@ -191,7 +185,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 				}
 			}
 			
-			if (linkageEvidence == null)
+			if (linkageEvidences == null||linkageEvidences.isEmpty())
 			{
 				reportError(agpRow.getOrigin(),
 							MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,
@@ -199,22 +193,15 @@ public class AGPValidationCheck extends EntryValidationCheck
 			}
 			else
 			{
+				for(String linkageEvidence:linkageEvidences)
+				{
 				linkageEvidence = linkageEvidence.toLowerCase();
-				if (
-					!linkageEvidence.equals("na") &&						
-					!linkageEvidence.equals("paired-ends") &&
-					!linkageEvidence.equals("align_genus") &&
-					!linkageEvidence.equals("align_xgenus") &&
-					!linkageEvidence.equals("align_trnscpt") &&
-					!linkageEvidence.equals("within_clone") &&
-					!linkageEvidence.equals("clone_contig") &&
-					!linkageEvidence.equals("map") &&
-					!linkageEvidence.equals("strobe") &&
-					!linkageEvidence.equals("unspecified"))
+				if (!ArrayUtils.contains(linkageEvidenceArray, linkageEvidence))
 				{
 					reportError(agpRow.getOrigin(),
 								MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,
 								entry.getSubmitterAccession());
+				}
 				}
 			}
 			
@@ -239,15 +226,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 				{
 					orientation = orientation.toLowerCase();
 
-					if (!orientation.equals("+") &&
-							!orientation.equals("plus") &&
-							!orientation.equals("-") &&
-							!orientation.equals("minus") &&
-							!orientation.equals("?") &&
-							!orientation.equals("0") &&
-							!orientation.equals("unknown") &&
-							!orientation.equals("na") &&
-							!orientation.equals("irrelevant"))
+					if (!ArrayUtils.contains(orientationArray, orientation))
 					{
 						reportError(agpRow.getOrigin(),
 									MESSAGE_KEY_ORIENTATION_ERROR,
@@ -309,9 +288,26 @@ public class AGPValidationCheck extends EntryValidationCheck
 					}
 				}
 			}
+    	validateLinkageCombination(agpRow);
 		}
+		
 
 		return result;
+	}
+	
+	private void validateLinkageCombination(AgpRow agpRow)
+	{
+		
+		if(agpRow.isGap())
+		{
+			if(agpRow.hasLinkage())
+			{
+			if(!agpRow.getGap_type().toLowerCase().equals("scaffold")&&!agpRow.getGap_type().toLowerCase().equals("repeat"))
+			{
+		         reportError(agpRow.getOrigin(),MESSAGE_KEY_INVALID_LINKAGE_ERROR,agpRow.getGap_type());		
+			}
+			}
+		}
 	}
 
 }

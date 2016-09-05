@@ -167,7 +167,9 @@ public class ContoAGPFixTest {
 		assertEquals("N",row2.getComponent_type_id());
 		assertEquals(new Long(10),row2.getGap_length());
 		assertEquals("scaffold",row2.getGap_type());
-		assertEquals("paired-ends",row2.getLinkageevidence());
+		List<String> linkage_evidences= new ArrayList<String>();
+		linkage_evidences.add("paired-ends");
+		assertEquals(linkage_evidences,row2.getLinkageevidence());
 		assertEquals(true,row2.isGap());
 		assertEquals(null,row2.getOrientation());
 		assertEquals(new Integer(2),row2.getPart_number());

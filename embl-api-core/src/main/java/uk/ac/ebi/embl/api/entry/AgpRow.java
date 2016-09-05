@@ -15,6 +15,8 @@
 	 ******************************************************************************/
 package uk.ac.ebi.embl.api.entry;
 
+import java.util.List;
+
 import uk.ac.ebi.embl.api.validation.Origin;
 
 public class AgpRow
@@ -49,10 +51,11 @@ public class AgpRow
 		private String gap_type;//GAP_TYPE_ID
 		private Long component_end=null;//CONTIG_END
 		private String orientation;//ORIENTATION
-		private String linkageevidence;//LINKAGE_EVIDENCE_ID
+		private List<String> linkageevidence;//LINKAGE_EVIDENCE_ID
 		private String component_acc;//CONTIG_ACC
 		private String object_acc;//SCAFFOLD_ACC
 		private Origin origin;
+		private String linkage;
 		
 		public Origin getOrigin()
 		{
@@ -174,12 +177,12 @@ public class AgpRow
 			this.orientation = orientation;
 		}
 		
-		public String getLinkageevidence()
+		public List<String> getLinkageevidence()
 		{
 			return linkageevidence;
 		}
 		
-		public void setLinkageevidence(String linkageevidence)
+		public void setLinkageevidence(List<String> linkageevidence)
 		{
 			this.linkageevidence = linkageevidence;
 		}
@@ -198,7 +201,12 @@ public class AgpRow
 		{
 			return (component_type_id.equals("N") || component_type_id.equals("U"));
 		}
-		
+		public boolean hasLinkage()
+		{
+			if(getLinkage()!=null)
+			return getLinkage().toUpperCase().equals("YES");
+			return false;
+		}
 		public boolean isNegativeContig()
 		{
 			return this.orientation=="-";
@@ -210,6 +218,14 @@ public class AgpRow
 
 		public void setObject_acc(String object_acc) {
 			this.object_acc = object_acc;
+		}
+		
+		public String getLinkage() {
+			return linkage;
+		}
+
+		public void setLinkage(String linkage) {
+			this.linkage = linkage;
 		}
 
 		public boolean isValid()
@@ -233,6 +249,7 @@ public class AgpRow
 			}
 			return true;
 		}
+		
 		
 		@Override
 		public String toString() {

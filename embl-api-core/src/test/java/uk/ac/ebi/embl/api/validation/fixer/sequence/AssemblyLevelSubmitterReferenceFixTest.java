@@ -121,7 +121,6 @@ public class AssemblyLevelSubmitterReferenceFixTest
         assertTrue(result.isValid());
         assertEquals(0,entry.getReferences().size());
         assertEquals(0,result.count("AssemblyLevelSubmitterReferenceFix_1", Severity.FIX));
-     
-	}
+ 	}
 	
 }

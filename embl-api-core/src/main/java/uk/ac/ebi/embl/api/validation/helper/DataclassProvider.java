@@ -19,7 +19,7 @@ public class DataclassProvider {
 
 	public static final Pattern ASSEMBLYMASTER_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^(ERZ|GCA_)[0-9]+$");
 	public static final Pattern WGSMASTER_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{4})[0-9]{2}S?[0]{6,10}$");
-	public static final Pattern SEQUENCE_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{1})[0-9]{5,6}$");
+	public static final Pattern SEQUENCE_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{1,2})[0-9]{5,6}$");
 	public static final Pattern TPX_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^TPX_[0-9]{6}$");
 	public static final Pattern WGS_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{4})[0-9]{2}S?[0-9]{6,10}$");
 	private static EntryDAOUtils entryDaoUtils;

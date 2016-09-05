@@ -132,7 +132,8 @@ public class Assembly_gapFeatureCheck extends EntryValidationCheck
 			}// TSA End
 				// CON Begin
 			else if (gap_typeQualifier != null
-					&& (gap_typeQualifier.getValue().equals("within scaffold") || gap_typeQualifier.getValue().equals("repeat within scaffold")))
+					&& (gap_typeQualifier.getValue().equals("within scaffold") 
+					    || gap_typeQualifier.getValue().equals("repeat within scaffold")))
 			{
 				if (!linkageEvidenceExists)
 				{

@@ -150,13 +150,14 @@ public class NonContoAGPFix extends EntryValidationCheck
 			}
 
              List<Qualifier> gapQualifiers=gapFeature.getQualifiers();
+             List<String> linkageEvidences= new ArrayList<String>();
 
 			 for ( int i = 0; i < gapQualifiers.size(); ++i )
 			 {
 				 Qualifier gapQualifier=gapQualifiers.get(i);
 				 if ( Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME.equals(gapQualifier.getName()))
 				 {
-					 agpRow.setLinkageevidence(linkageEvidence.get(gapQualifier.getValue()));
+					 linkageEvidences.add(linkageEvidence.get(gapQualifier.getValue()));
 				 }
 				 if(Qualifier.GAP_TYPE_QUALIFIER_NAME.equals(gapQualifier.getName()))
 				 {
@@ -174,6 +175,7 @@ public class NonContoAGPFix extends EntryValidationCheck
 					 }
 				 }
 			 }
+			 agpRow.setLinkageevidence(linkageEvidences);
           
 			agpRow.setObject_acc(scaffoldEntry.getPrimaryAccession()+"."+scaffoldEntry.getSequence().getVersion());
 			agpRow.setObject(scaffoldEntry.getSubmitterAccession());

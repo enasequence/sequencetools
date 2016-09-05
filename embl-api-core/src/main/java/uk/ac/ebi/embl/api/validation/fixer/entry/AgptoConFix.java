@@ -36,6 +36,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Description("")
@@ -56,7 +57,7 @@ public class AgptoConFix extends EntryValidationCheck
 		gapType.put("telomere","telomere");
 		gapType.put("repeatwithLinkage","repeat within scaffold");
 		linkageEvidence.put("pcr","pcr");
-		linkageEvidence.put("na","na");
+		linkageEvidence.put("na","unspecified");
 		linkageEvidence.put("paired-ends","paired-ends");
 		linkageEvidence.put("align_genus","align genus");
 		linkageEvidence.put("align_xgenus","align xgenus");
@@ -97,7 +98,7 @@ public class AgptoConFix extends EntryValidationCheck
 			String orientation=agpRow.getOrientation();
 			Long gap_length=agpRow.getGap_length();
 			String gap_type=agpRow.getGap_type();
-			String linkage_evidence=agpRow.getLinkageevidence();
+			List<String> linkage_evidences=agpRow.getLinkageevidence();
 			String component_acc=agpRow.getComponent_acc();
 			
 		  if(agpRow.isGap())
@@ -111,7 +112,7 @@ public class AgptoConFix extends EntryValidationCheck
 			 Qualifier gap_typeQualifier=qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
 			 if("repeat".equals(gap_type))
 			 {
-			 if(linkage_evidence==null||linkage_evidence.isEmpty())
+			 if(linkage_evidences==null||linkage_evidences.isEmpty())
 			 {
 				 gap_type="repeatnoLinkage";
 			 }
@@ -123,10 +124,13 @@ public class AgptoConFix extends EntryValidationCheck
 			 String gapTypeValue=gapType.get(gap_type);
 			 gap_typeQualifier.setValue(gapTypeValue);
 			 assembly_gapFeature.addQualifier(gap_typeQualifier);
+			 for(String linkage_evidence:linkage_evidences)
+			 {
 			 Qualifier linkage_evidenceQualifier=qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
 			 String linkage_evidenceQualifierValue=linkageEvidence.get(linkage_evidence);
 			 linkage_evidenceQualifier.setValue(linkage_evidenceQualifierValue);
 			 assembly_gapFeature.addQualifier(linkage_evidenceQualifier);
+			 }
 			 Qualifier estimated_lengthQualifier=qualifierFactory.createQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME);
 			 if("U".equals(agpRow.getComponent_type_id()))
 			   {

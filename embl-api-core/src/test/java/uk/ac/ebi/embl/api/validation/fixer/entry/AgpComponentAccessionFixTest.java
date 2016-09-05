@@ -32,6 +32,9 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -45,6 +48,7 @@ public class AgpComponentAccessionFixTest {
 	public EntryFactory entryFactory;
 	public EntryDAOUtils entryDAOUtils;
 	public EmblEntryValidationPlanProperty planProperty;
+	List<String> linkageEvidences;
 
 	@Before
 	public void setUp() {
@@ -55,6 +59,8 @@ public class AgpComponentAccessionFixTest {
 		check = new AgpComponentAccessionFix();
 		entryDAOUtils = createMock(EntryDAOUtils.class);
 		planProperty=new EmblEntryValidationPlanProperty();
+		linkageEvidences= new ArrayList<String>();
+		linkageEvidences.add("paired-ends");
 	}
 
 	public void testCheck_Empty() throws ValidationEngineException {
@@ -96,7 +102,7 @@ public class AgpComponentAccessionFixTest {
 		validGaprow1.setComponent_type_id("N");
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
-		validGaprow1.setLinkageevidence("paired-ends");
+		validGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
 		entry.addAgpRow(validGaprow1);
 		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_contig_209591", "ERZ00001",2)).andReturn(null);
@@ -131,7 +137,7 @@ public class AgpComponentAccessionFixTest {
 		validGaprow1.setComponent_type_id("N");
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
-		validGaprow1.setLinkageevidence("paired-ends");
+		validGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
 		entry.addAgpRow(validGaprow1);
 		ContigSequenceInfo sequenceInfo=new ContigSequenceInfo();
