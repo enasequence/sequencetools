@@ -28,12 +28,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class implements validation plan and it hardcodes the order execution.
- * 
- * @author dlorenc
- * 
- */
 public class EmblEntryValidationPlan extends ValidationPlan
 {
 

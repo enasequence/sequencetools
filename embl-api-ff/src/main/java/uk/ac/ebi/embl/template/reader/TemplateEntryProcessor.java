@@ -14,6 +14,8 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
+import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblSequenceWriter;
 
@@ -132,7 +134,9 @@ public class TemplateEntryProcessor {
         StringWriter writer = new StringWriter();
         Entry entry = new EntryFactory().createEntry();
         entry.setComment(new Text(token));
-        new CCWriter(entry).write(writer);
+        FlatFileWriter ccwriter= new CCWriter(entry);
+        ccwriter.setWrapType(WrapType.EMBL_WRAP);
+        ccwriter.write(writer);
         String commentBlock = writer.toString();
         doReplace(delimitedKey, commentBlock);
     }

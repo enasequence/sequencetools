@@ -99,6 +99,8 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
 	public static final String REGULATORY_CLASS_QUALIFIER_NAME="regulatory_class";
 	public static final String ALTITUDE_QUALIFIER_NAME="altitude";
 	public static final String ARTIFICIAL_LOCATION="artificial_location";
+	public static final String TRANS_SPLICING="trans_splicing";
+
 
 	
 	private static final HashSet<String> QUOTED_QUALS = new HashSet<String>();

@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -129,7 +130,7 @@ public class TaxonHelperImpl implements TaxonHelper {
     	}
     }catch(Exception e)
      {
-    	  e.printStackTrace();
+    	  return null;
      }
     	return taxon;
 
@@ -175,7 +176,7 @@ public class TaxonHelperImpl implements TaxonHelper {
     	}
     }catch(Exception e)
      {
-	  e.printStackTrace();
+	   return null;
      }
     	return taxon;
     }
@@ -219,7 +220,7 @@ public class TaxonHelperImpl implements TaxonHelper {
     	}
     }catch(Exception e)
      {
-	  e.printStackTrace();
+	  return null;
      }
     	return taxon;
     }

@@ -262,7 +262,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		ArrayList<Qualifier> qualifiers = new ArrayList<Qualifier>();
 		
 		QualifierFactory qualifierFactory = new QualifierFactory();
-		
+				
 		try
 		{
 			stmt = connection.prepareStatement(sql);
@@ -277,7 +277,8 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			String chromosomeType = rs.getString(3);
 			String chromosomeLocation = rs.getString(2);
 			String chromosomeName = rs.getString(1);
-			if (chromosomeLocation != null && !chromosomeLocation.isEmpty()&& !virus)
+			
+			if (chromosomeLocation != null && !chromosomeLocation.isEmpty()&& !virus&&!chromosomeLocation.equalsIgnoreCase("Phage"))
 			{
 				String organelleValue =  SequenceEntryUtils.getOrganelleValue(chromosomeLocation);
 				if (organelleValue != null)

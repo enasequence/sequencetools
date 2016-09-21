@@ -18,6 +18,8 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
+import uk.ac.ebi.embl.flatfile.writer.WrapChar;
+import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -37,12 +39,22 @@ public class CCWriter extends FlatFileWriter {
 			isBlankString(entry.getComment().getText())) {
 			return false;
 		}
+		if(wrapType==WrapType.EMBL_WRAP)
+		{
+        setWrapChar(WrapChar.WRAP_CHAR_SPACE);
+		StringBuilder block= new StringBuilder();
+		block.append(entry.getComment().getText());
+    	writeBlock(writer, EmblPadding.CC_PADDING, block.toString());
+		}
+		else
+		{
 		List<String> comments = Arrays.asList(entry.getComment().getText().split("\n"));
 
 		for (String line : comments) {
 			writer.write(EmblPadding.CC_PADDING);
 			writer.write(line);
 			writer.write("\n");
+		}
 		}
 		return true;
 	}

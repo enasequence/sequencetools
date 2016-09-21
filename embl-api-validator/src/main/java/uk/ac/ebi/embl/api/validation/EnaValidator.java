@@ -16,6 +16,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation;
 
+import uk.ac.ebi.embl.agp.reader.AGPFileReader;
+import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.genomeassembly.GenomeAssemblyRecord;
 import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
@@ -45,8 +47,6 @@ import uk.ac.ebi.embl.flatfile.writer.genomeassembly.GenomeAssemblyFileWriter;
 import uk.ac.ebi.embl.gff3.reader.GFF3FlatFileEntryReader;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -73,10 +73,6 @@ public class EnaValidator
 	public static final String low_memory_arg = "-lowmemory";
 	public static final String write_de_arg = "-de";
 	public static final String wrap_arg = "-wrap";
-	public static final String embl_filetoken = "ID";
-	public static final String genbank_filetoken = "LOCUS";
-	public static final String gff_filetoken = "##gff-version 3";
-	public static final String fasta_filetoken = ">";
 	public static FileType fileType = FileType.EMBL;
 
 	public static final String file_format = "-f";
@@ -86,7 +82,6 @@ public class EnaValidator
 	public static final String transTable_token = "-table";
 	public static final String version_token="-version";
 
-	private static final String[] AssemblyFileToken = { "assembly","chromosome", "unlocalised", "unplaced", "placed" };
 	private static final String fileformatString = "File format(optional) Values:'embl','genbank','gff3','assembly'";
 	private static final String log_levelString = "Log level(optional) Values : 0(Quiet), 1(Summary), 2(Verbose)";
 	private static final String remoteString = "Remote, is this being run outside the EBI(optional)";
@@ -135,7 +130,6 @@ public class EnaValidator
 	private ValidationPlan emblValidator;
 	private ValidationPlan gff3Validator;
 	private ValidationPlan gaValidator;
-	private ValidationPlan fastaValidator;
 	protected boolean parseError;
 	private int totalEntryCount = 0;
 	private int fixCount = 0;
@@ -206,9 +200,6 @@ public class EnaValidator
 		emblValidator = new EmblEntryValidationPlan(emblEntryValidationPlanProperty);
 		emblValidator.addMessageBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		emblValidator.addMessageBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
-		fastaValidator = new EmblEntryValidationPlan(emblEntryValidationPlanProperty);
-		fastaValidator.addMessageBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
-		fastaValidator.addMessageBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		gff3Validator = new GFF3ValidationPlan(emblEntryValidationPlanProperty);
 		gff3Validator.addMessageBundle(ValidationMessageManager.GFF3_VALIDATION_BUNDLE);
 		gaValidator = new GenomeAssemblyValidationPlan(emblEntryValidationPlanProperty);
@@ -314,30 +305,9 @@ public class EnaValidator
 
 		}
 		File formatFile=entryFiles.get(0);
-		BufferedReader fileFormatReader = new BufferedReader(new FileReader(formatFile));
-		// FINDING THE TYPE OF FILE BY READING THE FIRST LINE OF THE FILE
-		String firstLineofFile = fileFormatReader.readLine();
-		fileFormatReader.close();
-		if (firstLineofFile.startsWith(embl_filetoken))
-			{
-				fileType = FileType.EMBL;
-			}
-	   else if (firstLineofFile.startsWith(genbank_filetoken))
-			{
-			  fileType = FileType.GENBANK;
-			}
-	  else if (firstLineofFile.startsWith(gff_filetoken))
-			{
-			 fileType = FileType.GFF3;
-			}
-	  else if (StringUtils.indexOfAny(	formatFile.getName(),AssemblyFileToken) != -1)
-			{
-			 fileType = FileType.GENOMEASSEMBLY;
-			}
-	 else if (firstLineofFile.startsWith(fasta_filetoken))
-			{
-			fileType = FileType.FASTA;
-			}
+		FileType fileFormat=FileUtils.getFileType(formatFile);
+		if(fileFormat!=null)
+			fileType=fileFormat;
 	}
 
 	/**
@@ -578,6 +548,9 @@ public class EnaValidator
 		case FASTA:
 			reader = new FastaFileReader(new FastaLineReader(fileReader));
 			break;
+		case AGP:
+			reader= new AGPFileReader(new AGPLineReader(fileReader));
+			break;
 		default:
 			System.exit(0);
 			break;
@@ -765,16 +738,21 @@ public class EnaValidator
 					}
 					else
 					{
-						EntryWriter entryWriter;
-						if (FileType.EMBL.equals(fileType)||FileType.FASTA.equals(fileType))
+						EntryWriter entryWriter = null;
+						switch(fileType)
 						{
+						case EMBL:
+						case FASTA:
+						case AGP:
 							entryWriter = new EmblEntryWriter((Entry) entry);
-						}
-						else
-						{
+							break;
+						case GENBANK:
 							entryWriter = new GenbankEntryWriter((Entry) entry);
+							break;
+						default:
+							break;
 						}
-
+						if(entryWriter!=null)
 						entryWriter.write(goodFilesWriter);
 					}
 				}
@@ -826,29 +804,36 @@ public class EnaValidator
 				else
 					if (fixMode)
 					{
-						if (FileType.GENOMEASSEMBLY.equals(fileType))
+						EntryWriter entryWriter = null;
+						Entry Egentry = (Entry) entry;
+						switch(fileType)
 						{
+						case GENOMEASSEMBLY:
 							GenomeAssemblyFileWriter.getWriter((GenomeAssemblyRecord) entry).write(fixedFileWriter);
-						}
-						else
-						{
-							EntryWriter entryWriter;
-							Entry Egentry = (Entry) entry;
+							break;
+						case EMBL:
+						case FASTA:
+						case AGP:
 							if (!Egentry.isDelete())
-							{
-								if (FileType.EMBL.equals(fileType)||FileType.FASTA.equals(fileType))
-								{
-									entryWriter = new EmblEntryWriter((Entry) entry);
-								}
-								else
-								{
-									entryWriter = new GenbankEntryWriter((Entry) entry);
-								}
-								entryWriter.setWrapType(wrapType);
-								entryWriter.write(fixedFileWriter);
+								entryWriter = new EmblEntryWriter((Entry) entry);
+							break;
+							
+						case GENBANK:
+								entryWriter = new GenbankEntryWriter((Entry) entry);
+								break;
+						default:
+							break;
+								
+								
 							}
+						if(entryWriter!=null)
+						{
+						entryWriter.setWrapType(wrapType);
+						entryWriter.write(fixedFileWriter);
 						}
+							
 					}
+					
 
 				if (planResult.getMessages(Severity.FIX).size() > 0)
 				{
@@ -1006,13 +991,11 @@ public class EnaValidator
 		{
 		case EMBL:
 		case GENBANK:
+		case FASTA:
 			planResult = emblValidator.execute(entry); 
 			break;
 		case GFF3:
 			planResult = gff3Validator.execute(entry);
-			break;
-		case FASTA:
-			planResult = fastaValidator.execute(entry);
 			break;
 		case GENOMEASSEMBLY:
 			planResult = gaValidator.execute(entry);

@@ -35,7 +35,6 @@ public enum ValidationUnit
 			SOURCE_FEAURES_ONLY_CHECKS
 			(
 				MasterEntrySourceCheck.class,
-				ChromosomeSourceQualifierCheck.class,
 				ExclusiveSourceQualifiersCheck.class,
 				HostQualifierCheck.class,
 				OrganismAndRequiredQualifierCheck.class,
@@ -244,7 +243,8 @@ public enum ValidationUnit
         		AssemblyLevelDataclassCheck.class,
         		AssemblyTopologyCheck.class,
         		AssemblyLevelSequenceCheck.class,
-        		AssemblyLevelEntryNameCheck.class
+        		AssemblyLevelEntryNameCheck.class,
+        		ChromosomeSourceQualifierCheck.class
 		   ),
 			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES
 			(

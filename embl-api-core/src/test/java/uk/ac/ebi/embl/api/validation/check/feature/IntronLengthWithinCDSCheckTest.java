@@ -133,4 +133,19 @@ public class IntronLengthWithinCDSCheckTest
 		assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1",
 				Severity.ERROR));
 	}
+	
+	@Test
+	public void testCheck_intronwithNegetiveValue() throws SQLException
+	{
+		Join<Location> locationJoin = new Join<Location>();
+		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+		locationJoin.addLocation(locationFactory.createLocalRange(9l, 25l));
+		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
+		check.setEmblEntryValidationPlanProperty(property);
+		feature.setLocations(locationJoin);
+		ValidationResult validationResult = check.check(feature);
+		assertTrue(validationResult.isValid());
+		assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1",
+				Severity.ERROR));
+	}
 }

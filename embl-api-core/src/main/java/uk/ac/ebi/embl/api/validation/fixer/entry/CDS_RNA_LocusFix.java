@@ -117,7 +117,7 @@ public class CDS_RNA_LocusFix extends EntryValidationCheck {
                             fixMade = true;
                         }
 
-                        if (gene != null) {
+                        if (gene != null&&!SequenceEntryUtils.isQualifierAvailable(Qualifier.GENE_QUALIFIER_NAME, geneFeature)) {
                             feature.addQualifier(gene);
                             fixMade = true;
                         }
