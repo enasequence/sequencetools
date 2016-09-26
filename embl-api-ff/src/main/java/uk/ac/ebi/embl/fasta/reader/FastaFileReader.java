@@ -47,12 +47,13 @@ public class FastaFileReader extends FlatFileEntryReader
 		entry = (new EntryFactory()).createEntry();
 		entry.setSequence((new SequenceFactory()).createSequence());
 		entry.getSequence().setTopology(Topology.LINEAR);
-		String object_name = readObjectName(lineReader);
-		if (object_name != null)
-		{
-			entry.setSubmitterAccession(object_name);
-			isEntry=true;
-		}
+	        String object_name = readObjectName(lineReader);
+	        if(object_name != null) {
+		      entry.setSubmitterAccession(object_name);
+		      Text header = new Text(lineReader.getCurrentRawLine());
+		      entry.setComment(header);
+		      isEntry = true;
+    		}
 		if(!lineReader.isNextTag())
 		{
 			lineReader.readLine();
