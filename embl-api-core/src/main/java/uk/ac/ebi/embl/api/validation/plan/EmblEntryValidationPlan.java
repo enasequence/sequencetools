@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 
@@ -155,7 +156,11 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			if (check instanceof FeatureValidationCheck)
 			{
 				for (Feature feature : entry.getFeatures())
-				{
+				{ 
+				 if(check instanceof CdsFeatureTranslationCheck)
+				 {
+					 ((CdsFeatureTranslationCheck) check).setEntry(entry);
+				 }
 					execute((FeatureValidationCheck) check,feature);
 				}
 			}

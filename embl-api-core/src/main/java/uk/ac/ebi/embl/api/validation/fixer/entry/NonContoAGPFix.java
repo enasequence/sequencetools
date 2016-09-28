@@ -142,6 +142,7 @@ public class NonContoAGPFix extends EntryValidationCheck
 	 AgpRow generateGapAgpRow(Feature gapFeature,int order,Entry scaffoldEntry) 
 	{
 		   AgpRow agpRow=new AgpRow(); 
+           agpRow.setObject(scaffoldEntry.getSubmitterAccession());
 	       long gapBegin=gapFeature.getLocations().getMinPosition();
 		   long gapEnd=gapFeature.getLocations().getMaxPosition();
 			if(gapEnd==0&&gapBegin!=0)
@@ -189,6 +190,7 @@ public class NonContoAGPFix extends EntryValidationCheck
 	 private AgpRow generateComponentAgpRow(Long prevGapEnd,Long gapBegin,int order,String contig_type,Entry scaffoldEntry)
 		{	
 		    AgpRow agpRow=new AgpRow();
+		    agpRow.setObject(scaffoldEntry.getSubmitterAccession());
 		    agpRow.setObject_acc(scaffoldEntry.getPrimaryAccession()+"."+scaffoldEntry.getSequence().getVersion());
 			agpRow.setObject(scaffoldEntry.getSubmitterAccession());
 			agpRow.setObject_beg(prevGapEnd+1);

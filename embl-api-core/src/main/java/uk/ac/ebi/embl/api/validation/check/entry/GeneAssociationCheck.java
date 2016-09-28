@@ -75,7 +75,7 @@ public class GeneAssociationCheck extends EntryValidationCheck {
                 if (gene2locusTag.containsKey(gene_name)) {
                     String registeredLocusName = gene2locusTag.get(gene_name);
                     //exception for rRNA features
-                    if (!registeredLocusName.equals(currentLocusName)&&!geneFeature.getName().equals(Feature.rRNA_FEATURE_NAME)) {//is associated with more than 1 locus tag value
+                    if (registeredLocusName!=null&&!registeredLocusName.equals(currentLocusName)&&!geneFeature.getName().equals(Feature.rRNA_FEATURE_NAME)) {//is associated with more than 1 locus tag value
                     	reportWarning(geneFeature.getOrigin(), MESSAGE_ID_DIFFERENT_LOCUS_VALUES, gene_name, registeredLocusName, currentLocusName,"\\locus_tag");
                     }
                 } else {
@@ -89,7 +89,7 @@ public class GeneAssociationCheck extends EntryValidationCheck {
 
                 if (gene2pseudoGene.containsKey(gene_name)) {
                     String registeredPseudoName = gene2pseudoGene.get(gene_name);
-                    if (!registeredPseudoName.equals(currentPseudoName)) {//is associated with more than 1 pseudogene value
+                    if (registeredPseudoName!=null&&!registeredPseudoName.equals(currentPseudoName)) {//is associated with more than 1 pseudogene value
                         reportWarning(geneFeature.getOrigin(), MESSAGE_ID_DIFFERENT_LOCUS_VALUES, gene_name, registeredPseudoName, currentPseudoName,"\\pseudogene");
                     }
                 } else {

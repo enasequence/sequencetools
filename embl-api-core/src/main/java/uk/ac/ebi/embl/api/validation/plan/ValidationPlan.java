@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
+import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -130,7 +131,8 @@ public abstract class ValidationPlan {
 		 {
 			 eraproDAOUtils = new EraproDAOUtilsImpl(planProperty.eraproConnection.get());
 		 }
-		 check.setEraproDAOUtils(eraproDAOUtils);
+		 
+		check.setEraproDAOUtils(eraproDAOUtils);
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e);

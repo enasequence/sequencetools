@@ -48,10 +48,10 @@ public class AgpRow
 		private String component_id;//CONTIG_NAME
 		private Long gap_length=null;//GAP_LENGTH
 		private Long component_beg=null;//CONTIG_START
-		private String gap_type;//GAP_TYPE_ID
+		private String gap_type;//GAP_TYPE
 		private Long component_end=null;//CONTIG_END
 		private String orientation;//ORIENTATION
-		private List<String> linkageevidence;//LINKAGE_EVIDENCE_ID
+		private List<String> linkageevidence;//LINKAGE_EVIDENCE
 		private String component_acc;//CONTIG_ACC
 		private String object_acc;//SCAFFOLD_ACC
 		private Origin origin;
@@ -264,5 +264,4 @@ public class AgpRow
 					+ component_acc + ", scaffold_acc="+object_acc+", is_gap="+isGap()+"]";
 		}
 	}
-
 

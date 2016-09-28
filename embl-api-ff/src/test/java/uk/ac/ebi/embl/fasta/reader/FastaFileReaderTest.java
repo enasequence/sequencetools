@@ -33,6 +33,8 @@ public class FastaFileReaderTest extends FastaReaderTest{
 				"XX\n"+
 				"KW   .\n"+
 				"XX\n"+
+				"CC   ENA|A00001|A00001.1 Cauliflower mosaic virus satellite cDNA\n"+
+                "XX\n"+
 				"SQ   Sequence 335 BP; 69 A; 82 C; 95 G; 89 T; 0 other;\n"+
 				"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n"+
 				"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n"+
@@ -81,6 +83,8 @@ public class FastaFileReaderTest extends FastaReaderTest{
 						"XX\n"+
 						"KW   .\n"+
 						"XX\n"+
+						"CC   ENA|A00001|A00001.1 Cauliflower mosaic virus satellite cDNA\n"+
+						"XX\n"+
 						"SQ   Sequence 335 BP; 69 A; 82 C; 95 G; 89 T; 0 other;\n"+
 						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n"+
 						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n"+
@@ -98,6 +102,8 @@ public class FastaFileReaderTest extends FastaReaderTest{
 						"DE   .\n"+
 						"XX\n"+
 						"KW   .\n"+
+						"XX\n"+
+						"CC   ENA|A00002|A00002.1 B.taurus DNA sequence 1 from patent application EP0238993\n"+
 						"XX\n"+
 						"SQ   Sequence 194 BP; 43 A; 55 C; 49 G; 47 T; 0 other;\n"+
 						"     aattcatgcg tccggacttc tgcctcgagc cgccgtacac tgggccctgc aaagctcgta        60\n"+
@@ -150,6 +156,8 @@ public class FastaFileReaderTest extends FastaReaderTest{
 						"XX\n"+
 						"KW   .\n"+
 						"XX\n"+
+						"CC   ENA|A00001|A00001.1 Cauliflower mosaic virus satellite cDNA\n"+
+						"XX\n"+
 						"SQ   Sequence 332 BP; 69 A; 82 C; 94 G; 87 T; 0 other;\n"+
 						"     ttgtttgatg gagaattgcg cagaggggtt atatctgcgt gaggatctgt cactcggcgg        60\n"+
 						"     tgtgggatac ctccctgcta aggcgggttg agtgatgttc cctcggactg gggaccgctg       120\n"+
@@ -167,6 +175,8 @@ public class FastaFileReaderTest extends FastaReaderTest{
 						"DE   .\n"+
 						"XX\n"+
 						"KW   .\n"+
+						"XX\n"+
+						"CC   ENA|A00002|A00002.1 B.taurus DNA sequence 1 from patent application EP0238993\n"+
 						"XX\n"+
 						"SQ   Sequence 194 BP; 43 A; 55 C; 49 G; 47 T; 0 other;\n"+
 						"     aattcatgcg tccggacttc tgcctcgagc cgccgtacac tgggccctgc aaagctcgta        60\n"+

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
@@ -51,6 +52,8 @@ public class FastaFileReader extends FlatFileEntryReader
 		if (object_name != null)
 		{
 			entry.setSubmitterAccession(object_name);
+			Text header = new Text(lineReader.getCurrentLine());
+			entry.setComment(header);
 			isEntry=true;
 		}
 		if(!lineReader.isNextTag())
