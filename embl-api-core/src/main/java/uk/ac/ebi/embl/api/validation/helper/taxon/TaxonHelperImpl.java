@@ -238,6 +238,8 @@ public class TaxonHelperImpl implements TaxonHelper {
 		
 		return taxon.isFormal();
 	}
+    
+    
 	
     @Override
 	public boolean isOrganismMetagenome(String scientificName) 
@@ -290,6 +292,20 @@ public class TaxonHelperImpl implements TaxonHelper {
 		    con.connect();
 		    return con.getResponseCode()>=400;
 		
+	}
+	
+	@Override
+	public boolean isOrganismSubmittable(String scientificName) 
+	{
+		Taxon taxon=taxonScientificNameCache.get(scientificName);
+		if(taxon==null)
+		{
+			taxon=getTaxonsByScientificName(scientificName);
+			if(taxon==null)
+			 return false;
+		}
+		
+		return taxon.isSubmittable();
 	}
 }
 

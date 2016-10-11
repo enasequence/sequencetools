@@ -39,6 +39,7 @@ public class Taxon implements Serializable {
 	private String rank;
 	private Boolean formalName=false;
 	private String lineage;
+	private Boolean submittable=false;
 		
 	protected Taxon()
 	{
@@ -59,6 +60,9 @@ public class Taxon implements Serializable {
     	this.mitochondrialGeneticCode=jsonTaxonObject.has("mitochondrialGeneticCode")?jsonTaxonObject.getInt("mitochondrialGeneticCode"):null;
     	this.plastIdGeneticCode=jsonTaxonObject.has("plastIdGeneticCode")?jsonTaxonObject.getInt("plastIdGeneticCode"):null;
     	this.lineage=jsonTaxonObject.has("lineage")?jsonTaxonObject.getString("lineage"):null;
+    	this.submittable=jsonTaxonObject.has("submittable")?jsonTaxonObject.getBoolean("submittable"):false;
+
+    	
     	
     	}
     	else
@@ -73,6 +77,7 @@ public class Taxon implements Serializable {
         	this.mitochondrialGeneticCode=null;
         	this.plastIdGeneticCode=null;
         	this.lineage=null;
+        	this.submittable=false;
     	}
     }catch(JSONException e)
     {
@@ -163,7 +168,12 @@ public class Taxon implements Serializable {
 	public String getLineage() {
 		return lineage;
 	}
-	
+	public Boolean isSubmittable() {
+		return submittable;
+	}
+	public void setSubmittable(Boolean submittable) {
+		this.submittable = submittable;
+	}
 	public List<String> getFamilyNames()
 	{
 		List<String> familyNames=new ArrayList<String>();

@@ -66,4 +66,6 @@ public interface TaxonHelper {
     
     Taxon getTaxonsByCommonName(String commonName);
     boolean isProkaryotic(String scientificName);
+
+	boolean isOrganismSubmittable(String scientificName);
 }

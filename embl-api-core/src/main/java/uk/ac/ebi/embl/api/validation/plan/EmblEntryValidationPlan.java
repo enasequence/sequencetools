@@ -68,7 +68,6 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
 			{
-
 				fixes.addAll(ValidationUnit.MASTER_HEADER_ONLY_FIXES.getValidationUnit());
 				fixes.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_FIXES.getValidationUnit());
 			}

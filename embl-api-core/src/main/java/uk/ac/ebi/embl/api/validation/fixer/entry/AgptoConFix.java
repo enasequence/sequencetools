@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.AGPValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -72,10 +73,6 @@ public class AgptoConFix extends EntryValidationCheck
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 		result = new ValidationResult();
-		FeatureFactory featureFactory=new FeatureFactory();
-		QualifierFactory qualifierFactory=new QualifierFactory();
-		LocationFactory locationFactory=new LocationFactory();
-		ArrayList<Location> components=new ArrayList<Location>();
 
 		if (entry == null||getEntryDAOUtils()==null||entry.getAgpRows().size()==0||!FileType.AGP.equals(getEmblEntryValidationPlanProperty().fileType.get()))
 		{
@@ -88,86 +85,8 @@ public class AgptoConFix extends EntryValidationCheck
         check.setEntryDAOUtils(getEntryDAOUtils());
         if(!check.check(entry).isValid())
         	return result;
-        
-		for(AgpRow agpRow:entry.getSortedAGPRows())
-		{
-			Long object_begin=agpRow.getObject_beg();
-			Long object_end=agpRow.getObject_end();
-			Long component_begin=agpRow.getComponent_beg();
-			Long component_end=agpRow.getComponent_end();
-			String orientation=agpRow.getOrientation();
-			Long gap_length=agpRow.getGap_length();
-			String gap_type=agpRow.getGap_type();
-			List<String> linkage_evidences=agpRow.getLinkageevidence();
-			String component_acc=agpRow.getComponent_acc();
-			
-		  if(agpRow.isGap())
-		  {
-			 Feature assembly_gapFeature=featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
-			 Order<Location> locations=new Order<Location>();
-			 LocalRange location=locationFactory.createLocalRange((long)object_begin,(long)object_end);
-			 locations.addLocation(location);
-			 locations.setSimpleLocation(true);
-			 assembly_gapFeature.setLocations(locations);
-			 Qualifier gap_typeQualifier=qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
-			 if("repeat".equals(gap_type))
-			 {
-			 if(linkage_evidences==null||linkage_evidences.isEmpty())
-			 {
-				 gap_type="repeatnoLinkage";
-			 }
-			 else
-			 {
-				 gap_type="repeatwithLinkage";
-			 }
-			 }
-			 String gapTypeValue=gapType.get(gap_type);
-			 gap_typeQualifier.setValue(gapTypeValue);
-			 assembly_gapFeature.addQualifier(gap_typeQualifier);
-			 for(String linkage_evidence:linkage_evidences)
-			 {
-			 Qualifier linkage_evidenceQualifier=qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
-			 String linkage_evidenceQualifierValue=linkageEvidence.get(linkage_evidence);
-			 linkage_evidenceQualifier.setValue(linkage_evidenceQualifierValue);
-			 assembly_gapFeature.addQualifier(linkage_evidenceQualifier);
-			 }
-			 Qualifier estimated_lengthQualifier=qualifierFactory.createQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME);
-			 if("U".equals(agpRow.getComponent_type_id()))
-			   {
-				 estimated_lengthQualifier.setValue("unknown");
-				 components.add(locationFactory.createUnknownGap(agpRow.getGap_length()));
-			   }
-			 else
-			 {
-				 estimated_lengthQualifier.setValue(new String(new Long(gap_length).toString()));
-				 components.add(locationFactory.createGap(agpRow.getGap_length()));
-			 }
-			 assembly_gapFeature.addQualifier(estimated_lengthQualifier);
-			 entry.addFeature(assembly_gapFeature); 			  
-		  }
-		  else
-		  {
-			  if(component_acc==null)
-				  continue;
-			  String[] accessionWithVersion=component_acc.split("\\.");
-			  String accession=accessionWithVersion[0];
-			  Integer version=new Integer(accessionWithVersion[1]);
-			  Location remoteLocation=locationFactory.createRemoteRange(accession, version, (long)component_begin, (long)component_end);
-			  if(orientation=="-"||orientation=="minus")
-				  remoteLocation.setComplement(true);
-			  components.add(remoteLocation);
-		  }
-			  
-   		  //reportMessage(Severity.FIX, entry.getOrigin(), ACCESSION_FIX_ID, agpRow.getComponent_acc(),componentID,agpRow.getObject());
-		}
-		  		
-		  entry.setDataClass(Entry.CON_DATACLASS);
-		  if(entry.getSequence()==null)
-		  {
-			  SequenceFactory sequenceFactory=new SequenceFactory();
-			  entry.setSequence(sequenceFactory.createSequence());
-		  }
-		  entry.getSequence().addContigs(components);
+        EntryUtils.convertAGPtofeatureNContigs(entry);
+        entry.setDataClass(Entry.CON_DATACLASS);
         }
         catch (SQLException e)
 		{

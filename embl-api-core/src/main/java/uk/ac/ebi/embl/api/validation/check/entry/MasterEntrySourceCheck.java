@@ -25,13 +25,15 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
-@Description("Multiple strain/isolate qualifiers are not allowed in Source feature")
+@Description("Multiple strain/isolate qualifiers are not allowed in Source feature"
+		+ "Scientific_name \"{0}\" is not submittable")
 @GroupIncludeScope(group={ValidationScope.Group.ASSEMBLY})
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME})
 public class MasterEntrySourceCheck extends EntryValidationCheck {
 
 	private final static String MASTER_ENTRY_SOURCE_MESSAGE_ID = "MasterEntrySourceCheck_1";
-	
+	private final static String MASTER_ENTRY_ORGANISM_MESSAGE_ID = "MasterEntrySourceCheck_2";
+
 	public ValidationResult check(Entry entry)
 	{
 		result = new ValidationResult();
@@ -43,12 +45,17 @@ public class MasterEntrySourceCheck extends EntryValidationCheck {
 		
 		List<Qualifier> strainQualifiers=entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME);
 		List<Qualifier> isolateQualifiers=entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME);
+		String organism = entry.getPrimarySourceFeature().getScientificName();
 		
 		if(strainQualifiers.size()>1||isolateQualifiers.size()>1)
 		{
-			reportError(entry.getPrimarySourceFeature().getOrigin(),  MASTER_ENTRY_SOURCE_MESSAGE_ID);
+			reportError(entry.getPrimarySourceFeature().getOrigin(),MASTER_ENTRY_SOURCE_MESSAGE_ID);
 		}
 		
+		if(getEmblEntryValidationPlanProperty().taxonHelper.get()!=null&&!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(organism))
+		{
+			reportError(entry.getOrigin(),MASTER_ENTRY_ORGANISM_MESSAGE_ID,organism);
+		}
 		return result;
 	}
 

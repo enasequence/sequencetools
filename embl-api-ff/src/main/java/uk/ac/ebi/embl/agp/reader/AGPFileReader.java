@@ -1,7 +1,6 @@
 package uk.ac.ebi.embl.agp.reader;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +33,6 @@ public class AGPFileReader extends FlatFileEntryReader
     protected int currentEntryLine = 1;
 	private static final int NUMBER_OF_COLUMNS = 9;
 	private String[] linkageArray={"YES","NO"};
-
 	private static final int OBJECT = 0;
 	private static final int OBJECT_BEG = 1;
 	private static final int OBJECT_END = 2;

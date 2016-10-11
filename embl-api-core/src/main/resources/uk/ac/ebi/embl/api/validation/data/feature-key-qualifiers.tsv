@@ -560,6 +560,7 @@ rep_origin	allele	N	N	N
 rep_origin	old_locus_tag	N	N	N
 rep_origin	inference	N	N	N
 rep_origin	experiment	N	N	N
+rep_origin	function	N	N	N
 repeat_region	gene_synonym	N	N	N
 repeat_region	satellite	N	Y	N
 repeat_region	note	N	N	N
@@ -1019,5 +1020,22 @@ regulatory	inference	N	Y	N
 regulatory	gene_synonym	N	Y	N
 regulatory	pseudogene	N	Y	N
 regulatory	regulatory_class	Y	Y	N
+propeptide	allele	N	Y	N
+propeptide	citation	N	Y	N
+propeptide	db_xref	N	Y	N
+propeptide	experiment	N	Y	N
+propeptide	function	N	Y	N
+propeptide	gene	N	Y	N
+propeptide	gene_synonym	N	Y	N
+propeptide	inference	N	Y	N
+propeptide	locus_tag	N	Y	N
+propeptide	map	N	Y	N
+propeptide	note	N	Y	N
+propeptide	old_locus_tag	N	Y	N
+propeptide	product	N	Y	N
+propeptide	pseudo	N	Y	N
+propeptide	pseudogene	N	Y	N
+propeptide	standard_name	N	Y	N
+
 
 
