@@ -44,22 +44,6 @@ public class EntriesValidationCheck implements EmblEntryValidationCheck<ArrayLis
 		return false;
 	}
 
-	@Override
-	@Deprecated
-	public ValidationScope getCurrentScope()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Deprecated
-	public void setCurrentScope(ValidationScope currentScope)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * Creates an error validation message for the entry and adds it to the
 	 * validation result.

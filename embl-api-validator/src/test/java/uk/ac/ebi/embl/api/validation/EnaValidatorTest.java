@@ -72,7 +72,7 @@ public class EnaValidatorTest {
         assertFalse(validationResult.isEmpty());
         List<ValidationMessage<Origin>> messages  = validationResult.get(0).getMessages("FeatureKeyCheck-2");
         assertFalse(messages.isEmpty());
-        assertEquals("Mandatory qualifier \"organism\" not present in feature \"source\"", messages.get(0).getMessage());
+        assertEquals("Mandatory qualifier \"organism\" not present in feature \"source\".", messages.get(0).getMessage());
     }
 
     @Test

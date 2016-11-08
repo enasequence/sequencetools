@@ -139,7 +139,7 @@ public class OrganismPatternAndQualifierValueCheckTest {
 		Collection<ValidationMessage<Origin>> messages = result.getMessages(
                 "OrganismPatternAndQualifierValueCheck", Severity.ERROR);
 		assertEquals(
-				"If the organism belongs to the specified lineage \"Bacteria\" and qualifier \"sub_species\" exists, the pattern formed by wrapping the qualifier value \"sub_species\" with patterns \".+\\s(subsp.)\\s\" and \".*\" must match",
+				"If the organism belongs to the specified lineage \"Bacteria\" and qualifier \"sub_species\" exists, the pattern formed by wrapping the qualifier value \"sub_species\" with patterns \".+\\s(subsp.)\\s\" and \".*\" must match.",
 				messages.iterator().next().getMessage());
 	}
 

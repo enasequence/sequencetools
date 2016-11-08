@@ -28,7 +28,6 @@ public abstract class SequenceValidationCheck implements EmblEntryValidationChec
 
 	private Origin origin;
     private boolean isPopulated;
-    private ValidationScope currentScope;
     private EmblEntryValidationPlanProperty property;
 	private EntryDAOUtils entryDAOUtils;
 	private EraproDAOUtils eraproDAOUtils;
@@ -51,17 +50,6 @@ public abstract class SequenceValidationCheck implements EmblEntryValidationChec
     public void setPopulated() {
         //override to do any processing of data post-population
         isPopulated = true;
-    }
-
-    @Override
-    @Deprecated
-    public ValidationScope getCurrentScope() {
-        return currentScope;
-    }
-    @Override
-    @Deprecated
-    public void setCurrentScope(ValidationScope currentScope) {
-        this.currentScope = currentScope;
     }
 
     public Origin getOrigin() {

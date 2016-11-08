@@ -30,6 +30,8 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class MasterEntrySourceCheckTest {
@@ -89,6 +91,42 @@ public class MasterEntrySourceCheckTest {
         assertTrue(!result.isValid());
 		assertEquals(1, result.count("MasterEntrySourceCheck_1", Severity.ERROR));
 
+	}
+	
+	@Test
+	public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
+		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
+		property.isAssembly.set(true);
+		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+		TaxonHelper taxonHelper= new TaxonHelperImpl();
+		property.taxonHelper.set(taxonHelper);
+		check.setEmblEntryValidationPlanProperty(property);
+		SourceFeature source= (new FeatureFactory()).createSourceFeature();
+		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"dfgh");
+		source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,"rgd");
+		source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "[Desulfotomaculus] guttoideum");
+		entry.addFeature(source);
+		ValidationResult result = check.check(entry);
+        assertTrue(!result.isValid());
+		assertEquals(1, result.count("MasterEntrySourceCheck_2", Severity.ERROR));
+
+	}
+	@Test
+	public void testCheck_validSourcefeatureSubmittable() throws SQLException {
+		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
+		property.isAssembly.set(true);
+		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+		TaxonHelper taxonHelper= new TaxonHelperImpl();
+		property.taxonHelper.set(taxonHelper);
+		check.setEmblEntryValidationPlanProperty(property);
+		SourceFeature source= (new FeatureFactory()).createSourceFeature();
+		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"dfgh");
+		source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,"rgd");
+		source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "[Desulfotomaculum] guttoideum");
+        source.setTaxId(58134l);
+		entry.addFeature(source);
+		ValidationResult result = check.check(entry);
+        assertTrue(result.isValid());
 	}
 	
 }

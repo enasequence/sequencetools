@@ -68,4 +68,6 @@ public interface TaxonHelper {
     boolean isProkaryotic(String scientificName);
 
 	boolean isOrganismSubmittable(String scientificName);
+
+    boolean isTaxidSubmittable(Long taxId);
 }

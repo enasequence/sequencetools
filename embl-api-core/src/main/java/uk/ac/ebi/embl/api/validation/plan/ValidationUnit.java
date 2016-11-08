@@ -109,7 +109,9 @@ public enum ValidationUnit
 				Assembly_gapFeatureCheck.class,
 				WGSGapCheck.class,
 				EC_numberCheck.class,
-				CitationQualifierCheck.class
+				CitationQualifierCheck.class,
+				PropeptideLocationCheck.class,
+				CdsFeatureCheck.class
 			),
 			NON_SOURCE_DEPENDSON_SOURCE_CHECKS
 			(

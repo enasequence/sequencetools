@@ -65,6 +65,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
     public static final String ncRNA_FEATURE_NAME = "ncRNA";
     public static final String OPERON_FEATURE_NAME = "operon";
     public static final String REGULATORY_FEATURE_NAME = "regulatory";
+    public static final String PROPETIDE_FEATURE_NAME ="propeptide";
 
     
     public static final String ASSEMBLY_GAP_FEATURE_NAME = "assembly_gap";

@@ -81,7 +81,6 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			checks.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SOURCE_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.NON_SOURCE_FEATURES_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SEQUENCE_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.SOURCE_DEPENDSON_SEQUENCE_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.ASSEMBLY_LEVEL_CHECKS.getValidationUnit());

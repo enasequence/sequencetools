@@ -36,8 +36,4 @@ public interface ValidationCheck<E> {
 
     boolean isPopulated();
 
-    ValidationScope getCurrentScope();
-    
-    void setCurrentScope(ValidationScope currentScope);
-    
 }

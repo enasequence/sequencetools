@@ -367,6 +367,7 @@ misc_recomb	allele	N	N	N
 misc_recomb	old_locus_tag	N	N	N
 misc_recomb	inference	N	N	N
 misc_recomb	experiment	N	N	N
+misc_recomb	recombination_class 	N	N	N
 misc_signal	gene_synonym	N	N	N
 misc_signal	db_xref	N	N	N
 misc_signal	citation	N	N	N

@@ -28,7 +28,6 @@ public abstract class GenomeAssemblyValidationCheck implements EmblEntryValidati
 	
 	protected ValidationResult result;
     private boolean isPopulated;
-    private ValidationScope currentScope;
 	private EmblEntryValidationPlanProperty property;
 	private EntryDAOUtils entryDAOUtils;
 	private EraproDAOUtils eraproDAOUtils;
@@ -44,18 +43,6 @@ public abstract class GenomeAssemblyValidationCheck implements EmblEntryValidati
     public void setPopulated() {
         //override to do any processing of data post-population
         isPopulated = true;
-    }
-
-    @Override
-    @Deprecated
-    public ValidationScope getCurrentScope() {
-        return currentScope;
-    }
-
-    @Override
-    @Deprecated
-    public void setCurrentScope(ValidationScope currentScope) {
-        this.currentScope = currentScope;
     }
 
     /**

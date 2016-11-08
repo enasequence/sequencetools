@@ -27,8 +27,6 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
-import uk.ac.ebi.embl.api.taxonomy.TaxonFactory;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;

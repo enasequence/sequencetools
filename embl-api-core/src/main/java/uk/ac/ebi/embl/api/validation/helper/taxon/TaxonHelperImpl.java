@@ -307,5 +307,18 @@ public class TaxonHelperImpl implements TaxonHelper {
 		
 		return taxon.isSubmittable();
 	}
+	
+	@Override
+	public boolean isTaxidSubmittable(Long taxId) {
+		Taxon taxon=taxonIdCache.get(taxId);
+		if(taxon==null)
+		{
+			taxon=getTaxonById(taxId);
+			if(taxon==null)
+			 return false;
+		}
+		
+		return taxon.isSubmittable();
+	}
 }
 

@@ -100,7 +100,7 @@ public class GeneSynonymFixTest {
         assertEquals(2, messages.size());
         assertEquals(2, feature2.getQualifiers(GENE_SYNONYM_NAME).size());
         String fixMessage =
-                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms";
+                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.";
 
         /**
          * we don't know which message will correspond as cant guarentee order, so check both
@@ -131,7 +131,7 @@ public class GeneSynonymFixTest {
         assertEquals(1, messages.size());
         assertEquals(2, feature2.getQualifiers(GENE_SYNONYM_NAME).size());
         String fixMessage =
-                "Removed gene_synonym \"extra synonym\" from feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms";
+                "Removed gene_synonym \"extra synonym\" from feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.";
         String actualMessage = messages.iterator().next().getMessage();
         System.out.println(fixMessage.equals(actualMessage));
         assertEquals(fixMessage, actualMessage);
@@ -167,10 +167,10 @@ public class GeneSynonymFixTest {
         assertEquals(2, feature3.getQualifiers(GENE_SYNONYM_NAME).size());
         Iterator<ValidationMessage<Origin>> messageIterator = messages.iterator();
         assertEquals(
-                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(
-                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(1, result.getMessages("GeneSynonymFix2").size());//1 also removed from feature 2
     }
@@ -199,13 +199,13 @@ public class GeneSynonymFixTest {
         assertEquals(3, feature3.getQualifiers(GENE_SYNONYM_NAME).size());
         Iterator<ValidationMessage<Origin>> messageIterator = messages.iterator();
         assertEquals(
-                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(
-                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(
-                "Added gene_synonym \"synonym3\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym3\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
     }
 
@@ -242,10 +242,10 @@ public class GeneSynonymFixTest {
         assertEquals(2, feature3.getQualifiers(GENE_SYNONYM_NAME).size());
         Iterator<ValidationMessage<Origin>> messageIterator = messages.iterator();
         assertEquals(
-                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym1\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(
-                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms",
+                "Added gene_synonym \"synonym2\" to feature sharing locus_tag/gene \"gene1\" - to create a stable list of gene_synonyms.",
                 messageIterator.next().getMessage());
         assertEquals(1, result.getMessages("GeneSynonymFix2").size());//1 also removed from feature 2
     }

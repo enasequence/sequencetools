@@ -47,6 +47,7 @@ import uk.ac.ebi.embl.flatfile.writer.genomeassembly.GenomeAssemblyFileWriter;
 import uk.ac.ebi.embl.gff3.reader.GFF3FlatFileEntryReader;
 
 import org.apache.commons.dbutils.DbUtils;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -480,18 +481,19 @@ public class EnaValidator
 	 * @param writer
 	 *            the writer
 	 * @return the list of ValidationPlanResult
+	 * @throws IOException 
 	 * @throws ValidationEngineException
 	 */
-	private List<ValidationPlanResult> validateFile(File file, Writer writer)
+	private List<ValidationPlanResult> validateFile(File file, Writer writer) throws IOException
 	{
 
 		List<ValidationPlanResult> messages = new ArrayList<ValidationPlanResult>();
 		ArrayList<Object> entryList = new ArrayList<Object>();
+		BufferedReader fileReader = null; 
 
 		try
 		{
-			
-			BufferedReader fileReader = new BufferedReader(new FileReader(file));
+			fileReader= new BufferedReader(new FileReader(file));
 			prepareReader(	fileReader,file.getName());
 			List<ValidationPlanResult> results = validateEntriesInReader(writer,file,entryList);
 			ValidationPlanResult entrySetResult = validateEntry(entryList);
@@ -513,6 +515,10 @@ public class EnaValidator
 		catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally{
+			if(fileReader!=null)
+			fileReader.close();
 		}
 
 		return messages;

@@ -153,7 +153,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 							
 							if (anticodonSeq != null && !Arrays.equals(anticodonSeq,sequenceString))
 							{
-								reportError(qualifier.getOrigin(), ANTICODON_SEQUENCE_MESSAGE_ID, antiCodon.getSequence(), sequenceString);
+								reportError(qualifier.getOrigin(), ANTICODON_SEQUENCE_MESSAGE_ID, antiCodon.getSequence(), new String(sequenceString));
 							}
 							else
 							{
