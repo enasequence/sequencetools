@@ -46,15 +46,22 @@ public class MasterEntrySourceCheck extends EntryValidationCheck {
 		List<Qualifier> strainQualifiers=entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME);
 		List<Qualifier> isolateQualifiers=entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME);
 		String organism = entry.getPrimarySourceFeature().getScientificName();
-		
+		Long taxId = entry.getPrimarySourceFeature().getTaxId();
+
+	
 		if(strainQualifiers.size()>1||isolateQualifiers.size()>1)
 		{
 			reportError(entry.getPrimarySourceFeature().getOrigin(),MASTER_ENTRY_SOURCE_MESSAGE_ID);
 		}
 		
-		if(getEmblEntryValidationPlanProperty().taxonHelper.get()!=null&&!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(organism))
+		if(getEmblEntryValidationPlanProperty().taxonHelper.get()!=null)
 		{
-			reportError(entry.getOrigin(),MASTER_ENTRY_ORGANISM_MESSAGE_ID,organism);
+			boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(organism);
+			boolean isTaxidSubmittable=isOrganismSubmittable;
+			if(taxId!=null)		
+				isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+			if(!isOrganismSubmittable&&!isTaxidSubmittable)
+			 reportError(entry.getOrigin(),MASTER_ENTRY_ORGANISM_MESSAGE_ID,organism);
 		}
 		return result;
 	}

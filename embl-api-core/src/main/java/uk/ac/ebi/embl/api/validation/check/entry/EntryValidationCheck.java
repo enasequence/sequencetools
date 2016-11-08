@@ -27,7 +27,6 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
 	
 	protected ValidationResult result;
     private boolean isPopulated;
-    private ValidationScope currentScope;
     private EmblEntryValidationPlanProperty property;
     private EntryDAOUtils entryDAOUtils;
     private EraproDAOUtils eraproDAOUtils;
@@ -49,19 +48,7 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
         isPopulated = true;
     }
 
-    @Override
-    @Deprecated
-    public ValidationScope getCurrentScope() {
-        return currentScope;
-    }
-
-    @Override
-    @Deprecated
-    public void setCurrentScope(ValidationScope currentScope) {
-        this.currentScope = currentScope;
-    }
-
-    /**
+     /**
 	 * Creates an error validation message for the entry and adds it to 
 	 * the validation result. 
 	 * 
