@@ -158,18 +158,25 @@ public class EnaValidator
 	 */
 	protected static Connection con = null;
 
-	public static void main(String[] args) throws SQLException
+	public static void main(String[] args) 
 	{
 		try
 		{
 			EnaValidator enaValidator = new EnaValidator();
 			enaValidator.init(args,null);
 			enaValidator.initValidator();
-			enaValidator.validateFiles();
+			int failedCount =enaValidator.validateFiles();
+			
+			if(failedCount==0)
+				System.exit(0);
+			if(failedCount>0)
+				System.exit(3);
 		}
 		catch (Exception e)
 		{
-			throw new SQLException(e);
+			e.printStackTrace();
+			System.exit(1);
+			
 		}
 		finally
 		{
@@ -232,7 +239,7 @@ public class EnaValidator
 				jc.usage();
 			else
 				System.out.println(message);
-			System.exit(0);
+			System.exit(2);
 		}
 		if (args.length == 0 || (args.length == 1 && params.help))
 		{
@@ -240,7 +247,7 @@ public class EnaValidator
 				jc.usage();
 			else
 				System.out.println(message);
-			System.exit(0);
+			System.exit(2);
 		}
 		if(params.version)
 		{
@@ -315,7 +322,7 @@ public class EnaValidator
 	 * Validate files.
 	 * @throws ValidationEngineException
 	 */
-	private void validateFiles()
+	private int validateFiles()
 	{
 		List<ValidationPlanResult> planResults = new ArrayList<ValidationPlanResult>();
 		int parseErrorCount = 0;
@@ -446,12 +453,13 @@ public class EnaValidator
 			summaryWriter.write(summaryLine);
 			summaryWriter.flush();
 			summaryWriter.close();
-
+			
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		return failCount;
 	}
 
 	/**
