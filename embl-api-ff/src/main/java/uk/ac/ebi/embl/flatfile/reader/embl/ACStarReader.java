@@ -59,7 +59,7 @@ public class ACStarReader extends SingleLineBlockReader {
 			submitterAccession = submitterAccession.substring(i);
 		}
 		
-		entry.setSubmitterAccession(StringUtils.removeEnd(submitterAccession, ";"));
+		entry.setSubmitterAccession(submitterAccession);
 		entry.setSubmitterWgsVersion(matcher.getInteger(GROUP_SUBMITTER_WGS_VERSION));
 	}	
 }

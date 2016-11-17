@@ -23,7 +23,8 @@ public enum ValidationUnit
 				Entry_NameCheck.class,
 				AssemblySecondarySpanCheck.class,
 				DataclassCheck.class,
-				KWCheck.class
+				KWCheck.class,
+				SubmitterAccessionFix.class
 			),
 			MASTER_HEADER_ONLY_CHECKS(
 					CitationExistsCheck.class,
@@ -170,7 +171,8 @@ public enum ValidationUnit
 				Isolation_sourceQualifierFix.class,
 				HostQualifierFix.class,
 				SourceQualifierMissingFix.class,
-				StrainQualifierValueFix.class
+				StrainQualifierValueFix.class,
+				Lat_lonValueFix.class
 			),
 			SOURCE_DEPENDSON_SEQUENCE_FIXES
 			(
