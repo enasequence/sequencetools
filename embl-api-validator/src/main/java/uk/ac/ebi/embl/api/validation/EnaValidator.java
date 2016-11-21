@@ -157,7 +157,9 @@ public class EnaValidator
 	 * database connection
 	 */
 	protected static Connection con = null;
-
+/*
+ * 
+ */
 	public static void main(String[] args) 
 	{
 		try
@@ -197,7 +199,7 @@ public class EnaValidator
 	{
 
 		EmblEntryValidationPlanProperty emblEntryValidationPlanProperty = new EmblEntryValidationPlanProperty();
-		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.EMBL);
+		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		emblEntryValidationPlanProperty.isDevMode.set(testMode);
 		emblEntryValidationPlanProperty.isFixMode.set(fixMode || fixDiagnoseMode);
 		emblEntryValidationPlanProperty.minGapLength.set(min_gap_length);
@@ -236,18 +238,25 @@ public class EnaValidator
 		{
 			System.err.println("Invalid options");
 			if (message == null)
+			{  
 				jc.usage();
+				writeReturnCodes();
+			}
 			else
 				System.out.println(message);
-			System.exit(2);
+			    System.exit(2);
 		}
 		if (args.length == 0 || (args.length == 1 && params.help))
 		{
 			if (message == null)
+			{
 				jc.usage();
+				writeReturnCodes();
+				
+			}
 			else
 				System.out.println(message);
-			System.exit(2);
+			    System.exit(2);
 		}
 		if(params.version)
 		{
@@ -1102,9 +1111,14 @@ public class EnaValidator
 		List<String> filenames = new ArrayList<String>();
 	}
 
-	private String getImplementationVersion(Manifest manifest) {
+	private void writeReturnCodes() {
 
-	    Attributes attributes = manifest.getMainAttributes();
-	    return attributes.getValue("Implementation-Version");
+		HashMap<Integer,String> returnCodeMap= new HashMap<Integer, String>();
+		returnCodeMap.put(0,"SUCCESS");
+		returnCodeMap.put(1,"INTERNAL ERROR");
+		returnCodeMap.put(2, "INVALID INPUT");
+		returnCodeMap.put(3, "VALIDATION ERROR");
+		
+	    System.out.println("Return Codes: "+returnCodeMap.toString());
 	   }
 }
