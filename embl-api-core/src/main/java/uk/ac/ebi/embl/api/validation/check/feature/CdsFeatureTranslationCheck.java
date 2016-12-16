@@ -38,7 +38,6 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
     public void setEntry(Entry entry) {
         this.entry = entry;
     }
-
     @SuppressWarnings("deprecation")
 	public ValidationResult check(Feature feature) {
     	translator=new CdsTranslator(getEmblEntryValidationPlanProperty());

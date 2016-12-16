@@ -145,6 +145,7 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
+		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
 		
 		entry.addAgpRow(Componentrow);
@@ -225,6 +226,7 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
+		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
 		
 		entry.addAgpRow(Componentrow);
@@ -276,6 +278,84 @@ public class AgptoConFixTest {
 		assertEquals(expectedEnd,endPosition);
 		assertEquals(expectedGapType, actualGapType);
 		assertEquals(expectedLinkageEvidence, actualLinkedEvidence);
+		assertEquals(expectedEstimatesLength, actualEstimatedLength);
+		 //entry sequence length check
+		assertEquals(354, entry.getSequence().getLength());
+	}
+	
+	@Test
+	public void testCheck_withNoLinkageEvidence() throws ValidationEngineException, SQLException {
+
+		AgpRow Componentrow=new AgpRow();
+		AgpRow gaprow=new AgpRow();
+		Componentrow.setObject("IWGSC_CSS_6DL_scaff_3330716");
+		Componentrow.setObject_beg(1l);
+		Componentrow.setObject_end(330l);
+		Componentrow.setPart_number(1);
+		Componentrow.setComponent_type_id("W");
+		Componentrow.setComponent_beg(1l);
+		Componentrow.setComponent_end(330l);
+		Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
+		Componentrow.setComponent_acc("CDRE01000271.1");
+		Componentrow.setOrientation("-");
+
+		gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
+		gaprow.setObject_beg(331);
+		gaprow.setObject_end(354l);
+		gaprow.setPart_number(2);
+		gaprow.setComponent_type_id("N");
+		gaprow.setGap_length(24l);
+		gaprow.setGap_type("scaffold");
+		
+		entry.addAgpRow(Componentrow);
+		entry.addAgpRow(gaprow);
+		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
+		planProperty.fileType.set(FileType.AGP);
+		planProperty.analysis_id.set("ERZ00001");
+		check.setEmblEntryValidationPlanProperty(planProperty);
+		ContigSequenceInfo contigSequenceInfo=new ContigSequenceInfo();
+		contigSequenceInfo.setPrimaryAccession("CDRE01000271");
+		contigSequenceInfo.setSequenceVersion(1);
+		contigSequenceInfo.setSequenceLength(331);
+		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_scaff_3330715", "ERZ00001",2)).andReturn(contigSequenceInfo);
+		replay(entryDAOUtils);
+		check.setEntryDAOUtils(entryDAOUtils);
+	    check.check(entry);
+		assertEquals(2,entry.getSequence().getContigs().size());
+
+		//contig1
+		assertTrue(entry.getSequence().getContigs().get(0) instanceof RemoteLocation);
+		assertTrue(entry.getSequence().getContigs().get(0).isComplement());
+		Long actualBeginPosition1=entry.getSequence().getContigs().get(0).getBeginPosition();
+		Long expectedBeginPosition1=1l;
+		Long actualEndPosition1=entry.getSequence().getContigs().get(0).getEndPosition();
+		Long expectedEndPosition1=330l;
+		RemoteLocation remoteLocation=(RemoteLocation) entry.getSequence().getContigs().get(0);
+		String actualAccessionwithVersion=remoteLocation.getAccession()+"."+remoteLocation.getVersion();
+		String expectedAccessionwithVersion="CDRE01000271.1";
+		assertEquals(expectedBeginPosition1,actualBeginPosition1);
+		assertEquals(expectedEndPosition1,actualEndPosition1);
+		assertEquals(expectedAccessionwithVersion,actualAccessionwithVersion);
+
+        //contig2
+		assertTrue(entry.getSequence().getContigs().get(1) instanceof Gap);
+		assertEquals(24, entry.getSequence().getContigs().get(1).getLength());
+		List<Feature> assemblyGap_features=SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
+		assertEquals(1, assemblyGap_features.size());
+		Long beginPosition=assemblyGap_features.get(0).getLocations().getMinPosition();
+		Long expectedBegin=331l;
+		Long endPosition=assemblyGap_features.get(0).getLocations().getMaxPosition();
+		Long expectedEnd=354l;
+		String actualGapType=assemblyGap_features.get(0).getSingleQualifierValue(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		String expectedGapType="within scaffold";
+		List<Qualifier> linkageevidenceQualifiers=assemblyGap_features.get(0).getQualifiers(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
+		String expectedLinkageEvidence="paired-ends";
+		String actualEstimatedLength=assemblyGap_features.get(0).getSingleQualifierValue(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME);
+		String expectedEstimatesLength="24";
+		assertEquals(expectedBegin,beginPosition);
+		assertEquals(expectedEnd,endPosition);
+		assertEquals(expectedGapType, actualGapType);
+		assertEquals(0, linkageevidenceQualifiers.size());
 		assertEquals(expectedEstimatesLength, actualEstimatedLength);
 		 //entry sequence length check
 		assertEquals(354, entry.getSequence().getLength());

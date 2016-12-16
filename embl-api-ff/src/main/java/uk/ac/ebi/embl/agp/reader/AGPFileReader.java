@@ -2,7 +2,6 @@ package uk.ac.ebi.embl.agp.reader;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -32,6 +31,7 @@ public class AGPFileReader extends FlatFileEntryReader
 	private final static String SCREGEX = "\\s+";
     protected int currentEntryLine = 1;
 	private static final int NUMBER_OF_COLUMNS = 9;
+	private static final int NO_LINKAGE_GAP_NUMBER_OF_COLUMNS = 8;
 	private String[] linkageArray={"YES","NO"};
 	private static final int OBJECT = 0;
 	private static final int OBJECT_BEG = 1;
@@ -80,8 +80,27 @@ public class AGPFileReader extends FlatFileEntryReader
 		
 		if (fields.length != NUMBER_OF_COLUMNS)
 		{
+			if (fields[COMPONENT_TYPE_ID] != null && ("N".equals(fields[COMPONENT_TYPE_ID]) || "U".equals(fields[COMPONENT_TYPE_ID])))
+			{
+	          if("NO".equalsIgnoreCase(fields[LINKAGE]))
+	          {
+	        	  if(fields.length!= NO_LINKAGE_GAP_NUMBER_OF_COLUMNS)
+	        	  {
+	        	   error("NumberOfColumnsCheck");
+				   return;
+	        	  }
+	          }
+	          else
+	          {
+	        	  error("NumberOfColumnsCheck");
+				  return;
+	          }
+	        }
+			else
+			{
 			error("NumberOfColumnsCheck");
 			return;
+			}
 		}
 		
 		if (fields[OBJECT] == null || fields[OBJECT].isEmpty())
@@ -205,15 +224,18 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 						
 			// LINKAGE_EVIDENCE
-			
-			if (fields[LINKAGEEVIDENCE] == null || fields[LINKAGEEVIDENCE].isEmpty())
+			if(fields.length==NUMBER_OF_COLUMNS)
 			{
-				error("MissingLinkageEvidenceCheck");
+			if ((fields[LINKAGEEVIDENCE] == null || fields[LINKAGEEVIDENCE].isEmpty()))
+			{
+				if(!"NO".equalsIgnoreCase(agpRow.getLinkage()))
+				    error("MissingLinkageEvidenceCheck");
 			}
 			else
 			{
 				String linkageEvidence=fields[LINKAGEEVIDENCE];
 			    agpRow.setLinkageevidence(Arrays.asList(linkageEvidence.split(";")));
+			}
 			}
 		}
 		else if (fields[COMPONENT_TYPE_ID] != null && !fields[COMPONENT_TYPE_ID].equals("A") && !fields[COMPONENT_TYPE_ID].equals("D")

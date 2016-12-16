@@ -178,6 +178,7 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setComponent_type_id("N");
 		inValidGaprow1.setGap_length(23l);
 		inValidGaprow1.setGap_type("scaffol");
+		inValidGaprow1.setLinkage("NO");
 		linkageEvidences.add("paired-nds");
 		inValidGaprow1.setLinkageevidence(linkageEvidences);
 		entry.addAgpRow(validComponentrow1);
@@ -186,9 +187,8 @@ public class AGPValidationCheckTest
 		planProperty.fileType.set(FileType.AGP);
 		check.setEmblEntryValidationPlanProperty(planProperty);
 		ValidationResult result = check.check(entry);
-		assertEquals(3, result.getMessages().size());
+		assertEquals(2, result.getMessages().size());
 		assertEquals(1, result.count("AGPValidationCheck-4", Severity.ERROR));
-		assertEquals(1, result.count("AGPValidationCheck-6", Severity.ERROR));
 		assertEquals(1, result.count("AGPValidationCheck-8", Severity.ERROR));
 	}
 	

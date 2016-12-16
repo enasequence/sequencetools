@@ -15,17 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
-import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
-import uk.ac.ebi.embl.api.entry.location.Order;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -35,9 +25,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 @Description("")

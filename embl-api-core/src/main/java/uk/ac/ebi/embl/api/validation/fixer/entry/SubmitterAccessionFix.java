@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 @Description("Entryname has been fixed from \"{0}\" to \"{1}\"")
 public class SubmitterAccessionFix extends EntryValidationCheck {
 
-	private final static String FIX_ID = "";
+	private final static String FIX_ID = "SubmitterAccessionFix";
 
 	public SubmitterAccessionFix() {
 	}

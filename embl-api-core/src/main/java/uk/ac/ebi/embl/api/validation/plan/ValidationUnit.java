@@ -23,8 +23,7 @@ public enum ValidationUnit
 				Entry_NameCheck.class,
 				AssemblySecondarySpanCheck.class,
 				DataclassCheck.class,
-				KWCheck.class,
-				SubmitterAccessionFix.class
+				KWCheck.class
 			),
 			MASTER_HEADER_ONLY_CHECKS(
 					CitationExistsCheck.class,
@@ -111,9 +110,8 @@ public enum ValidationUnit
 				WGSGapCheck.class,
 				EC_numberCheck.class,
 				CitationQualifierCheck.class,
-				PropeptideLocationCheck.class,
-				CdsFeatureCheck.class
-			),
+				PropeptideLocationCheck.class
+				),
 			NON_SOURCE_DEPENDSON_SOURCE_CHECKS
 			(
 				//FeatureAndSourceQualifierCheck.class, //this check no longer exists
@@ -162,7 +160,8 @@ public enum ValidationUnit
 			ENTRY_SPECIFIC_HEADER_ONLY_FIXES
 			(
 				DataclassFix.class,
-				TPA_dataclass_Fix.class
+				TPA_dataclass_Fix.class,
+				SubmitterAccessionFix.class
 
 			),
 			SOURCE_FEAURES_ONLY_FIXES

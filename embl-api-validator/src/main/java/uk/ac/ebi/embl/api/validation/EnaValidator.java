@@ -55,8 +55,6 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 /**
  * Created by IntelliJ IDEA. User: Lawrence Date: 08-Dec-2008 Time: 09:58:38 To
  * change this template use File | Settings | File Templates.
@@ -199,7 +197,7 @@ public class EnaValidator
 	{
 
 		EmblEntryValidationPlanProperty emblEntryValidationPlanProperty = new EmblEntryValidationPlanProperty();
-		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.EMBL);
 		emblEntryValidationPlanProperty.isDevMode.set(testMode);
 		emblEntryValidationPlanProperty.isFixMode.set(fixMode || fixDiagnoseMode);
 		emblEntryValidationPlanProperty.minGapLength.set(min_gap_length);

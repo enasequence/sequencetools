@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description("Submitter references mandatory in embl-bank entries")
-@ExcludeScope(validationScope={ValidationScope.EPO})
+@ExcludeScope(validationScope={ValidationScope.EPO,ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.EMBL_TEMPLATE,ValidationScope.EPO_PEPTIDE,ValidationScope.NCBI,ValidationScope.ARRAYEXPRESS,ValidationScope.EGA,ValidationScope.INSDC})
 public class ReferenceCheck extends EntryValidationCheck
 {
 	private static String SUBMITTER_REFERENCECHECK = "ReferenceCheck_1";
@@ -36,7 +36,7 @@ public class ReferenceCheck extends EntryValidationCheck
 	{
 		result = new ValidationResult();
 		boolean isSubmission = false;
-		if (entry == null || !getEmblEntryValidationPlanProperty().validationScope.get().equals(ValidationScope.EMBL) || entry.getDataClass() == Entry.PAT_DATACLASS || entry.getDataClass() == Entry.PRT_DATACLASS)
+		if (entry == null||entry.getDataClass() == Entry.PAT_DATACLASS || entry.getDataClass() == Entry.PRT_DATACLASS)
 			return result;
 		ArrayList<Reference> references = (ArrayList<Reference>) entry.getReferences();
 		for (Reference ref : references)

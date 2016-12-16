@@ -1,6 +1,6 @@
  allprojects 
  {
-    ext.version_base = '1.1.148'
+    ext.version_base = '1.1.153'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -74,7 +74,7 @@ if (gradle.startParameter.taskNames.contains("uploadArchives")) {
   {
     repositories 
      {
-        mavenDeployer 
+       mavenDeployer 
           {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
           }
@@ -124,9 +124,48 @@ if (gradle.startParameter.taskNames.contains("uploadArchives")) {
                 }
             }
         }
+//local repository	
+		 /*mavenDeployer 
+		 {
+		   repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
+                authentication(userName: artifactoryUsername, password: artifactoryPassword)
+            }
+			pom.project 
+          {
+               name 'sequencetools'
+               packaging 'jar'
+               description 'flat file parser and validator'
+               url 'http://www.ebi.ac.uk/ena'
+
+                scm 
+                {
+                    url 'https://github.com/enasequence/sequencetools'
+                }
+
+                licenses 
+                {
+                    license 
+                    {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers 
+                {
+                    developer 
+                    {
+                        id 'kethi'
+                        name 'kethi reddy'
+                        email 'reddyk@ebi.ac.uk'
+                    }
+                }
+            }
+		 }*/
+//local repository 
     }
   }
-}
+ }
 
 project(':embl-api-validator') {
   jar {
@@ -140,7 +179,7 @@ project(':embl-api-validator') {
     }
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.148",
+                     "Implementation-Version":"1.1.153",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())

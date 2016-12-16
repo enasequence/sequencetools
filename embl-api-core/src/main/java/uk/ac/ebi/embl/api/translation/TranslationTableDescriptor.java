@@ -108,7 +108,14 @@ public class TranslationTableDescriptor {
 			"FFLLSSSSYYY*CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNNKSSSSVVVVAAAADDEEGGGG",
 			"-----------------------------------M----------------------------")
 		);
-
+		
+		TABLES.put(15, new TranslationTableDescriptor(
+				15, 
+				"Blepharisma Macronuclear",
+				"FFLLSSSSYY*QCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"----------*---*--------------------M----------------------------")
+			);
+		
 		TABLES.put(16, new TranslationTableDescriptor(
 			16, 
 			"Chlorophycean Mitochondrial Code",
@@ -148,6 +155,45 @@ public class TranslationTableDescriptor {
 				"FFLLSSSSYY**CCGWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"---M---------------M---------------M----------------------------")
 			);
+		TABLES.put(26, new TranslationTableDescriptor(
+				26, 
+				"Pachysolen tannophilus Nuclear",
+				"FFLLSSSSYY**CC*WLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"----------**--*----M---------------M----------------------------")
+			);
+		
+		TABLES.put(27, new TranslationTableDescriptor(
+				27, 
+				"Karyorelict Nuclear",
+				"FFLLSSSSYYQQCCWWLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"--------------*--------------------M----------------------------")
+			);
+
+		TABLES.put(28, new TranslationTableDescriptor(
+				28, 
+				"Condylostoma Nuclear",
+				"FFLLSSSSYYQQCCWWLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"----------**--*--------------------M----------------------------")
+			);
+		TABLES.put(29, new TranslationTableDescriptor(
+				29, 
+				"Mesodinium Nuclear",
+				"FFLLSSSSYYYYCC*WLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"--------------*--------------------M----------------------------")
+			);
+		TABLES.put(30, new TranslationTableDescriptor(
+				30, 
+				"Peritrich Nuclear",
+				"FFLLSSSSYYEECC*WLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"--------------*--------------------M----------------------------")
+			);
+		TABLES.put(31, new TranslationTableDescriptor(
+				31, 
+				"Blastocrithidia Nuclear",
+				"FFLLSSSSYYEECCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"----------**-----------------------M----------------------------")
+			);
+		
 	}
 	
 	private int number;

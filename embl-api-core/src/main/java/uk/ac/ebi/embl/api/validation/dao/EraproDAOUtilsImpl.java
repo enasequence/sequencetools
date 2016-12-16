@@ -112,6 +112,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	
 	private String getFirstName(String firstName)
 	{
+		if(firstName==null)
+			return null;
 		StringBuilder nameBuilder= new StringBuilder();
 		if(StringUtils.containsNone(firstName,"@")&&StringUtils.contains(firstName, "-"))
 		{

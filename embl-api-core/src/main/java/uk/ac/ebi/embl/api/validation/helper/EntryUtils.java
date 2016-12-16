@@ -256,16 +256,19 @@ public class EntryUtils
 				 gap_type="repeatwithLinkage";
 			 }
 			 }
+			 if(linkage_evidences!=null)
+			 {
+				 for(String linkage_evidence:linkage_evidences)
+				 {
+				 Qualifier linkage_evidenceQualifier=qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
+				 String linkage_evidenceQualifierValue=linkageEvidence.get(linkage_evidence);
+				 linkage_evidenceQualifier.setValue(linkage_evidenceQualifierValue);
+				 assembly_gapFeature.addQualifier(linkage_evidenceQualifier);
+				 }
+			 }
 			 String gapTypeValue=gapType.get(gap_type);
 			 gap_typeQualifier.setValue(gapTypeValue);
 			 assembly_gapFeature.addQualifier(gap_typeQualifier);
-			 for(String linkage_evidence:linkage_evidences)
-			 {
-			 Qualifier linkage_evidenceQualifier=qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
-			 String linkage_evidenceQualifierValue=linkageEvidence.get(linkage_evidence);
-			 linkage_evidenceQualifier.setValue(linkage_evidenceQualifierValue);
-			 assembly_gapFeature.addQualifier(linkage_evidenceQualifier);
-			 }
 			 Qualifier estimated_lengthQualifier=qualifierFactory.createQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME);
 			 if("U".equals(agpRow.getComponent_type_id()))
 			   {

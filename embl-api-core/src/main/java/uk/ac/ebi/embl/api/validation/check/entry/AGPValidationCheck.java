@@ -185,6 +185,8 @@ public class AGPValidationCheck extends EntryValidationCheck
 				}
 			}
 			
+			if(agpRow.hasLinkage())
+			{
 			if (linkageEvidences == null||linkageEvidences.isEmpty())
 			{
 				reportError(agpRow.getOrigin(),
@@ -203,6 +205,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 								entry.getSubmitterAccession());
 				}
 				}
+			}
 			}
 			
 			if (gap_length != object_end - object_begin + 1)
