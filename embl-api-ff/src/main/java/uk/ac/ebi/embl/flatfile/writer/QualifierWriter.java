@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.writer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -84,7 +85,8 @@ public class QualifierWriter extends FlatFileWriter {
 				block.append("=");
 				block.append(qualifier.getValue());
 			}
-			writeBlock(writer, header, block.toString());
+			
+			writeBlock(writer, header, EntryUtils.convertNonAsciiStringtoAsciiString(block.toString()));
 		}
 		return true;
 	}	

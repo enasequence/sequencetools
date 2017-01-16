@@ -15,6 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,14 +30,14 @@ public class QualifierMatcher extends FlatFileMatcher {
 	public QualifierMatcher(FlatFileLineReader reader) {
 		super(reader, PATTERN);
 	}
-
+	 Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
 	private static final Pattern PATTERN = Pattern.compile(
 		"\\/([a-zA-Z1-9-_]+)\\s*=?(.*)?");
 
 	private static final int GROUP_QUALIFIER_NAME = 1;
 	private static final int GROUP_QUALIFIER_VALUE = 2;
 
-	public Qualifier getQualifier() {
+	public Qualifier getQualifier() throws UnsupportedEncodingException {
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		String qualifierName = getString(GROUP_QUALIFIER_NAME);
 		String qualifierValue = getString(GROUP_QUALIFIER_VALUE);
@@ -45,13 +47,13 @@ public class QualifierMatcher extends FlatFileMatcher {
 		{
 			if (!qualifier.isValueQuoted() && nofQuotes != 0)
 			{
-				if ( ( !qualifier.getName().equals(Qualifier.ANTICODON_QUALIFIER_NAME) &&
-					   !qualifier.getName().equals(Qualifier.COMPARE_QUALIFIER_NAME) ) )
+				if (!qualifier.getName().equals(Qualifier.COMPARE_QUALIFIER_NAME) )
 					error("FT.10", qualifierName, qualifierValue);
 			} else if (qualifier.isValueQuoted())
 			{
 				if (nofQuotes == 0)
 				{
+					if( !qualifier.getName().equals(Qualifier.ANTICODON_QUALIFIER_NAME))
 					error("FT.10", qualifierName, qualifierValue);
 				} else
 				{
@@ -63,10 +65,17 @@ public class QualifierMatcher extends FlatFileMatcher {
 					{
 						error("FT.10", qualifierName, qualifierValue);
 					}
-				}
+				 }
 			}
+			
+			Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
+		    if (m.find())
+		    {
+		    	error("FT.13", qualifierName, qualifierValue);
+		    }
 			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
 			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
+			
 			qualifier.setValue(qualifierValue);
 			return qualifier;
 		} else

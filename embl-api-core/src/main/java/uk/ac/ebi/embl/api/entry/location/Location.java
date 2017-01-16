@@ -91,4 +91,15 @@ public abstract class Location extends AbstractLocation implements Serializable 
 		return endPosition.intValue();
 	}
 		
+   //6361..6539,6363..6649
+	public boolean overlaps(Location location) {
+         if (location.getBeginPosition()>=getBeginPosition() && location.getBeginPosition() <= getEndPosition()) 
+             return true;
+         if(location.getBeginPosition() <= getBeginPosition() && location.getEndPosition()>=getBeginPosition()) 
+             return true;
+        else {
+            return false;
+        }
+    }
+
 }

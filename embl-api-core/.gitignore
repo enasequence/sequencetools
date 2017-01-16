@@ -5,3 +5,5 @@ target
 embl-api-core.iml
 build
 .gradle
+/bin
+/src/main/resources/uk/ac/ebi/ena/xsd/misc/

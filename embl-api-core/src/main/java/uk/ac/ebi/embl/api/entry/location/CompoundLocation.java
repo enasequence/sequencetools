@@ -259,4 +259,19 @@ public abstract class CompoundLocation<E extends Location> extends
 		});
 		return (CompoundLocation<Location>) this;	
 	}
+	
+ public boolean hasOverlappingLocation()
+ {
+	for(Location location1: getLocations())
+	{
+		for(Location location2: getLocations())
+		{
+			if(location1.overlaps(location2)&&!location1.equals(location2))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+ }
 }

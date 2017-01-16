@@ -188,7 +188,7 @@ public abstract class FlatFileWriter {
 			writer.write(firstLineHeader);
 		} else {
 			writer.write(header);
-		}		
+		}	
 		writer.write(line);
 		writer.write("\n");
 	}

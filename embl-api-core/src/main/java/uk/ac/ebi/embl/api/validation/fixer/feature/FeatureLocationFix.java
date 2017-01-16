@@ -48,6 +48,7 @@ public class FeatureLocationFix extends FeatureValidationCheck {
                 || compoundLocation.getLocations().size() == 0) {
             return result;
         }
+        
 
         List<Location> locations = compoundLocation.getLocations();
 
@@ -71,7 +72,7 @@ public class FeatureLocationFix extends FeatureValidationCheck {
                 }
             }
         }
-
+       feature.setLocations(compoundLocation.getSortedLocations());
         return result;
     }
 

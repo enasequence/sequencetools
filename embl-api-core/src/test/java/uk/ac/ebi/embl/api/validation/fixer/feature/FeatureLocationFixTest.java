@@ -96,4 +96,5 @@ public class FeatureLocationFixTest {
         assertTrue(fixedLocation2.getEndPosition() == 20);
         assertTrue(fixedLocation2.isComplement());
     }
-}
+    
+ }
