@@ -86,7 +86,7 @@ public class QualifierWriter extends FlatFileWriter {
 				block.append(qualifier.getValue());
 			}
 			
-			writeBlock(writer, header, EntryUtils.convertNonAsciiStringtoAsciiString(block.toString()));
+			writeBlock(writer, header, block.toString());
 		}
 		return true;
 	}	

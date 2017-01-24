@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
@@ -231,6 +232,8 @@ public class FeatureReader extends FlatFileLineReader {
 			return null;
 		}
 		String nextLine = lineReader.getNextMaskedLine();
+		
+		nextLine=StringEscapeUtils.unescapeHtml4(nextLine);
 		
 		if (!isQualifier(nextLine)) {
 			return null;

@@ -339,8 +339,8 @@ public class EnaValidator
 
 			if (filterMode && filterPrefix != null)
 			{
-				goodFilesWriter = new FileWriter(filterPrefix + "_good.txt");
-				badFilesWriter = new FileWriter(filterPrefix + "_bad.txt");
+				goodFilesWriter = new PrintWriter(filterPrefix + "_good.txt","UTF-8");
+				badFilesWriter = new PrintWriter(filterPrefix + "_bad.txt","UTF-8");
 			}
 
 			for (File file : entryFiles)
@@ -481,11 +481,11 @@ public class EnaValidator
 		String errorwriter = prefix == null ? "VAL_ERROR.txt" : prefix + "_" + "VAL_ERROR.txt";
 		String reportswriter = prefix == null ? "VAL_REPORTS.txt" : prefix + "_" + "VAL_REPORTS.txt";
 		String fixwriter = prefix == null ? "VAL_FIXES.txt" : prefix + "_" + "VAL_FIXES.txt";
-		summaryWriter = new FileWriter(summarywriter);
-		infoWriter = new FileWriter(infowriter);
-		errorWriter = new FileWriter(errorwriter);
-		reportWriter = new FileWriter(reportswriter);
-		fixWriter = new FileWriter(fixwriter);
+		summaryWriter = new PrintWriter(summarywriter,"UTF-8");
+		infoWriter = new PrintWriter(infowriter,"UTF-8");
+		errorWriter = new PrintWriter(errorwriter,"UTF-8");
+		reportWriter = new PrintWriter(reportswriter,"UTF-8");
+		fixWriter = new PrintWriter(fixwriter,"UTF-8");
 	}
 
 	/**
@@ -598,8 +598,8 @@ public class EnaValidator
 			Object entry = getNextEntryFromReader(writer);
 			if (entryList != null)
 				entryList.add(entry);
-			FileWriter origFileWriter = null;
-			FileWriter fixedFileWriter = null;
+			PrintWriter origFileWriter = null;
+			PrintWriter fixedFileWriter = null;
 			/**
 			 * we write fixed files (if we are fixing) to a temp file, then
 			 * replace the original file once we have finished reading the
@@ -631,13 +631,13 @@ public class EnaValidator
 				{
 					diagnoseDir.mkdirs();
 				}
-				origFileWriter = new FileWriter(new File(diagnosisDir + File.separator + targetFile.getName() + "_orig.txt"));
-				fixedFileWriter = new FileWriter(new File(diagnosisDir+ File.separator + targetFile.getName() + "_fixed.txt"));
+				origFileWriter = new PrintWriter(new File(diagnosisDir + File.separator + targetFile.getName() + "_orig.txt"),"UTF-8");
+				fixedFileWriter = new PrintWriter(new File(diagnosisDir+ File.separator + targetFile.getName() + "_fixed.txt"),"UTF-8");
 			}
 			else
 				if (fixMode)
 				{
-					fixedFileWriter = new FileWriter(fixedTempFile);
+					fixedFileWriter = new PrintWriter(fixedTempFile,"UTF-8");
 					String originalDirString = prefix == null ? "./original_files" : prefix + "_" + "original_files";
 					File originalsDir = new File(originalDirString);
 					System.out.println(originalsDir.getAbsolutePath());

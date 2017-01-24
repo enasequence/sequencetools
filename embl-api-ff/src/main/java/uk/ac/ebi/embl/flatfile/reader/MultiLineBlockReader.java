@@ -16,6 +16,10 @@
 package uk.ac.ebi.embl.flatfile.reader;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -27,6 +31,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
 	
 	private int firstLineNumber;
 	private int lastLineNumber;
+	Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
 	
     public MultiLineBlockReader(LineReader lineReader,
     		ConcatenateType concatenateType) {
@@ -102,6 +107,15 @@ public abstract class MultiLineBlockReader extends BlockReader {
 			return;
 		}
 		String blockString = block.toString();
+		
+		blockString=StringEscapeUtils.unescapeHtml4(blockString);
+		
+		Matcher m = htmlEntityRegexPattern.matcher(blockString);
+	    if (m.find())
+	    {
+	    	error("FF.15",getTag());
+	    }
+			
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.
 			blockString = FlatFileUtils.shrink(blockString);
