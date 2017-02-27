@@ -46,7 +46,7 @@ public class ACReader extends MultiLineBlockReader {
 					entry.addSecondaryAccession(new Text(accession, getOrigin()));
 				} else {
 					if (idLinePrimaryAccession != null
-							&& !idLinePrimaryAccession.equals(accession))
+							&& !idLinePrimaryAccession.equalsIgnoreCase(accession))
 						error("AC.1");
 					else {
 						if (!accession.equals("XXX")) {
