@@ -104,7 +104,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 		Taxon taxon=taxonFactory.createTaxon();
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonsByScientificName("Homo sapiens")).andReturn(taxon);
+		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
 		replay(taxonHelper);
 		property.taxonHelper.set(taxonHelper);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -118,7 +118,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 		Taxon taxon=taxonFactory.createTaxon();
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonsByScientificName("Homo sapiens")).andReturn(taxon);
+		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
 		replay(taxonHelper);
 		property.taxonHelper.set(taxonHelper);
 		sourceFeature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "Akio Tani");
@@ -135,7 +135,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonsByScientificName("Homo sapiens")).andReturn(taxon);
+		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
 		replay(taxonHelper);
 		property.taxonHelper.set(taxonHelper);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -151,7 +151,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonsByScientificName("Homo sapiens")).andReturn(taxon);
+		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
 		replay(taxonHelper);
 		property.taxonHelper.set(taxonHelper);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -168,7 +168,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonsByScientificName("Homo sapiens")).andReturn(taxon);
+		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
 		replay(taxonHelper);
 		property.taxonHelper.set(taxonHelper);
 		check.setEmblEntryValidationPlanProperty(property);

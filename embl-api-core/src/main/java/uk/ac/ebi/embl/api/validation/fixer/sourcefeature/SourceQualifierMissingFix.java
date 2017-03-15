@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.taxonomy.Taxon;
@@ -53,7 +55,12 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		}
 
 		String scientificName = entry.getPrimarySourceFeature().getScientificName();
-
+		if(NumberUtils.isNumber(scientificName))
+		{
+			Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(new Long(scientificName));
+			entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
+			entry.getPrimarySourceFeature().setTaxId(taxon.getTaxId());
+		}
 		boolean is_environment_sample_exists = entry.getPrimarySourceFeature().getQualifiers(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME).size() != 0;
 		boolean is_isolation_source_exists = entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size() != 0;
 
@@ -110,7 +117,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				}
 			if(!is_environment_sample_exists)
 			{
-				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(scientificName);
+				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
 			
 				if(taxon!=null)
 				{

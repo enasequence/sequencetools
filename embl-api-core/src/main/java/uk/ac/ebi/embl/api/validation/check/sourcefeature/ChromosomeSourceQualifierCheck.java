@@ -15,6 +15,9 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
+import java.util.ArrayList;
+
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -28,6 +31,13 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 
 	private final static String CHROMOSOME_SOURCE_QUALIFIER_ERROR = "ChromosomeSourceQualiferCheck_1";	
+	private final static String CHROMOSOME_SOURCE_QUALIFIER_MISSING_ERROR = "ChromosomeSourceQualiferCheck_2";	
+
+    private Entry entry;
+    
+    public void setEntry(Entry entry) {
+        this.entry = entry;
+    }
 	
 	@Override
 	public ValidationResult check(Feature feature) throws ValidationEngineException 
@@ -46,7 +56,22 @@ public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 			return result;
 		}
 		
+		
 		SourceFeature source = (SourceFeature) feature;
+		
+		if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null)
+		{
+			try
+			{
+			  ArrayList<Qualifier> chromosomeQualifiers =getEntryDAOUtils().getChromosomeQualifiers(getEmblEntryValidationPlanProperty().analysis_id.get(), entry.getSubmitterAccession(), source);
+			  if(chromosomeQualifiers==null||chromosomeQualifiers.isEmpty())
+				  reportError(entry.getOrigin(),CHROMOSOME_SOURCE_QUALIFIER_MISSING_ERROR, entry.getSubmitterAccession());				  			
+			
+			}catch(Exception e)
+			{
+				throw new ValidationEngineException(e);
+			}
+		}
 		int cnt = 0;
 			
 		if(source.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME)!=null)

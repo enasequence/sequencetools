@@ -37,6 +37,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 	private final String   taxidUri="http://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/tax-id/";
 	private final String   commonNameUri="http://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/common-name/";
     static Map<String, Taxon> taxonScientificNameCache = Collections.synchronizedMap(new HashMap<String, Taxon>());
+    static Map<String, List<Taxon>> taxonsScientificNameCache = Collections.synchronizedMap(new HashMap<String, List<Taxon>>());
     static Map<Long, Taxon> taxonIdCache = Collections.synchronizedMap(new HashMap<Long, Taxon>());
     static Map<String, Taxon> taxonCommonNameCache = Collections.synchronizedMap(new HashMap<String, Taxon>());
 
@@ -49,7 +50,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		Taxon taxon=taxonScientificNameCache.get(scientificName);
 		if(taxon==null)
 		{
-			taxon=getTaxonsByScientificName(scientificName);
+			taxon=getTaxonByScientificName(scientificName);
 			if(taxon==null)
 				return false;
 		}
@@ -75,7 +76,7 @@ public class TaxonHelperImpl implements TaxonHelper {
     	Taxon taxon=taxonScientificNameCache.get(scientificName);
 		if(taxon==null)
 		{
-			taxon=getTaxonsByScientificName(scientificName);
+			taxon=getTaxonByScientificName(scientificName);
 			if(taxon==null)
 				return false;
 		}
@@ -89,7 +90,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		Taxon taxon=taxonScientificNameCache.get(scientificName);
         if(taxon==null)
         {
-        	taxon=getTaxonsByScientificName(scientificName);
+        	taxon=getTaxonByScientificName(scientificName);
         }
         return taxon!=null;
     }
@@ -135,25 +136,25 @@ public class TaxonHelperImpl implements TaxonHelper {
     	return taxon;
 
         } 
-
+    
     @Override
-    public Taxon getTaxonsByScientificName(String scientificName) {
+    public List<Taxon> getTaxonsByScientificName(String scientificName) {
 
     	if(scientificName==null)
     		return null;
 		TaxonFactory taxonFactory=new TaxonFactory();
-    	Taxon taxon=null;
+    	List<Taxon> taxons=new ArrayList<Taxon>();
     	
     	
     try{
     	String uri=scientificNameUri+scientificName;
-    	if(taxonScientificNameCache.get(scientificName)==null)
+    	if(taxonsScientificNameCache.get(scientificName)==null)
     	{
     		    URL url = new URL(uri.replaceAll(" ", "%20"));
     		    if(isURLNotValid(url))
         		{
-        			taxonScientificNameCache.put(scientificName, taxon);
-        			 return taxon;
+    		    	taxonsScientificNameCache.put(scientificName, taxons);
+        			 return taxons;
         		}
         		
     			BufferedReader in = null;
@@ -166,8 +167,37 @@ public class TaxonHelperImpl implements TaxonHelper {
     			if(taxonString!=null&&isJSONArrayValid(taxonString.toString()))
     			{
         		JSONArray jsonTaxonObject=new JSONArray(taxonString.toString());
-    			taxon=taxonFactory.createTaxon(jsonTaxonObject.getJSONObject(0));
+        		for(int i=0;i<jsonTaxonObject.length();i++)
+    			taxons.add(taxonFactory.createTaxon(jsonTaxonObject.getJSONObject(i)));
     			}
+                taxonsScientificNameCache.put(scientificName, taxons);
+    	}
+    	else
+    	{
+            taxons=taxonsScientificNameCache.get(scientificName);
+    	}
+    }catch(Exception e)
+     {
+	   return null;
+     }
+    	return taxons;
+    }
+
+@Override
+    public Taxon getTaxonByScientificName(String scientificName) {
+
+    	if(scientificName==null)
+    		return null;
+		TaxonFactory taxonFactory=new TaxonFactory();
+    	Taxon taxon=null;
+    	
+    	
+    try{
+    	if(taxonsScientificNameCache.get(scientificName)==null)
+    	{
+    		   List<Taxon> taxons=getTaxonsByScientificName(scientificName);
+    		   if(taxons!=null&&taxons.size()==1)
+    			   taxon=taxons.get(0);
                 taxonScientificNameCache.put(scientificName, taxon);
     	}
     	else
@@ -231,7 +261,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		Taxon taxon=taxonScientificNameCache.get(scientificName);
 		if(taxon==null)
 		{
-			taxon=getTaxonsByScientificName(scientificName);
+			taxon=getTaxonByScientificName(scientificName);
 			if(taxon==null)
 			 return false;
 		}
@@ -247,7 +277,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		Taxon taxon=taxonScientificNameCache.get(scientificName);
 		if(taxon==null)
 		{
-			taxon=getTaxonsByScientificName(scientificName);
+			taxon=getTaxonByScientificName(scientificName);
 			if(taxon==null)
 			  return false;
 		}
@@ -300,7 +330,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		Taxon taxon=taxonScientificNameCache.get(scientificName);
 		if(taxon==null)
 		{
-			taxon=getTaxonsByScientificName(scientificName);
+			taxon=getTaxonByScientificName(scientificName);
 			if(taxon==null)
 			 return false;
 		}

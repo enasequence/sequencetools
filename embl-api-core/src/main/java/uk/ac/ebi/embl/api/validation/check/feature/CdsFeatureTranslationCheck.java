@@ -50,7 +50,6 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
         	    if (entry.getSequence()!=null&&entry.getSequence().getSequenceByte()!=null&&entry.getSequence().getLength()!=0) {
                     if (feature instanceof CdsFeature) {
                         CdsFeature cdsFeature = (CdsFeature) feature;
-                        boolean deleteAfter = cdsFeature.getTranslation() == null;
                         ExtendedResult<TranslationResult> validationResult = translator.translate(cdsFeature, entry);
                         TranslationResult translationResult = (TranslationResult) validationResult.getExtension();
 
@@ -78,9 +77,6 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
                             ((ExtendedResult<TranslationReportInfo>) result).setExtension(translationInfo);
                         }
 
-                        if (deleteAfter) {
-                            cdsFeature.setTranslation(null);
-                        }
                     }
             }
         } catch (RepositoryException e) {

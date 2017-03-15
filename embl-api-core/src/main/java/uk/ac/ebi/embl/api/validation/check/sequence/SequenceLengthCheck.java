@@ -115,7 +115,7 @@ public class SequenceLengthCheck extends EntryValidationCheck
 							}
 						}
 					}
-					reportError(result, entry, SEQUENCE_LENGTH_MESSAGE_ID,minSeqLength);
+					reportError(result, entry, SEQUENCE_LENGTH_MESSAGE_ID, minSeqLength,entry.getSubmitterAccession()==null?entry.getPrimaryAccession():entry.getSubmitterAccession());
 				}
 			}
 		}

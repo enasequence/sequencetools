@@ -91,7 +91,7 @@ public class CdsFeatureTranslationCheckTest {
         check.setEntry(entry);
         ValidationResult validationResult = check.check(cdsFeature);
         assertTrue(validationResult.isValid());
-        assertTrue(cdsFeature.getTranslation() == null);
+        assertEquals("MEW",cdsFeature.getTranslation());
     }
     
     @Test

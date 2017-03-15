@@ -46,6 +46,8 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 	private final static Pattern ISO_DATE_FORMAT_PATTERN_3 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})$"); // YYYY-MM-DD
 	private final static Pattern ISO_DATE_FORMAT_PATTERN_4 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})Z$"); // YYYY-MM-DDThhZ
 	private final static Pattern ISO_DATE_FORMAT_PATTERN_5 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mmZ
+	private final static Pattern ISO_DATE_FORMAT_PATTERN_6 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mm:ssZ
+
 	
 	private final static SimpleDateFormat INSDC_DATE_FORMAT_1 = new SimpleDateFormat("dd-MMM-yyyy"); // dd-MMM-yyyy
 	private final static SimpleDateFormat INSDC_DATE_FORMAT_2 = new SimpleDateFormat("MMM-yyyy"); // MMM-yyyy
@@ -55,6 +57,7 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 	private final static SimpleDateFormat ISO_DATE_FORMAT_3 = new SimpleDateFormat("yyyy-MM-dd"); // yyyy-MM-dd
 	private final static SimpleDateFormat ISO_DATE_FORMAT_4 = new SimpleDateFormat("yyyy-MM-dd'T'HH'Z'"); // yyyy-MM-ddThhZ
 	private final static SimpleDateFormat ISO_DATE_FORMAT_5 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // yyyy-MM-ddThh:mmZ
+	private final static SimpleDateFormat ISO_DATE_FORMAT_6 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // yyyy-MM-ddThh:mmZ
 
 	private final static Pattern DATE_RANGE_PATTERN = Pattern.compile("^([^/]+)/([^/]+)$");
 	
@@ -180,6 +183,11 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 			{
 				checkFutureDate(collectionQualifier, collectionDate);
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_5, collectionDate);
+			}
+			else if (ISO_DATE_FORMAT_PATTERN_6.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_6.parse(value)) != null)
+			{
+				checkFutureDate(collectionQualifier, collectionDate);
+				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_6, collectionDate);
 			}
 			else
 			{

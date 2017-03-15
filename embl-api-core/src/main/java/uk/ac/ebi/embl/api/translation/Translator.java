@@ -243,7 +243,7 @@ public class Translator extends AbstractTranslator {
                 if(sourceFeature.getTaxon().getTaxId() != null){
                     taxon = taxHelper.getTaxonById(sourceFeature.getTaxon().getTaxId());
                 }else if(sourceFeature.getTaxon().getScientificName() != null){
-                    taxon = taxHelper.getTaxonsByScientificName(sourceFeature.getTaxon().getScientificName());
+                    taxon = taxHelper.getTaxonByScientificName(sourceFeature.getTaxon().getScientificName());
                 }
 
                 //Classified organism
@@ -408,7 +408,7 @@ public class Translator extends AbstractTranslator {
                         if(sourceFeature.getTaxon().getTaxId() != null){
                             taxon = taxHelper.getTaxonById(sourceFeature.getTaxon().getTaxId());
                         }else if(sourceFeature.getTaxon().getScientificName() != null){
-                            taxon = taxHelper.getTaxonsByScientificName(sourceFeature.getTaxon().getScientificName());
+                            taxon = taxHelper.getTaxonByScientificName(sourceFeature.getTaxon().getScientificName());
                         }
 
                         //Classified organism

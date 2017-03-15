@@ -67,7 +67,7 @@ public class TaxonomicDivisionNotQualifierCheck extends EntryValidationCheck
 		}
 		String scientificName=entry.getPrimarySourceFeature().getScientificName();
 				
-		Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(scientificName);
+		Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
 		
 		List<Feature> sourceFeatures= SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
 		

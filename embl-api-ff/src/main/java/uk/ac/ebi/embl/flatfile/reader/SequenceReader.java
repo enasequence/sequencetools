@@ -141,10 +141,6 @@ public class SequenceReader extends FlatFileLineReader {
 				this.error("SQ.1", (char)base);
             } else if( SUBSTITUTION == c )
             {
-            	if(lineReader instanceof FastaLineReader)
-            	{
-            		this.error("SQ.1", (char)base);
-            	}
                 continue;
 			}
             

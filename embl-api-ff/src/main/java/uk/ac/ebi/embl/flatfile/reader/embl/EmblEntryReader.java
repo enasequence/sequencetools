@@ -221,7 +221,7 @@ EmblEntryReader extends EntryReader
         } else if( format.equals( Format.ASSEMBLY_FILE_FORMAT ) )
         {
      			addBlockReader(new IDReader(lineReader));
-     			addBlockReader(new ACReader(lineReader));
+     			addSkipTagCounterHolder(new ACReader(lineReader));
      			addSkipTagCounterHolder(new PRReader(lineReader));
      			addSkipTagCounterHolder(new DEReader(lineReader));
      			addSkipTagCounterHolder(new KWReader(lineReader));

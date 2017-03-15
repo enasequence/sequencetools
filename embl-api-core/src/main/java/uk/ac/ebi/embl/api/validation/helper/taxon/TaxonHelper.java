@@ -15,6 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.helper.taxon;
 
+import java.util.List;
+
 import uk.ac.ebi.embl.api.taxonomy.Taxon;
 
 public interface TaxonHelper {
@@ -62,8 +64,10 @@ public interface TaxonHelper {
     Taxon getTaxonById(Long taxId);
     boolean isOrganismFormal(String scientificName);
 
-    Taxon getTaxonsByScientificName(String scientificName);
+    Taxon getTaxonByScientificName(String scientificName);
     
+    List<Taxon> getTaxonsByScientificName(String scientificName);
+
     Taxon getTaxonsByCommonName(String commonName);
     boolean isProkaryotic(String scientificName);
 

@@ -21,15 +21,18 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -45,8 +48,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	private final static String MULTIPLE_TRANSEGENIC_MESSAGE_ID = "SourceFeatureQualifierCheck4";
 	private final static String FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID = "SourceFeatureQualifierCheck5";
 	private final static String TRANSEGENIC_SOURCE_MESSAGE_ID = "SourceFeatureQualifierCheck6";
-
-
+	private final static String NON_UNIQUE_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck7";
 
 
 	public SourceFeatureQualifierCheck() {
@@ -100,12 +102,14 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			int transgenic=0;
 			for (Feature feature : sources) {
 				SourceFeature source = (SourceFeature) feature;
+				if(source!=null&&source.getScientificName()!=null&&source.getTaxId()==null&&!isOrganismUnique(source.getScientificName()))
+    				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
 				if (SequenceEntryUtils.isQualifierAvailable(
 						Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
                     Qualifier orgQualifier = SequenceEntryUtils.getQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, feature);
-                    if (orgQualifier.isValue()) {
+                      if (orgQualifier.isValue()) {
                         organismValues.add(orgQualifier.getValue());
-                    }
+                        }
                 }
 				for (String requiredSourceQualifier : requiredSourceQualifiers) {
 					if (!SequenceEntryUtils.isQualifierAvailable(
@@ -122,6 +126,8 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				}
 				if(source.isTransgenic())
 					transgenic=source.getQualifiers(Qualifier.TRANSGENIC_QUALIFIER_NAME).size();
+				
+				
                }
 			
 			if(focus>0||transgenic>0)
@@ -183,5 +189,16 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 		return false;
 
 	}
+	
+	public boolean isOrganismUnique(String scientificName)
+    {
+		List<Taxon> taxons=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(scientificName);
+
+    	if(taxons.size()>1)
+        {
+        	return false;
+        }
+        return true;
+    }
 
 }

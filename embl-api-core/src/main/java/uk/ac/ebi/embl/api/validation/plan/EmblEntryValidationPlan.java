@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -163,6 +164,10 @@ public class EmblEntryValidationPlan extends ValidationPlan
 				 if(check instanceof FeatureLocationCheck)
 				 {
 					 ((FeatureLocationCheck) check).setEntry(entry);
+				 }
+				 if(check instanceof ChromosomeSourceQualifierCheck)
+				 {
+					 ((ChromosomeSourceQualifierCheck) check).setEntry(entry);
 				 }
 					execute((FeatureValidationCheck) check,feature);
 				}
