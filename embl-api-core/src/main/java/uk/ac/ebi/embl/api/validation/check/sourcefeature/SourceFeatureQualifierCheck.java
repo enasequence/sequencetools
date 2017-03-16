@@ -49,6 +49,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	private final static String FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID = "SourceFeatureQualifierCheck5";
 	private final static String TRANSEGENIC_SOURCE_MESSAGE_ID = "SourceFeatureQualifierCheck6";
 	private final static String NON_UNIQUE_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck7";
+	private final static String NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck8";
 
 
 	public SourceFeatureQualifierCheck() {
@@ -104,6 +105,8 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				SourceFeature source = (SourceFeature) feature;
 				if(source!=null&&source.getScientificName()!=null&&source.getTaxId()==null&&!isOrganismUnique(source.getScientificName()))
     				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
+				if(source!=null&&source.getScientificName()!=null&&!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName()))
+					reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName() );
 				if (SequenceEntryUtils.isQualifierAvailable(
 						Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
                     Qualifier orgQualifier = SequenceEntryUtils.getQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, feature);

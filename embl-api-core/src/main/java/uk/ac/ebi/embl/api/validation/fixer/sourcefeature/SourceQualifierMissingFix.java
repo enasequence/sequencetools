@@ -53,7 +53,14 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-
+		
+		if(entry.getPrimarySourceFeature().getTaxId()!=null)//set the scientific name based on taxid
+		{
+            Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(entry.getPrimarySourceFeature().getTaxId());
+            if(taxon!=null)
+            entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
+		}
+		
 		String scientificName = entry.getPrimarySourceFeature().getScientificName();
 		if(NumberUtils.isNumber(scientificName))
 		{
