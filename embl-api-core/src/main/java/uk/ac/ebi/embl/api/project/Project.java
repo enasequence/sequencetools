@@ -21,8 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.ac.ebi.embl.api.taxonomy.HasTaxon;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
-import uk.ac.ebi.embl.api.taxonomy.TaxonFactory;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+import uk.ac.ebi.ena.taxonomy.taxon.TaxonFactory;
+
 
 public class Project implements HasTaxon, Serializable {
 

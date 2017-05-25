@@ -21,14 +21,13 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,6 +79,72 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(entry.getOrigin(), DIFFERENT_ORGANISM_MESSAGE_ID);
 			}
 		}
+		
+		int focus=0;
+		int transgenic=0;
+		ArrayList<String> organismValues = null;
+		for (Feature feature : sources) {
+			SourceFeature source = (SourceFeature) feature;
+			if(source!=null&&source.getScientificName()!=null&&source.getTaxId()==null&&!isOrganismUnique(source.getScientificName()))
+				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
+			if(source!=null&&source.getScientificName()!=null)
+			{
+				boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName());
+				boolean isTaxidSubmittable=isOrganismSubmittable;
+				boolean isAnyNameSubmittable=false;
+				Long taxId = source.getTaxId();
+				if(taxId!=null)		
+					isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+				if(!isOrganismSubmittable&&!isTaxidSubmittable)
+				{
+					isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(source.getScientificName());
+					 if(!isAnyNameSubmittable)
+						 reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName());
+				}
+				
+				
+			}
+			if (SequenceEntryUtils.isQualifierAvailable(
+					Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
+                Qualifier orgQualifier = SequenceEntryUtils.getQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, feature);
+                  if (orgQualifier.isValue()) {
+                    organismValues.add(orgQualifier.getValue());
+                    }
+            }
+			if(source.isFocus())
+			{
+				focus=source.getQualifiers(Qualifier.FOCUS_QUALIFIER_NAME).size();
+			}
+			if(source.isTransgenic())
+				transgenic=source.getQualifiers(Qualifier.TRANSGENIC_QUALIFIER_NAME).size();
+			
+			
+           }
+		
+		if(focus>0||transgenic>0)
+		{//focus not allowed when /transgenic is used
+			reportError(entry.getOrigin(), FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID);
+		}
+		
+		if(sources.size()<2&&transgenic>0)
+		{
+			//entries with /transgenic must have at least 2 source features
+			reportError(entry.getOrigin(), TRANSEGENIC_SOURCE_MESSAGE_ID);
+		}
+		if(focus>1)
+		{
+			//multiple /focus qualifiers not allowed
+			reportError(entry.getOrigin(), MULTIPLE_FOCUS_MESSAGE_ID);
+			
+		}
+		if(transgenic>1)
+		{
+			//multiple /transgenic qualifiers not allowed
+			reportError(entry.getOrigin(), MULTIPLE_TRANSEGENIC_MESSAGE_ID);
+
+		}
+		
+
 		for (DataRow dataRow : dataSet.getRows()) {
 			String[] requiredSourceQualifiers = dataRow.getStringArray(0);
 			String qualifierName = dataRow.getString(1);
@@ -93,27 +158,11 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			if (!SequenceEntryUtils.isQualifierwithPatternAvailable(
 					qualifierName, qualifierValuePattern, entry))
 				continue;
-
-			
-			ArrayList<String> organismValues = null;
 			 
 			String reqSourceQualifierStr = Utils
 					.paramArrayToString(requiredSourceQualifiers);
-			int focus=0;
-			int transgenic=0;
+			
 			for (Feature feature : sources) {
-				SourceFeature source = (SourceFeature) feature;
-				if(source!=null&&source.getScientificName()!=null&&source.getTaxId()==null&&!isOrganismUnique(source.getScientificName()))
-    				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
-				if(source!=null&&source.getScientificName()!=null&&!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName()))
-					reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName() );
-				if (SequenceEntryUtils.isQualifierAvailable(
-						Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
-                    Qualifier orgQualifier = SequenceEntryUtils.getQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, feature);
-                      if (orgQualifier.isValue()) {
-                        organismValues.add(orgQualifier.getValue());
-                        }
-                }
 				for (String requiredSourceQualifier : requiredSourceQualifiers) {
 					if (!SequenceEntryUtils.isQualifierAvailable(
 							requiredSourceQualifier, feature))
@@ -123,40 +172,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				if (!sflag)
 					reportError(feature.getOrigin(), MESSAGE_ID,
 							reqSourceQualifierStr);
-				if(source.isFocus())
-				{
-					focus=source.getQualifiers(Qualifier.FOCUS_QUALIFIER_NAME).size();
-				}
-				if(source.isTransgenic())
-					transgenic=source.getQualifiers(Qualifier.TRANSGENIC_QUALIFIER_NAME).size();
-				
-				
-               }
-			
-			if(focus>0||transgenic>0)
-			{//focus not allowed when /transgenic is used
-				reportError(entry.getOrigin(), FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID);
 			}
-			
-			if(sources.size()<2&&transgenic>0)
-			{
-				//entries with /transgenic must have at least 2 source features
-				reportError(entry.getOrigin(), TRANSEGENIC_SOURCE_MESSAGE_ID);
-			}
-			if(focus>1)
-			{
-				//multiple /focus qualifiers not allowed
-				reportError(entry.getOrigin(), MULTIPLE_FOCUS_MESSAGE_ID);
-				
-			}
-			if(transgenic>1)
-			{
-				//multiple /transgenic qualifiers not allowed
-				reportError(entry.getOrigin(), MULTIPLE_TRANSEGENIC_MESSAGE_ID);
-
-			}
-			
-
 		}
 		
 
@@ -197,7 +213,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
     {
 		List<Taxon> taxons=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(scientificName);
 
-    	if(taxons.size()>1)
+    	if(taxons!=null&&taxons.size()>1)
         {
         	return false;
         }

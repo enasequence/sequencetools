@@ -122,8 +122,8 @@ public class MasterEntrySourceCheckTest {
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
 		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"dfgh");
 		source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,"rgd");
-		source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "[Desulfotomaculum] guttoideum");
-        source.setTaxId(58134l);
+		source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "Pseudendoclonium basiliense");
+       // source.setTaxId(58134l);
 		entry.addFeature(source);
 		ValidationResult result = check.check(entry);
         assertTrue(result.isValid());

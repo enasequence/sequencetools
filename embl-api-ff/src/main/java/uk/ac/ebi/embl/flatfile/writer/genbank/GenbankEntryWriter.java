@@ -23,8 +23,8 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 /** Flat file writer for the sequence entry.
  */

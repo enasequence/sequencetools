@@ -15,49 +15,26 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.helper.taxon;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
-import uk.ac.ebi.embl.api.taxonomy.TaxonFactory;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 
 public class TaxonHelperImpl implements TaxonHelper {
 	
-	private final String   scientificNameUri="http://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/";
-	private final String   taxidUri="http://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/tax-id/";
-	private final String   commonNameUri="http://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/common-name/";
-    static Map<String, Taxon> taxonScientificNameCache = Collections.synchronizedMap(new HashMap<String, Taxon>());
-    static Map<String, List<Taxon>> taxonsScientificNameCache = Collections.synchronizedMap(new HashMap<String, List<Taxon>>());
-    static Map<Long, Taxon> taxonIdCache = Collections.synchronizedMap(new HashMap<Long, Taxon>());
-    static Map<String, Taxon> taxonCommonNameCache = Collections.synchronizedMap(new HashMap<String, Taxon>());
-
+	TaxonomyClient taxonomyClient= null;
     public TaxonHelperImpl() {
-	
+    	taxonomyClient= new TaxonomyClientImpl();
     }
     @Override
     public boolean isChildOfAny(String scientificName, String...parentScientificNames)  {
 
-		Taxon taxon=taxonScientificNameCache.get(scientificName);
-		if(taxon==null)
-		{
-			taxon=getTaxonByScientificName(scientificName);
-			if(taxon==null)
-				return false;
-		}
-		
+			
 		for(String parentName : parentScientificNames)
 		{
-			if(taxon.isChildOf(parentName))
+			if(isChildOf(scientificName, parentName))
 				return true;
 		}
 		return false;
@@ -73,200 +50,90 @@ public class TaxonHelperImpl implements TaxonHelper {
     @Override
     public boolean isChildOf(String scientificName, String familyScientificName) {
     	
-    	Taxon taxon=taxonScientificNameCache.get(scientificName);
-		if(taxon==null)
-		{
-			taxon=getTaxonByScientificName(scientificName);
-			if(taxon==null)
-				return false;
-		}
-		
-          return taxon.isChildOf(familyScientificName);
+    	List <Taxon> taxons=getTaxonsByScientificName(scientificName);
+		if(taxons==null||taxons.size()==0)
+			return false;
+	
+	for(Taxon taxon:taxons)
+	{
+		if(taxon.isChildOf(familyScientificName))
+			return true;
+	}
+          return false;
     }
 
     @Override
     public boolean isOrganismValid(String scientificName) {
     	
-		Taxon taxon=taxonScientificNameCache.get(scientificName);
-        if(taxon==null)
+		List<Taxon> taxons=getTaxonsByScientificName(scientificName);
+        if(taxons==null||taxons.size()==0)
         {
-        	taxon=getTaxonByScientificName(scientificName);
+        	return false;
         }
-        return taxon!=null;
+        return true;
     }
 
     @Override
     public Taxon getTaxonById(Long taxId) {
-    	if(taxId==null)
-    		return null;
-    	TaxonFactory taxonFactory=new TaxonFactory();
+    	 
     	Taxon taxon=null;
-    try{
-    	String uri=taxidUri+taxId;
-    	if(taxonIdCache.get(taxId)==null)
-    	{
-    		 URL url = new URL(uri.replaceAll(" ", "%20"));
-    		if(isURLNotValid(url))
-    		{
-    			 taxonIdCache.put(taxId, taxon);
-    			 return taxon;
-    		}
-    		 BufferedReader in = null;
-    			in = new BufferedReader(new InputStreamReader(url.openStream()));
-    			String currLine = "";
-    			StringBuilder taxonString = new StringBuilder();
-    			while ((currLine = in.readLine()) != null) {
-    				taxonString.append(currLine);
-    			}
-    			if(taxonString!=null&&isJSONObjectValid(taxonString.toString()))
-    			{
-    				JSONObject jsonTaxonObject=new JSONObject(taxonString.toString());
-        			taxon=taxonFactory.createTaxon(jsonTaxonObject);
-        		}
-    			 taxonIdCache.put(taxId, taxon);
-    	}
-    	else
-    	{
-            taxon=taxonIdCache.get(taxId);
-    	}
-    }catch(Exception e)
-     {
-    	  return null;
-     }
-    	return taxon;
-
-        } 
+       try
+       {
+    	   taxon= taxonomyClient.getTaxonByTaxid(taxId);
+       }catch(Exception e)
+       {
+    	   return null;
+       }
+       return taxon;
+      } 
     
     @Override
     public List<Taxon> getTaxonsByScientificName(String scientificName) {
 
-    	if(scientificName==null)
+    	List<Taxon> taxons= new ArrayList<Taxon>();
+    	try{
+    		taxons.addAll(taxonomyClient.getTaxonByScientificName(scientificName));
+    	}catch(Exception e)
+    	{
     		return null;
-		TaxonFactory taxonFactory=new TaxonFactory();
-    	List<Taxon> taxons=new ArrayList<Taxon>();
-    	
-    	
-    try{
-    	String uri=scientificNameUri+scientificName;
-    	if(taxonsScientificNameCache.get(scientificName)==null)
-    	{
-    		    URL url = new URL(uri.replaceAll(" ", "%20"));
-    		    if(isURLNotValid(url))
-        		{
-    		    	taxonsScientificNameCache.put(scientificName, taxons);
-        			 return taxons;
-        		}
-        		
-    			BufferedReader in = null;
-    			in = new BufferedReader(new InputStreamReader(url.openStream()));
-    			String currLine = "";
-    			StringBuilder taxonString = new StringBuilder();
-    			while ((currLine = in.readLine()) != null) {
-    				taxonString.append(currLine);
-    			}
-    			if(taxonString!=null&&isJSONArrayValid(taxonString.toString()))
-    			{
-        		JSONArray jsonTaxonObject=new JSONArray(taxonString.toString());
-        		for(int i=0;i<jsonTaxonObject.length();i++)
-    			taxons.add(taxonFactory.createTaxon(jsonTaxonObject.getJSONObject(i)));
-    			}
-                taxonsScientificNameCache.put(scientificName, taxons);
     	}
-    	else
-    	{
-            taxons=taxonsScientificNameCache.get(scientificName);
-    	}
-    }catch(Exception e)
-     {
-	   return null;
-     }
     	return taxons;
+    	
     }
 
 @Override
     public Taxon getTaxonByScientificName(String scientificName) {
-
-    	if(scientificName==null)
+               List<Taxon> taxons=getTaxonsByScientificName(scientificName);
+    	if(taxons==null||taxons.size()==0)
     		return null;
-		TaxonFactory taxonFactory=new TaxonFactory();
-    	Taxon taxon=null;
-    	
-    	
-    try{
-    	if(taxonsScientificNameCache.get(scientificName)==null)
-    	{
-    		   List<Taxon> taxons=getTaxonsByScientificName(scientificName);
-    		   if(taxons!=null&&taxons.size()==1)
-    			   taxon=taxons.get(0);
-                taxonScientificNameCache.put(scientificName, taxon);
-    	}
-    	else
-    	{
-            taxon=taxonScientificNameCache.get(scientificName);
-    	}
-    }catch(Exception e)
-     {
-	   return null;
-     }
-    	return taxon;
+    	return taxons.get(0);
     }
     
     @Override
-    public Taxon getTaxonsByCommonName(String commonName) {
+    public List<Taxon> getTaxonsByCommonName(String commonName) {
 
-    	if(commonName==null)
+    	List<Taxon> taxons= new ArrayList<Taxon>();
+    	try{
+    		taxons.addAll(taxonomyClient.getTaxonByCommonName(commonName));
+    	}catch(Exception e)
+    	{
     		return null;
-		TaxonFactory taxonFactory=new TaxonFactory();
-    	Taxon taxon=null;
-    	
-    	
-    try{
-    	String uri=commonNameUri+commonName;
-    	if(taxonCommonNameCache.get(commonName)==null)
-    	{
-    		    URL url = new URL(uri.replaceAll(" ", "%20"));
-    		   	if(isURLNotValid(url))
-        		{
-        			taxonCommonNameCache.put(commonName, taxon);
-        			 return taxon;
-        		}
-    			BufferedReader in = null;
-    			in = new BufferedReader(new InputStreamReader(url.openStream()));
-    			String currLine = "";
-    			StringBuilder taxonString = new StringBuilder();
-    			while ((currLine = in.readLine()) != null) {
-    				taxonString.append(currLine);
-    			}
-    			if(taxonString!=null&&isJSONArrayValid(taxonString.toString()))
-    			{
-    			JSONArray jsonTaxonObject=new JSONArray(taxonString.toString());
-    			taxon=taxonFactory.createTaxon(jsonTaxonObject.getJSONObject(0));
-    			}
-    			taxonCommonNameCache.put(commonName, taxon);
     	}
-    	else
-    	{
-            taxon=taxonCommonNameCache.get(commonName);
-    	}
-    }catch(Exception e)
-     {
-	  return null;
-     }
-    	return taxon;
+    	return taxons;
     }
    
     @Override
     public boolean isOrganismFormal(String scientificName) 
 	{
-		Taxon taxon=taxonScientificNameCache.get(scientificName);
-		if(taxon==null)
+		List<Taxon> taxons=getTaxonsByScientificName(scientificName);
+		if(taxons==null||taxons.size()==0)
+    		return false;
+		for(Taxon taxon:taxons)
 		{
-			taxon=getTaxonByScientificName(scientificName);
-			if(taxon==null)
-			 return false;
+			if(taxon.isFormal())
+			return true;
 		}
-		
-		return taxon.isFormal();
+		return false;
 	}
     
     
@@ -274,36 +141,18 @@ public class TaxonHelperImpl implements TaxonHelper {
     @Override
 	public boolean isOrganismMetagenome(String scientificName) 
 	{
-		Taxon taxon=taxonScientificNameCache.get(scientificName);
-		if(taxon==null)
+    	List<Taxon> taxons=getTaxonsByScientificName(scientificName);
+    	if(taxons==null||taxons.size()==0)
+    		return false;
+		for(Taxon taxon:taxons)
 		{
-			taxon=getTaxonByScientificName(scientificName);
-			if(taxon==null)
-			  return false;
+			if(taxon.isMetagenome())
+			return true;
 		}
-		
-		return taxon.isMetagenome();
+		return false;
 	}
 
- private boolean isJSONArrayValid(String taxonString) {
-	    try {
-	        new JSONArray(taxonString);
-	    } catch (JSONException ex) {
-	           return false;
-	        }
-	    return true;
-	}
- 
- private boolean isJSONObjectValid(String taxonString) {
-	 try {
-	        new JSONObject(taxonString);
-	    } catch (JSONException ex) {
-	           return false;
-	        }
-	    return true;
-	}
- 
-	@Override
+  @Override
 	public boolean isProkaryotic(String scientificName) {
 		if (scientificName != null
 				&& isOrganismValid(scientificName)
@@ -314,41 +163,46 @@ public class TaxonHelperImpl implements TaxonHelper {
 		return false;
 	}
 	
-	boolean isURLNotValid(URL url) throws IOException
-	{
-		//String  proxy = "http://wwwcache.sanger.ac.uk";
-	    //String port = "3128";
-		    HttpURLConnection con=(HttpURLConnection) url.openConnection();
-		    con.connect();
-		    return con.getResponseCode()>=400;
-		
-	}
-	
 	@Override
 	public boolean isOrganismSubmittable(String scientificName) 
 	{
-		Taxon taxon=taxonScientificNameCache.get(scientificName);
+		try{
+		Taxon taxon=taxonomyClient.getSubmittableTaxonByScientificName(scientificName);
 		if(taxon==null)
+			return false;
+		}catch(Exception e)
 		{
-			taxon=getTaxonByScientificName(scientificName);
-			if(taxon==null)
-			 return false;
+			return false;
 		}
-		
-		return taxon.isSubmittable();
+		return true;
 	}
 	
 	@Override
 	public boolean isTaxidSubmittable(Long taxId) {
-		Taxon taxon=taxonIdCache.get(taxId);
+		try{
+		Taxon taxon=taxonomyClient.getSubmittableTaxonByTaxId(taxId);
 		if(taxon==null)
+			return false;
+		}catch(Exception e)
 		{
-			taxon=getTaxonById(taxId);
-			if(taxon==null)
-			 return false;
+			return false;
 		}
-		
-		return taxon.isSubmittable();
+		return true;
 	}
+	@Override
+	public boolean isAnyNameSubmittable(String anyName)
+	{
+		try{
+			Taxon taxon= taxonomyClient.getSubmittableTaxonByAnyName(anyName);
+			if(taxon==null)
+				return false;
+		  }
+		catch(Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
 }
 

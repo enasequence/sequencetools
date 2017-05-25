@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.entry.feature;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
@@ -25,8 +26,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.OrganismQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.taxonomy.HasTaxon;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.translation.TranslationTable;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.io.Serializable;
 

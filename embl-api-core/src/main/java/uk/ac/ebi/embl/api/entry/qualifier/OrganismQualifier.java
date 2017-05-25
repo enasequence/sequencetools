@@ -18,8 +18,9 @@ package uk.ac.ebi.embl.api.entry.qualifier;
 import java.io.Serializable;
 
 import uk.ac.ebi.embl.api.taxonomy.HasTaxon;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
-import uk.ac.ebi.embl.api.taxonomy.TaxonFactory;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+import uk.ac.ebi.ena.taxonomy.taxon.TaxonFactory;
+
 
 public class OrganismQualifier extends Qualifier implements HasTaxon, Serializable {
 	

@@ -26,10 +26,10 @@ import uk.ac.ebi.embl.api.entry.qualifier.CodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.*;
 

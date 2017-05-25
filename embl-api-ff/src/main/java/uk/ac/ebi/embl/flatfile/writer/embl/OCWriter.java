@@ -16,12 +16,12 @@
 package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.io.IOException;
 import java.io.Writer;

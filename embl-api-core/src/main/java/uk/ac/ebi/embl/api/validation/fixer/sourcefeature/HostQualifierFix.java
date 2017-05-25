@@ -18,12 +18,12 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.List;
 
@@ -54,15 +54,15 @@ public class HostQualifierFix extends FeatureValidationCheck
 			if(getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(hostQualifierValue))
 				continue;
 			
-			Taxon taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
+			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
 
-			if(taxon==null)
+			if(taxon==null||taxon.size()==0)
 			{
 				continue;
 			}
-			else if(taxon.getScientificName()!=null)
+			else if(taxon.get(0).getScientificName()!=null)
 			{
-				hostQualifier.setValue(taxon.getScientificName());
+				hostQualifier.setValue(taxon.get(0).getScientificName());
 				reportMessage(Severity.FIX, hostQualifier.getOrigin(), HOST_QUALIFIER_VALUE_FIX_ID, Qualifier.HOST_QUALIFIER_NAME,hostQualifier.getValue());
 			}
 		}

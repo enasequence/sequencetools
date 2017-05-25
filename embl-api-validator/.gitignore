@@ -10,3 +10,8 @@ build.number
 gradlew.bat
 bin
 gradle
+VAL_ERROR.txt
+VAL_INFO.txt
+VAL_FIXES.txt
+VAL_REPORTS.txt
+VAL_SUMMARY.txt

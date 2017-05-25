@@ -20,10 +20,10 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 @RemoteExclude
 public class HostQualifierCheck extends FeatureValidationCheck
 {
@@ -51,8 +51,8 @@ public class HostQualifierCheck extends FeatureValidationCheck
 		{
 			String hostQualifierValue=hostQualifier.getValue();
 			
-			Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
-			if(taxon!=null)
+			List<Taxon> taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
+			if(taxon!=null&&taxon.size()!=0)
 			{
 				reportError(hostQualifier.getOrigin(), INVALID_HOST_MESSAGE_ID,hostQualifier.getName());
 			}

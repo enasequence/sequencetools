@@ -17,12 +17,10 @@ package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import java.sql.SQLException;
 import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -30,12 +28,12 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.feature.QualifierValueRequiredQualifierValueCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.SourceFeatureQualifierCheck;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SourceFeatureQualifierCheckTest {
 	private Entry entry;
@@ -46,7 +44,7 @@ public class SourceFeatureQualifierCheckTest {
 	private Feature feature;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws SQLException {
 		ValidationMessageManager
 				.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		EntryFactory entryFactory = new EntryFactory();
@@ -55,11 +53,13 @@ public class SourceFeatureQualifierCheckTest {
 		DataSet dataSet = new DataSet();
 		entry = entryFactory.createEntry();
 		source = featureFactory.createSourceFeature();
-		
 		entry.addFeature(source);
-		
 		dataSet.addRow(new DataRow("strain,isolate,clone", "gene", ".*rRNA$"));
 		check = new SourceFeatureQualifierCheck(dataSet);
+		EmblEntryValidationPlanProperty planProperty=new EmblEntryValidationPlanProperty();
+		planProperty.taxonHelper.set(new TaxonHelperImpl());
+		check.setEmblEntryValidationPlanProperty(planProperty);
+
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -194,5 +194,21 @@ public class SourceFeatureQualifierCheckTest {
 		ValidationResult result = check.check(entry);
 		assertEquals(1,
 				result.count("SourceFeatureQualifierCheck5", Severity.ERROR));
+		}
+	
+	@Test
+	public void testCheck_OrganismSubmittable() {
+		source1 = featureFactory.createSourceFeature();
+		entry.addFeature(source1);
+		source.addQualifier(qualifierFactory.createQualifier("organism","uncultured fungus"));
+		ValidationResult result = check.check(entry);
+		assertEquals(0,
+				result.count("SourceFeatureQualifierCheck8", Severity.ERROR));
+		SourceFeature source2 = featureFactory.createSourceFeature();
+		entry.addFeature(source2);
+		source2.addQualifier(qualifierFactory.createQualifier("organism","Pseudendoclonium basiliense"));
+		result = check.check(entry);
+		assertEquals(0,
+				result.count("SourceFeatureQualifierCheck8", Severity.ERROR));
 		}
 }

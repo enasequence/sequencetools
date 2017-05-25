@@ -15,6 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.taxonomy;
 
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+
 public interface HasTaxon {
 
 	public Taxon getTaxon();

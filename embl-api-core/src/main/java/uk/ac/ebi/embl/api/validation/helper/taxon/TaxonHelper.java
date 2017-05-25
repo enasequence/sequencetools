@@ -17,7 +17,8 @@ package uk.ac.ebi.embl.api.validation.helper.taxon;
 
 import java.util.List;
 
-import uk.ac.ebi.embl.api.taxonomy.Taxon;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+
 
 public interface TaxonHelper {
 
@@ -59,19 +60,21 @@ public interface TaxonHelper {
 
     boolean isOrganismValid(String scientificName);
     
+    uk.ac.ebi.ena.taxonomy.taxon.Taxon getTaxonById(Long taxId);
+    
     boolean isOrganismMetagenome(String scientificName);
-
-    Taxon getTaxonById(Long taxId);
     boolean isOrganismFormal(String scientificName);
+    boolean isProkaryotic(String scientificName);
 
     Taxon getTaxonByScientificName(String scientificName);
     
     List<Taxon> getTaxonsByScientificName(String scientificName);
 
-    Taxon getTaxonsByCommonName(String commonName);
-    boolean isProkaryotic(String scientificName);
-
+    List<Taxon> getTaxonsByCommonName(String commonName);
+  
 	boolean isOrganismSubmittable(String scientificName);
 
     boolean isTaxidSubmittable(Long taxId);
+    
+    boolean isAnyNameSubmittable(String anyName);
 }
