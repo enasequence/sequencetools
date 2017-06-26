@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
+import uk.ac.ebi.embl.api.entry.feature.PeptideFeature;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
 import uk.ac.ebi.embl.api.validation.EntryValidations;
@@ -144,6 +145,7 @@ public class CdsTranslator {
 
         if (expectedTranslation == null ||
 			expectedTranslation.length() == 0 ) {
+        	if(!(cds instanceof PeptideFeature))
 			cds.setTranslation(conceptualTranslation); // Accept the translation.
 		}
 		else if (acceptTranslation 

@@ -314,6 +314,7 @@ public class Translator extends AbstractTranslator {
 			return validationResult;
 			if (!translationTable.equals(TranslationTable.DEFAULT_TRANSLATION_TABLE)) {
 			   // Set feature translation table.
+				if(!(feature instanceof PeptideFeature))
 				feature.setTranslationTable(translationTable);
 			}
 

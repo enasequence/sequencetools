@@ -101,8 +101,6 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 					 if(!isAnyNameSubmittable)
 						 reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName());
 				}
-				
-				
 			}
 			if (SequenceEntryUtils.isQualifierAvailable(
 					Qualifier.ORGANISM_QUALIFIER_NAME, feature)) {
@@ -144,7 +142,6 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
 		}
 		
-
 		for (DataRow dataRow : dataSet.getRows()) {
 			String[] requiredSourceQualifiers = dataRow.getStringArray(0);
 			String qualifierName = dataRow.getString(1);

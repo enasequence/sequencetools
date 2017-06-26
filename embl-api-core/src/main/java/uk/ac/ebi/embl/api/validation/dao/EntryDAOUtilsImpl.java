@@ -118,7 +118,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			}
 		} finally
 		{
-
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(pstmt);
 		}

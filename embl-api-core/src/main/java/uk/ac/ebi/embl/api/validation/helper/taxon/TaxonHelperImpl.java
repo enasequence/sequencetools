@@ -16,20 +16,23 @@
 package uk.ac.ebi.embl.api.validation.helper.taxon;
 
 import java.util.*;
-
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientCacheImpl;
+import uk.ac.ebi.ena.taxonomy.taxon.SubmittableTaxon;
+import uk.ac.ebi.ena.taxonomy.taxon.SubmittableTaxon.SubmittableTaxonStatus;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
-
 
 public class TaxonHelperImpl implements TaxonHelper {
 	
 	TaxonomyClient taxonomyClient= null;
-    public TaxonHelperImpl() {
-    	taxonomyClient= new TaxonomyClientImpl();
+	
+    public TaxonHelperImpl() 
+    {
+    	taxonomyClient= new TaxonomyClientCacheImpl();
     }
     @Override
-    public boolean isChildOfAny(String scientificName, String...parentScientificNames)  {
+    public boolean isChildOfAny(String scientificName, String...parentScientificNames)  
+    {
 
 			
 		for(String parentName : parentScientificNames)
@@ -41,16 +44,16 @@ public class TaxonHelperImpl implements TaxonHelper {
 	}
     
     @Override
-	public boolean isNotChildOfAny(String scientificName, String...parentScientificNames)  {
-
+	public boolean isNotChildOfAny(String scientificName, String...parentScientificNames)  
+    {
 		return !isChildOfAny(scientificName,scientificName);
 	}
 	
 
     @Override
-    public boolean isChildOf(String scientificName, String familyScientificName) {
-    	
-    	List <Taxon> taxons=getTaxonsByScientificName(scientificName);
+    public boolean isChildOf(String scientificName, String familyScientificName) 
+    {
+       	List <Taxon> taxons=getTaxonsByScientificName(scientificName);
 		if(taxons==null||taxons.size()==0)
 			return false;
 	
@@ -101,7 +104,7 @@ public class TaxonHelperImpl implements TaxonHelper {
     	
     }
 
-@Override
+   @Override
     public Taxon getTaxonByScientificName(String scientificName) {
                List<Taxon> taxons=getTaxonsByScientificName(scientificName);
     	if(taxons==null||taxons.size()==0)
@@ -152,7 +155,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 		return false;
 	}
 
-  @Override
+    @Override
 	public boolean isProkaryotic(String scientificName) {
 		if (scientificName != null
 				&& isOrganismValid(scientificName)
@@ -166,41 +169,27 @@ public class TaxonHelperImpl implements TaxonHelper {
 	@Override
 	public boolean isOrganismSubmittable(String scientificName) 
 	{
-		try{
-		Taxon taxon=taxonomyClient.getSubmittableTaxonByScientificName(scientificName);
-		if(taxon==null)
+		SubmittableTaxon taxon=taxonomyClient.getSubmittableTaxonByScientificName(scientificName);
+		if(taxon.getSubmittableTaxonStatus()!=SubmittableTaxonStatus.SUBMITTABLE_TAXON)
 			return false;
-		}catch(Exception e)
-		{
-			return false;
-		}
 		return true;
 	}
 	
 	@Override
 	public boolean isTaxidSubmittable(Long taxId) {
-		try{
-		Taxon taxon=taxonomyClient.getSubmittableTaxonByTaxId(taxId);
-		if(taxon==null)
+		SubmittableTaxon taxon=taxonomyClient.getSubmittableTaxonByTaxId(taxId);
+		if(taxon.getSubmittableTaxonStatus()!=SubmittableTaxonStatus.SUBMITTABLE_TAXON)
 			return false;
-		}catch(Exception e)
-		{
-			return false;
-		}
 		return true;
 	}
+	
 	@Override
 	public boolean isAnyNameSubmittable(String anyName)
 	{
-		try{
-			Taxon taxon= taxonomyClient.getSubmittableTaxonByAnyName(anyName);
-			if(taxon==null)
-				return false;
-		  }
-		catch(Exception e)
-		{
+		
+		SubmittableTaxon taxon = taxonomyClient.getSubmittableTaxonByAnyName(anyName);
+		if (taxon.getSubmittableTaxonStatus() != SubmittableTaxonStatus.SUBMITTABLE_TAXON)
 			return false;
-		}
 		return true;
 	}
 	
