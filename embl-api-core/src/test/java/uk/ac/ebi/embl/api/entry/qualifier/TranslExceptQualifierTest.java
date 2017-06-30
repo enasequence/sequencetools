@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.LocalBase;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
@@ -37,9 +38,8 @@ public class TranslExceptQualifierTest {
 		TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213..215,aa:Phe)");
 		assertEquals(qual.getAminoAcid().getAbbreviation(), "Phe");
 		assertEquals(qual.getAminoAcid().getLetter(), new Character('F'));
-		assertEquals(qual.getLocation().getBeginPosition(), new Long(213));
-		assertEquals(qual.getLocation().getEndPosition(), new Long(215));
-		assertTrue(qual.getLocation() instanceof LocalRange);
+		assertEquals(qual.getLocations().getMinPosition(), new Long(213));
+		assertEquals(qual.getLocations().getMaxPosition(), new Long(215));
 	}
 
 	@Test
@@ -47,15 +47,14 @@ public class TranslExceptQualifierTest {
 		TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213,aa:TERM)");
 		assertEquals(qual.getAminoAcid().getAbbreviation(), "TERM");
 		assertEquals(qual.getAminoAcid().getLetter(), new Character('*'));
-		assertEquals(qual.getLocation().getBeginPosition(), new Long(213));
-		assertEquals(qual.getLocation().getEndPosition(), new Long(213));
-		assertTrue(qual.getLocation() instanceof LocalBase);
+		assertEquals(qual.getLocations().getMinPosition(), new Long(213));
+		assertEquals(qual.getLocations().getMaxPosition(), new Long(213));
 	}
 	
 	@Test(expected=ValidationException.class)
 	public void testInvalidQualifier1() throws ValidationException {
 		TranslExceptQualifier qual = new TranslExceptQualifier("os:213..215,aa:Phe)");
-		assertEquals(qual.getLocation().getBeginPosition(), new Long(213));
+		assertEquals(qual.getLocations().getMinPosition(), new Long(213));
 	}
 
 	@Test(expected=ValidationException.class)

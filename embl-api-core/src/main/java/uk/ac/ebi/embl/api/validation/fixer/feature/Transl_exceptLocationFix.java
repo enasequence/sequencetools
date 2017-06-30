@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
@@ -27,15 +28,14 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 @Description("Invalid Location:Complement ignored in transl_except")
 public class Transl_exceptLocationFix extends FeatureValidationCheck
 {
 
 	private static final String Transl_ExceptValueFix_ID = "transl_exceptLocationFix";
-	private static final Pattern COMPATTERN = Pattern
-			.compile("^\\s*\\(\\s*pos\\s*:\\s*(?:complement\\s*\\(\\s*(?:(\\d+)(?:\\s*\\.\\.\\s*(\\d+)){0,1})\\s*\\))\\s*,\\s*aa\\s*:\\s*([^)\\s]+)\\s*\\)\\s*$");
-
+	
 	public Transl_exceptLocationFix()
 	{
 	}
@@ -54,32 +54,33 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck
 
 			TranslExceptQualifier tQualifier = (TranslExceptQualifier) tequalifier;
 			String teValue = tequalifier.getValue();
-			Matcher compmatcher = COMPATTERN.matcher(teValue);
-			if (compmatcher.matches())
-			{
-				StringBuffer fixedValue = new StringBuffer("(pos:");
+			StringBuffer fixedValue = new StringBuffer("(pos:");
 
 				try
 				{
-					Location location = tQualifier.getLocation();
-					String begin = location.getBeginPosition().toString();
-					String end = location.getEndPosition().toString();
-					fixedValue.append(begin);
-					if (!begin.equals(end))
+		           boolean isComplement= false;
+					CompoundLocation<Location> location = tQualifier.getLocations();
+					for(Location slocation: location.getLocations())
 					{
-						fixedValue.append("..");
-						fixedValue.append(end);
+						if(slocation.isComplement())
+						{
+							isComplement=true;
+							slocation.setComplement(false);
+						}
 					}
+					boolean complement = location.isComplement();
+					location.setComplement(false);
+					String locationString=LocationToStringCoverter.renderCompoundLocation(location);
+					fixedValue.append(locationString);
 					fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
 					tQualifier.setValue(fixedValue.toString());
+					if(isComplement)
 					reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
 				} catch (ValidationException e)
 				{
 
 				}
 			}
-
-		}
 
 		return result;
 	}

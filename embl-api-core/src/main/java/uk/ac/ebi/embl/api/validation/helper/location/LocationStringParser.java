@@ -64,8 +64,7 @@ public class LocationStringParser
 		{
 			throwValueException(object);
 		}
-
-		boolean isComplement = isValue(GROUP_COMPLEMENT);
+    	boolean isComplement = isValue(GROUP_COMPLEMENT);
 
 		if (isValue(GROUP_OPERATOR))
 		{

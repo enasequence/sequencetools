@@ -81,6 +81,7 @@ public enum ValidationUnit
 				QualifierValueNotQualifierEntryCheck.class,
 				QualifierValueRequiredQualifierValueEntryCheck.class,
 				AntiCodonQualifierCheck.class,
+				TranslExceptQualifierCheck.class,
 				CdsFeatureAminoAcidCheck.class,
 				DeprecatedQualifiersCheck.class,
 				EC_numberandProductValueCheck.class,

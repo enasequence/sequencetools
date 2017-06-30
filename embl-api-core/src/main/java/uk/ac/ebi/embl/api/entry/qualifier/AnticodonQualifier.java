@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationStringParser;
 
 
-public class AnticodonQualifier extends Qualifier implements Serializable,LocationQualifier {
+public class AnticodonQualifier extends Qualifier implements Serializable,CompoundLocationQualifier {
 	
 	private static final long serialVersionUID = -4130304812449439118L;
 	
@@ -100,20 +100,6 @@ public class AnticodonQualifier extends Qualifier implements Serializable,Locati
 		return matcher.group(7);
 	}
 
-	@Override
-	public boolean setLocation(Location location) throws ValidationException
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Location getLocation() throws ValidationException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public String getAminoAcidString() throws ValidationException
 	{
 		if (getValue() == null)
@@ -133,6 +119,14 @@ public class AnticodonQualifier extends Qualifier implements Serializable,Locati
 	public String getValue(String pos,String aminoAcid,String seq)
 	{
 		return "(pos:"+pos+",aa:"+aminoAcid+",seq:"+seq+")";
+	}
+
+	@Override
+	public boolean setLocations(CompoundLocation<Location> location)
+			throws ValidationException
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

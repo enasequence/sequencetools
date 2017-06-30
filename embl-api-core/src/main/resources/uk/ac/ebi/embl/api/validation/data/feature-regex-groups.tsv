@@ -11,7 +11,7 @@ country	1	FALSE	Afghanistan,Albania,Algeria,American Samoa,Andorra,Angola,Anguil
 satellite	1	TRUE	microsatellite,minisatellite,satellite
 lat_lon	3	FALSE	N,S
 lat_lon	6	FALSE	E,W
-transl_except	10	FALSE	3Hyp,4Abu,4Hyp,Aad,Abu,Acp,Ahe,Aib,Ala,Apm,Arg,Asn,Asp,Asx,Cys,Dbu,Des,Dpm,Dpr,EtAsn,EtGly,Gln,Glu,Glx,Gly,His,Hyl,Ide,Ile,Leu,Lys,MeGly,MeIle,MeLys,MeVal,Met,Nle,Nva,OTHER,Orn,Phe,Pro,Pyl,Sec,Ser,TERM,Thr,Trp,Tyr,Val,Xaa,Xle,aHyl,aIle,bAad,bAib,bAla
+transl_except	5	FALSE	3Hyp,4Abu,4Hyp,Aad,Abu,Acp,Ahe,Aib,Ala,Apm,Arg,Asn,Asp,Asx,Cys,Dbu,Des,Dpm,Dpr,EtAsn,EtGly,Gln,Glu,Glx,Gly,His,Hyl,Ide,Ile,Leu,Lys,MeGly,MeIle,MeLys,MeVal,Met,Nle,Nva,OTHER,Orn,Phe,Pro,Pyl,Sec,Ser,TERM,Thr,Trp,Tyr,Val,Xaa,Xle,aHyl,aIle,bAad,bAib,bAla
 inference	3	TRUE	ab initio prediction,alignment,nucleotide motif,profile,protein motif,similar to AA sequence,similar to DNA sequence,similar to RNA sequence,similar to RNA sequence{COM} EST,similar to RNA sequence{COM} mRNA,similar to RNA sequence{COM} other RNA,similar to sequence
 anticodon	5	FALSE	3Hyp,4Abu,4Hyp,Aad,Abu,Acp,Ahe,Aib,Ala,Apm,Arg,Asn,Asp,Asx,Cys,Dbu,Des,Dpm,Dpr,EtAsn,EtGly,Gln,Glu,Glx,Gly,His,Hyl,Ide,Ile,Leu,Lys,MeGly,MeIle,MeLys,MeVal,Met,Nle,Nva,OTHER,Orn,Phe,Pro,Pyl,Sec,Ser,TERM,Thr,Trp,Tyr,Val,Xaa,Xle,aHyl,aIle,bAad,bAib,bAla,SeC
 mobile_element_type	1	TRUE	LINE,MITE,SINE,insertion sequence,integron,non-LTR retrotransposon,other,retrotransposon,transposon

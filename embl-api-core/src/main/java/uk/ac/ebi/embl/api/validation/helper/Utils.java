@@ -382,12 +382,12 @@ public class Utils {
 						TranslExceptQualifier translExcepttqualifier = new TranslExceptQualifier(
 								qualifier.getValue());
 
-						if (shiftLocationQualifier(translExcepttqualifier,
+						/*if (shiftLocationQualifier(translExcepttqualifier,
 								deletedBeginNs, feature) != null) {
 							validationMessages.add(shiftLocationQualifier(
 									translExcepttqualifier, deletedBeginNs,
 									feature));
-						}
+						}*/
 					} /*else if (qualifier.getName().equals(
                             Qualifier.ANTICODON_QUALIFIER_NAME)) {
 
@@ -720,7 +720,7 @@ public class Utils {
 
 					// TRANSL_EXCEPT_QUALIFIER
 
-					if (qualifier.getName().equals(
+					/*if (qualifier.getName().equals(
 							qualifier.TRANSL_EXCEPT_QUALIFIER_NAME)) {
 						TranslExceptQualifier translExcepttqualifier = new TranslExceptQualifier(
 								qualifier.getValue());
@@ -731,7 +731,7 @@ public class Utils {
 									translExcepttqualifier, deletedBeginNs,
 									feature));
 						}
-					} /*else if (qualifier.getName().equals(
+					}else if (qualifier.getName().equals(
 							qualifier.ANTICODON_QUALIFIER_NAME)) {
 
 						AnticodonQualifier antiCodonqualifier = new AnticodonQualifier(
@@ -744,7 +744,7 @@ public class Utils {
 											feature));
 						}
 
-					}*/ else if (qualifier.getName().equals(
+					}*/  if (qualifier.getName().equals(
 							qualifier.RPT_UNIT_RANGE_QUALIFIER_NAME)) {
 
 						Rpt_Unit_RangeQualifier rptUnitRangequalifier = new Rpt_Unit_RangeQualifier(

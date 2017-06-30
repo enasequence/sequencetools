@@ -351,8 +351,8 @@ public class Translator extends AbstractTranslator {
         feature.getComplexQualifiers(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME, translExceptQualifiers);
 
         for (TranslExceptQualifier qualifier : translExceptQualifiers) {
-            Long beginPosition = qualifier.getLocation().getBeginPosition();
-            Long endPosition = qualifier.getLocation().getEndPosition();
+            Long beginPosition = qualifier.getLocations().getMinPosition();
+            Long endPosition = qualifier.getLocations().getMaxPosition();
 
             Integer relativeBeginPos =
                     feature.getLocations().getRelativeIntPosition(beginPosition);

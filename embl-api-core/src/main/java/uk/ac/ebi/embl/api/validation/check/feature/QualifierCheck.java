@@ -286,7 +286,7 @@ public class QualifierCheck extends FeatureValidationCheck {
     {
     	if(qualifier!=null&&qualifier.getName().equals(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME))
     	{
-    		Matcher matcher = TranslExceptQualifier.COMPATTERN.matcher(qualifier.getValue());
+    		Matcher matcher = TranslExceptQualifier.PATTERN.matcher(qualifier.getValue());
     		if(matcher.matches())
     		{
     			return true;
