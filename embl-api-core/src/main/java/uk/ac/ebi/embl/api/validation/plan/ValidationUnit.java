@@ -250,6 +250,10 @@ public enum ValidationUnit
         		AssemblyLevelEntryNameCheck.class,
         		ChromosomeSourceQualifierCheck.class
 		   ),
+		   COMMON_CHECKS
+		   (
+				   AsciiCharacterCheck.class
+		   ),
 			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES
 			(
 			);

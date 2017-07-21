@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
@@ -107,6 +108,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
 			return;
 		}
 		String blockString = block.toString();
+		//blockString=EntryUtils.convertNonAsciiStringtoAsciiString(blockString);
 		
 		blockString=StringEscapeUtils.unescapeHtml4(blockString);
 		

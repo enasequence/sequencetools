@@ -53,6 +53,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			checks.addAll(ValidationUnit.ASSEMBLY_LEVEL_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.FASTA_AGP_FEATURE_CHECKS.getValidationUnit());
+			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
  				{
 				fixes.addAll(ValidationUnit.AGP_SPECIFIC_FIXES.getValidationUnit());
@@ -68,6 +69,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 
 			checks.addAll(ValidationUnit.MASTER_HEADER_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
+			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
 			{
 				fixes.addAll(ValidationUnit.MASTER_HEADER_ONLY_FIXES.getValidationUnit());
@@ -86,6 +88,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			checks.addAll(ValidationUnit.SOURCE_DEPENDSON_SEQUENCE_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.ASSEMBLY_LEVEL_CHECKS.getValidationUnit());
+			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
 			{
 				fixes.addAll(ValidationUnit.MASTER_HEADER_ONLY_FIXES.getValidationUnit());

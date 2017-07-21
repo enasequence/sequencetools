@@ -19,17 +19,11 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
