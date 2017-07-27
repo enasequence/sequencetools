@@ -246,17 +246,9 @@ public abstract class CompoundLocation<E extends Location> extends
 	public CompoundLocation<Location> getSortedLocations()
 	{
 		
-		Collections.sort(this.locations, new Comparator<E>()
-		{
-			@Override
-			public int compare(	final E location1,
-								final E location2)
-			{
-				return (location1.getBeginPosition() < location2.getBeginPosition()) ? -1 
+		Collections.sort(this.locations,(location1,location2)->(location1.getBeginPosition() < location2.getBeginPosition()) ? -1 
 						:(location1.getBeginPosition()== location2.getBeginPosition()&&location1.getEndPosition()<location2.getEndPosition())?-1
-						:1;
-			}
-		});
+						:1);
 		return (CompoundLocation<Location>) this;	
 	}
 	

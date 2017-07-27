@@ -82,5 +82,18 @@ public class RemoteBetween extends Between implements RemoteLocation, Serializab
 		builder.append("accession", getAccession());
 		builder.append("version", getVersion());
 		return builder.toString();
+	}
+
+	@Override
+	public void setAccession(String accession)
+	{
+		sequenceAccession.setAccession(accession);
+	}
+
+	@Override
+	public void setVersion(int version)
+	{
+		sequenceAccession.setVersion(version);
+		
 	}	
 }

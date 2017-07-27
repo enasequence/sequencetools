@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -51,13 +52,13 @@ public class FeatureLocationCheckTest
 	}
 	
 	@Test
-	public void testCheck_NoFeature()
+	public void testCheck_NoFeature() throws ValidationEngineException
 	{
 		assertTrue(check.check(null).isValid());
 	}
 	
 	@Test
-	public void testCheck_noLocation()
+	public void testCheck_noLocation() throws ValidationEngineException
 	{
 		FeatureFactory featureFactory = new FeatureFactory();
 		Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
@@ -68,7 +69,7 @@ public class FeatureLocationCheckTest
 	
 	
 	@Test
-	public void testCheck_invalidOrderLocation()
+	public void testCheck_invalidOrderLocation() throws ValidationEngineException
 	{
 		FeatureFactory featureFactory = new FeatureFactory();
 		Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
@@ -81,7 +82,7 @@ public class FeatureLocationCheckTest
 	}
 	
 	@Test
-	public void testCheck_invalidOverlapLocation()
+	public void testCheck_invalidOverlapLocation() throws ValidationEngineException
 	{
 		FeatureFactory featureFactory = new FeatureFactory();
 		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
@@ -95,7 +96,7 @@ public class FeatureLocationCheckTest
 		assertEquals(1, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
 	}
 	@Test
-	public void testCheck_validOverlapLocation1()
+	public void testCheck_validOverlapLocation1() throws ValidationEngineException
 	{
 		FeatureFactory featureFactory = new FeatureFactory();
 		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
@@ -111,7 +112,7 @@ public class FeatureLocationCheckTest
 	}
 	
 	@Test
-	public void testCheck_validOverlapLocation2()
+	public void testCheck_validOverlapLocation2() throws ValidationEngineException
 	{
 		FeatureFactory featureFactory = new FeatureFactory();
 		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);

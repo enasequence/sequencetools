@@ -238,7 +238,8 @@ public enum ValidationUnit
 				AssemblyTopologyFix.class,
 				AssemblySourceQualiferFix.class,
 				AssemblyLevelSequenceFix.class,
-				AssemblyLevelSubmitterReferenceFix.class
+				AssemblyLevelSubmitterReferenceFix.class,
+				AssemblyFeatureRemoteLocationFix.class
     		 ),
     	    ASSEMBLY_LEVEL_CHECKS
             (

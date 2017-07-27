@@ -73,14 +73,12 @@ public class EnaValidator
 	public static final String write_de_arg = "-de";
 	public static final String wrap_arg = "-wrap";
 	public static FileType fileType = FileType.EMBL;
-
 	public static final String file_format = "-f";
 	public static final String prefix_token = "-prefix";
 	public static final String min_gap_length_token = "-min_gap_length";
 	public static final String assembly_token = "-assembly";
 	public static final String transTable_token = "-table";
 	public static final String version_token="-version";
-
 	private static final String fileformatString = "File format(optional) Values:'embl','genbank','gff3','assembly'";
 	private static final String log_levelString = "Log level(optional) Values : 0(Quiet), 1(Summary), 2(Verbose)";
 	private static final String remoteString = "Remote, is this being run outside the EBI(optional)";

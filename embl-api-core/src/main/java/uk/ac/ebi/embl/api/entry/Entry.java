@@ -690,15 +690,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	
 	public List<AgpRow> getSortedAGPRows()
 	{
-		Collections.sort(agpRows, new Comparator<AgpRow>()
-		{
-			@Override
-			public int compare(	final AgpRow object1,
-								final AgpRow object2)
-			{
-				return (object1.getPart_number() < object2.getPart_number()) ? -1 : 1;
-			}
-		});
+		Collections.sort(agpRows,(object1,object2)->object1.getPart_number() < object2.getPart_number() ? -1 : 1);
 		return agpRows;	
 	}
 	

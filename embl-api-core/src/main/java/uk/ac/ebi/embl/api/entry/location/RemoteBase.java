@@ -81,5 +81,19 @@ public class RemoteBase extends Base implements RemoteLocation, Serializable {
 		builder.append("accession", getAccession());
 		builder.append("version", getVersion());
 		return builder.toString();
+	}
+
+	@Override
+	public void setAccession(String accession)
+	{
+		sequenceAccession.setAccession(accession);
+		
+	}
+
+	@Override
+	public void setVersion(int version)
+	{
+		sequenceAccession.setVersion(version);
+		
 	}	
 }

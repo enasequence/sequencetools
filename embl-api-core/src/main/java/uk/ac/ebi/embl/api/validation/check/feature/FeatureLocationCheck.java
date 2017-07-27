@@ -22,9 +22,11 @@ import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -38,20 +40,23 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
     private static final String LOCATION_MISSING_ID = "FeatureLocationCheck-2";
     private static final String LOCATION_ORDER_ID = "FeatureLocationCheck-3";
     private static final String LOCATION_OVERLAP_ID = "FeatureLocationCheck-4";
+    private static final String INVALID_REMOTELOCATION_ID = "FeatureLocationCheck-5";
+
 
     private Entry entry;
     
     public void setEntry(Entry entry) {
         this.entry = entry;
     }
-    public ValidationResult check(Feature feature) {
+    public ValidationResult check(Feature feature) throws ValidationEngineException {
         result = new ValidationResult();
 
         if (feature == null) {
 			return result;
 		}
         
-      
+      try
+      {
 
         CompoundLocation<Location> compoundLocation = feature.getLocations();
 
@@ -78,7 +83,13 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
 					location.getBeginPosition() > location.getEndPosition())) {
 				reportError(feature.getOrigin(), LOCATION_ORDER_ID);
 			}
-            
+            if(location instanceof RemoteLocation)
+            {
+            	if(getEntryDAOUtils()!=null&&!getEntryDAOUtils().isEntryExists(((RemoteLocation) location).getAccession()))
+            	{
+            		reportError(feature.getOrigin(), INVALID_REMOTELOCATION_ID,feature.getName());	
+            	}
+            }
             }
         if(compoundLocation.hasOverlappingLocation())
         {
@@ -90,8 +101,11 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
         	}
           		
         }
-
-		return result;
+      }catch(Exception e)
+      {
+    	  throw new ValidationEngineException(e.getMessage());
+      }
+      return result;
 	}
 
 }

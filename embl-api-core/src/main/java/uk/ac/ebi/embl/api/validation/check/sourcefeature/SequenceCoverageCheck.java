@@ -123,11 +123,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		}
 
 		//sorts location so they will be checked in proper order
-		Collections.sort(sourceLocations, new Comparator<Location>() {
-			public int compare(Location o1, Location o2) {
-				return o1.getBeginPosition().compareTo(o2.getBeginPosition());
-			}
-		});
+		Collections.sort(sourceLocations, (o1,o2)->o1.getBeginPosition().compareTo(o2.getBeginPosition()));
 
 
         Iterator<Location> locationIter = sourceLocations.iterator();

@@ -83,4 +83,18 @@ public class RemoteRange extends Range implements RemoteLocation, Serializable {
 		builder.append("version", getVersion());
 		return builder.toString();
 	}
+
+	@Override
+	public void setAccession(String accession)
+	{
+		sequenceAccession.setAccession(accession);
+		
+	}
+
+	@Override
+	public void setVersion(int version)
+	{
+		sequenceAccession.setVersion(version);
+		
+	}
 }

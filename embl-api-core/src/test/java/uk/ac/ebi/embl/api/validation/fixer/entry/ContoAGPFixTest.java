@@ -201,5 +201,26 @@ public class ContoAGPFixTest {
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.check(entry);
 	}
+	@Test
+	public void testCheck_featureOrder() throws ValidationEngineException {
+		Order<Location> order1 = new Order<Location>();
+	    order1.addLocation(locationFactory.createLocalRange(14l,20l));
+	    Order<Location> order2 = new Order<Location>();
+	    order2.addLocation(locationFactory.createLocalRange(13l,15l));
+	    List<Feature> features= new ArrayList<Feature>();
+		Feature feature1= (new FeatureFactory()).createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
+		feature1.setLocations(order1);
+		Feature feature2= (new FeatureFactory()).createFeature(Feature.CDS_FEATURE_NAME);
+		feature2.setLocations(order2);
+		features.add(feature1);
+		features.add(feature2);
+		assertEquals(Feature.ASSEMBLY_GAP_FEATURE_NAME,features.get(0).getName());
+		assertEquals(Feature.CDS_FEATURE_NAME,features.get(1).getName());
+		features=  check.getSortedAssemblyGapFeatures(features);
+		assertEquals(Feature.CDS_FEATURE_NAME,features.get(0).getName());
+		assertEquals(Feature.ASSEMBLY_GAP_FEATURE_NAME,features.get(1).getName());
+
+	}
+
 	
 }

@@ -215,14 +215,7 @@ public class ContoAGPFix extends EntryValidationCheck
 
 		public List<Feature> getSortedAssemblyGapFeatures(List<Feature> assemblyGapFeature)
 		{
-			Collections.sort(assemblyGapFeature, new Comparator<Feature>()
-			{
-				@Override
-				public int compare(final Feature feature1, final Feature feature2)
-				{
-					return (feature1.getLocations().getMinPosition() < feature2.getLocations().getMinPosition()) ? -1 : 1;
-				}
-			});
+			Collections.sort(assemblyGapFeature,(feature1,feature2)->(feature1.getLocations().getMinPosition() < feature2.getLocations().getMinPosition()) ? -1 : 1);
 			return assemblyGapFeature;
 		}
 }

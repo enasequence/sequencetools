@@ -19,4 +19,6 @@ public interface RemoteLocation {
 
 	String getAccession();
 	Integer getVersion();
+	void setAccession(String accession);
+	void setVersion(int version);
 }
