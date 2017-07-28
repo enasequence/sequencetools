@@ -16,10 +16,8 @@
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import java.sql.SQLException;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
@@ -32,6 +30,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -45,6 +44,7 @@ public class AssemblyFeatureRemoteLocationFixTest {
     public FeatureFactory featureFactory;
     public LocationFactory locationFactory;
     private EntryDAOUtils entryDAOUtils;
+    private EmblEntryValidationPlanProperty property;
 
     @Before
 	public void setUp() {
@@ -54,6 +54,7 @@ public class AssemblyFeatureRemoteLocationFixTest {
         locationFactory = new LocationFactory();
         feature = featureFactory.createFeature("feature");
     	entryDAOUtils=createMock(EntryDAOUtils.class);
+    	property= new EmblEntryValidationPlanProperty();
         check = new AssemblyFeatureRemoteLocationFix();
     }
 
@@ -89,7 +90,9 @@ public class AssemblyFeatureRemoteLocationFixTest {
         Order<Location> order = new Order<Location>();
         order.addLocation(locationFactory.createRemoteRange("A00001", 1, 11l, 22l));
         feature.setLocations(order);
-        expect(entryDAOUtils.getAssemblyEntryAccession("A00001")).andReturn("A00001.1");
+        property.analysis_id.set("ERZ00001");
+        check.setEmblEntryValidationPlanProperty(property);
+        expect(entryDAOUtils.getAssemblyEntryAccession("A00001",property.analysis_id.get())).andReturn("A00001.1");
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
         ValidationResult validationResult = check.check(feature);
@@ -101,7 +104,9 @@ public class AssemblyFeatureRemoteLocationFixTest {
         Order<Location> order = new Order<Location>();
         order.addLocation(locationFactory.createRemoteRange("dfghhj", 1, 11l, 22l));
         feature.setLocations(order);
-        expect(entryDAOUtils.getAssemblyEntryAccession("dfghhj")).andReturn("A00001.1");
+        property.analysis_id.set("ERZ00001");
+        check.setEmblEntryValidationPlanProperty(property);
+        expect(entryDAOUtils.getAssemblyEntryAccession("dfghhj",property.analysis_id.get())).andReturn("A00001.1");
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
         ValidationResult validationResult = check.check(feature);

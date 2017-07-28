@@ -65,6 +65,6 @@ public interface EntryDAOUtils
 	
 	public String getDbcode(String prefix) throws SQLException;
 	
-	public String getAssemblyEntryAccession(String remoteAccession) throws SQLException;
+	public String getAssemblyEntryAccession(String remoteAccession,String assemblyId) throws SQLException;
 	
 }

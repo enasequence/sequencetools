@@ -49,7 +49,7 @@ public class AssemblyFeatureRemoteLocationFix extends FeatureValidationCheck
 		{
 			return result;
 		}
-		if (!compoundLocation.hasRemoteLocation())
+		if (!compoundLocation.hasRemoteLocation()||getEmblEntryValidationPlanProperty().analysis_id.get()==null)
 		{
 			return result;
 		}
@@ -61,7 +61,7 @@ public class AssemblyFeatureRemoteLocationFix extends FeatureValidationCheck
 				if (location instanceof RemoteLocation)
 				{
 					String remoteAccession=((RemoteLocation) location).getAccession()+"."+((RemoteLocation) location).getVersion();
-					String sequenceAccession=getEntryDAOUtils().getAssemblyEntryAccession(((RemoteLocation) location).getAccession());
+					String sequenceAccession=getEntryDAOUtils().getAssemblyEntryAccession(((RemoteLocation) location).getAccession(),getEmblEntryValidationPlanProperty().analysis_id.get());
 					if(sequenceAccession!=null)
 					{
 					((RemoteLocation) location).setAccession(sequenceAccession.split("\\.")[0]);

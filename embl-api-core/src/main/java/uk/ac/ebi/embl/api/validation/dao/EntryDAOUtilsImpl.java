@@ -770,18 +770,19 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	}
 
 	@Override
-	public String getAssemblyEntryAccession(String remoteAccession) throws SQLException
+	public String getAssemblyEntryAccession(String remoteAccession,String assemblyId) throws SQLException
 	{
 		if(remoteAccession==null)
 			return null;
-		 String sql=	"select acc from gcs_sequence where object_name=? or assigned_acc = ?";
+		 String sql=	"select acc from gcs_sequence where assembly_id= ? and object_name=? or assigned_acc = ?";
 		  ResultSet rs = null;
 		  PreparedStatement ps = null;
 			try
 			{
 				ps = connection.prepareStatement(sql);
-				ps.setString(1,remoteAccession);
+				ps.setString(1,assemblyId);
 				ps.setString(2,remoteAccession);
+				ps.setString(3,remoteAccession);
 				rs = ps.executeQuery();
 				if(rs.next())
 				{
