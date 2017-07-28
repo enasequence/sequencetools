@@ -873,6 +873,7 @@ source	collected_by	N	N	N
 source	collection_date	N	Y	N
 source	identified_by	N	Y	N
 source	PCR_primers	N	N	N
+source	submitter_seqid	N	N	N
 gene	gene_synonym	N	N	N
 gene	pseudogene	N	Y	N
 gene	citation	N	N	N
