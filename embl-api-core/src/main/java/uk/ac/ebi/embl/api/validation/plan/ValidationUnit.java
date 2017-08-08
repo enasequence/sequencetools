@@ -29,7 +29,7 @@ public enum ValidationUnit
 					CitationExistsCheck.class,
 					EntryProjectIdCheck.class,
 					HoldDateCheck.class,
-					ReferenceCheck.class,
+					//ReferenceCheck.class,
 					MasterEntryDescriptionCheck.class
 			),
 			SOURCE_FEAURES_ONLY_CHECKS
