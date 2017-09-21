@@ -26,7 +26,6 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationScope.Group;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceToGapFeatureBasesCheck;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.getFeatures;

@@ -61,7 +61,7 @@ public class AssemblyLevelSequenceFix extends EntryValidationCheck
 		   	return result;
 		}
 	   
-	   if(entry.getSequence().getContigs()!=null&&entry.getSequence().getContigs().size()!=0||entry.getAgpRows().size()!=0)//CO line exists
+	   if(entry.getSequence()!=null&&entry.getSequence().getContigs()!=null&&entry.getSequence().getContigs().size()!=0||entry.getAgpRows().size()!=0)//CO line exists
 	   {
 		   return result;
 	   }

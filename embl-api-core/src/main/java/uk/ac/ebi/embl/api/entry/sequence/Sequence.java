@@ -78,7 +78,10 @@ public class Sequence extends AbstractSequence implements HasOrigin,
 	public void setAccession(String accession) {
 		sequenceAccession.setAccession(accession);
 	}
-
+	public String getAccessionwithVersion()
+	{
+       return getAccession()+"."+getVersion();		
+	}
 	public String getGIAccession() {
 		return GIAccession;
 	}

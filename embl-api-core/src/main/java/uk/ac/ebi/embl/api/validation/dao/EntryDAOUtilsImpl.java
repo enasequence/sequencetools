@@ -164,7 +164,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			}
 		}
 		return null;
-
 	}
 	
 	@Override

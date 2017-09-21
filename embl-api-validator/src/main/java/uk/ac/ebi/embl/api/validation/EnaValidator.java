@@ -45,12 +45,9 @@ import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.genbank.GenbankEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.genomeassembly.GenomeAssemblyFileWriter;
 import uk.ac.ebi.embl.gff3.reader.GFF3FlatFileEntryReader;
-
 import org.apache.commons.dbutils.DbUtils;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;

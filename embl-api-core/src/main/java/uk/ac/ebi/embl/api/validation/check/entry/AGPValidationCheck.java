@@ -52,7 +52,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 
 
 
-	public ValidationResult check(Entry entry) throws ValidationEngineException
+		public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 
 		result = new ValidationResult();

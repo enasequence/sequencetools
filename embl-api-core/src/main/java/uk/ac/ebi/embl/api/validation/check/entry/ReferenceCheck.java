@@ -36,7 +36,7 @@ public class ReferenceCheck extends EntryValidationCheck
 	{
 		result = new ValidationResult();
 		boolean isSubmission = false;
-		if (entry == null||entry.getDataClass() == Entry.PAT_DATACLASS || entry.getDataClass() == Entry.PRT_DATACLASS)
+		if (entry == null||Entry.PAT_DATACLASS.equals(entry.getDataClass()) || Entry.PRT_DATACLASS.equals(entry.getDataClass()))
 			return result;
 		ArrayList<Reference> references = (ArrayList<Reference>) entry.getReferences();
 		for (Reference ref : references)
