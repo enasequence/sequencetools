@@ -28,11 +28,11 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public class AssemblyLevelSequenceCheckTest
+public class AnnotationOnlySequenceCheckTest
 {
 	private Entry entry;
 	private EntryFactory entryFactory;
-	private AssemblyLevelSequenceCheck check;
+	private AnnotationOnlySequenceCheck check;
 	private EmblEntryValidationPlanProperty property;
 	private EntryDAOUtils entryDAOUtils;
 	
@@ -48,7 +48,7 @@ public class AssemblyLevelSequenceCheckTest
 		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		property.analysis_id.set("ERZ0001");
-		check = new AssemblyLevelSequenceCheck();
+		check = new AnnotationOnlySequenceCheck();
         check.setEmblEntryValidationPlanProperty(property);
 		entryDAOUtils=createMock(EntryDAOUtils.class);
 	}
@@ -82,7 +82,8 @@ public class AssemblyLevelSequenceCheckTest
 	public void testCheck_noSequenceExistsandNoassembly_levelExists() throws ValidationEngineException, SQLException, IOException
 	{
 		expect(entryDAOUtils.isAssemblyLevelExists(check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn(false);
-		expect(entryDAOUtils.getSequence(entry.getSubmitterAccession(),check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn(null);
+		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn("A00001");
+		expect(entryDAOUtils.getSequence("A00001")).andReturn(null);	
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		assertTrue(check.check(entry).isValid());
@@ -92,19 +93,20 @@ public class AssemblyLevelSequenceCheckTest
 	public void testCheck_nodatabaseSequenceExistsandassembly_levelExists() throws ValidationEngineException, SQLException, IOException
 	{
 		expect(entryDAOUtils.isAssemblyLevelExists(check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn(true);
-		expect(entryDAOUtils.getSequence(entry.getSubmitterAccession(),check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn(null);
+		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 0)).andReturn(null);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult result=check.check(entry);
 		assertTrue(!result.isValid());
-		assertEquals(1,result.count("AssemblyLevelSequenceCheck_1", Severity.ERROR));
+		assertEquals(1,result.count("AnnotationOnlySequenceCheck_1", Severity.ERROR));
 	}
 	
 	@Test
 	public void testCheck_databaseSequenceExistsandassembly_levelExists() throws ValidationEngineException, SQLException, IOException
 	{
 		expect(entryDAOUtils.isAssemblyLevelExists(check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn(true);
-		expect(entryDAOUtils.getSequence(entry.getSubmitterAccession(),check.getEmblEntryValidationPlanProperty().analysis_id.get(),0)).andReturn("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgt".getBytes());
+		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 0)).andReturn("A00001");
+		expect(entryDAOUtils.getSequence("A00001")).andReturn("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgt".getBytes());
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		assertTrue(check.check(entry).isValid());

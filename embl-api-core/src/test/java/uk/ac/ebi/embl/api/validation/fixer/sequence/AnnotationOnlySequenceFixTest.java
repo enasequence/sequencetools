@@ -37,10 +37,10 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AssemblyLevelSequenceFixTest
+public class AnnotationOnlySequenceFixTest
 {
 
-	private AssemblyLevelSequenceFix check;
+	private AnnotationOnlySequenceFix check;
 	private EntryDAOUtils entryDAOUtils;
 	private EntryFactory entryFactory;
 	private Entry entry;
@@ -57,7 +57,7 @@ public class AssemblyLevelSequenceFixTest
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		property.analysis_id.set("ERZ0001");
-		check = new AssemblyLevelSequenceFix();
+		check = new AnnotationOnlySequenceFix();
 		check.setEmblEntryValidationPlanProperty(property);
    }
 
@@ -79,16 +79,16 @@ public class AssemblyLevelSequenceFixTest
 		entry.setSequence(new SequenceFactory().createSequence());
 		entry.setSubmitterAccession("chr1");
 		expect(entryDAOUtils.isAssemblyLevelExists(check.getEmblEntryValidationPlanProperty().analysis_id.get(),2)).andReturn(true);
-		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn(null);
+		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn("A00001");
 		expect(entryDAOUtils.getDataclass(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn(null);
-		expect(entryDAOUtils.getSequence(entry.getSubmitterAccession(),check.getEmblEntryValidationPlanProperty().analysis_id.get(),2)).andReturn("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgt".getBytes());
+		expect(entryDAOUtils.getSequence("A00001")).andReturn("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgt".getBytes());
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
       	ValidationResult result=check.check(entry);
         assertTrue(result.isValid());
         assertTrue(null==entry.getDataClass());
         assertTrue("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgt".equals(new String(entry.getSequence().getSequenceByte())));
-        assertEquals(1,result.count("AssemblyLevelSequenceFix_1", Severity.FIX));
+        assertEquals(1,result.count("AnnotationOnlySequenceFix", Severity.FIX));
 	}
 	
 	@Test
@@ -99,7 +99,7 @@ public class AssemblyLevelSequenceFixTest
 		expect(entryDAOUtils.isAssemblyLevelExists(check.getEmblEntryValidationPlanProperty().analysis_id.get(),2)).andReturn(true);
 		expect(entryDAOUtils.getPrimaryAcc(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn(null);
 		expect(entryDAOUtils.getDataclass(check.getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession(), 2)).andReturn(null);
-		expect(entryDAOUtils.getSequence(entry.getSubmitterAccession(),check.getEmblEntryValidationPlanProperty().analysis_id.get(), 2)).andReturn(null);
+		expect(entryDAOUtils.getSequence("A0001")).andReturn(null);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
        	ValidationResult result=check.check(entry);

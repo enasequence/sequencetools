@@ -85,7 +85,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		if (sequence == null) {
 			return result;
 		}
-		long sequenceSize = sequence.getLength();
+		Long sequenceSize = sequence.getLength();
 		
 		//collection sources' locations
 		List<Location> sourceLocations = new ArrayList<Location>();

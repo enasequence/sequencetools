@@ -138,6 +138,7 @@ public enum ValidationUnit
 			),
 			SEQUENCE_ONLY_CHECKS
 			(
+				AnnotationOnlySequenceCheck.class,
 				EntryContigsCheck.class, // CO line property will be
 										// moved to sequence
 				EntryMolTypeCheck.class,
@@ -228,6 +229,7 @@ public enum ValidationUnit
             SEQUENCE_ONLY_FIXES
 			(
                 ContigstosequenceFix.class,
+                AnnotationOnlySequenceFix.class,
 				SequenceBasesFix.class,
 				Mol_typeFix.class,
 				SequenceToGapFeatureBasesFix.class
@@ -237,7 +239,6 @@ public enum ValidationUnit
 			(
 				AssemblyTopologyFix.class,
 				AssemblySourceQualiferFix.class,
-				AssemblyLevelSequenceFix.class,
 				AssemblyLevelSubmitterReferenceFix.class,
 				AssemblyFeatureRemoteLocationFix.class
     		 ),
@@ -247,7 +248,6 @@ public enum ValidationUnit
         		LocustagExistsCheck.class,
         		AssemblyLevelDataclassCheck.class,
         		AssemblyTopologyCheck.class,
-        		AssemblyLevelSequenceCheck.class,
         		AssemblyLevelEntryNameCheck.class,
         		ChromosomeSourceQualifierCheck.class
 		   ),

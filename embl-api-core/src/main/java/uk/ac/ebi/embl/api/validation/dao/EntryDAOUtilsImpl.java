@@ -28,7 +28,6 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.check.entry.PrimaryAccessionCheck;
 import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table;
 import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table.cv_fqual_value_fix_record;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -126,13 +125,11 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	}
 	
 	@Override
-	public byte[] getSequence(String submitterAccession,String analysisID,int assemblyLevel)
+	public byte[] getSequence(String primaryAcc)
 			throws SQLException, IOException
 	{
 		String sql = "select p.seqtext from dbentry d join bioseq b on(d.bioseqid=b.seqid) join physicalseq p on(b.physeq=p.physeqid) where d.primaryacc#=?";
-		String objectName = submitterAccession;
-		String analysisId = analysisID;
-		String primaryAcc = getPrimaryAcc(analysisId, objectName, assemblyLevel);
+		
 		if (primaryAcc != null)
 		{
 			PreparedStatement stmt = null;

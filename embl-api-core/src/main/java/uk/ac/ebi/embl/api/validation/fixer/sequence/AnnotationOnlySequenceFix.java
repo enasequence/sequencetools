@@ -23,20 +23,21 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+
 import java.nio.ByteBuffer;
 
-@Description("{0} Sequence has already been loaded for the given assembly {1} with entry_name {2} and using the loaded sequence")
+@Description("Entry {0} with ObjectName{1} has already been stored in database and using stored sequence for validatation")
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
-@GroupIncludeScope(group={ValidationScope.Group.ASSEMBLY})
-public class AssemblyLevelSequenceFix extends EntryValidationCheck
+public class AnnotationOnlySequenceFix extends EntryValidationCheck
 {
-	private final static String SEQUENCE_FIX_ID = "AssemblyLevelSequenceFix_1";
+	private final static String SEQUENCE_FIX_ID = "AnnotationOnlySequenceFix";
 
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
+		try
+		{
 		result = new ValidationResult();
 
 		if (entry == null)
@@ -50,52 +51,63 @@ public class AssemblyLevelSequenceFix extends EntryValidationCheck
 		{
 			return result;
 		}
+		 if(entry.getSequence()!=null&&entry.getSequence().getSequenceByte()!=null&&entry.getSequence().getLength()!=0)
+			{
+			   	return result;
+			}
+		   
+		   if(entry.getSequence()!=null&&entry.getSequence().getContigs()!=null&&entry.getSequence().getContigs().size()!=0||entry.getAgpRows().size()!=0)//CO line exists
+		   {
+			   return result;
+		   }
+		   byte[] sequence =null;
+		   String primaryAcc=entry.getPrimaryAccession();
+		   
+		if(primaryAcc!=null)
+		{
+			sequence=entryDAOUtils.getSequence(entry.getPrimaryAccession());
+		}
+		else  //check whether it is an assembly
+		{
 		
 		if(getEmblEntryValidationPlanProperty().analysis_id.get()==null||entry.getSecondaryAccessions()==null)
 		{
 			return result;
 		}
 		
-		 if(entry.getSequence()!=null&&entry.getSequence().getSequenceByte()!=null&&entry.getSequence().getLength()!=0)
-		{
-		   	return result;
-		}
-	   
-	   if(entry.getSequence()!=null&&entry.getSequence().getContigs()!=null&&entry.getSequence().getContigs().size()!=0||entry.getAgpRows().size()!=0)//CO line exists
-	   {
-		   return result;
-	   }
-	   
 	   Integer assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
-	   String sequence_type= assemblyLevel==0?"contig":assemblyLevel==1?"scaffold":assemblyLevel==2?"chromosome":null;
-
 	   
        if(assemblyLevel==-1)
     	   return result;
 	   
-		try
-		{
+		
 			  if(!entryDAOUtils.isAssemblyLevelExists(getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel))
 			  {
 				  return result;
 			  }
 			 
-			byte[] sequence = entryDAOUtils.getSequence(entry.getSubmitterAccession(),getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel);
-			if (sequence != null)
+			 primaryAcc = entryDAOUtils.getPrimaryAcc(getEmblEntryValidationPlanProperty().analysis_id.get(), entry.getSubmitterAccession(), assemblyLevel);
+			if(primaryAcc==null)
+				return result;
+			   
+			sequence = entryDAOUtils.getSequence(primaryAcc);
+		}
+		
+		if (sequence != null)
 			{
 				if(entry.getSequence()==null)
 				{
 					entry.setSequence(new SequenceFactory().createSequence());
 				}
 				entry.getSequence().setSequence(ByteBuffer.wrap(sequence));
-				reportMessage(Severity.FIX, entry.getOrigin(), SEQUENCE_FIX_ID,sequence_type,getEmblEntryValidationPlanProperty().analysis_id.get(),entry.getSubmitterAccession());
+				reportMessage(Severity.FIX, entry.getOrigin(), SEQUENCE_FIX_ID,primaryAcc,entry.getSubmitterAccession());
 			}
 		
-		} catch (Exception e)
+		
+		}catch(Exception e)
 		{
-			throw new ValidationEngineException(e);
+			throw new ValidationEngineException(e.getMessage());
 		}
-
 		return result;
 	}
 }

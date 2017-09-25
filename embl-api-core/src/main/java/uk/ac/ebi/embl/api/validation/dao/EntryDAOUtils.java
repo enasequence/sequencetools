@@ -23,8 +23,7 @@ public interface EntryDAOUtils
 			                   String objectName,
 			                   int assemblyLevel) throws SQLException;
 
-	public byte[] getSequence(String submitterAccession,String analysisId,
-			                  int assemblyLevel)throws SQLException,IOException;
+	public byte[] getSequence(String primaryAcc)throws SQLException,IOException;
 	
 	public byte[] getSubSequence(String accession,Long beginPosition,Long length) throws SQLException, IOException;
 	
