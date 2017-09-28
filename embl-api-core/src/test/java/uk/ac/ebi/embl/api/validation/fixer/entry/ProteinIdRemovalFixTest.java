@@ -28,14 +28,9 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.check.entry.ProteinIdExistsCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -112,8 +107,7 @@ public class ProteinIdRemovalFixTest
 	public void testCheck_withNewproteinID() throws ValidationEngineException,
 			SQLException {
 
-		cdsFeature
-				.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
+		cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
 		entry.addFeature(cdsFeature);
 		property = new EmblEntryValidationPlanProperty();
 		property.analysis_id.set("ERZ00001");
@@ -149,8 +143,8 @@ public class ProteinIdRemovalFixTest
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
-		assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
-		assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
+		assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+		assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
 		}
 	
 	@Test
@@ -163,14 +157,10 @@ public class ProteinIdRemovalFixTest
 		property = new EmblEntryValidationPlanProperty();
 		property.analysis_id.set("ERZ00001");
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(entryDAOUtils.isAssemblyEntryUpdate(check.getEmblEntryValidationPlanProperty().analysis_id
-				.get(), entry.getSubmitterAccession(), 0)).andReturn(
-				false);
-		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
-		assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
-		assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
+		assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+		assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
 		}
 
 	

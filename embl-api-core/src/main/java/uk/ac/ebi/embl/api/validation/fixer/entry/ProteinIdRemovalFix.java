@@ -15,8 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
-import java.sql.SQLException;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -25,12 +23,11 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
 @Description("protein_id \"{0}\" has been deleted for feature \"{1}\", as protein_ids can only be assigned by EMBL")
-@GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER })
 public class ProteinIdRemovalFix extends EntryValidationCheck {
 
 	private final static String FIX_ID = "ProteinIdRemovalFix_1";
@@ -41,36 +38,13 @@ public class ProteinIdRemovalFix extends EntryValidationCheck {
 	public ValidationResult check(Entry entry) throws ValidationEngineException {
 		result = new ValidationResult();
 
-		if (entry == null || entry.getFeatures() == null
-				|| entry.getFeatures().size() == 0) {
+		if (entry == null || entry.getFeatures() == null || entry.getFeatures().size() == 0) {
 			return result;
 		}
-		Integer assemblyLevel = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 0 : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 1 : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 2 :-1;
-
-		if(getEmblEntryValidationPlanProperty().analysis_id.get()==null||assemblyLevel==-1)
-		{
-			return result;
-		}
-
-		EntryDAOUtils entryDAOUtils = getEntryDAOUtils();
-		boolean isEntryUpdate=false;
-		try{
-			isEntryUpdate=entryDAOUtils.isAssemblyEntryUpdate(
-				getEmblEntryValidationPlanProperty().analysis_id.get(),
-				entry.getSubmitterAccession(),assemblyLevel);
-		}catch(SQLException e)
-		{
-			throw new ValidationEngineException(e);
-		}
-
-		if (isEntryUpdate)
-			return result;
 		
-			for (Feature feature : entry.getFeatures()) {
-
-				if (feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME) != null
-						& feature.getQualifiers(
-								Qualifier.PROTEIN_ID_QUALIFIER_NAME).size() != 0) {
+		for (Feature feature : entry.getFeatures()) 
+		{
+				if (feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME) != null & feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME).size() != 0) {
 					for(Qualifier qualifier:feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME))
 					{
 					feature.removeQualifier(qualifier);
