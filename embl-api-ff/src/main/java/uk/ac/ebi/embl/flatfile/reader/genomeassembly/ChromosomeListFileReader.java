@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class ChromosomeListFileReader extends GCSEntryReader
@@ -26,9 +27,14 @@ public class ChromosomeListFileReader extends GCSEntryReader
 	private final static int CHROMOSOME_TYPE_COLUMN = 2;
 	private final static int CHROMOSOME_LOCATION_COLUMN = 3;
     private Set<String> chromosomeNames= new HashSet<String>();
+    ChromosomeEntry chromosomeEntry =null;
 	
+    public ChromosomeListFileReader(File file)
+    {
+    	this.file=file;
+    }
 	@Override
-	public void read(File file) throws FileNotFoundException, IOException
+	public ValidationResult read() throws FileNotFoundException, IOException
 	{
 		
 		int lineNumber = 1;
@@ -38,7 +44,6 @@ public class ChromosomeListFileReader extends GCSEntryReader
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
-				ChromosomeEntry chromosomeEntry = null;
 				line = line.trim();
 				if (line.isEmpty()) // Skip empty lines
 				{
@@ -70,6 +75,23 @@ public class ChromosomeListFileReader extends GCSEntryReader
 
 			}
 		}
+		return validationResult;
+	}
+	@Override
+	public ValidationResult skip() throws IOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Object getEntry()
+	{
+		return chromosomeEntry;
+	}
+	@Override
+	public boolean isEntry()
+	{
+		return validationResult.isValid();
 	}
 	
 }

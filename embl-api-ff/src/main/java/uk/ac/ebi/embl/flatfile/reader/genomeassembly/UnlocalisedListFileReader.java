@@ -2,10 +2,11 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.Pattern;
-
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class UnlocalisedListFileReader extends GCSEntryReader
@@ -15,9 +16,15 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 	private static final int NUMBER_OF_COLUMNS = 2;
 	private static final int OBJECT_NAME_COLUMN = 0;
 	private static final int CHROMOSOME_NAME_COLUMN = 1;
+	UnlocalisedEntry unlocalisedEntry = null;
 	
+	public UnlocalisedListFileReader(File file)
+	{
+		this.file=file;
+	}
+
 	@Override
-	public void read(File file) throws IOException
+	public ValidationResult read() throws FileNotFoundException, IOException
 	{
 		int lineNumber = 1;
 		
@@ -26,7 +33,6 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
-				UnlocalisedEntry unlocalisedEntry = null;
 				String[] fields = pattern.split(line.trim());
 				int noOfColumns = fields.length;
 				if (noOfColumns != NUMBER_OF_COLUMNS)
@@ -43,7 +49,22 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 			}
 			lineNumber++;
 		}
-		
+		return validationResult;
+	}
+	@Override
+	public ValidationResult skip() throws IOException
+	{
+		return null;
+	}
+	@Override
+	public Object getEntry()
+	{
+		 return unlocalisedEntry;
+	}
+	@Override
+	public boolean isEntry()
+	{
+		return validationResult.isValid();
 	}
 
 }
