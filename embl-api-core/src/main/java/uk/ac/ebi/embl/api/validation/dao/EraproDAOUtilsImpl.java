@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 {
 	private Connection connection;
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
+	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 
 	public EraproDAOUtilsImpl (Connection connection)
 	{
@@ -138,4 +140,136 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return nameBuilder.toString();
 	}
 	
+	@Override
+	public List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException
+	{
+		
+		List<String> analysisIdList= new ArrayList<String>();
+			
+        //check sample has different study_id
+		String  differentStudyidSQL= "select analysis_id "
+				+ "from analysis "
+				+ "join analysis_sample "
+				+ "using (analysis_id) "
+				+ "where study_id <> ? "
+				+ "and sample_id = ? "
+				+ "and analysis.submission_account_id = ? "
+				+ "and analysis_id <> ? "
+				+ "and analysis_type = 'SEQUENCE_ASSEMBLY' "
+				+ "and status_id in (2, 4, 7, 8)";
+
+		
+		ResultSet differentStudyidSQLrs = null;
+
+		try(PreparedStatement differentStudyidSQLstmt = connection.prepareStatement(differentStudyidSQL);)
+		{
+			AssemblySubmissionInfo assemblySubmissionInfo=getAssemblySubmissionInfo(analysisId);
+			
+			if(assemblySubmissionInfo.getStudyId()==null)
+				return analysisIdList;
+			
+			differentStudyidSQLstmt.setString(1,assemblySubmissionInfo.getStudyId());
+			differentStudyidSQLstmt.setString(2,assemblySubmissionInfo.getSampleId());
+			differentStudyidSQLstmt.setString(3,assemblySubmissionInfo.getSubmissionAccountId());
+			differentStudyidSQLstmt.setString(4,analysisId);
+			differentStudyidSQLrs=differentStudyidSQLstmt.executeQuery();
+			while(differentStudyidSQLrs.next())
+			{
+				analysisIdList.add(differentStudyidSQLrs.getString(1));
+			}
+			return analysisIdList;
+			/*
+			if(analysisIdList.size()>0)
+			{
+				//throw new AssemblyUserException("Multiple assembly submissions found with a different project but the same sample "+ assemblySubmissionInfo.getBiosampleId() + ": "+String.join(",",analysisIdList));
+				return true;
+			}
+			return false;
+			*/
+		}
+	}
+
+	@Override
+	public List<String> isAssemblyDuplicate(String analysisId) throws SQLException
+	{
+		
+		List<String> duplicateAnalysisIdList= new ArrayList<String>();
+		
+        //checks assembly is duplicate
+		String  duplicateAssemblySQL= " select analysis_id "
+				                     + "from analysis"
+				                     + " join analysis_sample"
+				                     + " using (analysis_id) "
+				                     + "where study_id = ?  "
+				                     + "and sample_id = ? "
+				                     + "and analysis.submission_account_id = ? "
+				                     + "and analysis_id <> ? "
+				                     + "and analysis_type = 'SEQUENCE_ASSEMBLY' "
+				                     + "and first_created between ? and ? "
+				                     + "and status_id in (2, 4, 7, 8)";
+
+		
+		ResultSet duplicateAssemblySQLrs = null;
+
+		try(PreparedStatement duplicateAssemblySQLstmt = connection.prepareStatement(duplicateAssemblySQL);)
+		{
+			AssemblySubmissionInfo assemblySubmissionInfo=getAssemblySubmissionInfo(analysisId);
+
+			if(assemblySubmissionInfo.getStudyId()==null)
+				return duplicateAnalysisIdList;
+			
+			duplicateAssemblySQLstmt.setString(1,assemblySubmissionInfo.getStudyId());
+			duplicateAssemblySQLstmt.setString(2,assemblySubmissionInfo.getSampleId());
+			duplicateAssemblySQLstmt.setString(3,assemblySubmissionInfo.getSubmissionAccountId());
+			duplicateAssemblySQLstmt.setString(4,analysisId);
+			duplicateAssemblySQLstmt.setDate(5,assemblySubmissionInfo.getBegindate());
+			duplicateAssemblySQLstmt.setDate(6,assemblySubmissionInfo.getEnddate());
+
+			duplicateAssemblySQLrs=duplicateAssemblySQLstmt.executeQuery();
+			while(duplicateAssemblySQLrs.next())
+			{
+				duplicateAnalysisIdList.add(duplicateAssemblySQLrs.getString(1));
+			}
+			return duplicateAnalysisIdList;
+		}
+	}
+	
+	@Override
+	public AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException
+	{
+		if(assemblySubmissionInfocache.get(analysisId)!=null)
+			return assemblySubmissionInfocache.get(analysisId);
+		
+		String sql = "select study_id, project_id, sample_id, biosample_id, analysis.submission_account_id, analysis.first_created-7 begindate ,analysis.first_created+7 enddate "
+				                   + "from analysis "
+				                   + "join analysis_sample "
+				                   + "using (analysis_id) "
+				                   + "join sample using (sample_id) "
+				                   + "join study using (study_id) "
+				                   + "where analysis_id = ?";
+		
+       	ResultSet rs = null;
+		AssemblySubmissionInfo assemblyInfo= new AssemblySubmissionInfo();
+		try(PreparedStatement stmt = connection.prepareStatement(sql);)
+		{
+			
+			stmt.setString(1, analysisId);
+			rs = stmt.executeQuery();
+			if(rs.next())
+			{
+				assemblyInfo.setStudyId(rs.getString("study_id"));
+				assemblyInfo.setProjectId(rs.getString("project_id"));
+				assemblyInfo.setBiosampleId(rs.getString("biosample_id"));
+				assemblyInfo.setSubmissionAccountId(rs.getString("submission_account_id"));
+				assemblyInfo.setSampleId(rs.getString("sample_id"));
+				assemblyInfo.setBegindate(rs.getDate("begindate"));
+				assemblyInfo.setEnddate(rs.getDate("enddate"));
+			}
+			assemblySubmissionInfocache.put(analysisId, assemblyInfo);
+			return assemblyInfo;
+		}
+		
+	}
+	
+
 }

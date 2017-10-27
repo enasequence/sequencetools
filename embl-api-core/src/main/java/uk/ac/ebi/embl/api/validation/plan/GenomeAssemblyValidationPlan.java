@@ -15,81 +15,117 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.plan;
 
-import java.sql.Connection;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
-import uk.ac.ebi.embl.api.genomeassembly.GenomeAssemblyRecord;
-import uk.ac.ebi.embl.api.validation.FileType;
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.GCSEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
+import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyFieldandValueCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeFieldandValueCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedFieldandValueCheck;
-import uk.ac.ebi.embl.api.validation.fix.genomeassembly.DeleteInvalidRowFix;
+import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
+import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
+import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
 
 public class GenomeAssemblyValidationPlan extends ValidationPlan
 {
-	private boolean FIX_MODE = false;// default
-	// Assembly File Checks
-	private AssemblyFieldandValueCheck assemblyFieldandValueCheck=new AssemblyFieldandValueCheck();;
-	private ChromosomeFieldandValueCheck chromosomeFieldandValueCheck = new ChromosomeFieldandValueCheck();
-	private UnlocalisedFieldandValueCheck unlocalisedFieldandValueCheck = new UnlocalisedFieldandValueCheck();
-	// Assembly File Fixes
-	private DeleteInvalidRowFix deleteInvalidRowFix = new DeleteInvalidRowFix();
-
 	public GenomeAssemblyValidationPlan(EmblEntryValidationPlanProperty planProperty)
 	{
 		super(planProperty);
 	}
 
-	@Override
-	public ValidationPlanResult execute(Object target) throws ValidationEngineException
+	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException
 	{
-
-		validationPlanResult = new ValidationPlanResult();
-
-		if (target instanceof GenomeAssemblyRecord)
+		List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
+		List<Class<? extends GenomeAssemblyValidationCheck<?>>> fixes = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
+		validatePlanProperty();
+		switch (planProperty.fileType.get())
 		{
-			GenomeAssemblyRecord gaRecord = (GenomeAssemblyRecord) target;
-			execute(gaRecord);
+		case ASSEMBLYINFO:
+			checks.addAll(GenomeAssemblyValidationUnit.ASSEMBLYINFO_CHECKS.getValidationUnit());
+			if (planProperty.isFixMode.get())
+ 				{
+				
+ 				}
+
+			break;
+		case CHROMOSOMELIST:
+
+			checks.addAll(GenomeAssemblyValidationUnit.CHROMOSOME_LIST_CHECKS.getValidationUnit());
+			if (planProperty.isFixMode.get())
+ 				{
+				
+ 				}
+
+			break;
+		case UNLOCALISEDLIST:
+			checks.addAll(GenomeAssemblyValidationUnit.UNLOCALISED_LIST_CHECKS.getValidationUnit());
+			if (planProperty.isFixMode.get())
+ 				{
+				
+ 				}
+
+			break;
+		default:
+			break;
+
+		}
+
+		try
+		{
+			executeChecksandFixes(fixes,entry);
+			executeChecksandFixes(checks,entry);
+			
+		}
+		catch (Exception e)
+		{
+           throw new ValidationEngineException(e);
 		}
 
 		return validationPlanResult;
+
 	}
 
-	public void execute(GenomeAssemblyRecord gaRecord) throws ValidationEngineException
+	void validatePlanProperty() throws ValidationEngineException
 	{
-		if (planProperty.isFixMode.get())
+		if (planProperty == null)
 		{
-			executeFixes(gaRecord);
+			throw new ValidationEngineException("EmblEntryValidationPlanProperty must not be null");
 		}
 
-		executeChecks(gaRecord);
 	}
 
-	public void executeChecks(GenomeAssemblyRecord gaRecord) throws ValidationEngineException
+	@Override
+	public ValidationPlanResult execute(Object target) throws ValidationEngineException
 	{
-		// Assembly File checks
-		if (gaRecord.isAssembly())
+		validationPlanResult = new ValidationPlanResult();
+		// TODO Auto-generated method stub
+		if(target instanceof Entry)
 		{
-			execute(assemblyFieldandValueCheck, gaRecord);
+			execute((Entry)target);
 		}
-		// Chromosome File checks
-		if (gaRecord.isChromosome())
-		{
-			execute(chromosomeFieldandValueCheck, gaRecord);
-		}
-		// Unlocalised File checks
-		if (gaRecord.isUnLocalised())
-		{
-			execute(unlocalisedFieldandValueCheck, gaRecord);
-		}
+		return validationPlanResult;
 	}
-
-	public void executeFixes(GenomeAssemblyRecord gaRecord) throws ValidationEngineException
-	{
-		execute(deleteInvalidRowFix, gaRecord);
-	}
-
 	
+	private void executeChecksandFixes(List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks,Entry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+	{
+		for (Class<? extends GenomeAssemblyValidationCheck<?>> validationCheck : checks)
+		{
+			EmblEntryValidationCheck<?> check = (EmblEntryValidationCheck<?>) validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
+			if (check instanceof GenomeAssemblyValidationCheck)
+			{
+				execute(check,entry);
+			}
+		}
+	}
+
 }

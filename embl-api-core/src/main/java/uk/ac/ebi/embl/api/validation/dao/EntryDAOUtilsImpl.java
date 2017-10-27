@@ -794,4 +794,72 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		  return null;
 	}
 	
+	@Override
+	public boolean isAssemblyUpdateSupported (String analysisId) throws SQLException
+	{
+		String query = "select gcs_pkg.is_update_supported(?) from dual";
+
+		try(PreparedStatement pstsmt = connection.prepareStatement(query))
+		{
+			pstsmt.setString(1, analysisId);
+			try(ResultSet rs = pstsmt.executeQuery();)
+			{
+			if (rs.next())
+			{
+				String status = rs.getString(1);
+				return status.equals("Y");
+			}
+			return false;
+			}
+		}
+	}
+	
+	@Override
+	public boolean isChromosomeValid(String analysisId,String chromosomeName) throws SQLException
+	{
+         String sql = "select 1 from gcs_chromosome where assembly_id = ? and chromosome_name = ?";
+		
+ 		try(PreparedStatement ps = connection.prepareStatement(sql))
+		{
+			ps.setString(1, analysisId);
+			ps.setString(2, chromosomeName);
+			ResultSet rs = ps.executeQuery();
+			if (!rs.next())
+			{
+				return false;		
+			}
+           return true;
+		}
+	}
+	public String associate_unlocalised_list_acc (String objectName, int assembly_level,String analysisId) throws SQLException
+	{
+		String selectSql = "select primaryacc#, "
+				+ "sequence_version "
+				+ "from dbentry "
+				+ "join gcs_sequence on (primaryacc# = gcs_sequence.assigned_acc and upper(gcs_sequence.object_name) = upper(?) and gcs_sequence.assembly_id = ? and gcs_sequence.assembly_level < ?)";
+
+		String acc = null;
+		Integer seqVersion = null;
+
+		try(PreparedStatement selecstmt = connection.prepareStatement(selectSql))
+		{
+			
+			selecstmt.setString(1, objectName);
+			selecstmt.setString(2, analysisId);
+			selecstmt.setInt(3, assembly_level);
+			try(ResultSet rs = selecstmt.executeQuery();)
+			{
+			if (rs.next())
+			{
+				acc = rs.getString("primaryacc#");
+				seqVersion = rs.getInt("sequence_version");
+				if (acc != null && seqVersion != null)
+				{
+					return acc + "." + seqVersion;
+				}
+			}
+			}
+		} 
+		return null;
+	}
 }

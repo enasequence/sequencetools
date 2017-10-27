@@ -43,7 +43,9 @@ public class ValidationPlanFactory
 				validationPlan.addMessageBundle(ValidationMessageManager.GFF3_VALIDATION_BUNDLE);
 				break;
 			}
-			case GENOMEASSEMBLY:
+			case ASSEMBLYINFO:
+			case CHROMOSOMELIST:
+			case UNLOCALISEDLIST:
 			{
 				validationPlan = new GenomeAssemblyValidationPlan(emblEntryValidationProperty);
 				validationPlan.addMessageBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);

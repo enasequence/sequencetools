@@ -34,7 +34,6 @@ public class AGPValidationCheck extends EntryValidationCheck
 	String[] orientationArray= {"+","plus","-","minus","?","0","unknown","na","irrelevant"};
 	String[] linkageEvidenceArray= {"na","paired-ends","align_genus","align_xgenus","align_trnscpt","within_clone","clone_contig","map","strobe","unspecified"};
 
-	
 	private final static String MESSAGE_KEY_OBJECT_NAME_ERROR = "AGPValidationCheck-1";
 	private final static String MESSAGE_KEY_PART_NUMBER_ERROR = "AGPValidationCheck-2";
 	private final static String MESSAGE_KEY_COMPONENT_TYPE_ID_ERROR = "AGPValidationCheck-3";
@@ -50,9 +49,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 	private final static String MESSAGE_KEY_INVALID_ROW_ERROR="AGPValidationCheck-13";
 	private final static String MESSAGE_KEY_INVALID_LINKAGE_ERROR="AGPValidationCheck-14";
 
-
-
-		public ValidationResult check(Entry entry) throws ValidationEngineException
+	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 
 		result = new ValidationResult();
@@ -70,9 +67,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 		if (entry.getAgpRows().size() == 0)
 		{
 			
-				reportError(entry.getOrigin(),
-							MESSAGE_KEY_PART_COUNT_ERROR,
-							entry.getSubmitterAccession());
+				reportError(entry.getOrigin(), MESSAGE_KEY_PART_COUNT_ERROR, entry.getSubmitterAccession());
 				return result;
 		}
 
@@ -105,15 +100,12 @@ public class AGPValidationCheck extends EntryValidationCheck
        // object_name missing check
 			if (objectName == null || objectName.isEmpty())
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_OBJECT_NAME_ERROR);
+				reportError(agpRow.getOrigin(),	MESSAGE_KEY_OBJECT_NAME_ERROR);
 			}
 		//part number validation check
 			if (part_number != (prevPartNumber + 1))
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_PART_NUMBER_ERROR,
-							entry.getSubmitterAccession());
+				reportError(agpRow.getOrigin(), MESSAGE_KEY_PART_NUMBER_ERROR, entry.getSubmitterAccession());
 			}
 			prevPartNumber = part_number;
 			//object_begin, object_end validation checks
@@ -121,39 +113,29 @@ public class AGPValidationCheck extends EntryValidationCheck
 
 			if (object_begin <= 0)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_OBJECT_COORDINATE_ERROR,
-							agpRow.getObject_beg(),entry.getSubmitterAccession(),agpRow.getPart_number());
+				reportError(agpRow.getOrigin(), MESSAGE_KEY_OBJECT_COORDINATE_ERROR, agpRow.getObject_beg(),entry.getSubmitterAccession(),agpRow.getPart_number());
 			}
 
 			if (object_end <= 0)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_OBJECT_COORDINATE_ERROR,
-							agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_OBJECT_COORDINATE_ERROR,agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
 			}
 
 			if (object_end < object_begin)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_OBJECT_COORDINATE_ERROR,
-							agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_OBJECT_COORDINATE_ERROR,	agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
 			}
 
 			if (prevEnd != -1 && object_begin != prevEnd + 1)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_OBJECT_COORDINATE_ERROR,
-							agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
+				reportError(agpRow.getOrigin(),	MESSAGE_KEY_OBJECT_COORDINATE_ERROR, agpRow.getObject_end(),entry.getSubmitterAccession(),agpRow.getPart_number());
 			}
 			prevEnd = object_end;
 			//component_type check
 		
 			if (component_type_id == null)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_COMPONENT_TYPE_ID_ERROR,
-							component_id);
+				reportError(agpRow.getOrigin(),	MESSAGE_KEY_COMPONENT_TYPE_ID_ERROR, component_id);
 			}
 			else
 			{
@@ -169,19 +151,15 @@ public class AGPValidationCheck extends EntryValidationCheck
 		
 			if (gap_type == null)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_GAP_TYPE_ERROR,
-							entry.getSubmitterAccession());
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_GAP_TYPE_ERROR,entry.getSubmitterAccession());
 			}
 			else
 			{
 				gap_type = gap_type.toLowerCase();
+				
 				if (!ArrayUtils.contains(gapTypeArray,gap_type))
 				{
-					reportError(agpRow.getOrigin(),
-								MESSAGE_KEY_GAP_TYPE_ERROR,
-								agpRow.getGap_type(),
-								entry.getSubmitterAccession());
+					reportError(agpRow.getOrigin(),MESSAGE_KEY_GAP_TYPE_ERROR,agpRow.getGap_type(),entry.getSubmitterAccession());
 				}
 			}
 			
@@ -189,9 +167,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			{
 			if (linkageEvidences == null||linkageEvidences.isEmpty())
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,
-							entry.getSubmitterAccession());
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,entry.getSubmitterAccession());
 			}
 			else
 			{
@@ -200,9 +176,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 				linkageEvidence = linkageEvidence.toLowerCase();
 				if (!ArrayUtils.contains(linkageEvidenceArray, linkageEvidence))
 				{
-					reportError(agpRow.getOrigin(),
-								MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,
-								entry.getSubmitterAccession());
+					reportError(agpRow.getOrigin(),MESSAGE_KEY_LINKAGE_EVIDENCE_ERROR,entry.getSubmitterAccession());
 				}
 				}
 			}
@@ -210,10 +184,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			
 			if (gap_length != object_end - object_begin + 1)
 			{
-				reportError(agpRow.getOrigin(),
-						     MESSAGE_KEY_GAP_LENGTH_ERROR,
-						     agpRow.getGap_length(),entry.getSubmitterAccession(),
-						     object_end - object_begin + 1);
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_GAP_LENGTH_ERROR,agpRow.getGap_length(),entry.getSubmitterAccession(),object_end - object_begin + 1);
 			}
 			
     	}
@@ -221,9 +192,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			
 			if (orientation == null)
 			{
-				reportError(agpRow.getOrigin(),
-							MESSAGE_KEY_ORIENTATION_ERROR,
-							agpRow.getComponent_id());
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_ORIENTATION_ERROR,agpRow.getComponent_id());
 			}
 				else
 				{
@@ -231,36 +200,39 @@ public class AGPValidationCheck extends EntryValidationCheck
 
 					if (!ArrayUtils.contains(orientationArray, orientation))
 					{
-						reportError(agpRow.getOrigin(),
-									MESSAGE_KEY_ORIENTATION_ERROR,
-									agpRow.getComponent_id());
+						reportError(agpRow.getOrigin(),	MESSAGE_KEY_ORIENTATION_ERROR, agpRow.getComponent_id());
 					}
 				}
 
 			if(component_begin!=null&&component_end!=null)
 			{
-				if (component_begin > component_end ||
-						component_end - component_begin != object_end - object_begin)
+				if (component_begin > component_end ||component_end - component_begin != object_end - object_begin)
 				{
-					reportError(agpRow.getOrigin(),
-								MESSAGE_KEY_COMPONENT_COORDINATE_ERROR,
-								entry.getSubmitterAccession(),agpRow.getComponent_id());
+					reportError(agpRow.getOrigin(),MESSAGE_KEY_COMPONENT_COORDINATE_ERROR,entry.getSubmitterAccession(),agpRow.getComponent_id());
 				}
 			}
 
-				if(getEntryDAOUtils()==null)//if database connection is not available, then the following check doesn't work.
-				{
-					continue;
-				}
+			
+			if(getEntryDAOUtils()==null)//if database connection is not available, then the following check doesn't work.
+			{
+					if (getEmblEntryValidationPlanProperty().isRemote.get() && getEmblEntryValidationPlanProperty().contigEntryNames.get().size() == 0)
+					{
+						throw new ValidationEngineException("Contig entry names must be given to validate AGP file");
+						
+					} else if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0)
+					{
+						if (!getEmblEntryValidationPlanProperty().contigEntryNames.get().contains(agpRow.getComponent_id()))
+							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR,agpRow.getComponent_id());
+					}
+				continue;
+			}
 				
 				int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
 
 				ContigSequenceInfo contigSequenceInfo = null;
 				try
 				{
-					contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(),
-							                                                                getEmblEntryValidationPlanProperty().analysis_id.get(),
-																					 assemblyLevel);
+					contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(),getEmblEntryValidationPlanProperty().analysis_id.get(),assemblyLevel);
 				}
 				catch (SQLException e)
 				{
@@ -270,9 +242,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 
 				if (null == contigSequenceInfo)
 				{
-					reportError(agpRow.getOrigin(),
-								MESSAGE_KEY_COMPONENT_VALID_ERROR,
-								agpRow.getComponent_id());
+					reportError(agpRow.getOrigin(),MESSAGE_KEY_COMPONENT_VALID_ERROR,agpRow.getComponent_id());
 				}
 				else
 				{
@@ -285,16 +255,13 @@ public class AGPValidationCheck extends EntryValidationCheck
 						component_end > sequenceLength ||
 						component_end < component_begin)
 					{
-						reportError(agpRow.getOrigin(),
-									MESSAGE_KEY_COMPONENT_RANGE_ERROR,
-								agpRow.getComponent_beg(),agpRow.getComponent_end(),agpRow.getComponent_id(),entry.getSubmitterAccession());
+						reportError(agpRow.getOrigin(),MESSAGE_KEY_COMPONENT_RANGE_ERROR,agpRow.getComponent_beg(),agpRow.getComponent_end(),agpRow.getComponent_id(),entry.getSubmitterAccession());
 					}
 				}
 			}
     	validateLinkageCombination(agpRow);
 		}
 		
-
 		return result;
 	}
 	

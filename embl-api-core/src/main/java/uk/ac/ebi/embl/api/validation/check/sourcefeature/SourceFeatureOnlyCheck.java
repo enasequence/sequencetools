@@ -45,6 +45,7 @@ public class SourceFeatureOnlyCheck extends EntryValidationCheck {
             ValidationMessage<Origin> message =
                     EntryValidations.createMessage(entry.getOrigin(), Severity.ERROR, MESSAGE_ID_NO_SOURCE);
             result.append(message);
+            return result;
         }
         
         int othersNumber = entry.getFeatures().size();
