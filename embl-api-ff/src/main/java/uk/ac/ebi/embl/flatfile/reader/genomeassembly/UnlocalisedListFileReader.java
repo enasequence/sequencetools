@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
@@ -16,7 +20,7 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 	private static final int NUMBER_OF_COLUMNS = 2;
 	private static final int OBJECT_NAME_COLUMN = 0;
 	private static final int CHROMOSOME_NAME_COLUMN = 1;
-	UnlocalisedEntry unlocalisedEntry = null;
+	List<UnlocalisedEntry> unlocalisedEntries = new ArrayList<UnlocalisedEntry>();
 	
 	public UnlocalisedListFileReader(File file)
 	{
@@ -41,10 +45,11 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 				}
 				else
 				{
-					unlocalisedEntry = new UnlocalisedEntry();
+				   UnlocalisedEntry unlocalisedEntry = new UnlocalisedEntry();
 					unlocalisedEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
 					unlocalisedEntry.setChromosomeName(fields[CHROMOSOME_NAME_COLUMN]);
 					unlocalisedEntry.setOrigin(new FlatFileOrigin(lineNumber));
+					unlocalisedEntries.add(unlocalisedEntry);
 				}
 			}
 			lineNumber++;
@@ -59,8 +64,13 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 	@Override
 	public Object getEntry()
 	{
-		 return unlocalisedEntry;
+		throw new UnsupportedOperationException();
 	}
+	
+    public List<UnlocalisedEntry> getentries()
+    {
+    	return unlocalisedEntries;
+    }
 	@Override
 	public boolean isEntry()
 	{

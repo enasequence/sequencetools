@@ -31,6 +31,9 @@ public class ChromosomeListAnalysisIdCheck extends GenomeAssemblyValidationCheck
 	@Override
 	public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException
 	{
+		if(entry==null)
+			return result;
+			
 		if (entry.getAnalysisId() == null || entry.getAnalysisId().isEmpty())
 		{	
 			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_ANALYSIS_ID_ERROR);

@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -27,7 +29,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 	private final static int CHROMOSOME_TYPE_COLUMN = 2;
 	private final static int CHROMOSOME_LOCATION_COLUMN = 3;
     private Set<String> chromosomeNames= new HashSet<String>();
-    ChromosomeEntry chromosomeEntry =null;
+    List<ChromosomeEntry> chromosomeEntries =new ArrayList<ChromosomeEntry>();
 	
     public ChromosomeListFileReader(File file)
     {
@@ -58,7 +60,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 				}
 				else
 				{
-					chromosomeEntry = new ChromosomeEntry();
+					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
 					chromosomeEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
 					chromosomeEntry.setChromosomeName(fields[CHROMOSOME_NAME_COLUMN]);
 					chromosomeEntry.setChromosomeType(fields[CHROMOSOME_TYPE_COLUMN]);
@@ -69,7 +71,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 					chromosomeEntry.setOrigin(new FlatFileOrigin(lineNumber));
 					if(!chromosomeNames.add(chromosomeEntry.getChromosomeName()))
 						error(lineNumber, MESSAGE_KEY_DUPLICATE_CHROMOSOME_NAME_ERROR,chromosomeEntry.getChromosomeName());
-
+					chromosomeEntries.add(chromosomeEntry);
 				}
 				lineNumber++;
 
@@ -83,11 +85,18 @@ public class ChromosomeListFileReader extends GCSEntryReader
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
 	@Override
 	public Object getEntry()
 	{
-		return chromosomeEntry;
+		throw new UnsupportedOperationException();
 	}
+	
+    public List<ChromosomeEntry> getentries()
+    {
+    	return chromosomeEntries;
+    }
 	@Override
 	public boolean isEntry()
 	{

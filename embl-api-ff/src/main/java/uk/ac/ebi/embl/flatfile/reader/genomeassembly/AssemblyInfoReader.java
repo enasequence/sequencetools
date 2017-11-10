@@ -21,6 +21,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 	@Override
 	public ValidationResult read() throws NumberFormatException, IOException
 	{
+		assemblyInfoEntry= new AssemblyInfoEntry();
 		int lineNumber = 1;
 		try(BufferedReader reader = getBufferedReader(file))
 		{

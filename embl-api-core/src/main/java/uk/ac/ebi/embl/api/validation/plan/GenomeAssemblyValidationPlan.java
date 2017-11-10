@@ -18,23 +18,11 @@ package uk.ac.ebi.embl.api.validation.plan;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.GCSEntry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
-import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
 
 public class GenomeAssemblyValidationPlan extends ValidationPlan
 {
@@ -43,7 +31,7 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 		super(planProperty);
 	}
 
-	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException
+	private ValidationPlanResult execute(GCSEntry entry) throws ValidationEngineException
 	{
 		List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
 		List<Class<? extends GenomeAssemblyValidationCheck<?>>> fixes = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
@@ -109,14 +97,14 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 	{
 		validationPlanResult = new ValidationPlanResult();
 		// TODO Auto-generated method stub
-		if(target instanceof Entry)
+		if(target instanceof GCSEntry)
 		{
-			execute((Entry)target);
+			execute((GCSEntry)target);
 		}
 		return validationPlanResult;
 	}
 	
-	private void executeChecksandFixes(List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks,Entry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+	private void executeChecksandFixes(List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks,GCSEntry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
 	{
 		for (Class<? extends GenomeAssemblyValidationCheck<?>> validationCheck : checks)
 		{

@@ -37,11 +37,13 @@ public class AssemblyInfoAnalysisIdCheck extends GenomeAssemblyValidationCheck<A
    @Override
 	public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
 	{
-		ValidationResult result = new ValidationResult();
-
+	   if(entry==null)
+		  return result;
+	   
 		if (entry.getAnalysisId() == null || entry.getAnalysisId().isEmpty())
 		{	
 			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_ANALYSIS_ID_ERROR);
+			return result;
 		}
 		
 		if (!entry.getAnalysisId().matches("^ERZ.*"))

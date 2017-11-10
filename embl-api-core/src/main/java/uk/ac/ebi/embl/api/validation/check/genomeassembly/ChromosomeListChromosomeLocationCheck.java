@@ -27,11 +27,11 @@ public class ChromosomeListChromosomeLocationCheck extends GenomeAssemblyValidat
 	
 	public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException
 	{
+		if(entry==null)
+			return result;
 		if (null == entry.getChromosomeLocation())
-		{
 			return result;				
-		}
-
+		
 		if (checkAndFixChromosomeLocation(entry, "macronuclear")) return result;
 		if (checkAndFixChromosomeLocation(entry, "nucleomorph")) return result;
 		if (checkAndFixChromosomeLocation(entry, "mitochondrion")) return result;		
