@@ -1,6 +1,9 @@
+ plugins {
+  id "org.sonarqube" version "2.6"
+}
  allprojects 
  {
-    ext.version_base = '1.1.179'
+    ext.version_base = '1.1.182'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -15,6 +18,7 @@
         }
     }
   }
+  
  subprojects 
   {
    apply plugin: 'java'
@@ -57,10 +61,10 @@
     archives sourcesJar
  }
 
- task wrapper(type: Wrapper) { gradleVersion = '1.12' 
+ task wrapper(type: Wrapper) { gradleVersion = '4.3.1' 
  }
  
- if (gradle.startParameter.taskNames.contains("uploadArchives")) {
+/* if (gradle.startParameter.taskNames.contains("uploadArchives")) {
         signing {
             required true
             sign configurations.archives
@@ -69,13 +73,13 @@
         task signArchives {
             // do nothing
         }
-    }
+    }*/
     
  uploadArchives 
   {
     repositories 
      {
-   /*   mavenDeployer 
+      mavenDeployer 
           {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
           }
@@ -124,11 +128,11 @@
                     }
                 }
             }
-        }*/
+        }
 //local repository	
-		 mavenDeployer 
+		/* mavenDeployer 
 		 {
-		   repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
+		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
                 authentication(userName: artifactoryUsername, password: artifactoryPassword)
             }
 			pom.project 
@@ -162,7 +166,7 @@
                     }
                 }
             }
-		 }
+		 }*/
 //local repository 
     }
   }
@@ -188,3 +192,10 @@ project(':embl-api-validator') {
     }
 }
   }
+  
+  sonarqube {
+    properties {
+        property "sonar.host.url", "http://ena-dev:9000/"
+        property "sonar.sourceEncoding", "UTF-8"
+    }
+}
