@@ -26,9 +26,15 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 
 public class QualifierMatcher extends FlatFileMatcher {
+   private boolean htmlEntValidationEnabled = true;
 
-	public QualifierMatcher(FlatFileLineReader reader) {
+   public QualifierMatcher(FlatFileLineReader reader) {
+      super(reader, PATTERN);
+   }
+
+   public QualifierMatcher(FlatFileLineReader reader, boolean executeHtmlEntityValidation) {
 		super(reader, PATTERN);
+		htmlEntValidationEnabled = executeHtmlEntityValidation;
 	}
 	 Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
 	private static final Pattern PATTERN = Pattern.compile(
@@ -67,12 +73,13 @@ public class QualifierMatcher extends FlatFileMatcher {
 					}
 				 }
 			}
-			
-			Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
-		    if (m.find())
-		    {
-		    	error("FT.13", qualifierName, qualifierValue);
-		    }
+			if (htmlEntValidationEnabled) {
+            Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
+            if (m.find())
+            {
+            	error("FT.13", qualifierName, qualifierValue);
+            }
+			}
 			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
 			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
 			

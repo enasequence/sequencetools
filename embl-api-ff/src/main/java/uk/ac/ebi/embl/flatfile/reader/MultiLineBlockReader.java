@@ -33,20 +33,20 @@ public abstract class MultiLineBlockReader extends BlockReader {
 	private int firstLineNumber;
 	private int lastLineNumber;
 	Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
-	
+
     public MultiLineBlockReader(LineReader lineReader,
     		ConcatenateType concatenateType) {
     	super(lineReader);
     	this.concatenateType = concatenateType;
     }
-    
+   
     public FlatFileOrigin getOrigin() {
     	if(!EmblEntryReader.isOrigin)
     	return null;
     	else
     	return new FlatFileOrigin(getLineReader().getFileId(), firstLineNumber, lastLineNumber);
     }
-    
+
     public enum ConcatenateType {
     	/** Flat file lines are concatenated together after the removal of
     	 * leading and trailing whitespace. Multiple adjacent whitespace
@@ -112,11 +112,13 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		
 		blockString=StringEscapeUtils.unescapeHtml4(blockString);
 		
-		Matcher m = htmlEntityRegexPattern.matcher(blockString);
-	    if (m.find())
-	    {
-	    	error("FF.15",getTag());
-	    }
+		if (htmlEntityValidationEnabled) {
+		   Matcher m = htmlEntityRegexPattern.matcher(blockString);
+		   if (m.find())
+		   {
+		      error("FF.15",getTag());
+		   }
+		}
 			
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.

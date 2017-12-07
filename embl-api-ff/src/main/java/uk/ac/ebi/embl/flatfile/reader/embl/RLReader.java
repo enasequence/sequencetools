@@ -32,6 +32,10 @@ import uk.ac.ebi.embl.flatfile.reader.UnpublishedMatcher;
 		super(lineReader,  ConcatenateType.CONCATENATE_SPACE);
 	}
 
+   public RLReader(LineReader lineReader, boolean htmlEntityValidationEnabled) {
+      super(lineReader,  ConcatenateType.CONCATENATE_SPACE);
+   }
+
 	@Override
 	public String getTag() {
 		return EmblTag.RL_TAG;

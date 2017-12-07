@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 public class FeatureReader extends FlatFileLineReader {
 	
 	boolean skipSource=false;
+	private boolean htmlEntityValidationEnabled = true;
 
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
@@ -43,6 +44,12 @@ public class FeatureReader extends FlatFileLineReader {
     public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
     	this.skipSource=skipSource;
+    }
+    
+    public FeatureReader(LineReader lineReader,boolean skipSource, boolean htmlEntValidationEnabled) {
+      super(lineReader);
+      this.skipSource=skipSource;
+      this.htmlEntityValidationEnabled = htmlEntValidationEnabled;
     }
         
     private static final int LOCATION_BEGIN_POS = 21;
@@ -289,7 +296,7 @@ public class FeatureReader extends FlatFileLineReader {
 		if (qualifierBuilder.length() == 0) {
 			return null;
 		}
-		QualifierMatcher qualifierMatcher = new QualifierMatcher(this);
+		QualifierMatcher qualifierMatcher = new QualifierMatcher(this, htmlEntityValidationEnabled);
 		if (!qualifierMatcher.match(qualifierBuilder.toString())) {
 			error("FT.5", "Invalid feature qualifier.");
 			return null;

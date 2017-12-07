@@ -18,12 +18,21 @@ package uk.ac.ebi.embl.flatfile.reader;
 /** Reader for flat file blocks.
  */
 public abstract class BlockReader extends FlatFileLineReader {
+	protected boolean htmlEntityValidationEnabled  = true;
 		
     public BlockReader(LineReader lineReader) {
     	super(lineReader);
     }
 
     public abstract String getTag();
+
+    /**
+     * Disable html entity validation in block text. Default true
+     */
+    public void enableHtmlEntityValidation(boolean enabled) {
+ 	   this.htmlEntityValidationEnabled = enabled;
+    }
+
     
     protected abstract void read(String block);
 }

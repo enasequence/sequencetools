@@ -99,11 +99,12 @@ public abstract class EntryReader extends FlatFileEntryReader
     protected abstract boolean readSequence( LineReader lineReader, Entry entry ) throws IOException;
 
 
-    protected void addBlockReader( BlockReader blockReader )
+    protected BlockReader addBlockReader( BlockReader blockReader )
     {
     	reader.put(blockReader.getTag(), blockReader);
     	HashMap<String,Integer> block=getBlockCounter ();
     	getBlockCounter ().put(blockReader.getTag(), 0);
+    	return blockReader;
     }
 
     protected void addSkipTagCounterHolder(BlockReader blockReader)
