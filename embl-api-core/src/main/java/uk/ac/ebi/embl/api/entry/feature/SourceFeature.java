@@ -35,7 +35,8 @@ public class SourceFeature extends Feature implements HasTaxon, Serializable {
 
 	private static final long serialVersionUID = -4327924654143517534L;
 	String anticodonMessage =null;
-	protected SourceFeature() {
+	protected SourceFeature() 
+	{
 		super(SOURCE_FEATURE_NAME, false);
 	}
 	

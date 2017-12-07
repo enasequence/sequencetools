@@ -2,7 +2,7 @@ package uk.ac.ebi.embl.api.validation;
 
 public enum FileType
 {
-	EMBL, GENOMEASSEMBLY,GFF3,FASTA,AGP,GENBANK,MASTER;
+	EMBL, ASSEMBLYINFO,CHROMOSOMELIST,UNLOCALISEDLIST,GFF3,FASTA,AGP,GENBANK,MASTER;
 	
 	static public FileType get(String fileType)
 	{

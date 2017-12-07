@@ -19,7 +19,6 @@ package uk.ac.ebi.embl.api.validation;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.genomeassembly.GenomeAssemblyRecord;
 import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FileUtils;
 import uk.ac.ebi.embl.api.validation.helper.FlattenedMessageResult;
@@ -36,18 +35,19 @@ import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
-import uk.ac.ebi.embl.flatfile.reader.genomeassembly.GenomeAssemblyFileReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.EntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.degenerator.DEGenerator;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.genbank.GenbankEntryWriter;
-import uk.ac.ebi.embl.flatfile.writer.genomeassembly.GenomeAssemblyFileWriter;
 import uk.ac.ebi.embl.gff3.reader.GFF3FlatFileEntryReader;
+
 import org.apache.commons.dbutils.DbUtils;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -558,9 +558,6 @@ public class EnaValidator
 		case GFF3:
 			reader = new GFF3FlatFileEntryReader(fileReader);
 			break;
-		case GENOMEASSEMBLY:
-			reader = new GenomeAssemblyFileReader(	fileReader,fileId);
-			break;
 		case FASTA:
 			reader = new FastaFileReader(new FastaLineReader(fileReader));
 			break;
@@ -679,12 +676,7 @@ public class EnaValidator
 
 				{
 					StringWriter stringWriter = new StringWriter();
-					if (FileType.GENOMEASSEMBLY.equals(fileType))
-					{
-						GenomeAssemblyFileWriter.getWriter((GenomeAssemblyRecord) entry).write(stringWriter);
-					}
-					else
-						if (FileType.EMBL.equals(fileType) || FileType.GENBANK.equals(fileType))
+					if (FileType.EMBL.equals(fileType) || FileType.GENBANK.equals(fileType))
 						{
 
 							Entry originalEntry = (Entry) reader.getEntry();
@@ -733,7 +725,7 @@ public class EnaValidator
 				/**
 				 * if we are sorting the files into good and bad - do so here
 				 */
-				if (filterMode && filterPrefix != null && !(FileType.GFF3.equals(fileType)) && !(FileType.GENOMEASSEMBLY.equals(fileType)))
+				if (filterMode && filterPrefix != null && !(FileType.GFF3.equals(fileType)))
 				{
 
 					if (!planResult.getMessages(Severity.ERROR).isEmpty())
@@ -793,12 +785,6 @@ public class EnaValidator
 						{
 							origFileWriter.write(originalFileString);
 						}
-						if (FileType.GENOMEASSEMBLY.equals(fileType))
-						{
-							GenomeAssemblyFileWriter.getWriter((GenomeAssemblyRecord) entry).write(fixedFileWriter);
-						}
-						else
-						{
 							EntryWriter entryWriter;
 							if (FileType.EMBL.equals(fileType)||FileType.FASTA.equals(fileType))
 							{
@@ -815,7 +801,7 @@ public class EnaValidator
 								entryWriter.write(fixedFileWriter);
 							}
 						}
-					}
+					
 				}
 				else
 					if (fixMode)
@@ -824,9 +810,6 @@ public class EnaValidator
 						Entry Egentry = (Entry) entry;
 						switch(fileType)
 						{
-						case GENOMEASSEMBLY:
-							GenomeAssemblyFileWriter.getWriter((GenomeAssemblyRecord) entry).write(fixedFileWriter);
-							break;
 						case EMBL:
 						case FASTA:
 						case AGP:
@@ -1012,9 +995,6 @@ public class EnaValidator
 			break;
 		case GFF3:
 			planResult = gff3Validator.execute(entry);
-			break;
-		case GENOMEASSEMBLY:
-			planResult = gaValidator.execute(entry);
 			break;
 		default:
 			break;

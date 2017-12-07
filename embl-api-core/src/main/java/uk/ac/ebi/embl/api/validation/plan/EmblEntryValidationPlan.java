@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.plan;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -26,7 +27,6 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +127,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 		{
 			throw new ValidationEngineException("EmblEntryValidationPlanProperty must not be null");
 		}
-
+		
 	}
 
 	@Override
@@ -176,5 +176,4 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			}
 		}
 	}
-
 }

@@ -112,7 +112,7 @@ public abstract class ValidationPlan {
 	 * @throws ValidationEngineException
 	 */
 	@SuppressWarnings("unchecked")
-	public ValidationPlanResult execute(EmblEntryValidationCheck check, Object target) throws ValidationEngineException {
+	public ValidationPlanResult execute(ValidationCheck check, Object target) throws ValidationEngineException {
 		
 		
 		if (check == null)

@@ -16,15 +16,13 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import java.sql.SQLException;
-
-import uk.ac.ebi.embl.api.genomeassembly.GenomeAssemblyRecord;
+import uk.ac.ebi.embl.api.entry.genomeassembly.GCSEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public abstract class GenomeAssemblyValidationCheck implements EmblEntryValidationCheck<GenomeAssemblyRecord> {
+public abstract class GenomeAssemblyValidationCheck<GCSEntry> implements EmblEntryValidationCheck<GCSEntry>{
 	
 	protected ValidationResult result;
     private boolean isPopulated;
@@ -32,8 +30,16 @@ public abstract class GenomeAssemblyValidationCheck implements EmblEntryValidati
 	private EntryDAOUtils entryDAOUtils;
 	private EraproDAOUtils eraproDAOUtils;
 
+	@Override
+	public ValidationResult check(GCSEntry object)
+			throws ValidationEngineException
+	{
+		// TODO Auto-generated method stub
+		return result;
+	}
 
     public GenomeAssemblyValidationCheck() {
+    	result= new ValidationResult();
 	}
 
     public boolean isPopulated() {

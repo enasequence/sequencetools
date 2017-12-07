@@ -34,8 +34,6 @@ public class FileUtils {
 	public static final String genbank_filetoken = "LOCUS";
 	public static final String gff_filetoken = "##gff-version 3";
 	public static final String fasta_filetoken = ">";
-	private static final String[] AssemblyFileToken = { "assembly","chromosome", "unlocalised", "unplaced", "placed" };
-
 
     public static void copyFile(File src,
                                 File dst) throws IOException, FileNotFoundException, SecurityException {
@@ -153,11 +151,7 @@ public class FileUtils {
 			{
 			 return FileType.GFF3;
 			}
-	  else if (StringUtils.indexOfAny(	formatFile.getName(),AssemblyFileToken) != -1)
-			{
-			 return FileType.GENOMEASSEMBLY;
-			}
-	 else if (firstLineofFile.startsWith(fasta_filetoken))
+	   else if (firstLineofFile.startsWith(fasta_filetoken))
 			{
 			return FileType.FASTA;
 			}
