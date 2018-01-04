@@ -3,9 +3,7 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
-
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
@@ -16,6 +14,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 	AssemblyInfoEntry assemblyInfoEntry = null;
 	public AssemblyInfoReader(File file)
 	{
+		super();
 		this.file=file;
 	}
 	@Override
@@ -43,6 +42,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 				else
 				{
 					String field= StringUtils.deleteWhitespace(fields[0].toUpperCase());
+					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");			
 					String fieldValue= fields[1];
 					switch(field)
 					{
@@ -56,10 +56,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 						assemblyInfoEntry.setSequencingTechnology(fieldValue);
 						break;
 					case "COVERAGE":
-						if(isFloat(fieldValue))
-						 assemblyInfoEntry.setCoverage( new Float(fieldValue));
-						else
-							error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,field,fieldValue);
+						 assemblyInfoEntry.setCoverage(fieldValue);
 						break;
 					case "PROGRAM":
 						assemblyInfoEntry.setProgram(fieldValue);
@@ -68,12 +65,20 @@ public class AssemblyInfoReader extends GCSEntryReader
 						assemblyInfoEntry.setPlatform(fieldValue);
 						break;
 					case "MINGAPLENTH":
-					case "MIN_GAP_LENGTH" :
 						if(isInteger(fieldValue))
-						assemblyInfoEntry.setMinGapLength(new Integer(fieldValue));
+						  assemblyInfoEntry.setMinGapLength(new Integer(fieldValue));
 						else
-						error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,field,fieldValue);
+						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
 						break;
+					case "MOLECULETYPE":
+						if(isValidMoltype(fieldValue))
+							assemblyInfoEntry.setMoleculeType(fieldValue);
+						else
+						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						break;
+					case "ORGANISM":
+						  	assemblyInfoEntry.setOrganism(fieldValue);
+						  	break;
 					default :
 						break;
 					}
@@ -96,17 +101,20 @@ public class AssemblyInfoReader extends GCSEntryReader
 	    }
 	    return true;
 	}
-	public static boolean isFloat(String s) {
-	    try { 
-	        Float.parseFloat(s); 
-	    } catch(NumberFormatException e) { 
-	        return false; 
-	    } catch(NullPointerException e) {
-	        return false;
-	    }
-	    return true;
-	}
 
+	public static boolean isValidMoltype(String molType) {
+		
+		if (molType == null) {
+			return false;
+		}
+
+		molType = StringUtils.deleteWhitespace(molType).toUpperCase();
+		if (!molType.equals("GENOMICDNA") && !molType.equals("GENOMICRNA") && !molType.equals("VIRALCRNA"))
+			return false;
+
+		return true;
+
+	}
 
 	@Override
 	public ValidationResult skip() throws IOException

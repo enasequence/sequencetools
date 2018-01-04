@@ -165,26 +165,26 @@ public class TranslationTableDescriptor {
 		TABLES.put(27, new TranslationTableDescriptor(
 				27, 
 				"Karyorelict Nuclear",
-				"FFLLSSSSYYQQCCWWLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"FFLLSSSSYYQQCCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"--------------*--------------------M----------------------------")
 			);
 
 		TABLES.put(28, new TranslationTableDescriptor(
 				28, 
 				"Condylostoma Nuclear",
-				"FFLLSSSSYYQQCCWWLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"FFLLSSSSYYQQCCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"----------**--*--------------------M----------------------------")
 			);
 		TABLES.put(29, new TranslationTableDescriptor(
 				29, 
 				"Mesodinium Nuclear",
-				"FFLLSSSSYYYYCC*WLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"FFLLSSSSYYYYCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"--------------*--------------------M----------------------------")
 			);
 		TABLES.put(30, new TranslationTableDescriptor(
 				30, 
 				"Peritrich Nuclear",
-				"FFLLSSSSYYEECC*WLLLAPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
+				"FFLLSSSSYYEECC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"--------------*--------------------M----------------------------")
 			);
 		TABLES.put(31, new TranslationTableDescriptor(

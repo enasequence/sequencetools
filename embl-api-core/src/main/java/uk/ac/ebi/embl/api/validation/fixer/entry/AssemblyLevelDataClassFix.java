@@ -78,7 +78,7 @@ public class AssemblyLevelDataClassFix extends EntryValidationCheck
 					reportMessage(Severity.FIX, entry.getOrigin(), DATACLASSFIX_ID,entry.getDataClass(), Entry.STD_DATACLASS);
 					entry.setDataClass(dataClass);
 				}
-			}
+		 }
 		
 		return result;
 	}

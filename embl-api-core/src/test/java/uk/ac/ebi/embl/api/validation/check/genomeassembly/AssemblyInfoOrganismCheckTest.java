@@ -22,18 +22,26 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AssemblyInfoCoverageCheckTest
+public class AssemblyInfoOrganismCheckTest
 {
 	private AssemblyInfoEntry assemblyEntry;
-	private AssemblyInfoCoverageCheck check;
+	private AssemblyInfoOrganismCheck check;
+	private EmblEntryValidationPlanProperty planProperty;
 
 	@Before
 	public void setUp() throws SQLException
 	{
-		check = new AssemblyInfoCoverageCheck();
+		check = new AssemblyInfoOrganismCheck();
+		planProperty=new EmblEntryValidationPlanProperty();
+		TaxonHelper taxonHelper = new TaxonHelperImpl();
+		planProperty.taxonHelper.set(taxonHelper);
+		check.setEmblEntryValidationPlanProperty(planProperty);
 	}
 
 	@Test
@@ -43,26 +51,29 @@ public class AssemblyInfoCoverageCheckTest
 	}
 
 	@Test
-	public void testCheck_NoCoverage() throws ValidationEngineException
+	public void testCheck_NoOrganism() throws ValidationEngineException
 	{
 		assemblyEntry= new AssemblyInfoEntry(); 
-		assertTrue(check.check(assemblyEntry).isValid());
+		ValidationResult result = check.check(assemblyEntry);
+		assertEquals(1, result.count("AssemblyInfoOrganismMissingCheck", Severity.ERROR));
 	}
 	
 	@Test
-	public void testCheck_invalidCoverage() throws ValidationEngineException
-	{
-		assemblyEntry= new AssemblyInfoEntry(); 
-		assemblyEntry.setCoverage("sdffgdfg");
-		ValidationResult result = check.check(assemblyEntry);
-		assertEquals(1, result.count("AssemblyinfoCoverageCheck", Severity.ERROR));
-	}
-	@Test
-	public void testCheck_validCoverage() throws ValidationEngineException
+	public void testCheck_invalidOrganism() throws ValidationEngineException
 	{
 		assemblyEntry= new AssemblyInfoEntry();
-		assemblyEntry.setOrganism("123.45x");
+		assemblyEntry.setOrganism("asfsdfg");
+		ValidationResult result = check.check(assemblyEntry);
+		assertEquals(1, result.count("AssemblyInfoInvalidOrganismCheck", Severity.ERROR));
+	}
+	
+	@Test
+	public void testCheck_validOrganism() throws ValidationEngineException
+	{
+		assemblyEntry= new AssemblyInfoEntry();
+		assemblyEntry.setOrganism("Bacteria");
 		ValidationResult result = check.check(assemblyEntry);
 		assertEquals(0, result.count("AssemblyInfoInvalidOrganismCheck", Severity.ERROR));
 	}
+	
 }

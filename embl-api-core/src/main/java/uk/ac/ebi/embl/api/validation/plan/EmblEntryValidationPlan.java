@@ -18,7 +18,6 @@ package uk.ac.ebi.embl.api.validation.plan;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -54,6 +53,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			checks.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.FASTA_AGP_FEATURE_CHECKS.getValidationUnit());
 			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
+			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
  				{
 				fixes.addAll(ValidationUnit.AGP_SPECIFIC_FIXES.getValidationUnit());
@@ -61,6 +61,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 				fixes.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_FIXES.getValidationUnit());
 				fixes.addAll(ValidationUnit.SEQUENCE_ONLY_FIXES.getValidationUnit());
 				fixes.addAll(ValidationUnit.FASTA_AGP_FEATURE_FIXES.getValidationUnit());
+				fixes.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_FIXES.getValidationUnit());
  				}
 
 			break;

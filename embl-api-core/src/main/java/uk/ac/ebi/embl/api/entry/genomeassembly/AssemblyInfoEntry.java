@@ -26,7 +26,7 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String masterId;
 	private String sampleId;
 	private String submissionAccountId;
-	private Float coverage;
+	private String coverage;
 	private Integer minGapLength;
 	private Integer contigCount;
 	private Integer scaffoldCount;
@@ -43,6 +43,8 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String sequencingTechnology;
 	private String program;
 	private String platform;
+	private String moleculeType;
+
 	
 	public String getAssemblyMethod()
 	{
@@ -189,12 +191,12 @@ public class AssemblyInfoEntry extends GCSEntry
 		this.submissionAccountId = submissionAccountId;
 	}
 
-	public Float getCoverage() 
+	public String getCoverage() 
 	{
 		return coverage;
 	}
 	
-	public void setCoverage(Float coverage) 
+	public void setCoverage(String coverage) 
 	{
 		this.coverage = coverage;
 	}	
@@ -285,5 +287,12 @@ public class AssemblyInfoEntry extends GCSEntry
 
 	public void setBiosampleId(String biosampleId) {
 		this.biosampleId = biosampleId;
+	}
+	public void setMoleculeType(String moleculeType){
+		this.moleculeType=moleculeType;
+	}
+	
+	public String getMoleculeType() {
+		return moleculeType;
 	}
 }

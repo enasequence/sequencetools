@@ -15,26 +15,37 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 @Description("")
-public class AssemblyInfoCoverageCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
+public class AssemblyInfoOrganismCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
-   private final String MESSAGE_KEY_COVERAGE_ERROR = "AssemblyinfoCoverageCheck";
-
-   @Override
+   
+	private final String MESSAGE_KEY_INVALID_ORGANISM_ERROR = "AssemblyInfoInvalidOrganismCheck";
+	private final String MESSAGE_KEY_ORGANISM_MISSING_ERROR = "AssemblyInfoOrganismMissingCheck";
+	
+	@Override
 	public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
 	{
-		if (entry == null||entry.getCoverage()==null)
+		if(entry==null)
 			return result;
-		entry.setCoverage(StringUtils.removeEnd(entry.getCoverage().toLowerCase(), "x"));
-		if (!NumberUtils.isNumber(entry.getCoverage())) 
-			reportError(entry.getOrigin(), MESSAGE_KEY_COVERAGE_ERROR, entry.getCoverage());
+		
+		if(entry.getOrganism()==null)
+		{
+			reportError(entry.getOrigin(),MESSAGE_KEY_ORGANISM_MISSING_ERROR);
+			return result;
+		}
+		
+		TaxonHelper taxonHelper=getEmblEntryValidationPlanProperty().taxonHelper.get();
+		if(!taxonHelper.isOrganismValid(entry.getOrganism()))
+		{
+			reportError(entry.getOrigin(),MESSAGE_KEY_INVALID_ORGANISM_ERROR,entry.getOrganism());
+		}
 		return result;
 	}
+	
 }
