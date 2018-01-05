@@ -32,7 +32,7 @@ public class AssemblyInfoCoverageCheck extends GenomeAssemblyValidationCheck<Ass
 	{
 		if (entry == null||entry.getCoverage()==null)
 			return result;
-		entry.setCoverage(StringUtils.removeEnd(entry.getCoverage().toLowerCase(), "x"));
+		entry.setCoverage(StringUtils.removeEnd(entry.getCoverage().trim().toLowerCase(), "x"));
 		if (!NumberUtils.isNumber(entry.getCoverage())) 
 			reportError(entry.getOrigin(), MESSAGE_KEY_COVERAGE_ERROR, entry.getCoverage());
 		return result;

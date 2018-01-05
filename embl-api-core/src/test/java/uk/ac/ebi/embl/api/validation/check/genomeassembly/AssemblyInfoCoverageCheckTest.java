@@ -57,12 +57,22 @@ public class AssemblyInfoCoverageCheckTest
 		ValidationResult result = check.check(assemblyEntry);
 		assertEquals(1, result.count("AssemblyinfoCoverageCheck", Severity.ERROR));
 	}
+	
 	@Test
-	public void testCheck_validCoverage() throws ValidationEngineException
+	public void testCheck_validCoverage1() throws ValidationEngineException
 	{
 		assemblyEntry= new AssemblyInfoEntry();
-		assemblyEntry.setOrganism("123.45x");
+		assemblyEntry.setCoverage("123.45x");
 		ValidationResult result = check.check(assemblyEntry);
-		assertEquals(0, result.count("AssemblyInfoInvalidOrganismCheck", Severity.ERROR));
+		assertEquals(0, result.count("AssemblyinfoCoverageCheck", Severity.ERROR));
+	}
+	
+	@Test
+	public void testCheck_validCoverage2() throws ValidationEngineException
+	{
+		assemblyEntry= new AssemblyInfoEntry();
+		assemblyEntry.setCoverage("546x");
+		ValidationResult result = check.check(assemblyEntry);
+		assertEquals(0, result.count("AssemblyinfoCoverageCheck", Severity.ERROR));
 	}
 }
