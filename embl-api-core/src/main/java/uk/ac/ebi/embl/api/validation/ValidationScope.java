@@ -27,9 +27,9 @@ public enum ValidationScope {
 	ASSEMBLY_MASTER(Group.ASSEMBLY),
 	ASSEMBLY_CONTIG(Group.ASSEMBLY),
 	ASSEMBLY_SCAFFOLD(Group.ASSEMBLY),
-	ASSEMBLY_CHROMOSOME(Group.ASSEMBLY);
-	
-	
+	ASSEMBLY_CHROMOSOME(Group.ASSEMBLY),
+	ASSEMBLY_TRANSCRIPTOME(Group.ASSEMBLY);
+		
 	private Group group;
 	
 	ValidationScope(Group group)

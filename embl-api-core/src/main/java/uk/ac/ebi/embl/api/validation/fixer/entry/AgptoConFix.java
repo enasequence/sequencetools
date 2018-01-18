@@ -45,6 +45,7 @@ public class AgptoConFix extends EntryValidationCheck
 		gapType.put("heterochromatin","heterochromatin");
 		gapType.put("telomere","telomere");
 		gapType.put("repeatwithLinkage","repeat within scaffold");
+		gapType.put("contamination","contamination");
 		linkageEvidence.put("pcr","pcr");
 		linkageEvidence.put("na","unspecified");
 		linkageEvidence.put("paired-ends","paired-ends");

@@ -68,8 +68,7 @@ public class TranslExceptQualifierCheck extends FeatureValidationCheck
 									return result;
 							}
 						}
-						TranslExceptQualifier translExceptQualifier = new TranslExceptQualifier(
-								translExceptQual.getValue());
+						TranslExceptQualifier translExceptQualifier = new TranslExceptQualifier(translExceptQual.getValue());
 					CompoundLocation<Location> antiCodonLocation = translExceptQualifier.getLocations();
 						Long beginPosition = featureLocation.getMinPosition();
 						Long endPosition = featureLocation.getMaxPosition();
@@ -107,6 +106,7 @@ public class TranslExceptQualifierCheck extends FeatureValidationCheck
 							}
 						if (anticodonLocationLength!=3)
 							{
+							    if(!("TERM".equals(aminoAcid.getAbbreviation())))
 								reportError(translExceptQualifier.getOrigin(),
 										TRANSL_EXCEPT_SEGMENT_END_MESSAGE_ID,
 										3);

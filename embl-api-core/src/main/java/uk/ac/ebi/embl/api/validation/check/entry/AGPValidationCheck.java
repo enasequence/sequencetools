@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 public class AGPValidationCheck extends EntryValidationCheck
 {
 	String[] componentTypeArray={"A","D","F","G","O","P","W","N","U"};
-	String[] gapTypeArray={"scaffold","contig","centromere","short_arm","heterochromatin","telomere","repeat"};
+	String[] gapTypeArray={"scaffold","contig","centromere","short_arm","heterochromatin","telomere","repeat","contamination"};
 	String[] orientationArray= {"+","plus","-","minus","?","0","unknown","na","irrelevant"};
 	String[] linkageEvidenceArray= {"na","paired-ends","align_genus","align_xgenus","align_trnscpt","within_clone","clone_contig","map","strobe","unspecified"};
 

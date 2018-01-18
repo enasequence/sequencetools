@@ -82,26 +82,25 @@ public class LocusReader extends SingleLineBlockReader {
 		
 		if (matcher.isValueXXX(GROUP_DIVISION)) {
 			String division = matcher.getUpperString(GROUP_DIVISION);
-		    if (division.equals("EST") ||
-		        division.equals("GSS") ||
-		        division.equals("PAT") ||
-		        division.equals("HTC") ||
-		        division.equals("HTG") ||
-		        division.equals("STS") ||
-		        division.equals("CON") ||
-		        division.equals("TSA")) {
-		    	entry.setDataClass(division);
-		    }
-  		    else if (division.equals("ROD") ||
-  		    		division.equals("MAM") ||
-    				division.equals("VRT") ||
-					division.equals("INV") ||
-					division.equals("PLN") ||
-					division.equals("VRL") ||
-		            division.equals("PHG")) {
+		    if (division.equals("PHG")||
+  		  		division.equals("ENV")||
+  				division.equals("FUN")||
+  				division.equals("HUM")||
+  				division.equals("INV")||
+  				division.equals("MAM")||
+  				division.equals("VRT")||
+  				division.equals("MUS")||
+  				division.equals("PLN")||
+  				division.equals("PRO")||
+  				division.equals("ROD")||
+  				division.equals("SYN")||
+  				division.equals("TGN")||
+  				division.equals("UNC")||
+  				division.equals("VRL")) 
   		    	entry.setDivision(division);
-  		    }
-		}		
+  		    	else
+  		    	 entry.setDataClass(division);
+  		}
 		Date ffDate = matcher.getDay(GROUP_DATE);
 		entry.setFFDate( ffDate );
 		entry.setLastUpdated( ffDate );

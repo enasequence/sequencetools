@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 		+ "Reference Author (RA) missing for RN [{0}]"
 		+ "Reference Location (RL) missing for RN [{0}]")
 
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.EMBL_TEMPLATE})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.EMBL_TEMPLATE,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
 
 public class CitationExistsCheck extends EntryValidationCheck {
 
