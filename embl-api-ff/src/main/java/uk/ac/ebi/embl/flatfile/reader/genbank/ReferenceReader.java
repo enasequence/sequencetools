@@ -81,6 +81,8 @@ public class ReferenceReader extends MultiLineBlockReader {
 				}
 				else {
 					reference.getLocations().addLocation(locationMatcher.getLocation());
+					reference.setLocationExists(true);
+
 				}
 			}
 		}

@@ -40,6 +40,7 @@ public class AuthorsReader extends MultiLineBlockReader {
 
 	@Override
 	protected void read(String block) {
+		getCache().getReference().setAuthorExists(true);
 		for (String author : FlatFileUtils.split(block, "(,\\s+)|(\\s+and\\s+)")) {
 			GenbankPersonMatcher personMatcher = new GenbankPersonMatcher(this);
 			if (!personMatcher.match(author)) {
