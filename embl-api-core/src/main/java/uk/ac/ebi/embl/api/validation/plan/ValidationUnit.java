@@ -190,7 +190,8 @@ public enum ValidationUnit
 				HostQualifierFix.class,
 				SourceQualifierMissingFix.class,
 				StrainQualifierValueFix.class,
-				Lat_lonValueFix.class
+				Lat_lonValueFix.class,
+				CountryQualifierFix.class
 			),
 			SOURCE_DEPENDSON_SEQUENCE_FIXES
 			(
