@@ -76,4 +76,11 @@ public enum ValidationScope {
 		ASSEMBLY,
 		SEQUENCE
 	}
+
+	public static ValidationScope getScope(FileType fileType) {
+		if(fileType == FileType.GENBANK) {
+			return ValidationScope.NCBI;
+		}
+		return ValidationScope.EMBL;
+	}
 }
