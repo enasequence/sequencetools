@@ -49,6 +49,8 @@ public class CountryQualifierFix extends FeatureValidationCheck
 
 	private Set<String> countries = new HashSet<>();
 
+	public CountryQualifierFix() { }
+
 	CountryQualifierFix(DataSet qualifierValueSet)
 	{
 		this.valuesSet = qualifierValueSet;
