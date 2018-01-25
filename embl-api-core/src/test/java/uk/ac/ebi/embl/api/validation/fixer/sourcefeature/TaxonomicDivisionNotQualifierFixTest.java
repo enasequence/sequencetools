@@ -29,13 +29,10 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.TaxonomicDivisionNotQualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.StrainQualifierValueFix;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -69,12 +66,12 @@ public class TaxonomicDivisionNotQualifierFixTest
 		property=new EmblEntryValidationPlanProperty();
 		taxonHelper=createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
-		DataSet dataSet = new DataSet();
+
 		DataRow dataRow1 = new DataRow(Qualifier.LAT_LON_QUALIFIER_NAME, "HUM");
 		DataRow dataRow2 = new DataRow("dev_stage", "PRO");
-		dataSet.addRow(dataRow1);
-		dataSet.addRow(dataRow2);
-		check = new TaxonomicDivisionNotQualifierFix(dataSet);
+
+		DataSetHelper.createAndAdd(FileName.TAXONOMIC_DIVISION_NO_QUALIFIER, dataRow1,dataRow2);
+		check = new TaxonomicDivisionNotQualifierFix();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 

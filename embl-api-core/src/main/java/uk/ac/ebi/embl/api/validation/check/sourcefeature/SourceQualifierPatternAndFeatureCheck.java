@@ -24,64 +24,60 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@CheckDataSet("source-qualifier-pattern-feature.tsv")
+@CheckDataSet( dataSetNames = {FileName.SOURCE_QUALIFIER_PATTERN_FEATURE})
 @Description("Feature \\\"{0}\\\" is required when qualifier \\\"{1}\\\" matches pattern \\\"{2}\\\"")
 public class SourceQualifierPatternAndFeatureCheck extends EntryValidationCheck {
-
-	@CheckDataRow
-	private DataRow dataRow;
 	
 	private final static String MESSAGE_ID = "SourceQualifierPatternAndFeatureCheck";
 
 	public SourceQualifierPatternAndFeatureCheck() {
 	}
 
-	SourceQualifierPatternAndFeatureCheck(DataRow dataRow) {
-		this.dataRow = dataRow;
-	}
-
 	public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
-
-        Collection<Feature> sources = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
-
-        String featureName = dataRow.getString(0);
-		String qualifierName = dataRow.getString(1);
-		String valuePattern = dataRow.getString(2);
-
-		if (StringUtils.isEmpty(qualifierName)
-				|| StringUtils.isEmpty(valuePattern)
-				|| StringUtils.isEmpty(featureName)) {
+		result = new ValidationResult();
+		if (null == entry) {
 			return result;
 		}
+		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.SOURCE_QUALIFIER_PATTERN_FEATURE).getRows()) {
 
-		Pattern pattern = Pattern.compile(valuePattern);
+			Collection<Feature> sources = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
 
-		for (Feature source : sources) {
-			Collection<Qualifier> qualifiers = source.getQualifiers(qualifierName);
-			if (qualifiers.isEmpty()) {
-				return result;
+			String featureName = dataRow.getString(0);
+			String qualifierName = dataRow.getString(1);
+			String valuePattern = dataRow.getString(2);
+
+			if (StringUtils.isEmpty(qualifierName)
+					|| StringUtils.isEmpty(valuePattern)
+					|| StringUtils.isEmpty(featureName)) {
+				continue;
 			}
-			for (Qualifier qualifier : qualifiers) {
-				String value = qualifier.getValue();
-				if (value == null) {
-					continue;
-				}
-				if (pattern.matcher(value).matches()) {
-					if (!SequenceEntryUtils.isFeatureAvailable(featureName,entry)) {
-						reportError(entry.getOrigin(), MESSAGE_ID, featureName, qualifierName, valuePattern);
+
+			Pattern pattern = Pattern.compile(valuePattern);
+
+			for (Feature source : sources) {
+				Collection<Qualifier> qualifiers = source.getQualifiers(qualifierName);
+				if (!qualifiers.isEmpty()) {
+
+					for (Qualifier qualifier : qualifiers) {
+						String value = qualifier.getValue();
+						if (value != null) {
+							if (pattern.matcher(value).matches()) {
+								if (!SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {
+									reportError(entry.getOrigin(), MESSAGE_ID, featureName, qualifierName, valuePattern);
+								}
+							}
+						}
 					}
 				}
 			}
+
 		}
 		return result;
 	}

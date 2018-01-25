@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@CheckDataSet(dataSetNames={"feature-regex-groups.tsv"})
 @Description("\"{0}\" qualifier value \"{1}\" is invalid, a note has been added.")
 @ExcludeScope(validationScope={ValidationScope.ARRAYEXPRESS, ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_CONTIG, ValidationScope.ASSEMBLY_MASTER, ValidationScope.ASSEMBLY_SCAFFOLD, ValidationScope.ASSEMBLY_TRANSCRIPTOME, ValidationScope.EGA, ValidationScope.EMBL, ValidationScope.EMBL, ValidationScope.EMBL_TEMPLATE, ValidationScope.EPO, ValidationScope.EPO_PEPTIDE, ValidationScope.INSDC})
 @RemoteExclude
@@ -44,17 +46,22 @@ public class CountryQualifierFix extends FeatureValidationCheck
 
 	QualifierFactory qualifierFactory = new QualifierFactory();
 
-	@CheckDataSet("feature-regex-groups.tsv")
-	private DataSet valuesSet;
+
+	//private DataSet valuesSet;
 
 	private Set<String> countries = new HashSet<>();
 
+    public CountryQualifierFix() { }
+
 	CountryQualifierFix(DataSet qualifierValueSet)
 	{
-		this.valuesSet = qualifierValueSet;
+		//this.valuesSet = qualifierValueSet;
 	}
 
-	public void init() {
+/*	public void init() {
+
+    	valuesSet = GlobalDataSets.getDataSet("feature-regex-groups.tsv");
+
 		if (valuesSet != null) {
 			for (DataRow regexpRow : valuesSet.getRows()) {
 				if (regexpRow.getString(0).equals("country")) {
@@ -65,18 +72,35 @@ public class CountryQualifierFix extends FeatureValidationCheck
 		} else {
 			throw new IllegalArgumentException("Failed to set qualifier values in CountryQualifierFix!");
 		}
+	}*/
+
+	private Set<String> getCountries() {
+		Set<String> countries = new HashSet<>();
+		DataSet valuesSet = GlobalDataSets.getDataSet("feature-regex-groups.tsv");
+
+		if (valuesSet != null) {
+			for (DataRow regexpRow : valuesSet.getRows()) {
+				if (regexpRow.getString(0).equals("country")) {
+					Stream.of(regexpRow.getStringArray(3)).forEach(country -> countries.add(country.trim().toLowerCase()));
+					break;
+				}
+			}
+		} else {
+			throw new IllegalArgumentException("Failed to set qualifier values in CountryQualifierFix!");
+		}
+		return countries;
 	}
 
-	@Override
+	/*@Override
 	public void setPopulated() {
 		init();
 		super.setPopulated();
-	}
+	}*/
 
 
 	public ValidationResult check(Feature feature) {
 		result = new ValidationResult();
-
+		Set<String> countries = getCountries();
 		if (null != feature && feature instanceof SourceFeature) {
 
 			SourceFeature source = (SourceFeature) feature;

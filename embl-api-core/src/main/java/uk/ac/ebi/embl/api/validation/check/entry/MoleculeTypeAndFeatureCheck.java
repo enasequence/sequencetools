@@ -22,18 +22,15 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
+@CheckDataSet(dataSetNames = { FileName.MOLTYPE_FEATURE })
 @Description("Feature {0} is required when molecule type is {1}. \"Join\" locations are only permitted in CDS features on mRNA entries when \"ribosomal_slippage\" or \"exception\" qualifiers are present.")
 public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 
-	@CheckDataSet("moltype-feature.tsv")
-	private DataSet dataSet;
 
     /**
      * whether this is a 'new' entry in the database - default to true until we have a system for
@@ -48,10 +45,6 @@ public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 
 	public MoleculeTypeAndFeatureCheck() {
 	}
-	
-	MoleculeTypeAndFeatureCheck(DataSet dataSet) {
-		this.dataSet = dataSet;
-	}
 
     public void setNewEntry(boolean newEntry) {
         isNewEntry = newEntry;
@@ -59,7 +52,8 @@ public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
-        
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.MOLTYPE_FEATURE);
+
         String moleculeType = SequenceEntryUtils.getMoleculeType(entry);
 		if (moleculeType == null) {
 			return result;

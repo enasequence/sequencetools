@@ -23,12 +23,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
 import static org.junit.Assert.assertEquals;
@@ -50,13 +48,9 @@ public class FeatureQualifierRenameFixTest {
 		DataRow dataRow1 = new DataRow("organism", "qualifier1");
 		DataRow dataRow2 = new DataRow("strain", "qualifier2");
 		DataRow dataRow3 = new DataRow("label", "note");
-		DataSet featureQualifierSet = new DataSet();
-		featureQualifierSet.addRow(dataRow1);
-		featureQualifierSet.addRow(dataRow2);
-		featureQualifierSet.addRow(dataRow3);
 
-		check = new FeatureQualifierRenameFix(featureQualifierSet);
-		check.setPopulated();
+		DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_RENAME, dataRow1,dataRow2, dataRow3);
+		check = new FeatureQualifierRenameFix();
 	}
 
 	@Test

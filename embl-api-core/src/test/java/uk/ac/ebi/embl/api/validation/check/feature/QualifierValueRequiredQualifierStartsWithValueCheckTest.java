@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -41,10 +42,10 @@ public class QualifierValueRequiredQualifierStartsWithValueCheckTest
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		FeatureFactory featureFactory = new FeatureFactory();
 		feature = featureFactory.createFeature("feature");
-		DataSet dataSet = new DataSet();
-		dataSet.addRow(new DataRow(	"product","MHC class I antigen","gene","HLA-A"));
-		dataSet.addRow(new DataRow("product","MHC class I antigen","gene","HLA-B"));
-		check = new QualifierValueRequiredQualifierStartsWithValueCheck(dataSet);
+
+		DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE, new DataRow(	"product","MHC class I antigen","gene","HLA-A"),
+				new DataRow("product","MHC class I antigen","gene","HLA-B"));
+		check = new QualifierValueRequiredQualifierStartsWithValueCheck();
 	}
 
 	@Test

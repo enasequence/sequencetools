@@ -19,9 +19,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -29,23 +27,18 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+@CheckDataSet(dataSetNames = { FileName.QUALIFIER_PATTERN_QUALIFIER })
 @ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE})//do not run in template mode - no control over what they type so could run into problems
 @Description("Qualifier {0} must exist when qualifier {1} value matches the pattern {2}.")
 public class QualifierPatternAndQualifierCheck extends FeatureValidationCheck {
-
-    @CheckDataSet("qualifier-pattern-qualifier.tsv")
-    private DataSet dataSet;
 
     private final static String MESSAGE_ID = "QualifierPatternAndQualifierCheck";
 
     public QualifierPatternAndQualifierCheck() {
     }
 
-    QualifierPatternAndQualifierCheck(DataSet dataSet) {
-        this.dataSet = dataSet;
-    }
-
     public ValidationResult check(Feature feature) {
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_PATTERN_QUALIFIER);
         result = new ValidationResult();
 
         if (feature == null) {

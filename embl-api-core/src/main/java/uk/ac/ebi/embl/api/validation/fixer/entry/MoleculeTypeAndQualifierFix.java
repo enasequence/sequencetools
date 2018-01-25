@@ -23,18 +23,15 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
+@CheckDataSet(dataSetNames = {FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES})
 @Description("\"{0}\" qualifier removed from feature \"{1}\" as mol_type is not equal to \"{2}\" ")
 public class MoleculeTypeAndQualifierFix extends EntryValidationCheck
 {
-	@CheckDataSet("source_qualifier_moltype_value.tsv")
-	private DataSet dataSet;
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndQualifierFix";
 
@@ -43,14 +40,9 @@ public class MoleculeTypeAndQualifierFix extends EntryValidationCheck
 
 	}
 
-	public MoleculeTypeAndQualifierFix(DataSet dataSet)
-	{
-		this.dataSet = dataSet;
-
-	}
-
 	public ValidationResult check(Entry entry)
 	{
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES);
 		result = new ValidationResult();
 
 		if (entry == null)

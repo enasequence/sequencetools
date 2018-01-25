@@ -18,9 +18,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -31,12 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@CheckDataSet(dataSetNames = {FileName.KEYWORD_DATACLASS})
 @Description("dataclass has been fixed to \"{0}\"" + 
              "Dataclass Keyword \"{0}\" has been added to the entry")
 public class DataclassFix extends EntryValidationCheck
 {
-	@CheckDataSet("keyword_dataclass.tsv")
-	private DataSet dataSet;
 
 	private final static String DATACLASS_FIX_ID = "DataclassFix_1";
 	private final static String KEYWORD_FIX_ID = "DataclassFix_2";
@@ -75,13 +72,9 @@ public class DataclassFix extends EntryValidationCheck
 	{
 	}
 
-	public DataclassFix(DataSet dataSet)
-	{
-		this.dataSet = dataSet;
-	}
-
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
 		result = new ValidationResult();
 
 		if (entry == null)

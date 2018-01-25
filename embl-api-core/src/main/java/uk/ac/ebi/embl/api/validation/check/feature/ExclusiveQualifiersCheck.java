@@ -19,18 +19,14 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
+@CheckDataSet(dataSetNames = {FileName.EXCLUSIVE_QUALIFIERS })
 @Description("Qualifiers {0} and {1} cannot exist together.")
 public class ExclusiveQualifiersCheck extends FeatureValidationCheck {
-
-    @CheckDataSet("exclusive-qualifiers.tsv")
-    private DataSet dataSet;
 
     private final static String MESSAGE_ID = "ExclusiveQualifiersCheck1";
     private final static String PSEUDO_MESSAGE_ID = "ExclusiveQualifiersCheck2";
@@ -38,12 +34,9 @@ public class ExclusiveQualifiersCheck extends FeatureValidationCheck {
     public ExclusiveQualifiersCheck() {
     }
 
-    ExclusiveQualifiersCheck(DataSet dataSet) {
-        this.dataSet = dataSet;
-    }
-
     public ValidationResult check(Feature feature) {
         result = new ValidationResult();
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS);
 
         if (feature == null) {
             return result;

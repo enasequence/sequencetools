@@ -28,27 +28,20 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 import java.util.Arrays;
 import java.util.List;
 
+@CheckDataSet(dataSetNames = {FileName.FEATURE_REGEX_GROUPS})
 @Description("The mol_type value \\\"{0}\\\" is not permitted.")
 public class EntryMolTypeCheck extends EntryValidationCheck {
 
     private final static String WRONG_MOLTYPE_ID = "EntryMolTypeCheck";
-
-    /**
-     * A list of the valid feature qualifier values - we only want to get hold of the mol_type one
-     */
-    @CheckDataSet("feature-regex-groups.tsv")
-    private DataSet valuesSet;
 
     private List<String> molTypeValues;
 
     public EntryMolTypeCheck() {
     }
 
-    public EntryMolTypeCheck(DataSet valuesSet) {
-        this.valuesSet = valuesSet;
-    }
-
     public void init() {
+        DataSet valuesSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+
         if (valuesSet != null) {
                 for (DataRow regexpRow : valuesSet.getRows()) {
                     if (regexpRow.getString(0).equals("mol_type")) {
@@ -60,13 +53,9 @@ public class EntryMolTypeCheck extends EntryValidationCheck {
         }
     }
 
-    public void setPopulated() {
-        init();
-        super.setPopulated();
-    }
-
     public ValidationResult check(Entry entry) {
 
+        init();
         result = new ValidationResult();
 
         if (entry == null) {

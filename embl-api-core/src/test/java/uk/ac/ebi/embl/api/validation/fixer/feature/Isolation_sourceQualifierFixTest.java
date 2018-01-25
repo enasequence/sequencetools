@@ -21,8 +21,10 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -75,17 +77,10 @@ public class Isolation_sourceQualifierFixTest
 				"1",
 				"TRUE",
 				"microsatellite,minisatellite,satellite");
-		DataSet feature_qualifier_values_set = new DataSet();
-		DataSet feature_regex_groups_set = new DataSet();
-		feature_qualifier_values_set.addRow(feature_qualifier_values_row1);
-		feature_qualifier_values_set.addRow(feature_qualifier_values_row2);
-		feature_qualifier_values_set.addRow(feature_qualifier_values_row3);
 
-		feature_regex_groups_set.addRow(feature_regex_groups_row1);
-		feature_regex_groups_set.addRow(feature_regex_groups_row2);
-		check = new Isolation_sourceQualifierFix(
-				feature_regex_groups_set,
-				feature_qualifier_values_set);
+		DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, feature_regex_groups_row1,feature_regex_groups_row2);
+		DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, feature_qualifier_values_row1,feature_qualifier_values_row2,feature_qualifier_values_row3);
+		check = new Isolation_sourceQualifierFix();
 	}
 
 	@Test

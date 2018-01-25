@@ -21,6 +21,8 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
@@ -29,15 +31,12 @@ import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
+@CheckDataSet( dataSetNames = {FileName.TAXONOMIC_DIVISION_QUALIFIER})
 @Description("Qualifier \"{0}\" can only exist if taxonomic division has one of the values \"{1}\"")
 @RemoteExclude
 
 public class TaxonomicDivisionQualifierCheck extends EntryValidationCheck
 {
-
-	@CheckDataSet("taxonomic_division-qualifier.tsv")
-	private DataSet dataSet;
-
 	private final static String TAXONOMIC_DIVISION_MESSAGE_ID = "TaxonomicDivisionQualifierCheck_1";
 
 	public TaxonomicDivisionQualifierCheck()
@@ -45,13 +44,9 @@ public class TaxonomicDivisionQualifierCheck extends EntryValidationCheck
 
 	}
 
-	TaxonomicDivisionQualifierCheck(DataSet dataSet)
-	{
-		this.dataSet = dataSet;
-	}
-
 	public ValidationResult check(Entry entry)
 	{
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.TAXONOMIC_DIVISION_QUALIFIER);
 		result = new ValidationResult();
 
 		if (entry == null)

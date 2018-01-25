@@ -23,11 +23,9 @@ import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
+@CheckDataSet(dataSetNames = { FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY })
 @Description("One of qualifiers {0} must exist when qualifier {1} exists in any feature.")
 public class QualifierAndRequiredQualifierinEntryCheck extends EntryValidationCheck {
-
-    @CheckDataSet("qualifier-required-qualifier-in-entry.tsv")
-    private DataSet dataSet;
 
     private final static String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinEntryCheck";
     private final static String MULTIPLE_MESSAGE_ID = "QualifierAndRequiredQualifierinEntryCheck2";
@@ -35,12 +33,9 @@ public class QualifierAndRequiredQualifierinEntryCheck extends EntryValidationCh
     public QualifierAndRequiredQualifierinEntryCheck() {
     }
 
-    QualifierAndRequiredQualifierinEntryCheck(DataSet dataSet) {
-        this.dataSet = dataSet;
-    }
-
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY);
 
         if (entry == null) {
             return result;

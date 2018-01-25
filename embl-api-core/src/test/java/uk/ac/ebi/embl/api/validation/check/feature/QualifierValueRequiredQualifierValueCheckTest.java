@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -41,14 +42,13 @@ public class QualifierValueRequiredQualifierValueCheckTest {
 
 		feature = featureFactory.createFeature("feature");
 
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(new DataRow("cell_type", "endothelial,stromal","tissue_type", "heart"));
-        check = new QualifierValueRequiredQualifierValueCheck(dataSet);
+        DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_REQ_QUALIFIER_VALUE, new DataRow("cell_type", "endothelial,stromal","tissue_type", "heart"));
+        check = new QualifierValueRequiredQualifierValueCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new QualifierValueRequiredQualifierValueCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

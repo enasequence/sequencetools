@@ -23,12 +23,10 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
 import static org.junit.Assert.assertEquals;
@@ -52,11 +50,9 @@ public class QualifierWithinQualifierFixTest
 		DataRow dataRow1 = new DataRow("EC_number", "N", "Y", "Y", null, 38, null);
 		DataRow dataRow2 = new DataRow("cell_type", "N", "Y", "Y", null, 39, null);
 		DataRow dataRow3 = new DataRow("focus", "Y", "Y", "N", null, 6, null);
-		DataSet dataSet = new DataSet();
-		dataSet.addRow(dataRow1);
-		dataSet.addRow(dataRow2);
-		dataSet.addRow(dataRow3);
-		check = new QualifierWithinQualifierFix(dataSet);
+
+		DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, dataRow1,dataRow2,dataRow3);
+		check = new QualifierWithinQualifierFix();
 	}
 	
 	@Test

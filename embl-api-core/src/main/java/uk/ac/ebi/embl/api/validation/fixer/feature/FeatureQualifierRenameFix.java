@@ -17,10 +17,8 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -29,14 +27,9 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import java.util.*;
 
+@CheckDataSet(dataSetNames = {FileName.FEATURE_QUALIFIER_RENAME})
 @Description(" feature Qualifier\\\"{0}\\\" has been replaced with \\\"{1}\\\"")
 public class FeatureQualifierRenameFix extends FeatureValidationCheck {
-
-	/**
-	 * A list of feature keys with old and new values
-	 */
-	@CheckDataSet("feature-qualifier-rename.tsv")
-	private DataSet featureQualifierRenameSet;
 
 	private HashMap<String, String> featureQualifierMap = new HashMap<String, String>();
 
@@ -45,17 +38,8 @@ public class FeatureQualifierRenameFix extends FeatureValidationCheck {
 	public FeatureQualifierRenameFix() {
 	}
 
-	FeatureQualifierRenameFix(DataSet featureQualifierRenameSet) {
-		this.featureQualifierRenameSet = featureQualifierRenameSet;
-
-	}
-
-	public void setPopulated() {
-		init();
-		super.setPopulated();
-	}
-
 	private void init() {
+		DataSet featureQualifierRenameSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_RENAME);
 
 		if (featureQualifierRenameSet != null) {
 
@@ -74,6 +58,7 @@ public class FeatureQualifierRenameFix extends FeatureValidationCheck {
 	}
 
 	public ValidationResult check(Feature feature) {
+		init();
 		result = new ValidationResult();
 
 		if (feature == null) {

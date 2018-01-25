@@ -20,8 +20,10 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -40,20 +42,13 @@ public class KWCheckTest {
 				.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		EntryFactory entryFactory = new EntryFactory();
 		entry = entryFactory.createEntry();
-		DataSet dataSet1 = new DataSet();
-		dataSet1.addRow(new DataRow("HTG"));
-		dataSet1.addRow(new DataRow("FLI_CDNA"));
-		DataSet dataSet2 = new DataSet();
-		dataSet2.addRow(new DataRow("TSA","TSA","TSA"));
-		dataSet2.addRow(new DataRow("TSA","TRANSCRIPTOMESHOTGUNASSEMBLY","Transcriptome Shotgun Assembly"));
-		dataSet2.addRow(new DataRow("WGS","WGS","WGS"));
-		/*dataSet2.addRow(new DataRow("TPA","TPA","TPA"));
-		dataSet2.addRow(new DataRow("TPA", "THIRDPARTYANNOTATION", "Third Party Annotation"));
-		dataSet2.addRow(new DataRow("TPA", "TPAEXPERIMENTAL", "TPA:experimental"));
-		dataSet2.addRow(new DataRow("TPA", "TPAINFERENTIAL", "TPA:inferential"));
-		dataSet2.addRow(new DataRow("TPA", "TPAREASSEMBLY", "TPA:reassembly"));*/
-				
-		check = new KWCheck(dataSet1,dataSet2);
+
+				//FileName.KEYWORD_DATACLASS, FileName.CON_NO_KEYWORDS
+		DataSetHelper.createAndAdd(FileName.CON_NO_KEYWORDS, new DataRow("HTG"),new DataRow("FLI_CDNA") );
+		DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS, new DataRow("TSA","TSA","TSA"),
+				new DataRow("TSA","TRANSCRIPTOMESHOTGUNASSEMBLY","Transcriptome Shotgun Assembly"),
+				new DataRow("WGS","WGS","WGS"));
+		check = new KWCheck();
 	}
 
 	@Test

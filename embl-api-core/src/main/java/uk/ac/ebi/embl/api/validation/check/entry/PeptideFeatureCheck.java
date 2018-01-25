@@ -39,7 +39,7 @@ import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.GENE_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.PSEUDO_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
 
-@CheckDataSet("single-source-qualifiers.tsv")
+@CheckDataSet(dataSetNames = { FileName.SINGLE_SOURCE_QUALIFIER })
 @Description("Peptide feature sharing \\\"gene\\\" or \\\"locus_tag\\\" qualifier with CDS containing \\\"pseudo\\\" qualifier must also contain \\\"pseudo\\\" qualifier.\n" +
         "Translation of peptide feature must be a part of the translation of CDS feature unless \\\"exception\\\" or \\\"transl_except\\\" qualifiers are present\n" +
         "Translation of peptide feature must have a length equal to a multiple of 3\n" +

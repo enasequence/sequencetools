@@ -28,14 +28,9 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import java.util.*;
 
+@CheckDataSet(dataSetNames = {FileName.FEATURE_RENAME})
 @Description(" feature \\\"{0}\\\" has been replaced with \\\"{1}\\\"")
 public class FeatureRenameFix extends FeatureValidationCheck {
-
-	/**
-	 * A list of feature keys with old and new values
-	 */
-	@CheckDataSet("feature-rename.tsv")
-	private DataSet featureRenameSet;
 
 	private HashMap<String, String> featureMap = new HashMap<String, String>();
 
@@ -45,18 +40,8 @@ public class FeatureRenameFix extends FeatureValidationCheck {
 
 	}
 
-	FeatureRenameFix(DataSet featureRenameSet) {
-		this.featureRenameSet = featureRenameSet;
-
-	}
-
-	public void setPopulated() {
-		init();
-		super.setPopulated();
-	}
-
 	private void init() {
-
+		DataSet featureRenameSet = GlobalDataSets.getDataSet(FileName.FEATURE_RENAME);
 		if (featureRenameSet != null) {
 
 			for (DataRow frdataRow : featureRenameSet.getRows()) {
@@ -71,6 +56,7 @@ public class FeatureRenameFix extends FeatureValidationCheck {
 	}
 
 	public ValidationResult check(Feature feature) {
+		init();
 		result = new ValidationResult();
 		String newValue = null;
 		if (feature == null) {

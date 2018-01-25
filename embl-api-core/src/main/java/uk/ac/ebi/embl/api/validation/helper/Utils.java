@@ -16,7 +16,6 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import org.apache.commons.lang.StringUtils;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -26,21 +25,11 @@ import uk.ac.ebi.embl.api.entry.qualifier.*;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
 import uk.ac.ebi.embl.api.storage.DataManager;
-import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.regex.Matcher;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Utils {

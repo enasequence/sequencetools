@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -39,14 +40,14 @@ public class QualifierAndRequiredQualifierinFeatureCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("chromosome,segment,organelle", "map");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
-		check = new QualifierAndRequiredQualifierinFeatureCheck(dataSet);
+
+        DataSetHelper.createAndAdd(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_FEATURE, dataRow);
+		check = new QualifierAndRequiredQualifierinFeatureCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new QualifierAndRequiredQualifierinFeatureCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

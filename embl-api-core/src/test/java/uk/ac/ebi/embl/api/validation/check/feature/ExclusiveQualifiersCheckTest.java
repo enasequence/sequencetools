@@ -26,6 +26,7 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -44,15 +45,14 @@ public class ExclusiveQualifiersCheckTest {
 
         DataRow dataRow1 = new DataRow("proviral", "virion");
         DataRow dataRow2 = new DataRow("pseudo", "product");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow1);
-        dataSet.addRow(dataRow2);
-        check = new ExclusiveQualifiersCheck(dataSet);
+
+        DataSetHelper.createAndAdd(FileName.EXCLUSIVE_QUALIFIERS, dataRow1,dataRow2);
+        check = new ExclusiveQualifiersCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new ExclusiveQualifiersCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

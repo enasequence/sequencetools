@@ -23,28 +23,27 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
+import javax.xml.crypto.Data;
+
+@CheckDataSet( dataSetNames = {FileName.QUALIFIER_VALUE_REQ_QUALIFIER_VALUE})
 @Description("Qualifier \\\"{0}\\\" must have one of values {1} when qualifier \\\"{2}\\\" has value \\\"{3}\\\".")
 public class QualifierValueRequiredQualifierValueCheck extends FeatureValidationCheck {
-
-    @CheckDataSet("qualifier-value-required-qualifier-value.tsv")
-	private DataSet dataSet;
     
    	private final static String MESSAGE_ID = "QualifierValueRequiredQualifierValueCheck";
 
 	public QualifierValueRequiredQualifierValueCheck() {
 	}
 
-	QualifierValueRequiredQualifierValueCheck(DataSet dataSet) {
-		this.dataSet = dataSet;
-	}
-
     public ValidationResult check(Feature feature) {
+	    DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_REQ_QUALIFIER_VALUE);
         result = new ValidationResult();
 
         if (feature == null) {

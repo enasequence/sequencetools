@@ -22,17 +22,17 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
+@CheckDataSet(dataSetNames = {FileName.QUALIFIER_PATTERN_FEATURE})
 @Description("Feature \\\"{0}\\\" is required when qualifier \\\"{1}\\\" matches pattern \\\"{2}\\\"")
 public class QualifierPatternAndFeatureCheck extends EntryValidationCheck
 {
-
-	@CheckDataSet("qualifier-pattern-feature.tsv")
-	private DataSet dataSet;
 
 	private final static String MESSAGE_ID = "QualifierPatternAndFeatureCheck_1";
 
@@ -40,15 +40,10 @@ public class QualifierPatternAndFeatureCheck extends EntryValidationCheck
 	{
 	}
 
-	QualifierPatternAndFeatureCheck(DataSet dataSet)
-	{
-		this.dataSet = dataSet;
-	}
-
 	public ValidationResult check(Entry entry)
 	{
 		result = new ValidationResult();
-
+		DataSet dataSet= GlobalDataSets.getDataSet(FileName.QUALIFIER_PATTERN_FEATURE);
 		if (entry == null)
 			return result;
 

@@ -22,8 +22,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -42,15 +44,14 @@ public class ExclusiveQualifierTransformToNoteQualifierFixTest {
 				.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		DataRow dataRow1 = new DataRow(Qualifier.PRODUCT_QUALIFIER_NAME,Qualifier.PSEUDO_QUALIFIER_NAME);
 		DataRow dataRow2 = new DataRow(Qualifier.PRODUCT_QUALIFIER_NAME,Qualifier.PSEUDOGENE_QUALIFIER_NAME);
-		DataSet dataSet = new DataSet();
-		dataSet.addRow(dataRow1);
-		dataSet.addRow(dataRow2);
+
 		FeatureFactory featureFactory = new FeatureFactory();
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		feature = featureFactory.createFeature("feature");
 		qualifier1 = qualifierFactory.createQualifier(Qualifier.PRODUCT_QUALIFIER_NAME,"25S rRNA");
 		qualifier2=qualifierFactory.createQualifier(Qualifier.PSEUDO_QUALIFIER_NAME);
-		check = new ExclusiveQualifierTransformToNoteQualifierFix(dataSet);
+		DataSetHelper.createAndAdd(FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE, dataRow1,dataRow2);
+		check = new ExclusiveQualifierTransformToNoteQualifierFix();
 	}
 
 	@Test

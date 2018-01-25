@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -24,41 +26,32 @@ import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet("feature-moltype.tsv")
+@CheckDataSet(dataSetNames = {FileName.FEATURE_MOLTYPE})
 @Description("Molecule type must have value {0} when feature {1} exists")
 public class FeatureAndMoleculeTypeCheck extends EntryValidationCheck {
-
-	@CheckDataRow
-	private DataRow dataRow;
 
 	private final static String MESSAGE_ID = "FeatureAndMoleculeTypeCheck-1";
 
 	public FeatureAndMoleculeTypeCheck() {
 	}
 
-	FeatureAndMoleculeTypeCheck(DataRow dataRow) {
-		this.dataRow = dataRow;
-	}
-
 	public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
+		result = new ValidationResult();
 
-        if (entry == null) {
+		if (entry == null) {
 			return result;
 		}
-        String expectedMoleculeType = this.dataRow.getString(0);
-		String featureName = this.dataRow.getString(1);
-		if (featureName == null || expectedMoleculeType == null) {
-			return result;
-		}
+		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.FEATURE_MOLTYPE).getRows()) {
+			String expectedMoleculeType = dataRow.getString(0);
+			String featureName = dataRow.getString(1);
+			if (featureName == null || expectedMoleculeType == null || !SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {
+				continue;
+			}
 
-		if (!SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {
-			return result;
-		}
-
-		String moleculeType = SequenceEntryUtils.getMoleculeType(entry);
-		if (!expectedMoleculeType.equals(moleculeType)) {
-			reportError(entry.getOrigin(), MESSAGE_ID, expectedMoleculeType, featureName);
+			String moleculeType = SequenceEntryUtils.getMoleculeType(entry);
+			if (!expectedMoleculeType.equals(moleculeType)) {
+				reportError(entry.getOrigin(), MESSAGE_ID, expectedMoleculeType, featureName);
+			}
 		}
 		return result;
 	}

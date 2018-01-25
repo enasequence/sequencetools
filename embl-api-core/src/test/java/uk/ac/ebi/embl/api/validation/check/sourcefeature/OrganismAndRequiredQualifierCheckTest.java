@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -48,17 +49,17 @@ public class OrganismAndRequiredQualifierCheckTest {
 
 		taxonHelper = createMock(TaxonHelper.class);
 		DataRow dataRow = new DataRow("strain,environmental_sample", "Bacteria,Archaea", "ERROR");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
+
         EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
         property.taxonHelper.set(taxonHelper);
-		check = new OrganismAndRequiredQualifierCheck( dataSet);
+        DataSetHelper.createAndAdd(FileName.ORGANISM_REQUIRED_QUALIFIER, dataRow);
+		check = new OrganismAndRequiredQualifierCheck( );
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new OrganismAndRequiredQualifierCheck();
+		DataSetHelper.clear();
 		check.check(source);
 	}
 

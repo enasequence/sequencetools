@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -61,15 +62,14 @@ public class OrganismAndPermittedQualifierCheckTest {
 		taxonHelper = createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
 		DataRow dataRow = new DataRow("virion", "Viruses,Viroids");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
-		check = new OrganismAndPermittedQualifierCheck(dataSet);
+        DataSetHelper.createAndAdd(FileName.ORG_PERMITTED_QUALIFIER, dataRow);
+		check = new OrganismAndPermittedQualifierCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
 	@Test
 	public void testCheck_NoDataSet() {
-		check = new OrganismAndPermittedQualifierCheck();
+		DataSetHelper.clear();
 		check.check(entry);
 	}
 

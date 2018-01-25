@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -48,19 +49,14 @@ public class DataclassCheckTest {
 				.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		EntryFactory entryFactory = new EntryFactory();
 		entry = entryFactory.createEntry();
-		DataSet dataclassDataSet = new DataSet();
-		DataSet keyworddataclassDataSet = new DataSet();
-		dataclassDataSet.addRow(new DataRow("STD"));
-		dataclassDataSet.addRow(new DataRow("XXX"));
-		dataclassDataSet.addRow(new DataRow("WGS"));
-		keyworddataclassDataSet.addRow(new DataRow("WGS","WGS","WGS"));
-		keyworddataclassDataSet.addRow(new DataRow("CON","CON","CON"));
-		check = new DataclassCheck(dataclassDataSet,keyworddataclassDataSet);
+		DataSetHelper.createAndAdd(FileName.DATACLASS,new DataRow("STD"),new DataRow("XXX"),new DataRow("WGS"));
+		DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS,new DataRow("WGS","WGS","WGS"), new DataRow("CON","CON","CON"));
+		check = new DataclassCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() throws ValidationEngineException {
-		check = new DataclassCheck();
+		DataSetHelper.clear();
 		entry.setDataClass("STD");
 		assertTrue(check.check(entry).isValid());
 	}

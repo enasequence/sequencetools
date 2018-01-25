@@ -24,9 +24,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
@@ -35,13 +33,10 @@ import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-@CheckDataSet("rrna-qualifier-value-organism-qualifier-value.tsv")
+@CheckDataSet(dataSetNames = {FileName.RRNA_QUALIFIER_VAL_ORGANISM_QUALIFIER_VALUE } )
 @Description("Value \"{0}\" of qualifier \"{1}\" is only allowed when source qualifier \"{2}\" has one of values {3} or contains the word \"{5}\" or organism belongs to one of {4}.")
 @RemoteExclude
 public class RRNAQualifierValueOrOrganismAndQualifierValueCheck extends EntryValidationCheck {
-
-	@CheckDataRow
-	private DataRow dataRow;
 
 	private final static String MESSAGE_ID = "RRNAQualifierValueOrOrganismAndQualifierValueCheck";
 	
@@ -50,62 +45,62 @@ public class RRNAQualifierValueOrOrganismAndQualifierValueCheck extends EntryVal
 		
 	}
 
-	RRNAQualifierValueOrOrganismAndQualifierValueCheck(DataRow dataRow) {
-		this.dataRow = dataRow;
-	}
-
 	public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
-        
-        if (entry == null) {
+		result = new ValidationResult();
+
+
+		if (entry == null) {
 			return result;
 		}
 
-        String qualifierValue = dataRow.getString(0);
-        String qualifierName = dataRow.getString(1);
-		String qualifierName2 = dataRow.getString(2);
-		String[] qualifierValue2 = dataRow.getStringArray(3);
-		String[] organismNames = dataRow.getStringArray(4);
-		
-		if ((qualifierName2 == null && ArrayUtils.isEmpty(organismNames)) || qualifierName == null) {
-			return result;
-		}
+		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.RRNA_QUALIFIER_VAL_ORGANISM_QUALIFIER_VALUE).getRows()) {
 
-		Collection<Feature> rRNAs = SequenceEntryUtils.getFeatures("rRNA", entry);
-		if (rRNAs.isEmpty()) {
-			return result;
-		}
+			String qualifierValue = dataRow.getString(0);
+			String qualifierName = dataRow.getString(1);
+			String qualifierName2 = dataRow.getString(2);
+			String[] qualifierValue2 = dataRow.getStringArray(3);
+			String[] organismNames = dataRow.getStringArray(4);
 
-        SourceFeature sourceFeature = entry.getPrimarySourceFeature();
-		if (sourceFeature == null) {
-			return result;
-		}
-
-		// null value means condition has not been checked yet
-		Boolean organismCondition = null;
-		for (Feature rRNA : rRNAs) {
-
-			boolean permittedQualifierValueAvailable =
-                    SequenceEntryUtils.isQualifierWithValueAvailable(qualifierName, qualifierValue, rRNA);
-			if (!permittedQualifierValueAvailable) {
-				continue; // there is no need to check condition
+			if ((qualifierName2 == null && ArrayUtils.isEmpty(organismNames)) || qualifierName == null) {
+				continue;
 			}
 
-			// check whether a provided qualifier has a specified value
-			boolean qualifierCondition = false;
-			for(String value:qualifierValue2)
-			{qualifierCondition =
-                    SequenceEntryUtils.isQualifierWithValueAvailable(qualifierName2, value, sourceFeature)||SequenceEntryUtils.isQualifierwithPatternAvailable(qualifierName2,"(.*)(plastid|PLASTID)(.*)" , entry);
-			if(qualifierCondition==true)
-			 break;			
-			}
-			if (!qualifierCondition && organismCondition == null) {
-				organismCondition = isAnyOrganismFromFamily(entry, organismNames);
+			Collection<Feature> rRNAs = SequenceEntryUtils.getFeatures("rRNA", entry);
+			if (rRNAs.isEmpty()) {
+				continue;
 			}
 
-			if (!qualifierCondition && !organismCondition && permittedQualifierValueAvailable) {
-				reportError(entry.getOrigin(), MESSAGE_ID, qualifierValue,
-                        qualifierName, qualifierName2, Utils.paramArrayToString(qualifierValue2), Utils.paramArrayToString(organismNames),"plastid");
+			SourceFeature sourceFeature = entry.getPrimarySourceFeature();
+			if (sourceFeature == null) {
+				continue;
+			}
+
+			// null value means condition has not been checked yet
+			Boolean organismCondition = null;
+			for (Feature rRNA : rRNAs) {
+
+				boolean permittedQualifierValueAvailable =
+						SequenceEntryUtils.isQualifierWithValueAvailable(qualifierName, qualifierValue, rRNA);
+				if (!permittedQualifierValueAvailable) {
+					continue; // there is no need to check condition
+				}
+
+				// check whether a provided qualifier has a specified value
+				boolean qualifierCondition = false;
+				for (String value : qualifierValue2) {
+					qualifierCondition =
+							SequenceEntryUtils.isQualifierWithValueAvailable(qualifierName2, value, sourceFeature) || SequenceEntryUtils.isQualifierwithPatternAvailable(qualifierName2, "(.*)(plastid|PLASTID)(.*)", entry);
+					if (qualifierCondition == true)
+						break;
+				}
+				if (!qualifierCondition && organismCondition == null) {
+					organismCondition = isAnyOrganismFromFamily(entry, organismNames);
+				}
+
+				if (!qualifierCondition && !organismCondition && permittedQualifierValueAvailable) {
+					reportError(entry.getOrigin(), MESSAGE_ID, qualifierValue,
+							qualifierName, qualifierName2, Utils.paramArrayToString(qualifierValue2), Utils.paramArrayToString(organismNames), "plastid");
+				}
 			}
 		}
 

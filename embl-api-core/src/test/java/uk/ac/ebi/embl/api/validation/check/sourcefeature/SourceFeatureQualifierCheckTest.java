@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -50,12 +51,12 @@ public class SourceFeatureQualifierCheckTest {
 		EntryFactory entryFactory = new EntryFactory();
 		featureFactory = new FeatureFactory();
 		qualifierFactory = new QualifierFactory();
-		DataSet dataSet = new DataSet();
 		entry = entryFactory.createEntry();
 		source = featureFactory.createSourceFeature();
 		entry.addFeature(source);
-		dataSet.addRow(new DataRow("strain,isolate,clone", "gene", ".*rRNA$"));
-		check = new SourceFeatureQualifierCheck(dataSet);
+
+		DataSetHelper.createAndAdd(FileName.SOURCE_REQUIRED_QUALIFIER, new DataRow("strain,isolate,clone", "gene", ".*rRNA$"));
+		check = new SourceFeatureQualifierCheck();
 		EmblEntryValidationPlanProperty planProperty=new EmblEntryValidationPlanProperty();
 		planProperty.taxonHelper.set(new TaxonHelperImpl());
 		check.setEmblEntryValidationPlanProperty(planProperty);
@@ -64,7 +65,7 @@ public class SourceFeatureQualifierCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new SourceFeatureQualifierCheck();
+		DataSetHelper.clear();
 		check.check(entry);
 	}
 

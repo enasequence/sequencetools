@@ -20,10 +20,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
@@ -36,27 +33,11 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.regex.Matcher;
 
+@CheckDataSet(dataSetNames = {FileName.FEATURE_QUALIFIER_VALUES, FileName.FEATURE_REGEX_GROUPS, FileName.ARTEMIS_QUALIFIERS})
 @Description("Feature qualifier \\\"{0}\\\" is not recognized\\Feature qualifier \\\"{0}\\\" does not have a value (mandatory for this type)\\" +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" is invalid. Refer to the feature documentation or ask a curator for guidance." +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.\"")
 public class QualifierCheck extends FeatureValidationCheck {
-
-    /**
-     * A list of the valid feature qualifier values. ALso whether the qualifier is allowed to be null, and whether it
-     * is 'new'. Also the regex that the value must subscribe to. Also the quoted value and the qualifier order.
-     */
-    @CheckDataSet("feature-qualifier-values.tsv")
-    private DataSet qualifierSet;
-
-    @CheckDataSet("artemis-qualifiers.tsv")
-    private DataSet artemisQualifiers;
-
-    /**
-     * A list of the regex groups of particular qualifiers that need to be a particular value.
-     * File generated using SQL on Webin database:
-     */
-    @CheckDataSet("feature-regex-groups.tsv")
-    private DataSet regexSet;
 
     private HashMap<String, QualifierInfo> qualifierMap = new HashMap<String, QualifierInfo>();
     private Set<String> artemisQualifiersSet = new TreeSet<String>();
@@ -89,63 +70,70 @@ public class QualifierCheck extends FeatureValidationCheck {
     public QualifierCheck() {
     }
 
-    QualifierCheck(DataSet dataSet, DataSet regexSet, DataSet artemisQualifiers) {
-        this.qualifierSet = dataSet;
-        this.regexSet = regexSet;
-        this.artemisQualifiers = artemisQualifiers;
-    }
-
-    public void setPopulated() {
-        init();
-        super.setPopulated();
-    }
 
     private void init() {
 
-        if (qualifierSet != null) {
-            try {
-                for (DataRow dataRow : qualifierSet.getRows()) {
-                    String qualifierName = Utils.parseTSVString(dataRow.getString(0));
-                    String noValue = Utils.parseTSVString(dataRow.getString(1));
-                    String newField = Utils.parseTSVString(dataRow.getString(2));
-                    String regex = Utils.parseTSVString(dataRow.getString(4));
-                    String comments = Utils.parseTSVString(dataRow.getString(6));
+        try {
 
-                    if (regex != null) {
-                        Pattern.compile(regex);
-                    }
+            setQualifierMap();
+            setArtemisQualifierSet();
+            setNullGroupTolerance();
 
-                    QualifierInfo qualifierInfo = new QualifierInfo(qualifierName, regex, noValue.equals("Y"), newField.equals("Y"), comments);
-					if (!qualifierName.equals("EC_number")) { //EMD-2496
-                    for (DataRow regexpRow : regexSet.getRows()) {//look at all the qualifier values associatesd with a regexp group
-                        if (regexpRow.getString(0).equals(qualifierName)) {
-                        	String regexGroupId = Utils.parseTSVString(regexpRow.getString(1));
-                            boolean caseInsensitive = Utils.parseTSVString(regexpRow.getString(2)).equals("TRUE");
-                            String[] regexpGroupValues = regexpRow.getStringArray(3);
+        } catch (PatternSyntaxException e) {
+            throw new IllegalArgumentException("Invalid pattern while instantiating QualifierCheck! " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
 
-                            RegexGroupInfo groupInfo = new RegexGroupInfo(regexGroupId);
-                            groupInfo.addValues(Arrays.asList(regexpGroupValues));
-                            groupInfo.setCaseInseneitive(caseInsensitive);
-                            qualifierInfo.addRegexGroupInfo(groupInfo);
-                        }
-                    }
-					}
+    private void setArtemisQualifierSet() {
+        for (DataRow dataRow : getRows(FileName.ARTEMIS_QUALIFIERS)) {
+            String artemisQualifier = Utils.parseTSVString(dataRow.getString(0));
+            artemisQualifiersSet.add(artemisQualifier);
+        }
+    }
 
-                    qualifierMap.put(qualifierName, qualifierInfo);
-                }
+    private void setQualifierMap() {
 
-                for (DataRow dataRow : artemisQualifiers.getRows()) {
-                    String artemisQualifier = Utils.parseTSVString(dataRow.getString(0));
-                    artemisQualifiersSet.add(artemisQualifier);
-                }
+        for (DataRow dataRow : getRows(FileName.FEATURE_QUALIFIER_VALUES)) {
+            String qualifierName = Utils.parseTSVString(dataRow.getString(0));
+            String noValue = Utils.parseTSVString(dataRow.getString(1));
+            String newField = Utils.parseTSVString(dataRow.getString(2));
+            String regex = Utils.parseTSVString(dataRow.getString(4));
+            String comments = Utils.parseTSVString(dataRow.getString(6));
 
-                setNullGroupTolerance();
-
-            } catch (PatternSyntaxException e) {
-                throw new IllegalArgumentException("Invalid pattern while instantiating QualifierCheck! " + e.getMessage());
+            //TODO: remove this as it does not have any effect
+            if (regex != null) {
+                Pattern.compile(regex);
             }
-        } else {
+
+            QualifierInfo qualifierInfo = new QualifierInfo(qualifierName, regex, noValue.equals("Y"), newField.equals("Y"), comments);
+            if (!qualifierName.equals("EC_number")) { //EMD-2496
+                for (DataRow regexpRow : getRows(FileName.FEATURE_REGEX_GROUPS)) {//look at all the qualifier values associatesd with a regexp group
+                    if (regexpRow.getString(0).equals(qualifierName)) {
+                        String regexGroupId = Utils.parseTSVString(regexpRow.getString(1));
+                        boolean caseInsensitive = Utils.parseTSVString(regexpRow.getString(2)).equals("TRUE");
+                        String[] regexpGroupValues = regexpRow.getStringArray(3);
+
+                        RegexGroupInfo groupInfo = new RegexGroupInfo(regexGroupId);
+                        groupInfo.addValues(Arrays.asList(regexpGroupValues));
+                        groupInfo.setCaseInseneitive(caseInsensitive);
+                        qualifierInfo.addRegexGroupInfo(groupInfo);
+                    }
+                }
+            }
+
+            qualifierMap.put(qualifierName, qualifierInfo);
+        }
+
+    }
+
+    private List<DataRow> getRows(String dataSetName) {
+        DataSet ds = GlobalDataSets.getDataSet(dataSetName);
+        if(null == ds) {
             throw new IllegalArgumentException("Failed to set qualifier values in QualifierCheck!");
+        } else {
+            return ds.getRows();
         }
     }
 
@@ -168,6 +156,7 @@ public class QualifierCheck extends FeatureValidationCheck {
     }
 
     public ValidationResult check(Feature feature) {
+        init();
         result = new ValidationResult();
 
         if (feature == null) {
@@ -177,11 +166,13 @@ public class QualifierCheck extends FeatureValidationCheck {
         for (Qualifier qualifier : feature.getQualifiers()) {
 
             String qualifierName = qualifier.getName();
-
+            if(qualifierName.equalsIgnoreCase("old_locus_tag")) {
+                System.out.println(qualifierName);
+            }
             if (qualifierMap.containsKey(qualifierName)) {
 
                 QualifierInfo qualifierInfo = qualifierMap.get(qualifierName);
-               
+
 
                 //check the NOVALUE requirement
                 String value = qualifier.getValue();
@@ -189,10 +180,10 @@ public class QualifierCheck extends FeatureValidationCheck {
                 if (!noValue && (value == null || value.equals(""))) {
                     reportError(qualifier.getOrigin(), NO_VALUE_ID, qualifierName, feature.getName());
                 }
-				if (noValue && value != null && !value.isEmpty()) {
-					reportError(qualifier.getOrigin(), NO_VALUE_ID_2,
-							qualifierName, feature.getName());
-				}
+                if (noValue && value != null && !value.isEmpty()) {
+                    reportError(qualifier.getOrigin(), NO_VALUE_ID_2,
+                            qualifierName, feature.getName());
+                }
 
                 /**
                  * do a check to see if the date is a legitimate one for collection date

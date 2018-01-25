@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -41,14 +42,13 @@ public class QualifierValueNotQualifierCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("macronuclear", "organelle", "mitochondrion");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
-		check = new QualifierValueNotQualifierCheck(dataSet);
+        DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_NOT_QUALIFIER, dataRow);
+		check = new QualifierValueNotQualifierCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new QualifierValueNotQualifierCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

@@ -24,12 +24,10 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.*;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.sql.SQLException;
@@ -53,19 +51,14 @@ public class FeatureKeyCheckTest {
         FeatureFactory featureFactory = new FeatureFactory();
         feature = featureFactory.createFeature("misc_feature");
         property=new EmblEntryValidationPlanProperty();
-        DataSet qualifiersSet = new DataSet();
-        qualifiersSet.addRow(new DataRow("misc_feature"));
-        qualifiersSet.addRow(new DataRow("operon"));
-        qualifiersSet.addRow(new DataRow("CDS"));
-        qualifiersSet.addRow(new DataRow("intron"));
 
-        DataSet regexSet = new DataSet();
-        regexSet.addRow(new DataRow("misc_feature", "gene", "N", "Y", "Y"));
-        regexSet.addRow(new DataRow("operon", "operon", "Y", "N", "N"));
-        regexSet.addRow(new DataRow("intron", "number", "N", "Y", "Y"));
-        regexSet.addRow(new DataRow("intron", "gene", "N", "Y", "Y"));
-        check = new FeatureKeyCheck(qualifiersSet, regexSet);
-        check.setPopulated();
+        DataSetHelper.createAndAdd(FileName.FEATURE_KEYS, new DataRow("misc_feature"),new DataRow("operon"), new DataRow("CDS"),new DataRow("intron"));
+        DataSetHelper.createAndAdd(FileName.FEATURE_KEY_QUALIFIERS,new DataRow("misc_feature", "gene", "N", "Y", "Y"),
+                new DataRow("operon", "operon", "Y", "N", "N"),
+                new DataRow("intron", "number", "N", "Y", "Y"),
+                new DataRow("intron", "gene", "N", "Y", "Y"));
+        check = new FeatureKeyCheck();
+
         check.setEmblEntryValidationPlanProperty(property);
     }
 

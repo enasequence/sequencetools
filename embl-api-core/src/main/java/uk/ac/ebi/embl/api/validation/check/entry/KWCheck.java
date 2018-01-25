@@ -32,20 +32,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@CheckDataSet(dataSetNames = { FileName.KEYWORD_DATACLASS, FileName.CON_NO_KEYWORDS })
 @Description("Keywords exists in DE Line must exists in KW Line ex:\"complete genome\""
 		+ "ID Line Dataclass \"{0}\" and Keyword Dataclass \"{1}\" are not identical" + "Multiple keyword dataclasses are not allowed "
 		+ "Keyword \"{0}\" must not exist in the CON dataclass Entry" + "missing keyword \"{0}\" for dataclass \"{1}\""
 		+ "\"{0}\" keywords are not valid for dataclass \"{1}\"")
-
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})		
 		
 public class KWCheck extends EntryValidationCheck
 {
-	@CheckDataSet("con-no-keywords.tsv")
-	private DataSet dataSet1;
-	@CheckDataSet("keyword_dataclass.tsv")
-	private DataSet dataSet2;
-
 	private final static String DATACLASS_KEYWORD_ID = "KWCheck_1";
 	private final static String MULTIPLE_DATACLASS_KEYWORD_ID = "KWCheck_2";
 	private final static String CON_DATACLASS_KEYWORD_ID = "KWCheck_3";
@@ -57,21 +52,26 @@ public class KWCheck extends EntryValidationCheck
 	{
 	}
 
+/*
 	public KWCheck(DataSet dataRow1, DataSet dataRow2)
 	{
 		this.dataSet1 = dataRow1;
 		this.dataSet2 = dataRow2;
 	}
+*/
 
-	public KWCheck(DataSet dataRow)
+	/*public KWCheck(DataSet dataRow)
 	{
 		this.dataSet1 = dataRow;
-	}
+	}*/
 
 	public ValidationResult check(Entry entry)
 	{
 		ArrayList<String> keyworddataclassdatasetList = new ArrayList<String>();
 		result = new ValidationResult();
+		DataSet dataSet1 = GlobalDataSets.getDataSet(FileName.CON_NO_KEYWORDS);
+		DataSet dataSet2 = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
+
 		if (entry == null)
 			return result;
 		String de = entry.getDescription().getText();

@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -42,14 +43,14 @@ public class ExclusiveQualifiersWithSameValuesCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("clone", "sub_clone");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
-        check = new ExclusiveQualifiersWithSameValueCheck(dataSet);
+		DataSetHelper.createAndAdd(FileName.EXCLUSIVE_QUALIFIERS_SAME_VALUE, dataRow);
+
+        check = new ExclusiveQualifiersWithSameValueCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new ExclusiveQualifiersWithSameValueCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

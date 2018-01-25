@@ -26,12 +26,11 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -51,12 +50,12 @@ public class DataclassFixTest
 		entryFactory = new EntryFactory();
 		featureFactory = new FeatureFactory();
 		entry = entryFactory.createEntry();
-		DataSet dataSet=new DataSet();
+
         DataRow estDataRow=new DataRow("EST","EST","EST");
         DataRow wgsDataRow=new DataRow("WGS","WGS","WGS");
-        dataSet.addRow(estDataRow);
-        dataSet.addRow(wgsDataRow);
-		check = new DataclassFix(dataSet);
+
+        DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS, estDataRow,wgsDataRow);
+		check = new DataclassFix();
 	}
 
 	@Test

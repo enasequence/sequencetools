@@ -21,6 +21,8 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
@@ -35,11 +37,10 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+@CheckDataSet( dataSetNames = {FileName.SOURCE_REQUIRED_QUALIFIER})
 @Description("Any of Qualifiers \"{0}\"   must exist in Source feature if there is an rRNA gene.")
 public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
-	@CheckDataSet("source-required-qualifiers.tsv")
-	private DataSet dataSet;
 	private boolean sflag = false;
 	private final static String MESSAGE_ID = "SourceFeatureQualifierCheck1";
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";
@@ -54,11 +55,8 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	public SourceFeatureQualifierCheck() {
 	}
 
-	SourceFeatureQualifierCheck(DataSet dataSet) {
-		this.dataSet = dataSet;
-	}
-
 	public ValidationResult check(Entry entry) {
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.SOURCE_REQUIRED_QUALIFIER);
 		result = new ValidationResult();
 
 		if (entry == null) {
