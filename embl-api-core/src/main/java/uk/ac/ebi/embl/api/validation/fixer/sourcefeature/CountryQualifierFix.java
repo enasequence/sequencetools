@@ -51,7 +51,7 @@ public class CountryQualifierFix extends FeatureValidationCheck
 
 	private Set<String> countries = new HashSet<>();
 
-    public CountryQualifierFix() { }
+  public CountryQualifierFix() { }
 
 	CountryQualifierFix(DataSet qualifierValueSet)
 	{
