@@ -30,6 +30,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -943,6 +944,16 @@ public class Utils {
 		
 		return componentTypeId;
 	}
-	
+
+	public static boolean isMatches(String regEx, String value) {
+		Pattern pattern = Pattern.compile(regEx);
+		Matcher matcher = pattern.matcher(value);
+		return matcher.matches();
+	}
+
+	public static Matcher matcher(String regEx, String value) {
+		Pattern pattern = Pattern.compile(regEx);
+		return pattern.matcher(value);
+	}
    
 }
