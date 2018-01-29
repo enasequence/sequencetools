@@ -44,7 +44,7 @@ public class ProteinIdRemovalFix extends EntryValidationCheck {
 		
 		for (Feature feature : entry.getFeatures()) 
 		{
-				if (feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME) != null & feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME).size() != 0) {
+				if (feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME) != null && feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME).size() != 0) {
 					for(Qualifier qualifier:feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME))
 					{
 					feature.removeQualifier(qualifier);

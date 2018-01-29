@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
@@ -59,7 +60,7 @@ public class QualifierCheck extends FeatureValidationCheck {
     public ValidationResult check(Feature feature) {
 
         try {
-            HashMap<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
+            Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
             Set<String> artemisQualifiersSet = QualifierHelper.getArtemisQualifierSet();
             QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
             qInfo.addRegexGroupInfos(QualifierHelper.setNullGroupTolerance(qInfo));

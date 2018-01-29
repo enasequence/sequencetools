@@ -164,6 +164,8 @@ public abstract class ValidationPlan {
 			Stream.of(checkDataSetAnnotation.dataSetNames()).forEach( dsName -> GlobalDataSets.loadIfNotExist(dsName, dataManager, fileManager, devMode));
         }
 
+        validationPlanResult.append(check.check(target));
+
         if (excludeScopeAnnotation != null) {
             demoteSeverity(validationPlanResult, excludeScopeAnnotation.maxSeverity());
         }

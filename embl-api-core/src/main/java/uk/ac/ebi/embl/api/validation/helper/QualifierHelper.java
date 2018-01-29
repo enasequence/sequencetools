@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 
 public class QualifierHelper {
 
-    private final static String NO_VALUE_ID = "QualifierCheck-2";
-    private final static String NO_VALUE_ID_2 = "QualifierCheck-5";
-    private final static String REGEX_FAIL_ID = "QualifierCheck-3";
-    private final static String REGEX_GROUP_FAIL_ID = "QualifierCheck-4";
-    private final static String COLLECTION_DATE_ID = "QualifierCheck-6";
-    private final static String LAT_LON_MESSAGE_ID1 = "QualifierCheck-7";
-    private final static String LAT_LON_MESSAGE_ID2 = "QualifierCheck-8";
-    private final static String PROTEIN_ID_VERSION_MESSAGE_ID = "QualifierCheck-9";
+    private static final String NO_VALUE_ID = "QualifierCheck-2";
+    private static final String NO_VALUE_ID_2 = "QualifierCheck-5";
+    private static final String REGEX_FAIL_ID = "QualifierCheck-3";
+    private static final String REGEX_GROUP_FAIL_ID = "QualifierCheck-4";
+    private static final String COLLECTION_DATE_ID = "QualifierCheck-6";
+    private static final String LAT_LON_MESSAGE_ID1 = "QualifierCheck-7";
+    private static final String LAT_LON_MESSAGE_ID2 = "QualifierCheck-8";
+    private static final String PROTEIN_ID_VERSION_MESSAGE_ID = "QualifierCheck-9";
     /**
      * if a list of permitted values exceeds this limit, they will be displayed in a separate page, rather than a tooltip
      */
@@ -32,6 +32,7 @@ public class QualifierHelper {
     private static final double MAX_LATITUDE_VALUE = 90.00;
     private static final double MAX_LONGITUDE_VALUE = 180.00;
 
+    private QualifierHelper(){}
 
   public static Optional<ValidationMessage<Origin>> checkNoValue(Qualifier qualifier, boolean noValue, String featureName) {
       Optional<ValidationMessage<Origin>> message = Optional.empty();
@@ -156,16 +157,13 @@ public class QualifierHelper {
         if(qualifier!=null&&qualifier.getName().equals(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME))
         {
             Matcher matcher = TranslExceptQualifier.PATTERN.matcher(qualifier.getValue());
-            if(matcher.matches())
-            {
-                return true;
-            }
+            return matcher.matches();
         }
 
         return false;
     }
 
-    static boolean valuesContains(List<String> validValues, String toMatch, boolean caseInsensitive) {
+    private static boolean valuesContains(List<String> validValues, String toMatch, boolean caseInsensitive) {
         for (String value : validValues) {
             if (caseInsensitive) {
                 if (value.equalsIgnoreCase(toMatch)) {
@@ -186,7 +184,7 @@ public class QualifierHelper {
         private String curatorComments;
         private boolean noValue;
         private boolean newField;
-        private List<RegexGroupInfo> regexGroupInfos = new ArrayList<RegexGroupInfo>();
+        private List<RegexGroupInfo> regexGroupInfos = new ArrayList<>();
 
         private QualifierInfo(String name, String regex, boolean noValue, boolean newField, String curatorComments) {
             this.name = name;
@@ -280,7 +278,7 @@ public class QualifierHelper {
 
     public static Set<String> getArtemisQualifierSet() {
 
-        Set<String> artemisQualifiersSet = new TreeSet();
+        Set<String> artemisQualifiersSet = new TreeSet<>();
         List<DataRow> dataRows = GlobalDataSets.getRows(FileName.ARTEMIS_QUALIFIERS);
         if(null == dataRows) {
             throw new IllegalArgumentException("");
@@ -293,8 +291,8 @@ public class QualifierHelper {
         return artemisQualifiersSet;
     }
 
-    public static HashMap<String, QualifierInfo> getQualifierMap() {
-        HashMap<String, QualifierInfo> qualifierMap = new HashMap();
+    public static Map<String, QualifierInfo> getQualifierMap() {
+        HashMap<String, QualifierInfo> qualifierMap = new HashMap<>();
         List<DataRow> dataRows = GlobalDataSets.getRows(FileName.FEATURE_QUALIFIER_VALUES);
         if(null == dataRows) {
             throw new IllegalArgumentException("");
