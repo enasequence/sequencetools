@@ -192,7 +192,7 @@ public class EnaValidator
 	{
 
 		EmblEntryValidationPlanProperty emblEntryValidationPlanProperty = new EmblEntryValidationPlanProperty();
-		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.EMBL);
+		emblEntryValidationPlanProperty.validationScope.set(ValidationScope.getScope(fileType));
 		emblEntryValidationPlanProperty.isDevMode.set(testMode);
 		emblEntryValidationPlanProperty.isFixMode.set(fixMode || fixDiagnoseMode);
 		emblEntryValidationPlanProperty.minGapLength.set(min_gap_length);
