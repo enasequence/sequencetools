@@ -28,8 +28,6 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.SourceFeatureQualifierCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -50,38 +48,19 @@ public class SourceFeatureQualifierCheckTest {
 		EntryFactory entryFactory = new EntryFactory();
 		featureFactory = new FeatureFactory();
 		qualifierFactory = new QualifierFactory();
-		DataSet dataSet = new DataSet();
 		entry = entryFactory.createEntry();
 		source = featureFactory.createSourceFeature();
 		entry.addFeature(source);
-		dataSet.addRow(new DataRow("strain,isolate,clone", "gene", ".*rRNA$"));
-		check = new SourceFeatureQualifierCheck(dataSet);
+		check = new SourceFeatureQualifierCheck();
 		EmblEntryValidationPlanProperty planProperty=new EmblEntryValidationPlanProperty();
 		planProperty.taxonHelper.set(new TaxonHelperImpl());
 		check.setEmblEntryValidationPlanProperty(planProperty);
 
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		check = new SourceFeatureQualifierCheck();
-		check.check(entry);
-	}
-
 	@Test
 	public void testCheck_NoEntry() {
 		assertTrue(check.check(null).isValid());
-	}
-
-	@Test
-	public void testCheck_SourceWithNoRequiredsQualifier() {
-		feature = featureFactory.createFeature("gene");
-		feature.addQualifier("gene", "10S rRNA");
-		entry.addFeature(feature);
-		source.addQualifier("sub_species");
-		ValidationResult result = check.check(entry);
-		assertEquals(1,
-				result.count("SourceFeatureQualifierCheck1", Severity.ERROR));
 	}
 
 	@Test
@@ -143,20 +122,6 @@ public class SourceFeatureQualifierCheckTest {
 				result.count("SourceFeatureQualifierCheck1", Severity.ERROR));
 	}
 
-	@Test
-	public void testCheck_Message() {
-		feature = featureFactory.createFeature("gene");
-		feature.addQualifier("gene", "10S rRNA");
-		entry.addFeature(feature);
-		source.addQualifier("sub_species");
-		ValidationResult result = check.check(entry);
-		Collection<ValidationMessage<Origin>> messages = result.getMessages(
-				"SourceFeatureQualifierCheck1", Severity.ERROR);
-		assertEquals(
-				"Any of the qualifiers \"strain, isolate, clone\" must exist in the Source feature if there is an rRNA gene.",
-				messages.iterator().next().getMessage());
-	}
-	
 	@Test
 	public void testCheck_multipleFocus() {
 		feature = featureFactory.createFeature("gene");

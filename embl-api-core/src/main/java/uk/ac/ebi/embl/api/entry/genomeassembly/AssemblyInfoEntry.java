@@ -37,15 +37,22 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String biosampleId;
 	private Integer minContigCount;
 	private Integer minScaffoldCount;
-	private String organism;
 	private String gcId;
 	private String assemblyMethod;
 	private String sequencingTechnology;
 	private String program;
 	private String platform;
 	private String moleculeType;
+	private String studyId;
+  	
+	public String getStudyId() {
+		return studyId;
+	}
 
-	
+	public void setStudyId(String studyId) {
+		this.studyId = studyId;
+	}
+
 	public String getAssemblyMethod()
 	{
 		return assemblyMethod;
@@ -272,15 +279,6 @@ public class AssemblyInfoEntry extends GCSEntry
 		this.chromosomeAccRange = chromosomeAccRange;
 	}
 
-	public String getOrganism() 
-	{
-		return organism;
-	}
-
-	public void setOrganism(String organism) 
-	{
-		this.organism = organism;
-	}
 	public String getBiosampleId() {
 		return biosampleId;
 	}

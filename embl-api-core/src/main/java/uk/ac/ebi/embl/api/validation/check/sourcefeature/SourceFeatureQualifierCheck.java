@@ -38,10 +38,6 @@ import org.apache.commons.lang.ArrayUtils;
 @Description("Any of Qualifiers \"{0}\"   must exist in Source feature if there is an rRNA gene.")
 public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
-	@CheckDataSet("source-required-qualifiers.tsv")
-	private DataSet dataSet;
-	private boolean sflag = false;
-	private final static String MESSAGE_ID = "SourceFeatureQualifierCheck1";
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";
 	private final static String MULTIPLE_FOCUS_MESSAGE_ID = "SourceFeatureQualifierCheck3";
 	private final static String MULTIPLE_TRANSEGENIC_MESSAGE_ID = "SourceFeatureQualifierCheck4";
@@ -52,10 +48,6 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
 
 	public SourceFeatureQualifierCheck() {
-	}
-
-	SourceFeatureQualifierCheck(DataSet dataSet) {
-		this.dataSet = dataSet;
 	}
 
 	public ValidationResult check(Entry entry) {
@@ -141,37 +133,6 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			reportError(entry.getOrigin(), MULTIPLE_TRANSEGENIC_MESSAGE_ID);
 
 		}
-		
-		for (DataRow dataRow : dataSet.getRows()) {
-			String[] requiredSourceQualifiers = dataRow.getStringArray(0);
-			String qualifierName = dataRow.getString(1);
-			String qualifierValuePattern = dataRow.getString(2);
-
-			if (qualifierName == null
-					|| ArrayUtils.isEmpty(requiredSourceQualifiers)
-					|| qualifierValuePattern == null) {
-				continue;
-			}
-			if (!SequenceEntryUtils.isQualifierwithPatternAvailable(
-					qualifierName, qualifierValuePattern, entry))
-				continue;
-			 
-			String reqSourceQualifierStr = Utils
-					.paramArrayToString(requiredSourceQualifiers);
-			
-			for (Feature feature : sources) {
-				for (String requiredSourceQualifier : requiredSourceQualifiers) {
-					if (!SequenceEntryUtils.isQualifierAvailable(
-							requiredSourceQualifier, feature))
-						continue;
-					sflag = true;
-				}
-				if (!sflag)
-					reportError(feature.getOrigin(), MESSAGE_ID,
-							reqSourceQualifierStr);
-			}
-		}
-		
 
 		return result;
 	}
