@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.genbank;
 
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.DblinkXRefMatcher;
@@ -49,7 +50,10 @@ public class DblinkReader extends MultiLineBlockReader {
 			return;
 		}
 		XRef xref = xRefMatcher.getXRef();
-		xref.setOrigin(getOrigin());				
+		xref.setOrigin(getOrigin());
+		if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioSample")) {
+			entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
+		}
 		entry.addXRef(xref);
 		}
 	}
