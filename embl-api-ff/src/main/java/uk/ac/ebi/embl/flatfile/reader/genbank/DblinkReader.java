@@ -44,17 +44,17 @@ public class DblinkReader extends MultiLineBlockReader {
 		
 		for(String xrefString :xrefStrings )
 		{
-		
-		if(!xRefMatcher.match(xrefString)) {
-			error("FF.1", getTag());
-			return;
-		}
-		XRef xref = xRefMatcher.getXRef();
-		xref.setOrigin(getOrigin());
-		if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioSample")) {
-			entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
-		}
-		entry.addXRef(xref);
+			if(!xRefMatcher.match(xrefString)) {
+				error("FF.1", getTag());
+				return;
+			}
+			XRef xref = xRefMatcher.getXRef();
+			xref.setOrigin(getOrigin());
+			if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioProject")) {
+				entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
+			} else {
+				entry.addXRef(xref);
+			}
 		}
 	}
 
