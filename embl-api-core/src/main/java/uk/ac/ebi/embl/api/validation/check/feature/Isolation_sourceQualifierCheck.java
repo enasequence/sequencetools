@@ -43,8 +43,8 @@ public class Isolation_sourceQualifierCheck extends FeatureValidationCheck
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet qualifierValueSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
-		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
+		DataSet qualifierValueSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
 		result = new ValidationResult();
 
 		if (feature == null)

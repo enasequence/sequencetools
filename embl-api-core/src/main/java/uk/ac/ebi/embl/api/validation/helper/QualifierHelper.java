@@ -45,7 +45,7 @@ public class QualifierHelper {
       return message;
   }
 
-  public static ValidationResult checkRegEx(Qualifier qualifier, QualifierInfo qualifierInfo) {
+  public static ValidationResult checkRegEx(QualifierInfo qualifierInfo, Qualifier qualifier) {
       ValidationResult result = new ValidationResult();
       if(null != qualifier.getValue() && null != qualifierInfo.getRegex()) {
         Matcher matcher = Utils.matcher(qualifierInfo.getRegex(), qualifier.getValue());
@@ -83,57 +83,55 @@ public class QualifierHelper {
       return result;
   }
 
-    public static ValidationResult checkRegexValueRange(QualifierInfo qualifierInfo,
+    public static ValidationResult checkLatLonRange(QualifierInfo qualifierInfo,
                                                         Qualifier qualifier) {
         ValidationResult result = new ValidationResult();
 
-        if (qualifierInfo.getName().equals(Qualifier.LAT_LON_QUALIFIER_NAME)) {
-            Double lat = null, lon=null;
-            String direcSN,direcWE,latValue,lonValue;
-            String regex = qualifierInfo.getRegex();
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(qualifier.getValue());
-            if (matcher.find()) {
-                latValue = matcher.group(1);
-                lonValue = matcher.group(4);
-                direcSN = matcher.group(3);
-                direcWE = matcher.group(6);
-                if (latValue != null) {
-                    lat = new Double(latValue);
-                    lat = Math.floor(lat * 10000 + 0.5) / 10000;
-                }
+        String regex = qualifierInfo.getRegex();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(qualifier.getValue());
+        if (matcher.find()) {
+            Double lat = getLatLonVal(matcher.group(1));
+            Double lon = getLatLonVal(matcher.group(4));
+            String direcSN = matcher.group(3);// if not required delete these 2 assignments
+            String direcWE = matcher.group(6);
 
-                if (lonValue != null) {
-                    lon = new Double(lonValue);
-                    lon = Math.floor(lon * 10000 + 0.5) / 10000;
-                }
-                // System.out.println("lat" + lat + "lon" + lon);
-                if (lat < 0) { // need to do fixing for the direction direcSN
-                    lat = -lat;
-                }
-                if (lon < 0) { // need to do fixing for the direction direcWE
-
-                    lon = -lon;
-
-                }
-                if (lat > MAX_LATITUDE_VALUE) {
-                    result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, LAT_LON_MESSAGE_ID1, qualifier.getName(), lat, MAX_LATITUDE_VALUE));
-                }
-                if (lon > MAX_LONGITUDE_VALUE) {
-                    result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, LAT_LON_MESSAGE_ID2, qualifier.getName(), lat, MAX_LONGITUDE_VALUE));
-                }
+            if (lat < 0) { // need to do fixing for the direction direcSN
+                lat = -lat;
+            }
+            if (lon < 0) { // need to do fixing for the direction direcWE
+                lon = -lon;
+            }
+            if (lat > MAX_LATITUDE_VALUE) {
+                result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, LAT_LON_MESSAGE_ID1, qualifier.getName(), lat, MAX_LATITUDE_VALUE));
+            }
+            if (lon > MAX_LONGITUDE_VALUE) {
+                result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, LAT_LON_MESSAGE_ID2, qualifier.getName(), lat, MAX_LONGITUDE_VALUE));
             }
         }
-        if (qualifierInfo.getName().equals(Qualifier.PROTEIN_ID_QUALIFIER_NAME)) {
-            Integer version = 0;
-            String regex = qualifierInfo.getRegex();
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(qualifier.getValue());
-            if (matcher.find()) {
-                version = new Integer(matcher.group(3));
-                if (version < 1) {
-                    result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, PROTEIN_ID_VERSION_MESSAGE_ID, qualifier.getName(), qualifier.getName()));
-                }
+
+        return result;
+    }
+
+    private static Double getLatLonVal(String s) {
+        Double lon = null;
+        if (s != null) {
+            lon = new Double(s);
+            lon = Math.floor(lon * 10000 + 0.5) / 10000;
+        }
+        return lon;
+    }
+    public static ValidationResult checkProteinIdVersion(QualifierInfo qualifierInfo,
+                                                        Qualifier qualifier) {
+        ValidationResult result = new ValidationResult();
+        Integer version = 0;
+        String regex = qualifierInfo.getRegex();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(qualifier.getValue());
+        if (matcher.find()) {
+            version = new Integer(matcher.group(3));
+            if (version < 1) {
+                result.append(EntryValidations.createMessage(qualifier.getOrigin(), Severity.ERROR, PROTEIN_ID_VERSION_MESSAGE_ID, qualifier.getName(), qualifier.getName()));
             }
         }
         return result;

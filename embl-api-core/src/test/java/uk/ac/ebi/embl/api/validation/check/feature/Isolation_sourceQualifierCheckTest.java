@@ -79,8 +79,8 @@ public class Isolation_sourceQualifierCheckTest
 				"TRUE",
 				"microsatellite,minisatellite,satellite");
 
-		DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS,feature_qualifier_values_row1,feature_qualifier_values_row2,feature_qualifier_values_row3);
-		DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES,feature_regex_groups_row1,feature_regex_groups_row2);
+		DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES ,feature_qualifier_values_row1,feature_qualifier_values_row2,feature_qualifier_values_row3);
+		DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS,feature_regex_groups_row1,feature_regex_groups_row2);
 
 		check = new Isolation_sourceQualifierCheck();
 	}

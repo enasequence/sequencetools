@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("protein_id \"{0}\" has been deleted for feature \"{1}\", as protein_ids can only be assigned by EMBL")
-@ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER })
+@ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI })
 public class ProteinIdRemovalFix extends EntryValidationCheck {
 
 	private final static String FIX_ID = "ProteinIdRemovalFix_1";

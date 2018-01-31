@@ -17,15 +17,12 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
@@ -34,28 +31,13 @@ import java.util.regex.PatternSyntaxException;
 @Description("Feature qualifier \\\"{0}\\\" is not recognized\\Feature qualifier \\\"{0}\\\" does not have a value (mandatory for this type)\\" +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" is invalid. Refer to the feature documentation or ask a curator for guidance." +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class QualifierCheck extends FeatureValidationCheck {
 
     private static final String NO_QUALIFIER_FOUND_ID = "QualifierCheck-1";
 
     public QualifierCheck() {
     }
-
-
-    private void init() {
-
-        try {
-
-           // setNullGroupTolerance();
-
-        } catch (PatternSyntaxException e) {
-            throw new IllegalArgumentException("Invalid pattern while instantiating QualifierCheck! " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-
 
     public ValidationResult check(Feature feature) {
 
@@ -116,8 +98,17 @@ public class QualifierCheck extends FeatureValidationCheck {
 
                     //todo check the 'NEW' field
 
-                    result.append(QualifierHelper.checkRegexValueRange(qualifierInfo,qualifier));
-                    result.append(QualifierHelper.checkRegEx(qualifier, qualifierInfo));
+                    switch(qualifierName) {
+                        case Qualifier.LAT_LON_QUALIFIER_NAME :
+                            result.append(QualifierHelper.checkLatLonRange(qualifierInfo, qualifier));
+                            break;
+                        case Qualifier.PROTEIN_ID_QUALIFIER_NAME:
+                            result.append(QualifierHelper.checkProteinIdVersion(qualifierInfo,qualifier));
+                            break;
+                        default:
+                    }
+
+                    result.append(QualifierHelper.checkRegEx(qualifierInfo, qualifier));
 
 
                 } else {//the qualifier is not in the CV

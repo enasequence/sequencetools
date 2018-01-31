@@ -11,6 +11,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 @CheckDataSet(dataSetNames = {FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE})
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExclusiveQualifierTransformToNoteQualifierFix extends
 		FeatureValidationCheck
 {
@@ -26,11 +27,7 @@ public class ExclusiveQualifierTransformToNoteQualifierFix extends
 		DataSet exclusiveQualifierSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE);
 		result = new ValidationResult();
 
-		if (feature == null)
-		{
-			return result;
-		}
-		if(feature.getQualifiers().size()==0)
+		if (feature == null || feature.getQualifiers().isEmpty())
 		{
 			return result;
 		}

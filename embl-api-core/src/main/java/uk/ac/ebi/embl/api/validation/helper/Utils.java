@@ -955,5 +955,15 @@ public class Utils {
 		Pattern pattern = Pattern.compile(regEx);
 		return pattern.matcher(value);
 	}
+
+	public static boolean isAllUpperCase(String s) {
+
+		for(char c: s.toCharArray()) {
+			if(Character.isAlphabetic(c) && !Character.isUpperCase(c)){
+				return false;
+			}
+		}
+		return true;
+	}
    
 }

@@ -5,8 +5,11 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -35,12 +38,9 @@ public class CountryQualifierFixTest {
                 "1",
                 "TRUE",
                 "microsatellite,minisatellite,satellite");
-        DataSet feature_regex_groups_set = new DataSet();
 
-        feature_regex_groups_set.addRow(feature_regex_groups_row1);
-        feature_regex_groups_set.addRow(feature_regex_groups_row2);
-        check = new CountryQualifierFix(feature_regex_groups_set);
-        check.setPopulated();
+        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, feature_regex_groups_row1,feature_regex_groups_row2 );
+        check = new CountryQualifierFix();
     }
 
     @Test
@@ -73,6 +73,15 @@ public class CountryQualifierFixTest {
     }
 
     @Test
+    public void testCheckCountryQualifierWithRegion()
+    {
+        Feature feature = featureFactory.createFeature("source");
+        feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Mexico: Mexico City");
+        assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+        assertEquals(0, check.check(feature).getMessages().size());
+    }
+
+    @Test
     public void testCheckCountryQualifierWithInvalidValue()
     {
         Feature feature = featureFactory.createFeature("source");
@@ -86,6 +95,28 @@ public class CountryQualifierFixTest {
         //Country has been removed
         assertEquals(1, result.count("CountryQualifierFix_1", Severity.FIX));
         assertEquals(0, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    }
+
+    @Test
+    public void testCheckCountryQualifierInvalidWithNoteInFeature()
+    {
+        Feature feature = featureFactory.createFeature("source");
+        feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Switz");
+        QualifierFactory qualifierFactory = new QualifierFactory();
+        Qualifier noteQualifier = qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, "existing note");
+        feature.addQualifier(noteQualifier);
+
+        assertEquals(1, feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).size());
+        ValidationResult result = check.check(feature);
+        //note has been added
+        assertEquals(1, feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).size());
+        assertEquals("existing note;Switz", feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).get(0).getValue());
+        assertEquals(1, result.getMessages().size());
+        //Country has been removed
+        assertEquals(1, result.count("CountryQualifierFix_1", Severity.FIX));
+        assertEquals(0, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+
+
     }
 
 }

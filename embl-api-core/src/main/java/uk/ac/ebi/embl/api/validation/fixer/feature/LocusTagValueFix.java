@@ -10,6 +10,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("\"locus_tag\" qualifier value has been changed from \"{0}\" to \"{1}\"")
 public class LocusTagValueFix extends FeatureValidationCheck
@@ -35,10 +36,9 @@ public class LocusTagValueFix extends FeatureValidationCheck
 		for(Qualifier qualifier:LocustagQualifiers)
 		{
 			String locusTagValue=qualifier.getValue();
-			if(locusTagValue!=null&&!StringUtils.isAllUpperCase(locusTagValue))
-			{
-			qualifier.setValue(locusTagValue.toUpperCase());
-			reportMessage(Severity.FIX, feature.getOrigin(), LocusTagPrefixFix_ID, Qualifier.LOCUS_TAG_QUALIFIER_NAME, locusTagValue, qualifier.getValue());
+			if(locusTagValue != null && !Utils.isAllUpperCase(locusTagValue)) {
+				qualifier.setValue(locusTagValue.toUpperCase());
+				reportMessage(Severity.FIX, feature.getOrigin(), LocusTagPrefixFix_ID, Qualifier.LOCUS_TAG_QUALIFIER_NAME, locusTagValue, qualifier.getValue());
 			}
 		}
 		
