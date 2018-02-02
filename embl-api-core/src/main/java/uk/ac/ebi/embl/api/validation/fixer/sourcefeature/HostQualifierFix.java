@@ -27,48 +27,37 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.List;
 
-@Description("\"{0}\" qualifier value has been changed to scientific name \"{1}\"")
+@Description("\"{0}\" qualifier value has been changed from \"{1}\" to scientific name \"{2}\"")
 @RemoteExclude
 public class HostQualifierFix extends FeatureValidationCheck
 {
-	private final static String HOST_QUALIFIER_VALUE_FIX_ID = "HostQualifierFix_1";
+	private static final String HOST_QUALIFIER_VALUE_FIX_ID = "HostQualifierFix_1";
 	
-	public ValidationResult check(Feature feature)
-	{
+	public ValidationResult check(Feature feature) {
 		result = new ValidationResult();
 
-		if(feature==null)
-		{
+		if (feature == null || !(feature instanceof SourceFeature)) {
 			return result;
 		}
-		
-		if(!(feature instanceof SourceFeature))
-			return result;
-		
-		SourceFeature source=(SourceFeature)feature;
-		List<Qualifier> hostQualifiers = source.getQualifiers(Qualifier.HOST_QUALIFIER_NAME);
-		for (Qualifier hostQualifier : hostQualifiers)
-		{
-			String hostQualifierValue = hostQualifier.getValue();
-			
-			if(getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(hostQualifierValue))
-				continue;
-			
-			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
 
-			if(taxon==null||taxon.size()==0)
-			{
-				continue;
-			}
-			else if(taxon.get(0).getScientificName()!=null)
-			{
-				hostQualifier.setValue(taxon.get(0).getScientificName());
-				reportMessage(Severity.FIX, hostQualifier.getOrigin(), HOST_QUALIFIER_VALUE_FIX_ID, Qualifier.HOST_QUALIFIER_NAME,hostQualifier.getValue());
+		SourceFeature source = (SourceFeature) feature;
+		List<Qualifier> hostQualifiers = source.getQualifiers(Qualifier.HOST_QUALIFIER_NAME);
+		for (Qualifier hostQualifier : hostQualifiers) {
+			String hostQualifierValue = hostQualifier.getValue();
+			if (!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(hostQualifierValue)) {
+
+				List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
+				if (taxon != null && !taxon.isEmpty()) {
+					String newValue = taxon.get(0).getScientificName();
+					if (newValue != null) {
+						reportMessage(Severity.FIX, hostQualifier.getOrigin(), HOST_QUALIFIER_VALUE_FIX_ID, Qualifier.HOST_QUALIFIER_NAME, hostQualifier.getValue(), newValue);
+						hostQualifier.setValue(newValue);
+					}
+				}
 			}
 		}
 
 		return result;
-
 	}
 
 }

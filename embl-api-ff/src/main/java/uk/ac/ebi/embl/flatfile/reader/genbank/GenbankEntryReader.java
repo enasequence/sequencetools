@@ -59,6 +59,7 @@ public class GenbankEntryReader extends EntryReader {
     	addBlockReader(new DefinitionReader(lineReader));
     	addBlockReader(new KeywordsReader(lineReader));
     	addBlockReader(new VersionReader(lineReader));
+    	//Delete below line after discussing with the team
     	addBlockReader(new ProjectReader(lineReader));
     	addBlockReader(new DblinkReader(lineReader));
     	addBlockReader(new ContigReader(lineReader));

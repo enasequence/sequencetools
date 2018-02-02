@@ -50,6 +50,7 @@ public class DblinkReader extends MultiLineBlockReader {
 			}
 			XRef xref = xRefMatcher.getXRef();
 			xref.setOrigin(getOrigin());
+			//move text BioProject to a constant file
 			if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioProject")) {
 				entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
 			} else {
