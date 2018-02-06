@@ -21,10 +21,9 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -36,7 +35,11 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
 @Description("Any of Qualifiers \"{0}\"   must exist in Source feature if there is an rRNA gene.")
+@ExcludeScope( validationScope = {ValidationScope.NCBI})
 public class SourceFeatureQualifierCheck extends EntryValidationCheck {
+
+	private boolean sflag = false;
+	private final static String MESSAGE_ID = "SourceFeatureQualifierCheck1";
 
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";
 	private final static String MULTIPLE_FOCUS_MESSAGE_ID = "SourceFeatureQualifierCheck3";
@@ -51,6 +54,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	}
 
 	public ValidationResult check(Entry entry) {
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.SOURCE_REQUIRED_QUALIFIER);
 		result = new ValidationResult();
 
 		if (entry == null) {
@@ -87,7 +91,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				Long taxId = source.getTaxId();
 				if(taxId!=null)		
 					isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
-				if(!isOrganismSubmittable&&!isTaxidSubmittable)
+				if(!isOrganismSubmittable && !isTaxidSubmittable)
 				{
 					isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(source.getScientificName());
 					 if(!isAnyNameSubmittable)

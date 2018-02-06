@@ -22,11 +22,7 @@ import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.HashMap;
@@ -37,25 +33,6 @@ import java.util.ArrayList;
         "Qualifier \\\"{0}\\\" must occur exactly 1 time for feature \\\"{1}\\\", not \"{2}\".\\\\Qualifier \\\"{0}\\\" " +
         "is recomended for feature \\\"{1}\\\".")
 public class FeatureKeyCheck extends FeatureValidationCheck {
-
-    /**
-     * A list of the feature keys in table CV-FKEY.
-     * File generated using SQL on Webin database:
-     * <p/>
-     * "select fkey from cv_fkey"
-     */
-    @CheckDataSet("feature-keys.tsv")
-    private DataSet keySet;
-
-    /**
-     * A list of the key-qualifier combinations where either the qualifier is mandatory for the key,
-     * is recommended or must occur only once.
-     * File generated using SQL on Webin database:
-     * <p/>
-     * "select fkey.fkey, fqual.fqual, fkqual.mandatory, fkqual.single, fkqual.recommended from cv_fkey_qual fkqual, cv_fqual fqual, cv_fkey fkey where fkqual.fqualid = fqual.fqualid and (fkqual.mandatory = 'Y' or fkqual.single = 'Y' or fkqual.recommended = 'Y') and fkqual.fkeyid = fkey.fkeyid order by fkey asc"
-     */
-    @CheckDataSet("feature-key-qualifiers.tsv")
-    private DataSet keyQualifiersSet;
 
     private HashMap<String, FeatureKeyInfo> keysMap = new HashMap<String, FeatureKeyInfo>();
 
@@ -71,17 +48,11 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
     public FeatureKeyCheck() {
     }
 
-    FeatureKeyCheck(DataSet keySet, DataSet keyQualifiersSet) {
-        this.keySet = keySet;
-        this.keyQualifiersSet = keyQualifiersSet;
-    }
-
-    public void setPopulated() {
-        init();
-        super.setPopulated();
-    }
 
     private void init() {
+        DataSet keySet = GlobalDataSets.getDataSet(FileName.FEATURE_KEYS);
+        DataSet keyQualifiersSet = GlobalDataSets.getDataSet(FileName.FEATURE_KEY_QUALIFIERS);
+
         if (keySet != null && keyQualifiersSet != null) {
             for (DataRow dataRow : keySet.getRows()) {
                 String key = dataRow.getString(0);
@@ -111,6 +82,7 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
     }
 
     public ValidationResult check(Feature feature) {
+        init();
         result = new ValidationResult();
 
         if (feature == null) {

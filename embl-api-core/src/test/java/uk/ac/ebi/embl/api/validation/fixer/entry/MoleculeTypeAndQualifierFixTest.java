@@ -25,8 +25,10 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -53,12 +55,11 @@ public class MoleculeTypeAndQualifierFixTest
 		Sequence sequence = new SequenceFactory().createSequenceByte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes());
 		sequence.setMoleculeType("mRNA");
 		entry.setSequence(sequence);
-		DataSet dataSet = new DataSet();
 		DataRow dataRow1 = new DataRow(
 				"genomic DNA",
 				Qualifier.GERMLINE_QUALIFIER_NAME);
-		dataSet.addRow(dataRow1);
-		check = new MoleculeTypeAndQualifierFix(dataSet);
+		DataSetHelper.createAndAdd(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES, dataRow1);
+		check = new MoleculeTypeAndQualifierFix();
 	}
 
 	public void testCheck_Empty()

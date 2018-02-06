@@ -21,6 +21,7 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.sql.SQLException;
 
 import org.junit.Before;
@@ -32,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -65,9 +67,8 @@ public class TaxonomicDivisionNotQualifierCheckTest
 		DataSet dataSet = new DataSet();
 		DataRow dataRow1 = new DataRow(Qualifier.LAT_LON_QUALIFIER_NAME, "HUM");
 		DataRow dataRow2 = new DataRow("dev_stage", "PRO");
-		dataSet.addRow(dataRow1);
-		dataSet.addRow(dataRow2);
-		check = new TaxonomicDivisionNotQualifierCheck(dataSet);
+		DataSetHelper.createAndAdd(FileName.TAXONOMIC_DIVISION_NO_QUALIFIER, dataRow1,dataRow2);
+		check = new TaxonomicDivisionNotQualifierCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 

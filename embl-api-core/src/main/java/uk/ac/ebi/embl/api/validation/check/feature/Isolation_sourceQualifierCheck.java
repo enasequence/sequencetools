@@ -24,8 +24,9 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description("isolation_source is a country \"{0}\",change isolation_source qualifier to country qualifier " + "isolation_source is a lat_lon \"{0}\", change isolation_source qualifier to lat_lon qualifier ")
@@ -34,30 +35,14 @@ public class Isolation_sourceQualifierCheck extends FeatureValidationCheck
 	private final static String ISOLATION_SOURCE_COUNTRY_CHECK_ID = "Isolation_sourceQualifierCheck_1";
 	private final static String ISOLATION_SOURCE_LAT_LON_CHECK_ID = "Isolation_sourceQualifierCheck_2";
 
-	/**
-	 * A list of the valid feature qualifier values
-	 */
-
-	// for isolation_source having country qualifier value
-	@CheckDataSet("feature-regex-groups.tsv")
-	private DataSet qualifierValueSet;
-
-	// for isolation_source having lat_lon/country qualifier value regexp
-	@CheckDataSet("feature-qualifier-values.tsv")
-	private DataSet qualifierRegexSet;
-
 	public Isolation_sourceQualifierCheck()
 	{
 	}
 
-	public Isolation_sourceQualifierCheck(DataSet qualifierValueSet, DataSet qualifierRegexSet)
-	{
-		this.qualifierValueSet = qualifierValueSet;
-		this.qualifierRegexSet = qualifierRegexSet;
-	}
-
 	public ValidationResult check(Feature feature)
 	{
+		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
+		DataSet qualifierValueSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
 		result = new ValidationResult();
 
 		if (feature == null)

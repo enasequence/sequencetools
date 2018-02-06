@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -54,37 +55,19 @@ public class QualifierCheckTest {
         DataRow dataRow5 = new DataRow("protein_id",	"N",	"Y",	"Y",	"^\\s*([A-Z]{3}\\d{5})(\\.)(\\d+)\\s*$",	"93",	"(null)");
         DataRow dataRow6 = new DataRow("inference",	"N",	"Y",	"Y",	"^((COORDINATES|DESCRIPTION|EXISTENCE):)?([^\\:\\(]+)(\\(same\\sspecies\\))?(:.+)?$",	"89",	"(null)");
 
-        DataSet qualifiersSet = new DataSet();
-        qualifiersSet.addRow(dataRow1);
-        qualifiersSet.addRow(dataRow2);
-        qualifiersSet.addRow(dataRow3);
-        qualifiersSet.addRow(dataRow4);
-        qualifiersSet.addRow(dataRow5);
-        qualifiersSet.addRow(dataRow6);
-
-
         DataRow regexRow = new DataRow("collection_date", "3", "FALSE", "Oct");
         DataRow regexRow2 = new DataRow("rpt_type","1","TRUE","tandem,inverted,flanking,terminal,direct,dispersed,other");
         DataRow regexRow3 = new DataRow("lat_lon", "3", "FALSE", "N,S");
         DataRow regexRow4 = new DataRow("lat_lon", "6", "FALSE", "E,W");
         DataRow regexRow5 = new DataRow("inference","3","TRUE","ab initio prediction,alignment,non-experimental evidence no additional details recorded,nucleotide motif,profile,protein motif,similar to AA sequence,similar to DNA sequence,similar to RNA sequence,similar to RNA sequence{COM} EST,similar to RNA sequence{COM} mRNA,similar to RNA sequence{COM} other RNA,similar to sequence");
 
-        DataSet regexSet = new DataSet();
-        regexSet.addRow(regexRow);
-        regexSet.addRow(regexRow2);
-        regexSet.addRow(regexRow3);
-        regexSet.addRow(regexRow4);
-        regexSet.addRow(regexRow5);
-
-
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
-        DataSet artemisSet = new DataSet();
-        artemisSet.addRow(artemisRow);
-        artemisSet.addRow(artemisRow2);
 
-        check = new QualifierCheck(qualifiersSet, regexSet, artemisSet);
-        check.setPopulated();
+        DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6);
+        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
+        DataSetHelper.createAndAdd(FileName.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
+        check = new QualifierCheck();
     }
 
     @Test

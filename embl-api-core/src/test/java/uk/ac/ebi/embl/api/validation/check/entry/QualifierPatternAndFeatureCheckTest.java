@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -52,12 +53,10 @@ public class QualifierPatternAndFeatureCheckTest
 				"tRNA",
 				"product",
 				"^(transfer RNA-).*$");
-		DataSet qualifier_pattern_feature_dataset = new DataSet();
-		qualifier_pattern_feature_dataset.addRow(qualifier_pattern_feature_row2);
-		qualifier_pattern_feature_dataset.addRow(qualifier_pattern_feature_row1);
+
 		entry = entryFactory.createEntry();
-		check = new QualifierPatternAndFeatureCheck(
-				qualifier_pattern_feature_dataset);
+		DataSetHelper.createAndAdd(FileName.QUALIFIER_PATTERN_FEATURE, qualifier_pattern_feature_row1,qualifier_pattern_feature_row2);
+		check = new QualifierPatternAndFeatureCheck();
 	}
 
 	@Test

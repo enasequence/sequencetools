@@ -20,8 +20,6 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
@@ -33,22 +31,14 @@ public class EntryMolTypeCheck extends EntryValidationCheck {
 
     private final static String WRONG_MOLTYPE_ID = "EntryMolTypeCheck";
 
-    /**
-     * A list of the valid feature qualifier values - we only want to get hold of the mol_type one
-     */
-    @CheckDataSet("feature-regex-groups.tsv")
-    private DataSet valuesSet;
-
     private List<String> molTypeValues;
 
     public EntryMolTypeCheck() {
     }
 
-    public EntryMolTypeCheck(DataSet valuesSet) {
-        this.valuesSet = valuesSet;
-    }
-
     public void init() {
+        DataSet valuesSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+
         if (valuesSet != null) {
                 for (DataRow regexpRow : valuesSet.getRows()) {
                     if (regexpRow.getString(0).equals("mol_type")) {
@@ -60,13 +50,9 @@ public class EntryMolTypeCheck extends EntryValidationCheck {
         }
     }
 
-    public void setPopulated() {
-        init();
-        super.setPopulated();
-    }
-
     public ValidationResult check(Entry entry) {
 
+        init();
         result = new ValidationResult();
 
         if (entry == null) {

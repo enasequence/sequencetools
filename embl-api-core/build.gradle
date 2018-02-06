@@ -8,5 +8,5 @@ dependencies {
   compile 'com.beust:jcommander:1.7'
   compile 'org.json:json:20131018'
   testCompile 'org.easymock:easymock:3.1'
-  compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.6')
+  compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
   }

@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -61,14 +62,13 @@ public class TaxonomicDivisionQualifierCheckTest
 		property=new EmblEntryValidationPlanProperty();
 		taxonHelper=createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
-		DataSet dataSet = new DataSet();
+
 		DataRow dataRow1 = new DataRow("cultivar", "PLN");
 		DataRow dataRow2 = new DataRow("serovar", "PRO");
 		DataRow dataRow3 = new DataRow("variety", "PLN,FUN");
-		dataSet.addRow(dataRow1);
-		dataSet.addRow(dataRow2);
-		dataSet.addRow(dataRow3);
-		check = new TaxonomicDivisionQualifierCheck(dataSet);
+
+		DataSetHelper.createAndAdd(FileName.TAXONOMIC_DIVISION_QUALIFIER, dataRow1,dataRow2,dataRow3);
+		check = new TaxonomicDivisionQualifierCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 

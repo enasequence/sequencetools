@@ -23,10 +23,7 @@ import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
 import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.HasOrigin;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
 import java.io.Serializable;
@@ -114,7 +111,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
         DataManager dataManager = new CachedFileDataManager();
         CheckFileManager tsvFileManager = new CheckFileManager();
 
-        DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath("feature-qualifier-values.tsv", false), false);
+        DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath(FileName.FEATURE_QUALIFIER_VALUES, false), false);
         if (dataSet != null) {
 
             for (DataRow row : dataSet.getRows()) {

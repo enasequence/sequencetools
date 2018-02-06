@@ -21,14 +21,15 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
+
+import java.io.File;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -46,14 +47,9 @@ public class FeatureRenameFixTest {
 	    	DataRow dataRow1 = new DataRow("misc_feature","feature1");
 	        DataRow dataRow2 = new DataRow("conflict","feature2");
 	        DataRow dataRow3 = new DataRow("repeat_region","feature3");
-	        
-	        DataSet featureSet = new DataSet();
-	        featureSet.addRow(dataRow1);
-	        featureSet.addRow(dataRow2);
-	        featureSet.addRow(dataRow3);
-	        
-	        check = new FeatureRenameFix(featureSet);
-	        check.setPopulated();
+
+	        DataSetHelper.createAndAdd(FileName.FEATURE_RENAME, dataRow1,dataRow2,dataRow3);
+	        check = new FeatureRenameFix();
 	    }
 	
 	    

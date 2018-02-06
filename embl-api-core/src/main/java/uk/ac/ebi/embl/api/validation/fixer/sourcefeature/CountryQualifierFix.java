@@ -21,10 +21,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
@@ -40,23 +37,12 @@ import java.util.stream.Stream;
 @RemoteExclude
 public class CountryQualifierFix extends FeatureValidationCheck
 {
-	private final static String COUNTRY_QUALIFIER_VALUE_FIX_ID = "CountryQualifierFix_1";
+	private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID = "CountryQualifierFix_1";
 
-	QualifierFactory qualifierFactory = new QualifierFactory();
+	private Set<String> getCountries() {
+		Set<String> countries = new HashSet<>();
+		DataSet valuesSet = GlobalDataSets.getDataSet("feature-regex-groups.tsv");
 
-	@CheckDataSet("feature-regex-groups.tsv")
-	private DataSet valuesSet;
-
-	private Set<String> countries = new HashSet<>();
-
-	public CountryQualifierFix() { }
-
-	CountryQualifierFix(DataSet qualifierValueSet)
-	{
-		this.valuesSet = qualifierValueSet;
-	}
-
-	public void init() {
 		if (valuesSet != null) {
 			for (DataRow regexpRow : valuesSet.getRows()) {
 				if (regexpRow.getString(0).equals("country")) {
@@ -67,18 +53,13 @@ public class CountryQualifierFix extends FeatureValidationCheck
 		} else {
 			throw new IllegalArgumentException("Failed to set qualifier values in CountryQualifierFix!");
 		}
+		return countries;
 	}
-
-	@Override
-	public void setPopulated() {
-		init();
-		super.setPopulated();
-	}
-
 
 	public ValidationResult check(Feature feature) {
+		QualifierFactory qualifierFactory = new QualifierFactory();
 		result = new ValidationResult();
-
+		Set<String> countries = getCountries();
 		if (null != feature && feature instanceof SourceFeature) {
 
 			SourceFeature source = (SourceFeature) feature;
@@ -86,16 +67,26 @@ public class CountryQualifierFix extends FeatureValidationCheck
 			for (Qualifier countryQualifier : countryQualifiers) {
 				String countryQualifierValue = countryQualifier.getValue();
 
-				if (!countries.contains(countryQualifierValue.trim().toLowerCase())) {
+				if (!countries.contains(getCountry(countryQualifierValue))) {
 					source.removeQualifier(countryQualifier);
-					source.addQualifier(qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, countryQualifierValue));
+					if (SequenceEntryUtils.isQualifierAvailable(Qualifier.NOTE_QUALIFIER_NAME, source)) {
+						source.getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME).setValue(feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME) + ";" + countryQualifierValue);
+					} else {
+						source.addQualifier(qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, countryQualifierValue));
+					}
+
 					reportMessage(Severity.FIX, countryQualifier.getOrigin(), COUNTRY_QUALIFIER_VALUE_FIX_ID, Qualifier.COUNTRY_QUALIFIER_NAME, countryQualifier.getValue());
 				}
 			}
 	    }
 
 		return result;
+	}
 
+	private String getCountry(String country) {
+		if(country == null) return null;
+		String[] split = country.split("[:,]");
+		return split.length>0? split[0].trim().toLowerCase(): null;
 	}
 
 }

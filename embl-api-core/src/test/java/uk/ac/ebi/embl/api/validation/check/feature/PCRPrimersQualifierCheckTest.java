@@ -25,7 +25,9 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
@@ -45,7 +47,8 @@ public class PCRPrimersQualifierCheckTest {
 				.createQualifier(Qualifier.PCR_PRIMERS_QUALIFIER_NAME);
 		feature.addQualifier(qualifier);
 		DataRow dataRow = new DataRow("a,c,g,t,m,r,w,s,y,k,v,h,d,b,n");
-		check = new PCRPrimersQualifierCheck(dataRow);
+		DataSetHelper.createAndAdd(FileName.NUCLEOTIDE_CODE, dataRow);
+		check = new PCRPrimersQualifierCheck();
 	}
 
 	@Test

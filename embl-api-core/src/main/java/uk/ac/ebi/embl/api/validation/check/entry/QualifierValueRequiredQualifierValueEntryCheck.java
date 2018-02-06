@@ -25,9 +25,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
@@ -35,20 +36,14 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 public class QualifierValueRequiredQualifierValueEntryCheck extends
 		EntryValidationCheck {
 
-	@CheckDataSet("qualifier-value-required-qualifier-entry-value.tsv")
-	private DataSet dataSet;
-
 	private final static String MESSAGE_ID = "QualifierValueRequiredQualifierValueEntryCheck";
 
 	public QualifierValueRequiredQualifierValueEntryCheck() {
 	}
 
-	QualifierValueRequiredQualifierValueEntryCheck(DataSet dataRow) {
-		this.dataSet = dataRow;
-	}
-
 	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VAL_REQUIRED_QUALIFIER_ENTRY);
 
 		if (entry == null) {
 			return result;

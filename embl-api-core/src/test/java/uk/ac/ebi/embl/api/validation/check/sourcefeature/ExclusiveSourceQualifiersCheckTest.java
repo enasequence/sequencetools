@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ExclusiveSourceQualifiersCheck;
@@ -51,12 +52,13 @@ public class ExclusiveSourceQualifiersCheckTest {
 		entry.addFeature(source2);
 
 		DataRow dataRow = new DataRow("focus", "transgenic");
-		check = new ExclusiveSourceQualifiersCheck(dataRow);
+		DataSetHelper.createAndAdd(FileName.SOURCE_EXCLUSIVE_QUALIFIERS, dataRow);
+		check = new ExclusiveSourceQualifiersCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new ExclusiveSourceQualifiersCheck();
+		DataSetHelper.clear();
 		check.check(entry);
 	}
 

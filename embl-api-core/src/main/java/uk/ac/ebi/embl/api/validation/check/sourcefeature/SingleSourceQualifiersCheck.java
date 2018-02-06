@@ -21,51 +21,46 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@CheckDataSet("single-source-qualifiers.tsv")
 @Description("Qualifier {0} cannot exist in more than one source feature.")
 public class SingleSourceQualifiersCheck extends EntryValidationCheck {
-
-	@CheckDataRow
-	private DataRow dataRow;
 
 	private final static String MESSAGE_ID = "SingleSourceQualifiersCheck";
 
 	public SingleSourceQualifiersCheck() {
 	}
 
-	SingleSourceQualifiersCheck(DataRow dataSet) {
-		this.dataRow = dataSet;
-	}
-
 	public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
-        
-        if (entry == null) {
+		result = new ValidationResult();
+
+		if (entry == null) {
 			return result;
 		}
 
-		String qualifierName = dataRow.getString(0);
+		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.SINGLE_SOURCE_QUALIFIER).getRows()) {
 
-		Collection<Feature> sources = SequenceEntryUtils.getFeatures(
-				Feature.SOURCE_FEATURE_NAME, entry);
-		boolean alreadyAvailable = false;
-		for (Feature source : sources) {
-			Collection<Qualifier> qualifiers = source
-					.getQualifiers(qualifierName);
-			if (qualifiers.size() > 1) {
-				reportError(entry.getOrigin(), MESSAGE_ID, qualifierName);
+			String qualifierName = dataRow.getString(0);
+
+			Collection<Feature> sources = SequenceEntryUtils.getFeatures(
+					Feature.SOURCE_FEATURE_NAME, entry);
+			boolean alreadyAvailable = false;
+			for (Feature source : sources) {
+				Collection<Qualifier> qualifiers = source
+						.getQualifiers(qualifierName);
+				if (qualifiers.size() > 1) {
+					reportError(entry.getOrigin(), MESSAGE_ID, qualifierName);
+				}
+				if (alreadyAvailable && !qualifiers.isEmpty()) {
+					reportError(entry.getOrigin(), MESSAGE_ID, qualifierName);
+				}
+				alreadyAvailable = !qualifiers.isEmpty();
 			}
-			if (alreadyAvailable && !qualifiers.isEmpty()) {
-				reportError(entry.getOrigin(), MESSAGE_ID, qualifierName);
-			}
-			alreadyAvailable = !qualifiers.isEmpty();
 		}
 		return result;
 	}

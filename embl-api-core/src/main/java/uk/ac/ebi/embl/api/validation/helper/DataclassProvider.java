@@ -75,18 +75,17 @@ public class DataclassProvider {
 	{
 		Set<String> keywordDataclassSet = new HashSet<String>();
 		ArrayList<String> keywordDataclasses=new ArrayList<String>();
-
 		HashMap<String, String> compressedKeywordToDataclassMap = new HashMap<String, String>();
 		HashMap<String, String> compressedKeywordToKeywordMap = new HashMap<String, String>();
 		HashMap<Text, Text> keywordMap = new HashMap<Text, Text>();
-		List<Text> keywords = entry.getKeywords();
+
 		for (DataRow row : d.getRows())
 		{
 			compressedKeywordToDataclassMap.put(row.getString(1), row.getString(0));
 			if (row.getString(2) != null)
 				compressedKeywordToKeywordMap.put(row.getString(1), row.getString(2));
 		}
-		for (Text keyword : keywords)
+		for (Text keyword : entry.getKeywords())
 		{
 			String compressedKeyword = getcompressedKeyword(keyword);
 			if (compressedKeywordToDataclassMap.containsKey(compressedKeyword) && compressedKeywordToKeywordMap.containsKey(compressedKeyword))
@@ -100,7 +99,7 @@ public class DataclassProvider {
 			entry.removeKeyword(key);
 			entry.addKeyword(keywordMap.get(key));
 		}
-		if (keywordDataclassSet.size() == 0)
+		if (keywordDataclassSet.isEmpty())
 		{
 			keywordDataclasses.add("XXX");
 			return keywordDataclasses;

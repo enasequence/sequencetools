@@ -24,34 +24,25 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 @Description("If the organism belongs to the specified lineage {0} and qualifier {1} exists, the pattern formed by wrapping the qualifier value {1} with patterns {2} and {3} must match")
 @RemoteExclude
 public class OrganismPatternAndQualifierValueCheck extends FeatureValidationCheck {
 
-    @CheckDataSet("organism-qualifier-pattern.tsv")
-    private DataSet dataSet;
-
     private final static String MESSAGE_ID = "OrganismPatternAndQualifierValueCheck";
-
-   
-    OrganismPatternAndQualifierValueCheck(DataSet dataSet) {
-        this.dataSet = dataSet;
-    }
 
     public OrganismPatternAndQualifierValueCheck()
 	{
 	}
 
 	public ValidationResult check(Feature feature) {
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.ORGANISM_QUALIFIER_PATTERN);
         result = new ValidationResult();
 
         if (feature == null) {

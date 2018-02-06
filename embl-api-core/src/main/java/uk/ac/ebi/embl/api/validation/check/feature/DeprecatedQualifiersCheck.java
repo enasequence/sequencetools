@@ -18,21 +18,14 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description("The {0} qualifier is deprecated. The {0} qualifier is deprecated, please replace with {1}." +
         "The {0} qualifier is deprecated and is replaced by {1} - this change will be made automatically during curation of your entry.")
 public class DeprecatedQualifiersCheck extends FeatureValidationCheck {
 
-    @CheckDataSet("deprecated-qualifiers.tsv")
-	private DataSet dataSet;
-	
 	private final static String DEPRECATED_ID = "DeprecatedQualifiersCheck";
 	private final static String REPLACEMENT_ID = "DeprecatedQualifiersCheck-2";
 	private final static String AUTOFIX_ID = "DeprecatedQualifiersCheck-3";
@@ -40,12 +33,9 @@ public class DeprecatedQualifiersCheck extends FeatureValidationCheck {
 	public DeprecatedQualifiersCheck() {
 	}
 
-	DeprecatedQualifiersCheck(DataSet dataSet) {
-		this.dataSet = dataSet;
-	}
-
     public ValidationResult check(Feature feature) {
         result = new ValidationResult();
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.DEPRECATED_QUALIFIERS);
 
         if (feature == null) {
             return result;

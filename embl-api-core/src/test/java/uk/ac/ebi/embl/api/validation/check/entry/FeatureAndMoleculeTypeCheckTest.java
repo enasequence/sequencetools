@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 
@@ -49,12 +50,13 @@ public class FeatureAndMoleculeTypeCheckTest {
 		entry.setSequence(sequence);
 
 		DataRow dataRow = new DataRow("genomic DNA", "STS");
-		check = new FeatureAndMoleculeTypeCheck(dataRow);
+		DataSetHelper.createAndAdd(FileName.FEATURE_MOLTYPE, dataRow);
+		check = new FeatureAndMoleculeTypeCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new FeatureAndMoleculeTypeCheck();
+		DataSetHelper.clear();
 		entry.getSequence().setMoleculeType("genomic DNA");
 		entry.addFeature(featureFactory.createFeature("STS"));
 		check.check(entry);

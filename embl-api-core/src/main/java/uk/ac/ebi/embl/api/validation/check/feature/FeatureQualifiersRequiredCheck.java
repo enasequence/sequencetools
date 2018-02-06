@@ -18,10 +18,9 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.ArrayList;
@@ -30,39 +29,18 @@ import java.util.List;
 @Description("The feature name \\\"{0}\\\" must have at least one qualifier.\\\\")
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
-	/**
-	 * A list of the features that require at least one qualifier to make any
-	 * sense
-	 */
-	@CheckDataSet("feature-require-qualifiers.tsv")
-	private DataSet keySet;
-
-    /**
-     * this is not used - we cant remember what it is for - maybe resurect one day...
-     */
-	@CheckDataSet("feature-not-require-qualifiers.tsv")
-	private DataSet noKeySet;
-
 	private List<String> featuresList = new ArrayList<String>();
 	private List<String> featuresNoQualList = new ArrayList<String>();
 
-	private final static String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
-	private final static String QUALIFIERS_REQUIRED_ID_2 = "FeatureQualifiersRequiredCheck";
+	private static final String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
+	private static final String QUALIFIERS_REQUIRED_ID_2 = "FeatureQualifiersRequiredCheck";
 
 	public FeatureQualifiersRequiredCheck() {
 	}
 
-	FeatureQualifiersRequiredCheck(DataSet keySet) {
-		this.keySet = keySet;
-
-	}
-
-	public void setPopulated() {
-		init();
-		super.setPopulated();
-	}
-
 	private void init() {
+		DataSet keySet = GlobalDataSets.getDataSet(FileName.FEATURE_REQUIRE_QUALIFIERS);
+		DataSet noKeySet = GlobalDataSets.getDataSet(FileName.FEATURE_NOT_REQUIRE_QUALIFIERS);
 		if (keySet != null) {
 			for (DataRow dataRow : keySet.getRows()) {
 				String key = dataRow.getString(0);
@@ -78,6 +56,7 @@ public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 	}
 
 	public ValidationResult check(Feature feature) {
+		init();
 		result = new ValidationResult();
 
 		if (feature == null) {

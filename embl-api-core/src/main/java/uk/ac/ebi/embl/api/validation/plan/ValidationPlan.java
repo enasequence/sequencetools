@@ -17,26 +17,17 @@ package uk.ac.ebi.embl.api.validation.plan;
 
 import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
 import uk.ac.ebi.embl.api.storage.DataManager;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
-import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is intended for implementation of validation execution plan. 
@@ -78,6 +69,7 @@ public abstract class ValidationPlan {
 		this.dataManager = new CachedFileDataManager();
 		this.fileManager = new CheckFileManager();
         this.devMode = devMode;
+		GlobalDataSets.init(dataManager, fileManager, devMode);
     }
 
     public void addMessageBundle(String bundleName){
@@ -143,7 +135,7 @@ public abstract class ValidationPlan {
 		RemoteExclude remoteExclude = checkClass.getAnnotation(RemoteExclude.class);
 		Description descAnnotation = checkClass.getAnnotation(Description.class);
 		GroupIncludeScope groupIncludeAnnotation = checkClass.getAnnotation(GroupIncludeScope.class);
-		
+
 		if(remoteExclude!=null&&remote)
 		{
 			return validationPlanResult;
@@ -157,61 +149,13 @@ public abstract class ValidationPlan {
         	return validationPlanResult;
         }
 
-//        System.out.println("running " + check.toString());
-
-		List<Field> dataSetFields = new ArrayList<Field>();
-		Field dataRowField = null;
-		Field[] fields = check.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(CheckDataSet.class)) {
-				dataSetFields.add(field);
-			}
-			if (dataRowField == null && field.isAnnotationPresent(CheckDataRow.class)) {
-				dataRowField = field;
-			}
-		}
 
         // inject data sets
-        if (!check.isPopulated()) {
-            for (Field field : dataSetFields) {
-                CheckDataSet dataSetAnnotation = field.getAnnotation(CheckDataSet.class);
-                if (dataSetAnnotation == null) {
-                    continue;
-                }
-
-                DataSet dataSet = getDataSet(dataSetAnnotation);
-                field.setAccessible(true);
-                try {
-                    field.set(check, dataSet);
-                } catch (IllegalArgumentException e) {
-                    throw new ValidationEngineException(e);
-                } catch (IllegalAccessException e) {
-                    throw new ValidationEngineException(e);
-                }
-            }
-            check.setPopulated();
+        /*if(null != checkDataSetAnnotation) {
+			Stream.of(checkDataSetAnnotation.dataSetNames()).forEach( dsName -> GlobalDataSets.loadIfNotExist(dsName, dataManager, fileManager, devMode));
         }
-
-        //todo get rid of row by row setting and hold the whole dataset in the check and iterate there
-        if (dataRowField == null) 
-        {//no rows to inject, just run
-			validationPlanResult.append(check.check(target));
-		} else {//inject the data row each time and run
-			CheckDataSet globalDataSetAnnotation = checkClass.getAnnotation(CheckDataSet.class);
-			DataSet globalDataSet = getDataSet(globalDataSetAnnotation);
-			for (DataRow dataRow : globalDataSet.getRows()) {
-				dataRowField.isAnnotationPresent(CheckDataRow.class);
-				dataRowField.setAccessible(true);
-				try {
-					dataRowField.set(check, dataRow);
-				} catch (IllegalArgumentException e) {
-					throw new ValidationEngineException(e);
-				} catch (IllegalAccessException e) {
-					throw new ValidationEngineException(e);
-				}
-				validationPlanResult.append(check.check(target));
-            }
-		}
+*/
+        validationPlanResult.append(check.check(target));
 
         if (excludeScopeAnnotation != null) {
             demoteSeverity(validationPlanResult, excludeScopeAnnotation.maxSeverity());
@@ -224,17 +168,6 @@ public abstract class ValidationPlan {
 //        System.out.println(this.result.count());
         
         return validationPlanResult;
-	}
-
-	private DataSet getDataSet(CheckDataSet dataSetAnnotation) {
-		if (dataSetAnnotation == null) {
-			return null;
-		}
-		return getDataSet(dataSetAnnotation.value(), validationScope);
-	}
-
-	private DataSet getDataSet(String fileName, ValidationScope validationScope) {
-		return dataManager.getDataSet(fileManager.filePath(fileName, devMode), devMode);
 	}
 	
 	/**

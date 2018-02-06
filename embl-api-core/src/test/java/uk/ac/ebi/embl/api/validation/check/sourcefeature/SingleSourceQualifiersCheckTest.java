@@ -27,7 +27,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.SingleSourceQualifiersCheck;
 
@@ -51,12 +53,17 @@ public class SingleSourceQualifiersCheckTest {
 		entry.addFeature(source2);
 
 		DataRow dataRow = new DataRow("focus");
-		check = new SingleSourceQualifiersCheck(dataRow);
+
+		DataSet dataSet = new DataSet();
+		dataSet.addRow(dataRow);
+		GlobalDataSets.add(FileName.SINGLE_SOURCE_QUALIFIER, dataSet);
+
+		check = new SingleSourceQualifiersCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new SingleSourceQualifiersCheck();
+		DataSetHelper.clear();
 		check.check(entry);
 	}
 

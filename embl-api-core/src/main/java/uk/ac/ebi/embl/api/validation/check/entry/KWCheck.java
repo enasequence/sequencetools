@@ -19,33 +19,21 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Description("Keywords exists in DE Line must exists in KW Line ex:\"complete genome\""
 		+ "ID Line Dataclass \"{0}\" and Keyword Dataclass \"{1}\" are not identical" + "Multiple keyword dataclasses are not allowed "
 		+ "Keyword \"{0}\" must not exist in the CON dataclass Entry" + "missing keyword \"{0}\" for dataclass \"{1}\""
 		+ "\"{0}\" keywords are not valid for dataclass \"{1}\"")
-
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})		
-		
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class KWCheck extends EntryValidationCheck
 {
-	@CheckDataSet("con-no-keywords.tsv")
-	private DataSet dataSet1;
-	@CheckDataSet("keyword_dataclass.tsv")
-	private DataSet dataSet2;
-
 	private final static String DATACLASS_KEYWORD_ID = "KWCheck_1";
 	private final static String MULTIPLE_DATACLASS_KEYWORD_ID = "KWCheck_2";
 	private final static String CON_DATACLASS_KEYWORD_ID = "KWCheck_3";
@@ -57,38 +45,22 @@ public class KWCheck extends EntryValidationCheck
 	{
 	}
 
-	public KWCheck(DataSet dataRow1, DataSet dataRow2)
-	{
-		this.dataSet1 = dataRow1;
-		this.dataSet2 = dataRow2;
-	}
-
-	public KWCheck(DataSet dataRow)
-	{
-		this.dataSet1 = dataRow;
-	}
-
 	public ValidationResult check(Entry entry)
 	{
-		ArrayList<String> keyworddataclassdatasetList = new ArrayList<String>();
 		result = new ValidationResult();
+		DataSet dataSet1 = GlobalDataSets.getDataSet(FileName.CON_NO_KEYWORDS);
+		DataSet dataSet2 = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
+
 		if (entry == null)
 			return result;
-		String de = entry.getDescription().getText();
-		if (de != null)
-		{
-			checkDescriptionRules(entry, de);
-		}
-		for (DataRow row : dataSet2.getRows())
-		{
-			keyworddataclassdatasetList.add(row.getString(0));
-		}
+
+		checkDescriptionRules(entry, entry.getDescription().getText());
 
 		String idLineDataclass = entry.getDataClass();
 		ArrayList<String> keywordDataclassList = DataclassProvider.getKeywordDataclass(entry, dataSet2);
 		
 		
-		if (idLineDataclass == null && keywordDataclassList.size() == 0)
+		if (idLineDataclass == null && keywordDataclassList.isEmpty())
 		{
 			return result;
 		}
@@ -359,8 +331,9 @@ public class KWCheck extends EntryValidationCheck
 		 * 
 		 * }
 		 */
-		if (description != null && description.length() <= 5)
-			return;
+		if(description == null) return;
+		if (description.length() <= 5) return;
+
 		boolean TPA = description.substring(0, 5).equals("TPA: ");
 		boolean TSA = description.substring(0, 5).equals("TSA: ");
 		boolean TPX = description.substring(0, 5).equals("TPX: ");

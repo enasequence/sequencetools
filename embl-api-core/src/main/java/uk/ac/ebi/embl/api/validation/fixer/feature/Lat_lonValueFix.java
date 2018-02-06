@@ -43,7 +43,7 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 		}
 		List<Qualifier> latlonQualifiers=feature.getQualifiers(Qualifier.LAT_LON_QUALIFIER_NAME);
 		
-		if(latlonQualifiers.size()==0)
+		if(latlonQualifiers.isEmpty())
 		{
 			return result;
 		}
@@ -80,9 +80,9 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 				}
 				if(!qualifier.getValue().equals(newValue))
 				{
+					reportMessage(Severity.FIX, qualifier.getOrigin(),
+						Lat_lonValueFix_ID,qualifier.getValue(), newValue);
 					qualifier.setValue(newValue);
-				reportMessage(Severity.FIX, qualifier.getOrigin(),
-						Lat_lonValueFix_ID,qualifier.getValue());
 				}
 			}
 				

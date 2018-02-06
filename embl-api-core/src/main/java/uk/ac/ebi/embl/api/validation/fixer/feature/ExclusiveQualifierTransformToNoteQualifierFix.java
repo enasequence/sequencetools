@@ -5,19 +5,14 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExclusiveQualifierTransformToNoteQualifierFix extends
 		FeatureValidationCheck
 {
-	@CheckDataSet("exclusive-qualifiers-to-remove.tsv")
-	private DataSet exclusiveQualifierSet;
 
 	private final static String REMOVE_QUALIFIER_MESSAGE_ID = "ExclusiveQualifierTransformToNoteQualifierFix";
 
@@ -25,20 +20,12 @@ public class ExclusiveQualifierTransformToNoteQualifierFix extends
 	{
 	}
 
-	ExclusiveQualifierTransformToNoteQualifierFix(DataSet exclusiveQualifierSet)
-	{
-		this.exclusiveQualifierSet = exclusiveQualifierSet;
-	}
-
 	public ValidationResult check(Feature feature)
 	{
+		DataSet exclusiveQualifierSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE);
 		result = new ValidationResult();
 
-		if (feature == null)
-		{
-			return result;
-		}
-		if(feature.getQualifiers().size()==0)
+		if (feature == null || feature.getQualifiers().isEmpty())
 		{
 			return result;
 		}

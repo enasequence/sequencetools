@@ -20,30 +20,17 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 @Description("Qualifier {0} must not exist when organism belongs to {1}.")
 @RemoteExclude
 public class OrganismNotQualifierCheck extends FeatureValidationCheck {
 
-    @CheckDataSet("organism-no-qualifier.tsv")
-    private DataSet dataSet;
-
 //    private final static String ORGANISM_NOT_FOUND_ID = "OrganismNotQualifierCheck-1";
     private final static String ORGANISM_IS_CHILD_ID = "OrganismNotQualifierCheck-2";
-
-   OrganismNotQualifierCheck(DataSet dataSet) {
-       this.dataSet = dataSet;
-    }
 
     public OrganismNotQualifierCheck()
 {
@@ -51,6 +38,7 @@ public class OrganismNotQualifierCheck extends FeatureValidationCheck {
 }
 
 	public ValidationResult check(Feature feature) {
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.ORGANISM_NO_QUALIFIER);
         result = new ValidationResult();
 
         if (feature == null) {

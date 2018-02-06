@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -52,16 +53,13 @@ public class MoleculeTypeAndFeatureCheckTest {
 		Sequence sequence = sequenceFactory.createSequence();
 		entry.setSequence(sequence);
 
-		DataSet dataSet = new DataSet();
-		dataSet.addRow(new DataRow("rRNA", "rRNA"));
-		dataSet.addRow(new DataRow("tmRNA", "tmRNA"));
-
-		check = new MoleculeTypeAndFeatureCheck(dataSet);
+		DataSetHelper.createAndAdd(FileName.MOLTYPE_FEATURE, new DataRow("rRNA", "rRNA"),new DataRow("tmRNA", "tmRNA") );
+		check = new MoleculeTypeAndFeatureCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new MoleculeTypeAndFeatureCheck();
+		DataSetHelper.clear();
 		entry.getSequence().setMoleculeType("rRNA");
 		entry.addFeature(featureFactory.createFeature("rRNA"));
 		check.check(entry);

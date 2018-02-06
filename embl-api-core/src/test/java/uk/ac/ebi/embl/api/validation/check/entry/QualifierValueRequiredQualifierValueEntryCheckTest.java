@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -48,15 +49,15 @@ public class QualifierValueRequiredQualifierValueEntryCheckTest {
 		feature2 = featureFactory.createFeature("LTR");
 		entry.addFeature(feature1);
 		entry.addFeature(feature2);
-		DataSet dataSet = new DataSet();
-		dataSet.addRow(new DataRow("organelle", "mitochondrion", "gene",
+
+		DataSetHelper.createAndAdd(FileName.QUALIFIER_VAL_REQUIRED_QUALIFIER_ENTRY, new DataRow("organelle", "mitochondrion", "gene",
 				"12S rRNA"));
-		check = new QualifierValueRequiredQualifierValueEntryCheck(dataSet);
+		check = new QualifierValueRequiredQualifierValueEntryCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new QualifierValueRequiredQualifierValueEntryCheck();
+		DataSetHelper.clear();
 		check.check(entry);
 	}
 

@@ -15,15 +15,16 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import org.apache.commons.lang.math.NumberUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import java.util.*;
 
-import org.apache.commons.lang.math.NumberUtils;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Description("\"\\gap_type\" and \"\\linkage_evidence\" qualifiers are only allowed in assembly_gap feature."
 		+ "\"assembly_gap\" and \"gap\" feature are mutually exclusive"

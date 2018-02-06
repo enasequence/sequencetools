@@ -39,7 +39,7 @@ public class LocusReader extends SingleLineBlockReader {
 				"\\s+" +
 				"(?:(\\d+)\\s+\\w+)" + // length
 				"\\s+" +
-				"(\\w+)" + // molecule type
+				"(\\S+)" + // molecule type
 				"(?:\\s+(\\w+))?" + // topology
 				"\\s+" +
 				"(\\w+)" + // division

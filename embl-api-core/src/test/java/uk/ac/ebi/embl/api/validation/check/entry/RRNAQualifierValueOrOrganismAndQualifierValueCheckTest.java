@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -58,13 +59,14 @@ public class RRNAQualifierValueOrOrganismAndQualifierValueCheckTest {
 		taxonHelper = createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
 		DataRow dataRow = new DataRow("16S ribosomal RNA", "product", "organelle", "mitochondrion,chloroplast","Bacteria,Archaea");
-		check = new RRNAQualifierValueOrOrganismAndQualifierValueCheck(dataRow);
+		DataSetHelper.createAndAdd(FileName.RRNA_QUALIFIER_VAL_ORGANISM_QUALIFIER_VALUE, dataRow);
+		check = new RRNAQualifierValueOrOrganismAndQualifierValueCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new RRNAQualifierValueOrOrganismAndQualifierValueCheck();
+		DataSetHelper.clear();
 
 		entry.addFeature(rRNA);
 		source.addQualifier("organelle", "mitochondrion");

@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -41,16 +42,13 @@ public class DeprecatedQualifiersCheckTest {
 
 		feature = featureFactory.createFeature("feature");
 
-		DataSet dataSet = new DataSet();
-        dataSet.addRow(new DataRow("partial","(null)","N"));
-        dataSet.addRow(new DataRow("specific_host","host","Y"));
-        dataSet.addRow(new DataRow("david","bod","N"));
-        check = new DeprecatedQualifiersCheck(dataSet);
+        DataSetHelper.createAndAdd(FileName.DEPRECATED_QUALIFIERS, new DataRow("partial","(null)","N"), new DataRow("specific_host","host","Y"), new DataRow("david","bod","N"));
+        check = new DeprecatedQualifiersCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new DeprecatedQualifiersCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 

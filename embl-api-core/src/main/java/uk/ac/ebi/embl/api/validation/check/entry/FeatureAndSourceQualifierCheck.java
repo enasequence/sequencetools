@@ -20,61 +20,46 @@ import java.util.Collection;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet("feature-source-qualifier.tsv")
 @Description("Source qualifier {0} is required when feature {1} exists.")
 public class FeatureAndSourceQualifierCheck extends EntryValidationCheck {
 
-	@CheckDataRow
-	private DataRow dataRow;
-	
-	private final static String MESSAGE_ID = "FeatureAndSourceQualifierCheck-1";
+	private static final String MESSAGE_ID = "FeatureAndSourceQualifierCheck-1";
 	
 	public FeatureAndSourceQualifierCheck() {
 	}
 	
-	FeatureAndSourceQualifierCheck(DataRow dataRow) {
-		this.dataRow = dataRow;
-	}
-	
 	public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
+		result = new ValidationResult();
 
-        if (entry == null) {
+		if (entry == null) {
 			return result;
 		}
-        String expectedQualifierName = dataRow.getString(0);
-		String featureName = dataRow.getString(1);
-		if (featureName == null || expectedQualifierName == null) {
-			return result;
-		}
-		
-		if (!SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {
-			return result;
-		}
-		
-		Collection<Feature> sources = SequenceEntryUtils.getFeatures(
-				Feature.SOURCE_FEATURE_NAME, entry);
-		if (sources == null || sources.isEmpty()) {
-			reportError(entry.getOrigin(), MESSAGE_ID, featureName, expectedQualifierName);
-			return result;
-		}
-		boolean isQualifierAvailable = false;
-		for (Feature source : sources) {
-			isQualifierAvailable = SequenceEntryUtils.isQualifierAvailable(expectedQualifierName, source);
-			if (isQualifierAvailable) {
-				break;
+		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.FEATURE_SOURCE_QUALIFIER).getRows()) {
+			String expectedQualifierName = dataRow.getString(0);
+			String featureName = dataRow.getString(1);
+			if (featureName == null || expectedQualifierName == null || !SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {
+				continue;
 			}
-		}
-		if (!isQualifierAvailable) {
-			reportError(entry.getOrigin(), MESSAGE_ID, expectedQualifierName, featureName);
+
+			Collection<Feature> sources = SequenceEntryUtils.getFeatures(
+					Feature.SOURCE_FEATURE_NAME, entry);
+			if (sources == null || sources.isEmpty()) {
+				reportError(entry.getOrigin(), MESSAGE_ID, featureName, expectedQualifierName);
+			} else {
+				boolean isQualifierAvailable = false;
+				for (Feature source : sources) {
+					isQualifierAvailable = SequenceEntryUtils.isQualifierAvailable(expectedQualifierName, source);
+					if (isQualifierAvailable) {
+						break;
+					}
+				}
+				if (!isQualifierAvailable) {
+					reportError(entry.getOrigin(), MESSAGE_ID, expectedQualifierName, featureName);
+				}
+			}
 		}
 		
 		return result;

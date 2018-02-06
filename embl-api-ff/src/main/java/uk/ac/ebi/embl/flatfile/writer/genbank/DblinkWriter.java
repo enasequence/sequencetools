@@ -17,7 +17,10 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
@@ -31,35 +34,41 @@ public class DblinkWriter extends FlatFileWriter {
 		}
 
 	public boolean write(Writer writer) throws IOException {
-		if (entry.getXRefs() == null ||
-			entry.getXRefs().size() == 0 ) {
+		if (entry.getXRefs() == null || entry.getXRefs().isEmpty() ) {
 			return false;
 		}
 
-		boolean writeBlock = false;
-		boolean isFirstLine = true;
+		boolean contentWritten = false;
 
-        for(XRef xref : entry.getXRefs())
-        {
-			if (isFirstLine) {
-				writer.write(GenbankPadding.DBLINK_PADDING);
-				isFirstLine = false;
-			} else {
-				writer.write(GenbankPadding.BLANK_PADDING);
-			}
-
-			if (!isBlankString(xref.getDatabase())) {
-				writer.write(xref.getDatabase());
-			}
-			writer.write(": ");
-			if (!isBlankString(xref.getPrimaryAccession())) {
-				writer.write(xref.getPrimaryAccession());
-			}
-			writer.write("\n");
-			writeBlock = true;
-
+		if(entry.getProjectAccessions() != null && !entry.getProjectAccessions().isEmpty()) {
+			//move text BioProject to a constant file
+			contentWritten = writeDBLink(writer, false, "BioProject", entry.getProjectAccessions().get(0).getText());
 		}
 
-		return writeBlock;
+        for(XRef xref : entry.getXRefs()) {
+			contentWritten = writeDBLink(writer, contentWritten, xref.getDatabase(), xref.getPrimaryAccession());
+		}
+
+		return contentWritten;
+	}
+
+	private boolean writeDBLink(Writer writer, boolean contentWritten, String key , String value) throws  IOException{
+
+		if (contentWritten) {
+			writer.write(GenbankPadding.BLANK_PADDING);
+		} else {
+			writer.write(GenbankPadding.DBLINK_PADDING);
+		}
+
+		if (!isBlankString(key)) {
+			writer.write(key);
+		}
+		writer.write(": ");
+		if (!isBlankString(value)) {
+			writer.write(value);
+		}
+		writer.write("\n");
+
+		return true;
 	}
 }

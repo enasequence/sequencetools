@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -61,16 +62,15 @@ public class MoleculeTypeAndOrganismCheckTest {
 
 		taxonHelper = createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
-		DataSet dataSet =new DataSet();
 		DataRow dataRow = new DataRow("Deltavirus,Retro-transcribing viruses,ssRNA viruses,dsRNA viruses", "genomic RNA");
-		dataSet.addRow(dataRow);
-		check = new MoleculeTypeAndOrganismCheck(dataSet);
+		DataSetHelper.createAndAdd(FileName.MOLTYPE_ORGANISM, dataRow);
+		check = new MoleculeTypeAndOrganismCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new MoleculeTypeAndOrganismCheck();
+		DataSetHelper.clear();
 		entry.getSequence().setMoleculeType("genomic RNA");
 		source.addQualifier("organism", "Deltavirus");
 		check.check(entry);

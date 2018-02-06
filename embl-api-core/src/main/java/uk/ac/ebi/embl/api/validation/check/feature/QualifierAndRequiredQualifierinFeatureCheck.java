@@ -19,16 +19,11 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("One of qualifiers {0} must exist when qualifier {1} exists within the same feature.")
 public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidationCheck {
-
-    @CheckDataSet("qualifier-required-qualifier-in-feature.tsv")
-    private DataSet dataSet;
 
     private final static String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck";
     private final static String MULTIPLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck2";
@@ -36,11 +31,8 @@ public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidati
     public QualifierAndRequiredQualifierinFeatureCheck() {
     }
 
-    QualifierAndRequiredQualifierinFeatureCheck(DataSet dataSet) {
-        this.dataSet = dataSet;
-    }
-
     public ValidationResult check(Feature feature) {
+        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_FEATURE);
         result = new ValidationResult();
 
         if (feature == null) {

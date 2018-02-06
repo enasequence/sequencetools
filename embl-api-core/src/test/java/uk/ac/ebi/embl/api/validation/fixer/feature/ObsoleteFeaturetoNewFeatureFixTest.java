@@ -22,8 +22,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -49,15 +51,10 @@ public class ObsoleteFeaturetoNewFeatureFixTest
 		DataRow dataRow4 = new DataRow("GC_signal","regulatory","regulatory_class","GC_signal");
 		DataRow dataRow5 = new DataRow("-10_signal","regulatory","regulatory_class","minus_10_signal");
 		DataRow dataRow6 = new DataRow("LTR","repeat_region","rtp_type","long_terminal_repeat");
-		DataSet obsoleteFeaturedataSet = new DataSet();
-		obsoleteFeaturedataSet.addRow(dataRow1);
-		obsoleteFeaturedataSet.addRow(dataRow2);
-		obsoleteFeaturedataSet.addRow(dataRow3);
-		obsoleteFeaturedataSet.addRow(dataRow4);
-		obsoleteFeaturedataSet.addRow(dataRow5);
-		obsoleteFeaturedataSet.addRow(dataRow6);
+
 		qualifierFactory = new QualifierFactory();
-		check = new ObsoleteFeaturetoNewFeatureFix(obsoleteFeaturedataSet);
+		DataSetHelper.createAndAdd(FileName.OBSOLETE_FEATURE_TO_FEATURE, dataRow1,dataRow2,dataRow3,dataRow4,dataRow5,dataRow6);
+		check = new ObsoleteFeaturetoNewFeatureFix();
 	}
 
 	@Test

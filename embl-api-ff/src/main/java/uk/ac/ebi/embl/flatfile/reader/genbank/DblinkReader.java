@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.genbank;
 
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.DblinkXRefMatcher;
@@ -43,14 +44,18 @@ public class DblinkReader extends MultiLineBlockReader {
 		
 		for(String xrefString :xrefStrings )
 		{
-		
-		if(!xRefMatcher.match(xrefString)) {
-			error("FF.1", getTag());
-			return;
-		}
-		XRef xref = xRefMatcher.getXRef();
-		xref.setOrigin(getOrigin());				
-		entry.addXRef(xref);
+			if(!xRefMatcher.match(xrefString)) {
+				error("FF.1", getTag());
+				return;
+			}
+			XRef xref = xRefMatcher.getXRef();
+			xref.setOrigin(getOrigin());
+			//move text BioProject to a constant file
+			if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioProject")) {
+				entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
+			} else {
+				entry.addXRef(xref);
+			}
 		}
 	}
 

@@ -20,11 +20,14 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 @Description("Removed the qualifier {1}in feature {2},since {0},{1} qualifiers values are duplicated in the same feature"
 		+ "removed the qualifier {0} in feature {2},since it has duplicated value {1} in the same feature ")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class FeatureQualifierDuplicateValueFix extends FeatureValidationCheck {
 
 	private static final String DIFF_QUALIFIER_VALUES_DUPLICATED = "FeatureQualifierDuplicateValueFix_1";

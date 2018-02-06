@@ -19,12 +19,8 @@ import java.util.ArrayList;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 
@@ -32,14 +28,9 @@ import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 		+ "\"{0}\" dataclass allowed only for Master entries"
 		+ "Keyword dataclass \"{0}\" is not matching with ID line dataclass \"{1}\""
 		+ "Accession dataclass \"{0}\" is not matching with ID line dataclass \"{1}\" ")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class DataclassCheck extends EntryValidationCheck {
 
-	@CheckDataSet("dataclass.tsv")
-	private DataSet dataclassDataSet;
-	
-	@CheckDataSet("keyword_dataclass.tsv")
-	private DataSet keyworddataclassDataSet;
 
 	private final static String INVALID_DATACLASS_MESSAGE_ID = "DataclassCheck1";
 	private final static String MASTER_DATACLASS_MESSAGE_ID = "DataclassCheck2";
@@ -49,11 +40,6 @@ public class DataclassCheck extends EntryValidationCheck {
 
 	public DataclassCheck() {
 
-	}
-
-	DataclassCheck(DataSet dataclassDataSet, DataSet keyworddataclassDataSet) {
-		this.dataclassDataSet = dataclassDataSet;
-		this.keyworddataclassDataSet= keyworddataclassDataSet;
 	}
 
 	public ValidationResult check(Entry entry) throws ValidationEngineException {
@@ -70,7 +56,7 @@ public class DataclassCheck extends EntryValidationCheck {
 			return result;
 		}
 
-		for (DataRow row : dataclassDataSet.getRows()) {
+		for (DataRow row : GlobalDataSets.getDataSet(FileName.DATACLASS).getRows()) {
 			String validDataclass = row.getString(0);
 			if (validDataclass.equals(entryDataclass))
 				sflag = true;
@@ -83,19 +69,19 @@ public class DataclassCheck extends EntryValidationCheck {
 			reportError(entry.getOrigin(), MASTER_DATACLASS_MESSAGE_ID, entryDataclass);
 		}
 		try{
-		String accessionDataclass=DataclassProvider.getAccessionDataclass(entry.getPrimaryAccession());
-		ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, keyworddataclassDataSet);
-		
-		if(keywordDataclasses.size()==1&&!keywordDataclasses.get(0).equals("XXX")&&!keywordDataclasses.get(0).equals(entryDataclass))
-		{
-			reportError(entry.getOrigin(), KEYWORD_DATACLASS_MESSAGE_ID,keywordDataclasses.get(0),entryDataclass );
+			String accessionDataclass=DataclassProvider.getAccessionDataclass(entry.getPrimaryAccession());
+			ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS));
 
-		}
-		
-		if(accessionDataclass!=null &&!accessionDataclass.equals(entryDataclass))
-		{
-			reportError(entry.getOrigin(), ACCESSION_DATACLASS_MESSAGE_ID, accessionDataclass,entryDataclass);
-		}
+			if(keywordDataclasses.size()==1&&!keywordDataclasses.get(0).equals("XXX")&&!keywordDataclasses.get(0).equals(entryDataclass))
+			{
+				reportError(entry.getOrigin(), KEYWORD_DATACLASS_MESSAGE_ID,keywordDataclasses.get(0),entryDataclass );
+
+			}
+
+			if(accessionDataclass!=null &&!accessionDataclass.equals(entryDataclass))
+			{
+				reportError(entry.getOrigin(), ACCESSION_DATACLASS_MESSAGE_ID, accessionDataclass,entryDataclass);
+			}
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());

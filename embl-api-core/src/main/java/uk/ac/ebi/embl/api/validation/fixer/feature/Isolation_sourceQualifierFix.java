@@ -19,9 +19,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
@@ -30,37 +31,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 @Description("isolation_source qualifier transformed to country qualifier as isolation_source qualifier value \"{0}\", is country" + "isolation_source qualifier transformed to lat_lon qualifier as isolation_source qualifier value \"{0}\", matches lat_lon regex")
 public class Isolation_sourceQualifierFix extends FeatureValidationCheck
 {
 	private final static String ISOLATION_SOURCE_COUNTRY_FIX_ID = "Isolation_sourceQualifierFix_1";
 	private final static String ISOLATION_SOURCE_LAT_LON_FIX_ID = "Isolation_sourceQualifierFix_2";
 
-	/**
-	 * A list of the valid feature qualifier values
-	 */
-
-	// for isolation_source having country qualifier value
-	@CheckDataSet("feature-regex-groups.tsv")
-	private DataSet qualifierValueSet;
-
-	// for isolation_source having lat_lon/country qualifier value regexp
-	@CheckDataSet("feature-qualifier-values.tsv")
-	private DataSet qualifierRegexSet;
-
 	public Isolation_sourceQualifierFix()
 	{
 	}
 
-	public Isolation_sourceQualifierFix(DataSet qualifierValueSet, DataSet qualifierRegexSet)
-	{
-		this.qualifierValueSet = qualifierValueSet;
-		this.qualifierRegexSet = qualifierRegexSet;
-	}
-
 	public ValidationResult check(Feature feature)
 	{
+		DataSet qualifierValueSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
+
 		result = new ValidationResult();
 
 		if (feature == null)

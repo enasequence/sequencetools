@@ -8,16 +8,15 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 public class QualifierWithinQualifierFix extends FeatureValidationCheck
 {
-	@CheckDataSet("feature-qualifier-values.tsv")
-	private DataSet qualifierSet;
-	
+
 	private final static String QUALIFIER_REGEX = "^(.)*(\\s)((/\\w+)(\\s)?(=(\\s)?[^\\s]+)?(=(\\s)?\\'(.+)\\')?)(\\s)?(.)*$";
 	private final static String ADD_QUALIFIER_MESSAGE_ID = "QualifierWithinQualifierFix_1";
 	private final static String EXCLUDE_QUALIFIER_MESSAGE_ID = "QualifierWithinQualifierFix_2";
@@ -26,13 +25,9 @@ public class QualifierWithinQualifierFix extends FeatureValidationCheck
 	{
 	}
 	
-	QualifierWithinQualifierFix(DataSet dataSet)
-	{
-		this.qualifierSet = dataSet;
-	}
-	
 	public ValidationResult check(Feature feature)
 	{
+		DataSet qualifierSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
 		result = new ValidationResult();
 		
 		if (feature == null)

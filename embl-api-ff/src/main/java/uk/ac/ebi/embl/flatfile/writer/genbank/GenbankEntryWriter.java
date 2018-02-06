@@ -45,7 +45,6 @@ public class GenbankEntryWriter extends EntryWriter {
 		new DefinitionWriter(entry, wrapType).write(writer);
 		new AccessionWriter(entry, wrapType).write(writer);
 		new VersionWriter(entry).write(writer);
-		new ProjectWriter(entry, wrapType).write(writer);
 		new DblinkWriter(entry).write(writer);
 		new KeywordsWriter(entry, wrapType).write(writer);
 		

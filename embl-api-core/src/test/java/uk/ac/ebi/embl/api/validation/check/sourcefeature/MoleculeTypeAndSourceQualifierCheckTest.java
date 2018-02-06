@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -58,15 +59,17 @@ public class MoleculeTypeAndSourceQualifierCheckTest {
 		DataRow dataRow = new DataRow(
 				"tissue_type,dev_stage,isolation_source,collection_date,host,lab_host,sex,mating_type,haplotype,cultivar,ecotype,variety,breed,isolate,strain,clone,country,lat_lon,specimen_voucher,culture_collection,biomaterial,PCR_primers",
 				"mRNA");
-		DataSet dataSet =new DataSet();
+		DataSetHelper.createAndAdd(FileName.MOLTYPE_SOURCE_QUALIFIERS, dataRow);
+
 		DataRow dataRow1=new DataRow("genomic DNA",Qualifier.GERMLINE_QUALIFIER_NAME);
-		dataSet.addRow(dataRow1);
-		check = new MoleculeTypeAndSourceQualifierCheck(dataRow,dataSet);
+		DataSetHelper.createAndAdd(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES, dataRow1);
+
+		check = new MoleculeTypeAndSourceQualifierCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new MoleculeTypeAndSourceQualifierCheck();
+		DataSetHelper.clear();
 		entry.getSequence().setMoleculeType("mRNA");
 		source.addQualifier("tissue_type", "Deltavirus");
 		check.check(entry);

@@ -24,25 +24,17 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 @Description("Organism must belong to one of {0} when molecule type is {1}.")
 @RemoteExclude
+@ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
-
-
-	@CheckDataSet("moltype-organism.tsv")
-	 private DataSet dataSet;
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndOrganismCheck";
 	
@@ -51,11 +43,8 @@ public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
 		
 	}
 
-	MoleculeTypeAndOrganismCheck(DataSet dataSet) {
-		this.dataSet =dataSet;
-	}
-
 	public ValidationResult check(Entry entry) {
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.MOLTYPE_ORGANISM);
         result = new ValidationResult();
         
         if (entry == null) {

@@ -21,8 +21,10 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -47,11 +49,10 @@ public class EntryMolTypeCheckTest {
         entry.setSequence(sequence);
 
         DataRow regexRow = new DataRow("mol_type","1","TRUE","genomic RNA,viral cRNA,other DNA,other RNA,pre-RNA,transcribed RNA,genomic DNA,unassigned RNA,unassigned DNA");
-        DataSet regexSet = new DataSet();
-        regexSet.addRow(regexRow);
 
-        check = new EntryMolTypeCheck(regexSet);
-        check.init();
+        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, regexRow);
+        check = new EntryMolTypeCheck();
+
     }
 
 	public void testCheck_NoSequence() {

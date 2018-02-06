@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
@@ -42,14 +43,13 @@ public class QualifierPatternAndQualifierCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("proviral", "note", ".*endogenous retrovirus$");
-        DataSet dataSet = new DataSet();
-        dataSet.addRow(dataRow);
-		check = new QualifierPatternAndQualifierCheck(dataSet);
+        DataSetHelper.createAndAdd(FileName.QUALIFIER_PATTERN_QUALIFIER, dataRow);
+		check = new QualifierPatternAndQualifierCheck();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		check = new QualifierPatternAndQualifierCheck();
+		DataSetHelper.clear();
 		check.check(feature);
 	}
 
