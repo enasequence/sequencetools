@@ -64,7 +64,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					case "PLATFORM":
 						assemblyInfoEntry.setPlatform(fieldValue);
 						break;
-					case "MINGAPLENTH":
+					case "MINGAPLENGTH":
 						if(isInteger(fieldValue))
 						  assemblyInfoEntry.setMinGapLength(new Integer(fieldValue));
 						else

@@ -80,18 +80,24 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
     	   
        }
     	
-       if(projectAccessions.size()==0)
+       if(getEmblEntryValidationPlanProperty().locus_tag_prefixes.get().size()!=0)
        {
-    	   return result;
+    	   projectLocustagPrefixes.addAll(getEmblEntryValidationPlanProperty().locus_tag_prefixes.get());
        }
-       
-        for(Text projectAccession:projectAccessions)
-    	   {
-    		   HashSet<String> locusTagPrefixes= getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText());
-    		   if(!locusTagPrefixes.isEmpty())
-    		   projectLocustagPrefixes.addAll(locusTagPrefixes);
-       	   }
-       
+       else
+       {
+				if (projectAccessions.size() == 0) 
+				{
+					return result;
+				}
+
+				for (Text projectAccession : projectAccessions) 
+				{
+					HashSet<String> locusTagPrefixes = getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText());
+					if (!locusTagPrefixes.isEmpty())
+						projectLocustagPrefixes.addAll(locusTagPrefixes);
+				}
+       }
        
        for(Qualifier qualifier:locusTagQualifiers)
        {

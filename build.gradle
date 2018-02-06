@@ -1,6 +1,6 @@
  allprojects 
  {
-    ext.version_base = '1.1.204'
+    ext.version_base = '1.1.205'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -182,7 +182,7 @@ project(':embl-api-validator') {
     
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.204",
+                     "Implementation-Version":"1.1.205",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())

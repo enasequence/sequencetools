@@ -55,22 +55,13 @@ public class SourceFeatureQualifierCheckTest {
 		entry = entryFactory.createEntry();
 		source = featureFactory.createSourceFeature();
 		entry.addFeature(source);
-
-		DataSetHelper.createAndAdd(FileName.SOURCE_REQUIRED_QUALIFIER, new DataRow("strain,isolate,clone", "gene", ".*rRNA$"));
-
-		check = new SourceFeatureQualifierCheck();
+    	check = new SourceFeatureQualifierCheck();
 		EmblEntryValidationPlanProperty planProperty=new EmblEntryValidationPlanProperty();
 		planProperty.taxonHelper.set(new TaxonHelperImpl());
 		check.setEmblEntryValidationPlanProperty(planProperty);
 
 	}
 
-
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
-		check.check(entry);
-	}
 
 	@Test
 	public void testCheck_NoEntry() {

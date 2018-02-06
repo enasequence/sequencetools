@@ -19,8 +19,6 @@ import java.io.IOException;
 
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.reader.embl.DRReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class DblinkReaderTest extends GenbankReaderTest {
 
@@ -31,13 +29,10 @@ public class DblinkReaderTest extends GenbankReaderTest {
 		ValidationResult result = (new DblinkReader(lineReader)).read(entry);
 		lineReader.readLine();
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(1, entry.getXRefs().size());
-		assertEquals(
-				"BioProject",
-				entry.getXRefs().get(0).getDatabase());
+		assertEquals(0, entry.getXRefs().size());
 		assertEquals(
 				"PRJNA28847",
-				entry.getXRefs().get(0).getPrimaryAccession());
+				entry.getProjectAccessions().get(0).getText());
 		}
 
 	public void testRead_XrefWithMultipleLines() throws IOException {
@@ -48,19 +43,16 @@ public class DblinkReaderTest extends GenbankReaderTest {
 		ValidationResult result = (new DblinkReader(lineReader)).read(entry);
 		lineReader.readLine();
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(2, entry.getXRefs().size());
-		assertEquals(
-				"BioProject",
-				entry.getXRefs().get(0).getDatabase());
+		assertEquals(1, entry.getXRefs().size());
 		assertEquals(
 				"PRJNA28847",
-				entry.getXRefs().get(0).getPrimaryAccession());
+				entry.getProjectAccessions().get(0).getText());
 		assertEquals(
 				"BioSample",
-				entry.getXRefs().get(1).getDatabase());
+				entry.getXRefs().get(0).getDatabase());
 		assertEquals(
 				"SAMN02436234",
-				entry.getXRefs().get(1).getPrimaryAccession());
+				entry.getXRefs().get(0).getPrimaryAccession());
 
 	}
 
