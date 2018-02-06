@@ -29,28 +29,19 @@ import java.util.List;
 @Description("The feature name \\\"{0}\\\" must have at least one qualifier.\\\\")
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
-	private List<String> featuresList = new ArrayList<String>();
-	private List<String> featuresNoQualList = new ArrayList<String>();
+	private List<String> featuresList = new ArrayList<>();
 
 	private static final String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
-	private static final String QUALIFIERS_REQUIRED_ID_2 = "FeatureQualifiersRequiredCheck";
 
 	public FeatureQualifiersRequiredCheck() {
 	}
 
 	private void init() {
 		DataSet keySet = GlobalDataSets.getDataSet(FileName.FEATURE_REQUIRE_QUALIFIERS);
-		DataSet noKeySet = GlobalDataSets.getDataSet(FileName.FEATURE_NOT_REQUIRE_QUALIFIERS);
 		if (keySet != null) {
 			for (DataRow dataRow : keySet.getRows()) {
 				String key = dataRow.getString(0);
 				featuresList.add(key);
-			}
-		}
-		if (noKeySet != null) {
-			for (DataRow dataRow : noKeySet.getRows()) {
-				String nkey = dataRow.getString(0);
-				featuresNoQualList.add(nkey);
 			}
 		}
 	}
@@ -63,20 +54,8 @@ public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 			return result;
 		}
 
-		if (featuresList.contains(feature.getName())) {// check the key is in
-														// the CV
-			if (feature.getQualifiers().size() == 0) {
-				reportError(feature.getOrigin(), QUALIFIERS_REQUIRED_ID_1,
-						feature.getName());
-			}
-//		} else if (!featuresList.contains(feature.getName())
-//				&& !featuresNoQualList.contains(feature.getName())) {
-//
-//			if (feature.getQualifiers().size() == 0) {
-//				reportWarning(feature.getOrigin(), QUALIFIERS_REQUIRED_ID_2,
-//						feature.getName());
-//			}
-
+		if (featuresList.contains(feature.getName()) && feature.getQualifiers().isEmpty()) {
+            reportError(feature.getOrigin(), QUALIFIERS_REQUIRED_ID_1, feature.getName());
 		}
 
 		return result;

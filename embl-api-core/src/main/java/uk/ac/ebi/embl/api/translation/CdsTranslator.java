@@ -58,16 +58,15 @@ public class CdsTranslator {
 	public ExtendedResult<TranslationResult> translate(CdsFeature cds, Entry entry) throws RepositoryException {
     
         ExtendedResult<TranslationResult> validationResult = new ExtendedResult<TranslationResult>();
-        if(cds==null||cds.getLocations()==null)
+        if(cds == null || cds.getLocations() == null)
             return validationResult;
         
-    	if((Entry.CON_DATACLASS.equals(entry.getDataClass())&&(entry.getSequence()==null||entry.getSequence().getSequenceByte()==null))||cds==null)
+    	if((Entry.CON_DATACLASS.equals(entry.getDataClass()) && (entry.getSequence() == null || entry.getSequence().getSequenceByte() == null)) )
     		return validationResult;
 
         // Check translation amino acids.
 		if (cds.getTranslation() != null) {
 			CdsFeatureAminoAcidCheck validationCheck = new CdsFeatureAminoAcidCheck();
-//			validationCheck.setEntryId(entry.getId());
 			validationResult.append(validationCheck.check(cds));
 		}
 
