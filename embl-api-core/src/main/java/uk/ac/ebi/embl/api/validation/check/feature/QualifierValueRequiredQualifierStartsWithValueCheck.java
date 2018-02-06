@@ -24,11 +24,9 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet( dataSetNames = {FileName.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE})
 @Description("Qualifier \\\"{0}\\\" must have one of values {1} when qualifier \\\"{2}\\\" value starts with \\\"{3}\\\".")
 public class QualifierValueRequiredQualifierStartsWithValueCheck extends
 		FeatureValidationCheck

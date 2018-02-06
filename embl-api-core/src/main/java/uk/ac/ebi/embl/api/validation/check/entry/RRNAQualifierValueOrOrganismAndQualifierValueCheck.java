@@ -25,15 +25,10 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-@CheckDataSet(dataSetNames = {FileName.RRNA_QUALIFIER_VAL_ORGANISM_QUALIFIER_VALUE } )
 @Description("Value \"{0}\" of qualifier \"{1}\" is only allowed when source qualifier \"{2}\" has one of values {3} or contains the word \"{5}\" or organism belongs to one of {4}.")
 @RemoteExclude
 public class RRNAQualifierValueOrOrganismAndQualifierValueCheck extends EntryValidationCheck {

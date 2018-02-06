@@ -21,14 +21,10 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-@CheckDataSet( dataSetNames = {FileName.ORGANISM_NO_QUALIFIER})
 @Description("Qualifier {0} must not exist when organism belongs to {1}.")
 @RemoteExclude
 public class OrganismNotQualifierCheck extends FeatureValidationCheck {

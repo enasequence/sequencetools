@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationScope.Group;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceToGapFeatureBasesCheck;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.getFeatures;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.getQualifier;
@@ -39,6 +40,7 @@ import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.getQualifier;
 @Description("gap feature created for \"{0}\" n characters between \"{1}\" and \"{2}\" "
 		+ "{0} gap features created for the entry"
 		+ "greater than 90% of newly created gap features are 100bp long,so the estimated_length qualifier value for these gap features is set to :\"unknown\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class SequenceToGapFeatureBasesFix extends
 		SequenceToGapFeatureBasesCheck
 {

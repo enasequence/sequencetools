@@ -23,11 +23,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet( dataSetNames = { FileName.NCRNA_QUALIFIER_VAL_QUALIFIER_PATTERN })
 @Description("Qualifier \"{0}\" must have value which matches the pattern \"{1}\" when qualifier \"{2}\" has value \"{3}\".")
 public class NcRNAQualifierValueAndQualifierPatternCheck extends FeatureValidationCheck {
 

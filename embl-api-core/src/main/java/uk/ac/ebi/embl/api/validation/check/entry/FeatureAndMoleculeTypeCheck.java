@@ -21,12 +21,8 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_MOLTYPE})
 @Description("Molecule type must have value {0} when feature {1} exists")
 public class FeatureAndMoleculeTypeCheck extends EntryValidationCheck {
 

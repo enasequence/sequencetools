@@ -29,11 +29,9 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet(dataSetNames = {FileName.QUALIFIER_VAL_REQUIRED_QUALIFIER_ENTRY })
 @Description("Qualifier \\\"{0}\\\" must have one of values {1} when qualifier \\\"{2}\\\" has value \\\"{3}\\\"in any feature.")
 public class QualifierValueRequiredQualifierValueEntryCheck extends
 		EntryValidationCheck {

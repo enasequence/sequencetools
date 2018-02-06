@@ -19,17 +19,14 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@CheckDataSet(dataSetNames = {FileName.KEYWORD_DATACLASS})
 @Description("dataclass has been fixed to \"{0}\"" + 
              "Dataclass Keyword \"{0}\" has been added to the entry")
 public class DataclassFix extends EntryValidationCheck

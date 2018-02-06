@@ -22,13 +22,11 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
-@CheckDataSet(dataSetNames = {FileName.TAXONOMIC_DIVISION_NO_QUALIFIER})
 @Description("Qualifier \"{0}\" has been removed from Feature \"{1}\" as qualifier \"{0}\" must not exist if taxonomic divison has value {2}.")
 @RemoteExclude
 public class TaxonomicDivisionNotQualifierFix extends EntryValidationCheck

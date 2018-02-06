@@ -20,15 +20,12 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 import java.util.Arrays;
 import java.util.List;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_REGEX_GROUPS})
 @Description("The mol_type value \\\"{0}\\\" is not permitted.")
 public class EntryMolTypeCheck extends EntryValidationCheck {
 

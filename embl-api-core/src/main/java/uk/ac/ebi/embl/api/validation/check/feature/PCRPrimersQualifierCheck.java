@@ -25,12 +25,9 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet(dataSetNames = { FileName.NUCLEOTIDE_CODE })
 @Description("Qualifier \"{0}\" has invalid format"
 		+ "Qualifier \"{0}\" has illegal modified bases format:\"{1}\""
 		+ "Qualifier \"{0}\" has no modified bases within <>"

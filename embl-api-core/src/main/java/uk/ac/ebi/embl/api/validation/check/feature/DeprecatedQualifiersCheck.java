@@ -20,11 +20,8 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = { FileName.DEPRECATED_QUALIFIERS })
 @Description("The {0} qualifier is deprecated. The {0} qualifier is deprecated, please replace with {1}." +
         "The {0} qualifier is deprecated and is replaced by {1} - this change will be made automatically during curation of your entry.")
 public class DeprecatedQualifiersCheck extends FeatureValidationCheck {

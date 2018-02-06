@@ -27,13 +27,10 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-@CheckDataSet(dataSetNames = {FileName.ORG_PERMITTED_QUALIFIER })
 @Description("Qualifier {0} is only permitted when organism belongs to {1}.")
 @RemoteExclude
 public class OrganismAndPermittedQualifierCheck extends EntryValidationCheck {

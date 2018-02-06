@@ -18,7 +18,6 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_QUALIFIER_VALUES, FileName.FEATURE_REGEX_GROUPS, FileName.ARTEMIS_QUALIFIERS})
 @Description("Feature qualifier \\\"{0}\\\" is not recognized\\Feature qualifier \\\"{0}\\\" does not have a value (mandatory for this type)\\" +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" is invalid. Refer to the feature documentation or ask a curator for guidance." +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.\"")

@@ -12,10 +12,8 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_QUALIFIER_VALUES})
 public class QualifierWithinQualifierFix extends FeatureValidationCheck
 {
 

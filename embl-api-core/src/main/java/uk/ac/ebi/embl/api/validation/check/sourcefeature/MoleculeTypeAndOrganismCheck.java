@@ -25,18 +25,15 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-@CheckDataSet( dataSetNames = {FileName.MOLTYPE_ORGANISM})
 @Description("Organism must belong to one of {0} when molecule type is {1}.")
 @RemoteExclude
+@ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndOrganismCheck";

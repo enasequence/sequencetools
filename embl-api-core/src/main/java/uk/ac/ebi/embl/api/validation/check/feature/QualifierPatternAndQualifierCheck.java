@@ -21,13 +21,11 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-@CheckDataSet(dataSetNames = { FileName.QUALIFIER_PATTERN_QUALIFIER })
 @ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE})//do not run in template mode - no control over what they type so could run into problems
 @Description("Qualifier {0} must exist when qualifier {1} value matches the pattern {2}.")
 public class QualifierPatternAndQualifierCheck extends FeatureValidationCheck {

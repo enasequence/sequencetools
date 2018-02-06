@@ -24,12 +24,10 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.Collection;
 
-@CheckDataSet(dataSetNames = {FileName.QUALIFIER_VALUE_NOT_QUALIFIER_ENTRY })
 @Description("Qualifier {0} must not exist when qualifier {1} has value {2} in any feature.")
 public class QualifierValueNotQualifierEntryCheck extends EntryValidationCheck {
 

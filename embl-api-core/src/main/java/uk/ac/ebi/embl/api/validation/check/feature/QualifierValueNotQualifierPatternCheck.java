@@ -27,12 +27,8 @@ import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet( dataSetNames =  { FileName.QUALIFIER_VALUE_NOT_QUALIFIER_PATTERN })
 @Description("Qualifier {0} must not have value which matches the pattern {1} + <value> + {2} where <value> is a value of qualifier {3}.")
 public class QualifierValueNotQualifierPatternCheck extends FeatureValidationCheck {
 

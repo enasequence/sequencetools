@@ -25,13 +25,9 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@CheckDataSet( dataSetNames = {FileName.SOURCE_QUALIFIER_PATTERN_FEATURE})
 @Description("Feature \\\"{0}\\\" is required when qualifier \\\"{1}\\\" matches pattern \\\"{2}\\\"")
 public class SourceQualifierPatternAndFeatureCheck extends EntryValidationCheck {
 	

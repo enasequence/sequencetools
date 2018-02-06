@@ -27,10 +27,8 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet( dataSetNames = {FileName.FEATURE_REGEX_GROUPS, FileName.FEATURE_QUALIFIER_VALUES} )
 @Description("isolation_source is a country \"{0}\",change isolation_source qualifier to country qualifier " + "isolation_source is a lat_lon \"{0}\", change isolation_source qualifier to lat_lon qualifier ")
 public class Isolation_sourceQualifierCheck extends FeatureValidationCheck
 {

@@ -19,12 +19,9 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet( dataSetNames = { FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_FEATURE })
 @Description("One of qualifiers {0} must exist when qualifier {1} exists within the same feature.")
 public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidationCheck {
 

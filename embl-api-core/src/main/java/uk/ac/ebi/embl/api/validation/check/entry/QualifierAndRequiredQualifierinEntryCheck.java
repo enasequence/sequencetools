@@ -19,12 +19,12 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet(dataSetNames = { FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY })
 @Description("One of qualifiers {0} must exist when qualifier {1} exists in any feature.")
+@ExcludeScope( validationScope = {ValidationScope.NCBI})
 public class QualifierAndRequiredQualifierinEntryCheck extends EntryValidationCheck {
 
     private final static String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinEntryCheck";
@@ -53,7 +53,7 @@ public class QualifierAndRequiredQualifierinEntryCheck extends EntryValidationCh
                     message = MULTIPLE_MESSAGE_ID;
                 }
 
-                ValidationMessage<Origin> valMessage = reportError(entry.getOrigin(), message,
+               reportError(entry.getOrigin(), message,
                         Utils.paramArrayToString(requiredQualifierNames), qualifierName);
             }
         }

@@ -22,7 +22,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@CheckDataSet(dataSetNames={FileName.FEATURE_REGEX_GROUPS})
 @Description("\"{0}\" qualifier value \"{1}\" is invalid, a note has been added.")
 @ExcludeScope(validationScope={ValidationScope.ARRAYEXPRESS, ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_CONTIG, ValidationScope.ASSEMBLY_MASTER, ValidationScope.ASSEMBLY_SCAFFOLD, ValidationScope.ASSEMBLY_TRANSCRIPTOME, ValidationScope.EGA, ValidationScope.EMBL, ValidationScope.EMBL, ValidationScope.EMBL_TEMPLATE, ValidationScope.EPO, ValidationScope.EPO_PEPTIDE, ValidationScope.INSDC})
 @RemoteExclude

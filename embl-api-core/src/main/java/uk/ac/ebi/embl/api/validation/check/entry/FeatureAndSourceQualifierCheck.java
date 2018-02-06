@@ -21,16 +21,12 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = { FileName.FEATURE_SOURCE_QUALIFIER })
 @Description("Source qualifier {0} is required when feature {1} exists.")
 public class FeatureAndSourceQualifierCheck extends EntryValidationCheck {
 
-	private final static String MESSAGE_ID = "FeatureAndSourceQualifierCheck-1";
+	private static final String MESSAGE_ID = "FeatureAndSourceQualifierCheck-1";
 	
 	public FeatureAndSourceQualifierCheck() {
 	}

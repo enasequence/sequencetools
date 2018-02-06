@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import java.sql.SQLException;
 import java.util.Collection;
 
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_MASTER,ValidationScope.NCBI})
 @Description("Sequence of >100kb should probably have a project id."
 		+ "Circular genomic entry should probably have a project id."
 		+ "Entry must not have multiple project ids."

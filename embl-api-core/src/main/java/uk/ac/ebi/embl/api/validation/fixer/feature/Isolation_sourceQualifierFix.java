@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
@@ -32,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-@CheckDataSet(dataSetNames = {FileName.FEATURE_REGEX_GROUPS , FileName.FEATURE_QUALIFIER_VALUES})
 @Description("isolation_source qualifier transformed to country qualifier as isolation_source qualifier value \"{0}\", is country" + "isolation_source qualifier transformed to lat_lon qualifier as isolation_source qualifier value \"{0}\", matches lat_lon regex")
 public class Isolation_sourceQualifierFix extends FeatureValidationCheck
 {

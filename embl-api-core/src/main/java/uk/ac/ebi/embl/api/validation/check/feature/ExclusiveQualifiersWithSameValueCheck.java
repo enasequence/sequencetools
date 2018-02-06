@@ -26,12 +26,8 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = { FileName.EXCLUSIVE_QUALIFIERS_SAME_VALUE })
 @Description("Qualifiers {0} and {1} cannot have the same value.")
 public class ExclusiveQualifiersWithSameValueCheck extends FeatureValidationCheck {
 

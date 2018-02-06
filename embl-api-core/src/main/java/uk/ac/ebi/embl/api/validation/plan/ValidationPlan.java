@@ -17,27 +17,17 @@ package uk.ac.ebi.embl.api.validation.plan;
 
 import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
 import uk.ac.ebi.embl.api.storage.DataManager;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
-import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This class is intended for implementation of validation execution plan. 
@@ -79,6 +69,7 @@ public abstract class ValidationPlan {
 		this.dataManager = new CachedFileDataManager();
 		this.fileManager = new CheckFileManager();
         this.devMode = devMode;
+		GlobalDataSets.init(dataManager, fileManager, devMode);
     }
 
     public void addMessageBundle(String bundleName){
@@ -144,7 +135,6 @@ public abstract class ValidationPlan {
 		RemoteExclude remoteExclude = checkClass.getAnnotation(RemoteExclude.class);
 		Description descAnnotation = checkClass.getAnnotation(Description.class);
 		GroupIncludeScope groupIncludeAnnotation = checkClass.getAnnotation(GroupIncludeScope.class);
-        CheckDataSet checkDataSetAnnotation = checkClass.getAnnotation(CheckDataSet.class);
 
 		if(remoteExclude!=null&&remote)
 		{
@@ -159,11 +149,12 @@ public abstract class ValidationPlan {
         	return validationPlanResult;
         }
 
+
         // inject data sets
-        if(null != checkDataSetAnnotation) {
+        /*if(null != checkDataSetAnnotation) {
 			Stream.of(checkDataSetAnnotation.dataSetNames()).forEach( dsName -> GlobalDataSets.loadIfNotExist(dsName, dataManager, fileManager, devMode));
         }
-
+*/
         validationPlanResult.append(check.check(target));
 
         if (excludeScopeAnnotation != null) {

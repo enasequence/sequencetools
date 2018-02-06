@@ -22,11 +22,9 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
-@CheckDataSet(dataSetNames = {FileName.OBSOLETE_FEATURE_TO_FEATURE})
 @Description("Feature {0} transformed to {1} feature with \"{2}\" qualiifer value \"{3}\"")
 public class ObsoleteFeaturetoNewFeatureFix extends FeatureValidationCheck
 {

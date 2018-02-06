@@ -20,13 +20,15 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("strain qualifier value \"{0}\" has been changed to \"{1}\" " + "entry description \"{0}\" has been changed to \"{1}\"")
 @RemoteExclude
-
+@ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class StrainQualifierValueFix extends EntryValidationCheck
 {
 
@@ -70,18 +72,11 @@ public class StrainQualifierValueFix extends EntryValidationCheck
 			{
 				strainQualifierValue = strainQualifierValue.replace("type strain: ", "");
 			}
-		} else
+		} else if ((strainQualifier.getValue().endsWith("(T)") || strainQualifier.getValue().endsWith("T")) && !strainQualifier.getValue().startsWith("type strain:"))
 		{
-			if (strainQualifier.getValue().endsWith("(T)") || strainQualifier.getValue().endsWith("T"))
-			{
-				if (!strainQualifier.getValue().startsWith("type strain:"))
-				{
-					strainQualifierValue = "type strain: " + strainQualifierValue;
-				}
-
-			}
-
+			strainQualifierValue = "type strain: " + strainQualifierValue;
 		}
+
 		if (!strainQualifier.getValue().equals(strainQualifierValue))
 		{
 			reportMessage(Severity.FIX, entry.getOrigin(), STRAIN_MESSAGE_ID, strainQualifier.getValue(), strainQualifierValue);

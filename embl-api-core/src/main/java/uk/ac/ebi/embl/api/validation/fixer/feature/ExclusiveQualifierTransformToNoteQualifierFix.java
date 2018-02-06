@@ -6,11 +6,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
-@CheckDataSet(dataSetNames = {FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE})
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExclusiveQualifierTransformToNoteQualifierFix extends
 		FeatureValidationCheck

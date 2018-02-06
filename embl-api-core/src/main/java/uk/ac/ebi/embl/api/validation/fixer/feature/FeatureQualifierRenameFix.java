@@ -19,15 +19,12 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import java.util.*;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_QUALIFIER_RENAME})
 @Description(" feature Qualifier\\\"{0}\\\" has been replaced with \\\"{1}\\\"")
 public class FeatureQualifierRenameFix extends FeatureValidationCheck {
 

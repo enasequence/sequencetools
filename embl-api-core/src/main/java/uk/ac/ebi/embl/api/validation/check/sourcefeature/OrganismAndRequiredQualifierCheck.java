@@ -22,13 +22,11 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet( dataSetNames = {FileName.ORGANISM_REQUIRED_QUALIFIER})
 @Description("At least one of the following qualifiers {0} must exist when organism belongs to {1}.")
 @ExcludeScope(validationScope = { ValidationScope.EPO,ValidationScope.EPO_PEPTIDE })
 @RemoteExclude

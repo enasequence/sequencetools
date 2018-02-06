@@ -21,24 +21,19 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckDataSet(dataSetNames = { FileName.FEATURE_REQUIRE_QUALIFIERS, FileName.FEATURE_NOT_REQUIRE_QUALIFIERS })
 @Description("The feature name \\\"{0}\\\" must have at least one qualifier.\\\\")
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
 	private List<String> featuresList = new ArrayList<String>();
 	private List<String> featuresNoQualList = new ArrayList<String>();
 
-	private final static String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
-	private final static String QUALIFIERS_REQUIRED_ID_2 = "FeatureQualifiersRequiredCheck";
+	private static final String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
+	private static final String QUALIFIERS_REQUIRED_ID_2 = "FeatureQualifiersRequiredCheck";
 
 	public FeatureQualifiersRequiredCheck() {
 	}

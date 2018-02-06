@@ -21,11 +21,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 
-@CheckDataSet(dataSetNames = {FileName.DATACLASS, FileName.KEYWORD_DATACLASS })
 @Description("Invalid ID Line dataclass \"{0}\""
 		+ "\"{0}\" dataclass allowed only for Master entries"
 		+ "Keyword dataclass \"{0}\" is not matching with ID line dataclass \"{1}\""

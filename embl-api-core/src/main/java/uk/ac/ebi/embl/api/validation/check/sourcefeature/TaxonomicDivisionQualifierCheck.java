@@ -25,13 +25,11 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
-@CheckDataSet( dataSetNames = {FileName.TAXONOMIC_DIVISION_QUALIFIER})
 @Description("Qualifier \"{0}\" can only exist if taxonomic division has one of the values \"{1}\"")
 @RemoteExclude
 

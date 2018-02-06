@@ -20,11 +20,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = {FileName.EXCLUSIVE_QUALIFIERS })
 @Description("Qualifiers {0} and {1} cannot exist together.")
 public class ExclusiveQualifiersCheck extends FeatureValidationCheck {
 

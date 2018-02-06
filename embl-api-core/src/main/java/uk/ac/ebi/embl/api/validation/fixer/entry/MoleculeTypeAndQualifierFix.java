@@ -24,11 +24,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@CheckDataSet(dataSetNames = {FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES})
 @Description("\"{0}\" qualifier removed from feature \"{1}\" as mol_type is not equal to \"{2}\" ")
 public class MoleculeTypeAndQualifierFix extends EntryValidationCheck
 {

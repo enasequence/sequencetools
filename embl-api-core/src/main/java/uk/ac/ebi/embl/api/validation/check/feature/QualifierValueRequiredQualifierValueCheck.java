@@ -27,13 +27,10 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-import javax.xml.crypto.Data;
 
-@CheckDataSet( dataSetNames = {FileName.QUALIFIER_VALUE_REQ_QUALIFIER_VALUE})
 @Description("Qualifier \\\"{0}\\\" must have one of values {1} when qualifier \\\"{2}\\\" has value \\\"{3}\\\".")
 public class QualifierValueRequiredQualifierValueCheck extends FeatureValidationCheck {
     

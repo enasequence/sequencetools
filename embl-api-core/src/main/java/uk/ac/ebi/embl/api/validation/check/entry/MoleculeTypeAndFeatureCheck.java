@@ -23,11 +23,8 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
-@CheckDataSet(dataSetNames = { FileName.MOLTYPE_FEATURE })
 @Description("Feature {0} is required when molecule type is {1}. \"Join\" locations are only permitted in CDS features on mRNA entries when \"ribosomal_slippage\" or \"exception\" qualifiers are present.")
 public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 

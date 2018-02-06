@@ -25,12 +25,9 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@CheckDataSet( dataSetNames = {FileName.SINGLE_SOURCE_QUALIFIER})
 @Description("Qualifier {0} cannot exist in more than one source feature.")
 public class SingleSourceQualifiersCheck extends EntryValidationCheck {
 

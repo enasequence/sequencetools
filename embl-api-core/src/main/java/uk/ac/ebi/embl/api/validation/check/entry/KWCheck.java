@@ -19,20 +19,14 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@CheckDataSet(dataSetNames = { FileName.KEYWORD_DATACLASS, FileName.CON_NO_KEYWORDS })
 @Description("Keywords exists in DE Line must exists in KW Line ex:\"complete genome\""
 		+ "ID Line Dataclass \"{0}\" and Keyword Dataclass \"{1}\" are not identical" + "Multiple keyword dataclasses are not allowed "
 		+ "Keyword \"{0}\" must not exist in the CON dataclass Entry" + "missing keyword \"{0}\" for dataclass \"{1}\""

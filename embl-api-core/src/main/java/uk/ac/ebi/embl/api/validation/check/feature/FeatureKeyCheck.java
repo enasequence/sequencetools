@@ -23,15 +23,12 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-@CheckDataSet(dataSetNames = {FileName.FEATURE_KEY_QUALIFIERS, FileName.FEATURE_KEYS })
 @Description("The feature name \\\"{0}\\\" is not recognized\\\\Mandatory qualifier \\\"{0}\\\" not present in feature {1}\\\\" +
         "Qualifier \\\"{0}\\\" must occur exactly 1 time for feature \\\"{1}\\\", not \"{2}\".\\\\Qualifier \\\"{0}\\\" " +
         "is recomended for feature \\\"{1}\\\".")

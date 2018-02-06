@@ -26,19 +26,15 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.GlobalDataSets;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
-@CheckDataSet(dataSetNames = {FileName.MOLTYPE_SOURCE_QUALIFIERS, FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES})
 @Description("Any of Qualifiers \"{0}\" must exist in Source feature if Molecule Type matches the Value \"{1}\""
 		+ "mol_type must have value \"{0}\" when qualifier \"{1}\" exists")
+@ExcludeScope( validationScope = {ValidationScope.NCBI})
 public class MoleculeTypeAndSourceQualifierCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndSourceQualifierCheck";

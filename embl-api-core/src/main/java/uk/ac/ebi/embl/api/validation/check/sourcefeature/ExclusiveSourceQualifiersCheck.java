@@ -22,14 +22,11 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataRow;
-import uk.ac.ebi.embl.api.validation.annotation.CheckDataSet;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 import java.util.Collection;
 
-@CheckDataSet( dataSetNames = {FileName.SOURCE_EXCLUSIVE_QUALIFIERS})
 @Description("Qualifiers {0} and {1} cannot exist together within the same entry")
 public class ExclusiveSourceQualifiersCheck extends EntryValidationCheck {
 
