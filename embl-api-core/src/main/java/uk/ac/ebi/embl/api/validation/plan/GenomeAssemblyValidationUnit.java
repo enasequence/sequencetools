@@ -13,7 +13,6 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProgramChe
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSamplewithDifferentProjectCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSubmissionIdCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoOrganismCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListAnalysisIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeNameCheck;
@@ -37,8 +36,7 @@ public enum GenomeAssemblyValidationUnit
 			AssemblyInfoProgramCheck.class,
 			AssemblyInfoProjectIdheck.class,
 			AssemblyInfoSamplewithDifferentProjectCheck.class,
-			AssemblyInfoSubmissionIdCheck.class,
-			AssemblyInfoOrganismCheck.class
+			AssemblyInfoSubmissionIdCheck.class
 			),
 			CHROMOSOME_LIST_CHECKS
 			(

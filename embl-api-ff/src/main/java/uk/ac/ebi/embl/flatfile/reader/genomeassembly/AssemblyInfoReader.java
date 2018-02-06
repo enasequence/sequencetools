@@ -76,9 +76,12 @@ public class AssemblyInfoReader extends GCSEntryReader
 						else
 						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
 						break;
-					case "ORGANISM":
-						  	assemblyInfoEntry.setOrganism(fieldValue);
-						  	break;
+					case "SAMPLE":
+						 assemblyInfoEntry.setSampleId(fieldValue);
+						 break;
+					case "STUDY":
+					  	 assemblyInfoEntry.setStudyId(fieldValue);
+					  	 break;
 					default :
 						break;
 					}
