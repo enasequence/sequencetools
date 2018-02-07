@@ -21,8 +21,10 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Qualifiers {0} and {1} cannot exist together.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExclusiveQualifiersCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "ExclusiveQualifiersCheck1";

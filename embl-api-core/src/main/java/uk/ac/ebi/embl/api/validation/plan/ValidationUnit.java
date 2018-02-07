@@ -272,7 +272,8 @@ public enum ValidationUnit
 		   COMMON_CHECKS
 		   (
 				   AsciiCharacterCheck.class,
-				   NCBIQualifierCheck.class
+				   NCBIQualifierCheck.class,
+				   JournalFix.class
 		   ),
 			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES
 			(

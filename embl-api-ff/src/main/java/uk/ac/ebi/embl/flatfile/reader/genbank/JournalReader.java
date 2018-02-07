@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import uk.ac.ebi.embl.api.entry.reference.Publication;
+import uk.ac.ebi.embl.api.entry.reference.Unpublished;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.ElectronicReferenceMatcher;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -24,6 +25,8 @@ import uk.ac.ebi.embl.flatfile.reader.SubmissionMatcher;
 import uk.ac.ebi.embl.flatfile.reader.ThesisMatcher;
 import uk.ac.ebi.embl.flatfile.reader.UnpublishedMatcher;
 
+import java.util.regex.Pattern;
+
 /** Reader for the flat file JOURNAL line.
  */
 public class JournalReader extends MultiLineBlockReader {
@@ -31,6 +34,10 @@ public class JournalReader extends MultiLineBlockReader {
 	public JournalReader(LineReader lineReader) {
 		super(lineReader,  ConcatenateType.CONCATENATE_SPACE);
 	}
+
+	private static final Pattern UNPUBLISHED_WITH_YEAR_PATTERN = Pattern.compile(
+			"^(Unpublished\\s*\\([0-9]*\\))\\s*(\\.)?\\s*"
+	);
 
 	@Override
 	public String getTag() {
@@ -43,6 +50,10 @@ public class JournalReader extends MultiLineBlockReader {
 		UnpublishedMatcher unpublishedMatcher = new UnpublishedMatcher(this);
 		if (unpublishedMatcher.match(block)) {
 			publication = unpublishedMatcher.getUnpublished(getCache().getPublication());
+		} else if(UNPUBLISHED_WITH_YEAR_PATTERN.matcher(block).matches()) {
+			Unpublished unPublished = unpublishedMatcher.getUnpublished(getCache().getPublication());
+			unPublished.setJournalBlock(block);
+			publication =  unPublished;
 		}
 		if (publication == null) {
 			ThesisMatcher thesisMatcher = new ThesisMatcher(this);

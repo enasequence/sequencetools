@@ -25,6 +25,9 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 @Description("Flatfile contains non-ascii characters: \"{0}\"")
 public class AsciiCharacterCheck extends EntryValidationCheck
 {
@@ -37,21 +40,21 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 		if(entry==null)
 			return result;
 		
-		if(!isAscii(entry.getComment().getText()))
+		if(isNonAscii(entry.getComment().getText()))
 			reportError(entry.getComment().getOrigin(), ASCII_CHARACTER_CHECK,entry.getComment().getText());
-		if(!isAscii(entry.getDescription().getText()))
+		if(isNonAscii(entry.getDescription().getText()))
 			reportError(entry.getDescription().getOrigin(), ASCII_CHARACTER_CHECK,entry.getDescription().getText());
 		
 		for(Reference reference: entry.getReferences())
 		{
-			if(!isAscii(reference.getPublication().getTitle()))
+			if(isNonAscii(reference.getPublication().getTitle()))
 					reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK,reference.getPublication().getTitle());
 
 			for(Person author:reference.getPublication().getAuthors())
 			{ 
-				if(!isAscii(author.getFirstName()))
+				if(isNonAscii(author.getFirstName()))
 				reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK,author.getFirstName());
-				if(!isAscii(author.getSurname()))
+				if(isNonAscii(author.getSurname()))
 				reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK,author.getSurname());
 			}
 			
@@ -60,7 +63,7 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 	    {
 	    	for(Qualifier qualifier: feature.getQualifiers())
 	    	{
-	    		if(!isAscii(qualifier.getValue()))
+	    		if(isNonAscii(qualifier.getValue()))
 	    		  reportError(qualifier.getOrigin(), ASCII_CHARACTER_CHECK,qualifier.getValue());
 	    	}
 	    }
@@ -68,23 +71,17 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 	}
 	
 	
-	private boolean isAscii(String text)
+	private boolean isNonAscii(String text)
 	{
-		char j;
 		if(text==null)
-			return true;
-		
+			return false;
+
 		for(int i=0; i<text.length();i++)
 		{
-			if(CharUtils.isAscii(text.charAt(i)))
-				continue;
-			else
-			{
-				j= text.charAt(i);
+			if(!CharUtils.isAscii(text.charAt(i))) {
+				return true;
 			}
-			return false;
 		}
-		return true;
-
+		return false;
 	}
 }

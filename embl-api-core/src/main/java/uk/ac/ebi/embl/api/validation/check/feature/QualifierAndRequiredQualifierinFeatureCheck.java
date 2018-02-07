@@ -25,8 +25,8 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 @Description("One of qualifiers {0} must exist when qualifier {1} exists within the same feature.")
 public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidationCheck {
 
-    private final static String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck";
-    private final static String MULTIPLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck2";
+    private static final String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck";
+    private static final String MULTIPLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck2";
 
     public QualifierAndRequiredQualifierinFeatureCheck() {
     }
@@ -51,8 +51,7 @@ public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidati
                     message = MULTIPLE_MESSAGE_ID;
                 }
 
-                ValidationMessage<Origin> valMessage = reportError(feature.getOrigin(), message,
-                        Utils.paramArrayToString(requiredQualifierNames), qualifierName);
+                reportError(feature.getOrigin(), message, Utils.paramArrayToString(requiredQualifierNames), qualifierName);
             }
         }
 

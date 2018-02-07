@@ -25,6 +25,8 @@ public class Unpublished extends Publication
 	
 	private static final long serialVersionUID = 6789260715844060492L;
 
+	private String journalBlock;
+
 	protected Unpublished() {
 	}
 		
@@ -74,5 +76,13 @@ public class Unpublished extends Publication
 		final CompareToBuilder builder = new CompareToBuilder();
 		builder.appendSuper(super.compareTo(other));
 		return builder.toComparison();
+	}
+
+	public String getJournalBlock() {
+		return journalBlock;
+	}
+
+	public void setJournalBlock(String journalBlock) {
+		this.journalBlock = journalBlock;
 	}
 }

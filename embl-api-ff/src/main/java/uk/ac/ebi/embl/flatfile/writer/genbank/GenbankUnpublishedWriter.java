@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 import java.io.IOException;
 import java.io.Writer;
 
+import uk.ac.ebi.embl.api.contant.Constant;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -33,7 +34,7 @@ public class GenbankUnpublishedWriter extends FlatFileWriter {
 
 	public boolean write(Writer writer) throws IOException {
 		writer.write(GenbankPadding.JOURNAL_PADDING);
-		writer.write("Unpublished");
+		writer.write(Constant.JOURNAL_UNPUBLISHED_VALUE);
 		writer.write("\n");			
 		return true;
 	}
