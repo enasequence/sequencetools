@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
@@ -37,7 +38,15 @@ public class QualifierMatcher extends FlatFileMatcher {
 	private static final int GROUP_QUALIFIER_NAME = 1;
 	private static final int GROUP_QUALIFIER_VALUE = 2;
 
+	public Qualifier getQualifier(FileType fileType) throws UnsupportedEncodingException {
+		return readQualifier(fileType);
+	}
+
 	public Qualifier getQualifier() throws UnsupportedEncodingException {
+		return  readQualifier(null);
+	}
+
+	private Qualifier readQualifier(FileType fileType) throws UnsupportedEncodingException {
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		String qualifierName = getString(GROUP_QUALIFIER_NAME);
 		String qualifierValue = getString(GROUP_QUALIFIER_VALUE);
@@ -67,12 +76,13 @@ public class QualifierMatcher extends FlatFileMatcher {
 					}
 				 }
 			}
-			
-			Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
-		    if (m.find())
-		    {
-		    	error("FT.13", qualifierName, qualifierValue);
-		    }
+
+			if(fileType == null || fileType != FileType.GENBANK) {
+				Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
+				if (m.find()) {
+					error("FT.13", qualifierName, qualifierValue);
+				}
+			}
 			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
 			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
 			

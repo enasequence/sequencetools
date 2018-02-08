@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.Unpublished;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.ElectronicReferenceMatcher;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -30,9 +31,13 @@ import java.util.regex.Pattern;
 /** Reader for the flat file JOURNAL line.
  */
 public class JournalReader extends MultiLineBlockReader {
-	
+
 	public JournalReader(LineReader lineReader) {
 		super(lineReader,  ConcatenateType.CONCATENATE_SPACE);
+	}
+
+	public JournalReader(LineReader lineReader, FileType fileType) {
+		super(lineReader,  ConcatenateType.CONCATENATE_SPACE, fileType);
 	}
 
 	private static final Pattern UNPUBLISHED_WITH_YEAR_PATTERN = Pattern.compile(

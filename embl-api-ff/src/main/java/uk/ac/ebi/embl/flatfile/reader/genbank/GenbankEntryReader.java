@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
 
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -73,7 +74,7 @@ public class GenbankEntryReader extends EntryReader {
     	addBlockReader(new AuthorsReader(lineReader));
     	addBlockReader(new ConsrtmReader(lineReader));
     	addBlockReader(new TitleReader(lineReader));
-    	addBlockReader(new JournalReader(lineReader));
+    	addBlockReader(new JournalReader(lineReader, FileType.GENBANK));
     	addBlockReader(new PubmedReader(lineReader));
     	addBlockReader(new RemarkReader(lineReader));
     	addBlockReader(new MedlineReader(lineReader));
@@ -92,7 +93,7 @@ public class GenbankEntryReader extends EntryReader {
     protected boolean readFeature(LineReader lineReader,
     		Entry entry) throws IOException {
     	if (lineReader.getActiveTag().equals(GenbankTag.FEATURES_TAG) && !lineReader.isCurrentTag()) {
-    		append((new FeatureReader(lineReader)).read(entry));
+    		append((new FeatureReader(lineReader, FileType.GENBANK)).read(entry));
             Integer count = getBlockCounter().get(GenbankTag.FEATURES_TAG);
             getBlockCounter().put(GenbankTag.FEATURES_TAG, ++count);
             return true;

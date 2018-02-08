@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
@@ -35,16 +36,21 @@ import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 public class FeatureReader extends FlatFileLineReader {
 	
 	boolean skipSource=false;
+	private FileType fileType;
 
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
     }
-   
-    public FeatureReader(LineReader lineReader,boolean skipSource) {
+
+	public FeatureReader(LineReader lineReader, FileType fileType) {
+		super(lineReader);
+		this.fileType = fileType;
+	}
+
+	public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
     	this.skipSource=skipSource;
     }
-        
     private static final int LOCATION_BEGIN_POS = 21;
     private static final int QUALIFIER_BEGIN_POS = 21;
      int quotecount=0;
@@ -294,7 +300,7 @@ public class FeatureReader extends FlatFileLineReader {
 			error("FT.5", "Invalid feature qualifier.");
 			return null;
 		}		
-		Qualifier qualifier = qualifierMatcher.getQualifier();
+		Qualifier qualifier = qualifierMatcher.getQualifier(fileType);
 		if(qualifier!=null)
 		qualifier.setOrigin(
 				new FlatFileOrigin(lineReader.getFileId(), firstLineNumber, lastLineNumber));
