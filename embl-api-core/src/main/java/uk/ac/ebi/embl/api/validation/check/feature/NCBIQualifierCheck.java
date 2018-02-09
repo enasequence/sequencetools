@@ -41,6 +41,10 @@ public class NCBIQualifierCheck extends FeatureValidationCheck {
     }
 
     public ValidationResult check(Feature feature) {
+        result = new ValidationResult();
+        if (feature == null) {
+            return result;
+        }
 
         try {
             Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
@@ -48,11 +52,6 @@ public class NCBIQualifierCheck extends FeatureValidationCheck {
             Set<String> ignorable = new HashSet<>(Arrays.asList(Qualifier.OLD_LOCUS_TAG, Qualifier.PROTEIN_ID_QUALIFIER_NAME));
             QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
             qInfo.addRegexGroupInfos(QualifierHelper.setNullGroupTolerance(qInfo));
-            result = new ValidationResult();
-
-            if (feature == null) {
-                return result;
-            }
 
             for (Qualifier qualifier : feature.getQualifiers()) {
 
@@ -62,12 +61,8 @@ public class NCBIQualifierCheck extends FeatureValidationCheck {
                     if (qualifierMap.containsKey(qualifierName)) {
                         QualifierHelper.QualifierInfo qualifierInfo = qualifierMap.get(qualifierName);
 
-                        QualifierHelper.checkNoValue(qualifier, qualifierInfo.isNoValue(), feature.getName()).ifPresent(result::append);
-                        switch(qualifierName) {
-                            case Qualifier.LAT_LON_QUALIFIER_NAME :
-                                result.append(QualifierHelper.checkLatLonRange(qualifierInfo, qualifier));
-                                break;
-                            default:
+                        if(qualifierName.equalsIgnoreCase(Qualifier.LAT_LON_QUALIFIER_NAME)) {
+                            result.append(QualifierHelper.checkLatLonRange(qualifierInfo, qualifier));
                         }
 
                         result.append(QualifierHelper.checkRegEx(qualifierInfo, qualifier));

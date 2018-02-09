@@ -21,14 +21,17 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 @RemoteExclude
+@ExcludeScope( validationScope = {ValidationScope.NCBI})
 public class HostQualifierCheck extends FeatureValidationCheck
 {
 
-	private final static String INVALID_HOST_MESSAGE_ID = "HostQualifierCheck_1";
+	private static final String INVALID_HOST_MESSAGE_ID = "HostQualifierCheck_1";
 
 	@Override
 	public ValidationResult check(Feature feature)
@@ -42,8 +45,7 @@ public class HostQualifierCheck extends FeatureValidationCheck
 
 		SourceFeature source=(SourceFeature)feature;
 		List<Qualifier> hostQualifiers = source.getQualifiers(Qualifier.HOST_QUALIFIER_NAME);
-		if(hostQualifiers.size()==0)
-		{
+		if(hostQualifiers == null || hostQualifiers.isEmpty()) {
 			return result;
 		}
 		
@@ -52,9 +54,8 @@ public class HostQualifierCheck extends FeatureValidationCheck
 			String hostQualifierValue=hostQualifier.getValue();
 			
 			List<Taxon> taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
-			if(taxon!=null&&taxon.size()!=0)
-			{
-				reportError(hostQualifier.getOrigin(), INVALID_HOST_MESSAGE_ID,hostQualifier.getName());
+			if(taxon != null && !taxon.isEmpty()) {
+				reportError(hostQualifier.getOrigin(), INVALID_HOST_MESSAGE_ID,hostQualifier.getValue());
 			}
 		}
 

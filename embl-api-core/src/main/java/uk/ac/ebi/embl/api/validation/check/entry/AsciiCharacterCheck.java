@@ -16,19 +16,18 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import org.apache.commons.lang3.CharUtils;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-
-import java.util.Optional;
-import java.util.stream.Stream;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Flatfile contains non-ascii characters: \"{0}\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class AsciiCharacterCheck extends EntryValidationCheck
 {
 	private static String ASCII_CHARACTER_CHECK = "AsciiCharacterCheck_1";

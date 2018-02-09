@@ -21,18 +21,16 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.GlobalDataSets;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 @Description("Qualifier \"{0}\" can only exist if taxonomic division has one of the values \"{1}\"")
 @RemoteExclude
-
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class TaxonomicDivisionQualifierCheck extends EntryValidationCheck
 {
 	private final static String TAXONOMIC_DIVISION_MESSAGE_ID = "TaxonomicDivisionQualifierCheck_1";
