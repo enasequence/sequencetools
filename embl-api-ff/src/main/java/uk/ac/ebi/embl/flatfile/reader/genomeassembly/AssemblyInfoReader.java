@@ -11,6 +11,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 {
 	private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
 	private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
+	private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
+
 	AssemblyInfoEntry assemblyInfoEntry = null;
 	public AssemblyInfoReader(File file)
 	{
@@ -83,6 +85,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					  	 assemblyInfoEntry.setStudyId(fieldValue);
 					  	 break;
 					default :
+						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
 						break;
 					}
 					
