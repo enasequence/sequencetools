@@ -29,43 +29,26 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 @RemoteExclude
 public class OrganismNotQualifierCheck extends FeatureValidationCheck {
 
-//    private final static String ORGANISM_NOT_FOUND_ID = "OrganismNotQualifierCheck-1";
-    private final static String ORGANISM_IS_CHILD_ID = "OrganismNotQualifierCheck-2";
+    private static final String ORGANISM_IS_CHILD_ID = "OrganismNotQualifierCheck-2";
 
-    public OrganismNotQualifierCheck()
-{
-	// TODO Auto-generated constructor stub
-}
+    public OrganismNotQualifierCheck() {
+        // no implementation required, left blank on purpose
+    }
 
 	public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.ORGANISM_NO_QUALIFIER);
         result = new ValidationResult();
 
-        if (feature == null) {
-            return result;
-        }
-
-        if (!(feature instanceof SourceFeature)) {
+        if (feature == null || !(feature instanceof SourceFeature)) {
             return result;
         }
         SourceFeature source = (SourceFeature) feature;
 
         Qualifier organismQualifier = source.getSingleQualifier(Qualifier.ORGANISM_QUALIFIER_NAME);
-        if (organismQualifier == null) {
+        if (organismQualifier == null || organismQualifier.getValue() == null) {
             return result;
         }
 
-        String organism = organismQualifier.getValue();
-        if (organism == null) {
-            return result;
-        }
-
-        //dropping the message about the organism not being recognized - not helpful
-//        if (!taxonHelper.isOrganismValid(organism)) {
-//            reportMessage(Severity.INFO, feature.getOrigin(), ORGANISM_NOT_FOUND_ID, organism);
-//        }
-
-        for (DataRow dataRow : dataSet.getRows()) {
+        for (DataRow dataRow : GlobalDataSets.getDataSet(FileName.ORGANISM_NO_QUALIFIER).getRows()) {
             String qualifierName = dataRow.getString(0);
             String[] organismFamilyNames = dataRow.getStringArray(1);
 
@@ -78,7 +61,7 @@ public class OrganismNotQualifierCheck extends FeatureValidationCheck {
             }
 
             for (String familyName : organismFamilyNames) {
-                if (getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organism, familyName)) {
+                if (getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organismQualifier.getValue(), familyName)) {
                     reportError(feature.getOrigin(), ORGANISM_IS_CHILD_ID, qualifierName, familyName);
                 }
             }

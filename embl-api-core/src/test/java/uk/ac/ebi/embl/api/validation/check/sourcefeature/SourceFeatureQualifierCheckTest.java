@@ -55,13 +55,14 @@ public class SourceFeatureQualifierCheckTest {
 		entry = entryFactory.createEntry();
 		source = featureFactory.createSourceFeature();
 		entry.addFeature(source);
+
     	check = new SourceFeatureQualifierCheck();
+
 		EmblEntryValidationPlanProperty planProperty=new EmblEntryValidationPlanProperty();
 		planProperty.taxonHelper.set(new TaxonHelperImpl());
 		check.setEmblEntryValidationPlanProperty(planProperty);
 
 	}
-
 
 	@Test
 	public void testCheck_NoEntry() {

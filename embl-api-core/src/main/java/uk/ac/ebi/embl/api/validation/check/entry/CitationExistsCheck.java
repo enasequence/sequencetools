@@ -44,7 +44,7 @@ public class CitationExistsCheck extends EntryValidationCheck {
 			return result;
 		}
 
-		if (entry.getReferences().size() == 0)
+		if (entry.getReferences().isEmpty())
 		{
 			reportError(entry.getOrigin(), REFERENCE_MISSING_MESSAGE_ID);
 		} else
@@ -58,7 +58,7 @@ public class CitationExistsCheck extends EntryValidationCheck {
 					reportError(ref.getOrigin(), REFERENCE_LOCATION_MESSAGE_ID,ref.getReferenceNumber());
 				}
 
-				if (!ref.isAuthorExists()||publication.getAuthors().size()==0)
+				if (!ref.isAuthorExists() || publication.getAuthors().isEmpty())
 				{
 					if(ref.getPublication().getConsortium()==null || ref.getPublication().getConsortium().length()==0)
 					reportError(ref.getOrigin(), REFERENCE_AUTHOR_MESSAGE_ID,ref.getReferenceNumber());
