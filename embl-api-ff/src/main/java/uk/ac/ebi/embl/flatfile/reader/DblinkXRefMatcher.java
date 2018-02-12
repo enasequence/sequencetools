@@ -15,6 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
@@ -57,5 +59,20 @@ public class DblinkXRefMatcher extends FlatFileMatcher {
 		xref.setPrimaryAccession(FlatFileUtils.trimRight(
 				getString(GROUP_ACCESSION), ' '));
 		return xref;
-	}	
+	}
+
+	public List<XRef> getXRefs() {
+		List<XRef> xRefs = new ArrayList<>();
+		String accnString = FlatFileUtils.trimRight(getString(GROUP_ACCESSION), ' ');
+		String dataBase = FlatFileUtils.trimRight(getString(GROUP_DATABASE), ' ');
+		if(accnString != null) {
+			for (String accn : accnString.split(",")) {
+				XRef xref = (new EntryFactory()).createXRef();
+				xref.setDatabase(dataBase);
+				xref.setPrimaryAccession(accn.trim());
+				xRefs.add(xref);
+			}
+		}
+		return xRefs;
+	}
 }

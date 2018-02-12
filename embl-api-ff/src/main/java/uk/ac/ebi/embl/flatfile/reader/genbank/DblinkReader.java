@@ -22,6 +22,8 @@ import uk.ac.ebi.embl.flatfile.reader.DblinkXRefMatcher;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
+import java.util.List;
+
 /** Reader for the flat file DBlink lines.
  */
 public class DblinkReader extends MultiLineBlockReader {
@@ -41,21 +43,41 @@ public class DblinkReader extends MultiLineBlockReader {
 		DblinkXRefMatcher xRefMatcher = new DblinkXRefMatcher(this);
 		
 		String[] xrefStrings=block.split("\\n");
-		
-		for(String xrefString :xrefStrings )
-		{
-			if(!xRefMatcher.match(xrefString)) {
-				error("FF.1", getTag());
-				return;
-			}
-			XRef xref = xRefMatcher.getXRef();
-			xref.setOrigin(getOrigin());
-			//move text BioProject to a constant file
-			if(xref.getDatabase()!=null && xref.getDatabase().trim().equalsIgnoreCase("BioProject")) {
-				entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
+
+		StringBuilder stringToevaluate = new StringBuilder();
+		int length = xrefStrings.length;
+		for(int i=0; i<length ;i++ ) {
+
+			if (xrefStrings[i].trim().endsWith(",") || (i+1 < length && xrefStrings[i+1].trim().startsWith(",")) ) {
+				stringToevaluate.append(xrefStrings[i]);
 			} else {
-				entry.addXRef(xref);
+				stringToevaluate.append(xrefStrings[i]);
+				if (!xRefMatcher.match(stringToevaluate.toString())) {
+					error("FF.1", getTag());
+					return;
+				}
+
+				List<XRef> xrefList = xRefMatcher.getXRefs();
+				if(xrefList == null || xrefList.isEmpty()) {
+					error("FF.1", getTag());
+					return;
+				} else {
+					xrefList.forEach(xref -> {
+						xref.setOrigin(getOrigin());
+						if (xref.getDatabase() != null && xref.getDatabase().trim().equalsIgnoreCase("BioProject")) {
+							entry.addProjectAccession(new Text(xref.getPrimaryAccession(), xref.getOrigin()));
+						} else {
+							entry.addXRef(xref);
+						}
+					});
+				}
+
+				stringToevaluate = new StringBuilder();
+
 			}
+		}
+		if(stringToevaluate.length() > 0) {
+			error("FF.1", getTag());
 		}
 	}
 
