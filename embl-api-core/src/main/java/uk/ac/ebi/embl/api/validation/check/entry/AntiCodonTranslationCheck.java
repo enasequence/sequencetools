@@ -30,25 +30,18 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.translation.Codon;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
 import uk.ac.ebi.embl.api.translation.Translator;
-import uk.ac.ebi.embl.api.validation.ExtendedResult;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
-import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.AntiCodonQualifierCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 @Description("Translate the anticodon")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 @RemoteExclude
 public class AntiCodonTranslationCheck extends EntryValidationCheck
 {

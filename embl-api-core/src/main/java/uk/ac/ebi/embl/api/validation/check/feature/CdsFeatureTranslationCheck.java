@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 @Description("Runs the translator and returns results")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 @RemoteExclude
 public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
 

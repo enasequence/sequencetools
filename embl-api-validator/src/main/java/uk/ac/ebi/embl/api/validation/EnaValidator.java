@@ -441,6 +441,7 @@ public class EnaValidator
 
 			summaryLine = summaryLine.concat("\n*** SUMMARY***\n");
 
+			summaryLine = summaryLine.concat("Parsing error:" + parseErrorCount+ "\n");
 			summaryLine = summaryLine.concat("Fixed Entries:" + fixCount + "\n");
 			summaryLine = summaryLine.concat("Failed Entries:" + failCount+ "\n");
 			summaryLine = summaryLine.concat("Checked Entries:"+ totalEntryCount + "\n");

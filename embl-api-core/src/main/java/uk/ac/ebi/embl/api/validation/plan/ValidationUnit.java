@@ -43,7 +43,6 @@ public enum ValidationUnit
 				KWCheck.class
 			),
 			MASTER_HEADER_ONLY_CHECKS(
-					CitationExistsCheck.class,
 					EntryProjectIdCheck.class,
 					HoldDateCheck.class,
 					//ReferenceCheck.class,
