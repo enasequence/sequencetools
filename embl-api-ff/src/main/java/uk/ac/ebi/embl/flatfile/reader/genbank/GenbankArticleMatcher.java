@@ -57,7 +57,9 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
 			"(?:^" +
 			"(.+)" + // journal + volume + issue
 			"\\s*" +			
-			"In\\s*press.*$)"
+			"In\\s*press.*$)|"+
+			//journal volume (year)
+			"((?:^(.+)\\s*(?:\\((\\d{4})\\))\\s*$))"
 		);
 
 	private static int GROUP_1_JOURNAL_VOLUME_ISSUE = 1;
@@ -67,6 +69,9 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
 	private static int GROUP_2_JOURNAL_VOLUME_ISSUE = 5;
 	private static int GROUP_2_YEAR = 6;
 	private static int GROUP_3_JOURNAL_VOLUME_ISSUE = 7;
+	private static int GROUP_4_JOURNAL_VOLUME_YEAR = 8;
+	private static int GROUP_4_JOURNAL = 9;
+	private static int GROUP_4_YEAR = 10;//year from last group
 	
 	public Article getArticle(Publication publication) {
 		Article article = null;
@@ -91,9 +96,13 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
 			article.setJournal(journal);
 			article.setYear(getYear(GROUP_2_YEAR));
 		}
-		else {
+		else if(isValue(GROUP_3_JOURNAL_VOLUME_ISSUE)){
 			String journal = FlatFileUtils.shrink(getString(GROUP_3_JOURNAL_VOLUME_ISSUE));
 			article.setJournal(journal);
+		} else if(isValue(GROUP_4_JOURNAL_VOLUME_YEAR)){
+			String journal = FlatFileUtils.shrink(getString(GROUP_4_JOURNAL));
+			article.setJournal(journal);
+			article.setYear(getYear(GROUP_4_YEAR));
 		}
 		return article;
 	}
