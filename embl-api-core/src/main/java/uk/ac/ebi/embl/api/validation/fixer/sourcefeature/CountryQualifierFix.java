@@ -86,7 +86,7 @@ public class CountryQualifierFix extends FeatureValidationCheck
 	private String getCountry(String country) {
 		if(country == null) return null;
 		String[] split = country.split("[:,]");
-		return split.length>0? split[0].trim().toLowerCase(): null;
+		return split.length>0? split[0].trim().toLowerCase(): country;
 	}
 
 }
