@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import java.io.BufferedReader;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,12 @@ EmblLineReader extends LineReader
     {
     	super(reader, fileId);
     }
+    
+    public 
+    EmblLineReader(BufferedReader reader, Charset charset, String fileId) 
+    {
+    	super(reader, charset, fileId);
+    }    
 
     public EmblLineReader(RandomAccessFile raf, String fileId) {
     	super(raf, fileId);

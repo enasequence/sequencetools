@@ -18,6 +18,11 @@ package uk.ac.ebi.embl.flatfile.reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.flatfile.EmblTag;
@@ -40,6 +45,9 @@ public abstract class LineReader {
 	private int currentLineNumber = 0;
 
 	private int nextLineNumber = 0;
+	
+	// TODO take into consideration the Charset
+	private long bytesOffset = 0;
 
 	private String activeTag;
 	
@@ -51,6 +59,13 @@ public abstract class LineReader {
 	{
 		return ignoreParseError;
 	}
+	
+	/**
+	 * Charset encoding used by the underlying BufferedReader
+	 */
+	private Charset charset;
+
+	private CharsetEncoder ce;
 
 	public LineReader setIgnoreParseError(boolean ignoreParseError)
 	{
@@ -72,12 +87,26 @@ public abstract class LineReader {
 	}
 
 	public LineReader(BufferedReader reader) {
+	   this(reader, Charset.defaultCharset());
+	}
+	
+	public LineReader(BufferedReader reader, Charset charset) {
 		this.reader = new LineReaderWrapper(reader);
+		this.charset = charset;
+		initCharsetEncoder();
 	}
 
 	public LineReader(BufferedReader reader, String fileId) {
 		this.reader = new LineReaderWrapper(reader);
+		initCharsetEncoder();
 		this.fileId = fileId;
+	}
+	
+	public LineReader(BufferedReader reader, Charset charset, String fileId) {
+		this.reader = new LineReaderWrapper(reader);
+		this.fileId = fileId;
+		this.charset = charset;
+		initCharsetEncoder();
 	}
 
 	public LineReader(RandomAccessFile raf, String fileId) {
@@ -91,7 +120,21 @@ public abstract class LineReader {
 	}
 
 	public void setReader(BufferedReader reader) {
+		setReader(reader, Charset.defaultCharset());
+	}
+
+	public void setReader(BufferedReader reader, Charset charset) {
 		this.reader = new LineReaderWrapper(reader);
+		this.charset = charset;
+		initCharsetEncoder();
+	}
+	
+	private void initCharsetEncoder() {
+		if (charset != null) {
+			ce = charset.newEncoder();
+			ce.onMalformedInput(CodingErrorAction.REPLACE);
+			ce.onUnmappableCharacter(CodingErrorAction.REPLACE);
+		}
 	}
 
 	/**
@@ -343,10 +386,14 @@ public abstract class LineReader {
 				++nextLineNumber;
 				if( currentLine != null ) 
 				{
-					if (currentLine.length() == 0)
+					if (currentLine.length() == 0 ) {
+						countStringBytes("\n");
 						continue;
-					if (isSkipLine(currentLine))
+					}
+					if (isSkipLine(currentLine)) {
+						countLineBytes(currentLine);
 						continue;
+					}
 					
 					currentLine = replaceWithSpace( currentLine );
 					setFirstLine(currentLine);
@@ -359,16 +406,22 @@ public abstract class LineReader {
 		}
 		if (currentLine == null) {
 			return false;
+		} else {
+			countLineBytes(currentLine);
 		}
 
 		while (true) {
 			nextLine = reader.readLine();
 			++nextLineNumber;
 			if (nextLine != null) {
-				if (nextLine.length() == 0)
+				if (nextLine.length() == 0) {
+					countStringBytes("\n");
 					continue;
-				if (isSkipLine(nextLine))
+				}
+				if (isSkipLine(nextLine)) {
+					countLineBytes(nextLine);
 					continue;
+				}
 
 				nextLine = replaceWithSpace( nextLine );
 			}
@@ -387,7 +440,20 @@ public abstract class LineReader {
 		return true;
 	}
 
+	private void countLineBytes(String line) {
+		// count line terminator
+		countStringBytes(line + "\n");
+	}
 
+	private void countStringBytes(String line) {
+		try {
+			bytesOffset += ce.encode(CharBuffer.wrap(line)).array().length;
+		} catch (CharacterCodingException e) {
+			// should not happen, we asked to replace chars in these situations
+			e.printStackTrace();
+		}
+	}
+	
 	String
 	replaceWithSpace( CharSequence line )
 	{
@@ -401,6 +467,7 @@ public abstract class LineReader {
 	            case '\n':
 	            case '\r':
 	                result.setCharAt( index, ' ' );
+	                bytesOffset++;
 	            
 	        }
 	    return result.toString();
@@ -431,8 +498,16 @@ public abstract class LineReader {
 			}
 		}
 
-
 	public LineReaderCache getCache() {
 		return cache;
+	}
+	
+	/**
+	 * Return read bytes offset from the beginning of the stream
+	 * 
+	 * @return
+	 */
+	public long getOffset() {
+	   return bytesOffset;
 	}
 }

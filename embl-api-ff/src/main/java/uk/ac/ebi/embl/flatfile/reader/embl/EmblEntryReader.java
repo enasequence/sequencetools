@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,24 +56,36 @@ EmblEntryReader extends EntryReader
    };
 
 //TODO: delete!
-    public 
-    EmblEntryReader( BufferedReader reader )
-    {
+   public 
+   EmblEntryReader( BufferedReader reader )
+   {
 
-      this(reader, Format.EMBL_FORMAT, null);
-   }
+		this(reader, Format.EMBL_FORMAT, null);
+	}
+			
+	public 
+	EmblEntryReader( BufferedReader reader,
+	         Format         format, 
+	         String         fileId )
+	{
+	
+		super(new EmblLineReader(reader, fileId));
+
+		addBlockReaders(format);
+	}
    
 
-    public 
-    EmblEntryReader( BufferedReader reader, 
-                     Format         format, 
-                     String         fileId )
-    {
-
-      super(new EmblLineReader(reader, fileId));
-
-      addBlockReaders(format);
-   }
+	public 
+	EmblEntryReader( BufferedReader reader,
+					 Charset        charset,
+	                 Format         format, 
+	                 String         fileId )
+	{
+	
+		super(new EmblLineReader(reader, charset, fileId));
+	
+		addBlockReaders(format);
+	}
     
     public 
     EmblEntryReader( BufferedReader reader, 
@@ -82,6 +95,19 @@ EmblEntryReader extends EntryReader
     {
 
       super(new EmblLineReader(reader, fileId).setIgnoreParseError(ignoreParseError));
+
+      addBlockReaders(format);
+   }
+    
+    public 
+    EmblEntryReader( BufferedReader reader, 
+    				 Charset        charset,
+                     Format         format, 
+                     String         fileId,
+                     boolean ignoreParseError)
+    {
+
+      super(new EmblLineReader(reader, charset, fileId).setIgnoreParseError(ignoreParseError));
 
       addBlockReaders(format);
    }

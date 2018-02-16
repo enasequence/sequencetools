@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,10 +49,10 @@ public class EBISearchEmblEntryReader extends EmblEntryReader {
    private boolean      htmlEntValidationEnabled = true;
    private boolean      conSeqDatacheckEnabled   = true;
 
-   public EBISearchEmblEntryReader(BufferedReader reader, EmblEntryReader.Format format, String fileId,
+   public EBISearchEmblEntryReader(BufferedReader reader, Charset charset, EmblEntryReader.Format format, String fileId,
                     boolean ignoreParseError, boolean htmlEntityValidationEnabled) {
 
-      super(reader, format, fileId);
+      super(reader, charset, format, fileId);
 
       this.htmlEntValidationEnabled = htmlEntityValidationEnabled;
       initializeBlockReaders(format);
