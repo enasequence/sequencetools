@@ -35,7 +35,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					continue;
 				}
 				
-				String[] fields = line.split(":");
+				String[] fields = line.trim().split("\\s+",2);
 				int numberOfColumns = fields.length;
 				if (numberOfColumns != 2 )
 				{
@@ -51,14 +51,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 					case "ASSEMBLYNAME":
 						assemblyInfoEntry.setName(fieldValue);
 						break;
-					case "ASSEMBLYMETHOD":
-						assemblyInfoEntry.setAssemblyMethod(fieldValue);
-						break;
-					case "SEQUENCINGTECHNOLOGY":
-						assemblyInfoEntry.setSequencingTechnology(fieldValue);
-						break;
 					case "COVERAGE":
-						 assemblyInfoEntry.setCoverage(fieldValue);
+						assemblyInfoEntry.setCoverage(fieldValue);
 						break;
 					case "PROGRAM":
 						assemblyInfoEntry.setProgram(fieldValue);

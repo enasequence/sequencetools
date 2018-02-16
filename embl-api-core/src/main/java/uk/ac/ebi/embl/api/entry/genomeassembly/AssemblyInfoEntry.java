@@ -38,8 +38,6 @@ public class AssemblyInfoEntry extends GCSEntry
 	private Integer minContigCount;
 	private Integer minScaffoldCount;
 	private String gcId;
-	private String assemblyMethod;
-	private String sequencingTechnology;
 	private String program;
 	private String platform;
 	private String moleculeType;
@@ -51,26 +49,6 @@ public class AssemblyInfoEntry extends GCSEntry
 
 	public void setStudyId(String studyId) {
 		this.studyId = studyId;
-	}
-
-	public String getAssemblyMethod()
-	{
-		return assemblyMethod;
-	}
-
-	public void setAssemblyMethod(String assemblyMethod)
-	{
-		this.assemblyMethod = assemblyMethod;
-	}
-
-	public String getSequencingTechnology()
-	{
-		return sequencingTechnology;
-	}
-
-	public void setSequencingTechnology(String sequencingTechnology)
-	{
-		this.sequencingTechnology = sequencingTechnology;
 	}
 
 	public String getProgram()
