@@ -3,6 +3,9 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -12,6 +15,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 	private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
 	private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
 	private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
+
+	private static Pattern pattern =Pattern.compile("^(\\w+)\\s+(.+)$");
 
 	AssemblyInfoEntry assemblyInfoEntry = null;
 	public AssemblyInfoReader(File file)
@@ -34,18 +39,14 @@ public class AssemblyInfoReader extends GCSEntryReader
 				{
 					continue;
 				}
-				
-				String[] fields = line.trim().split("\\s+",2);
-				int numberOfColumns = fields.length;
-				if (numberOfColumns != 2 )
+
+				Matcher matcher = pattern.matcher(line);
+
+				if(matcher.matches() && matcher.groupCount() == 2)
 				{
-					error(lineNumber,MESSAGE_KEY_INVALID_FORMAT_ERROR,line);
-				}
-				else
-				{
-					String field= StringUtils.deleteWhitespace(fields[0].toUpperCase());
+					String field= StringUtils.deleteWhitespace(matcher.group(1).toUpperCase());
 					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");			
-					String fieldValue= fields[1];
+					String fieldValue= matcher.group(2).trim();
 					switch(field)
 					{
 					case "ASSEMBLYNAME":
@@ -64,13 +65,13 @@ public class AssemblyInfoReader extends GCSEntryReader
 						if(isInteger(fieldValue))
 						  assemblyInfoEntry.setMinGapLength(new Integer(fieldValue));
 						else
-						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,field,fieldValue);
 						break;
 					case "MOLECULETYPE":
 						if(isValidMoltype(fieldValue))
 							assemblyInfoEntry.setMoleculeType(fieldValue);
 						else
-						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,field,fieldValue);
 						break;
 					case "SAMPLE":
 						 assemblyInfoEntry.setSampleId(fieldValue);
@@ -83,6 +84,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 						break;
 					}
 					
+				} else {
+					error(lineNumber,MESSAGE_KEY_INVALID_FORMAT_ERROR,line);
 				}
 				lineNumber++;
 
