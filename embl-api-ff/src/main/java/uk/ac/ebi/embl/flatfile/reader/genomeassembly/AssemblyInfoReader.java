@@ -78,6 +78,12 @@ public class AssemblyInfoReader extends GCSEntryReader
 					case "STUDY":
 					  	 assemblyInfoEntry.setStudyId(fieldValue);
 					  	 break;
+					case "TPA":
+						if(isValidTPA(fieldValue))
+							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(fieldValue)||"true".equalsIgnoreCase(fieldValue)?true:false);
+						else
+						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						break;
 					default :
 						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
 						break;
@@ -113,6 +119,21 @@ public class AssemblyInfoReader extends GCSEntryReader
 			return false;
 
 		return true;
+
+	}
+	
+public static boolean isValidTPA(String tpa) {
+		
+		if (tpa == null) 
+		{
+			return false;
+		}
+
+		tpa = StringUtils.deleteWhitespace(tpa).toUpperCase();
+		if ("true".equalsIgnoreCase(tpa)||"false".equalsIgnoreCase(tpa)||"yes".equalsIgnoreCase(tpa)||"no".equalsIgnoreCase(tpa))
+			return true;;
+
+		return false;
 
 	}
 
