@@ -45,6 +45,8 @@ public class QualifierMatcher extends FlatFileMatcher {
 		Qualifier qualifier=qualifierFactory.createQualifier(qualifierName);
 		if (qualifierValue != null)
 		{
+			if(!getReader().getLineReader().isIgnoreParseError())
+			{
 			if (!qualifier.isValueQuoted() && nofQuotes != 0)
 			{
 				if (!qualifier.getName().equals(Qualifier.COMPARE_QUALIFIER_NAME) )
@@ -73,6 +75,7 @@ public class QualifierMatcher extends FlatFileMatcher {
 		    {
 		    	error("FT.13", qualifierName, qualifierValue);
 		    }
+			}
 			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
 			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
 			

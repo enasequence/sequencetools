@@ -109,15 +109,17 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		}
 		String blockString = block.toString();
 		//blockString=EntryUtils.convertNonAsciiStringtoAsciiString(blockString);
+		if(!lineReader.isIgnoreParseError())
+		{
 		
-		blockString=StringEscapeUtils.unescapeHtml4(blockString);
+		String blockStringwithNohtmlEntity=StringEscapeUtils.unescapeHtml4(blockString);
 		
-		Matcher m = htmlEntityRegexPattern.matcher(blockString);
+		Matcher m = htmlEntityRegexPattern.matcher(blockStringwithNohtmlEntity);
 	    if (m.find())
 	    {
 	    	error("FF.15",getTag());
 	    }
-			
+		}
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.
 			blockString = FlatFileUtils.shrink(blockString);
