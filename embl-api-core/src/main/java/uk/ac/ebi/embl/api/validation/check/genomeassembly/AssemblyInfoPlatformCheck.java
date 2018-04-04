@@ -18,24 +18,29 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
+import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("")
+@GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_MASTER})
 public class AssemblyInfoPlatformCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
-   
-	public static final String MESSAGE_KEY_PLATFORM_ERROR = "";
+    public static final String MESSAGE_KEY_PLATFORM_ERROR = "AssemblyInfoPlatformMissingCheck";
 		
-    public AssemblyInfoPlatformCheck()
-	{
-
-	}
-   
     @Override
 	public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
 	{
-		if(entry==null)
-		return result;
+    	if(entry==null)
+			return result;
+		
+		if (entry.getPlatform() == null || entry.getPlatform().isEmpty())
+		{	
+			reportError(entry.getOrigin(), MESSAGE_KEY_PLATFORM_ERROR);
+			return result;
+		}
 		return result;
 	}
 	

@@ -45,12 +45,13 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
       { 
     	  List<Qualifier> locusTagQualifiers=SequenceEntryUtils.getQualifiers(Qualifier.LOCUS_TAG_QUALIFIER_NAME, entry);
            
-       if(locusTagQualifiers.size()==0||getEntryDAOUtils()==null)
+       if(locusTagQualifiers.size()==0||(getEntryDAOUtils()==null&&getEmblEntryValidationPlanProperty().locus_tag_prefixes.get().size()==0))
        {
     	   return result;
        }
        
-       if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null&&!getEmblEntryValidationPlanProperty().analysis_id.get().isEmpty())
+       if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null
+    	  && !getEmblEntryValidationPlanProperty().analysis_id.get().isEmpty())
        {
     	   Entry masterEntry=getEntryDAOUtils().getMasterEntry(getEmblEntryValidationPlanProperty().analysis_id.get());
     	   projectAccessions.addAll(masterEntry.getProjectAccessions());
@@ -68,6 +69,9 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
        else if(entry.getProjectAccessions()!=null&&entry.getProjectAccessions().size()!=0)
        {
     	   projectAccessions.addAll(entry.getProjectAccessions());
+       }
+       if(entry.getXRefs().size()!=0)
+       {
             List<XRef> xrefs= entry.getXRefs();
     	   
     	   for(XRef xref:xrefs)
@@ -77,8 +81,7 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
     			   samplePrefix=xref.getPrimaryAccession();
     		   }
     	   }
-    	   
-       }
+        }
     	
        if(getEmblEntryValidationPlanProperty().locus_tag_prefixes.get().size()!=0)
        {
@@ -86,11 +89,6 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
        }
        else
        {
-				if (projectAccessions.size() == 0) 
-				{
-					return result;
-				}
-
 				for (Text projectAccession : projectAccessions) 
 				{
 					HashSet<String> locusTagPrefixes = getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText());
@@ -111,7 +109,7 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
     		   {
     			   continue;
     		   }
-    		   if(!projectLocustagPrefixes.contains(locustagPrefix))
+    		   if(projectAccessions.size()!=0&&!projectLocustagPrefixes.contains(locustagPrefix))
     		   {
     			  reportError(qualifier.getOrigin(), MESSAGE_ID_INVALID_PREFIX,locusTagValue,locustagPrefix );
     		   }

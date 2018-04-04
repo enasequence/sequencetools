@@ -24,20 +24,20 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 public class AssemblyInfoProgramCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
    
-	private final String MESSAGE_KEY_PROGRAM_ERROR = "";
+	private final String MESSAGE_KEY_PROGRAM_ERROR = "AssemblyInfoProgramMissingCheck";
 	
-	
-    public AssemblyInfoProgramCheck()
-	{
-
-	}
-    
-   @Override
-	public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
-	{
-		if(entry==null)
+	    @Override
+		public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
+		{
+	    	if(entry==null)
+				return result;
+			
+			if (entry.getProgram() == null || entry.getProgram().isEmpty())
+			{	
+				reportError(entry.getOrigin(), MESSAGE_KEY_PROGRAM_ERROR);
+				return result;
+			}
 			return result;
-		return result;
-	}	
+		}
 	
 }

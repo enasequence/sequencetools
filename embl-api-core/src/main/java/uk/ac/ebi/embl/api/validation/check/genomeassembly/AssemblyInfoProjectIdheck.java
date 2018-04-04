@@ -43,6 +43,7 @@ public class AssemblyInfoProjectIdheck extends GenomeAssemblyValidationCheck<Ass
 		if (entry.getProjectId() == null || entry.getProjectId().isEmpty())
 		{	
 			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_PROJECT_ID_ERROR);
+			return result;
 		}
 		
 		if (!entry.getProjectId().matches("^PRJ[EN].*"))

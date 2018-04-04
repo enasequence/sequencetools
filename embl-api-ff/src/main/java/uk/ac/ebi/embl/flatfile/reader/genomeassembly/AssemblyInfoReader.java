@@ -11,6 +11,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 {
 	private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
 	private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
+	private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
+
 	AssemblyInfoEntry assemblyInfoEntry = null;
 	public AssemblyInfoReader(File file)
 	{
@@ -33,7 +35,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					continue;
 				}
 				
-				String[] fields = line.split(":");
+				String[] fields = line.trim().split("\\s+",2);
 				int numberOfColumns = fields.length;
 				if (numberOfColumns != 2 )
 				{
@@ -49,14 +51,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 					case "ASSEMBLYNAME":
 						assemblyInfoEntry.setName(fieldValue);
 						break;
-					case "ASSEMBLYMETHOD":
-						assemblyInfoEntry.setAssemblyMethod(fieldValue);
-						break;
-					case "SEQUENCINGTECHNOLOGY":
-						assemblyInfoEntry.setSequencingTechnology(fieldValue);
-						break;
 					case "COVERAGE":
-						 assemblyInfoEntry.setCoverage(fieldValue);
+						assemblyInfoEntry.setCoverage(fieldValue);
 						break;
 					case "PROGRAM":
 						assemblyInfoEntry.setProgram(fieldValue);
@@ -83,6 +79,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					  	 assemblyInfoEntry.setStudyId(fieldValue);
 					  	 break;
 					default :
+						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
 						break;
 					}
 					
