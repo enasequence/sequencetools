@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.flatfile.reader;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
@@ -27,7 +28,8 @@ import java.util.regex.Pattern;
 /** Reader for flat file blocks.
  */
 public abstract class MultiLineBlockReader extends BlockReader {
-	
+
+	FileType fileType;
 	private int firstLineNumber;
 	private int lastLineNumber;
 	Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
@@ -37,7 +39,14 @@ public abstract class MultiLineBlockReader extends BlockReader {
     	super(lineReader);
     	this.concatenateType = concatenateType;
     }
-    
+
+	public MultiLineBlockReader(LineReader lineReader,
+								ConcatenateType concatenateType, FileType fileType) {
+		super(lineReader);
+		this.concatenateType = concatenateType;
+		this.fileType = fileType;
+	}
+
     public FlatFileOrigin getOrigin() {
     	if(!EmblEntryReader.isOrigin)
     	return null;
@@ -109,14 +118,13 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		//blockString=EntryUtils.convertNonAsciiStringtoAsciiString(blockString);
 		if(!lineReader.isIgnoreParseError())
 		{
-		
-		String blockStringwithNohtmlEntity=StringEscapeUtils.unescapeHtml4(blockString);
-		
-		Matcher m = htmlEntityRegexPattern.matcher(blockStringwithNohtmlEntity);
-	    if (m.find())
-	    {
-	    	error("FF.15",getTag());
-	    }
+            String blockStringwithNohtmlEntity=StringEscapeUtils.unescapeHtml4(blockString);
+            if(fileType == null || fileType != FileType.GENBANK) {
+                Matcher m = htmlEntityRegexPattern.matcher(blockStringwithNohtmlEntity);
+                if (m.find()) {
+                    error("FF.15", getTag());
+                }
+            }
 		}
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.
