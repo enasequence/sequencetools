@@ -25,10 +25,13 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 @Description("Added \"EC_number\" qualifier from \"Product\" Value {0}" + "\"product\" qualifier value {0} has been changed to {1}")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class EC_numberfromProductValueFix extends FeatureValidationCheck
 {
 	

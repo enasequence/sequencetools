@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
+import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -40,6 +41,11 @@ public class RAReader extends MultiLineBlockReader {
 		for (String author : FlatFileUtils.split(block, ",")) {
 			EmblPersonMatcher personMatcher = new EmblPersonMatcher(this);
 			if (!personMatcher.match(author)) {
+				if(lineReader.isIgnoreParseError())
+				{
+					getCache().getPublication().addAuthor((new ReferenceFactory()).createPerson(block));
+				}
+				else
 				error("RA.1", author);
 			}
 			else {

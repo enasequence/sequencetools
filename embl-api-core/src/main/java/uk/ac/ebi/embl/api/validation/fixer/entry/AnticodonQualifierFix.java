@@ -74,7 +74,7 @@ public class AnticodonQualifierFix extends EntryValidationCheck
 			{
 				CompoundLocation<Location> location = qualifier.getLocations();
 				String pos=LocationToStringCoverter.renderCompoundLocation(location);
-				String aminoAcid=qualifier.getAminoAcid().getAbbreviation();//valid amino acid(e.g. aa: Sec) from the anticodon (e.g. aa :SeC) value
+				String aminoAcid=qualifier.getAminoAcid()!=null?qualifier.getAminoAcid().getAbbreviation():null;//valid amino acid(e.g. aa: Sec) from the anticodon (e.g. aa :SeC) value
 				String aminoAcidString=qualifier.getAminoAcidString();//from the original anticodon value(e.g. aa :SeC)
 				SegmentFactory factory = new SegmentFactory();
 				Segment segment = factory.createSegment(entry.getSequence(), location);

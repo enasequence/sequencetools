@@ -26,4 +26,5 @@ public abstract class BlockReader extends FlatFileLineReader {
     public abstract String getTag();
     
     protected abstract void read(String block);
-}
+    
+ }

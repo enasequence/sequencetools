@@ -42,12 +42,25 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String platform;
 	private String moleculeType;
 	private String studyId;
+	private boolean tpa;
   	
-	public String getStudyId() {
+	public boolean isTpa() 
+	{
+		return tpa;
+	}
+
+	public void setTpa(boolean tpa) 
+	{
+		this.tpa = tpa;
+	}
+
+	public String getStudyId() 
+	{
 		return studyId;
 	}
 
-	public void setStudyId(String studyId) {
+	public void setStudyId(String studyId) 
+	{
 		this.studyId = studyId;
 	}
 
