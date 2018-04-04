@@ -21,12 +21,15 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Description("The feature name \\\"{0}\\\" must have at least one qualifier.\\\\")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
 	private List<String> featuresList = new ArrayList<>();

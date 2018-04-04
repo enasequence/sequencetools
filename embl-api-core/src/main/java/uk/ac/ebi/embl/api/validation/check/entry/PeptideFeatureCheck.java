@@ -30,6 +30,7 @@ import uk.ac.ebi.embl.api.translation.TranslationResult;
 import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
         "Translation of peptide feature must have a length equal to a multiple of 3\n" +
         "Translations are permitted to not be a multiple of 3 if the parent CDS feature is partial, as a start codon of 2 or 3 and the peptide feature has a start or end position equal to that of the parent CDS")
 @RemoteExclude
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class PeptideFeatureCheck extends EntryValidationCheck {
 
     protected static final String NO_PSEUDO_MESSAGE = "PeptideFeatureCheck_1";

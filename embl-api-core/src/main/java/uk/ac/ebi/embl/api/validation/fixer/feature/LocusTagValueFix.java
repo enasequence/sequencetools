@@ -2,8 +2,6 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -29,16 +27,16 @@ public class LocusTagValueFix extends FeatureValidationCheck
 			return result;
 		}
 		
-		List<Qualifier> LocustagQualifiers = feature.getQualifiers(Qualifier.LOCUS_TAG_QUALIFIER_NAME);
-		if (LocustagQualifiers == null)
+		List<Qualifier> locusTagQualifiers = feature.getQualifiers(Qualifier.LOCUS_TAG_QUALIFIER_NAME);
+		if (locusTagQualifiers == null)
 			return result;
 		
-		for(Qualifier qualifier:LocustagQualifiers)
+		for(Qualifier qualifier:locusTagQualifiers)
 		{
 			String locusTagValue=qualifier.getValue();
 			if(locusTagValue != null && !Utils.isAllUpperCase(locusTagValue)) {
 				qualifier.setValue(locusTagValue.toUpperCase());
-				reportMessage(Severity.FIX, feature.getOrigin(), LocusTagPrefixFix_ID, Qualifier.LOCUS_TAG_QUALIFIER_NAME, locusTagValue, qualifier.getValue());
+				reportMessage(Severity.FIX, feature.getOrigin(), LocusTagPrefixFix_ID, locusTagValue, qualifier.getValue());
 			}
 		}
 		

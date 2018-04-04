@@ -24,6 +24,11 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -32,9 +37,10 @@ public class CollectionDateQualifierFixTest {
 	private Feature feature;
 	private Qualifier qualifier;
 	private CollectionDateQualifierFix check;
+	private EmblEntryValidationPlanProperty property;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception{
 		ValidationMessageManager
 				.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		FeatureFactory featureFactory = new FeatureFactory();
@@ -42,7 +48,10 @@ public class CollectionDateQualifierFixTest {
 		feature = featureFactory.createFeature("feature");
 		qualifier = qualifierFactory.createQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
 		feature.addQualifier(qualifier);
+		property = new EmblEntryValidationPlanProperty();
+		property.validationScope.set(ValidationScope.EMBL);
 		check = new CollectionDateQualifierFix();
+		check.setEmblEntryValidationPlanProperty(property);
 	}
 
 	@Test
@@ -80,8 +89,44 @@ public class CollectionDateQualifierFixTest {
 		qualifier.setValue("1-04-2012");
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(0,
-				validationResult.count("CollectionDateQualifierFix_ID_1", Severity.FIX));
+				validationResult.count("CollectionDateQualifierFix_1", Severity.FIX));
 	}
-	
 
+	@Test
+	public void testNCBICollectionDateFormatDDMmmYY() throws Exception {
+		property.validationScope.set(ValidationScope.NCBI);
+		check = new CollectionDateQualifierFix();
+		check.setEmblEntryValidationPlanProperty(property);
+		qualifier.setValue("11-Oct-12");
+		ValidationResult validationResult = check.check(feature);
+		List<Qualifier> collectionDateQualifiers= feature.getQualifiers(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+		String fixedDate = collectionDateQualifiers.get(0).getValue();
+		assertEquals("11-Oct-2012", fixedDate);
+		assertEquals(1, validationResult.count("CollectionDateQualifierFix_1", Severity.FIX));
+	}
+
+	@Test
+	public void testNCBICollectionDateFormatDMmmYY() throws Exception {
+		property.validationScope.set(ValidationScope.NCBI);
+		check = new CollectionDateQualifierFix();
+		check.setEmblEntryValidationPlanProperty(property);
+		qualifier.setValue("1-Oct-12");
+		ValidationResult validationResult = check.check(feature);
+		List<Qualifier> collectionDateQualifiers= feature.getQualifiers(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+		String fixedDate = collectionDateQualifiers.get(0).getValue();
+		assertEquals("01-Oct-2012", fixedDate);
+		assertEquals(1, validationResult.count("CollectionDateQualifierFix_1", Severity.FIX));
+	}
+
+	@Test
+	public void testEMBLCollectionDateFormatDDMmmYY() throws Exception {
+		check = new CollectionDateQualifierFix();
+		check.setEmblEntryValidationPlanProperty(property);
+		qualifier.setValue("11-Oct-12");
+		ValidationResult validationResult = check.check(feature);
+		List<Qualifier> collectionDateQualifiers= feature.getQualifiers(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+		String fixedDate = collectionDateQualifiers.get(0).getValue();
+		assertEquals("11-Oct-12", fixedDate);
+		assertEquals(0, validationResult.count("CollectionDateQualifierFix_1", Severity.FIX));
+	}
 }

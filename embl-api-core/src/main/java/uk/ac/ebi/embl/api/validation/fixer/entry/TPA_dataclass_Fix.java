@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -34,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Description("TPA Description line fix")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class TPA_dataclass_Fix extends EntryValidationCheck {
 
 	private final static String FIX_ID = "TPA_dataclass_Fix";

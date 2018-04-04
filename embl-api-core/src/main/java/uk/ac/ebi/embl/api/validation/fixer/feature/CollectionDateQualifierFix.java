@@ -16,12 +16,14 @@
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
@@ -31,6 +33,7 @@ public class CollectionDateQualifierFix extends FeatureValidationCheck
 	
 	private static final String CollectionDateQualifierFix_ID_1 = "CollectionDateQualifierFix_1";
 	private final static Pattern INSDC_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{1})-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "DD-Mmm-YYYY"
+	private static final Pattern NCBI_DATE_FORMAT_PATTERN = Pattern.compile("^(\\d{1,2})-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\\d{2})$"); // "DD-Mmm-YY"
 
 	public ValidationResult check(Feature feature)
 	{
@@ -52,12 +55,22 @@ public class CollectionDateQualifierFix extends FeatureValidationCheck
 			String collectionDateValue = collectionDateQualifier.getValue();
 			if (INSDC_DATE_FORMAT_PATTERN_1.matcher(collectionDateValue).matches())
 			 {
-				collectionDateQualifier.setValue("0"+collectionDateValue);// convert date format "D-MON-YYYY" to "DD-MON-YYYY" 
+				collectionDateQualifier.setValue("0"+collectionDateValue);// convert date format "D-MON-YYYY" to "DD-MON-YYYY"
                 reportMessage(Severity.FIX, collectionDateQualifier.getOrigin(), CollectionDateQualifierFix_ID_1, collectionDateValue,collectionDateQualifier.getValue());
 			 }
+
+			if(getEmblEntryValidationPlanProperty().validationScope.get() == ValidationScope.NCBI) {
+				Matcher matcher = NCBI_DATE_FORMAT_PATTERN.matcher(collectionDateValue);
+				if (matcher.matches())
+				{
+					String monthYear = "-"+matcher.group(2)+"-20"+matcher.group(3);
+					collectionDateQualifier.setValue(matcher.group(1).length()==1?"0"+matcher.group(1)+monthYear:matcher.group(1)+monthYear);// convert date format "D-MON-YY" or "DD-MON-YY" to "DD-MON-YYYY"
+					reportMessage(Severity.FIX, collectionDateQualifier.getOrigin(), CollectionDateQualifierFix_ID_1, collectionDateValue,collectionDateQualifier.getValue());
+				}
+			}
 		}
 		return result;
 	}
-	
+
 		
 }
