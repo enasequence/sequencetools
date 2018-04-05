@@ -37,11 +37,25 @@ public class ValidationResult implements Serializable {
     private String reportMessage;
     private boolean writeMessageReports = false;//default
     private boolean writeResultReport;
+    private Origin  defaultOrigin;
 
     public ValidationResult() {
-		this.messages = new ArrayList<ValidationMessage<Origin>>();
+    	this( null );
 	}
 
+    public ValidationResult( Origin defaultOrigin ) {
+		this.defaultOrigin = defaultOrigin;
+		this.messages = new ArrayList<ValidationMessage<Origin>>();
+	}
+    
+    public Origin getDefaultOrigin() {
+    	return defaultOrigin;
+    }
+    
+    public void setDefaultOrigin( Origin defaultOrigin ) {
+    	this.defaultOrigin = defaultOrigin;
+    }
+    
     public String getReportMessage() {
         return reportMessage;
     }
@@ -79,6 +93,11 @@ public class ValidationResult implements Serializable {
 		if (message == null) {
 			return;
 		}
+		
+		if( null != defaultOrigin ) {
+			message.addOrigin( defaultOrigin );
+		}
+		
 		this.messages.add(message);
 	}
 
