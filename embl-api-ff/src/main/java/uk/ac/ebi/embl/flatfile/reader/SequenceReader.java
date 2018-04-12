@@ -81,10 +81,6 @@ public class SequenceReader extends FlatFileLineReader {
       
         entry.getSequence().setSequence( Entry.PROTEIN.equals(molType) ? compactProteinSequence( sequence ) 
                                                                   : compactDNASequence( sequence ) );
-       if(entry.getIdLineSequenceLength() != 0 && entry.getIdLineSequenceLength() != length)
-        {
-            error( "SQ.2", entry.getIdLineSequenceLength(), length );
-        }
         //entry.getSequence().setLength( length);
         entry.getSequence().setOrigin( new FlatFileOrigin( lineReader.getFileId(), firstLineNumber, lastLineNumber ) );
 		}

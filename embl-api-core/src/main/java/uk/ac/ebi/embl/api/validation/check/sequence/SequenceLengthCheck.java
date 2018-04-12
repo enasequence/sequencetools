@@ -43,6 +43,7 @@ public class SequenceLengthCheck extends EntryValidationCheck
 	private final static String SEQUENCE_LENGTH_GSS_MESSAGE_ID = "SequenceLengthCheck3";
 	private final static String SEQUENCE_LENGTH_TSA_MESSAGE_ID = "SequenceLengthCheck4";
 	private final static String SEQUENCE_LENGTH_INCRNA_MESSAGE_ID = "SequenceLengthCheck5";
+	private final static String SEQUENCE_LENGTH_MISMATCH_MESSAGE_ID = "SequenceLengthCheck6";
 
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
@@ -68,7 +69,11 @@ public class SequenceLengthCheck extends EntryValidationCheck
 		if (sequenceExistsCheck.check(entry).isValid())
 		{
 			long length = entry.getSequence().getLength();
-					
+
+			if(entry.getIdLineSequenceLength()>0 && entry.getIdLineSequenceLength() != length) {
+				reportError(entry.getOrigin(), SEQUENCE_LENGTH_MISMATCH_MESSAGE_ID, entry.getIdLineSequenceLength(), length);
+			}
+
 			if(length<200&&SequenceEntryUtils.isQualifierWithValueAvailable(Qualifier.NCRNA_CLASS_QUALIFIER_NAME, "lncRNA", entry))
 				
 				reportWarning(entry.getOrigin(), SEQUENCE_LENGTH_INCRNA_MESSAGE_ID);
