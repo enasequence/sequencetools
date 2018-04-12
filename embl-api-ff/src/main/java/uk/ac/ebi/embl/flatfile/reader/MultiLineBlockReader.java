@@ -116,7 +116,8 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		}
 		String blockString = block.toString();
 		//blockString=EntryUtils.convertNonAsciiStringtoAsciiString(blockString);
-		if(!lineReader.isIgnoreParseError())
+		//TODO: this validation can be removed
+		/*if(!lineReader.isIgnoreParseError())
 		{
             String blockStringwithNohtmlEntity=StringEscapeUtils.unescapeHtml4(blockString);
             if(fileType == null || fileType != FileType.GENBANK) {
@@ -125,7 +126,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
                     error("FF.15", getTag());
                 }
             }
-		}
+		}*/
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.
 			blockString = FlatFileUtils.shrink(blockString);

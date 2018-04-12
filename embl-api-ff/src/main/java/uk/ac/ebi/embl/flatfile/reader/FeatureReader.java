@@ -179,6 +179,7 @@ public class FeatureReader extends FlatFileLineReader {
 			error("FT.2"); // Missing feature name.
 			return null;
 		}
+		//TODO: read only source feature , skip all others using the flag and return null for other features
 		String locationString = line.substring(LOCATION_BEGIN_POS);
 		CompoundLocation<Location> location = readLocation(locationString);
 		if (location == null) {

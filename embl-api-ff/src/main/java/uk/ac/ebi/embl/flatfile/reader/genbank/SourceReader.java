@@ -35,12 +35,14 @@ public class SourceReader extends MultiLineBlockReader {
 
 	@Override
 	protected void read(String block) {
-		OrganismMatcher organismMatcher = new OrganismMatcher(this);
-		if (!organismMatcher.match(block)) {
-			error("FF.1", getTag());
-			return;
+		if(lineReader.isParseSource()) {
+			OrganismMatcher organismMatcher = new OrganismMatcher(this);
+			if (!organismMatcher.match(block)) {
+				error("FF.1", getTag());
+				return;
+			}
+			getCache().setScientificName(organismMatcher.getScientificName());
+			getCache().setCommonName(organismMatcher.getCommonName());
 		}
-		getCache().setScientificName(organismMatcher.getScientificName());
-		getCache().setCommonName(organismMatcher.getCommonName());
 	}
 }

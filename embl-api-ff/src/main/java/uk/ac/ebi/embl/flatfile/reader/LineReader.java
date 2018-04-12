@@ -47,6 +47,16 @@ public abstract class LineReader {
 	
 	private boolean ignoreParseError=false;
 
+	private ReaderOptions readerOptions;
+
+	public ReaderOptions getReaderOptions() {
+		return readerOptions;
+	}
+
+	public void setReaderOptions(ReaderOptions readerOptions) {
+		this.readerOptions = readerOptions;
+	}
+
 	public boolean isIgnoreParseError()
 	{
 		return ignoreParseError;

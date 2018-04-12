@@ -43,6 +43,9 @@ public class SequenceReader extends FlatFileLineReader {
     protected void 
     readLines() throws IOException
     {
+        //TODO: probably not a right place, line cursor has to be moved, check if skipTag logic can be used
+        if(lineReader.getReaderOptions().isIgnoreSequence())
+            return;
 
 		long start = System.currentTimeMillis();
 

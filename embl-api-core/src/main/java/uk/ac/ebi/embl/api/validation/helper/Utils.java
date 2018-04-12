@@ -216,7 +216,7 @@ public class Utils {
         if(input.equals("(null)")){
             return null;
         }
-        return input;
+        return input.trim();
     }
     
 	/**

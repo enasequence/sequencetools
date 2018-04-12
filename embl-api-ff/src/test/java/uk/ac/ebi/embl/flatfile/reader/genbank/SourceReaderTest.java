@@ -16,18 +16,29 @@
 package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 public class SourceReaderTest extends GenbankReaderTest {
 
+	Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
 	public void testReadWithoutCommonName() throws IOException {
-		initLineReader(
+
+		String blockString = "Feline panleukopenia virus gene for &quot; structural protein 1, complete cds, isolate: 483.";
+		//Matcher m = htmlEntityRegexPattern.matcher(blockStringwithNohtmlEntity);
+
+
+		String blockStringwithNohtmlEntity= StringEscapeUtils.unescapeHtml4(blockString);
+		System.out.println(blockStringwithNohtmlEntity);
+		/*initLineReader(
 			"SOURCE      dsfdsfjsdlkfslkdfjdsl\n"
 		);
 		ValidationResult result = (new SourceReader(lineReader)).read(entry);
-		assertEquals(0, result.count(Severity.ERROR));
+		assertEquals(0, result.count(Severity.ERROR));*/
     }
 
 	public void testReadWithCommonNameWrapped() throws IOException {
