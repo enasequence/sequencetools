@@ -86,7 +86,9 @@ public class QualifierValueFix extends FeatureValidationCheck
 						qual.setValue(qual.getValue().replaceAll(",",""));
 					}
 
-					reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_1,qName,qValue,qual.getValue());
+					if(!qValue.equals(qual.getValue())) {
+						reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_1, qName, qValue, qual.getValue());
+					}
 
 				}
 				if (getEntryDAOUtils() != null)
