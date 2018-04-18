@@ -1,6 +1,6 @@
  allprojects 
  {
-    ext.version_base = '1.1.211'
+    ext.version_base = '1.1.213'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -76,7 +76,7 @@
   {
     repositories 
      {
-      mavenDeployer 
+     /*mavenDeployer 
           {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
           }
@@ -125,9 +125,9 @@
                     }
                 }
             }
-        }
+        }*/
 //local repository	
-		 /*mavenDeployer 
+		 mavenDeployer 
 		 {
 		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
                 authentication(userName: artifactoryUsername, password: artifactoryPassword)
@@ -163,7 +163,7 @@
                     }
                 }
             }
-		 }*/
+		 }
 //local repository 
     }
   }

@@ -37,83 +37,85 @@ public enum ValidationUnit
 {
 			ENTRY_SPECIFIC_HEADER_ONLY_CHECKS
 			(
-				Entry_NameCheck.class,
-				AssemblySecondarySpanCheck.class,
-				DataclassCheck.class,
-				KWCheck.class
+				Entry_NameCheck.class,//exclude for master and include for assemblies
+				AssemblySecondarySpanCheck.class,//exclude for all assemblies
+				DataclassCheck.class,//exclude for assembly master 
+				KWCheck.class//exclude for assembly master
 			),
 			MASTER_HEADER_ONLY_CHECKS(
-					EntryProjectIdCheck.class,
-					HoldDateCheck.class,
+					EntryProjectIdCheck.class,//exclude for all assemblies
+					HoldDateCheck.class,//include for all
 					//ReferenceCheck.class,
-					MasterEntryDescriptionCheck.class
+					MasterEntryDescriptionCheck.class//include only for assembly master
 			),
 			SOURCE_FEAURES_ONLY_CHECKS
 			(
-				MasterEntrySourceCheck.class,
-				ExclusiveSourceQualifiersCheck.class,
-				HostQualifierCheck.class,
-				OrganismAndRequiredQualifierCheck.class,
-				OrganismNotQualifierCheck.class,
-				OrganismPatternAndQualifierValueCheck.class,
-				SingleSourceQualifiersCheck.class,
-				SourceFeatureOnlyCheck.class,
-				SourceFeatureQualifierCheck.class,
-				Type_materialQualifierCheck.class,
-				CollectionDateQualifierCheck.class,
-				Isolation_sourceQualifierCheck.class
+				MasterEntrySourceCheck.class,//include only for assembly master
+				ExclusiveSourceQualifiersCheck.class,//include for all
+				HostQualifierCheck.class,//include for all
+				OrganismAndRequiredQualifierCheck.class, //include for all
+				OrganismNotQualifierCheck.class,//include for all
+				OrganismPatternAndQualifierValueCheck.class,//include for all
+				SingleSourceQualifiersCheck.class,//include for all
+				SourceFeatureOnlyCheck.class,//include for all
+				SourceFeatureQualifierCheck.class,//include for all
+				Type_materialQualifierCheck.class,//include for all
+				CollectionDateQualifierCheck.class,//include for all
+				Isolation_sourceQualifierCheck.class//include for all
 			),
 			SOURCE_DEPENDSON_SEQUENCE_CHECKS
 			(
-				MoleculeTypeAndOrganismCheck.class,
-				MoleculeTypeAndSourceQualifierCheck.class,
-				SequenceCoverageCheck.class
+				MoleculeTypeAndOrganismCheck.class,//exclude for assembly master
+				MoleculeTypeAndSourceQualifierCheck.class,//exclude for assembly master
+				SequenceCoverageCheck.class//exclude for assembly master
 			),
 
 			FASTA_AGP_FEATURE_CHECKS
 			(
-				QualifierCheck.class,
-				GapFeatureBasesCheck.class,
-				GapFeatureLocationsCheck.class,
-				Assembly_gapFeatureCheck.class,
-				WGSGapCheck.class
+				QualifierCheck.class, //include for all
+				GapFeatureBasesCheck.class,//include for all
+				GapFeatureLocationsCheck.class,//include for all
+				Assembly_gapFeatureCheck.class,//include for all
+				WGSGapCheck.class//include for all
 		     ),
-		     
+			COMMON_FEATURE_CHECKS
+			(
+					ExclusiveQualifiersCheck.class,//include for all
+					QualifierAndRequiredQualifierinFeatureCheck.class
+			),
+					     
 			NON_SOURCE_FEATURES_ONLY_CHECKS
 			(
-				DuplicateFeatureCheck.class, // need to separate source feature
-												// duplication check
-				ProteinIdExistsCheck.class,
-				EntryFeatureLocationCheck.class,
-				ExonFeaturesIntervalCheck.class,
-				FeaturewithRemoteLocationCheck.class,
-				GeneAssociationCheck.class,
-				GeneFeatureLocusTagCheck.class,
-				LocusTagAssociationCheck.class,
-				LocusTagPrefixCheck.class,
-				OperonFeatureCheck.class,
-				QualifierAndRequiredQualifierinEntryCheck.class,
-				QualifierPatternAndFeatureCheck.class,
-				QualifierValueNotQualifierEntryCheck.class,
-				QualifierValueRequiredQualifierValueEntryCheck.class,
-				AntiCodonQualifierCheck.class,
-				TranslExceptQualifierCheck.class,
-				CdsFeatureAminoAcidCheck.class,
-				DeprecatedQualifiersCheck.class,
-				EC_numberandProductValueCheck.class,
-				EstimatedLengthCheck.class,
-				ExclusiveQualifiersCheck.class,
-				ExclusiveQualifiersWithSameValueCheck.class,
-				FeatureKeyCheck.class,
-				FeatureLengthCheck.class,
-				FeatureLocationCheck.class,
+				DuplicateFeatureCheck.class, //include for all
+				ProteinIdExistsCheck.class,//exclude for assembly master
+				EntryFeatureLocationCheck.class,//exclude for assembly master
+				ExonFeaturesIntervalCheck.class,//exclude for assembly master
+				FeaturewithRemoteLocationCheck.class,//exclude for assembly master
+				GeneAssociationCheck.class,//exclude for assembly master
+				GeneFeatureLocusTagCheck.class,//exclude for assembly master
+				LocusTagAssociationCheck.class,//exclude for assembly master
+				LocusTagPrefixCheck.class,//exclude for assembly master
+				OperonFeatureCheck.class,//exclude for assembly master
+				QualifierAndRequiredQualifierinEntryCheck.class,//include for all
+				QualifierPatternAndFeatureCheck.class,//include for all
+				QualifierValueNotQualifierEntryCheck.class,//include for all
+				QualifierValueRequiredQualifierValueEntryCheck.class,//include for all
+				AntiCodonQualifierCheck.class,//exclude for assembly master
+				TranslExceptQualifierCheck.class,//exclude for assembly master
+				CdsFeatureAminoAcidCheck.class,//exclude for assembly master
+				DeprecatedQualifiersCheck.class,//include for all
+				EC_numberandProductValueCheck.class,//exclude for assembly master
+				EstimatedLengthCheck.class,//exclude for assembly master
+				ExclusiveQualifiersWithSameValueCheck.class,//include for all
+				FeatureKeyCheck.class,//include for all
+				FeatureLengthCheck.class,//include for all
+				FeatureLocationCheck.class,//include for all
 				FeatureLocationTypeCheck.class, // separate the sourcefeature
 												// location check
 				FeatureQualifiersRequiredCheck.class,
 				IntronLengthWithinCDSCheck.class,
 				NcRNAQualifierValueAndQualifierPatternCheck.class,
 				PCRPrimersQualifierCheck.class,
-				QualifierAndRequiredQualifierinFeatureCheck.class,
 				QualifierCheck.class, // separate the source feature qualifier
 										// checks
 				QualifierPatternAndQualifierCheck.class,
@@ -274,10 +276,7 @@ public enum ValidationUnit
 				   NCBIQualifierCheck.class,
 				   JournalFix.class
 		   ),
-			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES
-			(
-			),
-			
+						
 //  GCS entry validation checks
 			ASSEMBLYINFO_CHECKS
 			(
