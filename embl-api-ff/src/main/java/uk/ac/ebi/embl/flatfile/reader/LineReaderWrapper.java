@@ -67,6 +67,7 @@ public class LineReaderWrapper implements ILineReader {
 	public String readLine() throws IOException {
 
 		if (bufferedReader != null) {
+
 			return bufferedReader.readLine();
 		} else if (raf != null) {
 			return raf.readLine();
@@ -113,5 +114,12 @@ public class LineReaderWrapper implements ILineReader {
 			throw new UnsupportedOperationException(
 					"Cannot seek without randon access file");
 		}
+	}
+
+	public long getDilePointer() throws  IOException{
+		if(raf != null) {
+			return raf.getFilePointer();
+		}
+		return 0L;
 	}
 }

@@ -36,16 +36,11 @@ public class OSReader extends MultiLineBlockReader {
 	@Override
 	protected void read(String block) {
 		OrganismMatcher organismMatcher = new OrganismMatcher(this);
-		if (!organismMatcher.match(block)) {
-			if(lineReader.isIgnoreParseError())
-			{
-				getCache().setScientificName(block);
-			}
-			else
-			error("FF.10", block);
-			return;
+		if (organismMatcher.match(block)) {
+			getCache().setScientificName(organismMatcher.getScientificName());
+			getCache().setCommonName(organismMatcher.getCommonName());
+		} else {
+			getCache().setScientificName(block);
 		}
-		getCache().setScientificName(organismMatcher.getScientificName());
-		getCache().setCommonName(organismMatcher.getCommonName());
 	}
 }

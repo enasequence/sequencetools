@@ -19,10 +19,10 @@ import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.FileType;
+import uk.ac.ebi.embl.api.validation.helper.EMBLStringEscapeUtil;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QualifierMatcher extends FlatFileMatcher {
@@ -30,7 +30,7 @@ public class QualifierMatcher extends FlatFileMatcher {
 	public QualifierMatcher(FlatFileLineReader reader) {
 		super(reader, PATTERN);
 	}
-	 Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
+
 	private static final Pattern PATTERN = Pattern.compile(
 		"\\/([a-zA-Z1-9-_]+)\\s*=?(.*)?");
 
@@ -73,10 +73,7 @@ public class QualifierMatcher extends FlatFileMatcher {
 				}
 
 				if (fileType == null || fileType != FileType.GENBANK) {
-					Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
-					if (m.find()) {
-						error("FT.13", qualifierName, qualifierValue);
-					}
+					qualifierValue = EMBLStringEscapeUtil.escapeASCIIHtmlEntities(qualifierValue).toString();
 				}
 			}
 			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');

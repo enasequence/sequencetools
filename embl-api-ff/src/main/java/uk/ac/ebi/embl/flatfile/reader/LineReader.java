@@ -371,7 +371,9 @@ public abstract class LineReader {
 			return false;
 		}
 
-		while (true) {
+		while (true) {//TODO: we can get the start and end offset here as well(have to compare start and end tags)
+			//TODO: keep start offset, when you find end offset, store both in entry and reset
+
 			nextLine = reader.readLine();
 			++nextLineNumber;
 			if (nextLine != null) {

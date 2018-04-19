@@ -54,6 +54,17 @@ public class FeatureReader extends FlatFileLineReader {
     private static final int LOCATION_BEGIN_POS = 21;
     private static final int QUALIFIER_BEGIN_POS = 21;
      int quotecount=0;
+
+     private void skipFeature() throws IOException {
+		 while (true) {
+			 lineReader.readLine();
+			 String nextLine = lineReader.getNextMaskedLine();
+
+			 if (isFeature(nextLine)) {
+				 break;
+			 }
+		 }
+	 }
     protected void readLines() throws IOException {
     	// The feature names must appear in the correct position.
     	// The feature qualifiers must appear in the correct position.
@@ -64,23 +75,41 @@ public class FeatureReader extends FlatFileLineReader {
     	// The qualifier value can only continue if the qualifier is double 
     	// quoted.    	
     	boolean moltypeFound = false;
-    	Feature feature = readFeature();
-    	if (feature == null) {
-    		return;
-    	}
-    	if(Feature.SOURCE_FEATURE_NAME.equals(feature.getName())&&skipSource)
-    	{
-    		while(true)
-    		{
-         		lineReader.readLine();
-	    		String nextLine = lineReader.getNextMaskedLine();
 
-    			if(isFeature(nextLine))
-    			{
-    				break;
-    			}
-    		}
-    	}
+		int firstLineNumber = lineReader.getCurrentLineNumber();
+		String line = lineReader.getCurrentMaskedLine();
+		if (line.length() <= LOCATION_BEGIN_POS) {
+			error("FT.1"); // Invalid feature.
+			return;
+		}
+		String featureName = line.substring(0, LOCATION_BEGIN_POS).trim();
+		if(StringUtils.contains(featureName," "))
+		{
+			error("FT.12",featureName); // FeatureName shouldn't contain spaces
+			return;
+		}
+
+		if (FlatFileUtils.isBlankString(featureName)) {
+			error("FT.2"); // Missing feature name.
+			return;
+		}
+
+		featureName = Utils.getValidFeatureName(featureName);
+
+    	if(Feature.SOURCE_FEATURE_NAME.equals(featureName) )
+    	{
+    		if(skipSource) {
+				skipFeature();
+			}
+    	} else if(lineReader.getReaderOptions() != null && lineReader.getReaderOptions().isParseSourceOnly()) {
+			skipFeature();
+		}
+
+		Feature feature = readFeature(firstLineNumber, line, featureName);
+		if (feature == null) {
+			return;
+		}
+
     	while (true) {
     		Qualifier qualifier = readQualifier();
     		if (qualifier != null) {
@@ -161,32 +190,16 @@ public class FeatureReader extends FlatFileLineReader {
 	
     }
 
-    private Feature readFeature() throws IOException {
-    	int firstLineNumber = lineReader.getCurrentLineNumber();
-		String line = lineReader.getCurrentMaskedLine();
-		if (line.length() <= LOCATION_BEGIN_POS) {
-			error("FT.1"); // Invalid feature.
-			return null;
-		}
-		String featureName = line.substring(0, LOCATION_BEGIN_POS).trim();
-		if(StringUtils.contains(featureName," "))
-		{
-			error("FT.12",featureName); // FeatureName shouldn't contain spaces
-			return null;
-		}
-		
-		if (FlatFileUtils.isBlankString(featureName)) {
-			error("FT.2"); // Missing feature name.
-			return null;
-		}
-		//TODO: read only source feature , skip all others using the flag and return null for other features
+    private Feature readFeature(int firstLineNumber, String line, String featureName) throws IOException {
+
+
 		String locationString = line.substring(LOCATION_BEGIN_POS);
 		CompoundLocation<Location> location = readLocation(locationString);
 		if (location == null) {
 			return null;
 		}
 		int lastLineNumber = lineReader.getCurrentLineNumber();
-		featureName=Utils.getValidFeatureName(featureName);
+
 		Feature feature = (new FeatureFactory()).createFeature(featureName);
 		feature.setOrigin(new FlatFileOrigin(lineReader.getFileId(), firstLineNumber, lastLineNumber));
 		feature.setLocations(location);
