@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -265,22 +267,15 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 	/** Writes the message in text format.
      * @param writer
      */
-	public void writeTextMessage(Writer writer) throws IOException {
-		if (getSeverity() == Severity.ERROR) {
-			writer.write("ERROR: ");
-		}
-		else if (getSeverity() == Severity.WARNING) {
-			writer.write("WARNING: ");
-		}
-		else if (getSeverity() == Severity.INFO) {
-			writer.write("INFO: ");
-		}
-		writer.write(getMessage());
-		for (Origin origin : getOrigins()) {
-			String originText = origin.getOriginText();
-			writer.write(originText);
-		}
-		writer.write("\n");
+	public void 
+	writeTextMessage( Writer writer ) throws IOException 
+	{
+		
+		writer.write( String.format( "%TF %-10s %s %s\n",
+				                     System.currentTimeMillis(),
+				                     getSeverity(), 
+				                     getMessage(), 
+				                     getOrigins().stream().map( e -> e.getOriginText() ).collect( Collectors.joining( ", ", "<", ">" ) ) ) );
 	}
 
 	/** Writes the message in xml format. 

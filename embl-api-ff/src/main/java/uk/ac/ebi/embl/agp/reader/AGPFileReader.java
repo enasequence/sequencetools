@@ -78,28 +78,29 @@ public class AGPFileReader extends FlatFileEntryReader
 	   
      	String[] fields = line.split(SCREGEX);
 		
-		if (fields.length != NUMBER_OF_COLUMNS)
+		if( fields.length != NUMBER_OF_COLUMNS )
 		{
-			if (fields[COMPONENT_TYPE_ID] != null && ("N".equals(fields[COMPONENT_TYPE_ID]) || "U".equals(fields[COMPONENT_TYPE_ID])))
+			if( fields.length >= COMPONENT_TYPE_ID + 1 
+				&& fields[ COMPONENT_TYPE_ID ] != null 
+				&& ( "N".equals( fields[ COMPONENT_TYPE_ID ] ) || "U".equals( fields[ COMPONENT_TYPE_ID ] ) ) )
 			{
-	          if("NO".equalsIgnoreCase(fields[LINKAGE]))
+	          if( fields.length >= LINKAGE + 1
+	        	  && "NO".equalsIgnoreCase( fields[ LINKAGE ] ) )
 	          {
-	        	  if(fields.length!= NO_LINKAGE_GAP_NUMBER_OF_COLUMNS)
+	        	  if( fields.length!= NO_LINKAGE_GAP_NUMBER_OF_COLUMNS )
 	        	  {
-	        	   error("NumberOfColumnsCheck");
-				   return;
+	        		  error( "NumberOfColumnsCheck" );
+	        		  return;
 	        	  }
-	          }
-	          else
+	          }else
 	          {
-	        	  error("NumberOfColumnsCheck");
+	        	  error( "NumberOfColumnsCheck" );
 				  return;
 	          }
-	        }
-			else
+	        } else
 			{
-			error("NumberOfColumnsCheck");
-			return;
+				error( "NumberOfColumnsCheck" );
+				return;
 			}
 		}
 		

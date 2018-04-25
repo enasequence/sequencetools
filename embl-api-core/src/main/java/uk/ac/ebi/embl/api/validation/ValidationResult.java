@@ -15,13 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author dlorenc
@@ -311,34 +312,40 @@ public class ValidationResult implements Serializable {
         writeMessages(writer, getMessages(), targetOrigin);
     }
 
-    private void writeMessages(Writer writer,
-                               Collection<ValidationMessage<Origin>> messages,
-                               String targetOrigin) throws IOException {
+    private void 
+    writeMessages( Writer writer,
+                   Collection<ValidationMessage<Origin>> messages,
+                   String targetOrigin ) throws IOException 
+    {
 
-        if (!messages.isEmpty()) {
-            for (ValidationMessage<Origin> message : messages) {
-                writer.write("\n" + message.getSeverity());
-                writer.write(": ");
-                writer.write(message.getMessage());
-//                writer.write(" (" + message.getMessageKey() + ") ");
-                for (Object origin : message.getOrigins()) {
-        			String originText = ((Origin) origin).getOriginText();
-        			writer.write(originText);
-                    writer.write(" - " + targetOrigin);
+        if( !messages.isEmpty() )
+        {
+            for( ValidationMessage<Origin> message : messages )
+            {
+                writer.write( String.format( "\n%s %s%s", 
+                		                     message.getSeverity(), 
+                		                     message.getMessage(),
+                	                         message.getOrigins().stream()
+                	                         		.map( e -> null != targetOrigin ? targetOrigin + ", " + e.getOriginText().trim() : e.getOriginText().trim() )
+                	                         		.collect( Collectors.joining("; ", " [", "]" ) ) ) 
+                	                       );
+                                              
+                if( message.isHasCuratorMessage() )
+                {
+                    writer.write( "\n********\nCurator message: " + message.getCuratorMessage() + "\n********" );
                 }
 
-                if (message.isHasCuratorMessage()) {
-                    writer.write("\n********\nCurator message: " + message.getCuratorMessage() + "\n********");
+                if( writeMessageReports && message.isHasReportMessage() )
+                {
+                    writer.write( "\n********\nMessage Report:\n\n" + message.getReportMessage() + "END message report********" );
                 }
-
-                if (writeMessageReports && message.isHasReportMessage()) {
-                    writer.write("\n********\nMessage Report:\n\n" + message.getReportMessage() + "END message report********");
-                }
+                
                 writer.flush();
             }
         }
 
-        if (writeResultReport && isHasReportMessage()) {
+        if( writeResultReport && isHasReportMessage() )
+        {
             writer.write("\nReport:\n\n" + getReportMessage() + "********\n");
             writer.flush();
         }
