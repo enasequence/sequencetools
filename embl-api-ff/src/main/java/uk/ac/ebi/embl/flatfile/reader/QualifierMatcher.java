@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.FileType;
-import uk.ac.ebi.embl.api.validation.helper.EMBLStringEscapeUtil;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -41,44 +41,32 @@ public class QualifierMatcher extends FlatFileMatcher {
 		return readQualifier(fileType);
 	}
 
-	public Qualifier getQualifier() throws UnsupportedEncodingException {
+	public Qualifier getQualifier()  {
 		return  readQualifier(null);
 	}
 
-	private Qualifier readQualifier(FileType fileType) throws UnsupportedEncodingException {
+	private Qualifier readQualifier(FileType fileType)  {
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		String qualifierName = getString(GROUP_QUALIFIER_NAME);
 		String qualifierValue = getString(GROUP_QUALIFIER_VALUE);
-		int nofQuotes=StringUtils.countMatches(qualifierValue, "\"");
-		Qualifier qualifier=qualifierFactory.createQualifier(qualifierName);
-		if (qualifierValue != null)
-		{
-			if(!getReader().getLineReader().isIgnoreParseError()) {
-				if (!qualifier.isValueQuoted() && nofQuotes != 0) {
-					if (!qualifier.getName().equals(Qualifier.COMPARE_QUALIFIER_NAME))
-						error("FT.10", qualifierName, qualifierValue);
-				} else if (qualifier.isValueQuoted()) {
-					if (nofQuotes == 0) {
-						if (!qualifier.getName().equals(Qualifier.ANTICODON_QUALIFIER_NAME))
-							error("FT.10", qualifierName, qualifierValue);
-					} else {
-						if (qualifierValue.indexOf('"') != 0 && qualifierValue.lastIndexOf('"') != qualifierValue.length() - 1)
 
-						{
-							error("FT.10", qualifierName, qualifierValue);
-						} else if (nofQuotes % 2 != 0) {
-							error("FT.10", qualifierName, qualifierValue);
-						}
+		Qualifier qualifier=qualifierFactory.createQualifier(qualifierName);
+		if (qualifierValue != null) {
+			if(getReader().getLineReader().getReaderOptions().isIgnoreParserErrors()){
+				int nofQuotes = StringUtils.countMatches(qualifierValue, "\"");
+				if (nofQuotes != 0) {
+					if (qualifierValue.indexOf('"') != 0 && qualifierValue.lastIndexOf('"') != qualifierValue.length() - 1) {
+						error("FT.10", qualifierName, qualifierValue);
+					}
+					qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
+					qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
+					if(nofQuotes > 2 && StringUtils.countMatches(qualifierValue, "\"") > 0){
+						error("FT.10", qualifierName, qualifierValue);
 					}
 				}
-
-				if (fileType == null || fileType != FileType.GENBANK) {
-					qualifierValue = EMBLStringEscapeUtil.escapeASCIIHtmlEntities(qualifierValue).toString();
-				}
+				qualifierValue = Utils.escapeASCIIHtmlEntities(qualifierValue).toString();
 			}
-			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
-			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
-			
+
 			qualifier.setValue(qualifierValue);
 			return qualifier;
 		} else

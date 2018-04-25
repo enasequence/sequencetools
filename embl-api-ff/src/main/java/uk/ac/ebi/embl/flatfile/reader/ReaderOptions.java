@@ -4,6 +4,7 @@ public class ReaderOptions {
 
     private boolean ignoreSequence;
     private boolean parseSourceOnly;
+    private boolean ignoreParserErrors;
 
     public boolean isIgnoreSequence() {
         return ignoreSequence;
@@ -19,5 +20,13 @@ public class ReaderOptions {
 
     public void setParseSourceOnly(boolean parseSourceOnly) {
         this.parseSourceOnly = parseSourceOnly;
+    }
+
+    public boolean isIgnoreParserErrors() {
+        return ignoreParserErrors;
+    }
+
+    public void setIgnoreParserErrors(boolean ignoreParserErrors) {
+        this.ignoreParserErrors = ignoreParserErrors;
     }
 }

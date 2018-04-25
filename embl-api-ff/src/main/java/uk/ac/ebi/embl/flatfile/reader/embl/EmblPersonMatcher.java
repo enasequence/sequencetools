@@ -31,7 +31,7 @@ public class EmblPersonMatcher extends FlatFileMatcher {
 
 	public static final Pattern PATTERN = Pattern.compile(
 			"^([^\\.]+)" + // surname
-			"((\\s+[^\\s\\.]*\\s*\\..*)?|(\\.{1}[^\\s\\.]*\\s*\\.*)?)$"); // first name
+			"(\\s+[^\\s\\.]*\\s*\\..*)?$"); // first name
 	
 	private static final int GROUP_SURNAME = 1;
 	private static final int GROUP_FIRST_NAME = 2;

@@ -16,7 +16,7 @@
 package uk.ac.ebi.embl.flatfile.reader;
 
 import uk.ac.ebi.embl.api.validation.FileType;
-import uk.ac.ebi.embl.api.validation.helper.EMBLStringEscapeUtil;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
@@ -116,7 +116,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		{
 			blockString = block.toString();
 		} else {
-			blockString = EMBLStringEscapeUtil.escapeASCIIHtmlEntities(block).toString();
+			blockString = Utils.escapeASCIIHtmlEntities(block).toString();
 		}
 
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {

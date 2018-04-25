@@ -80,7 +80,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					  	 break;
 					case "TPA":
 						if(isValidTPA(fieldValue))
-							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(fieldValue)||"true".equalsIgnoreCase(fieldValue)?true:false);
+							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(fieldValue)||"true".equalsIgnoreCase(fieldValue));
 						else
 						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
 						break;
@@ -100,10 +100,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 	public static boolean isInteger(String s) {
 	    try { 
 	        Integer.parseInt(s); 
-	    } catch(NumberFormatException e) { 
+	    } catch(NumberFormatException | NullPointerException e) {
 	        return false; 
-	    } catch(NullPointerException e) {
-	        return false;
 	    }
 	    return true;
 	}
@@ -115,10 +113,11 @@ public class AssemblyInfoReader extends GCSEntryReader
 		}
 
 		molType = StringUtils.deleteWhitespace(molType).toUpperCase();
-		if (!molType.equals("GENOMICDNA") && !molType.equals("GENOMICRNA") && !molType.equals("VIRALCRNA"))
+		return molType.equals("GENOMICDNA") || molType.equals("GENOMICRNA") || molType.equals("VIRALCRNA");
+		/*if (!molType.equals("GENOMICDNA") && !molType.equals("GENOMICRNA") && !molType.equals("VIRALCRNA"))
 			return false;
 
-		return true;
+		return true;*/
 
 	}
 	

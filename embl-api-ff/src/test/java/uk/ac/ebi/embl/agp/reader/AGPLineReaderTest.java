@@ -4,11 +4,6 @@ import java.io.IOException;
 
 public class AGPLineReaderTest extends AGPReaderTest{
 
-	public void testingReaders() throws  Exception {
-
-	}
-
-
 	public void testGetCurrentTag_StandardTag() throws IOException {
 		setLineReader(
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+"

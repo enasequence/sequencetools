@@ -41,7 +41,7 @@ public class RAReader extends MultiLineBlockReader {
 		for (String author : FlatFileUtils.split(block, ",")) {
 			EmblPersonMatcher personMatcher = new EmblPersonMatcher(this);
 			if (!personMatcher.match(author)) {
-				error("RA.1", author);
+				getCache().getPublication().addAuthor(new ReferenceFactory().createPerson(null, author));
 			}
 			else {
 				getCache().getPublication().addAuthor(personMatcher.getPerson());
