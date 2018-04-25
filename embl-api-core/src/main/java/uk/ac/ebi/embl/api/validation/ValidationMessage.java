@@ -18,12 +18,8 @@ package uk.ac.ebi.embl.api.validation;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class ValidationMessage<T extends Origin> implements Serializable {
@@ -69,6 +65,8 @@ public class ValidationMessage<T extends Origin> implements Serializable {
      * An exception associated with the validation message.
      */
     private Throwable throwable;
+
+	private ValidationMessage.MessageFormatter messageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
     
     /**
      * Static string denoting that there is no message key for this message
@@ -207,6 +205,14 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 		this.throwable = throwable;
 	}
 
+	public MessageFormatter getMessageFormatter() {
+		return messageFormatter;
+	}
+
+	public void setMessageFormatter(MessageFormatter messageFormatter) {
+		this.messageFormatter = messageFormatter;
+	}
+
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);
@@ -261,25 +267,90 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 	 * @return created validation message
 	 */
 	public static ValidationMessage<Origin> message(Severity severity, String messageKey, Object... params) {
-		return new ValidationMessage<Origin>(severity, messageKey, params);
-	}
-		
-	/** Writes the message in text format.
-     * @param writer
-     */
-	public void 
-	writeTextMessage( Writer writer ) throws IOException 
-	{
-		
-		writer.write( String.format( "%TF %-10s %s %s\n",
-				                     System.currentTimeMillis(),
-				                     getSeverity(), 
-				                     getMessage(), 
-				                     getOrigins().stream().map( e -> e.getOriginText() ).collect( Collectors.joining( ", ", "<", ">" ) ) ) );
+		return new ValidationMessage<>(severity, messageKey, params);
 	}
 
-	/** Writes the message in xml format. 
-	 */		
-	public void writeXmlMessage() {		
-	}	
+
+
+	public interface MessageFormatter
+	{
+		void writeMessage(Writer writer, ValidationMessage<?> validationMessage, String targetOrigin) throws IOException;
+	}
+
+	public static class TextMessageFormatter implements MessageFormatter
+	{
+		private final String LINE_BEGIN;
+		private final String LINE_END;
+		private final String ORIGIN_BEGIN = "[";
+		private final String ORIGIN_END = "]";
+		private final String ORIGIN_SEPARATOR = ", ";
+
+		public TextMessageFormatter(String lineBegin, String lineEnd) {
+			this.LINE_BEGIN = lineBegin;
+			this.LINE_END = lineEnd;
+		}
+
+		@Override
+		public void writeMessage(Writer writer, ValidationMessage<?> message, String targetOrigin) throws IOException
+		{
+			List<Origin> allOrigins = new ArrayList<>( message.getOrigins().size() + (targetOrigin != null ? 1 : 0) );
+			if (targetOrigin != null) {
+				allOrigins.add(new DefaultOrigin(targetOrigin));
+			}
+			allOrigins.addAll( message.getOrigins() );
+
+			String origin = allOrigins.stream().map( (e) -> e.getOriginText()).collect(
+					Collectors.joining(ORIGIN_SEPARATOR, ORIGIN_BEGIN, ORIGIN_END));
+			if ((ORIGIN_BEGIN + ORIGIN_END).equals(origin)) {
+				origin = "";
+			}
+			else {
+				origin = " " + origin;
+			}
+
+			writer.write(String.format("%s%s%s: %s%s%s",
+				LINE_BEGIN,
+				getMessagePrefix(),
+				message.getSeverity(),
+				message.getMessage(),
+				origin,
+				LINE_END));
+		}
+
+		protected String getMessagePrefix() {
+			return "";
+		}
+	}
+
+	public static class TextTimeMessageFormatter extends TextMessageFormatter
+	{
+		public TextTimeMessageFormatter(String lineBegin, String lineEnd) {
+			super(lineBegin, lineEnd);
+		}
+
+		@Override
+		protected String getMessagePrefix() {
+			return String.format("%TFT%1$tH:%1$tM:%1$tS ", System.currentTimeMillis());
+		}
+	}
+
+	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END = new TextMessageFormatter("\n", "");
+
+	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextMessageFormatter("", "\n");
+
+	public static final MessageFormatter TEXT_TIME_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextTimeMessageFormatter("", "\n");
+
+	/** Writes the message in text format.
+     */
+	public void writeMessage( Writer writer ) throws IOException
+	{
+		messageFormatter.writeMessage( writer, this, null );
+	}
+
+	/** Writes the message with an additional target origin.
+	 */
+	public void writeMessage( Writer writer, String targetOrigin ) throws IOException
+	{
+		messageFormatter.writeMessage( writer, this, targetOrigin );
+	}
 }

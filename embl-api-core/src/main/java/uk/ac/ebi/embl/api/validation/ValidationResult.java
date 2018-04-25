@@ -15,14 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation;
 
-import java.io.IOException;
+  import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+  import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author dlorenc
@@ -36,8 +35,10 @@ public class ValidationResult implements Serializable {
 
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;
-    private boolean writeMessageReports = false;//default
-    private boolean writeResultReport;
+	private boolean writeCuratorMessage = true;
+    private boolean writeReportMessage = false;
+	private boolean writeResultReport = false;
+	private ValidationMessage.MessageFormatter messageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END;
     private Origin  defaultOrigin;
 
     public ValidationResult() {
@@ -56,8 +57,8 @@ public class ValidationResult implements Serializable {
     public void setDefaultOrigin( Origin defaultOrigin ) {
     	this.defaultOrigin = defaultOrigin;
     }
-    
-    public String getReportMessage() {
+
+	public String getReportMessage() {
         return reportMessage;
     }
 
@@ -69,13 +70,21 @@ public class ValidationResult implements Serializable {
         return reportMessage != null;
     }
 
-    public boolean isWriteMessageReports() {
-        return writeMessageReports;
+	public boolean isWriteCuratorMessage() {
+		return writeCuratorMessage;
+	}
+
+	public void setWriteCuratorMessage(boolean writeCuratorMessage) {
+		this.writeCuratorMessage = writeCuratorMessage;
+	}
+
+    public boolean isWriteReportMessage() {
+        return writeReportMessage;
     }
 
-    public void writeMessageReports(boolean writeMessageReports) {
-        this.writeMessageReports = writeMessageReports;
-    }
+	public void setWriteReportMessage(boolean writeReportMessage) {
+		this.writeReportMessage = writeReportMessage;
+	}
 
     public boolean isWriteResultReport() {
         return writeResultReport;
@@ -84,6 +93,15 @@ public class ValidationResult implements Serializable {
     public void writeResultReport(boolean writeResultReport) {
         this.writeResultReport = writeResultReport;
     }
+
+	public ValidationMessage.MessageFormatter getMessageFormatter() {
+		return messageFormatter;
+	}
+
+	public void setMessageFormatter(ValidationMessage.MessageFormatter messageFormatter) {
+		this.messageFormatter = messageFormatter;
+	}
+
 
     /**
 	 * Adds a validation message to the result.
@@ -308,46 +326,42 @@ public class ValidationResult implements Serializable {
         writeMessages(writer, getMessages(), null);
     }
 
-    public void writeMessages(Writer writer, String targetOrigin) throws IOException {
+    public void writeMessages(Writer writer,
+							  String targetOrigin) throws IOException {
         writeMessages(writer, getMessages(), targetOrigin);
     }
 
-    private void 
-    writeMessages( Writer writer,
-                   Collection<ValidationMessage<Origin>> messages,
-                   String targetOrigin ) throws IOException 
-    {
+	private void
+	writeMessages( Writer writer,
+				   Collection<ValidationMessage<Origin>> messages,
+				   String targetOrigin) throws IOException {
 
-        if( !messages.isEmpty() )
-        {
-            for( ValidationMessage<Origin> message : messages )
-            {
-                writer.write( String.format( "\n%s %s%s", 
-                		                     message.getSeverity(), 
-                		                     message.getMessage(),
-                	                         message.getOrigins().stream()
-                	                         		.map( e -> null != targetOrigin ? targetOrigin + ", " + e.getOriginText().trim() : e.getOriginText().trim() )
-                	                         		.collect( Collectors.joining("; ", " [", "]" ) ) ) 
-                	                       );
-                                              
-                if( message.isHasCuratorMessage() )
-                {
-                    writer.write( "\n********\nCurator message: " + message.getCuratorMessage() + "\n********" );
-                }
+		if (!messages.isEmpty()) {
+			for (ValidationMessage<Origin> message : messages) {
+				ValidationMessage.MessageFormatter originalMessageFormatter = message.getMessageFormatter();
+				message.setMessageFormatter(messageFormatter);
+				try {
+					message.writeMessage(writer, targetOrigin);
+				}
+				finally {
+					message.setMessageFormatter(originalMessageFormatter);
+				}
 
-                if( writeMessageReports && message.isHasReportMessage() )
-                {
-                    writer.write( "\n********\nMessage Report:\n\n" + message.getReportMessage() + "END message report********" );
-                }
-                
-                writer.flush();
-            }
-        }
+				if (writeCuratorMessage && message.isHasCuratorMessage()) {
+					writer.write("\n********\nCurator message: " + message.getCuratorMessage() + "\n********");
+				}
 
-        if( writeResultReport && isHasReportMessage() )
-        {
-            writer.write("\nReport:\n\n" + getReportMessage() + "********\n");
-            writer.flush();
-        }
-    }
+				if (writeReportMessage && message.isHasReportMessage()) {
+					writer.write("\n********\nReport message:\n\n" + message.getReportMessage() + "\n********");
+				}
+
+				writer.flush();
+			}
+
+			if (writeResultReport && isHasReportMessage()) {
+				writer.write("\nReport:\n\n" + getReportMessage() + "********\n");
+				writer.flush();
+			}
+		}
+	}
 }
