@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.check.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -40,6 +41,11 @@ public class QualifierCheck extends FeatureValidationCheck {
     public ValidationResult check(Feature feature) {
 
         try {
+        	if(feature instanceof SourceFeature
+        			&&(ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get())
+        			||ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get())
+        			||ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get())))
+        		return result;
             Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
             Set<String> artemisQualifiersSet = QualifierHelper.getArtemisQualifierSet();
             QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);

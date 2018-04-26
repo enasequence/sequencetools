@@ -19,6 +19,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.EntryValidations;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -26,6 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Description("The hold date must not be in the past")
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.NCBI})
+
 public class HoldDateCheck extends EntryValidationCheck {
 
     private final static String MESSAGE_ID = "HoldDateCheck";

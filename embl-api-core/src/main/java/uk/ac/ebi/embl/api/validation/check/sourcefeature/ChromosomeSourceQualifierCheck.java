@@ -26,8 +26,12 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
+import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
+@GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
 public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 
 	private final static String CHROMOSOME_SOURCE_QUALIFIER_ERROR = "ChromosomeSourceQualiferCheck_1";	

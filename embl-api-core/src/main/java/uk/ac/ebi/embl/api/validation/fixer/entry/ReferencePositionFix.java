@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -34,6 +35,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Description("RP line location range \"{0}\" - \"{1}\" has been fixed")
+
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME})
+
 public class ReferencePositionFix extends EntryValidationCheck {
 
 	private final static String FIX_ID = "ReferencePositionFix";

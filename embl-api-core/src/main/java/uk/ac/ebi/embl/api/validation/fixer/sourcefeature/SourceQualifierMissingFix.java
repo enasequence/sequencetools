@@ -49,7 +49,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-		if (entry.getPrimarySourceFeature() == null)
+		if (entry.getPrimarySourceFeature() == null||entry.getPrimarySourceFeature().getQualifiers().size()==0)
 		{
 			return result;
 		}
