@@ -35,7 +35,7 @@ public class ValidationResult implements Serializable {
 
 	private static final long serialVersionUID = 3511749874894611826L;
 
-	private static MessageFormatter default_message_formatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
+	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
 
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;
@@ -55,16 +55,16 @@ public class ValidationResult implements Serializable {
 	}
     
     public static void
-    setDefaultMessageFormatter( MessageFormatter default_message_formatter )
+    setDefaultMessageFormatter( MessageFormatter defaultMessageFormatter )
     {
-    	ValidationResult.default_message_formatter = default_message_formatter;
+    	ValidationResult.defaultMessageFormatter = defaultMessageFormatter;
     }
     
     
     public static MessageFormatter
     getDefaultMessageFormatter()
     {
-    	return ValidationResult.default_message_formatter;
+    	return ValidationResult.defaultMessageFormatter;
     }
     
     

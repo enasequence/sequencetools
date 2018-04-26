@@ -29,7 +29,7 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END = new TextMessageFormatter("\n", "");
 	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextMessageFormatter("", "\n");
 	public static final MessageFormatter TEXT_TIME_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextTimeMessageFormatter("", "\n");
-	private static MessageFormatter default_message_formatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
+	private static MessageFormatter defaultMessageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
 
 	
 	/**
@@ -81,16 +81,16 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 
     
     public static void
-    setDefaultMessageFormatter( MessageFormatter default_message_formatter )
+    setDefaultMessageFormatter( MessageFormatter defaultMessageFormatter )
     {
-    	ValidationMessage.default_message_formatter = default_message_formatter;
+    	ValidationMessage.defaultMessageFormatter = defaultMessageFormatter;
     }
     
     
     public static MessageFormatter
     getDefaultMessageFormatter()
     {
-    	return ValidationMessage.default_message_formatter;
+    	return ValidationMessage.defaultMessageFormatter;
     }
 
     
