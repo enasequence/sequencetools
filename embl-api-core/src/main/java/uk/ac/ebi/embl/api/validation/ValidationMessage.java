@@ -26,6 +26,12 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 
 	private static final long serialVersionUID = -2932989221653951201L;
 
+	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END = new TextMessageFormatter("\n", "");
+	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextMessageFormatter("", "\n");
+	public static final MessageFormatter TEXT_TIME_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextTimeMessageFormatter("", "\n");
+	private static MessageFormatter default_message_formatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
+
+	
 	/**
 	 * Message severity.
 	 */
@@ -66,13 +72,28 @@ public class ValidationMessage<T extends Origin> implements Serializable {
      */
     private Throwable throwable;
 
-	private ValidationMessage.MessageFormatter messageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
+	private ValidationMessage.MessageFormatter messageFormatter = getDefaultMessageFormatter();
     
     /**
      * Static string denoting that there is no message key for this message
      */
     public final static String NO_KEY = "NO_KEY";
 
+    
+    public static void
+    setDefaultMessageFormatter( MessageFormatter default_message_formatter )
+    {
+    	ValidationMessage.default_message_formatter = default_message_formatter;
+    }
+    
+    
+    public static MessageFormatter
+    getDefaultMessageFormatter()
+    {
+    	return ValidationMessage.default_message_formatter;
+    }
+
+    
     public ValidationMessage(Severity severity, String messageKeyParam, Object... params) {
         this.severity = severity;
         this.params = params;
@@ -334,23 +355,24 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 		}
 	}
 
-	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END = new TextMessageFormatter("\n", "");
-
-	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextMessageFormatter("", "\n");
-
-	public static final MessageFormatter TEXT_TIME_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextTimeMessageFormatter("", "\n");
-
 	/** Writes the message in text format.
      */
 	public void writeMessage( Writer writer ) throws IOException
 	{
-		messageFormatter.writeMessage( writer, this, null );
+		writeMessage( writer, messageFormatter, null );
 	}
 
 	/** Writes the message with an additional target origin.
 	 */
 	public void writeMessage( Writer writer, String targetOrigin ) throws IOException
 	{
-		messageFormatter.writeMessage( writer, this, targetOrigin );
+		writeMessage( writer, messageFormatter, targetOrigin );
+	}
+	
+	
+	public void 
+	writeMessage( Writer writer, MessageFormatter formatter, String targetOrigin ) throws IOException
+	{
+		formatter.writeMessage( writer, this, targetOrigin );
 	}
 }

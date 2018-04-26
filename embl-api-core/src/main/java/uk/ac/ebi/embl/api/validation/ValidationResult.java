@@ -23,6 +23,8 @@ import java.util.Collection;
 
   import org.apache.commons.lang.builder.ToStringBuilder;
 
+import uk.ac.ebi.embl.api.validation.ValidationMessage.MessageFormatter;
+
 /**
  * @author dlorenc
  *
@@ -33,12 +35,14 @@ public class ValidationResult implements Serializable {
 
 	private static final long serialVersionUID = 3511749874894611826L;
 
+	private static MessageFormatter default_message_formatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
+
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;
 	private boolean writeCuratorMessage = true;
     private boolean writeReportMessage = false;
 	private boolean writeResultReport = false;
-	private ValidationMessage.MessageFormatter messageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END;
+	private ValidationMessage.MessageFormatter messageFormatter = getDefaultMessageFormatter();
     private Origin  defaultOrigin;
 
     public ValidationResult() {
@@ -49,6 +53,20 @@ public class ValidationResult implements Serializable {
 		this.defaultOrigin = defaultOrigin;
 		this.messages = new ArrayList<ValidationMessage<Origin>>();
 	}
+    
+    public static void
+    setDefaultMessageFormatter( MessageFormatter default_message_formatter )
+    {
+    	ValidationResult.default_message_formatter = default_message_formatter;
+    }
+    
+    
+    public static MessageFormatter
+    getDefaultMessageFormatter()
+    {
+    	return ValidationResult.default_message_formatter;
+    }
+    
     
     public Origin getDefaultOrigin() {
     	return defaultOrigin;
@@ -338,15 +356,12 @@ public class ValidationResult implements Serializable {
 
 		if (!messages.isEmpty()) {
 			for (ValidationMessage<Origin> message : messages) {
-				ValidationMessage.MessageFormatter originalMessageFormatter = message.getMessageFormatter();
-				message.setMessageFormatter(messageFormatter);
-				try {
-					message.writeMessage(writer, targetOrigin);
-				}
-				finally {
-					message.setMessageFormatter(originalMessageFormatter);
-				}
+				if( null != messageFormatter )
+					message.writeMessage( writer, messageFormatter, targetOrigin );
+				else
+					message.writeMessage( writer, targetOrigin );
 
+				//TODO use to writeMessage
 				if (writeCuratorMessage && message.isHasCuratorMessage()) {
 					writer.write("\n********\nCurator message: " + message.getCuratorMessage() + "\n********");
 				}
