@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.api.validation;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Before;
@@ -27,14 +26,11 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.LocationQualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Rpt_Unit_RangeQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Tag_PeptideQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
@@ -42,9 +38,7 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.*;
 
 public class UtilsTest {
 
