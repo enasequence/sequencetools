@@ -36,10 +36,49 @@ import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.flatfile.reader.ReaderOptions;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class GenbankFeatureReaderTest extends GenbankReaderTest {
-	
+
+	public void testReadOnlySourceFeature() throws IOException {
+		initLineReader(
+				"     misc_RNA        <1..>538\n" +
+						"                     /note=\"contains internal transcribed spacer 1, 5.8S\n" +
+						"                     ribosomal RNA, internal transcribed spacer 2, and 28S\n" +
+						"                     ribosomal RNA\"\n" +
+						"     source          1..538\n" +
+						"                     /organism=\"Alternaria solani\"\n" +
+						"                     /mol_type=\"genomic DNA\"\n" +
+						"                     /host=\"Cynodon dactylon\"\n" +
+						"                     /specimen_voucher=\"KUABIASCD\"\n" +
+						"                     /db_xref=\"taxon:48100\"\n" +
+						"                     /country=\"India\"\n" +
+						"                     /collection_date=\"2009\"\n" +
+						"                     /collected_by=\"M.M. Vasanthakumari\"\n" +
+						"                     /PCR_primers=\"fwd_name: ITS1, fwd_seq: tccgtaggtaacctgcgg,\n" +
+						"                     rev_name: ITS4, rev_seq: tcctccgcttattgatatgc\"" );
+		ReaderOptions rO = new ReaderOptions();
+		rO.setParseSourceOnly(true);
+		lineReader.setReaderOptions(rO);
+
+		ValidationResult result = (new FeatureReader(lineReader)).read(entry);
+		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+		for (ValidationMessage<Origin> message : messages) {
+			System.out.println(message.getMessage());
+		}
+		assertNotNull(entry.getFeatures());
+		assertEquals(0, result.count(Severity.ERROR));
+		assertEquals(0, entry.getFeatures().size());
+
+		result = (new FeatureReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(entry.getFeatures());
+		assertEquals(1, entry.getFeatures().size());
+		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals("genomic DNA", entry.getSequence().getMoleculeType());
+	}
+
 	public void testRead_LocalSingleBase() throws IOException {
 		initLineReader(
 			"     source          156 \n" +

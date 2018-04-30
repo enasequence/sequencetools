@@ -44,30 +44,19 @@ public abstract class LineReader {
 	private String activeTag;
 	
 	private String firstLine;
-	
-	private boolean ignoreParseError=false;
 
 	private ReaderOptions readerOptions;
 
 	public ReaderOptions getReaderOptions() {
+	    if(readerOptions == null)
+            readerOptions = new ReaderOptions();
 		return readerOptions;
 	}
 
-	public void setReaderOptions(ReaderOptions readerOptions) {
+	public LineReader setReaderOptions(ReaderOptions readerOptions) {
 		this.readerOptions = readerOptions;
-	}
-
-	public boolean isIgnoreParseError()
-	{
-		return ignoreParseError;
-	}
-
-	public LineReader setIgnoreParseError(boolean ignoreParseError)
-	{
-		this.ignoreParseError = ignoreParseError;
 		return this;
 	}
-
 
 	private LineReaderCache cache = new LineReaderCache();
 

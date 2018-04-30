@@ -112,7 +112,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		}
 		String blockString;
 
-		if(lineReader.isIgnoreParseError() || (fileType != null && fileType == FileType.GENBANK))
+		if(lineReader.getReaderOptions().isIgnoreParserErrors() || (fileType != null && fileType == FileType.GENBANK))
 		{
 			blockString = block.toString();
 		} else {

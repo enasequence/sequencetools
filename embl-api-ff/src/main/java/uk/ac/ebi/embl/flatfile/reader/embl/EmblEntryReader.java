@@ -77,13 +77,7 @@ EmblEntryReader extends EntryReader
                      String         fileId,
 					 ReaderOptions readerOptions)
     {
-    	//List<String> ignorableElements;
-		//1. ignoreParserErrors
-		//2. parseOnlySourceFeature
-		//3. ignoreSequence
-//TODO: probably this is the one EBI search uses, so need to pass the flag here
-		super(new EmblLineReader(reader, fileId).setIgnoreParseError(false));
-
+		super(new EmblLineReader(reader, fileId).setReaderOptions(readerOptions));
 		addBlockReaders(format);
 	}
 
