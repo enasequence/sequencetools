@@ -1,10 +1,6 @@
  allprojects 
  {
-<<<<<<< HEAD
     ext.version_base = '1.1.216'
-=======
-    ext.version_base = '1.1.215'
->>>>>>> refs/remotes/origin/ENA-2411
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
