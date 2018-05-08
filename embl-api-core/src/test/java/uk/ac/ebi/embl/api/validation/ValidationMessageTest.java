@@ -24,9 +24,9 @@ public class ValidationMessageTest {
         assertEquals("ERROR: Missing message: TEST_MESSAGE\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationMessage.writeMessage(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
@@ -43,9 +43,9 @@ public class ValidationMessageTest {
         assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationMessage.writeMessage(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
@@ -63,9 +63,9 @@ public class ValidationMessageTest {
         assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationMessage.writeMessage(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationMessage.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);

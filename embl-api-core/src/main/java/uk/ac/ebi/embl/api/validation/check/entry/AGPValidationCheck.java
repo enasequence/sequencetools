@@ -50,6 +50,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 	private final static String MESSAGE_KEY_INVALID_LINKAGE_ERROR="AGPValidationCheck-14";
 	private final static String MESSAGE_KEY_SAME_COMPONENT_AND_OBJECT_ERROR="AGPValidationCheck-15";
 
+
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 
@@ -216,45 +217,58 @@ public class AGPValidationCheck extends EntryValidationCheck
 				if(agpRow.getComponent_id().equalsIgnoreCase(agpRow.getObject())) {
 					reportError(agpRow.getOrigin(), MESSAGE_KEY_SAME_COMPONENT_AND_OBJECT_ERROR, agpRow.getComponent_id());
 				} else {
+					
+					Long sequenceLength =null;
 					if (getEntryDAOUtils() == null)//if database connection is not available, then the following check doesn't work.
 					{
-						if (getEmblEntryValidationPlanProperty().isRemote.get() && getEmblEntryValidationPlanProperty().contigEntryNames.get().size() == 0) {
-							throw new ValidationEngineException("Contig entry names must be given to validate AGP file");
 
-						} else if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) {
-							if (!getEmblEntryValidationPlanProperty().contigEntryNames.get().contains(agpRow.getComponent_id()))
-								reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
+						if (getEmblEntryValidationPlanProperty().isRemote.get()) 
+						{
+							if(getEmblEntryValidationPlanProperty().contigEntryNames.get().size() == 0) 
+							{
+								throw new ValidationEngineException("Contig entry names must be given to validate AGP file");
+							}
+							else
+								if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) 
+								{
+									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id())==null)
+										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
+									else
+										sequenceLength = getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id()); 
+								}
+
 						}
-						continue;
 					}
+					else
+					{
+						int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
 
-					int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
+						ContigSequenceInfo contigSequenceInfo = null;
 
-					ContigSequenceInfo contigSequenceInfo = null;
-					try {
-						contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(), getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel);
-					} catch (SQLException e) {
-						e.printStackTrace();
-						throw new ValidationEngineException(e);
+						try {
+							contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(), getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel);
+						} catch (SQLException e) {
+							e.printStackTrace();
+							throw new ValidationEngineException(e);
+						}
+
+						if (null == contigSequenceInfo) 
+							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
+						else  
+							sequenceLength = new Long(contigSequenceInfo.getSequenceLength());
 					}
-
-					if (null == contigSequenceInfo) {
-						reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
-					} else {
-						int sequenceLength = contigSequenceInfo.getSequenceLength();
 
 						// Check that component coordinates are valid.
 
-						if (component_begin < 1 ||
-								component_begin > sequenceLength ||
-								component_end > sequenceLength ||
-								component_end < component_begin) {
-							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_RANGE_ERROR, agpRow.getComponent_beg(), agpRow.getComponent_end(), agpRow.getComponent_id(), entry.getSubmitterAccession());
-						}
-					}
+					if (sequenceLength!=null && (component_begin < 1 ||
+							component_begin > sequenceLength ||
+							component_end > sequenceLength ||
+							component_end < component_begin)) 
+						reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_RANGE_ERROR, agpRow.getComponent_beg(), agpRow.getComponent_end(), agpRow.getComponent_id(), entry.getSubmitterAccession());
+
 				}
-			}
-    		validateLinkageCombination(agpRow);
+    	}
+    	validateLinkageCombination(agpRow);
 		}
 		
 		return result;

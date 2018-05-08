@@ -223,8 +223,6 @@ public class AGPValidationCheckTest
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("AGPValidationCheck-7", Severity.ERROR));
 		assertEquals(1, result.count("AGPValidationCheck-11", Severity.ERROR));
-
-
 	}
 	@Test
 	public void testcheck_AGPRowwithinvalidgapLength()
@@ -257,4 +255,5 @@ public class AGPValidationCheckTest
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("AGPValidationCheck-8", Severity.ERROR));
 	}
+	
 }

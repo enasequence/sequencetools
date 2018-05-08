@@ -27,10 +27,10 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 	private static final long serialVersionUID = -2932989221653951201L;
 
 	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END = new TextMessageFormatter("\n", "");
+	public static final boolean writeCuratorMessage =true;
 	public static final MessageFormatter TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextMessageFormatter("", "\n");
 	public static final MessageFormatter TEXT_TIME_MESSAGE_FORMATTER_TRAILING_LINE_END = new TextTimeMessageFormatter("", "\n");
 	private static MessageFormatter defaultMessageFormatter = ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END;
-
 	
 	/**
 	 * Message severity.

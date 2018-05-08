@@ -23,12 +23,12 @@ public class ValidationResultTest {
         ValidationResult validationResult = new ValidationResult();
         validationResult.append(validationMessage);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
@@ -49,12 +49,12 @@ public class ValidationResultTest {
         validationResult.append(validationMessage);
         validationMessage.addOrigin(new DefaultOrigin(ORIGIN_MESSAGE_1));
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1]\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
@@ -76,12 +76,12 @@ public class ValidationResultTest {
         ValidationResult validationResult = new ValidationResult();
         validationResult.append(validationMessage);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]\n", str.toString());
 
         str.getBuffer().setLength(0);
-        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END);
+        validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE [ORIGIN_MESSAGE_1, ORIGIN_MESSAGE_2]\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationResult.setMessageFormatter(ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END);
@@ -103,7 +103,7 @@ public class ValidationResultTest {
         validationResult.append(validationMessage);
         validationResult.writeMessages(str);
         assertEquals(
-                "\nERROR: Missing message: TEST_MESSAGE\n" +
+                "ERROR: Missing message: TEST_MESSAGE\n\n" +
                 "********\n" +
                 "Curator message: CURATOR_MESSAGE\n" +
                 "********", str.toString());
@@ -112,7 +112,7 @@ public class ValidationResultTest {
         validationResult.setWriteCuratorMessage(false);
         validationResult.writeMessages(str);
         assertEquals(
-                "\nERROR: Missing message: TEST_MESSAGE", str.toString());
+                "ERROR: Missing message: TEST_MESSAGE\n", str.toString());
     }
 
 
@@ -124,13 +124,13 @@ public class ValidationResultTest {
         ValidationResult validationResult = new ValidationResult();
         validationResult.append(validationMessage);
         validationResult.writeMessages(str);
-        assertEquals("\nERROR: Missing message: TEST_MESSAGE", str.toString());
+        assertEquals("ERROR: Missing message: TEST_MESSAGE\n", str.toString());
 
         str.getBuffer().setLength(0);
         validationResult.setWriteReportMessage(true);
         validationResult.writeMessages(str);
         assertEquals(
-                "\nERROR: Missing message: TEST_MESSAGE\n" +
+                "ERROR: Missing message: TEST_MESSAGE\n\n" +
                 "********\n" +
                 "Report message:\n" +
                 "\n" +

@@ -35,7 +35,7 @@ public class ValidationResult implements Serializable {
 
 	private static final long serialVersionUID = 3511749874894611826L;
 
-	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
+	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
 
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;

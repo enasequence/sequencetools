@@ -256,7 +256,7 @@ public class EntryUtils
 				 gap_type="repeatwithLinkage";
 			 }
 			 }
-			 if(linkage_evidences!=null)
+			 if(linkage_evidences!=null&&agpRow.hasLinkage())
 			 {
 				 for(String linkage_evidence:linkage_evidences)
 				 {
