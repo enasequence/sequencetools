@@ -47,6 +47,7 @@ public class AGPFileReader extends FlatFileEntryReader
 	private static final int ORIENTATION = 8;
 	private static final int LINKAGEEVIDENCE = 8;
 	private static final Long UNKNOWN_GAP_LENGTH = 100l;
+	private boolean hasNonSingletonAgp = false;
         
     protected int nextEntryLine = currentEntryLine;
 
@@ -313,12 +314,21 @@ public class AGPFileReader extends FlatFileEntryReader
 		}
 		agpRow.setOrigin(new FlatFileOrigin(getLineReader().getFileId(),lineReader.getCurrentLineNumber()));
 		entry.addAgpRow(agpRow);
-		if(!lineReader.joinLine()||!lineReader.isNextLine())
-			break;
-		lineReader.readLine();
+
+		if(noOfComponents > 1)
+			hasNonSingletonAgp = true;
+
+		if(!lineReader.isNextLine()) {
+		    if(!hasNonSingletonAgp)
+		        error("SingletonsOnlyError");
+            break;
+        } else if(!lineReader.joinLine()) {
+            break;
+        }
+
+            lineReader.readLine();
     	}
-		if(noOfComponents==1)
-		 entry.setSingletonAgp(true);
+
 	}
 
 	@Override
