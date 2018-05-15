@@ -22,6 +22,8 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -55,7 +57,10 @@ public class AgpComponentAccessionFixTest {
 		ValidationMessageManager
 				.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		entryFactory = new EntryFactory();
+		SequenceFactory sequenceFactory= new SequenceFactory();
+		Sequence sequence=sequenceFactory.createSequence();
 		entry = entryFactory.createEntry();
+		entry.setSequence(sequence);
 		check = new AgpComponentAccessionFix();
 		entryDAOUtils = createMock(EntryDAOUtils.class);
 		planProperty=new EmblEntryValidationPlanProperty();
@@ -103,8 +108,8 @@ public class AgpComponentAccessionFixTest {
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
 		validGaprow1.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(validGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(validGaprow1);
 		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_contig_209591", "ERZ00001",2)).andReturn(null);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
@@ -138,8 +143,8 @@ public class AgpComponentAccessionFixTest {
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
 		validGaprow1.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(validGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(validGaprow1);
 		ContigSequenceInfo sequenceInfo=new ContigSequenceInfo();
 		sequenceInfo.setSequenceLength(400);
 		sequenceInfo.setPrimaryAccession("AC00001");

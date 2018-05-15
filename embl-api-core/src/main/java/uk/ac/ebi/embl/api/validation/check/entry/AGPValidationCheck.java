@@ -66,7 +66,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			return result;
 		}
 		
-		if (entry.getAgpRows().size() == 0)
+		if (entry.getSequence().getAgpRows().size() == 0)
 		{
 			
 				reportError(entry.getOrigin(), MESSAGE_KEY_PART_COUNT_ERROR, entry.getSubmitterAccession());
@@ -76,7 +76,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 		Integer prevPartNumber = 0;
 		Long prevEnd = -1l;	
 		
-		for (AgpRow agpRow : entry.getAgpRows())
+		for (AgpRow agpRow : entry.getSequence().getAgpRows())
 		{
 			String objectName = agpRow.getObject();
 			Long object_begin=agpRow.getObject_beg();
@@ -231,10 +231,10 @@ public class AGPValidationCheck extends EntryValidationCheck
 							else
 								if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) 
 								{
-									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id())==null)
+									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())==null)
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
-										sequenceLength = getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id()); 
+										sequenceLength = getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()); 
 								}
 
 						}

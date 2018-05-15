@@ -313,7 +313,7 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 		}
 		agpRow.setOrigin(new FlatFileOrigin(getLineReader().getFileId(),lineReader.getCurrentLineNumber()));
-		entry.addAgpRow(agpRow);
+		entry.getSequence().addAgpRow(agpRow);
 
 		if(noOfComponents > 1)
 			hasNonSingletonAgp = true;

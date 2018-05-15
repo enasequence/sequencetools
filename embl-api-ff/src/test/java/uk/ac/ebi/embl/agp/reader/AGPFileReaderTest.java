@@ -71,7 +71,7 @@ public class AGPFileReaderTest extends AGPReaderTest{
 						"IWGSC_CSS_6DL_scaff_3330716;	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n"+
 						"IWGSC_CSS_6DL_scaff_3330717	1	330	1	W	IWGSC_CSS_6DL_contig_209593	1	330	-\n";	
 		String expectedEntryString =
-				"ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
+				"ID   XXX; SV XXX; linear; XXX; XXX; XXX; 654 BP.\n"+
 						"XX\n"+
 						"AC   ;\n"+
 						"XX\n"+
@@ -82,7 +82,7 @@ public class AGPFileReaderTest extends AGPReaderTest{
 						"KW   .\n"+
 						"XX\n"+
 						"//\n"+
-						"ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
+						"ID   XXX; SV XXX; linear; XXX; XXX; XXX; 330 BP.\n"+
 						"XX\n"+
 						"AC   ;\n"+
 						"XX\n"+
@@ -118,7 +118,7 @@ public class AGPFileReaderTest extends AGPReaderTest{
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
 				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes\n";	
-		String expectedEntryString ="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
+		String expectedEntryString ="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 330 BP.\n"+
 				"XX\n"+
 				"AC   ;\n"+
 				"XX\n"+
@@ -156,9 +156,9 @@ public class AGPFileReaderTest extends AGPReaderTest{
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
 				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	no\n"+
-						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
+				"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		String expectedEntryString ="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
-				"XX\n"+
+  			"XX\n"+
 				"AC   ;\n"+
 				"XX\n"+
 				"AC * _IWGSC_CSS_6DL_scaff_3330716\n"+

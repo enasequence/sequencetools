@@ -19,7 +19,7 @@ public class AGPFileWriter
 	public void write() throws IOException
 	{
 		AGPRowWriter agpRowWriter=null;
-		for(AgpRow agpRow:entry.getAgpRows())
+		for(AgpRow agpRow:entry.getSequence().getAgpRows())
 		{
 		  agpRowWriter= new AGPRowWriter(agpRow, writer);
 		  agpRowWriter.write();
