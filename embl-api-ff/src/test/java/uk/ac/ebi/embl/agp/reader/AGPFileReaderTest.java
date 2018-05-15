@@ -27,8 +27,9 @@ public class AGPFileReaderTest extends AGPReaderTest{
 						"# GENOME CENTER: NCBI\n"+
 						"# DESCRIPTION: Example AGP specifying the assembly of scaffolds from WGS contigs\n"+
 						"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-						"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";
-		String expectedEntryString="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 354 BP.\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
+		String expectedEntryString="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
 				"XX\n"+
 				"AC   ;\n"+
 				"XX\n"+
@@ -154,9 +155,10 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_validnumberofColumns() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	no\n";	
-		String expectedEntryString ="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 354 BP.\n"+
-				"XX\n"+
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	no\n"+
+				"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
+		String expectedEntryString ="ID   XXX; SV XXX; linear; XXX; XXX; XXX; 0 BP.\n"+
+  			"XX\n"+
 				"AC   ;\n"+
 				"XX\n"+
 				"AC * _IWGSC_CSS_6DL_scaff_3330716\n"+
@@ -184,12 +186,36 @@ public class AGPFileReaderTest extends AGPReaderTest{
         }
 		assertEquals(expectedEntryString, writer.toString());
 	}
-	
+
+	@Test
+	public void testRead_singletonError() throws IOException {
+		String entryString =
+				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591	1	330	+\n"+
+						"IWGSC_CSS_6DL_scaff_3330717	1	654	1	W	IWGSC_CSS_6DL_contig_209593	1	330	+\n";
+		StringWriter writer = new StringWriter();
+		setBufferedReader(entryString);
+		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
+		while (true) {
+			ValidationResult result = reader.read();
+			Entry entry = reader.getEntry();
+			Collection<ValidationMessage<Origin>> messages = result.getMessages();
+
+			for ( ValidationMessage<Origin> message : messages) {
+				assertEquals("SingletonsOnlyError", message.getMessageKey());
+			}
+			if (!reader.isEntry()) {
+				break;
+			}
+			assertTrue(new EmblEntryWriter(entry).write(writer));
+		}
+	}
+
 	@Test
 	public void testRead_invalidobjectbeg() throws IOException {
 		String entryString =
-				"IWGSC_CSS_6DL_scaff_3330716	invalid	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	invalid	330	1	W	IWGSC_CSS_6DL_contig_209591	1	330	+\n"+
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -213,7 +239,9 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_missingobject_name() throws IOException {
 		String entryString =
 				"	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209593	1	300	+\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	655	954	3	W	IWGSC_CSS_6DL_contig_209594	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -237,7 +265,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidobjectend() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	invalid	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -261,7 +290,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidpartNumber() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	invalid	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	invalid	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -285,7 +315,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidcomponentTypeID() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	invalid	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	invalid	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -309,7 +340,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidgapLength() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	invalid	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	invalid	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -333,7 +365,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidcomponentBegin() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	invalid	330	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
@@ -357,7 +390,8 @@ public class AGPFileReaderTest extends AGPReaderTest{
 	public void testRead_invalidcomponentEnd() throws IOException {
 		String entryString =
 				"IWGSC_CSS_6DL_scaff_3330716	1	330	1	W	IWGSC_CSS_6DL_contig_209591;	1	invalid	+\n"+
-				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n";	
+				"IWGSC_CSS_6DL_scaff_3330716	331	354	2	N	24	scaffold	yes	paired-ends\n"+
+						"IWGSC_CSS_6DL_scaff_3330716	355	654	3	W	IWGSC_CSS_6DL_contig_209592	1	300	+\n";
 		StringWriter writer = new StringWriter();                      
 		setBufferedReader(entryString);
 		FlatFileEntryReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));
