@@ -129,7 +129,6 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private List<Text> masterTpaAccessions;
 	private List<Text> masterTsaAccessions;
 	protected List<Assembly> assemblies;
-	protected List<AgpRow> agpRows;
 	private boolean isAnnotationOnlyCON=false;
 	private boolean isSingletonAgp=false;
 	private boolean isNonExpandedCON=false;
@@ -148,7 +147,6 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.masterWgsAccessions = new ArrayList<Text>();
 		this.masterTpaAccessions = new ArrayList<Text>();
 		this.masterTsaAccessions = new ArrayList<Text>();
-		this.agpRows=new ArrayList<AgpRow>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
 
@@ -481,32 +479,6 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.assemblies.clear();
 	}	
 		
-		public List<AgpRow> getAgpRows() {
-		return this.agpRows;
-	}
-
-	public boolean addAgpRow(AgpRow agpRow) {
-		if (agpRow == null) {
-			return false;
-		}
-		return this.agpRows.add(agpRow);
-	}
-
-	public boolean addAgpRows(Collection<AgpRow> agpRows) {
-		if (agpRows == null) {
-			return false;
-		}
-		boolean changed = false;
-		for (AgpRow agpRow : agpRows) {
-			changed |= this.agpRows.add(agpRow);
-		}
-		return changed;
-	}
-
-	public boolean removeAgpRow(AgpRow agpRow) {
-		return this.agpRows.remove(agpRow);
-	}
-
 	public List<Text> getMasterConAccessions() {
 		return this.masterConAccessions;
 	}
@@ -686,12 +658,6 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public void setAnnotationOnlyCON(boolean isAnnotationOnlyCON)
 	{
 		this.isAnnotationOnlyCON = isAnnotationOnlyCON;
-	}
-	
-	public List<AgpRow> getSortedAGPRows()
-	{
-		Collections.sort(agpRows,(object1,object2)->object1.getPart_number() < object2.getPart_number() ? -1 : 1);
-		return agpRows;	
 	}
 	
 	public boolean isSingletonAgp() {

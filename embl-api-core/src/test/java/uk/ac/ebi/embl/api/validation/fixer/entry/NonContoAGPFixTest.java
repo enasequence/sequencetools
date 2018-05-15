@@ -99,7 +99,7 @@ public class NonContoAGPFixTest {
 	@Test
 	public void testCheck_NoAssemblyGapfeature() throws ValidationEngineException {
 		check.check(entry);
- 		assertEquals(0,entry.getAgpRows().size());
+ 		assertEquals(0,entry.getSequence().getAgpRows().size());
 	}
 	
 	@Test
@@ -107,10 +107,10 @@ public class NonContoAGPFixTest {
 	{
         entry.addFeature(assemblyGapFeature);
  		check.check(entry);
- 		assertEquals(3,entry.getAgpRows().size());
-		AgpRow row1=entry.getAgpRows().get(0);
-		AgpRow row2=entry.getAgpRows().get(1);
-		AgpRow row3=entry.getAgpRows().get(2);
+ 		assertEquals(3,entry.getSequence().getAgpRows().size());
+		AgpRow row1=entry.getSequence().getAgpRows().get(0);
+		AgpRow row2=entry.getSequence().getAgpRows().get(1);
+		AgpRow row3=entry.getSequence().getAgpRows().get(2);
 		assertTrue(!row1.isGap());
 		assertEquals("nonconentry",row1.getObject());
 		assertEquals("AC0001.1",row1.getObject_acc());
@@ -174,12 +174,12 @@ public class NonContoAGPFixTest {
         entry.addFeature(assemblyGapFeature1);
 		entry.getSequence().setSequence(ByteBuffer.wrap("aaaaaaaaaaannnnnnnnnnaaaaaaaannnnnaaaaa".getBytes()));
  		check.check(entry);
- 		assertEquals(5,entry.getAgpRows().size());
-		AgpRow row1=entry.getAgpRows().get(0);
-		AgpRow row2=entry.getAgpRows().get(1);
-		AgpRow row3=entry.getAgpRows().get(2);
-		AgpRow row4=entry.getAgpRows().get(3);
-		AgpRow row5=entry.getAgpRows().get(4);
+ 		assertEquals(5,entry.getSequence().getAgpRows().size());
+		AgpRow row1=entry.getSequence().getAgpRows().get(0);
+		AgpRow row2=entry.getSequence().getAgpRows().get(1);
+		AgpRow row3=entry.getSequence().getAgpRows().get(2);
+		AgpRow row4=entry.getSequence().getAgpRows().get(3);
+		AgpRow row5=entry.getSequence().getAgpRows().get(4);
 		assertTrue(!row1.isGap());
 		assertEquals("nonconentry",row1.getObject());
 		assertEquals("AC0001.1",row1.getObject_acc());

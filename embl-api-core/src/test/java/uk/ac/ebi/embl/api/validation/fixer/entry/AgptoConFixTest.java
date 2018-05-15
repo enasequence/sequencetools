@@ -105,8 +105,8 @@ public class AgptoConFixTest {
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
 		gaprow.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(Componentrow);
-		entry.addAgpRow(gaprow);
+		entry.getSequence().addAgpRow(Componentrow);
+		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
@@ -119,7 +119,7 @@ public class AgptoConFixTest {
 		assertEquals(0, assemblyGap_features.size());
 		assertEquals(0,entry.getSequence().getContigs().size());
 		//sequenceLength check
-		assertEquals(0, entry.getSequence().getLength());
+		assertEquals(354, entry.getSequence().getLength());
 	}
 
 	@Test
@@ -148,8 +148,8 @@ public class AgptoConFixTest {
 		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
 		
-		entry.addAgpRow(Componentrow);
-		entry.addAgpRow(gaprow);
+		entry.getSequence().addAgpRow(Componentrow);
+		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
@@ -229,8 +229,8 @@ public class AgptoConFixTest {
 		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
 		
-		entry.addAgpRow(Componentrow);
-		entry.addAgpRow(gaprow);
+		entry.getSequence().addAgpRow(Componentrow);
+		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
@@ -307,8 +307,8 @@ public class AgptoConFixTest {
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
 		
-		entry.addAgpRow(Componentrow);
-		entry.addAgpRow(gaprow);
+		entry.getSequence().addAgpRow(Componentrow);
+		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");

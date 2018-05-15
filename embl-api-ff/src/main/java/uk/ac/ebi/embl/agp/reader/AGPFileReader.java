@@ -312,7 +312,7 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 		}
 		agpRow.setOrigin(new FlatFileOrigin(getLineReader().getFileId(),lineReader.getCurrentLineNumber()));
-		entry.addAgpRow(agpRow);
+		entry.getSequence().addAgpRow(agpRow);
 		if(!lineReader.joinLine()||!lineReader.isNextLine())
 			break;
 		lineReader.readLine();

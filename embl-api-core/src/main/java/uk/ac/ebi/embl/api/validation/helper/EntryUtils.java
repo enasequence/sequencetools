@@ -224,7 +224,7 @@ public class EntryUtils
 		LocationFactory locationFactory=new LocationFactory();
 		ArrayList<Location> components=new ArrayList<Location>();
 		
-		for(AgpRow agpRow:entry.getSortedAGPRows())
+		for(AgpRow agpRow:entry.getSequence().getSortedAGPRows())
 		{
 			Long object_begin=agpRow.getObject_beg();
 			Long object_end=agpRow.getObject_end();

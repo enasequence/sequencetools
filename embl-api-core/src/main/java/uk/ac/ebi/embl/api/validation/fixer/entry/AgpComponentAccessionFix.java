@@ -37,12 +37,12 @@ public class AgpComponentAccessionFix extends EntryValidationCheck
 	{
 		result = new ValidationResult();
 
-		if (entry == null||getEntryDAOUtils()==null||entry.getAgpRows().size()==0||!FileType.AGP.equals(getEmblEntryValidationPlanProperty().fileType.get()))
+		if (entry == null||getEntryDAOUtils()==null||entry.getSequence().getAgpRows().size()==0||!FileType.AGP.equals(getEmblEntryValidationPlanProperty().fileType.get()))
 		{
 			return result;
 		}
 
-		for(AgpRow agpRow:entry.getAgpRows())
+		for(AgpRow agpRow:entry.getSequence().getAgpRows())
 		{
 		  if(agpRow.isGap())
 			  continue;
