@@ -56,7 +56,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 
 		result = new ValidationResult();
 
-		if (entry == null)
+		if (entry == null||entry.getSequence()==null)
 		{
 			return result;
 		}
