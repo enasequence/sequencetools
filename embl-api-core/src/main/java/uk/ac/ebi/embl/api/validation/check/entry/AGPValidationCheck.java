@@ -186,7 +186,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 			
 			if (gap_length != object_end - object_begin + 1)
 			{
-				reportError(agpRow.getOrigin(),MESSAGE_KEY_GAP_LENGTH_ERROR,agpRow.getGap_length(),entry.getSubmitterAccession(),object_end - object_begin + 1);
+				reportError(agpRow.getOrigin(),MESSAGE_KEY_GAP_LENGTH_ERROR,agpRow.getGap_length(),object_end - object_begin + 1,object_begin,object_end,entry.getSubmitterAccession());
 			}
 			
     	}
