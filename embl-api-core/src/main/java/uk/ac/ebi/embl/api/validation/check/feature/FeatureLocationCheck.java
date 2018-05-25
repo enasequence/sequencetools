@@ -91,6 +91,8 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
             	}
             }
             }
+        if(feature instanceof CdsFeature && ((CdsFeature)feature).isPseudo())
+        	return result;
         if(compoundLocation.hasOverlappingLocation())
         {
         	if(!SequenceEntryUtils.isQualifierAvailable(Qualifier.RIBOSOMAL_SLIPPAGE, feature)&&!SequenceEntryUtils.isQualifierAvailable(Qualifier.TRANS_SPLICING, feature))

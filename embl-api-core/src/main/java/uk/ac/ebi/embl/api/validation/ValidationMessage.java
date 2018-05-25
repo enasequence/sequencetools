@@ -296,6 +296,7 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 	public interface MessageFormatter
 	{
 		void writeMessage(Writer writer, ValidationMessage<?> validationMessage, String targetOrigin) throws IOException;
+		String getFormattedMessage(ValidationMessage<?> message, String targetOrigin);
 	}
 
 	public static class TextMessageFormatter implements MessageFormatter
@@ -310,11 +311,23 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 			this.LINE_BEGIN = lineBegin;
 			this.LINE_END = lineEnd;
 		}
+		
+		
 
 		@Override
 		public void writeMessage(Writer writer, ValidationMessage<?> message, String targetOrigin) throws IOException
 		{
-			List<Origin> allOrigins = new ArrayList<>( message.getOrigins().size() + (targetOrigin != null ? 1 : 0) );
+			writer.write(getFormattedMessage(message, targetOrigin));
+		}
+
+		protected String getMessagePrefix() {
+			return "";
+		}
+		
+		@Override
+	    public String getFormattedMessage(ValidationMessage<?> message, String targetOrigin)
+	    {
+	    	List<Origin> allOrigins = new ArrayList<>( message.getOrigins().size() + (targetOrigin != null ? 1 : 0) );
 			if (targetOrigin != null) {
 				allOrigins.add(new DefaultOrigin(targetOrigin));
 			}
@@ -329,18 +342,15 @@ public class ValidationMessage<T extends Origin> implements Serializable {
 				origin = " " + origin;
 			}
 
-			writer.write(String.format("%s%s%s: %s%s%s",
+			return String.format("%s%s%s: %s%s%s",
 				LINE_BEGIN,
 				getMessagePrefix(),
 				message.getSeverity(),
 				message.getMessage(),
 				origin,
-				LINE_END));
-		}
-
-		protected String getMessagePrefix() {
-			return "";
-		}
+				LINE_END);
+	    }
+		
 	}
 
 	public static class TextTimeMessageFormatter extends TextMessageFormatter

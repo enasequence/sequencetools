@@ -130,4 +130,19 @@ public class FeatureLocationCheckTest
 		ValidationResult intronResult = check.check(cdsFeature);
 		assertEquals(0, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
 	}
+	@Test
+	public void testCheck_psuedoCDSOverlapLocation() throws ValidationEngineException
+	{
+		FeatureFactory featureFactory = new FeatureFactory();
+		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
+		cdsFeature.addQualifier(Qualifier.PSEUDO_QUALIFIER_NAME);
+		Join<Location> cdsFeatureLocation = new Join<Location>();
+		LocationFactory locationFactory = new LocationFactory();
+		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
+		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l,115l));
+		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(120l,125l));
+		cdsFeature.setLocations(cdsFeatureLocation);
+		ValidationResult intronResult = check.check(cdsFeature);
+		assertEquals(0, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
+	}
 }

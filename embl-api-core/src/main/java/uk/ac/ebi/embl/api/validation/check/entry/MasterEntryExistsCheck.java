@@ -31,7 +31,9 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
 public class MasterEntryExistsCheck extends EntryValidationCheck {
 
-	private final static String MESSAGE_ID = "MasterEntryExistsCheck_1";
+	private final static String MASTER_EXISTS_MESSAGE_ID = "MasterEntryExistsCheck_1";
+	private final static String MASTER_BIOSAMPLE_EXISTS_MESSAGE_ID = "MasterEntryExistsCheck_2";
+
 
 	public ValidationResult check(Entry entry) throws ValidationEngineException {
 		
@@ -55,13 +57,20 @@ public class MasterEntryExistsCheck extends EntryValidationCheck {
 		 {
 			isMasterExists=entryDAOUtils.isEntryExists(getEmblEntryValidationPlanProperty().analysis_id.get());
 		 }
-		} catch (SQLException e)
+		 
+	   } catch (SQLException e)
 			{
 			throw new ValidationEngineException(e);
 			}
 				if (!isMasterExists)
 				{
-					reportError(entry.getOrigin(),  MESSAGE_ID,getEmblEntryValidationPlanProperty().analysis_id.get());
+					reportError(entry.getOrigin(),  MASTER_EXISTS_MESSAGE_ID,getEmblEntryValidationPlanProperty().analysis_id.get());
+				}
+				
+				if(entry.getBiosampleId()==null)
+				{
+					reportError(entry.getOrigin(),  MASTER_BIOSAMPLE_EXISTS_MESSAGE_ID,getEmblEntryValidationPlanProperty().analysis_id.get());
+
 				}
 		
 		return result;

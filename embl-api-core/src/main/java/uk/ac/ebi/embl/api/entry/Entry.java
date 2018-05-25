@@ -675,5 +675,17 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public void setNonExpandedCON(boolean isNonExpandedCON) {
 		this.isNonExpandedCON = isNonExpandedCON;
 	}
+	
+	public String getBiosampleId()
+	{
+		for(XRef xref:getXRefs())
+		{
+			if("BioSample".equals(xref.getDatabase()))
+			{
+				return xref.getPrimaryAccession();
+			}
+		}
+		return null;
+	}
 
 }
