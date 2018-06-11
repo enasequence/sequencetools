@@ -50,6 +50,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");			
 					switch(field)
 					{
+						case "NAME":
 					case "ASSEMBLYNAME":
 						assemblyInfoEntry.setName(numberOfColumns==1?null:fields[1]);
 						break;
