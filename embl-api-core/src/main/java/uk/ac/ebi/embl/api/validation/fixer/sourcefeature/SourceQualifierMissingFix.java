@@ -23,7 +23,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -31,6 +33,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 @Description("Added source qualifier {0} as qualifier {2} value matches the pattern {3}"
 		+ "Qualifier \"environment_sample\" has been added to the \"Source\" feature as Organism is a Metagenome.")
 @RemoteExclude
+@ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class SourceQualifierMissingFix extends EntryValidationCheck
 {
 

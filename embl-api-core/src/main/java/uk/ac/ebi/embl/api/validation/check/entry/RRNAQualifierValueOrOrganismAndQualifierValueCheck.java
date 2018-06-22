@@ -26,11 +26,13 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Value \"{0}\" of qualifier \"{1}\" is only allowed when source qualifier \"{2}\" has one of values {3} or contains the word \"{5}\" or organism belongs to one of {4}.")
 @RemoteExclude
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class RRNAQualifierValueOrOrganismAndQualifierValueCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "RRNAQualifierValueOrOrganismAndQualifierValueCheck";

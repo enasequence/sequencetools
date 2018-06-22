@@ -66,7 +66,7 @@ public class GenbankEntryReader extends EntryReader {
     	addBlockReader(new ContigReader(lineReader));
     	addBlockReader(new OriginReader(lineReader));
     	addBlockReader(new PrimaryReader(lineReader));
-    	addBlockReader(new CommentReader(lineReader));
+    	addBlockReader(new CommentReader(lineReader, FileType.GENBANK));
     	addBlockReader(new FeaturesReader(lineReader));
     	addBlockReader(new SourceReader(lineReader));
     	addBlockReader(new OrganismReader(lineReader));

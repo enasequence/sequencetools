@@ -40,14 +40,14 @@ public class OrganismReader extends MultiLineBlockReader {
 			if (isFirstLine) {
 				isFirstLine = false;
 				OrganismMatcher organismMatcher = new OrganismMatcher(this);
-				if (!organismMatcher.match(line)) {
-					error("FF.1", getTag());
-					return;
-				}
-				getCache().setScientificName(organismMatcher.getScientificName());
-				String commonName = organismMatcher.getCommonName();
-				if (commonName != null) {
-					getCache().setCommonName(commonName);
+				if (organismMatcher.match(line)) {
+					getCache().setScientificName(organismMatcher.getScientificName());
+					String commonName = organismMatcher.getCommonName();
+					if (commonName != null) {
+						getCache().setCommonName(commonName);
+					}
+				} else {
+					getCache().setScientificName(line);
 				}
 			}
 			else {

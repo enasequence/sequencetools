@@ -46,7 +46,6 @@ public enum ValidationUnit
 					//ReferenceCheck.class,
 					MasterEntryDescriptionCheck.class,//include only for assembly master
 					MasterEntrySourceCheck.class,//include only for assembly master
-					ExclusiveSourceQualifiersCheck.class,//include for all
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
 					OrganismNotQualifierCheck.class,//include for all
@@ -85,8 +84,6 @@ public enum ValidationUnit
 					TranslExceptQualifierCheck.class,//exclude for assembly master
 					CdsFeatureAminoAcidCheck.class,//exclude for assembly master
 					DeprecatedQualifiersCheck.class,//include for all
-					EC_numberandProductValueCheck.class,//exclude for assembly master
-					EstimatedLengthCheck.class,//exclude for assembly master
 					ExclusiveQualifiersWithSameValueCheck.class,//include for all
 					FeatureKeyCheck.class,//include for all
 					FeatureLengthCheck.class,//include for all
@@ -158,6 +155,7 @@ public enum ValidationUnit
 					Lat_lonValueFix.class,//include for all
 					CountryQualifierFix.class,//include for all
 					MoleculeTypeAndQualifierFix.class,//include for all
+					ExclusiveSourceQualifiersFix.class,
 					CDS_RNA_LocusFix.class,//exclude for master
 					GaptoAssemblyGapFeatureFix.class,//exclude for master
 					GeneAssociatedwithFeatureFix.class,//exclude for master
