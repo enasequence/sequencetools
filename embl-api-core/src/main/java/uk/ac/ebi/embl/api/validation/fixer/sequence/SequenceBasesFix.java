@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 @Description("Base 'n's are deleted at the end and start of the sequence & shift the locations of features accordingly")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class SequenceBasesFix extends EntryValidationCheck {
 
 	private final static String SEQUENCE_BASES_FIX_ID_1 = "SequenceBasesFix_1";

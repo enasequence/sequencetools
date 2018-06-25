@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
@@ -26,6 +27,10 @@ public class CCReader extends MultiLineBlockReader {
 	
 	public CCReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_BREAK);
+	}
+
+	public CCReader(LineReader lineReader, FileType fileType) {
+		super(lineReader, ConcatenateType.CONCATENATE_BREAK, fileType);
 	}
 
 	@Override
