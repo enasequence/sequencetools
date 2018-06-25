@@ -15,23 +15,20 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author dlorenc
@@ -42,9 +39,8 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 @Description("The sequence is not fully covered by source features. The source features exceed the total sequence length.")
 
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
-
 public class SequenceCoverageCheck extends EntryValidationCheck {
-	//todo no check for this class
+
 	private final static String MESSAGE_ID_SHORT = "SequenceCoverageCheck-1";
 	private final static String MESSAGE_ID_LONG = "SequenceCoverageCheck-2";
 	private final static String MESSAGE_ID_FIRST_BASE_ERROR = "SequenceCoverageCheck-3";
@@ -52,7 +48,8 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 	private final static String MESSAGE_ID_GAPS_IN_LOCATIONS = "SequenceCoverageCheck-5";
 	private final static String MESSAGE_ID_INVALID_CONTIG_LOCATIONS = "SequenceCoverageCheck-6";
 	private final static String MESSAGE_ID_TRANSGENIC_SEQUENCE_COVERAGE = "SequenceCoverageCheck-7";
-
+	private final static String MESSAGE_ID_TRANSGENIC_FOCUS_OCCURRENCE = "SequenceCoverageCheck-8";
+	private final static String MESSAGE_ID_LOCATIONS_OVERLAP = "SequenceCoverageCheck-9";
 
 	/**
 	 * Checks the coverage of sequence by source features' locations.
@@ -63,8 +60,11 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
 
+		if(entry == null || entry.getSequence() == null) {
+			return result;
+		}
 		// checks the CONTIG/CO line locations cover the sequence length
-		if (entry.getSequence().getContigs().size() != 0) {
+		if (entry.getSequence().getContigs() != null && entry.getSequence().getContigs().size() != 0) {
 			result = checkContigLocation(entry);
 		}
 
@@ -91,6 +91,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		boolean hasTransgenic = false;
 		List<Location> sourceLocations = new ArrayList<>();
 		boolean isSourceFocuswithFullSequenceCoverage = false;
+		Origin firstSourceOrigin = sources.get(0).getOrigin();
 
 		for (SourceFeature source : sources) {
 			List<Location> locations = source.getLocations().getLocations();
@@ -101,8 +102,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 				}
 			} else {
 				if (hasTransgenic || isSourceFocuswithFullSequenceCoverage) {
-					//TODO: error: only one transgenic/focus source is allowed and they can not exist together
-					reportError(source.getOrigin(), "create new message id");
+					reportError(source.getOrigin(), MESSAGE_ID_TRANSGENIC_FOCUS_OCCURRENCE);
 				}
 
 				if (source.isTransgenic()) {
@@ -118,11 +118,6 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 
 		}
 
-		/**
-		 * get the origin of the first source feature - all errors will point to this
-		 */
-		Origin firstSourceOrigin = sources.get(0).getOrigin();
-
 		if (sourceLocations.isEmpty() && !isSourceFocuswithFullSequenceCoverage) {
 			reportCoverageError(result, entry.getOrigin(), MESSAGE_ID_NO_LOCATIONS, 0, sequenceSize);
 			return result;
@@ -132,7 +127,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		Collections.sort(sourceLocations, (o1, o2) -> o1.getBeginPosition().compareTo(o2.getBeginPosition()));
 
 		Iterator<Location> locationIter = sourceLocations.iterator();
-		Location location = (Location) locationIter.next();
+		Location location = locationIter.next();
 		Long[] firstLocation = checkLocation(location);
 
 		//checks first location
@@ -147,16 +142,14 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 		} else {
 			//check further locations
 			for (; locationIter.hasNext(); ) {
-				location = (Location) locationIter.next();
+				location = locationIter.next();
 				lastLocationPositions = checkLocation(location);
 
 				if ((firstLocation[1] + 1) != lastLocationPositions[0]) {//not contiguous
-					if (isSourceFocuswithFullSequenceCoverage || hasTransgenic) {
-						if ((firstLocation[1] + 1) < lastLocationPositions[0]) {
-							//there is an overlap, add error
-							reportCoverageError(result, firstSourceOrigin, "Yet to create new message id", 0, sequenceSize);
-						}
-					} else {
+					if ((firstLocation[1] + 1) > lastLocationPositions[0]) {
+						//there is an overlap, add error
+						reportCoverageError(result, firstSourceOrigin, MESSAGE_ID_LOCATIONS_OVERLAP, 0, sequenceSize);
+					} else if (!isSourceFocuswithFullSequenceCoverage && !hasTransgenic){
 						reportCoverageError(result, firstSourceOrigin, MESSAGE_ID_GAPS_IN_LOCATIONS, 0, sequenceSize);
 					}
 					return result;
@@ -211,7 +204,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
 
 	private ValidationResult checkContigLocation(Entry entry) {
 		List<Location> locations = entry.getSequence().getContigs();
-		Long contigSequenceCoverLength = new Long(0);
+		Long contigSequenceCoverLength = 0L;
 		Long sequenceLength = entry.getSequence().getLength();
 		for (Location location : locations) {
 			contigSequenceCoverLength += location.getLength();
