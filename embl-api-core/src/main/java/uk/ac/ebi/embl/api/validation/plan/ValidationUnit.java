@@ -154,7 +154,6 @@ public enum ValidationUnit
 					Lat_lonValueFix.class,//include for all
 					CountryQualifierFix.class,//include for all
 					MoleculeTypeAndQualifierFix.class,//include for all
-					ExclusiveSourceQualifiersFix.class,
 					CDS_RNA_LocusFix.class,//exclude for master
 					GaptoAssemblyGapFeatureFix.class,//exclude for master
 					GeneAssociatedwithFeatureFix.class,//exclude for master
