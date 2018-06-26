@@ -48,7 +48,6 @@ public enum ValidationUnit
 					MasterEntrySourceCheck.class,//include only for assembly master
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
-					OrganismNotQualifierCheck.class,//include for all
 					OrganismPatternAndQualifierValueCheck.class,//include for all
 					SingleSourceQualifiersCheck.class,//include for all
 					SourceFeatureOnlyCheck.class,//include for all
