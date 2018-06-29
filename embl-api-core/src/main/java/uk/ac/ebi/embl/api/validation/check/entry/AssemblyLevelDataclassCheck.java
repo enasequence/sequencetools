@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description("Invalid ID Line dataclass {0}"
 		+ "{0} dataclass allowed only for Master entries")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class AssemblyLevelDataclassCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "assemblyLevelDataclassCheck_1";

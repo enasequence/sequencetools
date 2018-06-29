@@ -11,7 +11,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
 @Description("")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class AnnotationOnlySequenceCheck extends EntryValidationCheck
 {
 	private final static String ASSEMBLY_LEVEL_SEQUENCE_CHECK_MESSAGE_1 = "AnnotationOnlySequenceCheck_1";

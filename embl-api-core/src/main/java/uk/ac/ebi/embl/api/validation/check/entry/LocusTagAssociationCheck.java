@@ -32,6 +32,7 @@ import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.LOCUS_TAG_QUALIFIER_N
  */
 @Description("Features sharing locus_tag \\\"{0}\\\" are associated with \\\"gene\\\" qualifiers with different values (\\\"{1}\\\" and \\\"{2}\\\")" +
         "Features sharing locus_tag \\\"{0}\\\" are associated with \\\"gene_synonym\\\" qualifiers with different sets of values. They should all share the same values.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class LocusTagAssociationCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID_DIFFERENT_GENE_VALUES = "LocusTagAssociationCheck1";

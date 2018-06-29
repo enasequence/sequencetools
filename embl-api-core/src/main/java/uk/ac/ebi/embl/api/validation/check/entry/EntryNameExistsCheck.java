@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("Assembly entries must have an entry_name")
 @GroupIncludeScope(group={ValidationScope.Group.ASSEMBLY})
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class EntryNameExistsCheck extends EntryValidationCheck {
 
 	private final static String ENTRY_NAME_MISSING_MESSAGE_ID = "EntryNameExistsCheck_1";

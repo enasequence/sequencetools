@@ -27,9 +27,12 @@ import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Abutting features cannot be adjacent between neighbouring exons.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExonFeaturesIntervalCheck extends EntryValidationCheck
 {
 

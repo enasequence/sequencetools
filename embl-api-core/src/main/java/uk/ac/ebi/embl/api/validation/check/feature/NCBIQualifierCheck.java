@@ -49,7 +49,7 @@ public class NCBIQualifierCheck extends FeatureValidationCheck {
         try {
             Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
             Set<String> artemisQualifiersSet = QualifierHelper.getArtemisQualifierSet();
-            Set<String> ignorable = new HashSet<>(Arrays.asList(Qualifier.OLD_LOCUS_TAG, Qualifier.PROTEIN_ID_QUALIFIER_NAME));
+            Set<String> ignorable = new HashSet<>(Arrays.asList(Qualifier.OLD_LOCUS_TAG, Qualifier.PROTEIN_ID_QUALIFIER_NAME, Qualifier.ALTITUDE_QUALIFIER_NAME));
             QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
             qInfo.addRegexGroupInfos(QualifierHelper.setNullGroupTolerance(qInfo));
 
