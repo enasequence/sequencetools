@@ -137,4 +137,16 @@ public class ValidationResultTest {
                 "REPORT_MESSAGE\n" +
                 "********", str.toString());
     }
+    
+    @Test
+    public void testWriteMessagestats() throws IOException {
+        StringWriter str = new StringWriter();
+        ValidationMessage validationMessage1= new ValidationMessage(Severity.ERROR, TEST_MESSAGE);
+        ValidationMessage validationMessage2 = new ValidationMessage(Severity.ERROR, TEST_MESSAGE);
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.append(validationMessage1);
+        validationResult.append(validationMessage2);
+        validationResult.writeMessageStats(str);
+        assertEquals("2	TEST_MESSAGE	Missing message: TEST_MESSAGE\n", str.toString());
+        }
 }
