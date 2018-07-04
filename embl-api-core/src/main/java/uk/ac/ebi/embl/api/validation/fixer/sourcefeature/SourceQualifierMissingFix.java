@@ -41,7 +41,8 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 	private static final String metagenomeEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_2";
 	private static final String metagenomeIsolationQualifierFix_ID = "SourceQualifierMissingFix_3";
 	private static final String lineageEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_4";
-
+	private static final String strainToIsolateFix = "SourceQualifierMissingFix_5";
+	private static final String strainRemovalFix = "SourceQualifierMissingFix_6";
 
 
 	public ValidationResult check(Entry entry)
@@ -143,6 +144,16 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				}
 			}
 			
+		}
+
+		if(is_environment_sample_exists && entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME).size() != 0) {
+			entry.getPrimarySourceFeature().removeQualifier(Qualifier.STRAIN_QUALIFIER_NAME);
+			if(entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size() == 0) {
+				entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME);
+				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainRemovalFix);
+			} else {
+				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainToIsolateFix);
+			}
 		}
 
 		return result;

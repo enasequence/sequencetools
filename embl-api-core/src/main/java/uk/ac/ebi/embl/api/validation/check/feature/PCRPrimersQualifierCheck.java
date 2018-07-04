@@ -25,13 +25,16 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Qualifier \"{0}\" has invalid format"
 		+ "Qualifier \"{0}\" has illegal modified bases format:\"{1}\""
 		+ "Qualifier \"{0}\" has no modified bases within <>"
 		+ "Qualifier \"{0}\" has invalid nucleotide:\"{1}\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class PCRPrimersQualifierCheck extends FeatureValidationCheck {
 
 	private final static String PCR_FORMAT_MESSAGE_ID = "PCRPrimersQualifierCheck_1";

@@ -155,6 +155,49 @@ public class SourceQualifierMissingFixTest
 		assertEquals(1, validationResult.count("SourceQualifierMissingFix_4", Severity.FIX));
 		assertTrue(SequenceEntryUtils.isQualifierAvailable(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME, entry));
 	}
-	
+
+	@Test
+	public void testCheckSourceWithStrainAndEnvSample()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		Qualifier organismQualifier = qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(organismQualifier);
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.STRAIN_QUALIFIER_NAME));
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.count("SourceQualifierMissingFix_6", Severity.FIX));
+	}
+
+	@Test
+	public void testCheckSourceWithStrainAndEnvSampleAndIsolate()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		Qualifier organismQualifier = qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(organismQualifier);
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.STRAIN_QUALIFIER_NAME));
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME));
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.count("SourceQualifierMissingFix_5", Severity.FIX));
+	}
+
 
 }

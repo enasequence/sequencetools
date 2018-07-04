@@ -18,15 +18,14 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.Collection;
 
 @Description("Entries of type \"WGS\" must not contain \"gap\" features.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class WGSGapCheck extends EntryValidationCheck {
 
     private final static String GAPS_PRESENT_ID = "WGSGapCheck";

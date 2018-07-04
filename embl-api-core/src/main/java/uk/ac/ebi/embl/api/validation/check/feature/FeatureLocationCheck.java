@@ -15,22 +15,17 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.util.List;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+
+import java.util.List;
 
 @Description("The feature has no location.\\Feature location missing.\\The begin and end position of a sequence span are in the wrong order."
 		+ " {0} feature  location is overlapped")
@@ -39,7 +34,6 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
     private static final String NO_LOCATION_ID = "FeatureLocationCheck-1";
     private static final String LOCATION_MISSING_ID = "FeatureLocationCheck-2";
     private static final String LOCATION_ORDER_ID = "FeatureLocationCheck-3";
-    private static final String LOCATION_OVERLAP_ID = "FeatureLocationCheck-4";
     private static final String INVALID_REMOTELOCATION_ID = "FeatureLocationCheck-5";
 
 
@@ -93,16 +87,7 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
             }
         if(feature instanceof CdsFeature && ((CdsFeature)feature).isPseudo())
         	return result;
-        if(compoundLocation.hasOverlappingLocation())
-        {
-        	if(!SequenceEntryUtils.isQualifierAvailable(Qualifier.RIBOSOMAL_SLIPPAGE, feature)&&!SequenceEntryUtils.isQualifierAvailable(Qualifier.TRANS_SPLICING, feature))
-        	{
-        		if(entry!=null&&entry.getSequence()!=null&&entry.getSequence().getTopology()==Topology.CIRCULAR)
-        			return result;
-        		reportError(feature.getOrigin(), LOCATION_OVERLAP_ID, feature.getName());
-        	}
-          		
-        }
+
       }catch(Exception e)
       {
     	  throw new ValidationEngineException(e.getMessage());

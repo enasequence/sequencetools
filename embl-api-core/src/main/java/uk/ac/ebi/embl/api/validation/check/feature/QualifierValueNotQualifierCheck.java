@@ -19,15 +19,14 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.GlobalDataSets;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.Collection;
 
 @Description("Qualifier {0} must not exist when qualifier {1} has value {2}.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class QualifierValueNotQualifierCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "QualifierValueNotQualifierCheck";

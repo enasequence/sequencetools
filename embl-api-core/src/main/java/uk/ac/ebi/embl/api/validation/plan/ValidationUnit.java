@@ -48,20 +48,16 @@ public enum ValidationUnit
 					MasterEntrySourceCheck.class,//include only for assembly master
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
-					OrganismNotQualifierCheck.class,//include for all
 					OrganismPatternAndQualifierValueCheck.class,//include for all
-					SingleSourceQualifiersCheck.class,//include for all
 					SourceFeatureOnlyCheck.class,//include for all
 					SourceFeatureQualifierCheck.class,//include for all
 					Type_materialQualifierCheck.class,//include for all
 					CollectionDateQualifierCheck.class,//include for all
-					Isolation_sourceQualifierCheck.class,//include for all
 					MoleculeTypeAndOrganismCheck.class,//exclude for assembly master
 					MoleculeTypeAndSourceQualifierCheck.class,//exclude for assembly master
 					SequenceCoverageCheck.class,//exclude for assembly master
 					QualifierCheck.class, //include for all
 					GapFeatureBasesCheck.class,//include for all
-					GapFeatureLocationsCheck.class,//include for all
 					Assembly_gapFeatureCheck.class,//include for all
 					WGSGapCheck.class,//include for all
 					ExclusiveQualifiersCheck.class,//include for all
@@ -99,11 +95,8 @@ public enum ValidationUnit
 					QualifierValueNotQualifierCheck.class,//include for all
 					QualifierValueNotQualifierPatternCheck.class,//include for all
 					QualifierValueRequiredQualifierStartsWithValueCheck.class,//include for all
-					QualifierValueRequiredQualifierValueCheck.class,//include for all
-					SimpleFeatureLocationCheck.class,//include for all
 					UnbalancedParenthesesCheck.class,//include for all
 					Assembly_gapFeatureCheck.class,//exclude for master
-					WGSGapCheck.class,//exclude for master
 					EC_numberCheck.class,//exclude for master
 					CitationQualifierCheck.class,//include for all
 					PropeptideLocationCheck.class,//exclude for master
@@ -111,13 +104,10 @@ public enum ValidationUnit
 					OrganismAndPermittedQualifierCheck.class,//include for all
 					RRNAQualifierValueOrOrganismAndQualifierValueCheck.class,//include for all
 					SourceQualifierPatternAndFeatureCheck.class,//include for all
-					TaxonomicDivisionNotQualifierCheck.class,//include for all
 					TaxonomicDivisionQualifierCheck.class,//include for all
 					AntiCodonTranslationCheck.class,//exclude for master
-					FeatureAndMoleculeTypeCheck.class,//include for all
 					GapFeatureBasesCheck.class,//exclude for master
 					GapFeatureLocationsCheck.class,//exclude for master
-					LocusTagCoverageCheck.class,//exclude for master
 					MoleculeTypeAndFeatureCheck.class,//include for all
 					PeptideFeatureCheck.class,//exclude for master
 					CdsFeatureTranslationCheck.class,//exclude for master
@@ -155,7 +145,6 @@ public enum ValidationUnit
 					Lat_lonValueFix.class,//include for all
 					CountryQualifierFix.class,//include for all
 					MoleculeTypeAndQualifierFix.class,//include for all
-					ExclusiveSourceQualifiersFix.class,
 					CDS_RNA_LocusFix.class,//exclude for master
 					GaptoAssemblyGapFeatureFix.class,//exclude for master
 					GeneAssociatedwithFeatureFix.class,//exclude for master
@@ -233,7 +222,7 @@ public enum ValidationUnit
 		this.checks = Arrays.asList(checks);
 	}
 
-	List<Class<? extends EmblEntryValidationCheck<?>>> getValidationUnit()
+	public List<Class<? extends EmblEntryValidationCheck<?>>> getValidationUnit()
 	{
 		return this.checks;
 	}

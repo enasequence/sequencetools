@@ -26,9 +26,11 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("Feature \\\"{0}\\\" is required when qualifier \\\"{1}\\\" matches pattern \\\"{2}\\\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class SourceQualifierPatternAndFeatureCheck extends EntryValidationCheck {
 	
 	private final static String MESSAGE_ID = "SourceQualifierPatternAndFeatureCheck";

@@ -22,12 +22,14 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
 import java.sql.SQLException;
 import java.util.List;
 
 @Description("invalid protein_id {0}: protein_id can only be assigned by EMBL")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ProteinIdExistsCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "ProteinIdExistsCheck_1";

@@ -21,11 +21,13 @@ import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.sql.SQLException;
 import java.util.*;
 
 @Description("Illegal /locus_tag value \"{0} \". locus_tag prefix \"{1}\" is not registered with the project")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class LocusTagPrefixCheck extends EntryValidationCheck {
 
 	protected final static String MESSAGE_ID_INVALID_PREFIX = "LocusTagPrefixCheck1";

@@ -15,28 +15,20 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.*;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.LocationFactory;
+import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
-import java.util.Collection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class FeatureLocationCheckTest
@@ -80,69 +72,5 @@ public class FeatureLocationCheckTest
 		ValidationResult intronResult = check.check(intronFeature);
 		assertEquals(1, intronResult.count("FeatureLocationCheck-3", Severity.ERROR));
 	}
-	
-	@Test
-	public void testCheck_invalidOverlapLocation() throws ValidationEngineException
-	{
-		FeatureFactory featureFactory = new FeatureFactory();
-		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-		Join<Location> cdsFeatureLocation = new Join<Location>();
-		LocationFactory locationFactory = new LocationFactory();
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l,115l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(120l,125l));
-		cdsFeature.setLocations(cdsFeatureLocation);
-		ValidationResult intronResult = check.check(cdsFeature);
-		assertEquals(1, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
-	}
-	@Test
-	public void testCheck_validOverlapLocation1() throws ValidationEngineException
-	{
-		FeatureFactory featureFactory = new FeatureFactory();
-		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-		cdsFeature.addQualifier(Qualifier.RIBOSOMAL_SLIPPAGE);
-		Join<Location> cdsFeatureLocation = new Join<Location>();
-		LocationFactory locationFactory = new LocationFactory();
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l,115l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(120l,125l));
-		cdsFeature.setLocations(cdsFeatureLocation);
-		ValidationResult intronResult = check.check(cdsFeature);
-		assertEquals(0, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
-	}
-	
-	@Test
-	public void testCheck_validOverlapLocation2() throws ValidationEngineException
-	{
-		FeatureFactory featureFactory = new FeatureFactory();
-		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-		EntryFactory entryFactory= new EntryFactory();
-		Entry entry=entryFactory.createEntry();
-		entry.setSequence((new SequenceFactory()).createSequence());
-		entry.getSequence().setTopology(Topology.CIRCULAR);
-        check.setEntry(entry);
-		Join<Location> cdsFeatureLocation = new Join<Location>();
-		LocationFactory locationFactory = new LocationFactory();
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l,115l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(120l,125l));
-		cdsFeature.setLocations(cdsFeatureLocation);
-		ValidationResult intronResult = check.check(cdsFeature);
-		assertEquals(0, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
-	}
-	@Test
-	public void testCheck_psuedoCDSOverlapLocation() throws ValidationEngineException
-	{
-		FeatureFactory featureFactory = new FeatureFactory();
-		Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-		cdsFeature.addQualifier(Qualifier.PSEUDO_QUALIFIER_NAME);
-		Join<Location> cdsFeatureLocation = new Join<Location>();
-		LocationFactory locationFactory = new LocationFactory();
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l,115l));
-		cdsFeatureLocation.addLocation(locationFactory.createLocalRange(120l,125l));
-		cdsFeature.setLocations(cdsFeatureLocation);
-		ValidationResult intronResult = check.check(cdsFeature);
-		assertEquals(0, intronResult.count("FeatureLocationCheck-4", Severity.ERROR));
-	}
+
 }

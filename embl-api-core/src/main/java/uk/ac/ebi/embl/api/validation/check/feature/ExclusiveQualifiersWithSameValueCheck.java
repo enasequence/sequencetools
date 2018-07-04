@@ -26,9 +26,12 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Qualifiers {0} and {1} cannot have the same value.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class ExclusiveQualifiersWithSameValueCheck extends FeatureValidationCheck {
 
 	private final static String MESSAGE_ID = "ExclusiveQualifiersWithSameValueCheck";
