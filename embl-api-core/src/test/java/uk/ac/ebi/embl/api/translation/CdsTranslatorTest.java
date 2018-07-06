@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.translation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
+import static uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter.renderCompoundLocation;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
@@ -50,8 +53,7 @@ public class CdsTranslatorTest {
 	private FeatureFactory featureFactory = new FeatureFactory();
 	private LocationFactory locationFactory = new LocationFactory();	
 	private CdsTranslator cdsTranslator;
-	private EmblEntryValidationPlanProperty property;
-	private TaxonHelper taxonHelper;
+	private CdsTranslator fixingCdsTranslator;
 
     private boolean write = false;
 	
@@ -62,13 +64,16 @@ public class CdsTranslatorTest {
 		sourceFeature = featureFactory.createSourceFeature();
 		entry.addFeature(cdsFeature);
 		entry.addFeature(sourceFeature);
-        taxonHelper = createMock(TaxonHelper.class);
-        property=new EmblEntryValidationPlanProperty();
-        property.taxonHelper.set(taxonHelper);
+		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
+        property.taxonHelper.set(createMock(TaxonHelper.class));
         cdsTranslator = new CdsTranslator(property);
+		EmblEntryValidationPlanProperty fixingProperty=new EmblEntryValidationPlanProperty();
+		fixingProperty.taxonHelper.set(createMock(TaxonHelper.class));
+		fixingProperty.isFixMode.set(true);
+		fixingCdsTranslator = new CdsTranslator(fixingProperty);
     }
 	
-	private void writeTranslation(TranslationResult translationResult, 
+	private void writeTranslation(TranslationResult translationResult,
 			String expectedTranslation) throws IOException {
 		TranslationResultWriter translationResultWriter = new TranslationResultWriter(
       	translationResult, expectedTranslation);
@@ -79,13 +84,21 @@ public class CdsTranslatorTest {
 	}
 
 	private boolean testValidTranslation (String expectedTranslation) {
-		return testValidTranslation (expectedTranslation, null);
+		return testValidTranslation (cdsTranslator, expectedTranslation, null);
+	}
+
+	private boolean testValidTranslation (String expectedTranslation, String expectedMessageKey) {
+		return testValidTranslation (cdsTranslator, expectedTranslation, expectedMessageKey);
+	}
+
+	private boolean testValidTranslationFixMode(String expectedTranslation) {
+		return testValidTranslation (fixingCdsTranslator, expectedTranslation, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean testValidTranslation (String expectedTranslation, String expectedMessageKey) {
+	private boolean testValidTranslation(CdsTranslator translator, String expectedTranslation, String expectedMessageKey) {
     	try {
-    		ValidationResult validationResult = cdsTranslator.translate(cdsFeature, entry);
+			ValidationResult validationResult = translator.translate(cdsFeature, entry);
             TranslationResult translationResult = null;
             if (validationResult instanceof ExtendedResult) {
             	ExtendedResult<TranslationResult> extendedResult = 
@@ -94,7 +107,7 @@ public class CdsTranslatorTest {
             }
             if (validationResult.count(Severity.ERROR) > 0) {
             	if (write) {
-            		System.out.print("UNEXPECTED ERROR\n");
+            		System.out.print("ERROR\n");
             		System.out.print("--------------------\n");
             		for (ValidationMessage message : validationResult.getMessages()) {
             			System.out.print("MESSAGE: "+ message.getMessage() + "\n");
@@ -103,20 +116,12 @@ public class CdsTranslatorTest {
             	}
             	return false;
             }
-            if (expectedMessageKey != null &&
-            	validationResult.count(expectedMessageKey, Severity.WARNING) >= 1) {
-            	if (write) {	            	
-            		System.out.print("EXPECTED WARNING\n");
-            		System.out.print("++++++++++++++++++\n");
-            		for (ValidationMessage message : validationResult.getMessages()) {
-            			System.out.print("MESSAGE: "+ message.getMessage() + "\n");
-            		}
-            		if (translationResult != null) {
-            			writeTranslation(translationResult, null);
-            		}
-            	}
-                return true;
-            }                        
+            if (expectedMessageKey != null) {
+				assertTrue(
+						validationResult.count(expectedMessageKey, Severity.WARNING) >= 1 ||
+								validationResult.count(expectedMessageKey, Severity.ERROR) >= 1);
+			}
+
             String conceptualTranslation = cdsFeature.getTranslation();
             if(!conceptualTranslation.equals(expectedTranslation)) {
             	if (write) {
@@ -195,98 +200,10 @@ public class CdsTranslatorTest {
             return false;
         }
     }
-	
+
 	@Test
 	public void testTranslate1() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
-		sourceFeature.setScientificName("JC polyomavirus");
+		setSequenceAndOrganismForJcPolyomavirus();
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
 		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(266L, 481L));
@@ -295,97 +212,10 @@ public class CdsTranslatorTest {
 			"KYSALPEPKAT"
 		));
 	}
-	
+
 	@Test
 	public void testTranslate2() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
@@ -403,94 +233,7 @@ public class CdsTranslatorTest {
 		
 	@Test
 	public void testTranslate3() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
@@ -506,94 +249,7 @@ public class CdsTranslatorTest {
 	
 	@Test
 	public void testTranslate4() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
@@ -619,94 +275,7 @@ public class CdsTranslatorTest {
 
 	@Test
 	public void testTranslate5() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
@@ -721,94 +290,7 @@ public class CdsTranslatorTest {
 
 	@Test
 	public void testTranslate6() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setException("Not a read exception");
@@ -820,7 +302,7 @@ public class CdsTranslatorTest {
 			"DTPYRDLKL");							
 		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(4484L, 5002L, true));
 		assertTrue(testValidTranslation(
-				"MDKVLNREESMELMDLLGLDRSAWGNIPVMRKAYLKKCKELHPDK" +
+				cdsTranslator, "MDKVLNREESMELMDLLGLDRSAWGNIPVMRKAYLKKCKELHPDK" +
 				"GGDEDKMKRMNFLYKKMEQGVKVAHQPDFGTWNSSEVGCDFPPNSDTLYCKEWPNCATN" +
 				"PSVHCPCLMCMLKLRHRNRKFLRSSPLVWIDCYCFDCFRQWFGCDLTQEALHCWEKVLG" +
 				"DTPYRDLKL", "CDSTranslator-3"
@@ -829,94 +311,7 @@ public class CdsTranslatorTest {
 
 	@Test
 	public void testTranslate7() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-			("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
-			"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
-			"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
-			"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
-			"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
-			"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
-			"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
-			"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
-			"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
-			"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
-			"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
-			"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
-			"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
-			"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
-			"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
-			"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
-			"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
-			"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
-			"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
-			"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
-			"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
-			"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
-			"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
-			"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
-			"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
-			"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
-			"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
-			"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
-			"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
-			"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
-			"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
-			"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
-			"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
-			"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
-			"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
-			"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
-			"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
-			"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
-			"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
-			"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
-			"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
-			"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
-			"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
-			"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
-			"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
-			"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
-			"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
-			"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
-			"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
-			"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
-			"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
-			"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
-			"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
-			"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
-			"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
-			"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
-			"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
-			"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
-			"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
-			"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
-			"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
-			"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
-			"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
-			"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
-			"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
-			"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
-			"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
-			"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
-			"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
-			"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
-			"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
-			"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
-			"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
-			"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
-			"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
-			"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
-			"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
-			"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
-			"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
-			"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
-			"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
-			"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
-			"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
-			"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
-			"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
-			"aagcttggaggcggaggcg").getBytes()
-		));
+		setSequenceAndOrganismForJcPolyomavirus();
 		sourceFeature.setScientificName("JC polyomavirus");
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setTranslationTable(11);
@@ -936,6 +331,9 @@ public class CdsTranslatorTest {
          */
         assertTrue(!cdsTranslator.getTranslator().isLeftPartial());
         assertTrue(cdsTranslator.getTranslator().isRightPartial());
+
+		assertTrue(!cdsFeature.getLocations().isLeftPartial());
+		assertTrue(cdsFeature.getLocations().isRightPartial());
 	}
 
 	@Test
@@ -989,7 +387,7 @@ public class CdsTranslatorTest {
 	
 	@Test
 	public void testTranslateStartCodon2() {
-		entry.setSequence(sequenceFactory.createSequenceByte( 
+		entry.setSequence(sequenceFactory.createSequenceByte(
 			("acaaattcgacggcttccgcttcgacggtgtcactagcatgatgtatctgcaccacggca" +
 			"ttggcacgggattctctgggggctatcatgaatatttcgggccaggcgtcgacgaggagg" +
 			"ccgtcgtctatctcatgctggctaacgatgccatgcactctctcttcccctcgattatca" +
@@ -1121,7 +519,7 @@ public class CdsTranslatorTest {
 				"tcacgtactgggtccaaatgctggagaagttacacaaggctttgcagctgcactcaaatg" +
 				"tggactgaccaaaaagcagctggacagcacaattggaatccaccctgtctgtgcagaggt" +
 				"attcacaacattgtctgtgaccaagcgctctggggcaagcatcctccaggctggctgctg" +
-				"aggttaagccccagtgtggatgcttttgccaagactccaaaccactgactcgtttccgtg").getBytes()	
+				"aggttaagccccagtgtggatgcttttgccaagactccaaaccactgactcgtttccgtg").getBytes()
 		));
 		sourceFeature.setScientificName("unclassified");
 		cdsFeature.setTranslationTable(11);
@@ -1143,43 +541,7 @@ public class CdsTranslatorTest {
 
 	@Test
 	public void testTranslateTranslationException3() {
-        entry.setSequence(sequenceFactory.createSequenceByte(
-				("ggccattatggccgggacctcagttttcttcagtccggcatttgcagcagagcgaaaggt" +
-				"ggtcgagtcctgaaggagggcctgatgtcttcatcattctcaaattcttgtaagctctgc" +
-				"gtcgggtgaaaccagacaaagccgcgagcccagggatgggagcacgcgggggacggcctg" +
-				"ccggcggggacgacagctttgcgcctgggtgcagcagcgtgcgtctcggggaagggaaga" +
-				"tattttaaggcgtgtctgagcagacggggaggcttttccaaacccaggcagcttcgtggc" +
-				"gtgtgcggtttcgacccggtcacacaaagcgtcagcatgtgaggacggtcgggccctgga" +
-				"aggaacgctctcggaactggccgcggaaaccgatctgcccgttgtgtttgtgaaacagag" +
-				"aaagataggcggccatggtccaaccttgaaggcttatcaggagggcagacttcaaaagct" +
-				"actaaaaatgaacggccctgaagatcttcccgagtcctatgactatgaccttatcatcat" +
-				"tggaggtggctcaggaggcctggcagctgctaaggaggcagcccaatatggcaagaaggt" +
-				"gatggtcctggactttgtcactcccacccctcttggaactagatggggtctcgaaggaac" +
-				"atgtgtgaatgtgggttgcatacctaaaaaactgatgcatcaagcagctttgttaggaca" +
-				"agccctacaagactctcgaaactatggatggaaagtcgaggagacagttaagcatgactg" +
-				"ggacagaatgatagaagctgtacagaatcacattggctctttgaattggggctaccgagt" +
-				"agctctgcgggagaaaaaagttgtctatgagaatgcttacgggcaatttattggtcctca" +
-				"caggattaaggcaacaaataataaaggcaaagaaaaaatttattcagcagagaggtttct" +
-				"cattgccactggtgaaagaccacgttacttgggcatccctggtgacaaagaatactgcat" +
-				"cagcagtgatgatcttttctccttgccttattgcccgggtaagaccctgattgttggagc" +
-				"atcctatgttgctttggagtgtgctggatttcttgccggtattggtttagacgtcactgt" +
-				"tatggttaggtccattcttcttagaggatttgaccaggacatggccaacaaaatcggtga" +
-				"acacatggaagaacatggcatcaagtttataagacagtttgtaccaattaaagttggaca" +
-				"aattgaagcggggacaccaggccgactcagagtagtagctcagtccaccaatagtgagga" +
-				"aatcattgaaggagaatataatacggtgttgctggcaataggaagagatgcttgcacaag" +
-				"aaaaattggcttagaaaccgtaggggtgaagataaatgaaaagactggaaaaatacctgt" +
-				"cacagatgaagaacagaccaatgtgccttacatctatgccattggcgatatattggagga" +
-				"taaggtggagctcaccccagttgcaatccaggcaggaagattgctggctcagaggctcta" +
-				"tgcaggttccactgtcaagtgtgattatgaaaatgttccaaccactgtatttactccttt" +
-				"ggaatatggtgcttgtggcctttctgaggagaaagctgtggagaagtttggggaagaaaa" +
-				"tattgaagtttaccatagttacttttggccattggaacggacgattccatcaagagataa" +
-				"caacaaatgttacgcaaaaataatctgtaatactaaagacaatgaacgtgttgtgggctt" +
-				"tcacgtactgggtccaaatgctggagaagttacacaaggctttgcagctgcactcaaatg" +
-				"tggactgaccaaaaagcagctggacagcacaattggaatccaccctgtctgtgcagaggt" +
-				"attcacaacattgtctgtgaccaagcgctctggggcaagcatcctccaggctggctgctg" +
-				"aggttaagccccagtgtggatgcttttgccaagactccaaaccactgactcgtttccgtg").getBytes()
-		));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setTranslationTable(1);
 		cdsFeature.setStartCodon(1);
 		cdsFeature.addQualifier("transl_except", "(pos:1979..1989,aa:Sec)");//outside the sequence range
@@ -1224,7 +586,7 @@ public class CdsTranslatorTest {
 			"ctctttctttctataatgttgtatcacactcttctaaaacttgagtggctgtcttaaaag" +
 			"atataaggggaaagataatattgtctgtctctgtattgcttagtaagtatttccatagtc" +
 			"aatgatggtttaataggtaaaccaaaccctataaacctgacctcctttatggttaatact" +
-			"attaaggaagaatgcagtacacaattggatacagtatggatttgtccaaata").getBytes()				
+			"attaaggaagaatgcagtacacaattggatacagtatggatttgtccaaata").getBytes()
 		));
 		sourceFeature.setScientificName("unclassified");
 		cdsFeature.setTranslationTable(11);
@@ -1264,204 +626,10 @@ public class CdsTranslatorTest {
 			"PKGKETSASQGH"
 		));
 	}
-	
-
-	@Test
-	public void testPseudo1() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-			("tttaaagattgagtggggatatgggttaaatcatgaaaaagcgaaaagacagtctcaagt" +
-			"ttatttttctttcggagataattgacgttcgttattgtttttatttttacgaagttatag" +
-			"ggaataaatatattcaaggtatggtattgcgtgtagatatagaatgtaatgcaggtatag" +
-			"gtatagttttaaactaacaaaacgtttctgctgggaaatctgcggctaacaaatttataa" +
-			"aaacggcagaggatggataaatgaagattaccgcatcagaacttgaggagcttgtttctg" +
-			"gagagcttatcggcgacaaaaatattgttttgacaggtatcagcggactttcagtcgcga" +
-			"ataaagacgatatttctcggtttaaaaataaaaatgtaataaaagtgtcaaacccctatt" +
-			"atgcctacggcattgtcctttctattgttgaaaaagagaaattagatgtagtagaaagaa" +
-			"atatacatatatctgccttgatagcagatgatgtaaagttgggaaaagatgcgtatatag" +
-			"ggcaaagtgttgtgattgagtctggatctgaaatcggtggcaatgcaaagatatttccaa" +
-			"atgtgtgtataataggtgtaaaaatgtaaaaatcggagaagaatgtcttatatatccgaa" +
-			"tattgttgtaagaggatacactgataggtgacagggttattattcagccggggggggggg" +
-			"ggatgtatcggtagaggcggttttggttttgcggcagatggcggcaaaatacgtaaaatt" +
-			"tctcaagtaggaaaagttgagataggcaatgatgttgaaatcggggcaaacactacaatt" +
-			"tacagagctactgttgacgttacaaggataggcagcggaacaaaaagtgataatctggtt" +
-			"cagatagtgcacaatgttcaaattggtgaaaactgcataattgtcgcgcaggtcggaata" +
-			"tcgggatcgacacggttgggaaataacgtgatgatagcaagtcagttgtgcgtttcggtg" +
-			"aatctgtgtgacggcgagcaggtttgtggaaatccaatattgccgattagtcaaagtgta").getBytes()
-	     ));
-		sourceFeature.setScientificName("unclassified");
-		cdsFeature.setTranslationTable(11);
-		cdsFeature.setStartCodon(1);
-		cdsFeature.setPseudo(true);
-		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(261L,1047L));
-		//assertTrue(testValidTranslation(
-		//		""
-	//	));
-	}
-
-	@Test
-	public void testPseudo2() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-			("tttaaagattgagtggggatatgggttaaatcatgaaaaagcgaaaagacagtctcaagt" +
-			"ttatttttctttcggagataattgacgttcgttattgtttttatttttacgaagttatag" +
-			"ggaataaatatattcaaggtatggtattgcgtgtagatatagaatgtaatgcaggtatag" +
-			"gtatagttttaaactaacaaaacgtttctgctgggaaatctgcggctaacaaatttataa" +
-			"aaacggcagaggatggataaatgaagattaccgcatcagaacttgaggagcttgtttctg" +
-			"gagagcttatcggcgacaaaaatattgttttgacaggtatcagcggactttcagtcgcga" +
-			"ataaagacgatatttctcggtttaaaaataaaaatgtaataaaagtgtcaaacccctatt" +
-			"atgcctacggcattgtcctttctattgttgaaaaagagaaattagatgtagtagaaagaa" +
-			"atatacatatatctgccttgatagcagatgatgtaaagttgggaaaagatgcgtatatag" +
-			"ggcaaagtgttgtgattgagtctggatctgaaatcggtggcaatgcaaagatatttccaa" +
-			"atgtgtgtataataggtgtaaaaatgtaaaaatcggagaagaatgtcttatatatccgaa" +
-			"tattgttgtaagaggatacactgataggtgacagggttattattcagccggggggggggg" +
-			"ggatgtatcggtagaggcggttttggttttgcggcagatggcggcaaaatacgtaaaatt" +
-			"tctcaagtaggaaaagttgagataggcaatgatgttgaaatcggggcaaacactacaatt" +
-			"tacagagctactgttgacgttacaaggataggcagcggaacaaaaagtgataatctggtt" +
-			"cagatagtgcacaatgttcaaattggtgaaaactgcataattgtcgcgcaggtcggaata" +
-			"tcgggatcgacacggttgggaaataacgtgatgatagcaagtcagttgtgcgtttcggtg" +
-			"aatctgtgtgacggcgagcaggtttgtggaaatccaatattgccgattagtcaaagtgta" +
-			"aaggttagagttttgatgagaaagttgccgaaaatataccgtgatttgaaaaaaataaaa" +
-			"aaagatttggatggtaaacaggtttgattatagcaacgcaaacgactgttttgaggaagt" +
-			"ttccgttgaaggaataggagacttcataccgggaacaaaagcgttgtggtttttaaaccc" +
-			"gctccaaatacggaatacggcattagatttgtaagaatggatttgccgaataagcctgaa" +
-			"atcaaagctatttggtcaaacgcttcttcaggtttagcggtgagaggaagcgttattgaa" +
-			"aaaacggcgtaaaaatttatacgattgagcatattatgtgcatgtttttctcttggaatt" +
-			"gataatttaattattgaaataaacagtaatgagcctccgattttagacggcagcgcaaaa" +
-			"atacttgcagaaacttttgcaatggggggtgaaagaatttgacgctctcagagagtatta" +
-			"tgctctcaaaaagcctatgcattttgaagctggaaaaactagaatatccgcatatccgtc" +
-			"ggatcatcttgaaataaaatgtattataggttttgaccatcagtttttgcgttttcagca" +
-			"gatgtctttaaaagacttaaacgatattgctccggcaaaagctttctactttgattacga" +
-			"gatagaagcactcaaaaagaaagggcttgctttgggcggatctatggataatgctatagt" +
-			"catagctttagacggagtacagaatgaagggttgttgcgttacaacaacgaatttgtaag" +
-			"acataaaatccttgatttgataggcgatatatatttggcgggaaaacctataaaagctaa" +
-			"gatagttgctgaaaaaccgggacatcagaataatatagtttttgtaaaagaatttttgaa" +
-			"aaaggcagtcaaaagctatgggggtagaaatggacaataatattaaaaatacaaaatcga" +
-			"caggaaccgaaaaaatattaagtactgaggaaattttaaagtgtata").getBytes()
-	     ));
-		sourceFeature.setScientificName("unclassified");
-		cdsFeature.setTranslationTable(11);
-		cdsFeature.setStartCodon(1);
-		cdsFeature.setPseudo(true);
-		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1170L, 2020L));
-		//assertTrue(testValidTranslation(
-		//		""
-		//));
-	}
-
-    @Test
-	public void testPseudogene1() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-			("tttaaagattgagtggggatatgggttaaatcatgaaaaagcgaaaagacagtctcaagt" +
-			"ttatttttctttcggagataattgacgttcgttattgtttttatttttacgaagttatag" +
-			"ggaataaatatattcaaggtatggtattgcgtgtagatatagaatgtaatgcaggtatag" +
-			"gtatagttttaaactaacaaaacgtttctgctgggaaatctgcggctaacaaatttataa" +
-			"aaacggcagaggatggataaatgaagattaccgcatcagaacttgaggagcttgtttctg" +
-			"gagagcttatcggcgacaaaaatattgttttgacaggtatcagcggactttcagtcgcga" +
-			"ataaagacgatatttctcggtttaaaaataaaaatgtaataaaagtgtcaaacccctatt" +
-			"atgcctacggcattgtcctttctattgttgaaaaagagaaattagatgtagtagaaagaa" +
-			"atatacatatatctgccttgatagcagatgatgtaaagttgggaaaagatgcgtatatag" +
-			"ggcaaagtgttgtgattgagtctggatctgaaatcggtggcaatgcaaagatatttccaa" +
-			"atgtgtgtataataggtgtaaaaatgtaaaaatcggagaagaatgtcttatatatccgaa" +
-			"tattgttgtaagaggatacactgataggtgacagggttattattcagccggggggggggg" +
-			"ggatgtatcggtagaggcggttttggttttgcggcagatggcggcaaaatacgtaaaatt" +
-			"tctcaagtaggaaaagttgagataggcaatgatgttgaaatcggggcaaacactacaatt" +
-			"tacagagctactgttgacgttacaaggataggcagcggaacaaaaagtgataatctggtt" +
-			"cagatagtgcacaatgttcaaattggtgaaaactgcataattgtcgcgcaggtcggaata" +
-			"tcgggatcgacacggttgggaaataacgtgatgatagcaagtcagttgtgcgtttcggtg" +
-			"aatctgtgtgacggcgagcaggtttgtggaaatccaatattgccgattagtcaaagtgta").getBytes()
-	     ));
-		sourceFeature.setScientificName("unclassified");
-		cdsFeature.setTranslationTable(11);
-		cdsFeature.setStartCodon(1);
-		cdsFeature.setPseudo(true);
-		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(261L,1047L));
-		//assertTrue(testValidTranslation(
-		//		""
-		//));
-	}
-
-	@Test
-	public void testPseudogene2() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-			("tttaaagattgagtggggatatgggttaaatcatgaaaaagcgaaaagacagtctcaagt" +
-			"ttatttttctttcggagataattgacgttcgttattgtttttatttttacgaagttatag" +
-			"ggaataaatatattcaaggtatggtattgcgtgtagatatagaatgtaatgcaggtatag" +
-			"gtatagttttaaactaacaaaacgtttctgctgggaaatctgcggctaacaaatttataa" +
-			"aaacggcagaggatggataaatgaagattaccgcatcagaacttgaggagcttgtttctg" +
-			"gagagcttatcggcgacaaaaatattgttttgacaggtatcagcggactttcagtcgcga" +
-			"ataaagacgatatttctcggtttaaaaataaaaatgtaataaaagtgtcaaacccctatt" +
-			"atgcctacggcattgtcctttctattgttgaaaaagagaaattagatgtagtagaaagaa" +
-			"atatacatatatctgccttgatagcagatgatgtaaagttgggaaaagatgcgtatatag" +
-			"ggcaaagtgttgtgattgagtctggatctgaaatcggtggcaatgcaaagatatttccaa" +
-			"atgtgtgtataataggtgtaaaaatgtaaaaatcggagaagaatgtcttatatatccgaa" +
-			"tattgttgtaagaggatacactgataggtgacagggttattattcagccggggggggggg" +
-			"ggatgtatcggtagaggcggttttggttttgcggcagatggcggcaaaatacgtaaaatt" +
-			"tctcaagtaggaaaagttgagataggcaatgatgttgaaatcggggcaaacactacaatt" +
-			"tacagagctactgttgacgttacaaggataggcagcggaacaaaaagtgataatctggtt" +
-			"cagatagtgcacaatgttcaaattggtgaaaactgcataattgtcgcgcaggtcggaata" +
-			"tcgggatcgacacggttgggaaataacgtgatgatagcaagtcagttgtgcgtttcggtg" +
-			"aatctgtgtgacggcgagcaggtttgtggaaatccaatattgccgattagtcaaagtgta" +
-			"aaggttagagttttgatgagaaagttgccgaaaatataccgtgatttgaaaaaaataaaa" +
-			"aaagatttggatggtaaacaggtttgattatagcaacgcaaacgactgttttgaggaagt" +
-			"ttccgttgaaggaataggagacttcataccgggaacaaaagcgttgtggtttttaaaccc" +
-			"gctccaaatacggaatacggcattagatttgtaagaatggatttgccgaataagcctgaa" +
-			"atcaaagctatttggtcaaacgcttcttcaggtttagcggtgagaggaagcgttattgaa" +
-			"aaaacggcgtaaaaatttatacgattgagcatattatgtgcatgtttttctcttggaatt" +
-			"gataatttaattattgaaataaacagtaatgagcctccgattttagacggcagcgcaaaa" +
-			"atacttgcagaaacttttgcaatggggggtgaaagaatttgacgctctcagagagtatta" +
-			"tgctctcaaaaagcctatgcattttgaagctggaaaaactagaatatccgcatatccgtc" +
-			"ggatcatcttgaaataaaatgtattataggttttgaccatcagtttttgcgttttcagca" +
-			"gatgtctttaaaagacttaaacgatattgctccggcaaaagctttctactttgattacga" +
-			"gatagaagcactcaaaaagaaagggcttgctttgggcggatctatggataatgctatagt" +
-			"catagctttagacggagtacagaatgaagggttgttgcgttacaacaacgaatttgtaag" +
-			"acataaaatccttgatttgataggcgatatatatttggcgggaaaacctataaaagctaa" +
-			"gatagttgctgaaaaaccgggacatcagaataatatagtttttgtaaaagaatttttgaa" +
-			"aaaggcagtcaaaagctatgggggtagaaatggacaataatattaaaaatacaaaatcga" +
-			"caggaaccgaaaaaatattaagtactgaggaaattttaaagtgtata").getBytes()
-	     ));
-		sourceFeature.setScientificName("unclassified");
-		cdsFeature.setTranslationTable(11);
-		cdsFeature.setStartCodon(1);
-		cdsFeature.setPseudo(true);
-		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1170L, 2020L));
-		//assertTrue(testValidTranslation(
-		//		""
-		//));
-	}
 
 	@Test
 	public void testException1() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-				("gatgggcctcagtgccgacgaggagtccgcaagtgggaggatcagccaccggagagggac" +
-				"gcgatggcaagagtggaggaaagttcggagggaaatcccaagagggtcacccgagattca" +
-				"agcggtgaggagggacccccgagacgctggtggagccccgggaaaaagaaaaagaaggca" +
-				"agggattggtagaaaagagcgcagcctcccgatacgagtttgccaggacctatcaagttt" +
-				"ggagtcatccgggccgtaggggagaatagaacaccggggggtgatccaccaggagaagga" +
-				"gcggagaacccacctccagaggaccccttcagcgaacagaaaggctcctcctctgcggga" +
-				"gtagggccgtagcgatggggggagatgctatgagttgggggagaccgaagcgaggaggaa" +
-				"agcaaagaaagcaacggggctagcgagtggatgttcctccccccgaaggtcccgagtgag" +
-				"gcttatcccggggatcggcctccgcctcccccatggtggcctccaggacccccgaaagga" +
-				"ggggggtgggccttggacccccaggggtccatgggatccgtggagtgcccgggacatccc" +
-				"cttttccacactccttcccccctgacggggcccccccataagatggcgagaaatccactc" +
-				"tcgggtccatcgtccatctctttcttaccttttggccggtatggtcccagcctcctcgct" +
-				"ggcgccggctgggcaacattctgaaggggaccgtccctcggtaatggcgaatgggaccca" +
-				"gaactctctttagcttccgaaagagaagcaagagaaaactggctctcccttagccatccg" +
-				"agtggacgtctgtcctccttcggatgcccaggtcggaccgcggggaggtggagacgccat" +
-				"gccgacccgaagaggaagaagaggacatggacgcgaaccgtgagtggaaccctcgatcct" +
-				"ttattggggggtacactcgaggagtggaaagcggggagaggggctcccagggccaaccta" +
-				"cgggaatccctgagtccctctggtgtccaggccgtcccctcttctagagaagggagactc" +
-				"cggaacgccttccatggtggggatgaagccgccgccgggtgctcccctcggaggtccctc" +
-				"gagggggttcacatccccaacccgcgggccggctactcttctttcccttctctcgtcttc" +
-				"ctcggtcaacctccgaagttcctcttcttcctccatgctgaggctctttcctccggagga" +
-				"gagctgtcttttcttgttctccagggccttcttttttcggtggtcccgcctctcctgttc" +
-				"ggtgaaccctcccgggtgtttcctcttcctaggtccggagtcgacctccatctgatccgt" +
-				"cctggctctcttcgccgggggagctccctccccatccttgtcctttcttattattcctcg" +
-				"gatgttccccagccaggggttgtcctcctcgagcctcttgagattcttggtgaccttccg" +
-				"gagctccctctcgagttcctcctttcttcttcttccatcgatccactttccgagtgtctc" +
-				"ttctctccccttccgggttctcctcgcatcggactggctcatcttcgatagggcggacgg" +
-				"tcccgagagctcttatcttccttcttagaagaggagtctcctggacgcttccgctcgctc" +
-				"ga").getBytes()
-	     ));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setTranslationTable(11);
 		cdsFeature.setStartCodon(1);
 		cdsFeature.setException("RNA editing");
@@ -1483,37 +651,7 @@ public class CdsTranslatorTest {
 	
 	@Test
 	public void testException2() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-				("gtgagcctcgtgccgaccgaagggcgcgatgggggagggggatcctccgagaggggatac"+
-				"ccactaaagagagggagataccctgagggagactgctcccaagaagttccaagagaatct"+
-				"caagaatgaggaggatccccaggacgctggagaaatctaggaatgggaaagaggagggcg"+
-				"gaaaaaatggagcggcctcccgattcgaacggcccgacgccagaactggagagcactccg"+
-				"ggccgtacggtcgggaaccctccagagggaagaagccacacggagtagaacggaaaaatc"+
-				"acctccagaggaccccttcagcgaacagaaggctctctcacgcggcaggagtaagaccat"+
-				"agcgtaggaagagatgctaggagttgggggagaccgaagcgaggagaaaagtaaagagag"+
-				"caacggggctagccagtgggtgttccgccccccaagaggcacgagtgaggcttatcccgg"+
-				"ggaactcggcgaatcgtccccacatagcagagccccggaccctcttccaaagagaccgga"+
-				"gggggtggcttggagcgtgggggagccgtgggtccgtgggatgctcctcccgattccgtc"+
-				"caatccccccccccgagaggtcccccaggaatggcgggaccccactcggcagggtccgcg"+
-				"taccatcctttcttacctgatggccggcatggtcccagcctcctcgctggcgccggctgg"+
-				"gcaacattccgaggggaccgtcccctcggtaatggcgaatgggacccagaactctctctg"+
-				"attccaagtgagaatcgagagaaaactggctctcccttagccatccgagtggacgttgtc"+
-				"ctccttcggatgcccaggtcggaccgcgaggaggtggagatgccatgccgacccgaagag"+
-				"gaaagaaggacgcgagacgcaaacctgtgagtggacacccgctttattcactggggacga"+
-				"caactctggggagagaagggaggatcggatgggaagagtatatcctacgggaatccccgg"+
-				"tctcccctcacgtccagcccctccccggtccgagtgaagatggactccgggaccccttgc"+
-				"atgctggggacgaagccgcccccgggcgctcccctcgctgctccctcgagggggttcaca"+
-				"cccccaactggcgggccggctgttcttcttttcctttcctcgtcttctccggtcaacctc"+
-				"ctaagttcctcttcttcttccttgctgaggttcttccctcccccggagagctgcttcttc"+
-				"ttgttctcgagggccttccttcttcggtgatcccgcctctcctgktcggtgaatcttccc"+
-				"ctgagaggtccctttccgggtccggagtctacctccatcctgtccgtccgggccctcttc"+
-				"gccgggggagccccttctccgtccctatccttctttccaattattcctttgatgtttccc"+
-				"agccagggattatcatcctcgagcttcttgatcttcttcttggccttccggagatctctc"+
-				"tcgagttctcctattcttcctcttgtggatacccactgctcgagaatgtcctcccgtcct"+
-				"cctcgcttctccttcttgtcggaccggctcatctcggcaagaggcggacggtcctcagtg"+
-				"ctcttactcttttctgtaaagaggagactgctggactcgtcgccccagtccgag").getBytes()
-	));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setException("RNAediting");
 		cdsFeature.setTranslation(
 			"MSRSDKKEKRGGREDILEQWVSTRGRIGELERDLRKAKKKIKKLE" +
@@ -1534,37 +672,7 @@ public class CdsTranslatorTest {
 
 	@Test
 	public void testInvalidTranslationException1() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-				("gtgagcctcgtgccgaccgaagggcgcgatgggggagggggatcctccgagaggggatac"+
-				"ccactaaagagagggagataccctgagggagactgctcccaagaagttccaagagaatct"+
-				"caagaatgaggaggatccccaggacgctggagaaatctaggaatgggaaagaggagggcg"+
-				"gaaaaaatggagcggcctcccgattcgaacggcccgacgccagaactggagagcactccg"+
-				"ggccgtacggtcgggaaccctccagagggaagaagccacacggagtagaacggaaaaatc"+
-				"acctccagaggaccccttcagcgaacagaaggctctctcacgcggcaggagtaagaccat"+
-				"agcgtaggaagagatgctaggagttgggggagaccgaagcgaggagaaaagtaaagagag"+
-				"caacggggctagccagtgggtgttccgccccccaagaggcacgagtgaggcttatcccgg"+
-				"ggaactcggcgaatcgtccccacatagcagagccccggaccctcttccaaagagaccgga"+
-				"gggggtggcttggagcgtgggggagccgtgggtccgtgggatgctcctcccgattccgtc"+
-				"caatccccccccccgagaggtcccccaggaatggcgggaccccactcggcagggtccgcg"+
-				"taccatcctttcttacctgatggccggcatggtcccagcctcctcgctggcgccggctgg"+
-				"gcaacattccgaggggaccgtcccctcggtaatggcgaatgggacccagaactctctctg"+
-				"attccaagtgagaatcgagagaaaactggctctcccttagccatccgagtggacgttgtc"+
-				"ctccttcggatgcccaggtcggaccgcgaggaggtggagatgccatgccgacccgaagag"+
-				"gaaagaaggacgcgagacgcaaacctgtgagtggacacccgctttattcactggggacga"+
-				"caactctggggagagaagggaggatcggatgggaagagtatatcctacgggaatccccgg"+
-				"tctcccctcacgtccagcccctccccggtccgagtgaagatggactccgggaccccttgc"+
-				"atgctggggacgaagccgcccccgggcgctcccctcgctgctccctcgagggggttcaca"+
-				"cccccaactggcgggccggctgttcttcttttcctttcctcgtcttctccggtcaacctc"+
-				"ctaagttcctcttcttcttccttgctgaggttcttccctcccccggagagctgcttcttc"+
-				"ttgttctcgagggccttccttcttcggtgatcccgcctctcctgktcggtgaatcttccc"+
-				"ctgagaggtccctttccgggtccggagtctacctccatcctgtccgtccgggccctcttc"+
-				"gccgggggagccccttctccgtccctatccttctttccaattattcctttgatgtttccc"+
-				"agccagggattatcatcctcgagcttcttgatcttcttcttggccttccggagatctctc"+
-				"tcgagttctcctattcttcctcttgtggatacccactgctcgagaatgtcctcccgtcct"+
-				"cctcgcttctccttcttgtcggaccggctcatctcggcaagaggcggacggtcctcagtg"+
-				"ctcttactcttttctgtaaagaggagactgctggactcgtcgccccagtccgag").getBytes()
-	));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setException("RNAediting");
 		LocalRange localRange=locationFactory.createLocalRange(948L,1592L);
 		localRange.setComplement(true);
@@ -1574,37 +682,7 @@ public class CdsTranslatorTest {
 	
 	@Test
 	public void testInvalidTranslationAminoAcid1() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-				("gtgagcctcgtgccgaccgaagggcgcgatgggggagggggatcctccgagaggggatac"+
-				"ccactaaagagagggagataccctgagggagactgctcccaagaagttccaagagaatct"+
-				"caagaatgaggaggatccccaggacgctggagaaatctaggaatgggaaagaggagggcg"+
-				"gaaaaaatggagcggcctcccgattcgaacggcccgacgccagaactggagagcactccg"+
-				"ggccgtacggtcgggaaccctccagagggaagaagccacacggagtagaacggaaaaatc"+
-				"acctccagaggaccccttcagcgaacagaaggctctctcacgcggcaggagtaagaccat"+
-				"agcgtaggaagagatgctaggagttgggggagaccgaagcgaggagaaaagtaaagagag"+
-				"caacggggctagccagtgggtgttccgccccccaagaggcacgagtgaggcttatcccgg"+
-				"ggaactcggcgaatcgtccccacatagcagagccccggaccctcttccaaagagaccgga"+
-				"gggggtggcttggagcgtgggggagccgtgggtccgtgggatgctcctcccgattccgtc"+
-				"caatccccccccccgagaggtcccccaggaatggcgggaccccactcggcagggtccgcg"+
-				"taccatcctttcttacctgatggccggcatggtcccagcctcctcgctggcgccggctgg"+
-				"gcaacattccgaggggaccgtcccctcggtaatggcgaatgggacccagaactctctctg"+
-				"attccaagtgagaatcgagagaaaactggctctcccttagccatccgagtggacgttgtc"+
-				"ctccttcggatgcccaggtcggaccgcgaggaggtggagatgccatgccgacccgaagag"+
-				"gaaagaaggacgcgagacgcaaacctgtgagtggacacccgctttattcactggggacga"+
-				"caactctggggagagaagggaggatcggatgggaagagtatatcctacgggaatccccgg"+
-				"tctcccctcacgtccagcccctccccggtccgagtgaagatggactccgggaccccttgc"+
-				"atgctggggacgaagccgcccccgggcgctcccctcgctgctccctcgagggggttcaca"+
-				"cccccaactggcgggccggctgttcttcttttcctttcctcgtcttctccggtcaacctc"+
-				"ctaagttcctcttcttcttccttgctgaggttcttccctcccccggagagctgcttcttc"+
-				"ttgttctcgagggccttccttcttcggtgatcccgcctctcctgktcggtgaatcttccc"+
-				"ctgagaggtccctttccgggtccggagtctacctccatcctgtccgtccgggccctcttc"+
-				"gccgggggagccccttctccgtccctatccttctttccaattattcctttgatgtttccc"+
-				"agccagggattatcatcctcgagcttcttgatcttcttcttggccttccggagatctctc"+
-				"tcgagttctcctattcttcctcttgtggatacccactgctcgagaatgtcctcccgtcct"+
-				"cctcgcttctccttcttgtcggaccggctcatctcggcaagaggcggacggtcctcagtg"+
-				"ctcttactcttttctgtaaagaggagactgctggactcgtcgccccagtccgag").getBytes()
-		));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setTranslation(
 			"SRSD1KEKRGGREDILEQWVSTRGRIGELERDLRKAKKKIKKLE" +
 			"DDNPWLGNIKGIIGKKDRDGEGAPPAKRARTDRMEVDSGPGKGPLRGRFTEQERRDHRR" +
@@ -1615,41 +693,11 @@ public class CdsTranslatorTest {
 		localRange.setComplement(true);
 		cdsFeature.getLocations().addLocation(localRange);
 		assertTrue(testInvalidTranslation("CdsFeatureAminoAcidCheck"));
-	}	
+	}
 
 	@Test
 	public void testInvalidTranslationAminoAcid2() {
-		entry.setSequence(sequenceFactory.createSequenceByte(
-				("gtgagcctcgtgccgaccgaagggcgcgatgggggagggggatcctccgagaggggatac"+
-				"ccactaaagagagggagataccctgagggagactgctcccaagaagttccaagagaatct"+
-				"caagaatgaggaggatccccaggacgctggagaaatctaggaatgggaaagaggagggcg"+
-				"gaaaaaatggagcggcctcccgattcgaacggcccgacgccagaactggagagcactccg"+
-				"ggccgtacggtcgggaaccctccagagggaagaagccacacggagtagaacggaaaaatc"+
-				"acctccagaggaccccttcagcgaacagaaggctctctcacgcggcaggagtaagaccat"+
-				"agcgtaggaagagatgctaggagttgggggagaccgaagcgaggagaaaagtaaagagag"+
-				"caacggggctagccagtgggtgttccgccccccaagaggcacgagtgaggcttatcccgg"+
-				"ggaactcggcgaatcgtccccacatagcagagccccggaccctcttccaaagagaccgga"+
-				"gggggtggcttggagcgtgggggagccgtgggtccgtgggatgctcctcccgattccgtc"+
-				"caatccccccccccgagaggtcccccaggaatggcgggaccccactcggcagggtccgcg"+
-				"taccatcctttcttacctgatggccggcatggtcccagcctcctcgctggcgccggctgg"+
-				"gcaacattccgaggggaccgtcccctcggtaatggcgaatgggacccagaactctctctg"+
-				"attccaagtgagaatcgagagaaaactggctctcccttagccatccgagtggacgttgtc"+
-				"ctccttcggatgcccaggtcggaccgcgaggaggtggagatgccatgccgacccgaagag"+
-				"gaaagaaggacgcgagacgcaaacctgtgagtggacacccgctttattcactggggacga"+
-				"caactctggggagagaagggaggatcggatgggaagagtatatcctacgggaatccccgg"+
-				"tctcccctcacgtccagcccctccccggtccgagtgaagatggactccgggaccccttgc"+
-				"atgctggggacgaagccgcccccgggcgctcccctcgctgctccctcgagggggttcaca"+
-				"cccccaactggcgggccggctgttcttcttttcctttcctcgtcttctccggtcaacctc"+
-				"ctaagttcctcttcttcttccttgctgaggttcttccctcccccggagagctgcttcttc"+
-				"ttgttctcgagggccttccttcttcggtgatcccgcctctcctgktcggtgaatcttccc"+
-				"ctgagaggtccctttccgggtccggagtctacctccatcctgtccgtccgggccctcttc"+
-				"gccgggggagccccttctccgtccctatccttctttccaattattcctttgatgtttccc"+
-				"agccagggattatcatcctcgagcttcttgatcttcttcttggccttccggagatctctc"+
-				"tcgagttctcctattcttcctcttgtggatacccactgctcgagaatgtcctcccgtcct"+
-				"cctcgcttctccttcttgtcggaccggctcatctcggcaagaggcggacggtcctcagtg"+
-				"ctcttactcttttctgtaaagaggagactgctggactcgtcgccccagtccgag").getBytes()
-		));
-		sourceFeature.setScientificName("unclassified");
+		setSequenceAndOrganismForUnclassified();
 		cdsFeature.setTranslation(
 			"SRSD*KEKRGGREDILEQWVSTRGRIGELERDLRKAKKKIKKLE" +
 			"DDNPWLGNIKGIIGKKDRDGEGAPPAKRARTDRMEVDSGPGKGPLRGRFTEQERRDHRR" +
@@ -1688,4 +736,177 @@ public class CdsTranslatorTest {
 		assertTrue(testInvalidTranslation("CDSTranslator-5"));
 	}
 
-  }
+
+	@Test
+	public void testFixMissingStartCodonWithoutComplement() { // ProteinTranslatorTest.cxx: ProteinTranslatorFixCds.in
+		sourceFeature.setScientificName("JC polyomavirus");
+		entry.setSequence(sequenceFactory.createSequenceByte(("ttttagaaacattaggatccgcatg").getBytes()));
+		cdsFeature.setStartCodon(1);
+		cdsFeature.setTranslationTable(11);
+		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
+		String translation = "F";
+		assertTrue(!cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertTrue(!testValidTranslation(translation, "Translator-18"));
+		assertTrue(!cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertTrue(testValidTranslationFixMode(translation));
+		assertTrue(cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertEquals("<1..6", renderCompoundLocation(cdsFeature.getLocations()));
+	}
+
+
+	@Test
+	public void testFixMissingStartCodonWithComplement() {
+		setSequenceAndOrganismForJcPolyomavirus();
+		cdsFeature.setStartCodon(1);
+		cdsFeature.setTranslationTable(11);
+		cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(4484L, 4999L, true));
+		String translation =
+				"DKVLNREESMELMDLLGLDRSAWGNIPVMRKAYLKKCKELHPDK" +
+				"GGDEDKMKRMNFLYKKMEQGVKVAHQPDFGTWNSSEVGCDFPPNSDTLYCKEWPNCATN" +
+				"PSVHCPCLMCMLKLRHRNRKFLRSSPLVWIDCYCFDCFRQWFGCDLTQEALHCWEKVLG" +
+				"DTPYRDLKL";
+		assertTrue(!cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertTrue(!testValidTranslation(translation, "Translator-18"));
+		assertTrue(!cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertTrue(testValidTranslationFixMode(translation));
+		assertTrue(cdsFeature.getLocations().isLeftPartial());
+		assertTrue(!cdsFeature.getLocations().isRightPartial());
+		assertEquals("complement(4484..>4999)", renderCompoundLocation(cdsFeature.getLocations()));
+	}
+
+
+
+
+
+
+	private void setSequenceAndOrganismForJcPolyomavirus() {
+		sourceFeature.setScientificName("JC polyomavirus");
+		entry.setSequence(sequenceFactory.createSequenceByte(
+				("gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg" +
+				"atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg" +
+				"agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca" +
+				"agtaaacaaagcacaaggggaagtggaaagcagccaggagcatgttttgcgagccagagc" +
+				"tgttttggcttgtcaccagctggccatggttcttcgccagctgtcacgtaaggcttctgt" +
+				"gaaagttagtaaaacctggagtggaacaaaaaaaagagctcaaaggattttaattttttt" +
+				"gttagaatttttgctggatttttgcacaggtgaagacagtgtagacgggaaaaaaagaca" +
+				"gaaacacagtggtttgactgagcagaaatacagtgctttgcctgaaccaaaagctacata" +
+				"ggtaagtaatgtttttttttgtgttttcaggttcatgggtgccgcagttgcacttttggg" +
+				"ggacctagttgctactgtttctgaggctgctgctgccacaggattttcagtagctgaaat" +
+				"tgctgctggagaggctgctgctactatagaagttgaaattgcatcccttgctactgtaga" +
+				"ggggattacaagtacctctgaggctatagctgcaataggccttactcctgaaacatatgc" +
+				"tgtaattactggagctccgggggctgtagctgggtttgctgcattggttcaaactgtaac" +
+				"tggtggtagtgctattgctcagttgggatatagattttttgctgactgggatcataaagt" +
+				"ttcaacagttgggctttttcagcagccagctatggctttacaattatttaatccagaaga" +
+				"ctactatgatattttatttcctggagtgaatgcctttgttaacaatattcactatttaga" +
+				"tcctagacattggggcccttctttgttctccacaatctcccaggctttttggaatcttgt" +
+				"tagagatgatttgccatctttaacatctcaggaaattcagagaagaacccaaaaactatt" +
+				"tgttgaaagtttagcaaggtttttggaagaaactacttgggcaatagttaattcaccagt" +
+				"taacttatataattatatttcagactattattctagattgtctccagttaggccctctat" +
+				"ggtaaggcaggttgcccaaagggagggaacctatatttcctttggccactcatataccca" +
+				"aagtatagatgatgcagacagcattcaagaagttacccaaaggctagatttaaaaacccc" +
+				"aaatgtgcaatctggtgaatttatagagaaaagtcttgcaccaggaggtgcaaatcaaag" +
+				"atctgctcctcaatggatgttgcctttacttttagggttgtacgggactgtaacacctgc" +
+				"tcttgaagcatatgaagatggccccaacaaaaagaaaaggagaaaggaaggaccccgtgc" +
+				"aagttccaaaacttcttataagaggaggagtagaagtgctagaagttaaaactggggttg" +
+				"actcaattacagaggtagaatgctttttaactccagaaatgggtgacccagatgagcatc" +
+				"ttaggggttttagtaagtcaatttctatatcagatacatttgaaagtgactccccaaata" +
+				"aggacatgcttccttgttacagtgtggccagaattccactgcccaatctaaatgaggatc" +
+				"tgacctgtggaaatatactaatgtgggaggctgttaccttaaaaactgaggttatagggg" +
+				"tgacaactttgatgaatgtgcactctaatggtcaagcaactcatgacaatggtgcaggaa" +
+				"agccagtgcagggcaccagctttcattttttttctgttgggggggaggctttagaattac" +
+				"agggggtggtttttaattacagaacaaagtacccagatggaacaatttttccaaagaatg" +
+				"caacagtgcaatctcaagtaatgaacacagagcacaaggcgtacctagataagaacaagg" +
+				"catatcctgttgaatgttgggttcctgatcccaccagaaatgaaaacacaagatattttg" +
+				"ggacactaacaggaggagaaaatgttcctccagttcttcatataacaaacactgccacaa" +
+				"cagtgctgcttgatgaatttggtgttgggccactttgcaaaggtgacaacttgtatttgt" +
+				"cagctgttgatgtttgtggcatgtttactaacagatctggttcccagcagtggagaggac" +
+				"tgtccagatattttaaggttcagctaagaaaaaggagggttaaaaacccctacccaattt" +
+				"ctttccttcttactgatttaattaacagaaggacccctagagttgatgggcagcctatgt" +
+				"atggcatggatgctcaggtagaggaggttagagtttttgaggggacagaggaacttccag" +
+				"gggacccagacatgatgagatatgttgacagatatggacagttgcagacaaagatgctgt" +
+				"aatcaaaggcctttattgtaatatgcagtacattttaataaagtataaccagctttactt" +
+				"tactgttgcagttattttgggggaggggtttttggttttttgaaacattgaaagccttta" +
+				"cagatgtgataagtgcagtgttcctgtgtgtctgcaccagaggcttctgagacctgggaa" +
+				"gagcattgtgattgagattcagtgcttgatccatgtccagagtcttctgcttcagaatct" +
+				"tcctctctaggaaagtcaagaatgggtctccccataccaacattagctttcatagtagaa" +
+				"aatgtatacatgcttatttctaaatccagcctttctttccactgcacaatcctctcatga" +
+				"atggcagctgcaaagtcagcaactggcctaaaccagattaaaagcaaaagcaaagtcatg" +
+				"ccactttgcaaaatccttttttctagtaaatattcagagcagcttagtgattttcttagg" +
+				"taggccttaggtctaaaatctatttgccttacaaatctggcttgtaaagttctaggcact" +
+				"gaatattcattcatggttacaattccaggtggaaacacctgtgttcttttgttttggtgt" +
+				"tttctctctaaattaactttcacacttccatctaagtaatctcttaggcaatcaaggttg" +
+				"cttatgccatgccctgaaggtaaatcccttgactctgcaccagtgccttttacatcctca" +
+				"aatacaaccataaactgatctatacccactcctaactcaaagtttaatctttctaatggc" +
+				"atgttaacatttaatgactttcccccacagagatcaagtaaagctgcagctaaagtagtt" +
+				"ttgccactgtctattggccccttgaatagccagtacctttttttgggaatgtttaataca" +
+				"atgcattttaagaactcataaatgacagtgtccatttgaggcagcaaacaatgaatccag" +
+				"gccaccccagccatatattgctctaaaacagcattgccatgtgccccaaaaattaagtcc" +
+				"attttatcaagcaaaaaattaaacctttcaactaacatttcttctctggtcatatggata" +
+				"ctgtcaaccctttgtttggctgctacggtatcaacagcctgctggcaaatgcttttttga" +
+				"tttttgctatctgcaaaaatttgggcattataatagtgcttttcatgatggttaaagtga" +
+				"tttggctgatcctttttttcacattttttgcattgcagtgggttttcctgaaagtctaag" +
+				"tacatgcccataagcaagaaaacatcctcacacttgatgtccaaagcatactgtgtaact" +
+				"aatttccatgaaacctgcttagtttcttctggttcttctgggttaaagtcatgctcctta" +
+				"aggcccccctgaatactttcttccactactgcatatggctgtctacacaaggcactgtaa" +
+				"aacaagtattccttattcacacctttacaaattaaaaaactaaaggtacatagtttttga" +
+				"cagtagttattaattgctgaaactctgtgtctatgtggtgttaaaaaaaacaaaatatta" +
+				"tgacccccaaaaccatgtctacttataaaggttacagagtatttttccataagtttctta" +
+				"tataaaatttgagctttttctttagtggtatacacagcaaaagaagcaacagttctatta" +
+				"ctaaacacagcttgactgaggaatgcatgcagatctacaggaaagtctttagggtcttct" +
+				"accttttttttcttcttaggtggggtagagtgctgggatcctgtgttttcatcatcactg" +
+				"gcaaacatttcttcatggcaaaacaggtcttcatcccacttctcattaaatgtattccac" +
+				"caggattcccattcatctgttccataggttggcacctaagaacaaaaaattaagtttatt" +
+				"gtaaaaaacaaaatgccctgcaaaacaaaaattgtggtttaccttaaagctttagatccc" +
+				"tgtagggggtgtctccaagaaccttctcccagcaatgaagagcttcttgggttaagtcac" +
+				"acccaaaccattgtctgaagcaatcaaagcaatagcaatctatccacacaagtgggctgc" +
+				"ttcttaaaaattttctgtttctatgccttaattttagcatgcacattaaacagggacaat" +
+				"gcactgaaggattagtggcacaattaggccattccttgcaataaagggtatcagaattag" +
+				"gaggaaaatcacaaccaacctctgaactattccatgtaccaaaatcaggctgatgagcaa" +
+				"cttttacaccttgttccatttttttatataaaaaattcattctcttcattttgtcttcgt" +
+				"ccccacctttatcagggtgaagttctttgcattttttcagataagcttttctcatgacag" +
+				"gaatgtttccccatgcagatctatcaaggcctaataaatccatgagctccatggattcct" +
+				"ccctattcagcactttgtccatttttgctttttgtagcaaaaaattaaagcaaaaaaggg" +
+				"aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt" +
+				"aagcttggaggcggaggcg").getBytes()
+		));
+	}
+
+	private void setSequenceAndOrganismForUnclassified() {
+		entry.setSequence(sequenceFactory.createSequenceByte(
+				("gtgagcctcgtgccgaccgaagggcgcgatgggggagggggatcctccgagaggggatac"+
+				"ccactaaagagagggagataccctgagggagactgctcccaagaagttccaagagaatct"+
+				"caagaatgaggaggatccccaggacgctggagaaatctaggaatgggaaagaggagggcg"+
+				"gaaaaaatggagcggcctcccgattcgaacggcccgacgccagaactggagagcactccg"+
+				"ggccgtacggtcgggaaccctccagagggaagaagccacacggagtagaacggaaaaatc"+
+				"acctccagaggaccccttcagcgaacagaaggctctctcacgcggcaggagtaagaccat"+
+				"agcgtaggaagagatgctaggagttgggggagaccgaagcgaggagaaaagtaaagagag"+
+				"caacggggctagccagtgggtgttccgccccccaagaggcacgagtgaggcttatcccgg"+
+				"ggaactcggcgaatcgtccccacatagcagagccccggaccctcttccaaagagaccgga"+
+				"gggggtggcttggagcgtgggggagccgtgggtccgtgggatgctcctcccgattccgtc"+
+				"caatccccccccccgagaggtcccccaggaatggcgggaccccactcggcagggtccgcg"+
+				"taccatcctttcttacctgatggccggcatggtcccagcctcctcgctggcgccggctgg"+
+				"gcaacattccgaggggaccgtcccctcggtaatggcgaatgggacccagaactctctctg"+
+				"attccaagtgagaatcgagagaaaactggctctcccttagccatccgagtggacgttgtc"+
+				"ctccttcggatgcccaggtcggaccgcgaggaggtggagatgccatgccgacccgaagag"+
+				"gaaagaaggacgcgagacgcaaacctgtgagtggacacccgctttattcactggggacga"+
+				"caactctggggagagaagggaggatcggatgggaagagtatatcctacgggaatccccgg"+
+				"tctcccctcacgtccagcccctccccggtccgagtgaagatggactccgggaccccttgc"+
+				"atgctggggacgaagccgcccccgggcgctcccctcgctgctccctcgagggggttcaca"+
+				"cccccaactggcgggccggctgttcttcttttcctttcctcgtcttctccggtcaacctc"+
+				"ctaagttcctcttcttcttccttgctgaggttcttccctcccccggagagctgcttcttc"+
+				"ttgttctcgagggccttccttcttcggtgatcccgcctctcctgktcggtgaatcttccc"+
+				"ctgagaggtccctttccgggtccggagtctacctccatcctgtccgtccgggccctcttc"+
+				"gccgggggagccccttctccgtccctatccttctttccaattattcctttgatgtttccc"+
+				"agccagggattatcatcctcgagcttcttgatcttcttcttggccttccggagatctctc"+
+				"tcgagttctcctattcttcctcttgtggatacccactgctcgagaatgtcctcccgtcct"+
+				"cctcgcttctccttcttgtcggaccggctcatctcggcaagaggcggacggtcctcagtg"+
+				"ctcttactcttttctgtaaagaggagactgctggactcgtcgccccagtccgag").getBytes()
+		));
+		sourceFeature.setScientificName("unclassified");
+	}
+}

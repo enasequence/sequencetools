@@ -51,6 +51,7 @@ public class Translator extends AbstractTranslator
 	private boolean fixMissingStartCodon = false;
 	private boolean fixRightPartialStopCodon = false;
 	private boolean fixRightPartialCodon = false;
+
 	private int codonStart = 1;
 
 	public void setCodonStart(int startCodon)
@@ -854,6 +855,7 @@ public class Translator extends AbstractTranslator
 					if (fixRightPartialStopCodon)
 					{
 						translationResult.setFixedRightPartialStopCodon(true);
+						translationResult.setFixedRightPartial(true);
 						rightPartial = false;
 					} else
 					{
@@ -929,6 +931,7 @@ public class Translator extends AbstractTranslator
 					if (fixMissingStartCodon)
 					{
 						translationResult.setFixedMissingStartCodon(true);
+						translationResult.setFixedLeftPartial(true);
 						leftPartial = true;
 					} else
 					{

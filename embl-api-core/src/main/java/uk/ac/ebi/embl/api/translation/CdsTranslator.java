@@ -41,7 +41,17 @@ public class CdsTranslator {
 	private Severity severity=null;
 	private  boolean acceptTranslation=false;
     private Translator translator;
-   EmblEntryValidationPlanProperty planProperty;
+   	EmblEntryValidationPlanProperty planProperty;
+
+   	private void createTranslator() {
+		translator = new Translator();
+		if (planProperty.isFixMode.get()) {
+			translator.setFixDegenarateStartCodon(true);
+			translator.setFixMissingStartCodon(true);
+			translator.setFixRightPartialCodon(true);
+			translator.setFixRightPartialStopCodon(true);
+		}
+	}
     
     public CdsTranslator(EmblEntryValidationPlanProperty planProperty) {
         this.planProperty=planProperty;
@@ -87,7 +97,7 @@ public class CdsTranslator {
 			return validationResult;
 		}
 
-        translator = new Translator();
+        createTranslator();
 
         /**
          * set up the translator with the details from the cds feature
@@ -141,6 +151,34 @@ public class CdsTranslator {
         if (extendedTranslatorResult.count(Severity.ERROR) > 0) {
             return extendedTranslatorResult;
         }
+
+        // Apply partiality fixes.
+
+		// TODO: the isReversedPartiality decision should be made
+		// once and kept in a member variable to avoid risk of
+		// problems.
+
+		// Note that if the compound location is a global complement
+		// and if one (but not both) ends are partial then the
+		// left and right partiality is reversed between CdsFeature
+		// and Translator.
+		boolean isReversedPartiality =
+			cds.getLocations().isComplement() &&
+			cds.getLocations().isLeftPartial() !=
+			cds.getLocations().isRightPartial();
+
+        boolean fixedLeftPartial = translator.isLeftPartial();
+		boolean fixedRightPartial = translator.isRightPartial();
+		if (isReversedPartiality) {
+			fixedLeftPartial = !fixedLeftPartial;
+			fixedRightPartial = !fixedRightPartial;
+		}
+		if (translationResult.isFixedLeftPartial()) {
+			cds.getLocations().setLeftPartial(fixedLeftPartial);
+		}
+		if (translationResult.isFixedRightPartial()) {
+			cds.getLocations().setRightPartial(fixedRightPartial);
+		}
 
         if (expectedTranslation == null ||
 			expectedTranslation.length() == 0 ) {
