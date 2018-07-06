@@ -130,7 +130,7 @@ public class NonContoAGPFix extends EntryValidationCheck
 		}
 		
 		
-		entry.addAgpRows(agpRows);
+		entry.getSequence().addAgpRows(agpRows);
 		}
 		catch(Exception e)
 		{

@@ -224,7 +224,7 @@ public class EntryUtils
 		LocationFactory locationFactory=new LocationFactory();
 		ArrayList<Location> components=new ArrayList<Location>();
 		
-		for(AgpRow agpRow:entry.getSortedAGPRows())
+		for(AgpRow agpRow:entry.getSequence().getSortedAGPRows())
 		{
 			Long object_begin=agpRow.getObject_beg();
 			Long object_end=agpRow.getObject_end();
@@ -256,7 +256,7 @@ public class EntryUtils
 				 gap_type="repeatwithLinkage";
 			 }
 			 }
-			 if(linkage_evidences!=null)
+			 if(linkage_evidences!=null&&agpRow.hasLinkage())
 			 {
 				 for(String linkage_evidence:linkage_evidences)
 				 {

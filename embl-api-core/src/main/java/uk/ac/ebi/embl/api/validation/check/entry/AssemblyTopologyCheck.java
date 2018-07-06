@@ -21,10 +21,12 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("\"CIRCULAR\" topology  is not allowed for assembly contigs")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope={ValidationScope.NCBI})
 public class AssemblyTopologyCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "assemblyTopologyCheck_1";

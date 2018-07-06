@@ -49,26 +49,19 @@ public class QualifierMatcher extends FlatFileMatcher {
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		String qualifierName = getString(GROUP_QUALIFIER_NAME);
 		String qualifierValue = getString(GROUP_QUALIFIER_VALUE);
-		int nofQuotes=StringUtils.countMatches(qualifierValue, "\"");
-		Qualifier qualifier=qualifierFactory.createQualifier(qualifierName);
+
+		Qualifier qualifier = qualifierFactory.createQualifier(qualifierName);
 		if (qualifierValue != null)
 		{
-			if(!getReader().getLineReader().isIgnoreParseError()) {
-				if (!qualifier.isValueQuoted() && nofQuotes != 0) {
-					if (!qualifier.getName().equals(Qualifier.COMPARE_QUALIFIER_NAME))
-						error("FT.10", qualifierName, qualifierValue);
-				} else if (qualifier.isValueQuoted()) {
-					if (nofQuotes == 0) {
-						if (!qualifier.getName().equals(Qualifier.ANTICODON_QUALIFIER_NAME))
-							error("FT.10", qualifierName, qualifierValue);
-					} else {
-						if (qualifierValue.indexOf('"') != 0 && qualifierValue.lastIndexOf('"') != qualifierValue.length() - 1)
+			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
+			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
 
-						{
-							error("FT.10", qualifierName, qualifierValue);
-						} else if (nofQuotes % 2 != 0) {
-							error("FT.10", qualifierName, qualifierValue);
-						}
+			if(!getReader().getLineReader().isIgnoreParseError()) {
+
+				if (qualifier.isValueQuoted()) {
+					int nofQuotes=StringUtils.countMatches(qualifierValue, "\"");
+					if (nofQuotes > 0) {
+						error("FT.10", qualifierName, qualifierValue);
 					}
 				}
 
@@ -79,14 +72,10 @@ public class QualifierMatcher extends FlatFileMatcher {
 					}
 				}
 			}
-			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
-			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
-			
+
 			qualifier.setValue(qualifierValue);
-			return qualifier;
-		} else
-		{
-			return qualifier;
 		}
+		return qualifier;
+
 	}
 }

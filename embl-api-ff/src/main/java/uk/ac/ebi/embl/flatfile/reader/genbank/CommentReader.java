@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.genbank;
 
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.embl.CCReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -22,6 +23,10 @@ import uk.ac.ebi.embl.flatfile.reader.LineReader;
 /** Reader for the flat file COMMENT line.
  */
 public class CommentReader extends CCReader {
+
+	public CommentReader(LineReader lineReader, FileType fileType) {
+		super(lineReader, fileType);
+	}
 
 	public CommentReader(LineReader lineReader) {
 		super(lineReader);

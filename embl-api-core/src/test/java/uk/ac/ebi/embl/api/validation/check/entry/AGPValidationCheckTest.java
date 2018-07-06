@@ -33,6 +33,8 @@ import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.location.*;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
@@ -52,7 +54,10 @@ public class AGPValidationCheckTest
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		planProperty=new EmblEntryValidationPlanProperty();
 		EntryFactory entryFactory = new EntryFactory();
+		SequenceFactory sequenceFactory= new SequenceFactory();
+		Sequence sequence=sequenceFactory.createSequence();
 		entry = entryFactory.createEntry();
+		entry.setSequence(sequence);
 		check = new AGPValidationCheck();
 		entryDAOUtils = createMock(EntryDAOUtils.class);
 		linkageEvidences= new ArrayList<String>();
@@ -101,8 +106,8 @@ public class AGPValidationCheckTest
 		validGaprow1.setLinkageevidence(linkageEvidences);
 		ContigSequenceInfo sequenceInfo=new ContigSequenceInfo();
 		sequenceInfo.setSequenceLength(400);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(validGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(validGaprow1);
 		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_contig_209591", "ERZ00001",2)).andReturn(sequenceInfo);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
@@ -118,7 +123,7 @@ public class AGPValidationCheckTest
 			throws SQLException, ValidationEngineException
 	{ 
 		AgpRow inValidGaprow1=new AgpRow();
-		entry.addAgpRow(inValidGaprow1);
+		entry.getSequence().addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		check.setEmblEntryValidationPlanProperty(planProperty);
@@ -140,7 +145,7 @@ public class AGPValidationCheckTest
 		inValidComponentrow1.setComponent_end(330l);
 		inValidComponentrow1.setComponent_id("IWGSC_CSS_6DL_contig_209591");
 		inValidComponentrow1.setOrientation("#");
-		entry.addAgpRow(inValidComponentrow1);
+		entry.getSequence().addAgpRow(inValidComponentrow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
@@ -181,8 +186,8 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setLinkage("NO");
 		linkageEvidences.add("paired-nds");
 		inValidGaprow1.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(inValidGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		check.setEmblEntryValidationPlanProperty(planProperty);
@@ -215,16 +220,14 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setGap_length(24l);
 		inValidGaprow1.setGap_type("scaffold");
 		inValidGaprow1.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(inValidGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		check.setEmblEntryValidationPlanProperty(planProperty);
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("AGPValidationCheck-7", Severity.ERROR));
 		assertEquals(1, result.count("AGPValidationCheck-11", Severity.ERROR));
-
-
 	}
 	@Test
 	public void testcheck_AGPRowwithinvalidgapLength()
@@ -249,12 +252,13 @@ public class AGPValidationCheckTest
 		inValidGaprow1.setGap_length(21l);
 		inValidGaprow1.setGap_type("scaffold");
 		inValidGaprow1.setLinkageevidence(linkageEvidences);
-		entry.addAgpRow(validComponentrow1);
-		entry.addAgpRow(inValidGaprow1);
+		entry.getSequence().addAgpRow(validComponentrow1);
+		entry.getSequence().addAgpRow(inValidGaprow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		check.setEmblEntryValidationPlanProperty(planProperty);
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("AGPValidationCheck-8", Severity.ERROR));
 	}
+	
 }

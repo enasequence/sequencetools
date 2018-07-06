@@ -2,7 +2,10 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class FeatureLengthCheck extends FeatureValidationCheck
 {
 	

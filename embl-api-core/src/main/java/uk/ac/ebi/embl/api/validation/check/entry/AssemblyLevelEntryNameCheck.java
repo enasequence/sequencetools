@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("Entry_names cannot be updated.Entry_name \"{0}\" is not matching with the registered \"{1}\" entry_names of the assembly \"{2}\"")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 public class AssemblyLevelEntryNameCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "AssemblyLevelEntryNameCheck_1";

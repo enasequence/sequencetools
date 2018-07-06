@@ -24,11 +24,13 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("Dataclass has been changed from \"{0}\" to \"{1}\"")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
 public class AssemblyLevelDataClassFix extends EntryValidationCheck
 {
 	private final String DATACLASSFIX_ID = "assemblyLevelDataClassFix_1";

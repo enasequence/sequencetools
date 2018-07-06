@@ -20,8 +20,9 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
-  import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import uk.ac.ebi.embl.api.validation.ValidationMessage.MessageFormatter;
 
@@ -35,7 +36,7 @@ public class ValidationResult implements Serializable {
 
 	private static final long serialVersionUID = 3511749874894611826L;
 
-	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_PRECEDING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
+	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
 
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;
@@ -377,6 +378,18 @@ public class ValidationResult implements Serializable {
 				writer.write("\nReport:\n\n" + getReportMessage() + "********\n");
 				writer.flush();
 			}
+		}
+	}
+	
+	public void writeMessageStats(Writer writer) throws IOException
+	{
+		HashMap<String, Integer> messageStats = new HashMap<String, Integer>();
+		for (ValidationMessage<Origin> message : getMessages()) {
+			messageStats.put(message.getMessageKey(),messageStats.containsKey(message.getMessageKey()) ? messageStats.get(message.getMessageKey()) + 1: 1);
+		}
+		for(String key:messageStats.keySet())
+		{
+			writer.write(String.format("%d\t%s\t%s\n", messageStats.get(key),key,ValidationMessageManager.getString(key)));
 		}
 	}
 }

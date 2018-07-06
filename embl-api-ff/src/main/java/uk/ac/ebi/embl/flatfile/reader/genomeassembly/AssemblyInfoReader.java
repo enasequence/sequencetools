@@ -12,6 +12,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 	private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
 	private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
 	private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
+	private static final String EMPTY_FILE_ERROR = "EmptyFileCheck";
+
 
 	AssemblyInfoEntry assemblyInfoEntry = null;
 	public AssemblyInfoReader(File file)
@@ -24,6 +26,11 @@ public class AssemblyInfoReader extends GCSEntryReader
 	{
 		assemblyInfoEntry= new AssemblyInfoEntry();
 		int lineNumber = 1;
+		if(file!=null&&file.length()==0)
+		{
+			error(1, EMPTY_FILE_ERROR);
+			return validationResult;
+		}
 		try(BufferedReader reader = getBufferedReader(file))
 		{
 			String line;
@@ -37,58 +44,61 @@ public class AssemblyInfoReader extends GCSEntryReader
 				
 				String[] fields = line.trim().split("\\s+",2);
 				int numberOfColumns = fields.length;
-				if (numberOfColumns != 2 )
-				{
-					error(lineNumber,MESSAGE_KEY_INVALID_FORMAT_ERROR,line);
-				}
-				else
+				if(numberOfColumns==1||numberOfColumns==2)
 				{
 					String field= StringUtils.deleteWhitespace(fields[0].toUpperCase());
 					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");			
-					String fieldValue= fields[1];
 					switch(field)
 					{
+						case "NAME":
 					case "ASSEMBLYNAME":
-						assemblyInfoEntry.setName(fieldValue);
+						assemblyInfoEntry.setName(numberOfColumns==1?null:fields[1]);
 						break;
 					case "COVERAGE":
-						assemblyInfoEntry.setCoverage(fieldValue);
+						assemblyInfoEntry.setCoverage(numberOfColumns==1?null:fields[1]);
 						break;
 					case "PROGRAM":
-						assemblyInfoEntry.setProgram(fieldValue);
+						assemblyInfoEntry.setProgram(numberOfColumns==1?null:fields[1]);
 						break;
 					case "PLATFORM":
-						assemblyInfoEntry.setPlatform(fieldValue);
+						assemblyInfoEntry.setPlatform(numberOfColumns==1?null:fields[1]);
 						break;
 					case "MINGAPLENGTH":
-						if(isInteger(fieldValue))
-						  assemblyInfoEntry.setMinGapLength(new Integer(fieldValue));
+						String minGapLength=numberOfColumns==1?null:fields[1];
+						if(isInteger(minGapLength))
+						  assemblyInfoEntry.setMinGapLength(new Integer(minGapLength));
 						else
-						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],minGapLength);
 						break;
 					case "MOLECULETYPE":
-						if(isValidMoltype(fieldValue))
-							assemblyInfoEntry.setMoleculeType(fieldValue);
+						String mol_type=numberOfColumns==1?null:fields[1];
+						if(isValidMoltype(mol_type))
+							assemblyInfoEntry.setMoleculeType(mol_type);
 						else
-						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],mol_type);
 						break;
 					case "SAMPLE":
-						 assemblyInfoEntry.setSampleId(fieldValue);
+						 assemblyInfoEntry.setSampleId(numberOfColumns==1?null:fields[1]);
 						 break;
 					case "STUDY":
-					  	 assemblyInfoEntry.setStudyId(fieldValue);
+					  	 assemblyInfoEntry.setStudyId(numberOfColumns==1?null:fields[1]);
 					  	 break;
 					case "TPA":
-						if(isValidTPA(fieldValue))
-							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(fieldValue)||"true".equalsIgnoreCase(fieldValue)?true:false);
+						String tpa=numberOfColumns==1?null:fields[1];
+						if(isValidTPA(tpa))
+							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(tpa)||"true".equalsIgnoreCase(tpa)?true:false);
 						else
-						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],fieldValue);
+						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],tpa);
 						break;
 					default :
 						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
 						break;
 					}
 					
+				}
+				else
+				{
+					error(lineNumber,MESSAGE_KEY_INVALID_FORMAT_ERROR,line);
 				}
 				lineNumber++;
 
@@ -98,6 +108,8 @@ public class AssemblyInfoReader extends GCSEntryReader
 	}
 
 	public static boolean isInteger(String s) {
+		if(s==null)
+			return false;
 	    try { 
 	        Integer.parseInt(s); 
 	    } catch(NumberFormatException e) { 

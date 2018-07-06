@@ -22,11 +22,13 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("Submitter Reference has been added to assembly entries")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
 public class AssemblyLevelSubmitterReferenceFix extends EntryValidationCheck
 {
 	private final String SUBMITTER_REFERENCEFIX_ID = "AssemblyLevelSubmitterReferenceFix_1";

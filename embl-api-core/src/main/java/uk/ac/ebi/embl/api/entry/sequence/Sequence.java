@@ -19,12 +19,14 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.validation.HasOrigin;
 import uk.ac.ebi.embl.api.validation.Origin;
@@ -52,14 +54,19 @@ public class Sequence extends AbstractSequence implements HasOrigin,
 
 	private long length = 0;
 	private long contigLength=0;
+	private long agpLength =0;
 	private String moleculeType;
 	private Topology topology;
 	protected List<Location> contigs;
+	protected List<AgpRow> agpRows;
+
 
 	protected Sequence() {
 		this.sequence=null;
 		this.contigs = new ArrayList<Location>();
+		this.agpRows=new ArrayList<AgpRow>();
 		this.contigLength=0;
+		this.agpLength=0;
 		this.sequenceAccession = new SequenceAccession(null, null);
 	}
 	
@@ -192,6 +199,27 @@ public class Sequence extends AbstractSequence implements HasOrigin,
 		  }
 		  return this.contigLength;
 		}
+		else if(getAgpRows().size()!=0)
+		{
+			if(agpLength==0)
+			{
+			for(AgpRow agpRow:getAgpRows())
+			{
+				if(agpRow.isValid())
+				{
+				if(!agpRow.isGap())
+				{
+					agpLength += agpRow.getComponent_end()-agpRow.getComponent_beg()+1;
+				}
+				else
+				{
+					agpLength += agpRow.getGap_length();
+				}
+				}
+			}
+			}
+			return this.agpLength;
+		}
 		else
 			return 0;
 	}
@@ -288,5 +316,36 @@ public class Sequence extends AbstractSequence implements HasOrigin,
 
 	public boolean removeContig(Location location) {
 		return this.contigs.remove(location);
+	}
+	
+	public List<AgpRow> getAgpRows() {
+		return this.agpRows;
+	}
+
+	public boolean addAgpRow(AgpRow agpRow) {
+		if (agpRow == null) {
+			return false;
+		}
+		return this.agpRows.add(agpRow);
+	}
+
+	public boolean addAgpRows(Collection<AgpRow> agpRows) {
+		if (agpRows == null) {
+			return false;
+		}
+		boolean changed = false;
+		for (AgpRow agpRow : agpRows) {
+			changed |= this.agpRows.add(agpRow);
+		}
+		return changed;
+	}
+
+	public boolean removeAgpRow(AgpRow agpRow) {
+		return this.agpRows.remove(agpRow);
+	}
+	public List<AgpRow> getSortedAGPRows()
+	{
+		Collections.sort(agpRows,(object1,object2)->object1.getPart_number() < object2.getPart_number() ? -1 : 1);
+		return agpRows;	
 	}
 }

@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
@@ -91,6 +92,7 @@ public class MasterEntryExistsCheckTest {
 	public void testCheck_validAnalysisId() throws SQLException, ValidationEngineException
 	{
 		entry.setDataClass(Entry.STD_DATACLASS);
+		entry.addXRef(new XRef("BioSample","sdffg"));
 		property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		property.analysis_id.set("ERZ0001");

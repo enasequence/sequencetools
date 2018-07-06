@@ -23,7 +23,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -31,6 +33,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 @Description("Added source qualifier {0} as qualifier {2} value matches the pattern {3}"
 		+ "Qualifier \"environment_sample\" has been added to the \"Source\" feature as Organism is a Metagenome.")
 @RemoteExclude
+@ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class SourceQualifierMissingFix extends EntryValidationCheck
 {
 
@@ -38,7 +41,8 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 	private static final String metagenomeEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_2";
 	private static final String metagenomeIsolationQualifierFix_ID = "SourceQualifierMissingFix_3";
 	private static final String lineageEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_4";
-
+	private static final String strainToIsolateFix = "SourceQualifierMissingFix_5";
+	private static final String strainRemovalFix = "SourceQualifierMissingFix_6";
 
 
 	public ValidationResult check(Entry entry)
@@ -49,7 +53,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-		if (entry.getPrimarySourceFeature() == null)
+		if (entry.getPrimarySourceFeature() == null||entry.getPrimarySourceFeature().getQualifiers().size()==0)
 		{
 			return result;
 		}
@@ -140,6 +144,16 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				}
 			}
 			
+		}
+
+		if(is_environment_sample_exists && entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME).size() != 0) {
+			entry.getPrimarySourceFeature().removeQualifier(Qualifier.STRAIN_QUALIFIER_NAME);
+			if(entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size() == 0) {
+				entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME);
+				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainRemovalFix);
+			} else {
+				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainToIsolateFix);
+			}
 		}
 
 		return result;
