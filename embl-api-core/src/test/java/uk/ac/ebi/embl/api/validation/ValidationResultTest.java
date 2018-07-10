@@ -141,8 +141,9 @@ public class ValidationResultTest {
     @Test
     public void testWriteMessagestats() throws IOException {
         StringWriter str = new StringWriter();
-        ValidationMessage validationMessage1= new ValidationMessage(Severity.ERROR, TEST_MESSAGE);
-        ValidationMessage validationMessage2 = new ValidationMessage(Severity.ERROR, TEST_MESSAGE);
+        ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
+        ValidationMessage validationMessage1= new ValidationMessage(Severity.ERROR, "QualifierCheck-1");
+        ValidationMessage validationMessage2 = new ValidationMessage(Severity.ERROR, "QualifierCheck-1");
         ValidationResult validationResult = new ValidationResult();
         validationResult.append(validationMessage1);
         validationResult.append(validationMessage2);
