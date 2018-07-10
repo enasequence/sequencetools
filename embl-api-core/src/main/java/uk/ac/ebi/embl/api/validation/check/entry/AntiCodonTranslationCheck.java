@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.translation.CdsTranslator;
 import uk.ac.ebi.embl.api.translation.Codon;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
 import uk.ac.ebi.embl.api.translation.Translator;
@@ -52,7 +53,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 	{
 		result = new ValidationResult();
 		AnticodonQualifier antiCodon = null;
-		Translator trans = null;
+		Translator translator = null;
 		byte[] sequenceString = null;
 		AntiCodonQualifierCheck anticodonCheck = new AntiCodonQualifierCheck();
 		if (entry == null)
@@ -114,7 +115,9 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 
 								}
 							}
-							trans = new Translator();
+							translator = new Translator();
+							CdsTranslator trans = new CdsTranslator(getEmblEntryValidationPlanProperty(),translator);
+
 							/**
 							 * set up the translator with the details from the
 							 * cds feature

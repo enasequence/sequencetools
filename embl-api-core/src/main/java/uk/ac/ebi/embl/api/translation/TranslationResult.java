@@ -22,42 +22,17 @@ public class TranslationResult implements Serializable {
 
 	private static final long serialVersionUID = -3348570245845628623L;
 
-    private boolean fixedDegerateStartCodon = false;
-    private boolean fixedMissingStartCodon = false;
-    private boolean fixedRightPartialStopCodon = false;
-    private boolean fixedRightPartialCodon = false;
     private boolean fixedLeftPartial = false;
     private boolean fixedRightPartial = false;
+    private boolean fixedPseudo = false;
 
-
-    protected void setFixedDegerateStartCodon(boolean fixedDegerateStartCodon) {
-        this.fixedDegerateStartCodon = fixedDegerateStartCodon;
-    }
-    public boolean isFixedDegerateStartCodon() {
-        return fixedDegerateStartCodon;
+    public boolean isFixedPseudo() {
+        return fixedPseudo;
     }
 
-    protected void setFixedMissingStartCodon(boolean fixedMissingStartCodon) {
-        this.fixedMissingStartCodon = fixedMissingStartCodon;
+    public void setFixedPseudo(boolean fixedPseudo) {
+        this.fixedPseudo = fixedPseudo;
     }
-    public boolean isFixedMissingStartCodon() {
-        return fixedMissingStartCodon;
-    }
-
-    protected void setFixedRightPartialStopCodon(boolean fixedRightPartialStopCodon) {
-        this.fixedRightPartialStopCodon = fixedRightPartialStopCodon;
-    }
-    public boolean isFixedRightPartialStopCodon() {
-        return fixedRightPartialStopCodon;
-    }
-    
-    protected void setFixedRightPartialCodon(boolean fixedRightPartialCodon) {
-        this.fixedRightPartialCodon = fixedRightPartialCodon;
-    }
-    public boolean getFixedRightPartialCodon() {
-        return fixedRightPartialCodon;
-    }
-
     protected void setFixedLeftPartial(boolean fixedLeftPartial) {
         this.fixedLeftPartial = fixedLeftPartial;
     }

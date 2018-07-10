@@ -15,14 +15,23 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.translation;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.PeptideFeature;
+import uk.ac.ebi.embl.api.entry.qualifier.CodonQualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
 import uk.ac.ebi.embl.api.validation.EntryValidations;
@@ -32,30 +41,27 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureAminoAcidCheck;
 import uk.ac.ebi.embl.api.RepositoryException;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public class CdsTranslator {
 
 	private Severity severity=null;
 	private  boolean acceptTranslation=false;
     private Translator translator;
-   	EmblEntryValidationPlanProperty planProperty;
+    private EmblEntryValidationPlanProperty planProperty;
 
-   	private void createTranslator() {
-		translator = new Translator();
-		if (planProperty.isFixMode.get()) {
-			translator.setFixDegenarateStartCodon(true);
-			translator.setFixMissingStartCodon(true);
-			translator.setFixRightPartialCodon(true);
-			translator.setFixRightPartialStopCodon(true);
-		}
-	}
-    
+
     public CdsTranslator(EmblEntryValidationPlanProperty planProperty) {
         this.planProperty=planProperty;
             }
+    public CdsTranslator(EmblEntryValidationPlanProperty planProperty, Translator translator) {
+        this.planProperty=planProperty;
+        this.translator = translator;
+    }
 	
 	/**
      * returns an ExtendedValidationResult
@@ -64,7 +70,6 @@ public class CdsTranslator {
      * @param entry
      * @return
      */
-   
 	public ExtendedResult<TranslationResult> translate(CdsFeature cds, Entry entry) throws RepositoryException {
     
         ExtendedResult<TranslationResult> validationResult = new ExtendedResult<TranslationResult>();
@@ -97,20 +102,7 @@ public class CdsTranslator {
 			return validationResult;
 		}
 
-        createTranslator();
-
-        /**
-         * set up the translator with the details from the cds feature
-         */
-        try {
-            validationResult.append(translator.configureFromFeature(cds, planProperty.taxonHelper.get(), entry));
-        } catch (ValidationException e) {
-            reportException(
-                    validationResult,
-                    e,
-                    entry,
-                    cds);
-        }
+        createTranslator(cds, entry, validationResult);
 
         if(!checkLocations(entry.getSequence().getLength(), cds.getLocations())){
             validationResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.ERROR, "CDSTranslator-4"));
@@ -140,23 +132,10 @@ public class CdsTranslator {
 		String expectedTranslation = cds.getTranslation();
 		String conceptualTranslation = translationResult.getConceptualTranslation();
 
-//        try {
-//            System.out.println("table = " + cds.getTranslationTable());
-//            System.out.println("sequence = " + segment.getSequence());
-//            System.out.println("conceptualTranslation = " + conceptualTranslation);
-//        } catch (ValidationException e) {
-//            e.printStackTrace();
-//        }
 
         if (extendedTranslatorResult.count(Severity.ERROR) > 0) {
             return extendedTranslatorResult;
         }
-
-        // Apply partiality fixes.
-
-		// TODO: the isReversedPartiality decision should be made
-		// once and kept in a member variable to avoid risk of
-		// problems.
 
 		// Note that if the compound location is a global complement
 		// and if one (but not both) ends are partial then the
@@ -180,6 +159,9 @@ public class CdsTranslator {
 			cds.getLocations().setRightPartial(fixedRightPartial);
 		}
 
+		if(translationResult.isFixedPseudo()) {
+		    cds.addQualifier(new QualifierFactory().createQualifier(Qualifier.PSEUDO_QUALIFIER_NAME));
+        }
         if (expectedTranslation == null ||
 			expectedTranslation.length() == 0 ) {
         	if(!(cds instanceof PeptideFeature))
@@ -202,6 +184,11 @@ public class CdsTranslator {
 			extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.WARNING,
                     "CDSTranslator-3"));
 		}
+
+		Set<String> fixes = translator.getFixes();
+		if(fixes != null && !fixes.isEmpty()) {
+		    fixes.forEach(f -> extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.FIX, f)));
+        }
 		
 		if (severity != null) {
 			Collection<ValidationMessage<Origin>> messages = 
@@ -219,6 +206,33 @@ public class CdsTranslator {
 			throw new RepositoryException(e);
 		}
 	}
+
+	private void createTranslator(CdsFeature cds, Entry entry, ExtendedResult<TranslationResult> validationResult) {
+        translator = new Translator();
+        if (planProperty.isFixMode.get()) {
+            translator.setFixDegenarateStartCodon(true);
+            translator.setFixMissingStartCodon(true);
+            translator.setFixRightPartialCodon(true);
+            translator.setFixRightPartialStopCodon(true);
+            translator.setFixMultipleOfThree(true);
+            translator.setFixInternalStopCodon(true);
+            translator.setFixStartCodonOffset(true);
+        }
+
+        /**
+         * set up the translator with the details from the cds feature
+         */
+        try {
+            validationResult.append(configureFromFeature(cds, planProperty.taxonHelper.get(), entry));
+        } catch (ValidationException e) {
+            reportException(
+                    validationResult,
+                    e,
+                    entry,
+                    cds);
+        }
+
+    }
 
     public Translator getTranslator() {
         return translator;
@@ -280,4 +294,241 @@ public class CdsTranslator {
         }
     }
 
+
+    public ValidationResult configureFromFeature(CdsFeature feature,
+                                                 TaxonHelper taxHelper, Entry entry) throws ValidationException
+    {
+        ValidationResult validationResult = new ValidationResult();
+        Integer featureTranslationTable = null;
+        if (feature != null)
+            featureTranslationTable = feature.getTranslationTable();
+
+        Integer translationTable = null;
+        ValidationMessage<Origin> infoMessage = null;
+        translator.setPeptideFeature(feature instanceof PeptideFeature);
+        SourceFeature sourceFeature = entry.getPrimarySourceFeature();
+        if (sourceFeature != null)
+        {
+            Taxon taxon = null;
+            if (sourceFeature.getTaxon().getTaxId() != null)
+            {
+                taxon = taxHelper.getTaxonById(sourceFeature.getTaxon()
+                        .getTaxId());
+            } else if (sourceFeature.getTaxon().getScientificName() != null)
+            {
+                taxon = taxHelper.getTaxonByScientificName(sourceFeature
+                        .getTaxon().getScientificName());
+            }
+
+            // Classified organism
+
+            if (taxon != null)
+            {
+                String organelle = sourceFeature
+                        .getSingleQualifierValue("organelle");
+                if (StringUtils.equals(organelle, "mitochondrion")
+                        || StringUtils.equals(organelle,
+                        "mitochondrion:kinetoplast"))
+                {
+                    translationTable = taxon.getMitochondrialGeneticCode();
+                    infoMessage = EntryValidations.createMessage(
+                            entry.getOrigin(), Severity.INFO,
+                            "CDSTranslator-12", organelle, translationTable);
+                } else if (StringUtils.contains(organelle, "plastid"))
+                {
+                    translationTable = TranslationTable.PLASTID_TRANSLATION_TABLE;
+                    infoMessage = EntryValidations.createMessage(
+                            entry.getOrigin(), Severity.INFO,
+                            "CDSTranslator-12", organelle, translationTable);
+                } else
+                {
+                    translationTable = taxon.getGeneticCode();
+                    infoMessage = EntryValidations.createMessage(
+                            entry.getOrigin(), Severity.INFO,
+                            "CDSTranslator-11", translationTable);
+                }
+            }
+
+            else
+            {
+                if (featureTranslationTable != null)
+                {
+                    translationTable = featureTranslationTable;
+                    infoMessage = EntryValidations.createMessage(
+                            entry.getOrigin(), Severity.INFO,
+                            "CDSTranslator-13", translationTable);
+                } else
+                {
+                    String organelle = sourceFeature
+                            .getSingleQualifierValue("organelle");
+                    if (StringUtils.equals(organelle, "mitochondrion"))
+                    {
+                        translationTable = 2;
+                        infoMessage = EntryValidations
+                                .createMessage(entry.getOrigin(),
+                                        Severity.INFO, "CDSTranslator-14",
+                                        organelle, translationTable);
+                    } else if (StringUtils.equals(organelle,
+                            "mitochondrion:kinetoplast"))
+                    {
+                        translationTable = 4;
+                        infoMessage = EntryValidations
+                                .createMessage(entry.getOrigin(),
+                                        Severity.INFO, "CDSTranslator-14",
+                                        organelle, translationTable);
+                    } else if (StringUtils.contains(organelle, "plastid"))
+                    {
+                        translationTable = TranslationTable.PLASTID_TRANSLATION_TABLE;
+                        infoMessage = EntryValidations
+                                .createMessage(entry.getOrigin(),
+                                        Severity.INFO, "CDSTranslator-14",
+                                        organelle, translationTable);
+                    } else
+                    {
+                        translationTable = TranslationTable.DEFAULT_TRANSLATION_TABLE;
+                        infoMessage = EntryValidations.createMessage(
+                                entry.getOrigin(), Severity.INFO,
+                                "CDSTranslator-15", translationTable);
+                    }
+
+                }
+            }
+        }
+
+        if (featureTranslationTable != null
+                && !featureTranslationTable.equals(translationTable))
+        {
+            validationResult.append(EntryValidations.createMessage(
+                    entry.getOrigin(), Severity.ERROR, "CDSTranslator-10",
+                    featureTranslationTable, translationTable));
+            translationTable = featureTranslationTable;
+        } else if (infoMessage != null)
+        {
+            validationResult.append(infoMessage);
+
+        }
+        if (translationTable == null)
+        {
+            if (feature != null)// CDSfeature
+                validationResult.append(EntryValidations.createMessage(
+                        feature.getOrigin(), Severity.INFO, "CDSTranslator-8",
+                        TranslationTable.DEFAULT_TRANSLATION_TABLE));
+            else
+                // non-cds feature
+                validationResult.append(EntryValidations.createMessage(
+                        entry.getOrigin(), Severity.INFO, "CDSTranslator-8"));
+            // Get the default translation table.
+            translationTable = TranslationTable.DEFAULT_TRANSLATION_TABLE;
+        }
+        translator.setTranslationTable(translationTable);
+        if (feature == null) // if it is not CDSfeature ex:tRNA
+            return validationResult;
+        if (!translationTable
+                .equals(TranslationTable.DEFAULT_TRANSLATION_TABLE))
+        {
+            // Set feature translation table.
+            if (!translator.isPeptideFeature())
+                feature.setTranslationTable(translationTable);
+        }
+
+        // Set the start codon.
+        Integer startCodon = feature.getStartCodon();
+        if (startCodon != null)
+        {
+            translator.setCodonStart(startCodon);
+        }
+
+
+        /**
+         * set the left and right partiality - if the compound location is
+         * global complement, and one end is partial only, we need to reverse
+         * the left and right partiality, as the translator assumes sequence to
+         * be on the primary strand. (if both ends are partial or both are
+         * unpartial, no need to reverse)
+         */
+
+        CompoundLocation compoundLocation = feature.getLocations();
+        if (compoundLocation.isComplement()
+                && compoundLocation.isLeftPartial() != compoundLocation
+                .isRightPartial())
+        {
+
+            translator.setLeftPartial(!compoundLocation.isLeftPartial());// reverse it
+            translator.setRightPartial(!compoundLocation.isRightPartial());// reverse it
+        } else
+        {
+            translator.setLeftPartial(compoundLocation.isLeftPartial());
+            translator.setRightPartial(compoundLocation.isRightPartial());
+        }
+
+        // Set a pseudo translation.
+        translator.setNonTranslating(feature.isPseudo());
+        // Set an exceptional translation.
+        translator.setException(feature.isException());
+
+        // Set translation exceptions.
+        List<TranslExceptQualifier> translExceptQualifiers = new ArrayList<TranslExceptQualifier>();
+        feature.getComplexQualifiers(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME,
+                translExceptQualifiers);
+
+        for (TranslExceptQualifier qualifier : translExceptQualifiers)
+        {
+            Long beginPosition = qualifier.getLocations().getMinPosition();
+            Long endPosition = qualifier.getLocations().getMaxPosition();
+
+            Integer relativeBeginPos = feature.getLocations()
+                    .getRelativeIntPosition(beginPosition);
+            Integer relativeEndPos = feature.getLocations()
+                    .getRelativeIntPosition(endPosition);
+            if (relativeBeginPos != null && relativeEndPos != null)// EMD-5594
+            {
+                if (beginPosition < endPosition
+                        && relativeBeginPos > relativeEndPos)
+                {
+                    Integer temp = relativeBeginPos;
+                    relativeBeginPos = relativeEndPos;
+                    relativeEndPos = temp;
+                }
+            }
+            if (relativeBeginPos == null)
+            {
+                validationResult.append(EntryValidations.createMessage(
+                        feature.getOrigin(), Severity.ERROR, "CDSTranslator-6",
+                        beginPosition.toString()));
+            } else if (relativeEndPos == null)
+            {
+                validationResult.append(EntryValidations.createMessage(
+                        feature.getOrigin(), Severity.ERROR, "CDSTranslator-7",
+                        endPosition.toString()));
+            } else
+            {
+                translator.addTranslationException(relativeBeginPos, relativeEndPos,
+                        qualifier.getAminoAcid().getLetter());
+            }
+        }
+
+        // Set codon exceptions.
+        List<CodonQualifier> codonQualifiers = new ArrayList<CodonQualifier>();
+        feature.getComplexQualifiers(Qualifier.CODON_QUALIFIER_NAME,
+                codonQualifiers);
+        for (CodonQualifier qualifier : codonQualifiers)
+        {
+            translator.addCodonException(qualifier.getCodon(), qualifier.getAminoAcid()
+                    .getLetter());
+        }
+
+        return validationResult;
+    }
+
+    public void setLeftPartial(boolean partial) {
+        translator.setLeftPartial(partial);
+    }
+
+    public void translateCodons(byte[] sequenceString, TranslationResult translatorResult) throws ValidationException {
+        translator.translateCodons(sequenceString, translatorResult);
+    }
+
+    public ExtendedResult<TranslationResult> translate(byte[] sequence, Origin origin) {
+        return translator.translate(sequence, origin);
+    }
 }

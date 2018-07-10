@@ -104,7 +104,8 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
                 /**
                  * get the translator from the CDS translator for use with the peptides
                  */
-                Translator translator = new Translator();
+                Translator trans = new Translator();
+                CdsTranslator translator = new CdsTranslator(getEmblEntryValidationPlanProperty(),trans);
 
                 for (PeptideFeature peptideFeature : relevantPeptideFeatures) {
 
