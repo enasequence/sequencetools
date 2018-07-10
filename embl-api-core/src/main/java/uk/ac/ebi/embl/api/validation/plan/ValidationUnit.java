@@ -48,7 +48,6 @@ public enum ValidationUnit
 					MasterEntrySourceCheck.class,//include only for assembly master
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
-					OrganismPatternAndQualifierValueCheck.class,//include for all
 					SourceFeatureOnlyCheck.class,//include for all
 					SourceFeatureQualifierCheck.class,//include for all
 					Type_materialQualifierCheck.class,//include for all
@@ -102,7 +101,6 @@ public enum ValidationUnit
 					PropeptideLocationCheck.class,//exclude for master
 					//FeatureAndSourceQualifierCheck.class, //this check no longer exists
 					OrganismAndPermittedQualifierCheck.class,//include for all
-					RRNAQualifierValueOrOrganismAndQualifierValueCheck.class,//include for all
 					SourceQualifierPatternAndFeatureCheck.class,//include for all
 					TaxonomicDivisionQualifierCheck.class,//include for all
 					AntiCodonTranslationCheck.class,//exclude for master
