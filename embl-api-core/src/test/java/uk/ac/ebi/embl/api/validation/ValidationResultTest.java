@@ -148,6 +148,6 @@ public class ValidationResultTest {
         validationResult.append(validationMessage1);
         validationResult.append(validationMessage2);
         validationResult.writeMessageStats(str);
-        assertEquals("2	TEST_MESSAGE	Missing message: TEST_MESSAGE\n", str.toString());
+        assertEquals("2	QualifierCheck-1	Feature qualifier \"{0}\" is not recognized.\n", str.toString());
         }
 }
