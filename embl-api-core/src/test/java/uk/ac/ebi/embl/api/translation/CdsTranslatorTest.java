@@ -99,7 +99,8 @@ public class CdsTranslatorTest {
 
     @SuppressWarnings("unchecked")
     private boolean testValidTranslation(CdsTranslator translator, String expectedTranslation, String expectedMessageKey) {
-        boolean isSuccess = false;
+        boolean isSuccess = true;
+
         try {
             ValidationResult validationResult = translator.translate(cdsFeature, entry);
             TranslationResult translationResult = null;
@@ -130,6 +131,10 @@ public class CdsTranslatorTest {
             }
 
             String conceptualTranslation = cdsFeature.getTranslation();
+
+            assertTrue(( expectedTranslation == null && cdsFeature.isPseudo()) ||
+                       ( expectedTranslation != null && !cdsFeature.isPseudo()));
+
             if (conceptualTranslation == null) {
                 if (expectedTranslation != null) {
                     if (write) {

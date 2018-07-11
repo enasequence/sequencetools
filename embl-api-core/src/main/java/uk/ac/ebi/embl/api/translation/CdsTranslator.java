@@ -155,6 +155,7 @@ public class CdsTranslator {
 
 		if(translationResult.isFixedPseudo()) {
 		    cds.addQualifier(new QualifierFactory().createQualifier(Qualifier.PSEUDO_QUALIFIER_NAME));
+		    cds.setTranslation(null);
         }
         if (expectedTranslation == null ||
 			expectedTranslation.length() == 0 ) {
