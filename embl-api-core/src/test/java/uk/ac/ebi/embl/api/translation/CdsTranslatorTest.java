@@ -905,12 +905,11 @@ public class CdsTranslatorTest {
     @Test
     public void testFixMultipleOfThree() { // ProteinTranslatorTest.cxx: ProteinTranslatorError5.in
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("atggatgaggattaggatccgcatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("atggatga").getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
 
         cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(5L, 8L, false));
-        write = true;
         String translation = "M";
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
@@ -924,6 +923,30 @@ public class CdsTranslatorTest {
         assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("<5..>8", renderCompoundLocation(cdsFeature.getLocations()));
     }
+
+    @Test
+    public void testFixMultipleOfThreeGlobalComplement() {
+        sourceFeature.setScientificName("JC polyomavirus");
+        entry.setSequence(sequenceFactory.createSequenceByte(("tcatccat").getBytes()));
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().setComplement(true);
+
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(5L, 8L, false));
+        String translation = "M";
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(!testValidTranslation(translation, "Translator-11"));
+        assertEquals("complement(5..8)", renderCompoundLocation(cdsFeature.getLocations()));
+
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(testValidTranslationFixMode(translation, "fixNonMultipleOfThreeMake3And5Partial"));
+        assertTrue(cdsFeature.getLocations().isLeftPartial());
+        assertTrue(cdsFeature.getLocations().isRightPartial());
+        assertEquals("complement(<5..>8)", renderCompoundLocation(cdsFeature.getLocations()));
+    }
+
 
     @Test
     public void testFixInternalStopCodonMakePseudo() {
