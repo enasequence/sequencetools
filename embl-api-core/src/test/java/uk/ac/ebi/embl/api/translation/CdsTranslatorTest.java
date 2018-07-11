@@ -956,7 +956,6 @@ public class CdsTranslatorTest {
         cdsFeature.setTranslationTable(11);
 
         cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
-        write = true;
         String translation = null;
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
@@ -970,6 +969,32 @@ public class CdsTranslatorTest {
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size() == 1);
         assertNull(cdsFeature.getTranslation());
         assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
+    }
+
+
+    @Test
+    public void testFixInternalStopCodonMakePseudoGlobalComplement() {
+        sourceFeature.setScientificName("JC polyomavirus");
+        entry.setSequence(sequenceFactory.createSequenceByte(("ctatttctacat").getBytes())); // M*K*
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().setComplement(true);
+
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
+        write = true;
+        String translation = null;
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(!testValidTranslation(translation, "Translator-17"));
+        assertEquals("complement(1..12)", renderCompoundLocation(cdsFeature.getLocations()));
+
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
+        assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseudo"));
+        assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size() == 1);
+        assertNull(cdsFeature.getTranslation());
+        assertEquals("complement(1..12)", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
     @Test
