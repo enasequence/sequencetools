@@ -825,7 +825,7 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixMake3partialBasesAfterStopCodon() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorMissingStopCodon.in
+    public void testFixNoStopCodonMake3Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorMissingStopCodon.in
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(("atggatgaggattaggatccgcatg").getBytes()));
         cdsFeature.setStartCodon(1);
@@ -848,7 +848,32 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixMoreThanOneStopCodon() { // ProteinTranslatorTest.cxx: ProteinTranslatorComplementError.in
+    public void testFixNoStopCodonMake3PartialGlobalComplement() {
+        sourceFeature.setScientificName("JC polyomavirus");
+        entry.setSequence(sequenceFactory.createSequenceByte(("catgcggatcctaatcctcatccat").getBytes()));
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().setComplement(true);
+
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(23L, 25L, false));
+        write = true;
+        String translation = "M";
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(!testValidTranslation(translation, "Translator-15"));
+        assertEquals("complement(23..25)", renderCompoundLocation(cdsFeature.getLocations()));
+
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(testValidTranslationFixMode(translation, "fixNoStopCodonMake3Partial"));
+        assertTrue(cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertEquals("complement(<23..25)", renderCompoundLocation(cdsFeature.getLocations()));
+    }
+
+
+    @Test
+    public void testErrorMoreThanOneStopCodon() { // ProteinTranslatorTest.cxx: ProteinTranslatorComplementError.in
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(("ctactacatgattaggatccgcatg").getBytes()));
         cdsFeature.setStartCodon(1);
@@ -903,8 +928,6 @@ public class CdsTranslatorTest {
         assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("<5..>8", renderCompoundLocation(cdsFeature.getLocations()));
     }
-
-
 
     @Test
     public void testFixInternalStopCodonMakePseudo() {
