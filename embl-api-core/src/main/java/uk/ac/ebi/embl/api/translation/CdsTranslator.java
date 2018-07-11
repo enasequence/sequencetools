@@ -445,7 +445,7 @@ public class CdsTranslator {
         // Note that if the compound location is a global complement
         // then the left and right partiality are reversed between CdsFeature
         // and Translator.
-        if (isSwapPartiality(compoundLocation.isLeftPartial(), compoundLocation.isRightPartial(), compoundLocation.isComplement())) {
+        if (compoundLocation.isComplement()) {
             translator.setLeftPartial(compoundLocation.isRightPartial());
             translator.setRightPartial(compoundLocation.isLeftPartial());
         } else {
@@ -522,9 +522,5 @@ public class CdsTranslator {
 
     public ExtendedResult<TranslationResult> translate(byte[] sequence, Origin origin) {
         return translator.translate(sequence, origin);
-    }
-
-    private boolean isSwapPartiality(boolean isLeftpartial, boolean isRightPartial, boolean isComplement) {
-        return isComplement && isLeftpartial != isRightPartial;
     }
 }
