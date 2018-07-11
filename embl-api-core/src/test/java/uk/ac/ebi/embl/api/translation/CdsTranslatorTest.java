@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.translation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -903,6 +904,8 @@ public class CdsTranslatorTest {
         assertEquals("<5..>8", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
+
+
     @Test
     public void testFixInternalStopCodonMakePseudo() {
         sourceFeature.setScientificName("JC polyomavirus");
@@ -923,6 +926,7 @@ public class CdsTranslatorTest {
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
         assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseudo"));
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size() == 1);
+        assertNull(cdsFeature.getTranslation());
         assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
