@@ -991,8 +991,8 @@ public class CdsTranslatorTest {
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
-        //assertTrue(cdsFeature.getLocations().isLeftPartial());
-        //assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("complement(1..>13)", renderCompoundLocation(cdsFeature.getLocations()));
     }
     private void setSequenceAndOrganismForJcPolyomavirus() {
