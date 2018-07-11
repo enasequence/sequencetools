@@ -737,7 +737,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixMadeFivePartialMissingStart"));
+        assertTrue(testValidTranslationFixMode(translation, "fixNoStartCodonMake5Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertEquals("<1..6", renderCompoundLocation(cdsFeature.getLocations()));
@@ -761,7 +761,7 @@ public class CdsTranslatorTest {
         assertTrue(!testValidTranslation(translation, "Translator-18"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixMadeFivePartialMissingStart"));
+        assertTrue(testValidTranslationFixMode(translation, "fixNoStartCodonMake5Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertEquals("complement(4484..>4999)", renderCompoundLocation(cdsFeature.getLocations()));
@@ -784,7 +784,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixRemovedThreePartial"));
+        assertTrue(testValidTranslationFixMode(translation, "fixValidStopCodonRemove3Partial"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertEquals("1..6", renderCompoundLocation(cdsFeature.getLocations()));
@@ -808,7 +808,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixRemovedThreePartial"));
+        assertTrue(testValidTranslationFixMode(translation, "fixValidStopCodonRemove3Partial"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertEquals("complement(1..6)", renderCompoundLocation(cdsFeature.getLocations()));
@@ -831,7 +831,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixMadeThreePartialNoStopCodon"));
+        assertTrue(testValidTranslationFixMode(translation, "fixNoStopCodonMake3Partial"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("1..>3", renderCompoundLocation(cdsFeature.getLocations()));
@@ -888,7 +888,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixNonMultipleOfThree"));
+        assertTrue(testValidTranslationFixMode(translation, "fixNonMultipleOfThreeMake3And5Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("<5..>8", renderCompoundLocation(cdsFeature.getLocations()));
@@ -912,7 +912,7 @@ public class CdsTranslatorTest {
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
-        assertTrue(testValidTranslationFixMode(translation, "FixMadePseudo"));
+        assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseduo"));
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size() == 1);
         assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
     }
@@ -934,7 +934,7 @@ public class CdsTranslatorTest {
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertTrue(testValidTranslationFixMode(translation, "FixMadeLeftPartialCodonStartOffset"));
+        assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertEquals("<1..12", renderCompoundLocation(cdsFeature.getLocations()));

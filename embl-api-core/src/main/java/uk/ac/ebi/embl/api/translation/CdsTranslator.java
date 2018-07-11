@@ -53,7 +53,7 @@ public class CdsTranslator {
 	private  boolean acceptTranslation=false;
     private Translator translator;
     private EmblEntryValidationPlanProperty planProperty;
-
+    private boolean isReversedPartiality = false;
 
     public CdsTranslator(EmblEntryValidationPlanProperty planProperty) {
         this.planProperty=planProperty;
@@ -62,8 +62,8 @@ public class CdsTranslator {
         this.planProperty=planProperty;
         this.translator = translator;
     }
-	
-	/**
+
+    /**
      * returns an ExtendedValidationResult
      *
      * @param cds
@@ -138,13 +138,8 @@ public class CdsTranslator {
         }
 
 		// Note that if the compound location is a global complement
-		// and if one (but not both) ends are partial then the
-		// left and right partiality is reversed between CdsFeature
+		// then the left and right partiality are reversed between CdsFeature
 		// and Translator.
-		boolean isReversedPartiality =
-			cds.getLocations().isComplement() &&
-			cds.getLocations().isLeftPartial() !=
-			cds.getLocations().isRightPartial();
 
         boolean fixedLeftPartial = translator.isLeftPartial();
 		boolean fixedRightPartial = translator.isRightPartial();
@@ -211,12 +206,13 @@ public class CdsTranslator {
         translator = new Translator();
         if (planProperty.isFixMode.get()) {
             translator.setFixDegenarateStartCodon(true);
-            translator.setFixMissingStartCodon(true);
-            translator.setFixRightPartialCodon(true);
-            translator.setFixRightPartialStopCodon(true);
-            translator.setFixMultipleOfThree(true);
-            translator.setFixInternalStopCodon(true);
-            translator.setFixStartCodonOffset(true);
+            translator.setFixNoStartCodonMake5Partial(true);
+            translator.setFixCodonStartNotOneMake5Partial(true);
+            translator.setFixNoStopCodonMake3Partial(true);
+            //translator.setFixDeleteTrailingBasesAfterStopCodon(true); //Not implemented
+            translator.setFixValidStopCodonRemove3Partial(true);
+            translator.setFixNonMultipleOfThreeMake3And5Partial(true);
+            translator.setFixInternalStopCodonMakePseduo(true);
         }
 
         /**
@@ -439,24 +435,17 @@ public class CdsTranslator {
         }
 
 
-        /**
-         * set the left and right partiality - if the compound location is
-         * global complement, and one end is partial only, we need to reverse
-         * the left and right partiality, as the translator assumes sequence to
-         * be on the primary strand. (if both ends are partial or both are
-         * unpartial, no need to reverse)
-         */
-
         CompoundLocation compoundLocation = feature.getLocations();
-        if (compoundLocation.isComplement()
-                && compoundLocation.isLeftPartial() != compoundLocation
-                .isRightPartial())
-        {
 
+        // Note that if the compound location is a global complement
+        // then the left and right partiality are reversed between CdsFeature
+        // and Translator.
+        boolean isReversedPartiality = compoundLocation.isComplement();
+
+        if (isReversedPartiality) {
             translator.setLeftPartial(!compoundLocation.isLeftPartial());// reverse it
             translator.setRightPartial(!compoundLocation.isRightPartial());// reverse it
-        } else
-        {
+        } else {
             translator.setLeftPartial(compoundLocation.isLeftPartial());
             translator.setRightPartial(compoundLocation.isRightPartial());
         }

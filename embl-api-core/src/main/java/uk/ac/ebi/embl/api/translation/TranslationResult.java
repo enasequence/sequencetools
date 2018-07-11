@@ -25,6 +25,15 @@ public class TranslationResult implements Serializable {
     private boolean fixedLeftPartial = false;
     private boolean fixedRightPartial = false;
     private boolean fixedPseudo = false;
+    private boolean fixedDegenerateStartCodon = false;
+
+    public boolean isFixedDegenerateStartCodon() {
+        return fixedDegenerateStartCodon;
+    }
+
+    public void setFixedDegenerateStartCodon(boolean fixedDegenerateStartCodon) {
+        this.fixedDegenerateStartCodon = fixedDegenerateStartCodon;
+    }
 
     public boolean isFixedPseudo() {
         return fixedPseudo;

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,16 +16,8 @@
 package uk.ac.ebi.embl.api.translation;
 
 import org.apache.commons.lang.StringUtils;
-
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
-import uk.ac.ebi.embl.api.entry.feature.PeptideFeature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.qualifier.CodonQualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck;
@@ -49,14 +41,15 @@ public class Translator extends AbstractTranslator
 	private boolean leftPartial = false;//5' partial
 	private boolean peptideFeature = false;
 
-	private boolean fixDegenerateStartCodon = false;//understand this using testcase
-	private boolean fixMissingStartCodon = false;//missing startCodon , make it 5' partial
-	private boolean fixStartCodonOffset = false;//codon start!= 1 , make it 5' partial
-	private boolean fixRightPartialStopCodon = false;//remove 3' partial
-	private boolean fixRightPartialCodon = false;//make 3' partial, only one stopCodon but >0 bases after stopCodon
-	private boolean fixMultipleOfThree = false;// make 3' and 5' partial
-	private boolean fixInternalStopCodon = false;// make feature as pseudo if there are internal stop codons
-	//private boolean deleteNotMultipleOfThree = false;//delete this feature
+	private boolean fixDegenerateStartCodon = false;//replace the unambiguous bases with valid bases and check it could be a valid startCodon(M)
+	private boolean fixNoStartCodonMake5Partial = false;//missing startCodon , make it 5' partial
+	private boolean fixCodonStartNotOneMake5Partial = false;//codon start!= 1 , make it 5' partial
+	private boolean fixNoStopCodonMake3Partial = false; //no stop codon make 3 partial
+	private boolean fixValidStopCodonRemove3Partial = false;//Stop codon found at 3' partial end, remove 3' partial
+	private boolean fixNonMultipleOfThreeMake3And5Partial = false;//bases not multiple of three, make 3' and 5' partial
+	private boolean fixInternalStopCodonMakePseduo = false;//make feature as pseudo if there are internal stop codons
+	private boolean fixDeleteTrailingBasesAfterStopCodon = false;//Delete trailing bases after stop codon
+
 	private Set<String> fixes;
 
 	public Translator() {
@@ -67,12 +60,37 @@ public class Translator extends AbstractTranslator
 		return fixes;
 	}
 
-	public void setFixInternalStopCodon(boolean fixInternalStopCodon) {
-		this.fixInternalStopCodon = fixInternalStopCodon;
+	public void setFixDeleteTrailingBasesAfterStopCodon(boolean fixDeleteTrailingBasesAfterStopCodon) {
+		this.fixDeleteTrailingBasesAfterStopCodon = fixDeleteTrailingBasesAfterStopCodon;
 	}
 
-	public void setFixMultipleOfThree(boolean fixMultipleOfThree) {
-		this.fixMultipleOfThree = fixMultipleOfThree;
+	public void setFixDegenarateStartCodon(boolean fixDegenerateStartCodon)
+	{
+		this.fixDegenerateStartCodon = fixDegenerateStartCodon;
+	}
+
+	public void setFixNoStopCodonMake3Partial(boolean fixNoStopCodonMake3Partial) {
+		this.fixNoStopCodonMake3Partial = fixNoStopCodonMake3Partial;
+	}
+
+	public void setFixNoStartCodonMake5Partial(boolean fixNoStartCodonMake5Partial) {
+		this.fixNoStartCodonMake5Partial = fixNoStartCodonMake5Partial;
+	}
+
+	public void setFixCodonStartNotOneMake5Partial(boolean fixCodonStartNotOneMake5Partial) {
+		this.fixCodonStartNotOneMake5Partial = fixCodonStartNotOneMake5Partial;
+	}
+
+	public void setFixValidStopCodonRemove3Partial(boolean fixValidStopCodonRemove3Partial) {
+		this.fixValidStopCodonRemove3Partial = fixValidStopCodonRemove3Partial;
+	}
+
+	public void setFixNonMultipleOfThreeMake3And5Partial(boolean fixNonMultipleOfThreeMake3And5Partial) {
+		this.fixNonMultipleOfThreeMake3And5Partial = fixNonMultipleOfThreeMake3And5Partial;
+	}
+
+	public void setFixInternalStopCodonMakePseduo(boolean fixInternalStopCodonMakePseduo) {
+		this.fixInternalStopCodonMakePseduo = fixInternalStopCodonMakePseduo;
 	}
 
 	public void setPeptideFeature(boolean peptideFeature) {
@@ -109,10 +127,6 @@ public class Translator extends AbstractTranslator
 		return leftPartial;
 	}
 
-	public void setFixStartCodonOffset(boolean fixStartCodonOffset) {
-		this.fixStartCodonOffset = fixStartCodonOffset;
-	}
-
 	public void setNonTranslating(boolean nonTranslating)
 	{
 		this.nonTranslating = nonTranslating;
@@ -121,38 +135,6 @@ public class Translator extends AbstractTranslator
 	public void setException(boolean exception)
 	{
 		this.exception = exception;
-	}
-
-	/**
-	 * If true then a degenerate start codon is translated to M using a
-	 * translation exception.
-	 */
-	public void setFixDegenarateStartCodon(boolean fixDegenerateStartCodon)
-	{
-		this.fixDegenerateStartCodon = fixDegenerateStartCodon;
-	}
-
-	/** If true then a feature with no start codon is made 5' partial. */
-	public void setFixMissingStartCodon(boolean fixMissingStartCodon)
-	{
-		this.fixMissingStartCodon = fixMissingStartCodon;
-	}
-
-	/**
-	 * If true then 3' partiality is removed when a stop codon is found at the
-	 * 3' end.
-	 */
-	public void setFixRightPartialStopCodon(boolean fixRightPartialStopCodon)
-	{
-		this.fixRightPartialStopCodon = fixRightPartialStopCodon;
-	}
-
-	/**
-	 * If true then a partial codon is removed after a stop codon at the 3' end.
-	 */
-	public void setFixRightPartialCodon(boolean fixRightPartialCodon)
-	{
-		this.fixRightPartialCodon = fixRightPartialCodon;
 	}
 
 	private class TranslationException
@@ -204,7 +186,7 @@ public class Translator extends AbstractTranslator
 		return codon.isTranslationException();
 	}
 
-	private void translateStartCodon(Codon codon) throws ValidationException
+	private void translateStartCodon(Codon codon, TranslationResult translationResult) throws ValidationException
 	{
 		codonTranslator.translateStartCodon(codon);
 		if (!applyTranslationException(codon) && fixDegenerateStartCodon
@@ -213,6 +195,8 @@ public class Translator extends AbstractTranslator
 		{
 			codon.setAminoAcid('M');
 			codon.setTranslationException(true);
+			//TODO: compare this and add /exception in cds feature in CdsTranslator
+			translationResult.setFixedDegenerateStartCodon(true);
 		}
 	}
 
@@ -237,7 +221,7 @@ public class Translator extends AbstractTranslator
 			codon.setPos(i + 1);
 			if ((i == codonStart - 1) && !leftPartial)
 			{
-				translateStartCodon(codon);
+				translateStartCodon(codon, translationResult);
 			} else
 			{
 				translateOtherCodon(codon);
@@ -262,7 +246,7 @@ public class Translator extends AbstractTranslator
 			codon.setPos(i + 1);
 			if ((i == codonStart - 1) && !leftPartial)
 			{
-				translateStartCodon(codon);
+				translateStartCodon(codon, translationResult);
 			} else
 			{
 				translateOtherCodon(codon);
@@ -420,10 +404,10 @@ public class Translator extends AbstractTranslator
 		{
 			if (!leftPartial && !nonTranslating)
 			{
-				if(fixStartCodonOffset) {
+				if(fixCodonStartNotOneMake5Partial) {
 					leftPartial = true;
 					translationResult.setFixedLeftPartial(true);
-					fixes.add("FixMadeLeftPartialCodonStartOffset");
+					fixes.add("fixCodonStartNotOneMake5Partial");
 				} else {
 					ValidationException.throwError("Translator-3", codonStart);
 				}
@@ -549,12 +533,12 @@ public class Translator extends AbstractTranslator
 			if (!peptideFeature && !leftPartial && !rightPartial
 					&& !nonTranslating && !exception)
 			{
-				if(fixMultipleOfThree){
+				if(fixNonMultipleOfThreeMake3And5Partial){
 					leftPartial = true;
 					rightPartial = true;
 					translationResult.setFixedRightPartial(true);
 					translationResult.setFixedLeftPartial(true);
-					fixes.add("FixNonMultipleOfThree");
+					fixes.add("fixNonMultipleOfThreeMake3And5Partial");
 				} else {
 					// CDS feature length must be a multiple of 3. Consider 5' or 3'
 					// partial location.
@@ -656,11 +640,11 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixRightPartialStopCodon)
+					if (fixValidStopCodonRemove3Partial)
 					{
 						translationResult.setFixedRightPartial(true);
 						rightPartial = false;
-						fixes.add("FixRemovedThreePartial");
+						fixes.add("fixValidStopCodonRemove3Partial");
 					} else
 					{
 						// Stop codon found at 3' partial end.
@@ -677,10 +661,10 @@ public class Translator extends AbstractTranslator
 				} else if (!peptideFeature)
 				{// peptide features are allowed to not have stop codons
 					// No stop codon at the 3' end.
-					if(fixRightPartialCodon) {
+					if(fixNoStopCodonMake3Partial) {
 						rightPartial = true;
 						translationResult.setFixedRightPartial(true);
-						fixes.add("FixMadeThreePartialNoStopCodon");
+						fixes.add("fixNoStopCodonMake3Partial");
 					} else {
 						ValidationException.throwError("Translator-15");
 					}
@@ -694,11 +678,12 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixRightPartialCodon)
+					if (fixDeleteTrailingBasesAfterStopCodon)
 					{
-						translationResult.setFixedRightPartial(true);
+						//TODO: correct fix is to remove the trailing partial codon, ignore now as no failures with this error
+						/*translationResult.setFixedRightPartial(true);
 						rightPartial = true;
-						fixes.add("FixMadeThreePartialBasesAfterStop");
+						fixes.add("fixBasesAfterStopCodonMake3Partial");*/
 					} else
 					{
 						// A partial codon appears after the stop codon.
@@ -720,10 +705,10 @@ public class Translator extends AbstractTranslator
 				return false; // no conceptual translation
 			} else
 			{
-				if(fixInternalStopCodon) {
+				if(fixInternalStopCodonMakePseduo) {
 					translationResult.setFixedPseudo(true);
 					nonTranslating = true;
-					fixes.add("FixMadePseudo");
+					fixes.add("fixInternalStopCodonMakePseduo");
 					return false;
 				} else {
 					// The protein translation contains internal stop condons.
@@ -748,11 +733,11 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixMissingStartCodon)
+					if (fixNoStartCodonMake5Partial)
 					{
 						translationResult.setFixedLeftPartial(true);
 						leftPartial = true;
-						fixes.add("FixMadeFivePartialMissingStart");
+						fixes.add("fixNoStartCodonMake5Partial");
 					} else
 					{
 						// The protein translation does not start with a
