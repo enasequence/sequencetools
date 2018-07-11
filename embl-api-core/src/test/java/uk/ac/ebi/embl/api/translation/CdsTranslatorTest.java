@@ -117,10 +117,11 @@ public class CdsTranslatorTest {
                     System.out.print("MESSAGE: "+ message.getMessage() + "\n");
                 }
                 if (expectedMessageKey != null) {
-                    assertTrue(
-                            validationResult.count(expectedMessageKey, Severity.WARNING) >= 1 ||
-                                    validationResult.count(expectedMessageKey, Severity.ERROR) >= 1 ||
-                                    validationResult.count(expectedMessageKey, Severity.FIX) >= 1);
+                    if (!(validationResult.count(expectedMessageKey, Severity.WARNING) >= 1 ||
+                          validationResult.count(expectedMessageKey, Severity.ERROR) >= 1 ||
+                           validationResult.count(expectedMessageKey, Severity.FIX) >= 1 )) {
+                        isSuccess = false;
+                    }
                 }
 
                 if (write) {
@@ -777,7 +778,7 @@ public class CdsTranslatorTest {
     @Test
     public void testFixValidStopCodonRemove3Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("atgtaggaggattaggatccgcatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("atgtag").getBytes())); // M*
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
 
@@ -798,23 +799,21 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixValidStopCodonRemove3PartialComplement() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
+    public void testFixValidStopCodonRemove3PartialGlobalComplement() {
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("ctacatgaggattaggatccgcatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte("ctacat".getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
-
-        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, true));
-        cdsFeature.getLocations().setRightPartial(true);
-        write = true;
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
+        cdsFeature.getLocations().setLeftPartial(true);
         String translation = "M";
-        assertTrue(!cdsFeature.getLocations().isLeftPartial());
-        assertTrue(cdsFeature.getLocations().isRightPartial());
+        assertTrue(cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(!testValidTranslation(translation, "Translator-14"));
         assertEquals("complement(<1..6)", renderCompoundLocation(cdsFeature.getLocations()));
-
-        assertTrue(!cdsFeature.getLocations().isLeftPartial());
-        assertTrue(cdsFeature.getLocations().isRightPartial());
+        assertTrue(cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(testValidTranslationFixMode(translation, "fixValidStopCodonRemove3Partial"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());

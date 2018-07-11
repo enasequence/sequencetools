@@ -140,20 +140,21 @@ public class CdsTranslator {
 		// then the left and right partiality are reversed between CdsFeature
 		// and Translator.
 
-		if (isSwapPartiality(translator.isLeftPartial(), translator.isRightPartial(), cds.getLocations().isComplement())) {
-            if (translationResult.isFixedLeftPartial()) {
-                cds.getLocations().setRightPartial(translator.isLeftPartial());
-            }
-            if (translationResult.isFixedRightPartial()) {
-                cds.getLocations().setLeftPartial(translator.isRightPartial());
-            }
-		}
-		else {
-            if (translationResult.isFixedLeftPartial()) {
+        if (translationResult.isFixedLeftPartial()) {
+            if (!cds.getLocations().isComplement()) {
                 cds.getLocations().setLeftPartial(translator.isLeftPartial());
             }
-            if (translationResult.isFixedRightPartial()) {
+            else {
+                cds.getLocations().setRightPartial(translator.isLeftPartial());
+            }
+        }
+
+        if (translationResult.isFixedRightPartial()) {
+            if (!cds.getLocations().isComplement()) {
                 cds.getLocations().setRightPartial(translator.isRightPartial());
+            }
+            else {
+                cds.getLocations().setLeftPartial(translator.isRightPartial());
             }
         }
 
