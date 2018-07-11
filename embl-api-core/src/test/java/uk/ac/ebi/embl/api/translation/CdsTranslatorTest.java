@@ -734,7 +734,7 @@ public class CdsTranslatorTest {
 
 
     @Test
-    public void testFixMissingStartCodonWithoutComplement() { // ProteinTranslatorTest.cxx: ProteinTranslatorFixCds.in
+    public void testFixNoStartCodonMake5Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorFixCds.in
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(("ttttagaaacattaggatccgcatg").getBytes()));
         cdsFeature.setStartCodon(1);
@@ -755,7 +755,7 @@ public class CdsTranslatorTest {
 
 
     @Test
-    public void testFixMissingStartCodonWithComplement() {
+    public void testFixNoStartCodonMake5PartialComplement() {
         setSequenceAndOrganismForJcPolyomavirus();
         write = true;
         cdsFeature.setStartCodon(1);
@@ -778,7 +778,7 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixRemove3partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
+    public void testFixValidStopCodonRemove3Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(("atgtaggaggattaggatccgcatg").getBytes()));
         cdsFeature.setStartCodon(1);
@@ -801,7 +801,7 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixRemove3partialWithComplement() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
+    public void testFixValidStopCodonRemove3PartialComplement() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorStopCodonPartial.in
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(("ctacatgaggattaggatccgcatg").getBytes()));
         cdsFeature.setStartCodon(1);
