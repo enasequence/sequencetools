@@ -823,7 +823,7 @@ public class CdsTranslatorTest {
     @Test
     public void testFixNoStopCodonMake3Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorErrorMissingStopCodon.in
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("atggatgaggattaggatccgcatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("atg").getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
 
@@ -846,25 +846,25 @@ public class CdsTranslatorTest {
     @Test
     public void testFixNoStopCodonMake3PartialGlobalComplement() {
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("catgcggatcctaatcctcatccat").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("cat").getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
         cdsFeature.getLocations().setComplement(true);
 
-        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(23L, 25L, false));
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 3L, false));
         write = true;
         String translation = "M";
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(!testValidTranslation(translation, "Translator-15"));
-        assertEquals("complement(23..25)", renderCompoundLocation(cdsFeature.getLocations()));
+        assertEquals("complement(1..3)", renderCompoundLocation(cdsFeature.getLocations()));
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(testValidTranslationFixMode(translation, "fixNoStopCodonMake3Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertEquals("complement(<23..25)", renderCompoundLocation(cdsFeature.getLocations()));
+        assertEquals("complement(<1..3)", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
 
