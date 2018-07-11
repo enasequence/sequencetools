@@ -124,21 +124,22 @@ public class CdsTranslatorTest {
                 if (write) {
                     writeTranslation(translationResult, expectedTranslation);
                 }
-                isSuccess = validationResult.count(Severity.ERROR) == 0;
+                if (!validationResult.isValid()) {
+                    return false;
+                }
             }
 
-
             String conceptualTranslation = cdsFeature.getTranslation();
-            if(conceptualTranslation == null )  {
-                if(!cdsFeature.isPseudo()) {
+            if (conceptualTranslation == null) {
+                if (expectedTranslation != null) {
                     if (write) {
                         System.out.print("FAILED TRANSLATION\n");
                         System.out.print("Conceptual translation is null\n");
                     }
                     isSuccess = false;
                 }
-
-            } else if(!conceptualTranslation.equals(expectedTranslation)) {
+            }
+            else if(!conceptualTranslation.equals(expectedTranslation)) {
                 if (write) {
                     System.out.print("FAILED TRANSLATION\n");
                     System.out.print("------------------\n");
@@ -898,15 +899,15 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixInternalStopCodon() {
+    public void testFixInternalStopCodonMakePseudo() {
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("atgtagaaatag").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("atgtagaaatag").getBytes())); // M*K*
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
 
         cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
         write = true;
-        String translation = "M";
+        String translation = null;
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(!testValidTranslation(translation, "Translator-17"));
@@ -921,26 +922,26 @@ public class CdsTranslatorTest {
     }
 
     @Test
-    public void testFixStopCodonOffset() {
+    public void testFixCodonStartNotOneMake5Partial() {
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("atgagtaaatag").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("aatgagtaaatag").getBytes())); // MSK*
         cdsFeature.setStartCodon(2);
         cdsFeature.setTranslationTable(11);
 
-        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 13L, false));
         write = true;
-        String translation = "M";
+        String translation = "MSK";
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(!testValidTranslation(translation, "Translator-3"));
-        assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
+        assertEquals("1..13", renderCompoundLocation(cdsFeature.getLocations()));
 
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
         assertTrue(cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
-        assertEquals("<1..12", renderCompoundLocation(cdsFeature.getLocations()));
+        assertEquals("<1..13", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
     private void setSequenceAndOrganismForJcPolyomavirus() {
