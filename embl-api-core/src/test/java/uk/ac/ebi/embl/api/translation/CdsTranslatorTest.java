@@ -99,6 +99,7 @@ public class CdsTranslatorTest {
 
     @SuppressWarnings("unchecked")
     private boolean testValidTranslation(CdsTranslator translator, String expectedTranslation, String expectedMessageKey) {
+        boolean isSuccess = false;
         try {
             ValidationResult validationResult = translator.translate(cdsFeature, entry);
             TranslationResult translationResult = null;
@@ -123,7 +124,7 @@ public class CdsTranslatorTest {
                 if (write) {
                     writeTranslation(translationResult, expectedTranslation);
                 }
-                return validationResult.count(Severity.ERROR) == 0;
+                isSuccess = validationResult.count(Severity.ERROR) == 0;
             }
 
 
@@ -134,30 +135,32 @@ public class CdsTranslatorTest {
                         System.out.print("FAILED TRANSLATION\n");
                         System.out.print("Conceptual translation is null\n");
                     }
-                    return false;
+                    isSuccess = false;
                 }
+
             } else if(!conceptualTranslation.equals(expectedTranslation)) {
                 if (write) {
                     System.out.print("FAILED TRANSLATION\n");
                     System.out.print("------------------\n");
                     writeTranslation(translationResult, expectedTranslation);
                 }
-                return false;
+                isSuccess = false;
             }
             else {
+                isSuccess = true;
                 if (write) {
                     System.out.print("SUCCESFULL TRANSLATION\n");
                     System.out.print("++++++++++++++++++++++\n");
                     writeTranslation(translationResult, expectedTranslation);
                 }
             }
-            return true;
         }
         catch (IOException ex) {
             return false;
         } catch (RepositoryException e) {
             return false;
         }
+        return isSuccess;
     }
 
     @SuppressWarnings("unchecked")
