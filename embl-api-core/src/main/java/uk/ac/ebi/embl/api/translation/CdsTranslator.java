@@ -140,18 +140,22 @@ public class CdsTranslator {
 		// then the left and right partiality are reversed between CdsFeature
 		// and Translator.
 
-        boolean fixedLeftPartial = translator.isLeftPartial();
-		boolean fixedRightPartial = translator.isRightPartial();
-		if (isSwapPartiality(fixedLeftPartial, fixedRightPartial, cds.getLocations().isComplement())) {
-			fixedLeftPartial = !fixedLeftPartial;
-			fixedRightPartial = !fixedRightPartial;
+		if (isSwapPartiality(translator.isLeftPartial(), translator.isRightPartial(), cds.getLocations().isComplement())) {
+            if (translationResult.isFixedLeftPartial()) {
+                cds.getLocations().setRightPartial(translator.isLeftPartial());
+            }
+            if (translationResult.isFixedRightPartial()) {
+                cds.getLocations().setLeftPartial(translator.isRightPartial());
+            }
 		}
-		if (translationResult.isFixedLeftPartial()) {
-			cds.getLocations().setLeftPartial(fixedLeftPartial);
-		}
-		if (translationResult.isFixedRightPartial()) {
-			cds.getLocations().setRightPartial(fixedRightPartial);
-		}
+		else {
+            if (translationResult.isFixedLeftPartial()) {
+                cds.getLocations().setLeftPartial(translator.isLeftPartial());
+            }
+            if (translationResult.isFixedRightPartial()) {
+                cds.getLocations().setRightPartial(translator.isRightPartial());
+            }
+        }
 
 		if(translationResult.isFixedPseudo()) {
 		    cds.addQualifier(new QualifierFactory().createQualifier(Qualifier.PSEUDO_QUALIFIER_NAME));

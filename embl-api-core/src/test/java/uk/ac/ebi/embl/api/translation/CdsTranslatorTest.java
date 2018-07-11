@@ -949,6 +949,29 @@ public class CdsTranslatorTest {
         assertEquals("<1..13", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
+    @Test
+    public void testFixCodonStartNotOneMake5PartialGlobalComplement() {
+        sourceFeature.setScientificName("JC polyomavirus");
+        entry.setSequence(sequenceFactory.createSequenceByte(("ctatttactcatt").getBytes())); // MSK*
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.setStartCodon(2);
+        cdsFeature.setTranslationTable(11);
+
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 13L, false));
+        write = true;
+        String translation = "MSK";
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(!testValidTranslation(translation, "Translator-3"));
+        assertEquals("complement(1..13)", renderCompoundLocation(cdsFeature.getLocations()));
+
+        assertTrue(!cdsFeature.getLocations().isLeftPartial());
+        assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
+        //assertTrue(cdsFeature.getLocations().isLeftPartial());
+        //assertTrue(!cdsFeature.getLocations().isRightPartial());
+        assertEquals("complement(1..>13)", renderCompoundLocation(cdsFeature.getLocations()));
+    }
     private void setSequenceAndOrganismForJcPolyomavirus() {
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(
