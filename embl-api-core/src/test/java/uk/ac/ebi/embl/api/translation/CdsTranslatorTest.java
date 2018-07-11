@@ -737,7 +737,7 @@ public class CdsTranslatorTest {
     @Test
     public void testFixNoStartCodonMake5Partial() { // ProteinTranslatorTest.cxx: ProteinTranslatorFixCds.in
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("ttttagaaacattaggatccgcatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("ttttag").getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
         cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
@@ -758,12 +758,12 @@ public class CdsTranslatorTest {
     @Test
     public void testFixNoStartCodonMake5PartialGlobalComplement() {
         sourceFeature.setScientificName("JC polyomavirus");
-        entry.setSequence(sequenceFactory.createSequenceByte(("ttttagaaacattaggatcctaatg").getBytes()));
+        entry.setSequence(sequenceFactory.createSequenceByte(("ctaaaa").getBytes()));
         cdsFeature.setStartCodon(1);
         cdsFeature.setTranslationTable(11);
         cdsFeature.getLocations().setComplement(true);
-        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(20L, 25L, false));
-        String translation = "H";
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
+        String translation = "F";
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(!testValidTranslation(translation, "Translator-18"));
@@ -772,7 +772,7 @@ public class CdsTranslatorTest {
         assertTrue(testValidTranslationFixMode(translation, "fixNoStartCodonMake5Partial"));
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(cdsFeature.getLocations().isRightPartial());
-        assertEquals("complement(20..>25)", renderCompoundLocation(cdsFeature.getLocations()));
+        assertEquals("complement(1..>6)", renderCompoundLocation(cdsFeature.getLocations()));
     }
 
     @Test
