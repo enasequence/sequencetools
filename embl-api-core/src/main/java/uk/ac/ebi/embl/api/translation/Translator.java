@@ -47,7 +47,7 @@ public class Translator extends AbstractTranslator
 	private boolean fixNoStopCodonMake3Partial = false; //no stop codon make 3 partial
 	private boolean fixValidStopCodonRemove3Partial = false;//Stop codon found at 3' partial end, remove 3' partial
 	private boolean fixNonMultipleOfThreeMake3And5Partial = false;//bases not multiple of three, make 3' and 5' partial
-	private boolean fixInternalStopCodonMakePseduo = false;//make feature as pseudo if there are internal stop codons
+	private boolean fixInternalStopCodonMakePseudo = false;//make feature as pseudo if there are internal stop codons
 	private boolean fixDeleteTrailingBasesAfterStopCodon = false;//Delete trailing bases after stop codon
 
 	private Set<String> fixes;
@@ -89,8 +89,8 @@ public class Translator extends AbstractTranslator
 		this.fixNonMultipleOfThreeMake3And5Partial = fixNonMultipleOfThreeMake3And5Partial;
 	}
 
-	public void setFixInternalStopCodonMakePseduo(boolean fixInternalStopCodonMakePseduo) {
-		this.fixInternalStopCodonMakePseduo = fixInternalStopCodonMakePseduo;
+	public void setFixInternalStopCodonMakePseudo(boolean fixInternalStopCodonMakePseudo) {
+		this.fixInternalStopCodonMakePseudo = fixInternalStopCodonMakePseudo;
 	}
 
 	public void setPeptideFeature(boolean peptideFeature) {
@@ -683,7 +683,7 @@ public class Translator extends AbstractTranslator
 						//TODO: correct fix is to remove the trailing partial codon, ignore now as no failures with this error
 						/*translationResult.setFixedRightPartial(true);
 						rightPartial = true;
-						fixes.add("fixBasesAfterStopCodonMake3Partial");*/
+						fixes.add("fixDeleteTrailingBasesAfterStopCodon");*/
 					} else
 					{
 						// A partial codon appears after the stop codon.
@@ -705,10 +705,10 @@ public class Translator extends AbstractTranslator
 				return false; // no conceptual translation
 			} else
 			{
-				if(fixInternalStopCodonMakePseduo) {
+				if(fixInternalStopCodonMakePseudo) {
 					translationResult.setFixedPseudo(true);
 					nonTranslating = true;
-					fixes.add("fixInternalStopCodonMakePseduo");
+					fixes.add("fixInternalStopCodonMakePseudo");
 					return false;
 				} else {
 					// The protein translation contains internal stop condons.

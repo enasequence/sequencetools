@@ -912,7 +912,7 @@ public class CdsTranslatorTest {
         assertTrue(!cdsFeature.getLocations().isLeftPartial());
         assertTrue(!cdsFeature.getLocations().isRightPartial());
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
-        assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseduo"));
+        assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseudo"));
         assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size() == 1);
         assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
     }

@@ -53,7 +53,6 @@ public class CdsTranslator {
 	private  boolean acceptTranslation=false;
     private Translator translator;
     private EmblEntryValidationPlanProperty planProperty;
-    private boolean isReversedPartiality = false;
 
     public CdsTranslator(EmblEntryValidationPlanProperty planProperty) {
         this.planProperty=planProperty;
@@ -143,7 +142,7 @@ public class CdsTranslator {
 
         boolean fixedLeftPartial = translator.isLeftPartial();
 		boolean fixedRightPartial = translator.isRightPartial();
-		if (isReversedPartiality) {
+		if (isSwapPartiality(fixedLeftPartial, fixedRightPartial, cds.getLocations().isComplement())) {
 			fixedLeftPartial = !fixedLeftPartial;
 			fixedRightPartial = !fixedRightPartial;
 		}
@@ -205,14 +204,14 @@ public class CdsTranslator {
 	private void createTranslator(CdsFeature cds, Entry entry, ExtendedResult<TranslationResult> validationResult) {
         translator = new Translator();
         if (planProperty.isFixMode.get()) {
-            translator.setFixDegenarateStartCodon(true);
+            //translator.setFixDegenarateStartCodon(true);//Not implemented
             translator.setFixNoStartCodonMake5Partial(true);
             translator.setFixCodonStartNotOneMake5Partial(true);
             translator.setFixNoStopCodonMake3Partial(true);
             //translator.setFixDeleteTrailingBasesAfterStopCodon(true); //Not implemented
             translator.setFixValidStopCodonRemove3Partial(true);
             translator.setFixNonMultipleOfThreeMake3And5Partial(true);
-            translator.setFixInternalStopCodonMakePseduo(true);
+            translator.setFixInternalStopCodonMakePseudo(true);
         }
 
         /**
@@ -440,11 +439,9 @@ public class CdsTranslator {
         // Note that if the compound location is a global complement
         // then the left and right partiality are reversed between CdsFeature
         // and Translator.
-        boolean isReversedPartiality = compoundLocation.isComplement();
-
-        if (isReversedPartiality) {
-            translator.setLeftPartial(!compoundLocation.isLeftPartial());// reverse it
-            translator.setRightPartial(!compoundLocation.isRightPartial());// reverse it
+        if (isSwapPartiality(compoundLocation.isLeftPartial(), compoundLocation.isRightPartial(), compoundLocation.isComplement())) {
+            translator.setLeftPartial(compoundLocation.isRightPartial());
+            translator.setRightPartial(compoundLocation.isLeftPartial());
         } else {
             translator.setLeftPartial(compoundLocation.isLeftPartial());
             translator.setRightPartial(compoundLocation.isRightPartial());
@@ -519,5 +516,9 @@ public class CdsTranslator {
 
     public ExtendedResult<TranslationResult> translate(byte[] sequence, Origin origin) {
         return translator.translate(sequence, origin);
+    }
+
+    private boolean isSwapPartiality(boolean isLeftpartial, boolean isRightPartial, boolean isComplement) {
+        return isComplement && isLeftpartial != isRightPartial;
     }
 }
