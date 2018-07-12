@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,8 @@
 package uk.ac.ebi.embl.api.translation;
 
 import org.apache.commons.lang.StringUtils;
-
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
-import uk.ac.ebi.embl.api.entry.feature.PeptideFeature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
-import uk.ac.ebi.embl.api.entry.qualifier.CodonQualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck;
@@ -40,18 +33,74 @@ import java.util.*;
  */
 public class Translator extends AbstractTranslator
 {
-
-	private boolean nonTranslating = false;
-	private boolean exception = false;
-	// private boolean partial = false;
-	private boolean rightPartial = false;
-	private boolean leftPartial = false;
-	private boolean peptideFeature = false;
-	private boolean fixDegenerateStartCodon = false;
-	private boolean fixMissingStartCodon = false;
-	private boolean fixRightPartialStopCodon = false;
-	private boolean fixRightPartialCodon = false;
+	private Map<Integer, TranslationException> translationExceptionMap = new HashMap<>();
 	private int codonStart = 1;
+	private boolean nonTranslating = false;//feature has /pseudo
+	private boolean exception = false;
+	private boolean rightPartial = false;//3' partial
+	private boolean leftPartial = false;//5' partial
+	private boolean peptideFeature = false;
+
+	private boolean fixDegenerateStartCodon = false;//replace the unambiguous bases with valid bases and check it could be a valid startCodon(M)
+	private boolean fixNoStartCodonMake5Partial = false;//missing startCodon , make it 5' partial
+	private boolean fixCodonStartNotOneMake5Partial = false;//codon start!= 1 , make it 5' partial
+	private boolean fixNoStopCodonMake3Partial = false; //no stop codon make 3 partial
+	private boolean fixValidStopCodonRemove3Partial = false;//Stop codon found at 3' partial end, remove 3' partial
+	private boolean fixNonMultipleOfThreeMake3And5Partial = false;//bases not multiple of three, make 3' and 5' partial
+	private boolean fixInternalStopCodonMakePseudo = false;//make feature as pseudo if there are internal stop codons
+	private boolean fixDeleteTrailingBasesAfterStopCodon = false;//Delete trailing bases after stop codon
+
+	private Set<String> fixes;
+
+	public Translator() {
+		fixes = new HashSet<>();
+	}
+
+	public Set<String> getFixes() {
+		return fixes;
+	}
+
+	public void setFixDeleteTrailingBasesAfterStopCodon(boolean fixDeleteTrailingBasesAfterStopCodon) {
+		this.fixDeleteTrailingBasesAfterStopCodon = fixDeleteTrailingBasesAfterStopCodon;
+	}
+
+	public void setFixDegenarateStartCodon(boolean fixDegenerateStartCodon)
+	{
+		this.fixDegenerateStartCodon = fixDegenerateStartCodon;
+	}
+
+	public void setFixNoStopCodonMake3Partial(boolean fixNoStopCodonMake3Partial) {
+		this.fixNoStopCodonMake3Partial = fixNoStopCodonMake3Partial;
+	}
+
+	public void setFixNoStartCodonMake5Partial(boolean fixNoStartCodonMake5Partial) {
+		this.fixNoStartCodonMake5Partial = fixNoStartCodonMake5Partial;
+	}
+
+	public void setFixCodonStartNotOneMake5Partial(boolean fixCodonStartNotOneMake5Partial) {
+		this.fixCodonStartNotOneMake5Partial = fixCodonStartNotOneMake5Partial;
+	}
+
+	public void setFixValidStopCodonRemove3Partial(boolean fixValidStopCodonRemove3Partial) {
+		this.fixValidStopCodonRemove3Partial = fixValidStopCodonRemove3Partial;
+	}
+
+	public void setFixNonMultipleOfThreeMake3And5Partial(boolean fixNonMultipleOfThreeMake3And5Partial) {
+		this.fixNonMultipleOfThreeMake3And5Partial = fixNonMultipleOfThreeMake3And5Partial;
+	}
+
+	public void setFixInternalStopCodonMakePseudo(boolean fixInternalStopCodonMakePseudo) {
+		this.fixInternalStopCodonMakePseudo = fixInternalStopCodonMakePseudo;
+	}
+
+	public void setPeptideFeature(boolean peptideFeature) {
+		this.peptideFeature = peptideFeature;
+	}
+
+	public boolean isPeptideFeature() {
+		return peptideFeature;
+	}
+
 
 	public void setCodonStart(int startCodon)
 	{
@@ -88,19 +137,12 @@ public class Translator extends AbstractTranslator
 		this.exception = exception;
 	}
 
-	public void setPeptideFeature(boolean peptideFeature)
-	{
-		this.peptideFeature = peptideFeature;
-	}
-
 	private class TranslationException
 	{
 		Character aminoAcid;
 		Integer beginPosition;
 		Integer endPosition;
 	}
-
-	private Map<Integer, TranslationException> translationExceptionMap = new HashMap<Integer, TranslationException>();
 
 	public void addTranslationException(Integer beginPosition,
 			Integer endPosition, Character aminoAcid)
@@ -115,38 +157,6 @@ public class Translator extends AbstractTranslator
 	public void addCodonException(String codon, Character aminoAcid)
 	{
 		codonTranslator.addCodonException(codon, aminoAcid);
-	}
-
-	/**
-	 * If true then a degenerate start codon is translated to M using a
-	 * translation exception.
-	 */
-	public void setFixDegenarateStartCodon(boolean fixDegenerateStartCodon)
-	{
-		this.fixDegenerateStartCodon = fixDegenerateStartCodon;
-	}
-
-	/** If true then a feature with no start codon is made 5' partial. */
-	public void setFixMissingStartCodon(boolean fixMissingStartCodon)
-	{
-		this.fixMissingStartCodon = fixMissingStartCodon;
-	}
-
-	/**
-	 * If true then 3' partiality is removed when a stop codon is found at the
-	 * 3' end.
-	 */
-	public void setFixRightPartialStopCodon(boolean fixRightPartialStopCodon)
-	{
-		this.fixRightPartialStopCodon = fixRightPartialStopCodon;
-	}
-
-	/**
-	 * If true then a partial codon is removed after a stop codon at the 3' end.
-	 */
-	public void setFixRightPartialCodon(boolean fixRightPartialCodon)
-	{
-		this.fixRightPartialCodon = fixRightPartialCodon;
 	}
 
 	private String extendCodon(String codon)
@@ -176,18 +186,17 @@ public class Translator extends AbstractTranslator
 		return codon.isTranslationException();
 	}
 
-	private void translateStartCodon(Codon codon,
-			TranslationResult translationResult) throws ValidationException
+	private void translateStartCodon(Codon codon, TranslationResult translationResult) throws ValidationException
 	{
 		codonTranslator.translateStartCodon(codon);
-		applyTranslationException(codon);
-		if (!codon.isTranslationException() && fixDegenerateStartCodon
+		if (!applyTranslationException(codon) && fixDegenerateStartCodon
 				&& !leftPartial && !codon.getAminoAcid().equals('M')
 				&& codonTranslator.isDegenerateStartCodon(codon))
 		{
 			codon.setAminoAcid('M');
 			codon.setTranslationException(true);
-			translationResult.setFixedDegerateStartCodon(true);
+			//TODO: compare this and add /exception in cds feature in CdsTranslator
+			translationResult.setFixedDegenerateStartCodon(true);
 		}
 	}
 
@@ -263,236 +272,6 @@ public class Translator extends AbstractTranslator
 		}
 	}
 
-	public ValidationResult configureFromFeature(CdsFeature feature,
-			TaxonHelper taxHelper, Entry entry) throws ValidationException
-	{
-
-		ValidationResult validationResult = new ValidationResult();
-		Integer featureTranslationTable = null;
-		if (feature != null)
-			featureTranslationTable = feature.getTranslationTable();
-
-		Integer translationTable = null;
-		ValidationMessage<Origin> infoMessage = null;
-
-		SourceFeature sourceFeature = entry.getPrimarySourceFeature();
-		if (sourceFeature != null)
-		{
-			Taxon taxon = null;
-			if (sourceFeature.getTaxon().getTaxId() != null)
-			{
-				taxon = taxHelper.getTaxonById(sourceFeature.getTaxon()
-						.getTaxId());
-			} else if (sourceFeature.getTaxon().getScientificName() != null)
-			{
-				taxon = taxHelper.getTaxonByScientificName(sourceFeature
-						.getTaxon().getScientificName());
-			}
-
-			// Classified organism
-
-			if (taxon != null)
-			{
-				String organelle = sourceFeature
-						.getSingleQualifierValue("organelle");
-				if (StringUtils.equals(organelle, "mitochondrion")
-						|| StringUtils.equals(organelle,
-								"mitochondrion:kinetoplast"))
-				{
-					translationTable = taxon.getMitochondrialGeneticCode();
-					infoMessage = EntryValidations.createMessage(
-							entry.getOrigin(), Severity.INFO,
-							"CDSTranslator-12", organelle, translationTable);
-				} else if (StringUtils.contains(organelle, "plastid"))
-				{
-					translationTable = TranslationTable.PLASTID_TRANSLATION_TABLE;
-					infoMessage = EntryValidations.createMessage(
-							entry.getOrigin(), Severity.INFO,
-							"CDSTranslator-12", organelle, translationTable);
-				} else
-				{
-					translationTable = taxon.getGeneticCode();
-					infoMessage = EntryValidations.createMessage(
-							entry.getOrigin(), Severity.INFO,
-							"CDSTranslator-11", translationTable);
-				}
-			}
-
-			else
-			{
-				if (featureTranslationTable != null)
-				{
-					translationTable = featureTranslationTable;
-					infoMessage = EntryValidations.createMessage(
-							entry.getOrigin(), Severity.INFO,
-							"CDSTranslator-13", translationTable);
-				} else
-				{
-					String organelle = sourceFeature
-							.getSingleQualifierValue("organelle");
-					if (StringUtils.equals(organelle, "mitochondrion"))
-					{
-						translationTable = 2;
-						infoMessage = EntryValidations
-								.createMessage(entry.getOrigin(),
-										Severity.INFO, "CDSTranslator-14",
-										organelle, translationTable);
-					} else if (StringUtils.equals(organelle,
-							"mitochondrion:kinetoplast"))
-					{
-						translationTable = 4;
-						infoMessage = EntryValidations
-								.createMessage(entry.getOrigin(),
-										Severity.INFO, "CDSTranslator-14",
-										organelle, translationTable);
-					} else if (StringUtils.contains(organelle, "plastid"))
-					{
-						translationTable = TranslationTable.PLASTID_TRANSLATION_TABLE;
-						infoMessage = EntryValidations
-								.createMessage(entry.getOrigin(),
-										Severity.INFO, "CDSTranslator-14",
-										organelle, translationTable);
-					} else
-					{
-						translationTable = TranslationTable.DEFAULT_TRANSLATION_TABLE;
-						infoMessage = EntryValidations.createMessage(
-								entry.getOrigin(), Severity.INFO,
-								"CDSTranslator-15", translationTable);
-					}
-
-				}
-			}
-		}
-
-		if (featureTranslationTable != null
-				&& !featureTranslationTable.equals(translationTable))
-		{
-			validationResult.append(EntryValidations.createMessage(
-					entry.getOrigin(), Severity.ERROR, "CDSTranslator-10",
-					featureTranslationTable, translationTable));
-			translationTable = featureTranslationTable;
-		} else if (infoMessage != null)
-		{
-			validationResult.append(infoMessage);
-
-		}
-		if (translationTable == null)
-		{
-			if (feature != null)// CDSfeature
-				validationResult.append(EntryValidations.createMessage(
-						feature.getOrigin(), Severity.INFO, "CDSTranslator-8",
-						TranslationTable.DEFAULT_TRANSLATION_TABLE));
-			else
-				// non-cds feature
-				validationResult.append(EntryValidations.createMessage(
-						entry.getOrigin(), Severity.INFO, "CDSTranslator-8"));
-			// Get the default translation table.
-			translationTable = TranslationTable.DEFAULT_TRANSLATION_TABLE;
-		}
-		setTranslationTable(translationTable);
-		if (feature == null) // if it is not CDSfeature ex:tRNA
-			return validationResult;
-		if (!translationTable
-				.equals(TranslationTable.DEFAULT_TRANSLATION_TABLE))
-		{
-			// Set feature translation table.
-			if (!(feature instanceof PeptideFeature))
-				feature.setTranslationTable(translationTable);
-		}
-
-		// Set the start codon.
-		Integer startCodon = feature.getStartCodon();
-		if (startCodon != null)
-		{
-			setCodonStart(startCodon);
-		}
-
-		/**
-		 * set the left and right partiality - if the compound location is
-		 * global complement, and one end is partial only, we need to reverse
-		 * the left and right partiality, as the translator assumes sequence to
-		 * be on the primary strand. (if both ends are partial or both are
-		 * unpartial, no need to reverse)
-		 */
-		CompoundLocation compoundLocation = feature.getLocations();
-		if (compoundLocation.isComplement()
-				&& compoundLocation.isLeftPartial() != compoundLocation
-						.isRightPartial())
-		{
-
-			setLeftPartial(!compoundLocation.isLeftPartial());// reverse it
-			setRightPartial(!compoundLocation.isRightPartial());// reverse it
-		} else
-		{
-			setLeftPartial(compoundLocation.isLeftPartial());
-			setRightPartial(compoundLocation.isRightPartial());
-		}
-
-		// Set a pseudo translation.
-		setNonTranslating(feature.isPseudo());
-		// Set an exceptional translation.
-		setException(feature.isException());
-
-		// Set translation exceptions.
-		List<TranslExceptQualifier> translExceptQualifiers = new ArrayList<TranslExceptQualifier>();
-		feature.getComplexQualifiers(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME,
-				translExceptQualifiers);
-
-		for (TranslExceptQualifier qualifier : translExceptQualifiers)
-		{
-			Long beginPosition = qualifier.getLocations().getMinPosition();
-			Long endPosition = qualifier.getLocations().getMaxPosition();
-
-			Integer relativeBeginPos = feature.getLocations()
-					.getRelativeIntPosition(beginPosition);
-			Integer relativeEndPos = feature.getLocations()
-					.getRelativeIntPosition(endPosition);
-			if (relativeBeginPos != null && relativeEndPos != null)// EMD-5594
-			{
-				if (beginPosition < endPosition
-						&& relativeBeginPos > relativeEndPos)
-				{
-					Integer temp = relativeBeginPos;
-					relativeBeginPos = relativeEndPos;
-					relativeEndPos = temp;
-				}
-			}
-			if (relativeBeginPos == null)
-			{
-				validationResult.append(EntryValidations.createMessage(
-						feature.getOrigin(), Severity.ERROR, "CDSTranslator-6",
-						beginPosition.toString()));
-			} else if (relativeEndPos == null)
-			{
-				validationResult.append(EntryValidations.createMessage(
-						feature.getOrigin(), Severity.ERROR, "CDSTranslator-7",
-						endPosition.toString()));
-			} else
-			{
-				addTranslationException(relativeBeginPos, relativeEndPos,
-						qualifier.getAminoAcid().getLetter());
-			}
-		}
-
-		// Set codon exceptions.
-		List<CodonQualifier> codonQualifiers = new ArrayList<CodonQualifier>();
-		feature.getComplexQualifiers(Qualifier.CODON_QUALIFIER_NAME,
-				codonQualifiers);
-		for (CodonQualifier qualifier : codonQualifiers)
-		{
-			addCodonException(qualifier.getCodon(), qualifier.getAminoAcid()
-					.getLetter());
-		}
-
-		// set whether is a peptide feature
-		if (feature instanceof PeptideFeature)
-		{
-			this.peptideFeature = true;
-		}
-
-		return validationResult;
-	}
-
 	private Integer getEntryTranslationTable(Integer featureTranslationTable,
 			TaxonHelper taxHelper, Entry entry,
 			ValidationResult validationResult) throws ValidationException
@@ -563,8 +342,7 @@ public class Translator extends AbstractTranslator
 	{
 
 		TranslationResult translationResult = new TranslationResult();
-		ExtendedResult<TranslationResult> extendedResult = new ExtendedResult<TranslationResult>(
-				translationResult);
+		ExtendedResult<TranslationResult> extendedResult = new ExtendedResult<>(translationResult);
 
 		if (sequence == null)
 		{
@@ -591,7 +369,7 @@ public class Translator extends AbstractTranslator
 		}
 		try
 		{
-			validateCodonStart(sequence.length);
+			validateCodonStart(sequence.length, translationResult);
 			sequence = validateTranslationExceptions(sequence);
 			validateCodons(sequence.length, translationResult);
 			translateCodons(sequence, translationResult);
@@ -616,7 +394,7 @@ public class Translator extends AbstractTranslator
 		return extendedResult;
 	}
 
-	private void validateCodonStart(int bases) throws ValidationException
+	private void validateCodonStart(int bases, TranslationResult translationResult) throws ValidationException
 	{
 		if (codonStart < 1 || codonStart > 3)
 		{
@@ -626,7 +404,13 @@ public class Translator extends AbstractTranslator
 		{
 			if (!leftPartial && !nonTranslating)
 			{
-				ValidationException.throwError("Translator-3", codonStart);
+				if(fixCodonStartNotOneMake5Partial) {
+					leftPartial = true;
+					translationResult.setFixedLeftPartial(true);
+					fixes.add("fixCodonStartNotOneMake5Partial");
+				} else {
+					ValidationException.throwError("Translator-3", codonStart);
+				}
 			}
 		}
 		if (bases < 3)
@@ -749,9 +533,17 @@ public class Translator extends AbstractTranslator
 			if (!peptideFeature && !leftPartial && !rightPartial
 					&& !nonTranslating && !exception)
 			{
-				// CDS feature length must be a multiple of 3. Consider 5' or 3'
-				// partial location.
-				ValidationException.throwError("Translator-11");
+				if(fixNonMultipleOfThreeMake3And5Partial){
+					leftPartial = true;
+					rightPartial = true;
+					translationResult.setFixedRightPartial(true);
+					translationResult.setFixedLeftPartial(true);
+					fixes.add("fixNonMultipleOfThreeMake3And5Partial");
+				} else {
+					// CDS feature length must be a multiple of 3. Consider 5' or 3'
+					// partial location.
+					ValidationException.throwError("Translator-11");
+				}
 			}
 		}
 	}
@@ -788,7 +580,7 @@ public class Translator extends AbstractTranslator
 				--i;
 			}
 			boolean conceptualTranslation = true;
-			if (!validateInternalStopCodons(internalStopCodons))
+			if (!validateInternalStopCodons(internalStopCodons, translationResult))
 			{
 				conceptualTranslation = false;
 			}
@@ -815,12 +607,9 @@ public class Translator extends AbstractTranslator
 		{
 			return; // no conceptual translation
 		}
-		if (translationResult.getCodons().size() == 1
+		if (!(translationResult.getCodons().size() == 1
 				&& translationResult.getTrailingBases().length() == 0
-				&& leftPartial)
-		{
-			return; // no conceptual translation
-		} else
+				&& leftPartial))
 		{
 			// CDS feature can have a single stop codon only
 			// if it has 3 bases and is 5' partial.
@@ -851,13 +640,15 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixRightPartialStopCodon)
+					if (fixValidStopCodonRemove3Partial)
 					{
-						translationResult.setFixedRightPartialStopCodon(true);
+						translationResult.setFixedRightPartial(true);
 						rightPartial = false;
+						fixes.add("fixValidStopCodonRemove3Partial");
 					} else
 					{
 						// Stop codon found at 3' partial end.
+						//Translator-14=Stop codon found at 3' partial end of the protein coding feature translation. Consider removing 3' partial location.
 						ValidationException.throwError("Translator-14");
 					}
 				}
@@ -870,7 +661,13 @@ public class Translator extends AbstractTranslator
 				} else if (!peptideFeature)
 				{// peptide features are allowed to not have stop codons
 					// No stop codon at the 3' end.
-					ValidationException.throwError("Translator-15");
+					if(fixNoStopCodonMake3Partial) {
+						rightPartial = true;
+						translationResult.setFixedRightPartial(true);
+						fixes.add("fixNoStopCodonMake3Partial");
+					} else {
+						ValidationException.throwError("Translator-15");
+					}
 				}
 			}
 			if (trailingStopCodons == 1
@@ -881,9 +678,12 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixRightPartialCodon)
+					if (fixDeleteTrailingBasesAfterStopCodon)
 					{
-						translationResult.setFixedRightPartialCodon(true);
+						//TODO: correct fix is to remove the trailing partial codon, ignore now as no failures with this error
+						/*translationResult.setFixedRightPartial(true);
+						rightPartial = true;
+						fixes.add("fixDeleteTrailingBasesAfterStopCodon");*/
 					} else
 					{
 						// A partial codon appears after the stop codon.
@@ -895,7 +695,7 @@ public class Translator extends AbstractTranslator
 		return true;
 	}
 
-	private boolean validateInternalStopCodons(int internalStopCodons)
+	private boolean validateInternalStopCodons(int internalStopCodons, TranslationResult translationResult)
 			throws ValidationException
 	{
 		if (internalStopCodons > 0)
@@ -905,8 +705,15 @@ public class Translator extends AbstractTranslator
 				return false; // no conceptual translation
 			} else
 			{
-				// The protein translation contains internal stop condons.
-				ValidationException.throwError("Translator-17");
+				if(fixInternalStopCodonMakePseudo) {
+					translationResult.setFixedPseudo(true);
+					nonTranslating = true;
+					fixes.add("fixInternalStopCodonMakePseudo");
+					return false;
+				} else {
+					// The protein translation contains internal stop condons.
+					ValidationException.throwError("Translator-17");
+				}
 			}
 		}
 		return true;
@@ -926,10 +733,11 @@ public class Translator extends AbstractTranslator
 					return false; // no conceptual translation
 				} else
 				{
-					if (fixMissingStartCodon)
+					if (fixNoStartCodonMake5Partial)
 					{
-						translationResult.setFixedMissingStartCodon(true);
+						translationResult.setFixedLeftPartial(true);
 						leftPartial = true;
+						fixes.add("fixNoStartCodonMake5Partial");
 					} else
 					{
 						// The protein translation does not start with a
