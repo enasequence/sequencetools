@@ -37,23 +37,18 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class DuplicateFeatureCheck extends EntryValidationCheck
 {
-	
-	boolean duplicateLocation = false;
-	protected final static String MESSAGE_ID = "DuplicateFeatureCheck1";
-	protected final static String DUPLICATE_CDS_PROTEIN_MESSAGE_ID = "DuplicateFeatureCheck2";
-	protected final static String DUPLICATE_CDS_CODON_START_MESSAGE_ID = "DuplicateFeatureCheck3";
-	protected final static String DUPLICATE_SOURCE_ORGANISM_MESSAGE_ID = "DuplicateFeatureCheck4";
-	protected final static String DIFFERENT_SOURCE_ORGANISM_MESSAGE_ID = "DuplicateFeatureCheck5";
+
+	protected final static String DUPLICATE_FEATURE_LOCATIONS = "DuplicateFeatureLocations";
+	protected final static String DUPLICATE_CDS_PROTEIN_MESSAGE_ID = "DuplicateProteinAccession";
+	protected final static String DUPLICATE_SOURCE_ORGANISM_MESSAGE_ID = "DuplicateOrganismAndLocation";
 	private static HashMap<MultiKey, Feature> featureMap;
 	List<Feature> features;
-	private static List<String> organismList;
-	private static BidiMap protein_idMap;
 
 	public ValidationResult check(Entry entry)
 	{
-		features = new ArrayList<Feature>();
-		organismList = new ArrayList<String>();
-		protein_idMap = new DualHashBidiMap();
+		features = new ArrayList<>();
+		List<String>  organismList = new ArrayList<>();
+		BidiMap protein_idMap = new DualHashBidiMap();
 
 		result = new ValidationResult();
 
@@ -61,10 +56,9 @@ public class DuplicateFeatureCheck extends EntryValidationCheck
 		{
 			return result;
 		}
-		featureMap = new HashMap<MultiKey, Feature>();
+		featureMap = new HashMap<>();
 		features = entry.getFeatures();
 
-		// System.out.println("protein_id map size:"+protein_idMap.size());
 		for (Feature feature : features)
 		{
 			boolean duplicateOrganism = false;
@@ -120,37 +114,9 @@ public class DuplicateFeatureCheck extends EntryValidationCheck
 						FeatureValidationCheck.appendLocusTadAndGeneIDToMessage(feature, message);
 					}
 
-				} else if (feature.getName().equals(Feature.CDS_FEATURE_NAME))
+				} else if (!feature.getName().equals(Feature.CDS_FEATURE_NAME))
 				{
-					try
-					{
-						Integer newCodon_start = 0;
-						Integer oldCodon_start = 0;
-						CdsFeature newcdsFeature = (CdsFeature) feature;
-						CdsFeature oldcdsFeature = (CdsFeature) oldFeature;
-						if (SequenceEntryUtils.isQualifierAvailable(Qualifier.CODON_START_QUALIFIER_NAME, newcdsFeature))
-							newCodon_start = ((CdsFeature) feature).getStartCodon();
-						if (SequenceEntryUtils.isQualifierAvailable(Qualifier.CODON_START_QUALIFIER_NAME, oldcdsFeature))
-							oldCodon_start = ((CdsFeature) oldFeature).getStartCodon();
-						if (newCodon_start.equals(oldCodon_start) || (oldCodon_start == 0 && newCodon_start == 1)
-								|| (oldCodon_start == 1 && newCodon_start == 0))
-						{
-							ValidationMessage<Origin> message = reportError(oldFeature.getOrigin(), DUPLICATE_CDS_CODON_START_MESSAGE_ID,
-									oldCodon_start);
-							message.append(feature.getOrigin());
-
-							FeatureValidationCheck.appendLocusTadAndGeneIDToMessage(oldFeature, message);
-							FeatureValidationCheck.appendLocusTadAndGeneIDToMessage(feature, message);
-						}
-						
-					} catch (ValidationException e)
-					{
-					}
-				}
-
-				else
-				{
-					ValidationMessage<Origin> message = reportError(feature.getOrigin(), MESSAGE_ID, feature.getName());
+					ValidationMessage<Origin> message = reportError(feature.getOrigin(), DUPLICATE_FEATURE_LOCATIONS, feature.getName());
 					message.append(oldFeature.getOrigin());
 
 					FeatureValidationCheck.appendLocusTadAndGeneIDToMessage(feature, message);
@@ -158,7 +124,7 @@ public class DuplicateFeatureCheck extends EntryValidationCheck
 				}
 			}
 		}
-		// System.out.println("protein_id map size:"+protein_idMap.size());
+
 		return result;
 	}
 
