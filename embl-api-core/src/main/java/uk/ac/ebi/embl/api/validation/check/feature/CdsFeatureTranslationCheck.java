@@ -51,6 +51,7 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
                     if (feature instanceof CdsFeature) {
                         CdsFeature cdsFeature = (CdsFeature) feature;
                         ExtendedResult<TranslationResult> validationResult = translator.translate(cdsFeature, entry);
+                        //TODO: get markedForDeletion flag from translator, add a fixer message and delete the current feature
                         TranslationResult translationResult = (TranslationResult) validationResult.getExtension();
 
                         /**

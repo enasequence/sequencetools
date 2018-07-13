@@ -22,40 +22,40 @@ public class TranslationResult implements Serializable {
 
 	private static final long serialVersionUID = -3348570245845628623L;
 
-    private boolean fixedDegerateStartCodon = false;
+    private boolean fixedLeftPartial = false;
+    private boolean fixedRightPartial = false;
+    private boolean fixedPseudo = false;
+    private boolean fixedDegenerateStartCodon = false;
 
-    protected void setFixedDegerateStartCodon(boolean fixedDegerateStartCodon) {
-        this.fixedDegerateStartCodon = fixedDegerateStartCodon;
-    }
-    public boolean isFixedDegerateStartCodon() {
-        return fixedDegerateStartCodon;
+    public boolean isFixedDegenerateStartCodon() {
+        return fixedDegenerateStartCodon;
     }
 
-    private boolean fixedMissingStartCodon = false;
-    protected void setFixedMissingStartCodon(boolean fixedMissingStartCodon) {
-        this.fixedMissingStartCodon = fixedMissingStartCodon;
+    public void setFixedDegenerateStartCodon(boolean fixedDegenerateStartCodon) {
+        this.fixedDegenerateStartCodon = fixedDegenerateStartCodon;
     }
-    public boolean isFixedMissingStartCodon() {
-        return fixedMissingStartCodon;
-    }
-    
 
-    private boolean fixedRightPartialStopCodon = false;
-    protected void setFixedRightPartialStopCodon(boolean fixedRightPartialStopCodon) {
-        this.fixedRightPartialStopCodon = fixedRightPartialStopCodon;
+    public boolean isFixedPseudo() {
+        return fixedPseudo;
     }
-    public boolean isFixedRightPartialStopCodon() {
-        return fixedRightPartialStopCodon;
+
+    public void setFixedPseudo(boolean fixedPseudo) {
+        this.fixedPseudo = fixedPseudo;
     }
-    
-    private boolean fixedRightPartialCodon = false;
-    protected void setFixedRightPartialCodon(boolean fixedRightPartialCodon) {
-        this.fixedRightPartialCodon = fixedRightPartialCodon;
+    protected void setFixedLeftPartial(boolean fixedLeftPartial) {
+        this.fixedLeftPartial = fixedLeftPartial;
     }
-    public boolean getFixedRightPartialCodon() {
-        return fixedRightPartialCodon;
+    public boolean isFixedLeftPartial() {
+        return fixedLeftPartial;
     }
-    
+
+    protected void setFixedRightPartial(boolean fixedRightPartial) {
+        this.fixedRightPartial = fixedRightPartial;
+    }
+    public boolean isFixedRightPartial() {
+        return fixedRightPartial;
+    }
+
     private Vector<Codon> codons;
     protected void setCodons(Vector<Codon> codons) {
         this.codons = codons;

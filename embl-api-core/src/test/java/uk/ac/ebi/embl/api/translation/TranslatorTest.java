@@ -143,7 +143,7 @@ public class TranslatorTest {
        test.setTranslationTable(11);
        test.setCodonStart(2);
        test.setLeftPartial(true);
-       test.setFixRightPartialCodon(true);
+       test.setFixDeleteTrailingBasesAfterStopCodon(true);
        assertTrue(test.testValidTranslation(
            "gcgcgccgctgtagccgctgatcgtggaattattggtggttatggtctaggtgccccctacggtttagctggtggttacggtttggaagttccttacggcttggctggatacgctgactaccgctaccccgctggtgcatgcggtatcgatgcttacggtggtattggtgaaggtaacgttgctgtcgctggtgagctgcccgtagctggtaccactgctgtcgctggtcaagtacctatcatgggcgctgtgaaattcggtggtgatgtctgcgctgctggttccgtatccatcgctggcaagtgcgcttgcggctgcggtgattacggttacggctacggattaggtgctccctacctgtactaaa",
            "RAAVAADRGIIGGYGLGAPYGLAGGYGLEVPYGLAGYADYRYPAGACGIDAYGGIGEGNVAVAGELPVAGTTAVAGQVPIMGAVKFGGDVCAAGSVSIAGKCACGCGDYGYGYGLGAPYLY"

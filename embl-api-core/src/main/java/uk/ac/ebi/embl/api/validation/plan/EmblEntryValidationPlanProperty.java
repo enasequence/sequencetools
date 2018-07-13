@@ -26,4 +26,5 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<String> analysis_id=new ValidationPlanProperty<String>(null);
 	public final ValidationPlanProperty<List<String>> locus_tag_prefixes = new ValidationPlanProperty<List<String>>(new ArrayList<String>());
 	public final ValidationPlanProperty<HashMap<String, Long>> contigEntryNames= new ValidationPlanProperty<HashMap<String, Long>>(new HashMap<String,Long>());
+	public final ValidationPlanProperty<Boolean> isFixCds = new ValidationPlanProperty<Boolean>(false);
 }
