@@ -131,7 +131,7 @@
 		 mavenDeployer 
 		 {
 		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
-                authentication(userName: artifactoryUsername, password: artifactoryPassword)
+                authentication(userName: "kethi", password: "Saibaba123")
             }
 			pom.project 
           {
