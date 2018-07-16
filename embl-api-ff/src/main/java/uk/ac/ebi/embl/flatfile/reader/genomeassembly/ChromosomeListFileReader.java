@@ -107,6 +107,11 @@ public class ChromosomeListFileReader extends GCSEntryReader
     {
     	return chromosomeEntries;
     }
+    
+    public boolean isSingleChromosome()
+    {
+    	return chromosomeEntries.size()==1;
+    }
 	@Override
 	public boolean isEntry()
 	{
