@@ -390,9 +390,11 @@ public class ValidationResult implements Serializable {
 			if(vals == null){
 				vals = new ArrayList<>();
 				vals.add(1);
-				vals.add(message.getSeverity());
+				vals.add(message.getSeverity().name());
 			} else {
-				vals.add(0,((Integer)vals.get(0))+1);
+				int count = ((Integer)vals.get(0))+1;
+				vals.remove(0);
+				vals.add(0,count);
 			}
 			messageStats.put(message.getMessageKey(),vals);
 		}
