@@ -21,8 +21,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+  import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+  import org.apache.commons.lang.builder.ToStringBuilder;
 
 import uk.ac.ebi.embl.api.validation.ValidationMessage.MessageFormatter;
 
@@ -380,16 +381,25 @@ public class ValidationResult implements Serializable {
 			}
 		}
 	}
-	
+
 	public void writeMessageStats(Writer writer) throws IOException
 	{
-		HashMap<String, Integer> messageStats = new HashMap<String, Integer>();
+		HashMap<String, List<Object>> messageStats = new HashMap<>();
 		for (ValidationMessage<Origin> message : getMessages()) {
-			messageStats.put(message.getMessageKey(),messageStats.containsKey(message.getMessageKey()) ? messageStats.get(message.getMessageKey()) + 1: 1);
+			List<Object> vals = messageStats.get(message.getMessageKey());
+			if(vals == null){
+				vals = new ArrayList<>();
+				vals.add(1);
+				vals.add(message.getSeverity());
+			} else {
+				vals.add(0,((Integer)vals.get(0))+1);
+			}
+			messageStats.put(message.getMessageKey(),vals);
 		}
 		for(String key:messageStats.keySet())
 		{
-			writer.write(String.format("%d\t%s\t%s\n", messageStats.get(key),key,ValidationMessageManager.getString(key)));
+			List<Object> vals = messageStats.get(key);
+			writer.write(String.format("%d\t%s\t%s\t%s\n", (Integer)vals.get(0),vals.get(1),key,ValidationMessageManager.getString(key)));
 		}
 	}
 }
