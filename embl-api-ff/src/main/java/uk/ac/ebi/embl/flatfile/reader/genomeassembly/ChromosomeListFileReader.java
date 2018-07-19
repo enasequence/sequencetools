@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class ChromosomeListFileReader extends GCSEntryReader
 {

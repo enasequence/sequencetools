@@ -17,9 +17,9 @@ package uk.ac.ebi.embl.flatfile.reader;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.embl.api.validation.FileType;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 import java.io.IOException;
 import java.util.regex.Matcher;

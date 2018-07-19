@@ -28,7 +28,6 @@ import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +40,15 @@ public class Utils {
 	private final static String UTILS_4 = "Utility_shift_Location_4";
 	private final static String UTILS_5 = "Utility_shift_Location_5";
 	private final static String UTILS_6= "Utility_shift_Location_6";
+	private static final String MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR = "SequenceMinCountCheck";
+	private static final String MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR = "SequenceMaxCountCheck";
 	private static final Pattern SHRINK = Pattern.compile(" {2,}");
+	private static final int  MIN_CONTIG_CNT = 2;
+	private static final int MAX_CONTIG_CNT = 1000000; 
+	private static final int MIN_SCAFFOLD_CNT = 1;
+	private static final int MAX_SCAFFOLD_CNT = 1000000;
+	private static final int MIN_CHROMOSOME_CNT = 1;
+	private static final int MAX_CHROMOSOME_CNT = 1260;
 	
 	private static final DataManager dataManager = new CachedFileDataManager();
 	private static final CheckFileManager tsvFileManager = new CheckFileManager();
@@ -964,6 +971,46 @@ public class Utils {
 			}
 		}
 		return true;
+	}
+	
+	
+	public static ValidationResult validateAssemblySequenceCount(long contigCount,long scaffoldCount,long chromosomeCount )
+	{
+		ValidationResult result = new ValidationResult();
+		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
+		{
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR, contigCount,"CONTIG", MIN_CONTIG_CNT);
+			result.append(message);
+		}
+		if (scaffoldCount != 0 && scaffoldCount < MIN_SCAFFOLD_CNT)
+		{
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR, scaffoldCount,"SCAFFOLD", MIN_SCAFFOLD_CNT);
+			result.append(message);
+		}
+
+		if (chromosomeCount != 0 && chromosomeCount < MIN_CHROMOSOME_CNT)
+		{
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR, chromosomeCount,"CHROMOSOME", MIN_SCAFFOLD_CNT);
+			result.append(message);
+		}
+
+		if(contigCount!=0&&contigCount>MAX_CONTIG_CNT)
+		{	
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, contigCount,"CONTIG", MAX_CONTIG_CNT);
+			result.append(message);
+		}
+		if(scaffoldCount!=0&&scaffoldCount>MAX_SCAFFOLD_CNT)
+		{	
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, scaffoldCount,"SCAFFOLD", MAX_SCAFFOLD_CNT);
+			result.append(message);
+		}
+		if(chromosomeCount!=0&&chromosomeCount>MAX_CHROMOSOME_CNT)
+		{	
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, chromosomeCount,"CHROMOSOME", MAX_CHROMOSOME_CNT);
+			result.append(message);
+		}
+
+		return result;
 	}
    
 }

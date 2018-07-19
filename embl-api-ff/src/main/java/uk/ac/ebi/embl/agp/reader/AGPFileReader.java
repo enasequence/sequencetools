@@ -10,10 +10,10 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 public class AGPFileReader extends FlatFileEntryReader

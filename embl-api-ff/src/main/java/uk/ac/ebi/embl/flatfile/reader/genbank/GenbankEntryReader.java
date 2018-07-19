@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Arrays;
 
 import uk.ac.ebi.embl.api.validation.FileType;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.FeatureReader;

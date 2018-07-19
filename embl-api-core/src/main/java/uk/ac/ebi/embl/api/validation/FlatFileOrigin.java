@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package uk.ac.ebi.embl.flatfile.validation;
-
-import uk.ac.ebi.embl.api.validation.Origin;
+package uk.ac.ebi.embl.api.validation;
 
 import java.io.IOException;
 import java.io.Writer;

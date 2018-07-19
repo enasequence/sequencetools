@@ -16,10 +16,10 @@
 package uk.ac.ebi.embl.gff3.reader;
 
 import uk.ac.ebi.embl.api.gff3.GFF3RecordSet;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.IOException;

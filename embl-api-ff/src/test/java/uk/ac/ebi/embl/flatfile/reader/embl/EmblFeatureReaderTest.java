@@ -32,11 +32,11 @@ import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteBetween;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class EmblFeatureReaderTest extends EmblReaderTest {
 
