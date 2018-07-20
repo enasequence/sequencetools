@@ -28,6 +28,8 @@ import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -974,9 +976,14 @@ public class Utils {
 	}
 	
 	
-	public static ValidationResult validateAssemblySequenceCount(long contigCount,long scaffoldCount,long chromosomeCount )
+	public static ValidationResult validateAssemblySequenceCount(EmblEntryValidationPlanProperty property,long contigCount,long scaffoldCount,long chromosomeCount )
 	{
+		
 		ValidationResult result = new ValidationResult();
+		
+		if(property.ignore_errors.get())
+			return result;
+		
 		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
 		{
 			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR, contigCount,"CONTIG", MIN_CONTIG_CNT);
