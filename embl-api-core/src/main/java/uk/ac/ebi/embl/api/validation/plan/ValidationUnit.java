@@ -96,7 +96,6 @@ public enum ValidationUnit
 					QualifierValueRequiredQualifierStartsWithValueCheck.class,//include for all
 					UnbalancedParenthesesCheck.class,//include for all
 					Assembly_gapFeatureCheck.class,//exclude for master
-					EC_numberCheck.class,//exclude for master
 					CitationQualifierCheck.class,//include for all
 					PropeptideLocationCheck.class,//exclude for master
 					//FeatureAndSourceQualifierCheck.class, //this check no longer exists
