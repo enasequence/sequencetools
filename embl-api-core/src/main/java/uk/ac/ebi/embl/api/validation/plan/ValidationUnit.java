@@ -178,7 +178,8 @@ public enum ValidationUnit
 					AssemblySourceQualiferFix.class,//exclude for master
 					AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 					AssemblyFeatureRemoteLocationFix.class,//exclude for master
-	    		    JournalFix.class//include for all
+	    		    JournalFix.class,//include for all
+	    		    AssemblyLevelEntryNameFix.class
 	        ),
 	
 	// GCS entry validation checks
