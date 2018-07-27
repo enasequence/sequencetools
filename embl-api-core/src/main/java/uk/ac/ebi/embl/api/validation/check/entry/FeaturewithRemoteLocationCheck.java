@@ -23,11 +23,14 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 @Description("Feature \"{0}\" has remote location,validator requires database connection to validate features having remote locations"
 		+ "Invalid remote feature Location \"{0}\" , Location range is not within entry \"{1}\" sequence length.")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class FeaturewithRemoteLocationCheck extends EntryValidationCheck
 {
 

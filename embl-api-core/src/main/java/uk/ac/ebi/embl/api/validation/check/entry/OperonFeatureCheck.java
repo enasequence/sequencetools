@@ -20,11 +20,13 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.*;
 
 @Description("Feature \"{0}\" refers to operon \"{1}\". Please provide an operon feature which spans the entire operon region. Refer to (http://www.ebi.ac.uk/ena/WebFeat/operon_s.html) for details"
 		+ "\"{0}\" number of features refer to operon \"{1}\". Please provide an operon feature which spans the entire operon region. Refer to (http://www.ebi.ac.uk/ena/WebFeat/operon_s.html) for details")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class OperonFeatureCheck extends EntryValidationCheck
 {
 

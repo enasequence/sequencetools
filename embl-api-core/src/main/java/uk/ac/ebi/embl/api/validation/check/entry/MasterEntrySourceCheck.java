@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 @Description("Multiple strain/isolate qualifiers are not allowed in Source feature"
 		+ "Scientific_name \"{0}\" is not submittable")
 @GroupIncludeScope(group={ValidationScope.Group.ASSEMBLY})
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.NCBI})
 public class MasterEntrySourceCheck extends EntryValidationCheck {
 
 	private final static String MASTER_ENTRY_SOURCE_MESSAGE_ID = "MasterEntrySourceCheck_1";

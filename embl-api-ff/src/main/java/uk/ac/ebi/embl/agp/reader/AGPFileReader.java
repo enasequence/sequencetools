@@ -10,10 +10,10 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 public class AGPFileReader extends FlatFileEntryReader
@@ -47,6 +47,7 @@ public class AGPFileReader extends FlatFileEntryReader
 	private static final int ORIENTATION = 8;
 	private static final int LINKAGEEVIDENCE = 8;
 	private static final Long UNKNOWN_GAP_LENGTH = 100l;
+	private boolean hasNonSingletonAgp = false;
         
     protected int nextEntryLine = currentEntryLine;
 
@@ -78,28 +79,29 @@ public class AGPFileReader extends FlatFileEntryReader
 	   
      	String[] fields = line.split(SCREGEX);
 		
-		if (fields.length != NUMBER_OF_COLUMNS)
+		if( fields.length != NUMBER_OF_COLUMNS )
 		{
-			if (fields[COMPONENT_TYPE_ID] != null && ("N".equals(fields[COMPONENT_TYPE_ID]) || "U".equals(fields[COMPONENT_TYPE_ID])))
+			if( fields.length >= COMPONENT_TYPE_ID + 1 
+				&& fields[ COMPONENT_TYPE_ID ] != null 
+				&& ( "N".equals( fields[ COMPONENT_TYPE_ID ] ) || "U".equals( fields[ COMPONENT_TYPE_ID ] ) ) )
 			{
-	          if("NO".equalsIgnoreCase(fields[LINKAGE]))
+	          if( fields.length >= LINKAGE + 1
+	        	  && "NO".equalsIgnoreCase( fields[ LINKAGE ] ) )
 	          {
-	        	  if(fields.length!= NO_LINKAGE_GAP_NUMBER_OF_COLUMNS)
+	        	  if( fields.length!= NO_LINKAGE_GAP_NUMBER_OF_COLUMNS )
 	        	  {
-	        	   error("NumberOfColumnsCheck");
-				   return;
+	        		  error( "NumberOfColumnsCheck" );
+	        		  return;
 	        	  }
-	          }
-	          else
+	          }else
 	          {
-	        	  error("NumberOfColumnsCheck");
+	        	  error( "NumberOfColumnsCheck" );
 				  return;
 	          }
-	        }
-			else
+	        } else
 			{
-			error("NumberOfColumnsCheck");
-			return;
+				error( "NumberOfColumnsCheck" );
+				return;
 			}
 		}
 		
@@ -311,13 +313,22 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 		}
 		agpRow.setOrigin(new FlatFileOrigin(getLineReader().getFileId(),lineReader.getCurrentLineNumber()));
-		entry.addAgpRow(agpRow);
-		if(!lineReader.joinLine()||!lineReader.isNextLine())
-			break;
-		lineReader.readLine();
+		entry.getSequence().addAgpRow(agpRow);
+
+		if(noOfComponents > 1)
+			hasNonSingletonAgp = true;
+
+		if(!lineReader.isNextLine()) {
+		    if(!hasNonSingletonAgp)
+		        error("SingletonsOnlyError");
+            break;
+        } else if(!lineReader.joinLine()) {
+            break;
+        }
+
+            lineReader.readLine();
     	}
-		if(noOfComponents==1)
-		 entry.setSingletonAgp(true);
+
 	}
 
 	@Override

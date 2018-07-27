@@ -22,8 +22,8 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 /**
  * Reader for the flat file sequence.

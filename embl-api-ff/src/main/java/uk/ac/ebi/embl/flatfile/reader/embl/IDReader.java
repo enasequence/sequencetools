@@ -99,13 +99,10 @@ public class IDReader extends SingleLineBlockReader {
 			}
 					
 		}
-		if (matcher.isValueXXX(GROUP_SEQUENCE_VERSION)) {
-			if (matcher.getInteger(GROUP_SEQUENCE_VERSION) >= 1)
-				entry.getSequence().setVersion(
-						matcher.getInteger(GROUP_SEQUENCE_VERSION));
-			else
-				error("ID.6", matcher.getInteger(GROUP_SEQUENCE_VERSION));
+		if (matcher.isValueXXX(GROUP_SEQUENCE_VERSION) && matcher.getInteger(GROUP_SEQUENCE_VERSION) >= 1) {
+			entry.getSequence().setVersion(matcher.getInteger(GROUP_SEQUENCE_VERSION));
 		}
+
 		Topology topology = getTopology(matcher.getString(GROUP_TOPOLOGY));
 		entry.getSequence().setTopology(topology);
 		if (matcher.isValueXXX(GROUP_MOLECULE_TYPE)) {

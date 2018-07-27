@@ -134,8 +134,8 @@ public class ContoAGPFixTest {
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.check(entry);
-		assertEquals(3, entry.getAgpRows().size());
-		List<AgpRow> agpRows=entry.getAgpRows();
+		assertEquals(3, entry.getSequence().getAgpRows().size());
+		List<AgpRow> agpRows=entry.getSequence().getAgpRows();
 		AgpRow row1=agpRows.get(0);
 		AgpRow row2=agpRows.get(1);
 		AgpRow row3=agpRows.get(2);

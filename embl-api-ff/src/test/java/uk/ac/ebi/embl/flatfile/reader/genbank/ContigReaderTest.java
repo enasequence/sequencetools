@@ -21,10 +21,10 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.location.Gap;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.genbank.ContigReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class ContigReaderTest extends GenbankReaderTest {
 

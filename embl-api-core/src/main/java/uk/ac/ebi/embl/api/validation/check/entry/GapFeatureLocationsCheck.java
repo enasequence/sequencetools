@@ -19,11 +19,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +31,7 @@ import java.util.Iterator;
  * gene and a stable list of gene_synonyms
  */
 @Description("bases immediately adjacent to gap location should not be 'n'")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class GapFeatureLocationsCheck extends EntryValidationCheck {
 
 	protected final static String MESSAGE_ID = "GapFeatureLocationsCheck";

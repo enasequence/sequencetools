@@ -38,7 +38,6 @@ public class FileName {
     public static final String MOLTYPE_SOURCE_QUALIFIERS = "moltype-source-qualifier.tsv";
     public static final String SOURCE_QUALIFIERS_MOLTYPE_VALUES = "source_qualifier_moltype_value.tsv";
     public static final String ORGANISM_REQUIRED_QUALIFIER = "organism-required-qualifier.tsv";
-    public static final String ORGANISM_NO_QUALIFIER = "organism-no-qualifier.tsv";
     public static final String ORGANISM_QUALIFIER_PATTERN = "organism-qualifier-pattern.tsv";
     public static final String SOURCE_REQUIRED_QUALIFIER = "source-required-qualifiers.tsv";
     public static final String SOURCE_QUALIFIER_PATTERN_FEATURE = "source-qualifier-pattern-feature.tsv";

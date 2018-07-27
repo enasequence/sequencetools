@@ -44,79 +44,21 @@ public class EmblEntryValidationPlan extends ValidationPlan
 		List<Class<? extends EmblEntryValidationCheck<?>>> checks = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
 		List<Class<? extends EmblEntryValidationCheck<?>>> fixes = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
 		validatePlanProperty();
-		switch (planProperty.fileType.get())
+		
+		checks.addAll(ValidationUnit.SEQUENCE_ENTRY_CHECKS.getValidationUnit());
+		if (planProperty.isFixMode.get())
 		{
-		case FASTA:
-		case AGP:
-			checks.addAll(ValidationUnit.SEQUENCE_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.ASSEMBLY_LEVEL_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.FASTA_AGP_FEATURE_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
-			if (planProperty.isFixMode.get())
- 				{
-				fixes.addAll(ValidationUnit.AGP_SPECIFIC_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.ASSEMBLY_LEVEL_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SEQUENCE_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.FASTA_AGP_FEATURE_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_FIXES.getValidationUnit());
- 				}
-
-			break;
-		case MASTER:
-
-			checks.addAll(ValidationUnit.MASTER_HEADER_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
-			if (planProperty.isFixMode.get())
-			{
-				fixes.addAll(ValidationUnit.MASTER_HEADER_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_FIXES.getValidationUnit());
-			}
-			break;
-
-		default:
-			checks.addAll(ValidationUnit.SEQUENCE_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.MASTER_HEADER_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.ASSEMBLY_LEVEL_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SEQUENCE_AND_SOURCE_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SEQUENCE_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SOURCE_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.NON_SOURCE_FEATURES_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SOURCE_DEPENDSON_SEQUENCE_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_CHECKS.getValidationUnit());
-			checks.addAll(ValidationUnit.COMMON_CHECKS.getValidationUnit());
-			if (planProperty.isFixMode.get())
-			{
-				fixes.addAll(ValidationUnit.SEQUENCE_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.MASTER_HEADER_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.ENTRY_SPECIFIC_HEADER_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.ASSEMBLY_LEVEL_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SOURCE_FEAURES_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SOURCE_DEPENDSON_SEQUENCE_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.NON_SOURCE_FEATURES_ONLY_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SOURCE_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SEQUENCE_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.NON_SOURCE_DEPENDSON_SEQUENCE_AND_SOURCE_FIXES.getValidationUnit());
-				fixes.addAll(ValidationUnit.SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES.getValidationUnit());
-			}
-			break;
-
+			fixes.addAll(ValidationUnit.SEQUENCE_ENTRY_FIXES.getValidationUnit());
 		}
 
 		try
 		{
 			executeChecksandFixes(fixes,entry);
 			executeChecksandFixes(checks,entry);
-			
 		}
 		catch (Exception e)
 		{
-           throw new ValidationEngineException(e);
+			throw new ValidationEngineException(e);
 		}
 
 		return validationPlanResult;

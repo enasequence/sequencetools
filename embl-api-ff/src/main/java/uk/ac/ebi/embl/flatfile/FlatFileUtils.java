@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -232,6 +233,7 @@ public abstract class FlatFileUtils {
 		if (string == null) {
 			return null;
 		}
+		Locale.setDefault(Locale.UK);
 		Date date = null;
 		try {
 			date = (dateMonYear.parse(string));

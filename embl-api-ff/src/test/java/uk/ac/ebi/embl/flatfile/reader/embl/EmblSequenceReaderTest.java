@@ -19,10 +19,10 @@ import java.io.IOException;
 
 import uk.ac.ebi.embl.flatfile.reader.ReaderOptions;
 import uk.ac.ebi.embl.flatfile.reader.SequenceReader;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblReaderTest;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class EmblSequenceReaderTest extends EmblReaderTest {
 

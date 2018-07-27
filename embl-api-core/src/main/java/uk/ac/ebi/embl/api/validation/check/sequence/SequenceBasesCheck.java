@@ -20,9 +20,12 @@ import java.util.Iterator;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Invalid base: {0}.Sequence starts and/or ends with 'n' characters")
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
 public class SequenceBasesCheck extends SequenceValidationCheck {
 
 	private final static String MESSAGE_ID = "SequenceBasesCheck";

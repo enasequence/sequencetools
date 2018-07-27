@@ -22,11 +22,14 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("\"propeptide\" feature length must be multiple of 3"
 		+ "\"propeptide\" feature must be located within CDS feature coordinates"
 		+ "\"propeptide\" feature must not overlap with either the sig_peptide or the mat_peptide")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class PropeptideLocationCheck extends EntryValidationCheck
 {
 

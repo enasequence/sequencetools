@@ -177,8 +177,15 @@ public class QualifierValueFixTest
 		ValidationResult result = check.check(feature);
 		 assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
 		 assertEquals("-3283m", feature.getSingleQualifierValue(Qualifier.ALTITUDE_QUALIFIER_NAME));
+	}
 
-		
+	@Test
+	public void testCheck_altitudeValueComma()
+	{
+		feature.addQualifier(Qualifier.ALTITUDE_QUALIFIER_NAME,"-3,283m.");
+		ValidationResult result = check.check(feature);
+		assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
+		assertEquals("-3283m", feature.getSingleQualifierValue(Qualifier.ALTITUDE_QUALIFIER_NAME));
 	}
 
 }

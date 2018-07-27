@@ -40,6 +40,20 @@ public class QualifierMatcher extends FlatFileMatcher {
 		String qualifierName = getString(GROUP_QUALIFIER_NAME);
 		String qualifierValue = getString(GROUP_QUALIFIER_VALUE);
 
+		Qualifier qualifier = qualifierFactory.createQualifier(qualifierName);
+		if (qualifierValue != null)
+		{
+			qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
+			qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
+
+			if(!getReader().getLineReader().isIgnoreParseError()) {
+
+				if (qualifier.isValueQuoted()) {
+					int nofQuotes=StringUtils.countMatches(qualifierValue, "\"");
+					if (nofQuotes > 0) {
+						error("FT.10", qualifierName, qualifierValue);
+					}
+
 		Qualifier qualifier=qualifierFactory.createQualifier(qualifierName);
 		if (qualifierValue != null) {
 
@@ -48,6 +62,15 @@ public class QualifierMatcher extends FlatFileMatcher {
 				if (qualifierValue.indexOf('"') != 0 && qualifierValue.lastIndexOf('"') != qualifierValue.length() - 1) {
 					error("FT.10", qualifierName, qualifierValue);
 				}
+
+				if (fileType == null || fileType != FileType.GENBANK) {
+					Matcher m = htmlEntityRegexPattern.matcher(qualifierValue);
+					if (m.find()) {
+						error("FT.13", qualifierName, qualifierValue);
+					}
+				}
+			}
+
 				qualifierValue = FlatFileUtils.trimLeft(qualifierValue, '"');
 				qualifierValue = FlatFileUtils.trimRight(qualifierValue, '"');
 				if(nofQuotes > 2 && StringUtils.countMatches(qualifierValue, "\"") > 0){
@@ -59,10 +82,8 @@ public class QualifierMatcher extends FlatFileMatcher {
 			}
 
 			qualifier.setValue(qualifierValue);
-			return qualifier;
-		} else
-		{
-			return qualifier;
 		}
+		return qualifier;
+
 	}
 }

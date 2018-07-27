@@ -17,9 +17,9 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.io.IOException;
 
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class CommentReaderTest extends GenbankReaderTest {
 

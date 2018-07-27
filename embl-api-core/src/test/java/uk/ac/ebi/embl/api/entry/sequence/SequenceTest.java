@@ -15,13 +15,19 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.entry.sequence;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.*;
 import java.nio.ByteBuffer;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 
 public class SequenceTest {
@@ -219,6 +225,45 @@ public class SequenceTest {
 		new Sequence().toString();	
 		sequenceFactory.createSequenceByte("aaaa".getBytes()).toString();
 	//	new Sequence(bytes, 4).toString();
+	}
+	
+	@Test
+	public void testAGPRows()
+	{
+		AgpRow validComponentrow1=new AgpRow();
+		AgpRow validComponentrow2=new AgpRow();
+		AgpRow validGaprow1=new AgpRow();
+		validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
+		validComponentrow1.setObject_beg(1l);
+		validComponentrow1.setObject_end(330l);
+		validComponentrow1.setPart_number(1);
+		validComponentrow1.setComponent_type_id("W");
+		validComponentrow1.setComponent_beg(1l);
+		validComponentrow1.setComponent_end(330l);
+		validComponentrow1.setComponent_id("IWGSC_CSS_6DL_contig_209591");
+		validComponentrow1.setOrientation("+");
+		validGaprow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
+		validGaprow1.setObject_beg(331);
+		validGaprow1.setObject_end(354l);
+		validGaprow1.setPart_number(2);
+		validGaprow1.setComponent_type_id("N");
+		validGaprow1.setGap_length(24l);
+		validGaprow1.setGap_type("scaffold");
+		validComponentrow2.setObject("IWGSC_CSS_6DL_scaff_3330716");
+		validComponentrow2.setObject_beg(1l);
+		validComponentrow2.setObject_end(330l);
+		validComponentrow2.setPart_number(1);
+		validComponentrow2.setComponent_type_id("W");
+		validComponentrow2.setComponent_beg(1l);
+		validComponentrow2.setComponent_end(330l);
+		validComponentrow2.setComponent_id("IWGSC_CSS_6DL_contig_209591");
+		validComponentrow2.setOrientation("+");
+	    Sequence sequence = new SequenceFactory().createSequence();
+	    sequence.addAgpRow(validGaprow1);
+	    sequence.addAgpRow(validComponentrow2);
+	    sequence.addAgpRow(validComponentrow1);
+	    assertEquals(684,sequence.getLength());
+	
 	}
 
 }

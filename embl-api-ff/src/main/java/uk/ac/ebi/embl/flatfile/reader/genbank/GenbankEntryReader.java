@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Arrays;
 
 import uk.ac.ebi.embl.api.validation.FileType;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
@@ -66,7 +66,7 @@ public class GenbankEntryReader extends EntryReader {
     	addBlockReader(new ContigReader(lineReader));
     	addBlockReader(new OriginReader(lineReader));
     	addBlockReader(new PrimaryReader(lineReader));
-    	addBlockReader(new CommentReader(lineReader));
+    	addBlockReader(new CommentReader(lineReader, FileType.GENBANK));
     	addBlockReader(new FeaturesReader(lineReader));
     	addBlockReader(new SourceReader(lineReader));
     	addBlockReader(new OrganismReader(lineReader));

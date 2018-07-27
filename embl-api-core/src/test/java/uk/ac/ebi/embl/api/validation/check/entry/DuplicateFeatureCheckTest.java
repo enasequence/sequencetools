@@ -84,7 +84,7 @@ public class DuplicateFeatureCheckTest {
 
         ValidationResult validationResult = check.check(entry);
         assertTrue(!validationResult.isValid());
-        assertEquals(1, validationResult.count(DuplicateFeatureCheck.MESSAGE_ID, Severity.ERROR));
+        assertEquals(1, validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class DuplicateFeatureCheckTest {
 
         ValidationResult validationResult = check.check(entry);
         assertTrue(!validationResult.isValid());
-        assertEquals(2, validationResult.count(DuplicateFeatureCheck.MESSAGE_ID, Severity.ERROR));
+        assertEquals(2, validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class DuplicateFeatureCheckTest {
 
         ValidationResult validationResult = check.check(entry);
         assertTrue(!validationResult.isValid());
-        assertEquals(1, validationResult.count(DuplicateFeatureCheck.MESSAGE_ID, Severity.ERROR));
+        assertEquals(1, validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
     }
 
     @Test
@@ -178,36 +178,6 @@ public class DuplicateFeatureCheckTest {
 
         ValidationResult validationResult = check.check(entry);
         assertTrue(validationResult.isValid());
-    }
-
-    @Test
-	public void testCheckCDSDuplication() {
-    	ProteinIdQualifier proteinQualifier1= qualifierFactory.createProteinIdQualifier("CAA00031.1");
-        ProteinIdQualifier proteinQualifier2= qualifierFactory.createProteinIdQualifier("CAA00033.1");
-        Join<Location> locationJoin = new Join<Location>();
-        locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-        Feature feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-        feature.setLocations(locationJoin);
-        feature.addQualifier(qualifierFactory.createQualifier(Qualifier.CODON_START_QUALIFIER_NAME, "5"));
-        feature.addQualifier(proteinQualifier1);
-        
-        
-
-         Join<Location> locationJoin2 = new Join<Location>();
-        locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
-        Feature feature2 = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-        feature2.setLocations(locationJoin2);
-        feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.CODON_START_QUALIFIER_NAME, "5"));
-       //feature.addQualifier(proteinQualifier2);
-        feature2.addQualifier(proteinQualifier1);
-
-        entry.addFeature(feature);
-        entry.addFeature(feature2);
-
-        ValidationResult validationResult = check.check(entry);
-        assertTrue(!validationResult.isValid());
-        assertEquals(1, validationResult.count(DuplicateFeatureCheck.DUPLICATE_CDS_CODON_START_MESSAGE_ID, Severity.ERROR));
-        assertEquals(1, validationResult.count(DuplicateFeatureCheck.DUPLICATE_CDS_PROTEIN_MESSAGE_ID, Severity.ERROR));//added new protein id check for cds feature
     }
 
    @Test
@@ -278,7 +248,7 @@ public class DuplicateFeatureCheckTest {
 
         ValidationResult validationResult = check.check(entry);
         assertTrue(validationResult.isValid());
-        assertEquals(0, validationResult.count(DuplicateFeatureCheck.MESSAGE_ID, Severity.ERROR));
+        assertEquals(0, validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
     }
 
     @Test

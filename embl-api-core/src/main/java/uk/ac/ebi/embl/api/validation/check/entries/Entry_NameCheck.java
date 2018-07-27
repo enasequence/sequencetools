@@ -6,9 +6,14 @@ import java.util.Set;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
+import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("Entry Set has Duplicated entry_names \"{0}\"")
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
 public class Entry_NameCheck extends EntriesValidationCheck
 {
 	protected final static String ENTRY_NAME_ID = "Entry_NameCheck1";

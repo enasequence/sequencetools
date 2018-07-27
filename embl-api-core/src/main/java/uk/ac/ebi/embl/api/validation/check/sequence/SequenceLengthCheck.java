@@ -100,11 +100,6 @@ public class SequenceLengthCheck extends EntryValidationCheck
 				if(getEmblEntryValidationPlanProperty().validationScope.get().isInGroup(Group.ASSEMBLY))
 				{
 					minSeqLength=MIN_SEQUENCE_LENGTH_ASSEMBLY;
-					
-				    if(getEmblEntryValidationPlanProperty().fileType.get()==FileType.AGP && 
-				       getEmblEntryValidationPlanProperty().isRemote.get())// when validator executed externally, no sequence available for AGPs
-					 minSeqLength=0;
-					
 				}
 				if (entry.getSequence().getLength() < minSeqLength)
 				{

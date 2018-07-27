@@ -18,10 +18,10 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 import java.io.IOException;
 
 import uk.ac.ebi.embl.api.entry.reference.Publication;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.embl.RXReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class RXReaderTest extends EmblReaderTest {
 

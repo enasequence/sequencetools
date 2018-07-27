@@ -17,9 +17,9 @@ package uk.ac.ebi.embl.flatfile.reader;
 
 import java.io.IOException;
 
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 /** Reader for single line flat file blocks.
  */

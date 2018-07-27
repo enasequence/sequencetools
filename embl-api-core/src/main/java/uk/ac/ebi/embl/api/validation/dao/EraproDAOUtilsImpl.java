@@ -11,23 +11,104 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
+import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.XRef;
+import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
 	private Connection connection;
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
+	
+	public enum SOURCEQUALIFIER
+	{
+		ecotype, 
+		cultivar,
+		isolate,
+		strain, 
+		sub_species, 
+		variety,
+	    sub_strain, 
+		cell_line, 
+		serotype, 
+		serovar, 
+		environmental_sample,
+		organelle;
+		
+		public static boolean isValid(String qualifier)
+		{
+			try
+			{
+				if (!qualifier.equalsIgnoreCase("PCR_primers"))
+				{
+					valueOf(qualifier.toLowerCase());
+				}
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public static boolean isNoValue(String qualifier)
+		{
+			List<String> noValueQualifiers = new ArrayList<String>();
+			noValueQualifiers.add(Qualifier.GERMLINE_QUALIFIER_NAME);
+			noValueQualifiers.add(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
+			noValueQualifiers.add(Qualifier.PROVIRAL_QUALIFIER_NAME);
+			noValueQualifiers.add(Qualifier.REARRANGED_QUALIFIER_NAME);
+			noValueQualifiers.add(Qualifier.FOCUS_QUALIFIER_NAME);
+			noValueQualifiers.add(Qualifier.TRANSGENIC_QUALIFIER_NAME);
+			noValueQualifiers
+					.add(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
+
+			if (noValueQualifiers.contains(qualifier))
+			{
+				return true;
+			}
+			return false;
+		}
+		
+		public static boolean isNullValue(String qualifierValue) {
+			List<String> nullValueCV = new ArrayList<String>();
+			nullValueCV.add("not applicable");
+			nullValueCV.add("not collected");
+			nullValueCV.add("not provided");
+			nullValueCV.add("restricted access");
+			nullValueCV.add("missing");
+            if(qualifierValue==null||qualifierValue.isEmpty())
+            	return true;
+			if (nullValueCV.contains(qualifierValue.toLowerCase())) {
+				return true;
+			}
+
+			return false;
+
+		}
+	}
+	
 
 	public EraproDAOUtilsImpl (Connection connection)
 	{
@@ -271,5 +352,183 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 	}
 	
+   public Entry getMasterEntry(String analysisId) throws SQLException
+	{
+		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
+		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex); 
+		Entry masterEntry = new Entry();
+		masterEntry.setPrimaryAccession(analysisId);
+		masterEntry.setIdLineSequenceLength(1);
+		FeatureFactory featureFactory = new FeatureFactory();
+		SequenceFactory sequenceFactory = new SequenceFactory();
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		TaxonHelper taxonHelper=new TaxonHelperImpl();
+		String sampleId = null;
+		String projectId = null;
+		String scientificName = null;
+		String prevSampleId = null;
+		String prevProjectId = null;
+		String uniqueName=null;
+		boolean addUniqueName=true;
+		
+		String masterQuery = "select st.project_id, st.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
+			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
+			"from analysis a " +
+			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
+			"join sample sam on(asam.sample_id=sam.sample_id) " +
+			"join submission s on(s.submission_id=a.submission_id) " +
+			"join study st on(a.study_id=st.study_id) " +
+			"where a.analysis_id=?";
+
+		boolean masterExists = false;
+		boolean biosampleExists=false;
+				
+		masterEntry.setDataClass(Entry.SET_DATACLASS);
+
+		
+		Sequence sequence = sequenceFactory.createSequence();
+		//sequence.setLength(1); // Required by putff.
+		masterEntry.setSequence(sequence);
+		masterEntry.setIdLineSequenceLength(1);
+		masterEntry.getSequence().setMoleculeType("genomic DNA");
+		masterEntry.getSequence().setTopology(Topology.LINEAR);		
+		
+		sourceFeature.setMasterLocation();
+		
+		PreparedStatement masterInfoStmt = null;
+		ResultSet masterInfoRs = null;
+				
+		try
+		{
+			masterInfoStmt = connection.prepareStatement(masterQuery);
+			masterInfoStmt.setString(1, analysisId);
+			masterInfoRs = masterInfoStmt.executeQuery();
+			while (masterInfoRs.next())
+			{
+				masterExists = true;
+				//masterEntry.setHoldDate(masterInfoRs.getDate("hold_date"));//hold_date always should be null , as entry status depends on study_id
+				masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
+
+				sampleId = masterInfoRs.getString("sample_id");
+
+				projectId = masterInfoRs.getString("project_id");
+				if (projectId != null && !projectId.equals(prevProjectId))
+				{
+					masterEntry.addProjectAccession(new Text(projectId));
+				}			
+				prevProjectId = projectId;
+
+				String bioSampleId = masterInfoRs.getString("biosample_id");
+				if (bioSampleId != null && !bioSampleId.equals(prevSampleId))
+				{
+					masterEntry.addXRef(new XRef("BioSample", bioSampleId));
+					biosampleExists=true;
+				}			
+				prevSampleId = bioSampleId;
+				
+				sourceFeature.setTaxId(Long.valueOf(masterInfoRs.getString("tax_id")));
+				
+				scientificName = masterInfoRs.getString("scientific_name");
+				String molType=masterInfoRs.getString("mol_type");
+				String tpa=masterInfoRs.getString("tpa");
+				if("true".equalsIgnoreCase(tpa))
+				{
+					masterEntry.addKeyword(new Text("Third Party Data"));
+					masterEntry.addKeyword(new Text("TPA"));
+					masterEntry.addKeyword(new Text("assembly"));
+				}
+				if(molType!=null&&taxonHelper.isChildOf(scientificName, "Viruses"))
+				{
+					masterEntry.getSequence().setMoleculeType(molType);
+				}
+				sourceFeature.setScientificName(scientificName);
+				uniqueName=masterInfoRs.getString("sample_alias");
+			}
+		}
+		
+		finally
+		{
+			DbUtils.closeQuietly(masterInfoRs);
+			DbUtils.closeQuietly(masterInfoStmt);
+		}
+		
+		if (!masterExists)
+		{
+			return null;
+		}
+		
+			
+		// SOURCE QUALIFIERS
+		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()',value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
+		PreparedStatement select_sourcequalifiers_pstmt = null;
+		ResultSet select_sourcequalifers_rs = null;
+		Qualifier isolationSourceQualifier=null;
+		try
+		{
+			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
+			select_sourcequalifiers_pstmt.setString(1, sampleId);
+			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
+			while (select_sourcequalifers_rs.next())
+			{
+				String tag = select_sourcequalifers_rs.getString(1);
+				if(tag==null)
+					continue;
+				tag=tag.toLowerCase();
+				String value = select_sourcequalifers_rs.getString(2);
+				if(isolation_sourcePattern.matcher(tag).matches())
+				{
+					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
+					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
+					continue;
+				}
+				if (tag.equalsIgnoreCase("PCR_primers"))
+				{
+					tag = "PCR_primers";
+				}
+				if (SOURCEQUALIFIER.isValid(tag))
+				{
+					
+					if(!SOURCEQUALIFIER.isNoValue(tag)&&SOURCEQUALIFIER.isNullValue(value))
+						continue;
+
+					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
+					{
+						addUniqueName=false;
+					}
+				    
+					if(SOURCEQUALIFIER.isNoValue(tag))
+					{
+						if(!"NO".equalsIgnoreCase(value))
+					     sourceFeature.addQualifier(tag);
+					}
+				    else
+					sourceFeature.addQualifier(tag, value);
+				}
+			}
+			if(addUniqueName&&taxonHelper.isProkaryotic(scientificName))
+			{
+				sourceFeature.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName);
+			}
+			masterEntry.addReference(getSubmitterReference(analysisId));
+			if(sourceFeature.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
+				sourceFeature.addQualifier(isolationSourceQualifier);				
+		}
+		catch (Exception ex)
+		{
+		}
+		finally
+		{
+			DbUtils.closeQuietly(select_sourcequalifers_rs);
+			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
+		}
+		masterEntry.addFeature(sourceFeature);
+		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
+		masterEntry.setDescription(new Text(description));
+		
+		return masterEntry;
+	}
 
 }

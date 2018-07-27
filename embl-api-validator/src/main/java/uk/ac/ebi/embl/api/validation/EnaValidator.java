@@ -948,7 +948,7 @@ public class EnaValidator
 		{
 			if (result.isHasReportMessage())
 			{
-				result.writeMessageReports(true);// turn report writing on for
+				result.setWriteReportMessage(true);// turn report writing on for
 													// this writer
 				result.writeMessages(reportWriter);
 			}
@@ -1028,7 +1028,7 @@ public class EnaValidator
 				writer.write("\n");
 				for (ValidationMessage<Origin> validationMessage : parseResult.getMessages())
 				{
-					validationMessage.writeTextMessage(writer);
+					validationMessage.writeMessage(writer);
 				}
 				parseError = true;
 			}

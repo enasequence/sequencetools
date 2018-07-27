@@ -56,7 +56,18 @@ public class AgpRow
 		private String object_acc;//SCAFFOLD_ACC
 		private Origin origin;
 		private String linkage;
+		private byte[] sequence;
 		
+		public byte[] getSequence() 
+		{
+			return sequence;
+		}
+
+		public void setSequence(byte[] sequence) 
+		{
+			this.sequence = sequence;
+		}
+
 		public Origin getOrigin()
 		{
 			return origin;
@@ -66,7 +77,8 @@ public class AgpRow
 		{
 			this.origin = origin;
 		}
-			
+		
+		
 		public String getObject()
 		{
 			return object;

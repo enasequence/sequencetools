@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -23,13 +22,12 @@ import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.AminoAcid;
 import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Anticodon validation")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class AntiCodonQualifierCheck extends FeatureValidationCheck
 	{
 		private final static String ANTICODON_LOCATION_RANGE_MESSAGE_ID = "AntiCodonQualifierCheck_1";

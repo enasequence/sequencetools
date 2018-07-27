@@ -76,10 +76,19 @@ public class QualifierValueFix extends FeatureValidationCheck
 						invalidEcnumberList.add(qual);
 					}
 				}
-				if(qName.equals(Qualifier.ALTITUDE_QUALIFIER_NAME)&&qValue.endsWith("m."))
+
+				if(qName.equals(Qualifier.ALTITUDE_QUALIFIER_NAME) && qValue != null)
 				{
-					qual.setValue(qValue.substring(0, qValue.length()-1));
-					reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_1,qName,qValue,qual.getValue());
+					if(qValue.endsWith("m.")) {
+						qual.setValue(qValue.substring(0, qValue.length() - 1));
+					}
+					if(qValue.contains(",")) {
+						qual.setValue(qual.getValue().replaceAll(",",""));
+					}
+
+					if(!qValue.equals(qual.getValue())) {
+						reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_1, qName, qValue, qual.getValue());
+					}
 
 				}
 				if (getEntryDAOUtils() != null)

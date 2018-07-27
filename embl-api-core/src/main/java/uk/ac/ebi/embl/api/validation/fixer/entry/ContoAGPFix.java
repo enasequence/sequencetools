@@ -76,7 +76,7 @@ public class ContoAGPFix extends EntryValidationCheck
 		Long objectStart=0l;
 		Long objectEnd=0l;
 
-		if (entry == null||getEntryDAOUtils()==null||(entry.getSequence()!=null&&entry.getSequence().getContigs().size()==0)||entry.getAgpRows().size()!=0)
+		if (entry == null||getEntryDAOUtils()==null||(entry.getSequence()!=null&&entry.getSequence().getContigs().size()==0)||entry.getSequence().getAgpRows().size()!=0)
 		{
 			return result;
 		}
@@ -145,7 +145,7 @@ public class ContoAGPFix extends EntryValidationCheck
 				agpRows.add(generateComponentAgpRow(contig,agpRow,contigEntry));
 			}
  	}
-		entry.addAgpRows(agpRows);
+		entry.getSequence().addAgpRows(agpRows);
 		}
 		catch(Exception e)
 		{

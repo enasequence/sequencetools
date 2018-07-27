@@ -20,10 +20,13 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Invalid EC number : \"{0}\" "
 		+ " Non existent EC number : \"{0}\"  ")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class EC_numberCheck extends FeatureValidationCheck
 {
 	private static final String EC_numberCheck_Warning_ID = "EC_numberCheck_1";

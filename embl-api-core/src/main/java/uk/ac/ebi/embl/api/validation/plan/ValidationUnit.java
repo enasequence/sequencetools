@@ -35,250 +35,154 @@ import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.*;
 @SuppressWarnings("unchecked")
 public enum ValidationUnit
 {
-			ENTRY_SPECIFIC_HEADER_ONLY_CHECKS
-			(
-				Entry_NameCheck.class,
-				AssemblySecondarySpanCheck.class,
-				DataclassCheck.class,
-				KWCheck.class
-			),
-			MASTER_HEADER_ONLY_CHECKS(
-					EntryProjectIdCheck.class,
-					HoldDateCheck.class,
+	        SEQUENCE_ENTRY_CHECKS
+	        (
+	        		Entry_NameCheck.class,//exclude for master and include for assemblies
+					AssemblySecondarySpanCheck.class,//exclude for all assemblies
+					DataclassCheck.class,//exclude for assembly master 
+					KWCheck.class,//exclude for assembly master
+					EntryProjectIdCheck.class,//exclude for all assemblies
+					HoldDateCheck.class,//include for all
 					//ReferenceCheck.class,
-					MasterEntryDescriptionCheck.class
-			),
-			SOURCE_FEAURES_ONLY_CHECKS
-			(
-				MasterEntrySourceCheck.class,
-				ExclusiveSourceQualifiersCheck.class,
-				HostQualifierCheck.class,
-				OrganismAndRequiredQualifierCheck.class,
-				OrganismNotQualifierCheck.class,
-				OrganismPatternAndQualifierValueCheck.class,
-				SingleSourceQualifiersCheck.class,
-				SourceFeatureOnlyCheck.class,
-				SourceFeatureQualifierCheck.class,
-				Type_materialQualifierCheck.class,
-				CollectionDateQualifierCheck.class,
-				Isolation_sourceQualifierCheck.class
-			),
-			SOURCE_DEPENDSON_SEQUENCE_CHECKS
-			(
-				MoleculeTypeAndOrganismCheck.class,
-				MoleculeTypeAndSourceQualifierCheck.class,
-				SequenceCoverageCheck.class
-			),
-
-			FASTA_AGP_FEATURE_CHECKS
-			(
-				QualifierCheck.class,
-				GapFeatureBasesCheck.class,
-				GapFeatureLocationsCheck.class,
-				Assembly_gapFeatureCheck.class,
-				WGSGapCheck.class
-		     ),
-		     
-			NON_SOURCE_FEATURES_ONLY_CHECKS
-			(
-				DuplicateFeatureCheck.class, // need to separate source feature
-												// duplication check
-				ProteinIdExistsCheck.class,
-				EntryFeatureLocationCheck.class,
-				ExonFeaturesIntervalCheck.class,
-				FeaturewithRemoteLocationCheck.class,
-				GeneAssociationCheck.class,
-				GeneFeatureLocusTagCheck.class,
-				LocusTagAssociationCheck.class,
-				LocusTagPrefixCheck.class,
-				OperonFeatureCheck.class,
-				QualifierAndRequiredQualifierinEntryCheck.class,
-				QualifierPatternAndFeatureCheck.class,
-				QualifierValueNotQualifierEntryCheck.class,
-				QualifierValueRequiredQualifierValueEntryCheck.class,
-				AntiCodonQualifierCheck.class,
-				TranslExceptQualifierCheck.class,
-				CdsFeatureAminoAcidCheck.class,
-				DeprecatedQualifiersCheck.class,
-				EC_numberandProductValueCheck.class,
-				EstimatedLengthCheck.class,
-				ExclusiveQualifiersCheck.class,
-				ExclusiveQualifiersWithSameValueCheck.class,
-				FeatureKeyCheck.class,
-				FeatureLengthCheck.class,
-				FeatureLocationCheck.class,
-				FeatureLocationTypeCheck.class, // separate the sourcefeature
-												// location check
-				FeatureQualifiersRequiredCheck.class,
-				IntronLengthWithinCDSCheck.class,
-				NcRNAQualifierValueAndQualifierPatternCheck.class,
-				PCRPrimersQualifierCheck.class,
-				QualifierAndRequiredQualifierinFeatureCheck.class,
-				QualifierCheck.class, // separate the source feature qualifier
-										// checks
-				QualifierPatternAndQualifierCheck.class,
-				QualifierValueNotQualifierCheck.class,
-				QualifierValueNotQualifierPatternCheck.class,
-				QualifierValueRequiredQualifierStartsWithValueCheck.class,
-				QualifierValueRequiredQualifierValueCheck.class,
-				SimpleFeatureLocationCheck.class,
-				UnbalancedParenthesesCheck.class,
-				Assembly_gapFeatureCheck.class,
-				WGSGapCheck.class,
-				EC_numberCheck.class,
-				CitationQualifierCheck.class,
-				PropeptideLocationCheck.class
-				),
-			NON_SOURCE_DEPENDSON_SOURCE_CHECKS
-			(
-				//FeatureAndSourceQualifierCheck.class, //this check no longer exists
-				OrganismAndPermittedQualifierCheck.class,
-				RRNAQualifierValueOrOrganismAndQualifierValueCheck.class,
-				SourceQualifierPatternAndFeatureCheck.class,
-				TaxonomicDivisionNotQualifierCheck.class,
-				TaxonomicDivisionQualifierCheck.class
-			),
-			NON_SOURCE_DEPENDSON_SEQUENCE_CHECKS
-			(
-				AntiCodonTranslationCheck.class,
-				FeatureAndMoleculeTypeCheck.class,
-				GapFeatureBasesCheck.class,
-				GapFeatureLocationsCheck.class,
-				LocusTagCoverageCheck.class,
-				MoleculeTypeAndFeatureCheck.class
-			),
-			NON_SOURCE_DEPENDSON_SEQUENCE_AND_SOURCE_CHECKS
-			(
-				PeptideFeatureCheck.class,
-				CdsFeatureTranslationCheck.class
-			),
-			SEQUENCE_ONLY_CHECKS
-			(
-				AnnotationOnlySequenceCheck.class,
-				EntryContigsCheck.class, // CO line property will be
-										// moved to sequence
-				EntryMolTypeCheck.class,
-				SequenceBasesCheck.class,
-				SequenceExistsCheck.class,
-				SequenceLengthCheck.class,
-				MoleculeTypeAndDataclassCheck.class,
-				SequenceToGapFeatureBasesCheck.class,
-				AGPValidationCheck.class
-			),
-			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_CHECKS
-			(
-			),
-
-			MASTER_HEADER_ONLY_FIXES
-			(
-				HoldDateFix.class,
-				ReferencePositionFix.class
-			),
-			
-			ENTRY_SPECIFIC_HEADER_ONLY_FIXES
-			(
-				DataclassFix.class,
-				TPA_dataclass_Fix.class,
-				SubmitterAccessionFix.class
-
-			),
-			SOURCE_FEAURES_ONLY_FIXES
-			(
-				CollectionDateQualifierFix.class,
-				Isolation_sourceQualifierFix.class,
-				HostQualifierFix.class,
-				SourceQualifierMissingFix.class,
-				StrainQualifierValueFix.class,
-				Lat_lonValueFix.class,
-				CountryQualifierFix.class
-			),
-			SOURCE_DEPENDSON_SEQUENCE_FIXES
-			(
-				MoleculeTypeAndQualifierFix.class
-			),
-			NON_SOURCE_FEATURES_ONLY_FIXES
-			(
-				CDS_RNA_LocusFix.class,
-				GaptoAssemblyGapFeatureFix.class,
-				GeneAssociatedwithFeatureFix.class,
-				GeneAssociationFix.class,
-				GeneSynonymFix.class,
-				LocusTagAssociationFix.class,
-				EC_numberfromProductValueFix.class,
-				ExclusiveQualifierTransformToNoteQualifierFix.class,
-				ExperimentQualifierFix.class,
-				FeatureLocationFix.class,
-				FeatureQualifierDuplicateValueFix.class,
-				FeatureQualifierRenameFix.class,
-				FeatureRenameFix.class,
-				ObsoleteFeaturetoNewFeatureFix.class,
-				Linkage_evidenceFix.class,
-				ObsoleteFeatureFix.class,
-				QualifierValueFix.class,
-				EC_numberValueFix.class,
-				QualifierWithinQualifierFix.class,
-				Transl_exceptLocationFix.class,
-				ProteinIdRemovalFix.class,
-				LocusTagValueFix.class
-			),
-			
-			FASTA_AGP_FEATURE_FIXES
-			(
-				Linkage_evidenceFix.class
-		     ),
-		     
-			NON_SOURCE_DEPENDSON_SOURCE_FIXES
-			(
-				TaxonomicDivisionNotQualifierFix.class
-			),
-			NON_SOURCE_DEPENDSON_SEQUENCE_FIXES
-			(
-				AnticodonQualifierFix.class
-			),
-			NON_SOURCE_DEPENDSON_SEQUENCE_AND_SOURCE_FIXES
-			(
-			),
-            AGP_SPECIFIC_FIXES
-            (
-    			 AgpComponentAccessionFix.class,
-    			 AgptoConFix.class
-    	    ),
-            SEQUENCE_ONLY_FIXES
-			(
-                ContigstosequenceFix.class,
-                AnnotationOnlySequenceFix.class,
-				SequenceBasesFix.class,
-				Mol_typeFix.class,
-				SequenceToGapFeatureBasesFix.class
-    		),
-			
-			ASSEMBLY_LEVEL_FIXES
-			(
-				AssemblyTopologyFix.class,
-				AssemblySourceQualiferFix.class,
-				AssemblyLevelSubmitterReferenceFix.class,
-				AssemblyFeatureRemoteLocationFix.class
-    		 ),
-    	    ASSEMBLY_LEVEL_CHECKS
-            (
-        		EntryNameExistsCheck.class,
-        		LocustagExistsCheck.class,
-        		AssemblyLevelDataclassCheck.class,
-        		AssemblyTopologyCheck.class,
-        		AssemblyLevelEntryNameCheck.class,
-        		ChromosomeSourceQualifierCheck.class
-		   ),
-		   COMMON_CHECKS
-		   (
-				   AsciiCharacterCheck.class,
-				   NCBIQualifierCheck.class,
-				   JournalFix.class
-		   ),
-			SEQUENCE_DEPENDSON_NON_SOURCE_FEATURES_FIXES
-			(
-			),
-			
-//  GCS entry validation checks
+					MasterEntryDescriptionCheck.class,//include only for assembly master
+					MasterEntrySourceCheck.class,//include only for assembly master
+					HostQualifierCheck.class,//include for all
+					OrganismAndRequiredQualifierCheck.class, //include for all
+					SourceFeatureOnlyCheck.class,//include for all
+					SourceFeatureQualifierCheck.class,//include for all
+					Type_materialQualifierCheck.class,//include for all
+					CollectionDateQualifierCheck.class,//include for all
+					MoleculeTypeAndOrganismCheck.class,//exclude for assembly master
+					MoleculeTypeAndSourceQualifierCheck.class,//exclude for assembly master
+					SequenceCoverageCheck.class,//exclude for assembly master
+					QualifierCheck.class, //include for all
+					GapFeatureBasesCheck.class,//include for all
+					Assembly_gapFeatureCheck.class,//include for all
+					WGSGapCheck.class,//include for all
+					ExclusiveQualifiersCheck.class,//include for all
+					QualifierAndRequiredQualifierinFeatureCheck.class,//include for all
+					DuplicateFeatureCheck.class, //include for all
+					ProteinIdExistsCheck.class,//exclude for assembly master
+					EntryFeatureLocationCheck.class,//exclude for assembly master
+					ExonFeaturesIntervalCheck.class,//exclude for assembly master
+					FeaturewithRemoteLocationCheck.class,//exclude for assembly master
+					GeneAssociationCheck.class,//exclude for assembly master
+					GeneFeatureLocusTagCheck.class,//exclude for assembly master
+					LocusTagAssociationCheck.class,//exclude for assembly master
+					LocusTagPrefixCheck.class,//exclude for assembly master
+					OperonFeatureCheck.class,//exclude for assembly master
+					QualifierAndRequiredQualifierinEntryCheck.class,//include for all
+					QualifierPatternAndFeatureCheck.class,//include for all
+					QualifierValueNotQualifierEntryCheck.class,//include for all
+					QualifierValueRequiredQualifierValueEntryCheck.class,//include for all
+					AntiCodonQualifierCheck.class,//exclude for assembly master
+					TranslExceptQualifierCheck.class,//exclude for assembly master
+					CdsFeatureAminoAcidCheck.class,//exclude for assembly master
+					DeprecatedQualifiersCheck.class,//include for all
+					ExclusiveQualifiersWithSameValueCheck.class,//include for all
+					FeatureKeyCheck.class,//include for all
+					FeatureLengthCheck.class,//include for all
+					FeatureLocationCheck.class,//include for all
+					FeatureLocationTypeCheck.class, // separate the sourcefeature
+													// location check
+					FeatureQualifiersRequiredCheck.class,//include for all
+					IntronLengthWithinCDSCheck.class,//exclude for master
+					NcRNAQualifierValueAndQualifierPatternCheck.class,//exclude for master
+					PCRPrimersQualifierCheck.class,//exclude for master
+					QualifierCheck.class, //include for all
+					QualifierPatternAndQualifierCheck.class,//include for all
+					QualifierValueNotQualifierCheck.class,//include for all
+					QualifierValueNotQualifierPatternCheck.class,//include for all
+					QualifierValueRequiredQualifierStartsWithValueCheck.class,//include for all
+					UnbalancedParenthesesCheck.class,//include for all
+					Assembly_gapFeatureCheck.class,//exclude for master
+					CitationQualifierCheck.class,//include for all
+					PropeptideLocationCheck.class,//exclude for master
+					//FeatureAndSourceQualifierCheck.class, //this check no longer exists
+					OrganismAndPermittedQualifierCheck.class,//include for all
+					SourceQualifierPatternAndFeatureCheck.class,//include for all
+					TaxonomicDivisionQualifierCheck.class,//include for all
+					AntiCodonTranslationCheck.class,//exclude for master
+					GapFeatureBasesCheck.class,//exclude for master
+					GapFeatureLocationsCheck.class,//exclude for master
+					MoleculeTypeAndFeatureCheck.class,//include for all
+					PeptideFeatureCheck.class,//exclude for master
+					CdsFeatureTranslationCheck.class,//exclude for master
+					AnnotationOnlySequenceCheck.class,//exclude for master
+					EntryContigsCheck.class, // CO line property will be
+											// moved to sequence //exclude for master
+					EntryMolTypeCheck.class,//include for all
+					SequenceBasesCheck.class,//exclude for master
+					SequenceExistsCheck.class,//exclude for master
+					SequenceLengthCheck.class,//exclude for master
+					MoleculeTypeAndDataclassCheck.class,//exclude for master
+					SequenceToGapFeatureBasesCheck.class,//exclude for master
+					AGPValidationCheck.class,//exclude for master
+					AsciiCharacterCheck.class,//include for all
+					NCBIQualifierCheck.class,//exclude for master
+					EntryNameExistsCheck.class,//exclude for master
+	        		LocustagExistsCheck.class,//exclude for master
+	        		AssemblyLevelDataclassCheck.class,//exclude for master
+	        		AssemblyTopologyCheck.class,//exclude for master
+	        		AssemblyLevelEntryNameCheck.class,//exclude for master
+	        		ChromosomeSourceQualifierCheck.class//exclude for master
+	        ),
+	        SEQUENCE_ENTRY_FIXES
+	        (
+	        		HoldDateFix.class,//include for all
+					ReferencePositionFix.class,//include for all
+					DataclassFix.class,//include for all
+					TPA_dataclass_Fix.class,//exclude for master
+					SubmitterAccessionFix.class,//exclude for master
+					CollectionDateQualifierFix.class,//include for all
+					Isolation_sourceQualifierFix.class,//include for all
+					HostQualifierFix.class,//include for all
+					SourceQualifierMissingFix.class,//include for all
+					StrainQualifierValueFix.class,//include for all
+					Lat_lonValueFix.class,//include for all
+					CountryQualifierFix.class,//include for all
+					MoleculeTypeAndQualifierFix.class,//include for all
+					CDS_RNA_LocusFix.class,//exclude for master
+					GaptoAssemblyGapFeatureFix.class,//exclude for master
+					GeneAssociatedwithFeatureFix.class,//exclude for master
+					GeneAssociationFix.class,//exclude for master
+					GeneSynonymFix.class,//exclude for master
+					LocusTagAssociationFix.class,//exclude for master
+					EC_numberfromProductValueFix.class,//exclude for master
+					ExclusiveQualifierTransformToNoteQualifierFix.class,//include for all
+					ExperimentQualifierFix.class,//exclude for master
+					FeatureLocationFix.class,//exclude for master
+					FeatureQualifierDuplicateValueFix.class,//include for all
+					FeatureQualifierRenameFix.class,//include for all
+					FeatureRenameFix.class,//exclude for master
+					ObsoleteFeaturetoNewFeatureFix.class,//exclude for master
+					Linkage_evidenceFix.class,//exclude for master
+					ObsoleteFeatureFix.class,//exclude for master
+					QualifierValueFix.class,//include for all
+					EC_numberValueFix.class,//exclude for master
+					QualifierWithinQualifierFix.class,//include for all
+					Transl_exceptLocationFix.class,//exclude for master
+					ProteinIdRemovalFix.class,//exclude for master
+					LocusTagValueFix.class,//exclude for master
+					Linkage_evidenceFix.class,//exclude for master
+			   		TaxonomicDivisionNotQualifierFix.class,//include for all
+					AnticodonQualifierFix.class,//exclude for master
+				    AgpComponentAccessionFix.class,//exclude for master
+	    			AgptoConFix.class,//excude for master
+	    	        ContigstosequenceFix.class,//exclude for master
+	                AnnotationOnlySequenceFix.class,//exclude for master
+					SequenceBasesFix.class,//exclude for master
+					Mol_typeFix.class,//exclude for master
+					SequenceToGapFeatureBasesFix.class,//exclude for master
+	    		    AssemblyTopologyFix.class,//exclude for master
+					AssemblySourceQualiferFix.class,//exclude for master
+					AssemblyLevelSubmitterReferenceFix.class,//exclude for master
+					AssemblyFeatureRemoteLocationFix.class,//exclude for master
+	    		    JournalFix.class,//include for all
+	    		    AssemblyLevelEntryNameFix.class
+	        ),
+	
+	// GCS entry validation checks
 			ASSEMBLYINFO_CHECKS
 			(
 			AssemblyInfoAnalysisIdCheck.class,
@@ -316,7 +220,7 @@ public enum ValidationUnit
 		this.checks = Arrays.asList(checks);
 	}
 
-	List<Class<? extends EmblEntryValidationCheck<?>>> getValidationUnit()
+	public List<Class<? extends EmblEntryValidationCheck<?>>> getValidationUnit()
 	{
 		return this.checks;
 	}
