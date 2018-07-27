@@ -16,14 +16,12 @@
 package uk.ac.ebi.embl.flatfile.reader;
 
 import uk.ac.ebi.embl.api.validation.FileType;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /** Reader for flat file blocks.
  */

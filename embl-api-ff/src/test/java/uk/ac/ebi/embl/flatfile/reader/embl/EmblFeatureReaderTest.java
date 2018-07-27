@@ -38,7 +38,6 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.ReaderOptions;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileOrigin;
 
 public class EmblFeatureReaderTest extends EmblReaderTest {
 
