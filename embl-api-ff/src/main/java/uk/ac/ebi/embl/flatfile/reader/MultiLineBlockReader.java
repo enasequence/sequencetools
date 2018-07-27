@@ -15,15 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /** Reader for flat file blocks.
  */
@@ -32,7 +30,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
 	FileType fileType;
 	private int firstLineNumber;
 	private int lastLineNumber;
-	Pattern htmlEntityRegexPattern = Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
+	private ConcatenateType concatenateType;
 	
     public MultiLineBlockReader(LineReader lineReader,
                                 ConcatenateType concatenateType) {
@@ -70,13 +68,11 @@ public abstract class MultiLineBlockReader extends BlockReader {
     	 * after removal or trailing whitespace.
     	 */	
     	CONCATENATE_BREAK
-    };   
-
-    private ConcatenateType concatenateType;
-        
-    private StringBuilder block = new StringBuilder();
+    };
        
     protected void readLines() throws IOException {
+		StringBuilder block = new StringBuilder();
+
     	firstLineNumber = lineReader.getCurrentLineNumber();
     	block.delete(0, block.length());
     	if (concatenateType == ConcatenateType.CONCATENATE_SPACE ||
@@ -114,18 +110,15 @@ public abstract class MultiLineBlockReader extends BlockReader {
 		if (block.length() == 0) {
 			return;
 		}
-		String blockString = block.toString();
-		//blockString=EntryUtils.convertNonAsciiStringtoAsciiString(blockString);
-		if(!lineReader.isIgnoreParseError())
+		String blockString;
+
+		if(lineReader.getReaderOptions().isIgnoreParserErrors() || (fileType != null && fileType == FileType.GENBANK))
 		{
-            String blockStringwithNohtmlEntity=StringEscapeUtils.unescapeHtml4(blockString);
-            if(fileType == null || fileType != FileType.GENBANK) {
-                Matcher m = htmlEntityRegexPattern.matcher(blockStringwithNohtmlEntity);
-                if (m.find()) {
-                    error("FF.15", getTag());
-                }
-            }
+			blockString = block.toString();
+		} else {
+			blockString = Utils.escapeASCIIHtmlEntities(block).toString();
 		}
+
 		if (concatenateType != ConcatenateType.CONCATENATE_BREAK) {
 			// Remove double spaces.
 			blockString = FlatFileUtils.shrink(blockString);

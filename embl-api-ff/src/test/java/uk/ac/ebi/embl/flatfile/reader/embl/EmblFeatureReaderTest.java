@@ -37,8 +37,38 @@ import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.flatfile.reader.ReaderOptions;
 
 public class EmblFeatureReaderTest extends EmblReaderTest {
+
+	public void testReadOnlySourceFeature() throws IOException {
+		initLineReader(
+				"FT   ncRNA           DP001173.2:3219018..3219088\n" +
+					  "FT                   /gene=\"MIR216B\"\n" +
+					  "FT                   /product=\"mir-216b\"\n" +
+				      "FT                   /note=\"ortholog of zebra finch tgu-mir-216b\"\n" +
+				      "FT                   /ncRNA_class=\"miRNA\"\n"+
+				      "FT   source          156 \n"+
+			          "FT                   /mol_type=\"mRNA\"");
+		ReaderOptions rO = new ReaderOptions();
+		rO.setParseSourceOnly(true);
+		lineReader.setReaderOptions(rO);
+
+		ValidationResult result = (new FeatureReader(lineReader)).read(entry);
+		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+		for (ValidationMessage<Origin> message : messages) {
+			System.out.println(message.getMessage());
+		}
+		assertNotNull(entry.getFeatures());
+		assertEquals(0, entry.getFeatures().size());
+
+		result = (new FeatureReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(entry.getFeatures());
+		assertEquals(1, entry.getFeatures().size());
+		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals("mRNA", entry.getSequence().getMoleculeType());
+	}
 
 	public void testRead_LocalSingleBase() throws IOException {
 		initLineReader("FT   source          156 \n"

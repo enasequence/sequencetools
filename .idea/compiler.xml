@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.8">
+      <module name="embl-api-core_main" target="1.8" />
+      <module name="embl-api-core_test" target="1.8" />
+      <module name="embl-api-ff_main" target="1.8" />
+      <module name="embl-api-ff_test" target="1.8" />
+      <module name="embl-api-validator_main" target="1.8" />
+      <module name="embl-api-validator_test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

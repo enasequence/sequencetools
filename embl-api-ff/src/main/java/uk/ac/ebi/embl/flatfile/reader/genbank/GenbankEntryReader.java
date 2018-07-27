@@ -93,7 +93,7 @@ public class GenbankEntryReader extends EntryReader {
     protected boolean readFeature(LineReader lineReader,
     		Entry entry) throws IOException {
     	if (lineReader.getActiveTag().equals(GenbankTag.FEATURES_TAG) && !lineReader.isCurrentTag()) {
-    		append((new FeatureReader(lineReader, FileType.GENBANK)).read(entry));
+    		append((new FeatureReader(lineReader)).read(entry));
             Integer count = getBlockCounter().get(GenbankTag.FEATURES_TAG);
             getBlockCounter().put(GenbankTag.FEATURES_TAG, ++count);
             return true;

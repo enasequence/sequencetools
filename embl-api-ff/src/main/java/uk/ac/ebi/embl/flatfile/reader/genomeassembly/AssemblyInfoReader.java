@@ -47,7 +47,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 				if(numberOfColumns==1||numberOfColumns==2)
 				{
 					String field= StringUtils.deleteWhitespace(fields[0].toUpperCase());
-					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");			
+					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");
 					switch(field)
 					{
 						case "NAME":
@@ -110,7 +110,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 	public static boolean isInteger(String s) {
 		if(s==null)
 			return false;
-	    try { 
+	    try {
 	        Integer.parseInt(s); 
 	    } catch(NumberFormatException e) { 
 	        return false; 

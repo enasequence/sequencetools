@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import java.io.IOException;
 
+import uk.ac.ebi.embl.flatfile.reader.ReaderOptions;
 import uk.ac.ebi.embl.flatfile.reader.SequenceReader;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -47,6 +48,26 @@ public class EmblSequenceReaderTest extends EmblReaderTest {
 		assertEquals(335, 
 				entry.getSequence().getLength());
 	}
+
+    public void testSkipSequence() throws IOException {
+        initLineReader(
+                "     gutttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+                        "     cggtgtggga TACctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
+                        "     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
+                        "     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
+                        "     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
+                        "     tctccgtgaa tgtctatcat tcctacacag gaccc                                  335\n"
+        );
+        ReaderOptions rO = new ReaderOptions();
+        rO.setIgnoreSequence(true);
+        ValidationResult result = (new SequenceReader(lineReader.setReaderOptions(rO))).read(entry);
+        assertEquals(0, result.count(Severity.ERROR));
+        assertNull(entry.getSequence().getSequenceByte());
+
+		result = (new SequenceReader(lineReader.setReaderOptions(new ReaderOptions()))).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(entry.getSequence().getSequenceByte());
+    }
 
 	public void testRead_Origin() throws IOException {
 		initLineReader(

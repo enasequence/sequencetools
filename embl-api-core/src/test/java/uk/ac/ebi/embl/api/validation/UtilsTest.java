@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -300,5 +301,56 @@ public class UtilsTest {
 		feature1.setLocations(order1);
 		entry.addFeature(feature1);
 		assertTrue(Utils.shiftLocation(entry, beginN, removeall).size() == 1);
+	}
+
+	@Test
+	public void escapeASCIIHtmlEntities() {
+		//null
+		Assert.assertEquals(null, Utils.escapeASCIIHtmlEntities(null));
+		//string with multiple spaces
+		StringBuilder ip = new StringBuilder("   ");
+		Assert.assertEquals("   ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//string with single space
+		ip = new StringBuilder(" ");
+		Assert.assertEquals(" ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//empty string
+		ip = new StringBuilder("");
+		Assert.assertEquals("", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//Valid html entity name &amp;
+		ip = new StringBuilder("gene &amp; protein");
+		Assert.assertEquals("gene & protein", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//html entity name without ending ; &amp
+		ip = new StringBuilder("gene &amp protein");
+		Assert.assertEquals("gene &amp protein", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//valid html entity number &#45;
+		ip = new StringBuilder("gene &#45; protein");
+		Assert.assertEquals("gene - protein", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//html entity number without ending ; &#45
+		ip = new StringBuilder("gene &#45 protein");
+		Assert.assertEquals("gene &#45 protein", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//invalid html entity number followed by a valid
+		ip = new StringBuilder("gene &#45&#45; protein");
+		Assert.assertEquals("gene &#45- protein", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//invalid html entity name followed by a valid
+		ip = new StringBuilder("gene &gt&gt; protein &#45; organ");
+		Assert.assertEquals("gene &gt> protein - organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//multiple html entity number
+		ip = new StringBuilder("gene &#45; protein &#45; organ");
+		Assert.assertEquals("gene - protein - organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//multiple html entity number with html entity name
+		ip = new StringBuilder("gene &gt; protein &amp; &#45; organ");
+		Assert.assertEquals("gene > protein & - organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//without html entity
+		ip = new StringBuilder("gene & protein - organ");
+		Assert.assertEquals("gene & protein - organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//without html entity
+		ip = new StringBuilder("gene protein organ");
+		Assert.assertEquals("gene protein organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//non ascii html entity number
+		ip = new StringBuilder("gene &#127; protein - organ");
+		Assert.assertEquals("gene &#127; protein - organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+		//non ascii html entity name and number
+		ip = new StringBuilder("gene &#127; protein &Ccedil; organ");
+		Assert.assertEquals("gene &#127; protein &Ccedil; organ", Utils.escapeASCIIHtmlEntities(ip).toString());
 	}
 }

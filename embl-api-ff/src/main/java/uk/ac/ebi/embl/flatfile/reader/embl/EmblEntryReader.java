@@ -24,10 +24,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.flatfile.EmblTag;
-import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
-import uk.ac.ebi.embl.flatfile.reader.LineReader;
-import uk.ac.ebi.embl.flatfile.reader.SequenceReader;
+import uk.ac.ebi.embl.flatfile.reader.*;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 public class 
@@ -78,11 +75,9 @@ EmblEntryReader extends EntryReader
     EmblEntryReader( BufferedReader reader, 
                      Format         format, 
                      String         fileId,
-                     boolean ignoreParseError)
+					 ReaderOptions readerOptions)
     {
-
-		super(new EmblLineReader(reader, fileId).setIgnoreParseError(ignoreParseError));
-
+		super(new EmblLineReader(reader, fileId).setReaderOptions(readerOptions));
 		addBlockReaders(format);
 	}
 

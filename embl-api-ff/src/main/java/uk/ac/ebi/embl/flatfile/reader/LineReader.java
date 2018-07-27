@@ -44,20 +44,19 @@ public abstract class LineReader {
 	private String activeTag;
 	
 	private String firstLine;
-	
-	private boolean ignoreParseError=false;
 
-	public boolean isIgnoreParseError()
-	{
-		return ignoreParseError;
+	private ReaderOptions readerOptions;
+
+	public ReaderOptions getReaderOptions() {
+	    if(readerOptions == null)
+            readerOptions = new ReaderOptions();
+		return readerOptions;
 	}
 
-	public LineReader setIgnoreParseError(boolean ignoreParseError)
-	{
-		this.ignoreParseError = ignoreParseError;
+	public LineReader setReaderOptions(ReaderOptions readerOptions) {
+		this.readerOptions = readerOptions;
 		return this;
 	}
-
 
 	private LineReaderCache cache = new LineReaderCache();
 
@@ -361,7 +360,9 @@ public abstract class LineReader {
 			return false;
 		}
 
-		while (true) {
+		while (true) {//TODO: we can get the start and end offset here as well(have to compare start and end tags)
+			//TODO: keep start offset, when you find end offset, store both in entry and reset
+
 			nextLine = reader.readLine();
 			++nextLineNumber;
 			if (nextLine != null) {
