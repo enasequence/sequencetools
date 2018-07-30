@@ -71,6 +71,7 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
 		assertEquals(0, result.count(Severity.ERROR));
 		assertEquals(0, entry.getFeatures().size());
 
+		lineReader.readLine();
 		result = (new FeatureReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNotNull(entry.getFeatures());
