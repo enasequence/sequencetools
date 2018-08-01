@@ -41,7 +41,7 @@ public class UnlocalisedListChromosomeValidationCheck extends GenomeAssemblyVali
 
 		try
 		{
-			if (getEntryDAOUtils().isChromosomeValid(entry.getAnalysisId(),	entry.getChromosomeName()))
+			if (!getEntryDAOUtils().isChromosomeValid(entry.getAnalysisId(),	entry.getChromosomeName()))
 			{
 				reportError(entry.getOrigin(),MESSAGE_KEY_CHROMOSOME_VALID_ERROR,entry.getChromosomeName());
 			}
