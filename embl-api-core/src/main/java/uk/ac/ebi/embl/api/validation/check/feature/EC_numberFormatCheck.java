@@ -15,53 +15,37 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import java.util.List;
+import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-@Deprecated
-@Description("Invalid EC number : \"{0}\" "
-		+ " Non existent EC number : \"{0}\"  ")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
-public class EC_numberCheck extends FeatureValidationCheck
-{
-	private static final String EC_numberCheck_Warning_ID = "EC_numberCheck_1";
-	private static final String EC_numberCheck_Error_ID = "EC_numberCheck_2";
 
-		
-	public EC_numberCheck()
-	{
-	}
+@Description("Invalid EC-number format: {0}")
+public class EC_numberFormatCheck extends FeatureValidationCheck
+{
+	private static final String EC_numberFormatCheck_Error_ID = "EC_numberFormatCheck";
+	private static final Pattern N_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.[Nn]");
+	private static final Pattern HYPHEN_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.[-]");
+	private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.\\d+");
+
 	public ValidationResult check(Feature feature) throws ValidationEngineException
 	{
 		result = new ValidationResult();
-		
-		if (feature == null||getEntryDAOUtils()==null)
-		{
+		if(feature==null)
 			return result;
-		}
-		try
+		List<Qualifier> ecQualifiers=feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
+		if(ecQualifiers.size()==0)
+			return result;
+		for(Qualifier ecNumber :ecQualifiers)
 		{
-		 if(!SequenceEntryUtils.isQualifierAvailable(Qualifier.EC_NUMBER_QUALIFIER_NAME, feature))
-			 return result; 
-				
-		String ecNumberValue = SequenceEntryUtils.getQualifierValue(Qualifier.EC_NUMBER_QUALIFIER_NAME, feature);
-		String result=getEntryDAOUtils().isEcnumberValid(ecNumberValue);
-		
-		if(result==null)
-			reportError(feature.getOrigin(),EC_numberCheck_Error_ID , ecNumberValue);
-		if("N".equals(result))
-		    reportWarning(feature.getOrigin(), EC_numberCheck_Warning_ID,ecNumberValue);
-		
-		} catch(Exception e)
-		{
-			throw new ValidationEngineException(e);
+			String value= ecNumber.getValue();
+			if(!N_PATTERN.matcher(value).matches()&&!HYPHEN_PATTERN.matcher(value).matches()&&!DIGIT_PATTERN.matcher(value).matches())
+				reportError(feature.getOrigin(),EC_numberFormatCheck_Error_ID , value);
 		}
-		
+
 		return result;
 	}
 }
