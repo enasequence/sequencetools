@@ -15,9 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
@@ -27,15 +24,12 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class EC_numberFormatCheckTest
 {
 	
 	private Feature feature;
 	private EC_numberFormatCheck check;
-	private EntryDAOUtils entryDAOUtils;
 	
 	@Before
 	public void setUp() throws SQLException
@@ -81,7 +75,7 @@ public class EC_numberFormatCheckTest
 	public void testCheck_invalidEcnumber1() throws ValidationEngineException 
 	{
 		
-		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.-.9");
+		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "-.6.9.9");
 		ValidationResult result=check.check(feature);
 		assertTrue(!result.isValid());
 		assertEquals(1, result.count("EC_numberFormatCheck", Severity.ERROR));
@@ -111,6 +105,16 @@ public class EC_numberFormatCheckTest
 	public void testCheck_validEcnumber2() throws SQLException, ValidationEngineException
 	{
 		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.5");
+		ValidationResult result=check.check(feature);
+		assertTrue(result.isValid());
+		assertEquals(0, result.count("EC_numberFormatCheck", Severity.ERROR));
+		
+	}
+	
+	@Test
+	public void testCheck_validEcnumber3() throws SQLException, ValidationEngineException
+	{
+		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.-.-.-");
 		ValidationResult result=check.check(feature);
 		assertTrue(result.isValid());
 		assertEquals(0, result.count("EC_numberFormatCheck", Severity.ERROR));

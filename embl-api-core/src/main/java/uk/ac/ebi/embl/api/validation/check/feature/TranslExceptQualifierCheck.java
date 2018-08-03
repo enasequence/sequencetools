@@ -74,7 +74,7 @@ public class TranslExceptQualifierCheck extends FeatureValidationCheck
 						Long endPosition = featureLocation.getMaxPosition();
 						start = antiCodonLocation.getMinPosition();
 						end = antiCodonLocation.getMaxPosition();
-						Long anticodonLocationLength=antiCodonLocation.getLength();
+						Long transLocationLength=antiCodonLocation.getLength();
 						aminoAcid = translExceptQualifier.getAminoAcid();
 						String aminoAcidString=translExceptQualifier.getAminoAcidString();
 						if (aminoAcid == null)
@@ -104,7 +104,7 @@ public class TranslExceptQualifierCheck extends FeatureValidationCheck
 								reportError(translExceptQualifier.getOrigin(),
 										TRANSL_EXCEPT_SEGMENT_START_MESSAGE_ID, start);
 							}
-						if (anticodonLocationLength!=3)
+						if (transLocationLength!=3)
 							{
 							    if(!("TERM".equals(aminoAcid.getAbbreviation())))
 								reportError(translExceptQualifier.getOrigin(),

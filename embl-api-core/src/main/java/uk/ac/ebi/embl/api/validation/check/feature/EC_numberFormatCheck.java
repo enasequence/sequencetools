@@ -27,9 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 public class EC_numberFormatCheck extends FeatureValidationCheck
 {
 	private static final String EC_numberFormatCheck_Error_ID = "EC_numberFormatCheck";
-	private static final Pattern N_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.[Nn]");
-	private static final Pattern HYPHEN_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.[-]");
-	private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.\\d+");
+	private static final Pattern PATTERN = Pattern.compile("^\\d+\\.(((\\d+|-)\\.(\\d+|-)\\.(\\d+|-))|((\\d+)\\.(\\d+)\\.(\\d+|n)))$");
 
 	public ValidationResult check(Feature feature) throws ValidationEngineException
 	{
@@ -42,7 +40,7 @@ public class EC_numberFormatCheck extends FeatureValidationCheck
 		for(Qualifier ecNumber :ecQualifiers)
 		{
 			String value= ecNumber.getValue();
-			if(!N_PATTERN.matcher(value).matches()&&!HYPHEN_PATTERN.matcher(value).matches()&&!DIGIT_PATTERN.matcher(value).matches())
+			if(!PATTERN.matcher(value).matches())
 				reportError(feature.getOrigin(),EC_numberFormatCheck_Error_ID , value);
 		}
 
