@@ -64,6 +64,21 @@ public class FeatureReader extends FlatFileLineReader {
 			return;
 		}
 
+        if((Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && skipSource)
+                || (!Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && lineReader.getReaderOptions() != null && lineReader.getReaderOptions().isParseSourceOnly()))
+        {
+            while(true)
+            {
+                lineReader.readLine();
+                String nextLine = lineReader.getNextMaskedLine();
+
+                if(isFeature(nextLine))
+                {
+                    break;
+                }
+            }
+        }
+
 		while (true) {
 			Qualifier qualifier = readQualifier();
 			if (qualifier != null) {
@@ -163,22 +178,6 @@ public class FeatureReader extends FlatFileLineReader {
 			return null;
 		}
 		featureName=Utils.getValidFeatureName(featureName);
-
-		if((Feature.SOURCE_FEATURE_NAME.equals(featureName) && skipSource)
-				|| (!Feature.SOURCE_FEATURE_NAME.equals(featureName) && lineReader.getReaderOptions() != null && lineReader.getReaderOptions().isParseSourceOnly()))
-		{
-			while(true)
-			{
-				lineReader.readLine();
-				String nextLine = lineReader.getNextMaskedLine();
-
-				if(isFeature(nextLine))
-				{
-					break;
-				}
-			}
-			return null;
-		}
 
 		String locationString = line.substring(LOCATION_BEGIN_POS);
 		CompoundLocation<Location> location = readLocation(locationString);

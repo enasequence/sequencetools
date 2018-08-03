@@ -69,14 +69,18 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
 		}
 		assertNotNull(entry.getFeatures());
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(0, entry.getFeatures().size());
+		assertEquals(1, entry.getFeatures().size());
+        assertEquals("misc_RNA", entry.getFeatures().get(0).getName());
 
 		lineReader.readLine();
 		result = (new FeatureReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNotNull(entry.getFeatures());
-		assertEquals(1, entry.getFeatures().size());
-		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals(2, entry.getFeatures().size());
+        assertEquals("misc_RNA", entry.getFeatures().get(0).getName());
+        assertEquals(0, entry.getFeatures().get(0).getQualifiers().size());
+		assertEquals("source", entry.getFeatures().get(1).getName());
+        assertEquals(7, entry.getFeatures().get(1).getQualifiers().size());
 		assertEquals("genomic DNA", entry.getSequence().getMoleculeType());
 	}
 

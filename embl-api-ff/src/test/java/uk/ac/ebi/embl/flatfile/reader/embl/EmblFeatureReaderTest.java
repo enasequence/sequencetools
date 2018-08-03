@@ -49,6 +49,7 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
 				      "FT                   /note=\"ortholog of zebra finch tgu-mir-216b\"\n" +
 				      "FT                   /ncRNA_class=\"miRNA\"\n"+
 				      "FT   source          156 \n"+
+						"FT                   /chromosome=\"Chr1\"\n" +
 			          "FT                   /mol_type=\"mRNA\"");
 		ReaderOptions rO = new ReaderOptions();
 		rO.setParseSourceOnly(true);
@@ -60,20 +61,66 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
 			System.out.println(message.getMessage());
 		}
 		assertNotNull(entry.getFeatures());
-		assertEquals(0, entry.getFeatures().size());
+		assertEquals(1, entry.getFeatures().size());
+		assertEquals("ncRNA", entry.getFeatures().get(0).getName());
 
 		lineReader.readLine();
 		result = (new FeatureReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNotNull(entry.getFeatures());
-		assertEquals(1, entry.getFeatures().size());
-		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals(2, entry.getFeatures().size());
+		assertEquals("ncRNA", entry.getFeatures().get(0).getName());
+		assertEquals(0, entry.getFeatures().get(0).getQualifiers().size());
+
+		assertEquals("source", entry.getFeatures().get(1).getName());
+		assertEquals(1, entry.getFeatures().get(1).getQualifiers().size());
 		assertEquals("mRNA", entry.getSequence().getMoleculeType());
 	}
 
 	public void test1SkipSourceFeature() throws IOException {
 		initLineReader(
 				"FT   source          1..481\n" +
+						"FT                   /organism=\"Carrot red leaf virus associated RNA\"\n" +
+						"FT                   /chromosome=\"Chr1\"\n" +
+						"FT                   /mol_type=\"genomic DNA\"\n" +
+						"FT                   /db_xref=\"taxon:1425368\"\n" +
+						"FT   misc_feature    1..481\n" +
+						"FT                   /note=\"sequence contains ITS1, 5.8S rRNA gene and ITS2\"\n" +
+						"XX\n" +
+						"SQ   Sequence 481 BP; 102 A; 134 C; 117 G; 128 T; 0 other;\n" +
+						"     ttaccgagtt catgccctta cgggtagatc tcccaccctg tgttatcatt acctttgttg        60\n" +
+						"     ctttggcggg ccgccaggct ccggtcaggc tatcggcttc ggctggtacg cgcccgccag       120");
+
+		ValidationResult result = (new FeatureReader(lineReader, true)).read(entry);
+		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+		for (ValidationMessage<Origin> message : messages) {
+			System.out.println(message.getMessage());
+		}
+		assertNotNull(entry.getFeatures());
+		assertEquals(1, entry.getFeatures().size());
+		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals(0, entry.getFeatures().get(0).getQualifiers().size());
+
+		lineReader.readLine();
+		result = (new FeatureReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(entry.getFeatures());
+		assertEquals(2, entry.getFeatures().size());
+		Feature source = entry.getFeatures().get(0);
+		assertEquals("source", source.getName());
+		assertEquals(0, source.getQualifiers().size());
+		for(Feature feature: entry.getFeatures()) {
+			if(!feature.getName().equals("source")){
+				assertEquals("misc_feature", feature.getName());
+				assertEquals(1, feature.getQualifiers().size());
+			}
+		}
+		assertEquals(null, entry.getSequence().getMoleculeType());
+	}
+
+	public void testReadOnlySourceFeatureSkipNext() throws IOException {
+		initLineReader(
+					"FT   source          1..481\n" +
 						"FT                   /organism=\"Carrot red leaf virus associated RNA\"\n" +
 						"FT                   /chromosome=\"Chr1\"\n" +
 						"FT                   /mol_type=\"genomic DNA\"\n" +
@@ -95,48 +142,21 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
 		}
 		assertNotNull(entry.getFeatures());
 		assertEquals(1, entry.getFeatures().size());
-		assertEquals("source", entry.getFeatures().get(0).getName());
+		assertEquals(2, entry.getFeatures().get(0).getQualifiers().size());
+		assertEquals("Chr1",entry.getFeatures().get(0).getQualifiers().get(1).getValue());
 
 		lineReader.readLine();
 		result = (new FeatureReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNotNull(entry.getFeatures());
-		assertEquals(1, entry.getFeatures().size());
-		assertEquals("source", entry.getFeatures().get(0).getName());
-		assertEquals("genomic DNA", entry.getSequence().getMoleculeType());
-	}
-
-	public void testReadOnlySourceFeatureSkipNext() throws IOException {
-		initLineReader(
-					"FT   source          1..481\n" +
-						"FT                   /organism=\"Carrot red leaf virus associated RNA\"\n" +
-						"FT                   /chromosome=\"Chr1\"\n" +
-						"FT                   /mol_type=\"genomic DNA\"\n" +
-						"FT                   /db_xref=\"taxon:1425368\"\n" +
-						"FT   misc_feature    1..481\n" +
-						"FT                   /note=\"sequence contains ITS1, 5.8S rRNA gene and ITS2\"\n" +
-						"XX\n" +
-						"SQ   Sequence 481 BP; 102 A; 134 C; 117 G; 128 T; 0 other;\n" +
-						"     ttaccgagtt catgccctta cgggtagatc tcccaccctg tgttatcatt acctttgttg        60\n" +
-						"     ctttggcggg ccgccaggct ccggtcaggc tatcggcttc ggctggtacg cgcccgccag       120");
-		ReaderOptions rO = new ReaderOptions();
-		//rO.setParseSourceOnly(true);
-		lineReader.setReaderOptions(rO);
-
-		ValidationResult result = (new FeatureReader(lineReader, true)).read(entry);
-		Collection<ValidationMessage<Origin>> messages = result.getMessages();
-		for (ValidationMessage<Origin> message : messages) {
-			System.out.println(message.getMessage());
+		assertEquals(2, entry.getFeatures().size());
+		for(Feature feature: entry.getFeatures()) {
+			if(!feature.getName().equals("source")){
+				assertEquals("misc_feature", feature.getName());
+				assertEquals(0, feature.getQualifiers().size());
+			}
 		}
-		assertNotNull(entry.getFeatures());
-		assertEquals(0, entry.getFeatures().size());
 
-		lineReader.readLine();
-		result = (new FeatureReader(lineReader)).read(entry);
-		assertEquals(0, result.count(Severity.ERROR));
-		assertNotNull(entry.getFeatures());
-		assertEquals(1, entry.getFeatures().size());
-		assertEquals("misc_feature", entry.getFeatures().get(0).getName());
 	}
 
 	public void testRead_LocalSingleBase() throws IOException {
