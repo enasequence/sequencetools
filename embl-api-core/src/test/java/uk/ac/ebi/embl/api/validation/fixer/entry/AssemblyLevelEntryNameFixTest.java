@@ -36,6 +36,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AssemblyLevelEntryNameFixTest
@@ -62,15 +63,25 @@ public class AssemblyLevelEntryNameFixTest
 	{
 		assertTrue(check.check(null).isValid());
 	}
+	
+	@Test
+	public void testCheck_NoSeqNumber() throws ValidationEngineException, SQLException
+	{
+		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
+		check.setEmblEntryValidationPlanProperty(property);
+	    check.check(entry);
+        assertNull(entry.getSubmitterAccession());
+	}
 
 	@Test
 	public void testCheck_noEntryName() throws SQLException, ValidationEngineException
 	{
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
+		check.setAssemblySeqNumber(1);
 	    ValidationResult result=check.check(entry);
         assertNotNull(entry.getSubmitterAccession());
-        assertTrue(entry.getSubmitterAccession().startsWith("contig"));
+        assertEquals("contig1",entry.getSubmitterAccession());
 	    assertEquals(1,result.count("AssemblyLevelEntryNameFix", Severity.FIX));
 	}
 	@Test

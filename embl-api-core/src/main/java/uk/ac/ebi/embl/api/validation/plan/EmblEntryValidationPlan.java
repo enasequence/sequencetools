@@ -26,17 +26,19 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
+import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmblEntryValidationPlan extends ValidationPlan
 {
-
+	int assemblySeqnumber=1;
+    
 	public EmblEntryValidationPlan(EmblEntryValidationPlanProperty planProperty)
 	{
 		super(planProperty);
-
 	}
 
 	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException
@@ -97,6 +99,9 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			}
 			if (check instanceof EntryValidationCheck)
 			{
+				if(check instanceof AssemblyLevelEntryNameFix )
+					((AssemblyLevelEntryNameFix)check).setAssemblySeqNumber(assemblySeqnumber++);
+				
 				execute((EntryValidationCheck) check,entry);
 			}
 			if (check instanceof FeatureValidationCheck)

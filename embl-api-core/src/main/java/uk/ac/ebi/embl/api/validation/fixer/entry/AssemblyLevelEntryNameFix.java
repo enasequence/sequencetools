@@ -30,22 +30,26 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
 public class AssemblyLevelEntryNameFix extends EntryValidationCheck
 {
-	private static long globalSeqNum = System.currentTimeMillis();
-
 	private final String ENTRYNAME_FIX_ID = "AssemblyLevelEntryNameFix";
+	
+	private int assemblySeqNumber=0;
 
-
+	public void setAssemblySeqNumber(int assemblySeqNumber)
+	{
+		this.assemblySeqNumber = assemblySeqNumber;
+	}
+	
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 		result = new ValidationResult();
 
-		if (entry == null)
+		if (entry == null||assemblySeqNumber==0)
 		{
 			return result;
 		}
 
 		String seqType = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "contig" : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "scaffold" : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "chromosome":"entry";
-		String entryName= seqType+ globalSeqNum++;
+		String entryName= seqType+ assemblySeqNumber;
 		
 		if(entry.getSubmitterAccession()==null)
 		{
