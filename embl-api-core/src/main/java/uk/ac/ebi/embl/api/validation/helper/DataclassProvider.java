@@ -13,6 +13,8 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
 public class DataclassProvider {
@@ -158,5 +160,15 @@ public class DataclassProvider {
 
 		return compressedKeyword.toUpperCase();
 	}
-	
+
+	public static boolean isValidDataclass(String dataClass) {
+
+		for (DataRow row : GlobalDataSets.getDataSet(FileName.DATACLASS).getRows()) {
+			String validDataclass = row.getString(0);
+			if (validDataclass != null && validDataclass.trim().equalsIgnoreCase(dataClass))
+				return true;
+		}
+
+		return false;
+	}
 }
