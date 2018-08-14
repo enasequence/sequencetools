@@ -24,6 +24,7 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Boolean> isRemote=new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<FileType> fileType=new ValidationPlanProperty<FileType>(FileType.EMBL);
 	public final ValidationPlanProperty<String> analysis_id=new ValidationPlanProperty<String>(null);
+	public final ValidationPlanProperty<String> organism=new ValidationPlanProperty<String>(null);
 	public final ValidationPlanProperty<List<String>> locus_tag_prefixes = new ValidationPlanProperty<List<String>>(new ArrayList<String>());
 	public final ValidationPlanProperty<HashMap<String, Long>> contigEntryNames= new ValidationPlanProperty<HashMap<String, Long>>(new HashMap<String,Long>());
 	public final ValidationPlanProperty<Boolean> isFixCds = new ValidationPlanProperty<Boolean>(false);

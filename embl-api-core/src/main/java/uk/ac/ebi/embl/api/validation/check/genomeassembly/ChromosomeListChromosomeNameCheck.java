@@ -24,6 +24,8 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
 @Description("")
 public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationCheck<ChromosomeEntry>
@@ -41,10 +43,14 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 	{
           if(entry==null)
         	  return result;
+          TaxonHelper taxonHelper = new TaxonHelperImpl();
 	
 		if (null == entry.getChromosomeName())
 		{
-			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_CHROMOSOME_NAME_ERROR, entry.getObjectName());
+			 if(getEmblEntryValidationPlanProperty().organism.get()!=null&&taxonHelper.isChildOf(getEmblEntryValidationPlanProperty().organism.get(), "Viruses")&&taxonHelper.isChildOf(getEmblEntryValidationPlanProperty().organism.get(), "Bacteria"))
+					return result;
+			 else
+     			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_CHROMOSOME_NAME_ERROR, entry.getObjectName());
 			return result;
 		}
 		if(entry.getChromosomeName().length()>=33)

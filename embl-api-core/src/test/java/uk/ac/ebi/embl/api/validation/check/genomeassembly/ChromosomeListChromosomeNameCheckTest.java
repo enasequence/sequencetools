@@ -22,18 +22,23 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
 
 public class ChromosomeListChromosomeNameCheckTest
 {
 	private ChromosomeListChromosomeNameCheck check;
 
 	@Before
-	public void setUp()
+	public void setUp() throws SQLException
 	{
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
 		check = new ChromosomeListChromosomeNameCheck();
+		check.setEmblEntryValidationPlanProperty(new EmblEntryValidationPlanProperty());
 	}
 
 	@Test
