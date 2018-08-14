@@ -1,5 +1,8 @@
 # Sequencetools
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/590acad80798461da13b6f581c4365f6)](https://app.codacy.com/app/enasequence/sequencetools?utm_source=github.com&utm_medium=referral&utm_content=enasequence/sequencetools&utm_campaign=badger)
+
+
 SequenceTools is a set of Java tools and APIs for working with sequence data including EMBL-Bank and NCBI flat file parsers and writers and validation and fixing functionality. 
 
 # License
