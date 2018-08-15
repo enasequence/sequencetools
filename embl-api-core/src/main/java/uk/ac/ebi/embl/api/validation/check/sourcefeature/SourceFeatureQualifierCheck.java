@@ -112,7 +112,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			
            }
 		
-		if(focus>0||transgenic>0)
+		if(focus>0&&transgenic>0)
 		{//focus not allowed when /transgenic is used
 			reportError(entry.getOrigin(), FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID);
 		}
