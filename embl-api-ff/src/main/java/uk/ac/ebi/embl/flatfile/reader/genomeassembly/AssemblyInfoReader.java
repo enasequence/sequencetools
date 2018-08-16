@@ -90,6 +90,10 @@ public class AssemblyInfoReader extends GCSEntryReader
 						else
 						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],tpa);
 						break;
+					case "ASSEMBLY_TYPE" :
+						String assemblyType = fields[1];
+						assemblyInfoEntry.setAssemblyType(assemblyType);
+						break;
 					default :
 						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
 						break;

@@ -43,7 +43,16 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String moleculeType;
 	private String studyId;
 	private boolean tpa;
+	private String assemblyType;
   	
+	public String getAssemblyType() {
+		return assemblyType;
+	}
+
+	public void setAssemblyType(String assemblyType) {
+		this.assemblyType = assemblyType;
+	}
+
 	public boolean isTpa() 
 	{
 		return tpa;
