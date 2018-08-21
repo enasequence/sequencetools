@@ -1,6 +1,6 @@
  allprojects
  {
-    ext.version_base = '1.1.264'
+    ext.version_base = '1.1.265'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -62,7 +62,7 @@
           gradleVersion = '4.8'
       }
  
-/* if (gradle.startParameter.taskNames.contains("uploadArchives")) {
+ if (gradle.startParameter.taskNames.contains("uploadArchives")) {
         signing {
             required true
             sign configurations.archives
@@ -72,12 +72,12 @@
             // do nothing
         }
     }
- */   
+ 
  uploadArchives 
   {
     repositories 
      {
-     /*mavenDeployer 
+     mavenDeployer 
           {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
           }
@@ -126,9 +126,9 @@
                     }
                 }
             }
-        }*/
+        }
 //local repository	
-		 mavenDeployer 
+		/* mavenDeployer 
 		 {
 		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
 		   authentication(userName: artifactoryUsername, password: artifactoryPassword)
@@ -164,7 +164,7 @@
                     }
                 }
             }
-		 }
+		 }*/
 //local repository 
     }
   }
@@ -183,7 +183,7 @@ project(':embl-api-validator') {
     
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.264",
+                     "Implementation-Version":"1.1.265",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())
