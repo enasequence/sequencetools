@@ -47,10 +47,7 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 	
 		if (null == entry.getChromosomeName())
 		{
-			 if(getEmblEntryValidationPlanProperty().organism.get()!=null&&(taxonHelper.isChildOf(getEmblEntryValidationPlanProperty().organism.get(), "Viruses")||taxonHelper.isChildOf(getEmblEntryValidationPlanProperty().organism.get(), "Bacteria")))
-					return result;
-			 else
-     			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_CHROMOSOME_NAME_ERROR, entry.getObjectName());
+			reportError(entry.getOrigin(), MESSAGE_KEY_MISSING_CHROMOSOME_NAME_ERROR, entry.getObjectName());
 			return result;
 		}
 		if(entry.getChromosomeName().length()>=33)
