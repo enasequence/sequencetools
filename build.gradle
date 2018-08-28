@@ -1,6 +1,6 @@
  allprojects
  {
-    ext.version_base = '1.1.266'
+    ext.version_base = '1.1.267'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -62,7 +62,7 @@
           gradleVersion = '4.8'
       }
  
- if (gradle.startParameter.taskNames.contains("uploadArchives")) {
+ /*if (gradle.startParameter.taskNames.contains("uploadArchives")) {
         signing {
             required true
             sign configurations.archives
@@ -71,7 +71,7 @@
         task signArchives {
             // do nothing
         }
-    }
+    }*/
  
  uploadArchives 
   {
@@ -183,7 +183,7 @@ project(':embl-api-validator') {
     
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.266",
+                     "Implementation-Version":"1.1.267",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())

@@ -33,6 +33,7 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
 	}
 	
 	private FlatFileLineReader reader;
+	private static final Pattern localBasePattern = Pattern.compile("(\\d+)");
 	private static final Pattern simpleLocationPattern = Pattern.compile("(\\d+)(..)(\\d+)");
 
 	private static final Pattern PATTERN = Pattern.compile(
@@ -61,7 +62,7 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
 			return null;
 		}
 		
-		if (elementCount == 1 && simpleLocationPattern.matcher(element.get(0)).matches())
+		if (elementCount == 1 && (simpleLocationPattern.matcher(element.get(0)).matches()||localBasePattern.matcher(element.get(0)).matches()))
 		{
 			compoundLocation.setSimpleLocation(true);
 		}
