@@ -121,8 +121,13 @@ public class EmblEntryWriter extends EntryWriter {
 		if(new MasterCONWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
-		(new MasterTPAWriter(entry, wrapType)).write(writer);
-		
+
+		if((new MasterTPAWriter(entry, wrapType)).write(writer)) {
+			writer.write(SEPARATOR_LINE);
+		}
+
+		(new MasterTSAWriter(entry, wrapType)).write(writer);
+
 		if(!entry.isNonExpandedCON())
         new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
 		writer.write(TERMINATOR_LINE);
