@@ -33,7 +33,7 @@ EmblEntryReader extends EntryReader
 
   // private static List<String> AT_LEAST_ONCE_BLOCKS = Arrays.asList( EmblTag.RN_TAG, EmblTag.RT_TAG, EmblTag.RL_TAG );
 
-    private static List<String> EXACTLY_ONCE_BLOCKS  = Arrays.asList( EmblTag.ID_TAG, EmblTag.AC_TAG, EmblTag.DE_TAG );
+    private List<String> EXACTLY_ONCE_BLOCKS  = Arrays.asList( EmblTag.ID_TAG, EmblTag.AC_TAG, EmblTag.DE_TAG );
 
     private static List<String> NONE_OR_ONCE_BLOCKS  = Arrays.asList( EmblTag.ST_STAR_TAG, EmblTag.DT_TAG, EmblTag.KW_TAG, EmblTag.PR_TAG, EmblTag.SQ_TAG, EmblTag.AH_TAG, EmblTag.CO_TAG, EmblTag.MASTER_CON_TAG, EmblTag.MASTER_WGS_TAG,
 			EmblTag.MASTER_TPA_TAG);
@@ -186,6 +186,7 @@ EmblEntryReader extends EntryReader
 			addBlockReader(new RTReader(lineReader));
 		} else if( format.equals( Format.NCR_FORMAT ) )
         {
+		   EXACTLY_ONCE_BLOCKS  = Arrays.asList( EmblTag.ID_TAG, EmblTag.DE_TAG );
 			addBlockReader(new IDReader(lineReader,true));
 			addBlockReader(new PAReader(lineReader));
 			addBlockReader(new ACReader(lineReader));
