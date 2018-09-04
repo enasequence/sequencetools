@@ -44,15 +44,16 @@ public class IDWriter extends FlatFileWriter {
 		writer.write("; ");
 
 		writer.write("SV ");
-		if (entry.getSequence() != null) {
+		if(entry.isMaster()) {
+			if(entry.getPrimaryAccession() != null) {
+				writer.write(entry.getPrimaryAccession().substring(4, 6));
+			} else {
+				writer.write("XX");
+			}
+		} else if (entry.getSequence() != null) {
 			Integer version = entry.getSequence().getVersion();
 			if (version != null) {
-				if(entry.isMaster()) {
-					String ver = version.toString();
-					writer.write(ver.length() == 1 ? "0"+ver: ver);
-				} else {
 					writer.write(version.toString());
-				}
 			}
 			else {
 				writer.write("XXX");
