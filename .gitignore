@@ -1,6 +1,7 @@
 /bin/
 /.gradle/
 .settings
+.project
 build
 gradlew
 gradle.properties

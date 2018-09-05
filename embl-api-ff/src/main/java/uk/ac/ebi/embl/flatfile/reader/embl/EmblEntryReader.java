@@ -39,6 +39,7 @@ EmblEntryReader extends EntryReader
 			EmblTag.MASTER_TPA_TAG);
     private boolean skipSourceFeature=false;
 
+    private Format format = null;
 
     public enum 
     Format
@@ -50,6 +51,7 @@ EmblEntryReader extends EntryReader
         NCR_FORMAT,
         ASSEMBLY_FILE_FORMAT
 	};
+	
 
 //TODO: delete!
     public 
@@ -67,7 +69,8 @@ EmblEntryReader extends EntryReader
     {
 
 		super(new EmblLineReader(reader, fileId));
-
+		
+		this.format = format;
 		addBlockReaders(format);
 	}
     
@@ -78,6 +81,8 @@ EmblEntryReader extends EntryReader
 					 ReaderOptions readerOptions)
     {
 		super(new EmblLineReader(reader, fileId).setReaderOptions(readerOptions));
+		
+		this.format = format;
 		addBlockReaders(format);
 	}
 
@@ -293,9 +298,11 @@ EmblEntryReader extends EntryReader
 
         if( entry.getDataClass() != null )
         {
-            if( entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.CO_TAG ) == null )
+            if(  entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.CO_TAG ) == null )
             {
-                validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.11" ) );
+               if ( this.format != Format.CDS_FORMAT ) {
+                  validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.11" ) );
+               }
 			}
             if( !entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.SQ_TAG ) == null )
             {
