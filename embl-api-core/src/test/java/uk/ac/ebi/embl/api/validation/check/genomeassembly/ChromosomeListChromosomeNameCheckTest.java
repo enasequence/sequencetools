@@ -78,7 +78,28 @@ public class ChromosomeListChromosomeNameCheckTest
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("ChromosomeListNameRegexCheck", Severity.ERROR));
 	}
-	
+
+	@Test
+	public void testRejectInvalidChromosomeName() throws ValidationEngineException
+	{
+		for(String name :  new String[] { "Un", "chrUn", "random", "rnd" , "unknown"}) {
+			ChromosomeEntry entry = new ChromosomeEntry();
+			entry.setAnalysisId("ERZ00000");
+			entry.setObjectName("chromosome");
+			entry.setChromosomeName(name);
+			ValidationResult result = new ChromosomeListChromosomeNameCheck().check(entry);
+			assertEquals(1, result.count("ChromosomeListNameInvalidCheck", Severity.ERROR));
+		}
+
+		for(String name :  new String[] { "nameUn", "chrUnName", "somerandom", "rndChr" , "unknownchrom"}) {
+			ChromosomeEntry entry = new ChromosomeEntry();
+			entry.setAnalysisId("ERZ00000");
+			entry.setObjectName("chromosome");
+			entry.setChromosomeName(name);
+			ValidationResult result = new ChromosomeListChromosomeNameCheck().check(entry);
+			assertEquals(1, result.count("ChromosomeListNameInvalidCheck", Severity.ERROR));
+		}
+	}
 	@Test
 	public void testCheck_chromosomeNameFix() throws ValidationEngineException
 	{

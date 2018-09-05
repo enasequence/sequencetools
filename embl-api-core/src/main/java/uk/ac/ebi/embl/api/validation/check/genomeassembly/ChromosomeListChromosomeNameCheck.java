@@ -15,17 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Description("")
 public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationCheck<ChromosomeEntry>
@@ -35,15 +32,15 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 	private final String MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR = "ChromosomeListNameRegexCheck";
 	private final String MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR = "ChromosomeListNameInvalidCheck";
 	
-	Pattern ChromosomeNamePattern = Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
-	String[] invalidChromosomeNameArray = new String[] { "chr", "chrm", "chrom", "chromosome", "linkage group", "linkage-group", "plasmid"}; 
+	private Pattern ChromosomeNamePattern = Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
+	private String[] chromosomeNamesToFixArray = new String[] { "chr", "chrm", "chrom", "chromosome", "linkage group", "linkage-group", "plasmid"};
+	private String[] chromosomeNamesToRejectArray = new String[] { "Un", "chrUn", "random", "rnd" , "unknown"};
     	
 
 	public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException
 	{
           if(entry==null)
         	  return result;
-          TaxonHelper taxonHelper = new TaxonHelperImpl();
 	
 		if (null == entry.getChromosomeName())
 		{
@@ -58,10 +55,12 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 		{
 			reportError(entry.getOrigin(), MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR, entry.getObjectName());
 		}
-        Arrays.stream(invalidChromosomeNameArray).filter(x->StringUtils.containsIgnoreCase(entry.getChromosomeName(),x)).forEach(x->
-        {
-    	    entry.setChromosomeName(StringUtils.remove(entry.getChromosomeName(),entry.getChromosomeName().substring(StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x),StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x)+x.length())));
-        });
+		if(Arrays.stream(chromosomeNamesToRejectArray).anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(),x ))) {
+			reportError(entry.getOrigin(), MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR, entry.getChromosomeName());
+		}
+        Arrays.stream(chromosomeNamesToFixArray).filter(x->StringUtils.containsIgnoreCase(entry.getChromosomeName(),x)).forEach(x->
+    	    entry.setChromosomeName(StringUtils.remove(entry.getChromosomeName(),entry.getChromosomeName().substring(StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x),StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x)+x.length())))
+        );
         if(entry.getChromosomeName().trim().equalsIgnoreCase("Mitocondria"))
         {
            entry.setChromosomeName("MT");	
