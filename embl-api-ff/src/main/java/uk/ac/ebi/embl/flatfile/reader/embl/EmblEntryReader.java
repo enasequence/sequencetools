@@ -100,7 +100,8 @@ EmblEntryReader extends EntryReader
     private void 
     addBlockReaders( Format format )
     {
-	
+       getBlockCounter().clear();
+       getSkipTagCounter().clear();
         if( format.equals( Format.EMBL_FORMAT ) )
         {
 			addBlockReader(new IDReader(lineReader));
@@ -298,11 +299,9 @@ EmblEntryReader extends EntryReader
 
         if( entry.getDataClass() != null )
         {
-            if(  entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.CO_TAG ) == null )
+            if(  this.format != Format.CDS_FORMAT && entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.CO_TAG ) == null )
             {
-               if ( this.format != Format.CDS_FORMAT ) {
-                  validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.11" ) );
-               }
+               validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.11" ) );
 			}
             if( !entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.SQ_TAG ) == null )
             {
