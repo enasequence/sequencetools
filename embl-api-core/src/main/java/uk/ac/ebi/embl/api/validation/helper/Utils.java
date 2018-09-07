@@ -1029,12 +1029,12 @@ public class Utils {
 	}
 
 
-	public static ValidationResult validateAssemblySequenceCount(EmblEntryValidationPlanProperty property,long contigCount,long scaffoldCount,long chromosomeCount )
+	public static ValidationResult validateAssemblySequenceCount(boolean ignoreErrors,long contigCount,long scaffoldCount,long chromosomeCount )
 	{
 
 		ValidationResult result = new ValidationResult();
 
-		if(property.ignore_errors.get())
+		if(ignoreErrors)
 			return result;
 
 		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
