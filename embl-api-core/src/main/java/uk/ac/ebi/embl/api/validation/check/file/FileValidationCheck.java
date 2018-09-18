@@ -15,17 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
 
-import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public abstract class FileValidationCheck implements ValidationCheck<SubmissionFile> {
+public abstract class FileValidationCheck implements ValidationCheck<SubmissionFiles> {
 	
 	protected ValidationResult result;
     private boolean isPopulated;

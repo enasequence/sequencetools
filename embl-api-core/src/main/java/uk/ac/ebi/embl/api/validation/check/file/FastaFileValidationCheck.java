@@ -15,8 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.File;
-
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -24,11 +22,11 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 public class FastaFileValidationCheck extends FileValidationCheck
 {
 	@Override
-	public ValidationPlanResult check(SubmissionFile file) throws ValidationEngineException 
+	public ValidationResult check(SubmissionFiles files) throws ValidationEngineException
 	{
-        for(File submissionFile : file.FASTA.getFiles())
+        for(SubmissionFile submissionFile : files.getFiles(SubmissionFile.FileType.FASTA))
         {
-        	FastaFileReader reader = new FastaFileReader( new FastaLineReader( AssemblyFileUtils.getBufferedReader( file)));
+        	FastaFileReader reader = new FastaFileReader( new FastaLineReader( AssemblyFileUtils.getBufferedReader( submissionFile.getFile() )));
             ValidationResult parseResult = reader.read();
             if(!parseResult.isValid())
             {
