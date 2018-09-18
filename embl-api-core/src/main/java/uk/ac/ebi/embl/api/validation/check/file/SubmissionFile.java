@@ -1,25 +1,46 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-public enum SubmissionFile {
+public class SubmissionFile {
 
-	FASTA, FLATFILE;
-	List<File> files = new ArrayList<File>();
+	public enum FileType {
+		FASTA,
+		FLATFILE,
+		AGP,
+		CHROMOSOME_LIST,
+		UNLOCALISED_LIST
+	};
 
-	public void addFile(File file) {
-		files.add(file);
+	private final FileType fileType;
+	private final File file;
+	private final File fixedFile;
+
+	public SubmissionFile (FileType fileType, File file) {
+		this.fileType = fileType;
+		this.file = file;
+		this.fixedFile = null;
 	}
 
-	public List<File> getFiles() {
-		return files;
+	public SubmissionFile (FileType fileType, File file, File fixedFile) {
+		this.fileType = fileType;
+		this.file = file;
+		this.fixedFile = fixedFile;
 	}
 
-	public void clear() {
-		files.clear();
+	FileType getFileType() {
+		return fileType;
+	};
 
+	File getFile() {
+		return file;
+	};
+
+	File getFixedFile() {
+		return fixedFile;
+	};
+
+	boolean createFixedFile() {
+		return fixedFile != null;
 	}
-
 }
