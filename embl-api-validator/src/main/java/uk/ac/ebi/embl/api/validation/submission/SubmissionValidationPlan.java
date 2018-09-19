@@ -46,7 +46,7 @@ public class SubmissionValidationPlan
 	public ValidationPlanResult execute() throws ValidationEngineException {
 		
 		ValidationCheck check = null;
-		for(SubmissionFile submissionFile : submissionFiles.getFiles())
+		for(SubmissionFile submissionFile : options.submissionFiles.get().getFiles())
 			{
 					switch(submissionFile.getFileType())
 					{
