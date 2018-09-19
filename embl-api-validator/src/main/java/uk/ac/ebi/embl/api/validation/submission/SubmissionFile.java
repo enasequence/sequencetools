@@ -1,4 +1,4 @@
-package uk.ac.ebi.embl.api.validation.check.file;
+package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
 

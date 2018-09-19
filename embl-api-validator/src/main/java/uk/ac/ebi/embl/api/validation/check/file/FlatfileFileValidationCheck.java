@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
@@ -34,5 +36,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
         }
 		return null;
 	}
+    }
 	
 }

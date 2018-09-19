@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package uk.ac.ebi.embl.api.validation.plan;
+package uk.ac.ebi.embl.api.validation.submission;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -27,33 +27,28 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
+import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubmissionValidationPlan extends ValidationPlan
+public class SubmissionValidationPlan
 {
-	public SubmissionValidationPlan(EmblEntryValidationPlanProperty property) {
-		super(property);
-		// TODO Auto-generated constructor stub
+	SubmissionOptions options;
+	public SubmissionValidationPlan(SubmissionOptions options) {
+		this.options =options;
 	}
-
-	@Override
-	public ValidationPlanResult execute(Object target) throws ValidationEngineException {
+	public ValidationPlanResult execute() throws ValidationEngineException {
 		
-		ValidationCheck check =null;
-		if(target instanceof List)
-		{
-			for(Object o : (List)target)
+		ValidationCheck check = null;
+		for(SubmissionFile submissionFile : submissionFiles.getFiles())
 			{
-				if(o instanceof SubmissionFile)
-				{
-					switch((SubmissionFile)o)
+					switch(submissionFile.getFileType())
 					{
 					case FASTA :
 						 check = new FastaFileValidationCheck();
@@ -64,7 +59,7 @@ public class SubmissionValidationPlan extends ValidationPlan
 					}
 				}
 				
-				check.check(o);
+				check.check(submissionFile);
 			}
 		}
 		return null;

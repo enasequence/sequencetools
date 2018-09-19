@@ -9,7 +9,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package uk.ac.ebi.embl.api.validation.check.file;
+package uk.ac.ebi.embl.api.validation.submission;
 
 import java.util.ArrayList;
 import java.util.List;
