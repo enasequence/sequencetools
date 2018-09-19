@@ -28,19 +28,19 @@ public class SubmissionFile {
 		this.fixedFile = fixedFile;
 	}
 
-	FileType getFileType() {
+	public FileType getFileType() {
 		return fileType;
 	};
 
-	File getFile() {
+	public File getFile() {
 		return file;
 	};
 
-	File getFixedFile() {
+	public File getFixedFile() {
 		return fixedFile;
 	};
 
-	boolean createFixedFile() {
+	public boolean createFixedFile() {
 		return fixedFile != null;
 	}
 }

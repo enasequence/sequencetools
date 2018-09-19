@@ -21,110 +21,21 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
-public abstract class FileValidationCheck implements ValidationCheck<SubmissionFiles> {
+public abstract class FileValidationCheck {
 	
-	protected ValidationResult result;
-    private boolean isPopulated;
-    private EmblEntryValidationPlanProperty property;
-    private EntryDAOUtils entryDAOUtils;
-    private EraproDAOUtils eraproDAOUtils;
-
-    public FileValidationCheck() {
-		result = new ValidationResult();
+	private EmblEntryValidationPlanProperty property =new EmblEntryValidationPlanProperty();
+	
+	public FileValidationCheck(EmblEntryValidationPlanProperty property) {
+		this.property =property;
 	}
-
-  
-    public boolean isPopulated() {
-        return isPopulated;
-    }
-
-    public void setPopulated() {
-        //override to do any processing of data post-population
-        isPopulated = true;
-    }
-
-     /**
-	 * Creates an error validation message for the entry and adds it to 
-	 * the validation result. 
-	 * 
-	 * @param origin
-     * @param messageKey a message key
-     * @param params message parameters
-     */
-    protected ValidationMessage<Origin> reportError(Origin origin, String messageKey,
-                               Object... params) {
-        return reportMessage(Severity.ERROR, origin, messageKey, params);
-    }
-
-	/**
-	 * Creates a warning validation message for the entry and adds it to 
-	 * the validation result. 
-	 * 
-	 * @param origin
-     * @param messageKey a message key
-     * @param params message parameters
-     */
-    protected ValidationMessage<Origin> reportWarning(Origin origin, String messageKey,
-                                 Object... params) {
-        return reportMessage(Severity.WARNING, origin, messageKey, params);
-    }
-
-    /**
-	 * Creates a validation message for the entry and adds it to 
-	 * the validation result.
-	 * 
-	 * @param severity message severity
-     * @param origin
-     * @param messageKey a message key
-     * @param params message parameters
-     */
-    protected ValidationMessage<Origin> reportMessage(Severity severity, Origin origin,
-                                 String messageKey, Object... params) {
-        ValidationMessage<Origin> message = EntryValidations.createMessage(origin, severity, messageKey, params);
-        result.append(message);
-        return message;
-    }
-    
-    @Override
-	public void setEmblEntryValidationPlanProperty(
-			EmblEntryValidationPlanProperty property) throws SQLException
-	{
-		this.property=property;
-	}
-
-	@Override
-	public EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty()
-	{
+	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
+	
+	protected EmblEntryValidationPlanProperty getProperty() {
 		return property;
 	}
 
-	@Override
-	public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils)
-	{
-		this.entryDAOUtils=entryDAOUtils;
-		
-	}
-
-	@Override
-	public EntryDAOUtils getEntryDAOUtils()
-	{
-		// TODO Auto-generated method stub
-		return entryDAOUtils;
-	}
-	
-	@Override
-	public EraproDAOUtils getEraproDAOUtils()
-	{
-		// TODO Auto-generated method stub
-		return eraproDAOUtils;
-	}
-    
-	@Override
-	public void setEraproDAOUtils(EraproDAOUtils eraproDAOUtils)
-	{
-		this.eraproDAOUtils=eraproDAOUtils;
-		
-	}
 }

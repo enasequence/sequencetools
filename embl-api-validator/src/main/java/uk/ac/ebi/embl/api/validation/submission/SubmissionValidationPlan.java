@@ -26,10 +26,13 @@ import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
 import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 
 import java.io.File;
@@ -44,24 +47,23 @@ public class SubmissionValidationPlan
 		this.options =options;
 	}
 	public ValidationPlanResult execute() throws ValidationEngineException {
-		
-		ValidationCheck check = null;
+		options.init();
+		FileValidationCheck check = null;
 		for(SubmissionFile submissionFile : options.submissionFiles.get().getFiles())
 			{
 					switch(submissionFile.getFileType())
 					{
 					case FASTA :
-						 check = new FastaFileValidationCheck();
+						 check = new FastaFileValidationCheck(options.getEntryValidationPlanProperty());
 						 break;
 					case FLATFILE:
-						check = new FlatfileFileValidationCheck();
+						check = new FlatfileFileValidationCheck(options.getEntryValidationPlanProperty());
 						break;
 					}
-				}
-				
 				check.check(submissionFile);
 			}
-		}
+			
+		
 		return null;
 	}
 }

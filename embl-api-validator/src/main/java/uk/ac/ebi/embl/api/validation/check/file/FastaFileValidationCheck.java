@@ -20,6 +20,7 @@ import java.io.FileReader;
 
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
@@ -28,19 +29,26 @@ import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 @Description("")
 public class FastaFileValidationCheck extends FileValidationCheck
 {
-	@Override
-	public ValidationResult check(SubmissionFiles files) throws ValidationEngineException
+
+	public FastaFileValidationCheck(EmblEntryValidationPlanProperty property) 
 	{
-        for(SubmissionFile submissionFile : files.getFiles(SubmissionFile.FileType.FASTA))
-        {
+		super(property);
+	}	
+	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	{
+		boolean valid=true;
+		try {
 			BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));
-        	FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
-            ValidationResult parseResult = reader.read();
-            if(!parseResult.isValid())
-            {
-            	valid = false;
-            }
-		return null;
+			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
+			ValidationResult parseResult = reader.read();
+			if(!parseResult.isValid())
+			{
+				valid = false;
+			}
+		}catch (Exception e) {
+			throw new ValidationEngineException(e.getMessage());
+		}
+		return valid;
 	}
-	
+
 }

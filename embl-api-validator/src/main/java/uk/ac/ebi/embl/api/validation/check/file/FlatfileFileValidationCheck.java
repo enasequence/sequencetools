@@ -17,25 +17,30 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
 {
+
+	public FlatfileFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	{
+		super(property);
+	}	
 	@Override
-    public ValidationResult check(SubmissionFiles files) throws ValidationEngineException
-    {
-        for(SubmissionFile submissionFile : files.getFiles(SubmissionFile.FileType.FLATFILE))
-        {
-        	//Emblentryre reader = new FastaFileReader( new FastaLineReader( AssemblyFileUtils.getBufferedReader( submissionFile.getFile() )));
-            ValidationResult parseResult = reader.read();
-            if(!parseResult.isValid())
-            {
-            	valid = false;
-        }
-		return null;
+	public boolean check(SubmissionFile files) throws ValidationEngineException
+	{
+		boolean valid =true;
+		//Emblentryre reader = new FastaFileReader( new FastaLineReader( AssemblyFileUtils.getBufferedReader( submissionFile.getFile() )));
+		ValidationResult parseResult = reader.read();
+		if(!parseResult.isValid())
+		{
+			valid = false;
+		}
+
+		return valid;
 	}
-    }
 	
 }
