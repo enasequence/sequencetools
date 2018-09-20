@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
@@ -43,7 +42,7 @@ public class ACWriter extends FlatFileWriter {
         }
         block.append(";");
 
-        for (Text secondaryAccession : Utils.createRange(entry.getSecondaryAccessions())) {
+        for (Text secondaryAccession : entry.getSecondaryAccessions()) {
             block.append(" ");
             block.append(secondaryAccession.getText());
             block.append(";");

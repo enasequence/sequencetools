@@ -1086,7 +1086,7 @@ public class Utils {
 		}
 	}
 
-	public static List<Text> createRange(List<Text> secondaryAccessions) {
+	public static List<Text> createRange(List<Text> secondaryAccessions, Origin origin) {
 
 		List<Text> accessionRange = new ArrayList<>();
 
@@ -1103,7 +1103,7 @@ public class Utils {
 					if(firstAcc == null) {
 						accessionRange.add(prevAccn);
 					} else {
-						accessionRange.add(new Text( firstAcc+"-"+lastAccn) );
+						accessionRange.add(new Text( firstAcc+"-"+lastAccn, origin) );
 						firstAcc = null;
 						lastAccn = null;
 					}
@@ -1123,7 +1123,7 @@ public class Utils {
 						accessionRange.add(prevAccn);
 						prevAccn = currSecAccn;
 					} else {
-						accessionRange.add(new Text( firstAcc+"-"+lastAccn) );
+						accessionRange.add(new Text( firstAcc+"-"+lastAccn, origin) );
 						firstAcc = null;
 						lastAccn = null;
 						prevAccn = currSecAccn;
@@ -1133,7 +1133,7 @@ public class Utils {
 		}
 
 		if(null != prevAccn) {
-			accessionRange.add(firstAcc == null? prevAccn: new Text( firstAcc+"-"+lastAccn) );
+			accessionRange.add(firstAcc == null? prevAccn: new Text( firstAcc+"-"+lastAccn, origin) );
 		}
 
 		return accessionRange;

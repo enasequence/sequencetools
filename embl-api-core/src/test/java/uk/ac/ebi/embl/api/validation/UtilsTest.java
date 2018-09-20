@@ -363,32 +363,32 @@ public class UtilsTest {
 	public void testCreateRange() {
 
 		//only one
-		List<Text> outpout = Utils.createRange(getSecondaryAccnList("ARZ001"));
+		List<Text> outpout = Utils.createRange(getSecondaryAccnList("ARZ001"), null);
 		assertEquals(1, outpout.size());
 		assertEquals("ARZ001", outpout.get(0).getText());
 
 		//empty input
-		outpout = Utils.createRange(new ArrayList<>());
+		outpout = Utils.createRange(new ArrayList<>(), null);
 		assertEquals(0, outpout.size());
 
-		outpout = Utils.createRange(null);
+		outpout = Utils.createRange(null, null);
 		assertEquals(0, outpout.size());
 
 		//No ranges all single
-		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ002", "ARZ003","ARZ004","ARZ005","ARZ011"));
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
 		assertEquals(2, outpout.size());
 		assertEquals("ARZ001-ARZ005", outpout.get(0).getText());
 		assertEquals("ARZ011", outpout.get(1).getText());
 
 		//Singles and ranges combined
-		outpout = Utils.createRange(getSecondaryAccnList("ARZ001-ARZ007", "ARZ011","ARZ012","ARZ013-ARZ017"));
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001-ARZ007", "ARZ011","ARZ012","ARZ013-ARZ017"), null);
 		assertEquals(3, outpout.size());
 		assertEquals("ARZ001-ARZ007", outpout.get(0).getText());
 		assertEquals("ARZ011-ARZ012", outpout.get(1).getText());
 		assertEquals("ARZ013-ARZ017", outpout.get(2).getText());
 
 		//different sequence
-		outpout = Utils.createRange(getSecondaryAccnList("ARZ000", "ARZ001-ARZ007", "ARZ011","ARZ013", "ARZ019","CRX1"));
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ000", "ARZ001-ARZ007", "ARZ011","ARZ013", "ARZ019","CRX1"), null);
 		assertEquals(6, outpout.size());
 		assertEquals("ARZ000", outpout.get(0).getText());
 		assertEquals("ARZ001-ARZ007", outpout.get(1).getText());
@@ -398,7 +398,7 @@ public class UtilsTest {
 		assertEquals("CRX1", outpout.get(5).getText());
 
 		//"ARZ001", "ARZ0002"(ARZ0002 with an extra 0, should not form a range)
-		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"));
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
 		assertEquals(4, outpout.size());
 		assertEquals("ARZ001", outpout.get(0).getText());
 		assertEquals("ARZ0002", outpout.get(1).getText());
@@ -406,7 +406,7 @@ public class UtilsTest {
 		assertEquals("ARZ011", outpout.get(3).getText());
 
 		//"ARZ001","ARA001" numbers are contiguous but different prefix should not form range
-		outpout = Utils.createRange(getSecondaryAccnList("ARZ001","ARA002", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"));
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001","ARA002", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
 		assertEquals(5, outpout.size());
 		assertEquals("ARZ001", outpout.get(0).getText());
 		assertEquals("ARA002", outpout.get(1).getText());
