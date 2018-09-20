@@ -1090,12 +1090,25 @@ public class Utils {
 
 		List<Text> accessionRange = new ArrayList<>();
 
-		if(secondaryAccessions == null)
+		if(secondaryAccessions == null || secondaryAccessions.isEmpty())
 			return accessionRange;
 
 		Text prevAccn = null;
 		String firstAcc = null;
 		String lastAccn = null;
+
+		if(origin == null) {
+			origin = secondaryAccessions.get(0).getOrigin();
+			if(secondaryAccessions.size() > 1 && origin != null) {
+				if (origin instanceof FlatFileOrigin) {
+					FlatFileOrigin firstOrigin = (FlatFileOrigin) origin;
+					FlatFileOrigin lastOrigin = (FlatFileOrigin) secondaryAccessions.get(secondaryAccessions.size() - 1).getOrigin();
+					if(lastOrigin != null) {
+						origin = new FlatFileOrigin(firstOrigin.getFileId(), firstOrigin.getFirstLineNumber(), lastOrigin.getLastLineNumber());
+					}
+				}
+			}
+		}
 
 		for(Text currSecAccn: secondaryAccessions) {
 			if(currSecAccn.getText().contains("-") ) {
