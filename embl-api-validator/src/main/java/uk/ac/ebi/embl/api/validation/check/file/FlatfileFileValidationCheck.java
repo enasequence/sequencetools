@@ -15,11 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
@@ -30,16 +32,21 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		super(property);
 	}	
 	@Override
-	public boolean check(SubmissionFile files) throws ValidationEngineException
+	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid =true;
-		//Emblentryre reader = new FastaFileReader( new FastaLineReader( AssemblyFileUtils.getBufferedReader( submissionFile.getFile() )));
-		ValidationResult parseResult = reader.read();
+		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		{
+		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
+		ValidationResult parseResult = emblReader.read();
 		if(!parseResult.isValid())
 		{
 			valid = false;
 		}
-
+		}catch(Exception e)
+		{
+			throw new ValidationEngineException(e.getMessage());
+		}
 		return valid;
 	}
 	

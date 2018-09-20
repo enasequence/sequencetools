@@ -15,30 +15,16 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.ValidationCheck;
+import java.util.List;
+
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
-import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
-import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.ChromosmeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
 {
@@ -49,21 +35,46 @@ public class SubmissionValidationPlan
 	public ValidationPlanResult execute() throws ValidationEngineException {
 		options.init();
 		FileValidationCheck check = null;
-		for(SubmissionFile submissionFile : options.submissionFiles.get().getFiles())
-			{
-					switch(submissionFile.getFileType())
-					{
-					case FASTA :
-						 check = new FastaFileValidationCheck(options.getEntryValidationPlanProperty());
-						 break;
-					case FLATFILE:
-						check = new FlatfileFileValidationCheck(options.getEntryValidationPlanProperty());
-						break;
-					}
-				check.check(submissionFile);
-			}
-			
+		List<SubmissionFile> chromosomelistSubmissionFiles=options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST);
+		List<SubmissionFile> fastaSubmissionFiles=options.submissionFiles.get().getFiles(FileType.FASTA);
+		List<SubmissionFile> flatfileSubmissionFiles=options.submissionFiles.get().getFiles(FileType.FLATFILE);
+		List<SubmissionFile> agpSubmissionFiles=options.submissionFiles.get().getFiles(FileType.AGP);
+		List<SubmissionFile> unlocalisedSubmissionFiles=options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST);
 		
+		for(SubmissionFile chromosomeListFile:chromosomelistSubmissionFiles)
+		{
+			check = new ChromosmeListFileValidationCheck(options.getEntryValidationPlanProperty());
+			if(!check.check(chromosomeListFile))
+				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
+		}
+
+		for(SubmissionFile fastaFile:fastaSubmissionFiles)
+		{
+			check = new FastaFileValidationCheck(options.getEntryValidationPlanProperty());
+			if(!check.check(fastaFile))
+				throw new ValidationEngineException("fasta file validation failed: "+fastaFile.getFile().getName());
+		}
+
+		for(SubmissionFile flatfile:flatfileSubmissionFiles)
+		{
+			check = new FlatfileFileValidationCheck(options.getEntryValidationPlanProperty());
+			if(!check.check(flatfile))
+				throw new ValidationEngineException("flat file validation failed: "+flatfile.getFile().getName());
+		}
+
+		for(SubmissionFile agpFile:agpSubmissionFiles)
+		{
+			check = new AGPFileValidationCheck(options.getEntryValidationPlanProperty());
+			if(!check.check(agpFile))
+				throw new ValidationEngineException("AGP file validation failed: "+agpFile.getFile().getName());
+		}
+		
+		for(SubmissionFile unlocalisedListFile:unlocalisedSubmissionFiles)
+		{
+			check = new AGPFileValidationCheck(options.getEntryValidationPlanProperty());
+			if(!check.check(unlocalisedListFile))
+				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
+		}
 		return null;
 	}
 }

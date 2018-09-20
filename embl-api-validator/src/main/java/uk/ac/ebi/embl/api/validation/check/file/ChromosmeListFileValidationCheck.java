@@ -15,38 +15,50 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.util.List;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
-import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
+import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
 
 @Description("")
-public class FastaFileValidationCheck extends FileValidationCheck
+public class ChromosmeListFileValidationCheck extends FileValidationCheck
 {
 
-	public FastaFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public ChromosmeListFileValidationCheck(EmblEntryValidationPlanProperty property) 
 	{
 		super(property);
 	}	
+	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid=true;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		boolean valid =true;
+		try
 		{
-			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
-			ValidationResult parseResult = reader.read();
-			if(!parseResult.isValid())
-			{
-				valid = false;
-			}
-		}catch (Exception e) {
+		ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
+		ValidationResult parseResult = reader.read();
+		if(!parseResult.isValid())
+		{
+			valid = false;
+		}
+		List<ChromosomeEntry> chromsomeEntries = reader.getentries();
+		getChromosomeEntryNames(chromsomeEntries);
+		
+		}catch(Exception e)
+		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
 	}
-
+	
+	public void getChromosomeEntryNames(List<ChromosomeEntry> chromosomeEntries)
+	{
+		for(ChromosomeEntry chromosomeEntry: chromosomeEntries)
+		{
+			chromosomeNames.add(chromosomeEntry.getObjectName());
+		}
+	}
+	
 }

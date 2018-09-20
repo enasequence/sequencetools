@@ -15,25 +15,25 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.sql.SQLException;
-
+import java.util.ArrayList;
+import java.util.List;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 public abstract class FileValidationCheck {
-	
+
 	private EmblEntryValidationPlanProperty property =new EmblEntryValidationPlanProperty();
-	
+	protected List<String> chromosomeNames = new ArrayList<String>();
+
 	public FileValidationCheck(EmblEntryValidationPlanProperty property) {
 		this.property =property;
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
-	
+	public boolean check() throws ValidationEngineException {
+		return false;
+	}
+
 	protected EmblEntryValidationPlanProperty getProperty() {
 		return property;
 	}

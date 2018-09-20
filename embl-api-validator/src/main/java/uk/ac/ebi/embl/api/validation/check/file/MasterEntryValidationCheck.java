@@ -21,32 +21,33 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
-import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 @Description("")
-public class FastaFileValidationCheck extends FileValidationCheck
+public class MasterEntryValidationCheck extends FileValidationCheck
 {
 
-	public FastaFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public MasterEntryValidationCheck(EmblEntryValidationPlanProperty property) 
 	{
 		super(property);
 	}	
+	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid=true;
+		boolean valid =true;
 		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
 		{
-			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
-			ValidationResult parseResult = reader.read();
-			if(!parseResult.isValid())
-			{
-				valid = false;
-			}
-		}catch (Exception e) {
+		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
+		ValidationResult parseResult = emblReader.read();
+		if(!parseResult.isValid())
+		{
+			valid = false;
+		}
+		}catch(Exception e)
+		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
 	}
-
+	
 }
