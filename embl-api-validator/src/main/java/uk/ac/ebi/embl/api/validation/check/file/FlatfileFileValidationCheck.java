@@ -21,15 +21,16 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
 {
 
-	public FlatfileFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public FlatfileFileValidationCheck(SubmissionOptions options) 
 	{
-		super(property);
+		super(options);
 	}	
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException

@@ -16,38 +16,62 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+
+import javax.management.OperationsException;
+
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 @Description("")
 public class MasterEntryValidationCheck extends FileValidationCheck
 {
 
-	public MasterEntryValidationCheck(EmblEntryValidationPlanProperty property) 
+	public MasterEntryValidationCheck(SubmissionOptions options) 
 	{
-		super(property);
+		super(options);
 	}	
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	public boolean check() throws ValidationEngineException
 	{
 		boolean valid =true;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		Entry entry =null;
+		try
 		{
-		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
-		ValidationResult parseResult = emblReader.read();
-		if(!parseResult.isValid())
-		{
-			valid = false;
-		}
+		    if(!getOptions().isRemote)
+		    {
+		      EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
+		      entry=utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
+		    }
+		    else
+		    {
+		    	//webin-cli
+		    }
+		    getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+		    EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+		    ValidationPlanResult result=validationPlan.execute(entry);
+		    getReporter().writeToFile(getReportFile(new File(getOptions().reportDir.get()),getOptions().analysisId.get()+"_master" ),result);
+		    
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
+	}
+	@Override
+	public boolean check(SubmissionFile file) throws ValidationEngineException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

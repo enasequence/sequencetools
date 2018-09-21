@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 
@@ -28,9 +29,9 @@ import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 public class FastaFileValidationCheck extends FileValidationCheck
 {
 
-	public FastaFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public FastaFileValidationCheck(SubmissionOptions options) 
 	{
-		super(property);
+		super(options);
 	}	
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{

@@ -23,14 +23,15 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
-	public AGPFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public AGPFileValidationCheck(SubmissionOptions options) 
 	{
-		super(property);
+		super(options);
 	}	
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{

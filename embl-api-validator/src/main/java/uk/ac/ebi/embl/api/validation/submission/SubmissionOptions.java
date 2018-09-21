@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +21,13 @@ public class SubmissionOptions
 	public final Optional<String> analysisId = Optional.empty();
 	public final Optional<Connection> enproConnection = Optional.empty();
 	public final Optional<Connection> eraproConnection = Optional.empty();
+	public final Optional<String> reportDir = Optional.empty();
+	
 	public final boolean isDevMode = false;
 	public final boolean isFixMode = true;
 	public final boolean isFixCds = true;
 	public final boolean ignoreErrors = true;
+	public final boolean isRemote = false;
 
 	private final Optional<ValidationScope> validationScope = Optional.empty();
 
@@ -35,6 +39,11 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
 		if(!assemblyInfoEntry.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
+		if(!reportDir.isPresent())
+			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
+		if(!(new File(reportDir.get())).isDirectory())
+			throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
+
 		switch(context.get())
 		{
 		case sequence:
@@ -48,7 +57,7 @@ public class SubmissionOptions
 		}
 	}
 	
-	EmblEntryValidationPlanProperty getEntryValidationPlanProperty()
+	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()
 	{
 		EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
 		property.isFixMode.set(isFixMode);
@@ -61,6 +70,8 @@ public class SubmissionOptions
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
 		property.validationScope.set(validationScope.get());
+		property.isRemote.set(isRemote);
+
 		return property;
 	}
 }

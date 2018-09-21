@@ -19,15 +19,16 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.UnlocalisedListFileReader;
 
 @Description("")
 public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 {
 
-	public UnlocalisedListFileValidationCheck(EmblEntryValidationPlanProperty property) 
+	public UnlocalisedListFileValidationCheck(SubmissionOptions options) 
 	{
-		super(property);
+		super(options);
 	}	
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
