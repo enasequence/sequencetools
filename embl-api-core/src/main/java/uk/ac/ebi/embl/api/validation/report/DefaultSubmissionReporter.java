@@ -19,15 +19,16 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 
 public class DefaultSubmissionReporter implements SubmissionReporter {
 
     private final HashSet<Severity> reportSeverity;
-    
-    public DefaultSubmissionReporter(HashSet<Severity> reportSeverity) {
-         this.reportSeverity = reportSeverity;
+
+    DefaultSubmissionReporter(HashSet<Severity> reportSeverity) {
+        this.reportSeverity = reportSeverity;
     }
 
     // Create message
@@ -46,12 +47,11 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
         return validationMessage;
     }
 
-    // Write to file.
-    //
+    // Write to path.
 
     @Override
     public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
+    writeToFile(Path reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
                 writeMessage(s, validationMessage, targetOrigin);
@@ -60,7 +60,7 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     @Override
     public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult) {
+    writeToFile(Path reportFile, ValidationPlanResult validationPlanResult) {
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
                 writeMessage(s, validationMessage, null /* targetOrigin */);
@@ -69,7 +69,7 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     @Override
     public void
-    writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin )
+    writeToFile(Path reportFile, ValidationResult validationResult, String targetOrigin )
     {
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationResult.getMessages() ) {
@@ -79,7 +79,7 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     @Override
     public void
-    writeToFile(File reportFile, ValidationResult validationResult )
+    writeToFile(Path reportFile, ValidationResult validationResult )
     {
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationResult.getMessages() ) {
@@ -89,23 +89,69 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     @Override
     public void
-    writeToFile(File reportFile, ValidationMessage validationMessage )
+    writeToFile(Path reportFile, ValidationMessage validationMessage )
     {
         writeMessages(reportFile, (s) -> writeMessage(s, validationMessage));
     }
 
     @Override
     public void
-    writeToFile(File reportFile, Severity severity, String message, Origin origin )
+    writeToFile(Path reportFile, Severity severity, String message, Origin origin )
     {
         writeMessages(reportFile, (s) -> writeMessage(s, createValidationMessage(severity, message, origin)));
     }
 
     @Override
     public void
-    writeToFile(File reportFile, Severity severity, String message )
+    writeToFile(Path reportFile, Severity severity, String message )
     {
         writeMessages(reportFile, (s) -> writeMessage(s, createValidationMessage(severity, message, null /* origin */)));
+    }
+
+
+    // Write to file.
+    //
+
+    @Override
+    public void
+    writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
+        writeToFile(reportFile.toPath(), validationPlanResult, targetOrigin);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, ValidationPlanResult validationPlanResult) {
+        writeToFile(reportFile.toPath(), validationPlanResult);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin ) {
+        writeToFile(reportFile.toPath(), validationResult, targetOrigin);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, ValidationResult validationResult ) {
+        writeToFile(reportFile.toPath(), validationResult);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, ValidationMessage validationMessage ) {
+        writeToFile(reportFile.toPath(), validationMessage);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, Severity severity, String message, Origin origin ) {
+        writeToFile(reportFile.toPath(), severity, message, origin);
+    }
+
+    @Override
+    public void
+    writeToFile(File reportFile, Severity severity, String message ) {
+        writeToFile(reportFile.toPath(), severity, message);
     }
 
     // Write messages
@@ -116,11 +162,11 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     }
 
     private void
-    writeMessages(File reportFile, WriteCallback callback) {
+    writeMessages(Path reportFile, WriteCallback callback) {
         OutputStream strm = System.out;
         if (reportFile != null) {
             try {
-                strm = Files.newOutputStream(reportFile.toPath(),
+                strm = Files.newOutputStream(reportFile,
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
             } catch (IOException e) {
                 //

@@ -37,7 +37,7 @@ public class DefaultSubmissionReporterTest {
 
     @Test
     public void
-    testWriteToReport_String_WithAndWithoutOrigin() throws Exception
+    testWriteToReport_String_WithAndWithoutOrigin_File() throws Exception
     {
         DefaultSubmissionReporter reporter = createReporter();
 
@@ -68,7 +68,7 @@ public class DefaultSubmissionReporterTest {
 
     @Test
     public void
-    testWriteToReport_ValidationMessage_WithAndWithoutOrigin() throws Exception
+    testWriteToReport_ValidationMessage_WithAndWithoutOrigin_File() throws Exception
     {
         DefaultSubmissionReporter reporter = createReporter();
 
@@ -99,7 +99,7 @@ public class DefaultSubmissionReporterTest {
 
     @Test
     public void
-    testWriteToReport_ValidationResult_WithAndWithoutTargetOrigin() throws Exception
+    testWriteToReport_ValidationResult_WithAndWithoutTargetOrigin_File() throws Exception
     {
         DefaultSubmissionReporter reporter = createReporter();
 
@@ -137,7 +137,7 @@ public class DefaultSubmissionReporterTest {
 
     @Test
     public void
-    testWriteToReport_ValidationPlanResult_WithAndWithoutTargetOrigin() throws Exception
+    testWriteToReport_ValidationPlanResult_WithAndWithoutTargetOrigin_File() throws Exception
     {
         DefaultSubmissionReporter reporter = createReporter();
 
@@ -179,4 +179,159 @@ public class DefaultSubmissionReporterTest {
         Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1 [ORIGIN2]"));
         Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2 [ORIGIN2]"));
     }
+
+
+
+
+
+
+
+    /////////
+
+
+    @Test
+    public void
+    testWriteToReport_String_WithAndWithoutOrigin_Path() throws Exception
+    {
+        DefaultSubmissionReporter reporter = createReporter();
+
+        Path reportFile = createTempFile();
+
+        reporter.writeToFile(reportFile, Severity.ERROR, "MESSAGE1" );
+        reporter.writeToFile(reportFile, Severity.INFO, "MESSAGE2" );
+
+        List<String> lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2"));
+
+        // With origin.
+
+        Origin origin = new DefaultOrigin("ORIGIN2");
+
+        reportFile = createTempFile();
+
+        reporter.writeToFile(reportFile, Severity.ERROR, "MESSAGE1", origin );
+        reporter.writeToFile(reportFile, Severity.INFO, "MESSAGE2", origin );
+
+        lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1 [ORIGIN2]"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2 [ORIGIN2]"));
+    }
+
+    @Test
+    public void
+    testWriteToReport_ValidationMessage_WithAndWithoutOrigin_Path() throws Exception
+    {
+        DefaultSubmissionReporter reporter = createReporter();
+
+        Path reportFile = createTempFile();
+
+        reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+
+        List<String> lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2"));
+
+        // With origin.
+
+        Origin origin = new DefaultOrigin("ORIGIN2");
+
+        reportFile = createTempFile();
+
+        reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.ERROR, "MESSAGE1", origin));
+        reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.INFO, "MESSAGE2", origin));
+
+        lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1 [ORIGIN2]"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2 [ORIGIN2]"));
+    }
+
+    @Test
+    public void
+    testWriteToReport_ValidationResult_WithAndWithoutTargetOrigin_Path() throws Exception
+    {
+        DefaultSubmissionReporter reporter = createReporter();
+
+        Path reportFile = createTempFile();
+
+        ValidationResult result = new ValidationResult();
+        result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+
+        reporter.writeToFile(reportFile, result);
+
+        List<String> lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2"));
+
+        // With target origin.
+
+        Origin origin = new DefaultOrigin("ORIGIN2");
+
+        reportFile = createTempFile();
+
+        result = new ValidationResult();
+        result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+
+        reporter.writeToFile(reportFile, result, "ORIGIN2");
+
+        lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1 [ORIGIN2]"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2 [ORIGIN2]"));
+    }
+
+
+    @Test
+    public void
+    testWriteToReport_ValidationPlanResult_WithAndWithoutTargetOrigin_Path() throws Exception
+    {
+        DefaultSubmissionReporter reporter = createReporter();
+
+        Path reportFile = createTempFile();
+
+        ValidationPlanResult planResult = new ValidationPlanResult();
+        ValidationResult result1 = new ValidationResult();
+        ValidationResult result2 = new ValidationResult();
+        result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+        planResult.append(result1);
+        planResult.append(result2);
+
+        reporter.writeToFile(reportFile, planResult);
+
+        List<String> lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2"));
+
+        // With target origin.
+
+        Origin origin = new DefaultOrigin("ORIGIN2");
+
+        reportFile = createTempFile();
+
+        planResult = new ValidationPlanResult();
+        result1 = new ValidationResult();
+        result2 = new ValidationResult();
+        result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+        planResult.append(result1);
+        planResult.append(result2);
+
+        reporter.writeToFile(reportFile, planResult, "ORIGIN2");
+
+        lines = Files.readAllLines(reportFile);
+        Assert.assertEquals(2, lines.size());
+        Assert.assertTrue(lines.get(0).endsWith("ERROR: MESSAGE1 [ORIGIN2]"));
+        Assert.assertTrue(lines.get(1).endsWith("INFO: MESSAGE2 [ORIGIN2]"));
+    }
+
 }
