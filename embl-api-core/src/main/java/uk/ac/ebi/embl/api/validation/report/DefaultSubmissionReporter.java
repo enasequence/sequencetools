@@ -27,7 +27,7 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     private final HashSet<Severity> reportSeverity;
 
-    DefaultSubmissionReporter(HashSet<Severity> reportSeverity) {
+    public DefaultSubmissionReporter(HashSet<Severity> reportSeverity) {
         this.reportSeverity = reportSeverity;
     }
 
