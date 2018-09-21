@@ -15,30 +15,38 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import uk.ac.ebi.embl.agp.reader.AGPFileReader;
+import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public abstract class FileValidationCheck {
 
 	private SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
-	protected List<String> chromosomeNames = new ArrayList<String>();
-	protected List<String> contigs = new ArrayList<String>();
-	protected List<String> scaffolds = new ArrayList<String>();
-	protected List<String> agpEntryNames = new ArrayList<String>();
-    protected HashMap<String,AgpRow> contigRangeMap= new HashMap<String,AgpRow>();
+	protected List<String> chromosomeNames = null;
+	protected List<String> contigs =null;
+	protected List<String> scaffolds =null;
+	protected List<String> agpEntryNames =null;
+	protected HashMap<String,AgpRow> contigRangeMap=null;
+	ArrayList<String> agpEntrynames = null;
+
 
 
 	public FileValidationCheck(SubmissionOptions options) {
@@ -47,7 +55,8 @@ public abstract class FileValidationCheck {
 		contigs = new ArrayList<String>();
 		scaffolds = new ArrayList<String>();
 		agpEntryNames = new ArrayList<String>();
-	    contigRangeMap= new HashMap<String,AgpRow>();
+		contigRangeMap= new HashMap<String,AgpRow>();
+		agpEntrynames=new ArrayList<String>();
 
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
@@ -58,7 +67,7 @@ public abstract class FileValidationCheck {
 	protected SubmissionOptions getOptions() {
 		return options;
 	}
-	
+
 	protected AnalysisType getAnalysisType()
 	{
 		switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
@@ -69,12 +78,12 @@ public abstract class FileValidationCheck {
 		case ASSEMBLY_CONTIG:
 		case ASSEMBLY_MASTER:
 		case ASSEMBLY_SCAFFOLD:
-			 return AnalysisType.SEQUENCE_ASSEMBLY;
+			return AnalysisType.SEQUENCE_ASSEMBLY;
 		default :
 			return null;
 		}
 	}
-	
+
 	public SubmissionReporter getReporter()
 	{
 		HashSet<Severity> severity = new HashSet<Severity>();
@@ -83,11 +92,48 @@ public abstract class FileValidationCheck {
 			return new DefaultSubmissionReporter(severity);
 		return reporter;
 	}
-	
-	 
+
+
 	public  File getReportFile(File reportDir, String fileName) throws ValidationEngineException
 	{
-	      return new File( reportDir, fileName + REPORT_FILE_SUFFIX );
+		return new File( reportDir, fileName + REPORT_FILE_SUFFIX );
+	}
+
+	public void readAGPfiles() throws ValidationEngineException
+	{
+
+		boolean valid = true;
+		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP) ) 
+		{
+			try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+			{
+				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
+
+				ValidationResult vr = reader.read();
+				int i=1;
+
+				while(reader.isEntry() )
+				{
+					agpEntrynames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
+
+					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
+					{
+						i++;
+						if(!agpRow.isGap())
+						{
+							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
+						}
+					}
+					vr = reader.read();
+				}
+
+			}catch(Exception e)
+			{
+				throw new ValidationEngineException(e.getMessage());
+			}
+
+		}
+
 	}
 
 }
