@@ -16,10 +16,14 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.util.List;
+import java.util.stream.Collectors;
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
@@ -40,9 +44,23 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		{
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
+			EmblEntryValidationPlan validationPlan =new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			if(!parseResult.isValid())
 			{
 				valid = false;
+				getReporter().writeToFile(getReportFile(new File(getOptions().reportDir.get()), submissionFile.getFile().getName()), parseResult);
+			}
+			while(reader.isEntry())
+			{
+				Entry entry=reader.getEntry();
+				List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
+            	for(String contigKey:contigKeys)
+            	{
+            		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
+            	}
+				ValidationPlanResult result=validationPlan.execute(entry);
+				getReporter().writeToFile(getReportFile(new File(getOptions().reportDir.get()), submissionFile.getFile().getName()), result);
+				reader.read();
 			}
 		}catch (Exception e) {
 			throw new ValidationEngineException(e.getMessage());

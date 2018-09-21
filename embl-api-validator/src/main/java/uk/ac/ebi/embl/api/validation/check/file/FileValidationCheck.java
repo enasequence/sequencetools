@@ -17,14 +17,14 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import uk.ac.ebi.embl.api.contant.AnalysisType;
+import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
-import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporterTest;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -32,11 +32,23 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 public abstract class FileValidationCheck {
 
 	private SubmissionOptions options =null;
-	protected List<String> chromosomeNames = new ArrayList<String>();
 	protected SubmissionReporter reporter=null;
+	private static final String REPORT_FILE_SUFFIX = ".report";
+	protected List<String> chromosomeNames = new ArrayList<String>();
+	protected List<String> contigs = new ArrayList<String>();
+	protected List<String> scaffolds = new ArrayList<String>();
+	protected List<String> agpEntryNames = new ArrayList<String>();
+    protected HashMap<String,AgpRow> contigRangeMap= new HashMap<String,AgpRow>();
+
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
+		chromosomeNames = new ArrayList<String>();
+		contigs = new ArrayList<String>();
+		scaffolds = new ArrayList<String>();
+		agpEntryNames = new ArrayList<String>();
+	    contigRangeMap= new HashMap<String,AgpRow>();
+
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
 	public boolean check() throws ValidationEngineException {
@@ -72,7 +84,6 @@ public abstract class FileValidationCheck {
 		return reporter;
 	}
 	
-	private static final String REPORT_FILE_SUFFIX = ".report";
 	 
 	public  File getReportFile(File reportDir, String fileName) throws ValidationEngineException
 	{

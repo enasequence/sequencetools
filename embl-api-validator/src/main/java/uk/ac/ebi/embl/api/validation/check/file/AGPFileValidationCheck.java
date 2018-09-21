@@ -17,8 +17,14 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.ByteBuffer;
+
+import org.apache.commons.lang3.StringUtils;
+
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
+import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
@@ -49,5 +55,37 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		}
 		return valid;
 	}
+	
+	public void constructAGPSequence(Entry entry,ValidationResult result,String fileName) throws ValidationEngineException
+    {
+		try
+		{
+ 		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
+ 
+         for(AgpRow agpRow: entry.getSequence().getSortedAGPRows())
+         {
+         	i++;
+           	if(!agpRow.isGap())
+         	{
+           		if(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i)==null||contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence()==null)
+           		{
+           			result.append(new ValidationMessage<>( Severity.ERROR, invalidComponentIdError,agpRow.getComponent_id()));
+           			AssemblyReporter.logMessages(fileName, result);           			
+           		}
+           		else
+           		{
+           			sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
+           		}
+         	}
+           	else
+           		sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
+         }
+         entry.getSequence().setSequence(sequenceBuffer);
+         String v = new String(sequenceBuffer.array());
+		}catch(Exception e)
+		{
+			throw new ValidationEngineException(e.getMessage());
+		}
+    }
 
 }
