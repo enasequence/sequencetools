@@ -18,6 +18,8 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
@@ -94,9 +97,9 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  File getReportFile(File reportDir, String fileName) throws ValidationEngineException
+	public  Path getReportFile(String reportDir, String fileName) throws ValidationEngineException
 	{
-		return new File( reportDir, fileName + REPORT_FILE_SUFFIX );
+		return Paths.get(reportDir, fileName + REPORT_FILE_SUFFIX );
 	}
 
 	public void readAGPfiles() throws ValidationEngineException
@@ -134,6 +137,25 @@ public abstract class FileValidationCheck {
 
 		}
 
+	}
+	
+	protected ValidationScope getValidationScope(String entryName)
+	{
+		if(options.context.get()==Context.genome)
+		if(chromosomeNames.contains(entryName.toUpperCase()))
+		{
+			return ValidationScope.ASSEMBLY_CHROMOSOME;
+		}
+		if(agpEntrynames.contains(entryName.toUpperCase()))
+		{
+		  	return ValidationScope.ASSEMBLY_SCAFFOLD;
+		}
+		else
+		{
+			return ValidationScope.ASSEMBLY_CONTIG;
+		}
+			
+		
 	}
 
 }

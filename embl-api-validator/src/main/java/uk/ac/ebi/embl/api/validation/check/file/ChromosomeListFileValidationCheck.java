@@ -19,18 +19,19 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
 
 @Description("")
-public class ChromosmeListFileValidationCheck extends FileValidationCheck
+public class ChromosomeListFileValidationCheck extends FileValidationCheck
 {
 
-	public ChromosmeListFileValidationCheck(SubmissionOptions options) 
-	{
+	public ChromosomeListFileValidationCheck(SubmissionOptions options) {
 		super(options);
-	}	
+	}
+	
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
@@ -38,27 +39,33 @@ public class ChromosmeListFileValidationCheck extends FileValidationCheck
 		try
 		{
 		ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
+
 		ValidationResult parseResult = reader.read();
 		if(!parseResult.isValid())
 		{
 			valid = false;
+			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 		}
-		List<ChromosomeEntry> chromsomeEntries = reader.getentries();
-		getChromosomeEntryNames(chromsomeEntries);
-		
+		getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
+		GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
+
+		List<ChromosomeEntry> chromosomeEntries = reader.getentries();
+		for(ChromosomeEntry entry : chromosomeEntries)
+		{
+			ValidationPlanResult result=plan.execute(entry);
+			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
+			if(!result.isValid())
+				valid=false;
+			if(entry.getObjectName()!=null)
+			chromosomeNames.add(entry.getObjectName().toUpperCase());
+
+		}
+            		
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
-	}
-	
-	public void getChromosomeEntryNames(List<ChromosomeEntry> chromosomeEntries)
-	{
-		for(ChromosomeEntry chromosomeEntry: chromosomeEntries)
-		{
-			chromosomeNames.add(chromosomeEntry.getObjectName());
-		}
 	}
 	
 }

@@ -18,16 +18,13 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
-
 import org.apache.commons.lang3.StringUtils;
-
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -47,9 +44,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
 			if(!parseResult.isValid())
-			{
-				valid = false;
+			{	valid = false;
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 			}
+			
 		}catch (Exception e) {
 			throw new ValidationEngineException(e.getMessage());
 		}
@@ -58,6 +56,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	
 	public void constructAGPSequence(Entry entry,ValidationResult result,String fileName) throws ValidationEngineException
     {
+		int i=0;
 		try
 		{
  		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
@@ -69,8 +68,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
          	{
            		if(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i)==null||contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence()==null)
            		{
-           			result.append(new ValidationMessage<>( Severity.ERROR, invalidComponentIdError,agpRow.getComponent_id()));
-           			AssemblyReporter.logMessages(fileName, result);           			
+           		  
            		}
            		else
            		{

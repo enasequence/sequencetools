@@ -44,11 +44,11 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		{
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
-			EmblEntryValidationPlan validationPlan =new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+			EmblEntryValidationPlan validationPlan =null;
 			if(!parseResult.isValid())
 			{
 				valid = false;
-				getReporter().writeToFile(getReportFile(new File(getOptions().reportDir.get()), submissionFile.getFile().getName()), parseResult);
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 			}
 			while(reader.isEntry())
 			{
@@ -58,14 +58,16 @@ public class FastaFileValidationCheck extends FileValidationCheck
             	{
             		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
             	}
+            	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
+            	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				ValidationPlanResult result=validationPlan.execute(entry);
-				getReporter().writeToFile(getReportFile(new File(getOptions().reportDir.get()), submissionFile.getFile().getName()), result);
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
 				reader.read();
 			}
 		}catch (Exception e) {
 			throw new ValidationEngineException(e.getMessage());
 		}
-		return valid;
+		return valid;	
 	}
 
 }

@@ -109,51 +109,6 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     }
 
 
-    // Write to file.
-    //
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
-        writeToFile(reportFile.toPath(), validationPlanResult, targetOrigin);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult) {
-        writeToFile(reportFile.toPath(), validationPlanResult);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin ) {
-        writeToFile(reportFile.toPath(), validationResult, targetOrigin);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationResult validationResult ) {
-        writeToFile(reportFile.toPath(), validationResult);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationMessage validationMessage ) {
-        writeToFile(reportFile.toPath(), validationMessage);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, Severity severity, String message, Origin origin ) {
-        writeToFile(reportFile.toPath(), severity, message, origin);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, Severity severity, String message ) {
-        writeToFile(reportFile.toPath(), severity, message);
-    }
-
     // Write messages
     //
 

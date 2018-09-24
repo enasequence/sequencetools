@@ -15,9 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.util.List;
+
+import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.UnlocalisedListFileReader;
@@ -41,6 +45,15 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		if(!parseResult.isValid())
 		{
 			valid = false;
+			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+		}
+		getOptions().getEntryValidationPlanProperty().fileType.set(FileType.UNLOCALISEDLIST);
+		GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
+		List<UnlocalisedEntry> unlocalisedEntries=reader.getentries();
+		for(UnlocalisedEntry entry : unlocalisedEntries)
+		{
+			ValidationPlanResult result=plan.execute(entry);
+			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
 		}
 		}catch(Exception e)
 		{

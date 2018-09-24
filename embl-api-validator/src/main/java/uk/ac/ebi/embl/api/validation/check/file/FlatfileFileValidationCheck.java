@@ -17,8 +17,11 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -36,14 +39,31 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid =true;
+		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
 		{
 		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
 		ValidationResult parseResult = emblReader.read();
-		if(!parseResult.isValid())
+		
+		while(emblReader.isEntry())
 		{
-			valid = false;
+			if(!parseResult.isValid())
+			{
+				valid = false;
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+			}
+			Entry entry = emblReader.getEntry();
+			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
+        	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+			ValidationPlanResult result=validationPlan.execute(entry);
+			if(!result.isValid())
+			{
+				valid = false;
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+			}
+			emblReader.read();
 		}
+		
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
