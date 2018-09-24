@@ -15,20 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-
-import uk.ac.ebi.embl.agp.reader.AGPFileReader;
-import uk.ac.ebi.embl.agp.reader.AGPLineReader;
-import uk.ac.ebi.embl.api.entry.AgpRow;
-import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.ChromosmeListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
@@ -47,7 +37,7 @@ public class SubmissionValidationPlan
 		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
 		{
 			
-			check = new ChromosmeListFileValidationCheck(options);
+			check = new ChromosomeListFileValidationCheck(options);
 			if(!check.check(chromosomeListFile))
 				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
 		}
