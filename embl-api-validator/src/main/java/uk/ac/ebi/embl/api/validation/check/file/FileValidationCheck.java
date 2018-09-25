@@ -16,7 +16,6 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -139,19 +137,19 @@ public abstract class FileValidationCheck {
 		}
 
 	}
-	
+
 	protected ValidationScope getValidationScope(String entryName)
 	{
 		if(options.context.get()==Context.genome)
-		if(chromosomeNames.contains(entryName.toUpperCase()))
-		{
-			chromosomes.add(entryName.toUpperCase());
-			return ValidationScope.ASSEMBLY_CHROMOSOME;
-		}
+			if(chromosomeNames.contains(entryName.toUpperCase()))
+			{
+				chromosomes.add(entryName.toUpperCase());
+				return ValidationScope.ASSEMBLY_CHROMOSOME;
+			}
 		if(agpEntrynames.contains(entryName.toUpperCase()))
 		{
 			scaffolds.add(entryName);
-		  	return ValidationScope.ASSEMBLY_SCAFFOLD;
+			return ValidationScope.ASSEMBLY_SCAFFOLD;
 		}
 		else
 		{
@@ -159,7 +157,7 @@ public abstract class FileValidationCheck {
 			return ValidationScope.ASSEMBLY_CONTIG;
 		}
 	}
-	
+
 	public void validateDuplicateEntryNames() throws ValidationEngineException
 	{
 		HashSet<String> entryNames = new HashSet<String>();
@@ -172,32 +170,32 @@ public abstract class FileValidationCheck {
 		for(String entryName:scaffolds)
 		{
 			if(!entryNames.add(entryName));
-			  duplicateEntryNames.add(entryName);
+			duplicateEntryNames.add(entryName);
 		}
 		for(String entryName:chromosomes)
 		{
 			if(!entryNames.add(entryName))
-              duplicateEntryNames.add(entryName);
+				duplicateEntryNames.add(entryName);
 		}
 		if(duplicateEntryNames.size()>0)
 		{
 			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",",duplicateEntryNames));
 		}
 	}
-	
-   public void validateSequencelessChromosomes() throws ValidationEngineException
-   {
-	   List<String> sequencelessChromosomes = new ArrayList<String>();
-	   if(chromosomeNames.size()!=chromosomes.size())
-	   {
-		   for(String chromosomeName: chromosomeNames)
-		   {
-			   if(!chromosomes.contains(chromosomeName))
-			   {
-				   sequencelessChromosomes.add(chromosomeName);
-			   }
-		   }
-		  throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes));
-	   }
-   }
+
+	public void validateSequencelessChromosomes() throws ValidationEngineException
+	{
+		List<String> sequencelessChromosomes = new ArrayList<String>();
+		if(chromosomeNames.size()!=chromosomes.size())
+		{
+			for(String chromosomeName: chromosomeNames)
+			{
+				if(!chromosomes.contains(chromosomeName))
+				{
+					sequencelessChromosomes.add(chromosomeName);
+				}
+			}
+			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes));
+		}
+	}
 }
