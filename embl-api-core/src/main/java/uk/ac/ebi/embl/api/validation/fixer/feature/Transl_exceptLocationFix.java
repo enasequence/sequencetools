@@ -15,9 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -53,7 +50,6 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck
 		{
 
 			TranslExceptQualifier tQualifier = (TranslExceptQualifier) tequalifier;
-			String teValue = tequalifier.getValue();
 			StringBuffer fixedValue = new StringBuffer("(pos:");
 
 				try
@@ -68,7 +64,7 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck
 							slocation.setComplement(false);
 						}
 					}
-					boolean complement = location.isComplement();
+
 					location.setComplement(false);
 					String locationString=LocationToStringCoverter.renderCompoundLocation(location);
 					fixedValue.append(locationString);
