@@ -55,6 +55,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 			}
 			Entry entry = emblReader.getEntry();
+			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+
 			if(!contigRangeMap.isEmpty())
 			{
 			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
@@ -64,6 +66,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
         	}
 			}
 			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
+        	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			ValidationPlanResult result=validationPlan.execute(entry);
 			if(!result.isValid())

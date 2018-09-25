@@ -25,6 +25,8 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -39,15 +41,27 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
+		ValidationPlan validationPlan =null;
 		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
 		{
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
-			if(!parseResult.isValid())
-			{	valid = false;
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
-			}
-			
+			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.AGP);
+        	while(reader.isEntry())
+        	{
+        		if(!parseResult.isValid())
+    			{	valid = false;
+    				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+    			}
+        		Entry entry =reader.getEntry();
+        		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+    			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+    			ValidationPlanResult result=validationPlan.execute(entry);
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
+				reader.read();
+        	}
+
 		}catch (Exception e) {
 			throw new ValidationEngineException(e.getMessage());
 		}

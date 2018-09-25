@@ -198,4 +198,58 @@ public abstract class FileValidationCheck {
 			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes));
 		}
 	}
+	
+	public String getDataclass(String entryName)
+	{
+		String dataclass=null;
+		switch(getOptions().context.get())
+		{
+		case genome :
+			switch(getOptions().getEntryValidationPlanProperty().fileType.get())
+			{
+			case FASTA:
+			  switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
+				{
+				case ASSEMBLY_CONTIG :
+					dataclass= Entry.WGS_DATACLASS;
+					break;
+				case ASSEMBLY_CHROMOSOME :
+					dataclass= Entry.STD_DATACLASS;
+					break;
+				default:
+					break;
+				}
+			case AGP:
+				 dataclass= Entry.CON_DATACLASS;
+				 break;
+			case EMBL:
+				 if(agpEntrynames.contains(entryName.toUpperCase()))
+					 dataclass= Entry.CON_DATACLASS;
+				 switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
+					{
+					case ASSEMBLY_CONTIG :
+						dataclass= Entry.WGS_DATACLASS;
+						break;
+					case ASSEMBLY_CHROMOSOME :
+						dataclass= Entry.STD_DATACLASS;
+						break;
+					default:
+						break;
+					}
+			case MASTER :
+				dataclass = Entry.SET_DATACLASS;
+				break;
+				  
+			default:
+				break;
+				}
+		case transcriptome:
+			dataclass= Entry.TSA_DATACLASS;
+			break;
+		default:
+			break;
+		
+		}
+		return dataclass;
+	}
 }

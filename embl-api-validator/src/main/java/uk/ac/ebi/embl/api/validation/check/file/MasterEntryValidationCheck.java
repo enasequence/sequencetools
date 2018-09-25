@@ -79,6 +79,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				entry=getMasterEntry(getOptions().analysisId.get(), getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
 			getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+        	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			ValidationPlanResult result=validationPlan.execute(entry);
 			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(),getOptions().analysisId.get()+"_master" ),result);

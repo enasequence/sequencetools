@@ -53,6 +53,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			while(reader.isEntry())
 			{
 				Entry entry=reader.getEntry();
+				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 				if(!contigRangeMap.isEmpty())
 				{
 				List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
@@ -62,6 +63,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
             	}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
+            	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				ValidationPlanResult result=validationPlan.execute(entry);
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
