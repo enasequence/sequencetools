@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
@@ -53,6 +55,14 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 			}
 			Entry entry = emblReader.getEntry();
+			if(!contigRangeMap.isEmpty())
+			{
+			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
+        	for(String contigKey:contigKeys)
+        	{
+        		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
+        	}
+			}
 			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			ValidationPlanResult result=validationPlan.execute(entry);

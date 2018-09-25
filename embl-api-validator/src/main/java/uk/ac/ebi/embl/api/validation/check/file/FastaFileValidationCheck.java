@@ -53,11 +53,14 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			while(reader.isEntry())
 			{
 				Entry entry=reader.getEntry();
+				if(!contigRangeMap.isEmpty())
+				{
 				List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
             	for(String contigKey:contigKeys)
             	{
             		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
             	}
+				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				ValidationPlanResult result=validationPlan.execute(entry);

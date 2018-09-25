@@ -69,6 +69,11 @@ public class SubmissionValidationPlan
 			if(!check.check(unlocalisedListFile))
 				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
 		}
+		if(Context.genome==options.context.get())
+		{
+			check.validateDuplicateEntryNames();
+			check.validateSequencelessChromosomes();
+		}
 		return null;
 	}
 	
