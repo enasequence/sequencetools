@@ -19,7 +19,6 @@ import uk.ac.ebi.embl.flatfile.reader.LineReaderCache;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 /**
  * Reader for flat file lines.

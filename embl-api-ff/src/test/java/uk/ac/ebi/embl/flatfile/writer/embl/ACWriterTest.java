@@ -66,9 +66,9 @@ public class ACWriterTest extends EmblWriterTest {
 		entry.addSecondaryAccession(new Text("A00016"));
 		entry.addSecondaryAccession(new Text("A00017"));
 		assertTrue(new ACWriter(entry, wrapType).write(writer));
-		assertEquals(
-				"AC   DP000153; A00001; A00002; A00003; A00004; A00005; A00006; A00007; A00008;\n" +
-				"AC   A00009; A00010; A00011; A00012; A00013; A00014; A00015; A00016; A00017;\n", 
-				writer.toString());
-	}
+        assertEquals(
+                "AC   DP000153; A00001; A00002; A00003; A00004; A00005; A00006; A00007; A00008;\n" +
+                        "AC   A00009; A00010; A00011; A00012; A00013; A00014; A00015; A00016; A00017;\n",
+                writer.toString());
+    }
 }

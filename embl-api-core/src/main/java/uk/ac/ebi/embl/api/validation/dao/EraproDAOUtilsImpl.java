@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
@@ -351,12 +352,16 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 		
 	}
-	
-   public Entry getMasterEntry(String analysisId) throws SQLException
+
+   public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
-		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
-		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex); 
 		Entry masterEntry = new Entry();
+		if(analysisType == null) {
+			return  masterEntry;
+		}
+
+		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
+		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
 		masterEntry.setPrimaryAccession(analysisId);
 		masterEntry.setIdLineSequenceLength(1);
 		FeatureFactory featureFactory = new FeatureFactory();
@@ -373,9 +378,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 		String masterQuery = "select st.project_id, st.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
 			"join sample sam on(asam.sample_id=sam.sample_id) " +
@@ -393,7 +398,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		//sequence.setLength(1); // Required by putff.
 		masterEntry.setSequence(sequence);
 		masterEntry.setIdLineSequenceLength(1);
-		masterEntry.getSequence().setMoleculeType("genomic DNA");
+		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
+			masterEntry.getSequence().setMoleculeType("transcribed RNA");
+		} else {
+			masterEntry.getSequence().setMoleculeType("genomic DNA");
+		}
 		masterEntry.getSequence().setTopology(Topology.LINEAR);		
 		
 		sourceFeature.setMasterLocation();

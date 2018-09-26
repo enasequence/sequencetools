@@ -129,6 +129,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private boolean isAnnotationOnlyCON=false;
 	private boolean isSingletonAgp=false;
 	private boolean isNonExpandedCON=false;
+	private int sequenceCount;
 
 	public Entry() {
 		this.secondaryAccessions = new ArrayList<Text>();
@@ -307,7 +308,11 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		}
 		return this.secondaryAccessions.addAll(accessions);
 	}
-	
+
+	public void clearAllSecondaryAccessions() {
+		this.secondaryAccessions = new ArrayList<>();
+	}
+
 	public boolean removeSecondaryAccession(Text accession) {
 		return this.secondaryAccessions.remove(accession);
 	}
@@ -697,5 +702,13 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
       this.removeKeywords();
       this.removeProjectAccessions();
       this.removeReferences();
+  }
+  
+  public int getSequenceCount() {
+		return sequenceCount;
+	}
+
+	public void setSequenceCount(int sequenceCount) {
+		this.sequenceCount = sequenceCount;
 	}
 }

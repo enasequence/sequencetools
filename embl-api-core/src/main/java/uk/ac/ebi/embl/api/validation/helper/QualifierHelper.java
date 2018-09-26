@@ -16,7 +16,6 @@ public class QualifierHelper {
     private static final String NO_VALUE_ID_2 = "QualifierCheck-5";
     private static final String REGEX_FAIL_ID = "QualifierCheck-3";
     private static final String REGEX_GROUP_FAIL_ID = "QualifierCheck-4";
-    private static final String COLLECTION_DATE_ID = "QualifierCheck-6";
     private static final String LAT_LON_MESSAGE_ID1 = "QualifierCheck-7";
     private static final String LAT_LON_MESSAGE_ID2 = "QualifierCheck-8";
     private static final String PROTEIN_ID_VERSION_MESSAGE_ID = "QualifierCheck-9";
