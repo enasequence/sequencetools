@@ -8,6 +8,7 @@ public class SubmissionFile {
 		FASTA,
 		FLATFILE,
 		AGP,
+		TSV,
 		CHROMOSOME_LIST,
 		UNLOCALISED_LIST
 	};
