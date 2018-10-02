@@ -71,8 +71,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 					addMessagekey(result);
 				}
 			}
-			else
-				setMasterEntry(masterEntry);
+
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());

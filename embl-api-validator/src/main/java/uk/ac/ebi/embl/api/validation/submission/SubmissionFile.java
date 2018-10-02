@@ -10,7 +10,8 @@ public class SubmissionFile {
 		AGP,
 		TSV,
 		CHROMOSOME_LIST,
-		UNLOCALISED_LIST
+		UNLOCALISED_LIST,
+		MASTER
 	};
 
 	private final FileType fileType;

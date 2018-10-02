@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
@@ -23,57 +24,36 @@ import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
 {
 	SubmissionOptions options;
+	FileValidationCheck check = null;
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
 	public ValidationPlanResult execute() throws ValidationEngineException {
 		options.init();
-		FileValidationCheck check = null;
-	
-		check = new MasterEntryValidationCheck(options);
-		if(!check.check())
-		{
-			throw new ValidationEngineException("Master entry validation failed" );
-		}
-		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
-		{			
-			check = new ChromosomeListFileValidationCheck(options);
-			if(!check.check(chromosomeListFile))
-				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
-		}
-		check.readAGPfiles();
-		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
-		{
-			check = new FastaFileValidationCheck(options);
-			if(!check.check(fastaFile))
-				throw new ValidationEngineException("fasta file validation failed: "+fastaFile.getFile().getName());
-		}
-
-		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
-		{
-			check = new FlatfileFileValidationCheck(options);
-			if(!check.check(flatfile))
-				throw new ValidationEngineException("flat file validation failed: "+flatfile.getFile().getName());
-		}
-
-		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
+		//Validation Order shouldn't be changed
+		if(options.context.get().getFileTypes().contains(FileType.MASTER))
+			createMaster();
+		if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST))
+			validateChromosomeList();
+		if(options.context.get().getFileTypes().contains(FileType.AGP))
 		{
 			check = new AGPFileValidationCheck(options);
-			if(!check.check(agpFile))
-				throw new ValidationEngineException("AGP file validation failed: "+agpFile.getFile().getName());
+			check.readAGPfiles();
 		}
-		
-		for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
-		{
-			check = new AGPFileValidationCheck(options);
-			if(!check.check(unlocalisedListFile))
-				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
-		}
+		if(options.context.get().getFileTypes().contains(FileType.FASTA))
+			validateFasta();
+		if(options.context.get().getFileTypes().contains(FileType.FLATFILE))
+			validateFlatfile();
+		if(options.context.get().getFileTypes().contains(FileType.AGP))
+			validateAGP();
+		if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
+			validateUnlocalisedList();
 		if(Context.genome==options.context.get())
 		{
 			check.validateDuplicateEntryNames();
@@ -81,7 +61,63 @@ public class SubmissionValidationPlan
 		}
 		return null;
 	}
-	
-	
-      
+
+
+	public void createMaster() throws ValidationEngineException
+	{
+		check = new MasterEntryValidationCheck(options);
+		if(!check.check())
+			throw new ValidationEngineException("Master entry validation failed" );
+	}
+
+	public void validateChromosomeList() throws ValidationEngineException
+	{
+		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
+		{			
+			check = new ChromosomeListFileValidationCheck(options);
+			if(!check.check(chromosomeListFile))
+				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
+		}
+	}
+
+	public void validateFasta() throws ValidationEngineException
+	{
+		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
+		{
+			check = new FastaFileValidationCheck(options);
+			if(!check.check(fastaFile))
+				throw new ValidationEngineException("fasta file validation failed: "+fastaFile.getFile().getName());
+		}
+	}
+
+	public void validateFlatfile() throws ValidationEngineException
+	{
+		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
+		{
+			check = new FlatfileFileValidationCheck(options);
+			if(!check.check(flatfile))
+				throw new ValidationEngineException("flat file validation failed: "+flatfile.getFile().getName());
+		}
+	}
+
+	public void validateAGP() throws ValidationEngineException
+	{
+		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
+		{
+			check = new AGPFileValidationCheck(options);
+			if(!check.check(agpFile))
+				throw new ValidationEngineException("AGP file validation failed: "+agpFile.getFile().getName());
+		}
+	}
+
+	public void validateUnlocalisedList() throws ValidationEngineException
+	{
+		for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
+		{
+			check = new UnlocalisedListFileValidationCheck(options);
+			if(!check.check(unlocalisedListFile))
+				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
+		}
+	}
+
 }

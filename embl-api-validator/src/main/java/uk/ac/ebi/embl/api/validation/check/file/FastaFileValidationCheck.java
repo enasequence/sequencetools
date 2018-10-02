@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -27,6 +28,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
 public class FastaFileValidationCheck extends FileValidationCheck
@@ -41,7 +43,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
@@ -78,6 +80,11 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					{
 						addMessagekey(result);
 					}
+				}
+				else
+				{
+					if(fixedFileWriter!=null)
+					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
 				}
 				reader.read();
 			}

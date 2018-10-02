@@ -47,20 +47,33 @@ public class FastaFileValidationCheckTest extends FileValidationCheckTest
 	public void testValidFastaFile() throws ValidationEngineException
 	{
 		validateMaster();
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		SubmissionFile file=initSubmissionTestFile("valid_fasta.txt",SubmissionFile.FileType.FASTA);
+        options.reportDir = Optional.of(file.getFile().getParent());
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
 		
 	}
 	
 	@Test
-	public void testValidInvalidFastaFile() throws ValidationEngineException
+	public void testInvalidFastaFile() throws ValidationEngineException
 	{
 		validateMaster();
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
+        options.reportDir = Optional.of(file.getFile().getParent());
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(!check.check(file));
+		assertTrue(check.getMessageStats().get("SQ.1")!=null);
+	}
 	
+	@Test
+	public void testFixedFastaFile() throws ValidationEngineException
+	{
+		validateMaster();
+		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
+        options.reportDir = Optional.of(file.getFile().getParent());
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		assertTrue(!check.check(file));
+		assertTrue(check.getMessageStats().get("SQ.1")!=null);
 	}
 	
 	

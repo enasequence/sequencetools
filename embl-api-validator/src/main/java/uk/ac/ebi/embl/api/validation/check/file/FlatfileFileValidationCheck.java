@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
@@ -42,7 +44,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid =true;
 		EmblEntryValidationPlan validationPlan=null;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
 		ValidationResult parseResult = emblReader.read();
@@ -79,6 +81,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				{
 					addMessagekey(result);
 				}
+			}
+			else
+			{
+				if(fixedFileWriter!=null)
+				new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
 			}
 			emblReader.read();
 		}

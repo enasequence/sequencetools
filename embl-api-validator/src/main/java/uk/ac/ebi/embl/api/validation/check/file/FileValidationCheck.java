@@ -16,7 +16,9 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -51,27 +53,22 @@ public abstract class FileValidationCheck {
 	private SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
-	protected HashMap<String,List<Qualifier>> chromosomeNameQualifiers = null;
-	protected List<String> chromosomes =null;
-	protected List<String> contigs =null;
-	protected List<String> scaffolds =null;
-	protected List<String> agpEntryNames =null;
-	protected HashMap<String,AgpRow> contigRangeMap=null;
-	ArrayList<String> agpEntrynames = null;
+	protected static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+	protected static List<String> chromosomes =new ArrayList<String>();
+	protected static List<String> contigs =new ArrayList<String>();
+	protected static List<String> scaffolds =new ArrayList<String>();
+	protected static List<String> agpEntryNames =new ArrayList<String>();
+	protected static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
+	ArrayList<String> agpEntrynames = new ArrayList<String>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
-	protected Entry masterEntry =null;
+	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
+	private PrintWriter fixedFileWriter =null;
 		   
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
-		chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
-		contigs = new ArrayList<String>();
-		scaffolds = new ArrayList<String>();
-		agpEntryNames = new ArrayList<String>();
-		contigRangeMap= new HashMap<String,AgpRow>();
-		agpEntrynames=new ArrayList<String>();
 		taxonHelper =new TaxonHelperImpl();
 
 	}
@@ -233,6 +230,7 @@ public abstract class FileValidationCheck {
 				default:
 					break;
 				}
+			  break;
 			case AGP:
 				 dataclass= Entry.CON_DATACLASS;
 				 break;
@@ -250,6 +248,7 @@ public abstract class FileValidationCheck {
 					default:
 						break;
 					}
+				 break;
 			case MASTER :
 				dataclass = Entry.SET_DATACLASS;
 				break;
@@ -257,6 +256,7 @@ public abstract class FileValidationCheck {
 			default:
 				break;
 				}
+			break;
 		case transcriptome:
 			dataclass= Entry.TSA_DATACLASS;
 			break;
@@ -267,7 +267,7 @@ public abstract class FileValidationCheck {
 		return dataclass;
 	}
 	
-	protected ConcurrentMap<String,AtomicLong> getMessageStats()
+	public ConcurrentMap<String,AtomicLong> getMessageStats()
 	{
 		return messageStats;
 	}
@@ -280,16 +280,8 @@ public abstract class FileValidationCheck {
 		}
 		
 	}
-   protected void setMasterEntry(Entry masterEntry)
-   {
-	   this.masterEntry =masterEntry;
-   }
-   
-   protected Entry getMasterEntry()
-   {
-	   return this.masterEntry;
-   }
-	protected void appendHeader(Entry entry) throws ValidationEngineException
+     
+ 	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
 		if(masterEntry==null)
 		{
@@ -317,4 +309,11 @@ public abstract class FileValidationCheck {
 		entry.getPrimarySourceFeature().addQualifiers(chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase()));
 		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 	}
+ 	
+ 	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws FileNotFoundException
+ 	{
+ 		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
+ 			fixedFileWriter= new PrintWriter(submissionFile.getFile().getAbsolutePath());
+ 		return fixedFileWriter;
+ 	}
 }

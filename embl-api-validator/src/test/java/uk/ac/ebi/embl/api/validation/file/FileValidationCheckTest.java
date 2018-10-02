@@ -47,6 +47,18 @@ public abstract class FileValidationCheckTest {
 		return file;
 	}
 	
+	protected  SubmissionFile 
+	initSubmissionFixedTestFile(String fileName,FileType fileType)
+	{
+		URL url = FileValidationCheckTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		SubmissionFile file = new SubmissionFile(fileType, new File(fileName),new File(fileName+".fixed"));
+		return file;
+	}
+	
 	protected SourceFeature getSource()
 	{
 		SourceFeature source = new FeatureFactory().createSourceFeature();

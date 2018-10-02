@@ -39,8 +39,10 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
-		if(!assemblyInfoEntry.isPresent())
+		if(!assemblyInfoEntry.isPresent()&&isRemote)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
+		if(!source.isPresent()&&isRemote)
+			throw new ValidationEngineException("SubmissionOptions:source must be provided");
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
 		if(!(new File(reportDir.get())).isDirectory())
@@ -57,15 +59,11 @@ public class SubmissionOptions
 		default:
 			break;
 		}
-		if(enproConnection.get()==null&&eraproConnection.get()==null)
+		if(enproConnection.get()==null||eraproConnection.get()==null)
 		{
-			if(assemblyInfoEntry.get()==null)
+			if(!isRemote)
 			{
-				throw new ValidationEngineException("SubmissionOptions:assemblyinfoEntry must be provided");
-			}
-			if(source.get()==null)
-			{
-				throw new ValidationEngineException("SubmissionOptions:source must be provided");
+				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
 	}

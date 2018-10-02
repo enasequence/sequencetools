@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
@@ -29,6 +30,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
 public class AGPFileValidationCheck extends FileValidationCheck
@@ -42,7 +44,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid=true;
 		ValidationPlan validationPlan =null;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
+		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
@@ -69,6 +71,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
     					addMessagekey(result);
     				}
     			}
+    			else
+				{
+					if(fixedFileWriter!=null)
+					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+				}
 				reader.read();
         	}
 
