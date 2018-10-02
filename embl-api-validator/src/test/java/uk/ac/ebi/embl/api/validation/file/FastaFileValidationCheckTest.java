@@ -15,22 +15,53 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.List;
-import java.util.stream.Collectors;
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.*;
+import static org.junit.Assert.assertTrue;
+import java.sql.SQLException;
+import java.util.Optional;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
-import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 
 @Description("")
-public class FastaFileValidationCheckTest
+public class FastaFileValidationCheckTest extends FileValidationCheckTest
 {
-
+   @Before
+   public void init() throws SQLException
+   {
+	   
+	   options = new SubmissionOptions();
+       options.context= Optional.of(Context.genome);
+       options.source= Optional.of(getSource());
+       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
+       options.isRemote = true;
+       
+   }
+	
+	@Test
+	public void testValidFastaFile() throws ValidationEngineException
+	{
+		validateMaster();
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		SubmissionFile file=initSubmissionTestFile("valid_fasta.txt",SubmissionFile.FileType.FASTA);
+		assertTrue(check.check(file));
+		
+	}
+	
+	@Test
+	public void testValidInvalidFastaFile() throws ValidationEngineException
+	{
+		validateMaster();
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
+		assertTrue(!check.check(file));
+	
+	}
+	
+	
 }

@@ -13,23 +13,25 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SubmissionOptions
 {
-	public final Optional<SubmissionFiles> submissionFiles = Optional.empty();
-	public final Optional<Context> context = Optional.empty();
-	public final Optional<AssemblyInfoEntry> assemblyInfoEntry = Optional.empty();
-	public final Optional<List<String>> locusTagPrefixes = Optional.empty();
-	public final Optional<SourceFeature> source = Optional.empty();
-	public final Optional<String> analysisId = Optional.empty();
-	public final Optional<Connection> enproConnection = Optional.empty();
-	public final Optional<Connection> eraproConnection = Optional.empty();
-	public final Optional<String> reportDir = Optional.empty();
+	public  Optional<SubmissionFiles> submissionFiles = Optional.empty();
+	public  Optional<Context> context = Optional.empty();
+	public  Optional<AssemblyInfoEntry> assemblyInfoEntry = Optional.empty();
+	public  Optional<List<String>> locusTagPrefixes = Optional.empty();
+	public  Optional<SourceFeature> source = Optional.empty();
+	public  Optional<String> analysisId = Optional.empty();
+	public  Optional<Connection> enproConnection = Optional.empty();
+	public  Optional<Connection> eraproConnection = Optional.empty();
+	public  Optional<String> reportDir = Optional.empty();
+	public  Optional<Integer> minGapLength = Optional.empty();
+	private EmblEntryValidationPlanProperty property =null;
 	
-	public final boolean isDevMode = false;
-	public final boolean isFixMode = true;
-	public final boolean isFixCds = true;
-	public final boolean ignoreErrors = true;
-	public final boolean isRemote = false;
+	public  boolean isDevMode = false;
+	public  boolean isFixMode = true;
+	public  boolean isFixCds = true;
+	public  boolean ignoreErrors = true;
+	public  boolean isRemote = false;
 
-	private final Optional<ValidationScope> validationScope = Optional.empty();
+	private  Optional<ValidationScope> validationScope = Optional.empty();
 
 	public void init() throws ValidationEngineException
 	{
@@ -47,31 +49,44 @@ public class SubmissionOptions
 		switch(context.get())
 		{
 		case sequence:
-			validationScope.of(ValidationScope.EMBL_TEMPLATE);
+			validationScope = Optional.of(ValidationScope.EMBL_TEMPLATE);
 			break;
 		case transcriptome:
-			validationScope.of(ValidationScope.ASSEMBLY_TRANSCRIPTOME);
+			validationScope=Optional.of(ValidationScope.ASSEMBLY_TRANSCRIPTOME);
 			break;
 		default:
 			break;
+		}
+		if(enproConnection.get()==null&&eraproConnection.get()==null)
+		{
+			if(assemblyInfoEntry.get()==null)
+			{
+				throw new ValidationEngineException("SubmissionOptions:assemblyinfoEntry must be provided");
+			}
+			if(source.get()==null)
+			{
+				throw new ValidationEngineException("SubmissionOptions:source must be provided");
+			}
 		}
 	}
 	
 	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()
 	{
-		EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+		if(property!=null)
+			return property;
+			
+		property = new EmblEntryValidationPlanProperty();
 		property.isFixMode.set(isFixMode);
 		property.isFixCds.set(isFixCds);
-		property.locus_tag_prefixes.set(locusTagPrefixes.get());
-		property.enproConnection.set(enproConnection.get());
-		property.eraproConnection.set(eraproConnection.get());
-		property.analysis_id.set(analysisId.get());
-		property.minGapLength.set(assemblyInfoEntry.get().getMinGapLength());
+		if(locusTagPrefixes.isPresent()) property.locus_tag_prefixes.set(locusTagPrefixes.get());
+		if(enproConnection.isPresent())  property.enproConnection.set(enproConnection.get());
+		if(eraproConnection.isPresent())  property.eraproConnection.set(eraproConnection.get());
+		if(analysisId.isPresent()) property.analysis_id.set(analysisId.get());
+		if(assemblyInfoEntry.isPresent()) property.minGapLength.set(minGapLength.isPresent()?minGapLength.get():assemblyInfoEntry.get().getMinGapLength());
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
-		property.validationScope.set(validationScope.get());
+		if(validationScope.isPresent())property.validationScope.set(validationScope.get());
 		property.isRemote.set(isRemote);
-
 		return property;
 	}
 }

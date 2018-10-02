@@ -23,12 +23,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.LocationFactory;
+import uk.ac.ebi.embl.api.entry.location.Order;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -41,24 +51,28 @@ public abstract class FileValidationCheck {
 	private SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
-	protected List<String> chromosomeNames = null;
+	protected HashMap<String,List<Qualifier>> chromosomeNameQualifiers = null;
 	protected List<String> chromosomes =null;
 	protected List<String> contigs =null;
 	protected List<String> scaffolds =null;
 	protected List<String> agpEntryNames =null;
 	protected HashMap<String,AgpRow> contigRangeMap=null;
 	ArrayList<String> agpEntrynames = null;
-
-
+	protected ConcurrentMap<String, AtomicLong> messageStats = null;
+	protected Entry masterEntry =null;
+	protected TaxonHelper taxonHelper= null;
+		   
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
-		chromosomeNames = new ArrayList<String>();
+		chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
 		contigs = new ArrayList<String>();
 		scaffolds = new ArrayList<String>();
 		agpEntryNames = new ArrayList<String>();
 		contigRangeMap= new HashMap<String,AgpRow>();
 		agpEntrynames=new ArrayList<String>();
+		taxonHelper =new TaxonHelperImpl();
 
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
@@ -141,7 +155,7 @@ public abstract class FileValidationCheck {
 	protected ValidationScope getValidationScope(String entryName)
 	{
 		if(options.context.get()==Context.genome)
-			if(chromosomeNames.contains(entryName.toUpperCase()))
+			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
 				chromosomes.add(entryName.toUpperCase());
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
@@ -186,9 +200,9 @@ public abstract class FileValidationCheck {
 	public void validateSequencelessChromosomes() throws ValidationEngineException
 	{
 		List<String> sequencelessChromosomes = new ArrayList<String>();
-		if(chromosomeNames.size()!=chromosomes.size())
+		if(chromosomeNameQualifiers.size()!=chromosomes.size())
 		{
-			for(String chromosomeName: chromosomeNames)
+			for(String chromosomeName: chromosomeNameQualifiers.keySet())
 			{
 				if(!chromosomes.contains(chromosomeName))
 				{
@@ -251,5 +265,56 @@ public abstract class FileValidationCheck {
 		
 		}
 		return dataclass;
+	}
+	
+	protected ConcurrentMap<String,AtomicLong> getMessageStats()
+	{
+		return messageStats;
+	}
+	protected void addMessagekey(ValidationResult result)
+	{
+		for(ValidationMessage message: result.getMessages())
+		{
+		messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1));
+		messageStats.get(message.getMessageKey()).incrementAndGet();
+		}
+		
+	}
+   protected void setMasterEntry(Entry masterEntry)
+   {
+	   this.masterEntry =masterEntry;
+   }
+   
+   protected Entry getMasterEntry()
+   {
+	   return this.masterEntry;
+   }
+	protected void appendHeader(Entry entry) throws ValidationEngineException
+	{
+		if(masterEntry==null)
+		{
+			throw new ValidationEngineException("Master entry must to validate sequences");
+		}
+		if(entry==null)
+			return ;
+		entry.removeReferences();
+		SourceFeature source=entry.getPrimarySourceFeature();
+		entry.removeFeature(source);
+		entry.addFeature(masterEntry.getPrimarySourceFeature());
+		entry.addReferences(masterEntry.getReferences());
+		entry.setDescription(masterEntry.getDescription());
+		entry.addProjectAccessions(masterEntry.getProjectAccessions());
+		entry.addXRefs(masterEntry.getXRefs());
+		if(entry.getSequence()!=null)
+		{
+		entry.getSequence().setMoleculeType(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.MOL_TYPE_QUALIFIER_NAME));
+		Order<Location>featureLocation = new Order<Location>();
+		featureLocation.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
+		entry.getPrimarySourceFeature().setLocations(featureLocation);
+		}
+		//add chromosome qualifiers to entry
+		if(entry.getSubmitterAccession()!=null)
+		entry.getPrimarySourceFeature().addQualifiers(chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase()));
+		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 	}
 }

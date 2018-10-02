@@ -16,7 +16,6 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +36,8 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	{
 		super(options);
 	}	
+	
+	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
@@ -48,12 +49,13 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			if(!parseResult.isValid())
 			{
 				valid = false;
+				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+				addMessagekey(parseResult);
 			}
 			while(reader.isEntry())
 			{
 				Entry entry=reader.getEntry();
-				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 				if(!contigRangeMap.isEmpty())
 				{
 				List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
@@ -65,8 +67,18 @@ public class FastaFileValidationCheck extends FileValidationCheck
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
             	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-				ValidationPlanResult result=validationPlan.execute(entry);
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
+            	appendHeader(entry);
+				ValidationPlanResult planResult=validationPlan.execute(entry);
+				if(!planResult.isValid())
+				{
+					valid = false;
+					if(getOptions().reportDir.isPresent())
+						getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+					for(ValidationResult result: planResult.getResults())
+					{
+						addMessagekey(result);
+					}
+				}
 				reader.read();
 			}
 		}catch (Exception e) {

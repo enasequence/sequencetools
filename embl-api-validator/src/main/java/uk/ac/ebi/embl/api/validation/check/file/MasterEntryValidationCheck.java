@@ -15,28 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.regex.Pattern;
-
-import javax.management.OperationsException;
-
-import org.apache.commons.dbutils.DbUtils;
-
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
@@ -44,15 +29,9 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl.SOURCEQUALIFIER;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 
 @Description("")
 public class MasterEntryValidationCheck extends FileValidationCheck
@@ -66,24 +45,34 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 	public boolean check() throws ValidationEngineException
 	{
 		boolean valid =true;
-		Entry entry =null;
 		try
 		{
 			if(!getOptions().isRemote)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
-				entry=utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
+				masterEntry=utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
 			}
 			else
 			{
-				entry=getMasterEntry(getOptions().analysisId.get(), getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
+				//webin-cli
+				masterEntry=getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
 			getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-			ValidationPlanResult result=validationPlan.execute(entry);
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(),getOptions().analysisId.get()+"_master" ),result);
-
+			ValidationPlanResult planResult=validationPlan.execute(masterEntry);
+			if(!planResult.isValid())
+			{
+				valid = false;
+				if(getOptions().reportDir.isPresent())
+					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), getOptions().analysisId.get()+"_master" ), planResult);
+				for(ValidationResult result: planResult.getResults())
+				{
+					addMessagekey(result);
+				}
+			}
+			else
+				setMasterEntry(masterEntry);
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
@@ -96,14 +85,12 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		return false;
 	}
 
-	public Entry getMasterEntry(String analysisId, AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws SQLException
+	public Entry getMasterEntry(AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws SQLException
 	{
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
 			return  masterEntry;
 		}
-
-		masterEntry.setPrimaryAccession(analysisId);
 		masterEntry.setIdLineSequenceLength(1);
 		SequenceFactory sequenceFactory = new SequenceFactory();
 		masterEntry.setDataClass(Entry.SET_DATACLASS);

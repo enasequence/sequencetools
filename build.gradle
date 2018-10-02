@@ -58,9 +58,9 @@
     archives sourcesJar
  }
 
-      task wrapper(type: Wrapper) {
-          gradleVersion = '4.8'
-      }
+ task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}
  
  /*if (gradle.startParameter.taskNames.contains("uploadArchives")) {
         signing {
@@ -179,8 +179,10 @@ project(':embl-api-validator') {
         configurations.runtime.collect {
             it.isDirectory() ? it : zipTree(it)
         }
-    }
-    
+         
+   }
+
+
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
                      "Implementation-Version":"1.1.267",

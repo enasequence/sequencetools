@@ -41,6 +41,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	private Connection connection;
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
+	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 	
 	public enum SOURCEQUALIFIER
 	{
@@ -355,6 +356,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
+	   if(masterCache.containsKey(analysisId+"_"+analysisType))
+	   {
+		   return masterCache.get(analysisId+"_"+analysisType);
+	   }
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
 			return  masterEntry;
@@ -536,7 +541,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		masterEntry.addFeature(sourceFeature);
 		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
 		masterEntry.setDescription(new Text(description));
-		
+		masterCache.put(analysisId+"_"+analysisType,masterEntry);
 		return masterEntry;
 	}
 

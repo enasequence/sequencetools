@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
@@ -31,41 +32,49 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 	public ChromosomeListFileValidationCheck(SubmissionOptions options) {
 		super(options);
 	}
-	
+
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid =true;
 		try
 		{
-		ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
+			ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
 
-		ValidationResult parseResult = reader.read();
-		if(!parseResult.isValid())
-		{
-			valid = false;
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
-		}
-		getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
-		GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
+			ValidationResult parseResult = reader.read();
+			if(!parseResult.isValid())
+			{
+				valid = false;
+				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+				addMessagekey(parseResult);
+			}
+			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
+			GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
 
-		List<ChromosomeEntry> chromosomeEntries = reader.getentries();
-		for(ChromosomeEntry entry : chromosomeEntries)
-		{
-			ValidationPlanResult result=plan.execute(entry);
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
-			if(!result.isValid())
-				valid=false;
-			if(entry.getObjectName()!=null)
-			chromosomeNames.add(entry.getObjectName().toUpperCase());
+			List<ChromosomeEntry> chromosomeEntries = reader.getentries();
+			for(ChromosomeEntry entry : chromosomeEntries)
+			{
+				ValidationPlanResult planResult=plan.execute(entry);
+				if(!planResult.isValid())
+				{
+					valid = false;
+					if(getOptions().reportDir.isPresent())
+						getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+					for(ValidationResult result: planResult.getResults())
+					{
+						addMessagekey(result);
+					}
+				}
+				if(entry.getObjectName()!=null)
+					chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(),entry.getQualifiers(taxonHelper.isChildOf(masterEntry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME), "Viruses")));
 
-		}
-            		
+			}
+
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
 	}
-	
+
 }

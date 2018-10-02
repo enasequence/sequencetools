@@ -68,11 +68,17 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-			ValidationPlanResult result=validationPlan.execute(entry);
-			if(!result.isValid())
+        	appendHeader(entry);
+			ValidationPlanResult planResult=validationPlan.execute(entry);
+			if(!planResult.isValid())
 			{
 				valid = false;
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+				if(getOptions().reportDir.isPresent())
+					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+				for(ValidationResult result: planResult.getResults())
+				{
+					addMessagekey(result);
+				}
 			}
 			emblReader.read();
 		}

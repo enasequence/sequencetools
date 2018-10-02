@@ -52,13 +52,23 @@ public class AGPFileValidationCheck extends FileValidationCheck
         		if(!parseResult.isValid())
     			{	valid = false;
     				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+    				addMessagekey(parseResult);
     			}
         		Entry entry =reader.getEntry();
-        		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-    			ValidationPlanResult result=validationPlan.execute(entry);
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
+            	appendHeader(entry);
+    			ValidationPlanResult planResult=validationPlan.execute(entry);
+    			if(!planResult.isValid())
+    			{
+    			    valid = false;
+    				if(getOptions().reportDir.isPresent())
+    					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+    				for(ValidationResult result: planResult.getResults())
+    				{
+    					addMessagekey(result);
+    				}
+    			}
 				reader.read();
         	}
 
@@ -80,20 +90,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
          	i++;
            	if(!agpRow.isGap())
          	{
-           		if(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i)==null||contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence()==null)
-           		{
-           		  
-           		}
-           		else
-           		{
-           			sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
-           		}
+           		sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
+           		
          	}
            	else
            		sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
          }
          entry.getSequence().setSequence(sequenceBuffer);
-         String v = new String(sequenceBuffer.array());
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());

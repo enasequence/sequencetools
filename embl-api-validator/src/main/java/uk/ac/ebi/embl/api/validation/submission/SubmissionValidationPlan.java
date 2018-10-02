@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationChec
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
@@ -33,10 +34,14 @@ public class SubmissionValidationPlan
 	public ValidationPlanResult execute() throws ValidationEngineException {
 		options.init();
 		FileValidationCheck check = null;
-		
-		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
+	
+		check = new MasterEntryValidationCheck(options);
+		if(!check.check())
 		{
-			
+			throw new ValidationEngineException("Master entry validation failed" );
+		}
+		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
+		{			
 			check = new ChromosomeListFileValidationCheck(options);
 			if(!check.check(chromosomeListFile))
 				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
