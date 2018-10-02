@@ -66,6 +66,7 @@ public abstract class FileValidationCheckTest {
 	protected void validateMaster() throws ValidationEngineException
 	{
 		SubmissionOptions options = new SubmissionOptions();
+		
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
 		options.isRemote =true;
