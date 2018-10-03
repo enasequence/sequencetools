@@ -15,7 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 
@@ -48,6 +51,18 @@ public abstract class FileValidationCheckTest {
 		}
 		SubmissionFile file = new SubmissionFile(fileType, new File(fileName));
 		return file;
+	}
+	
+	protected  File 
+	initFile(String fileName)
+	{
+		URL url = FileValidationCheckTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		
+		return new File(fileName);
 	}
 	
 	protected  SubmissionFile 
@@ -100,4 +115,5 @@ public abstract class FileValidationCheckTest {
 		FlatFileComparator comparator=new FlatFileComparator(options);
 		return comparator.compare(file.getAbsolutePath()+".expected", file.getAbsolutePath()+".fixed");
 	}
+	
 }

@@ -82,14 +82,11 @@ public abstract class FileValidationCheck {
 
 	protected AnalysisType getAnalysisType()
 	{
-		switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
+		switch(getOptions().context.get())
 		{
-		case ASSEMBLY_TRANSCRIPTOME:
+		case transcriptome:
 			return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
-		case ASSEMBLY_CHROMOSOME:
-		case ASSEMBLY_CONTIG:
-		case ASSEMBLY_MASTER:
-		case ASSEMBLY_SCAFFOLD:
+		case genome:
 			return AnalysisType.SEQUENCE_ASSEMBLY;
 		default :
 			return null;

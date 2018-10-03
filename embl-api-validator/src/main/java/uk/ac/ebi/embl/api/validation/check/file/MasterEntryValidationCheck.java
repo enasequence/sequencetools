@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -34,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
 public class MasterEntryValidationCheck extends FileValidationCheck
@@ -49,6 +51,8 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+			getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+        	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
 			if(!getOptions().isRemote)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
@@ -57,10 +61,13 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			else
 			{
 				//webin-cli
+				if(!getOptions().assemblyInfoEntry.isPresent())
+					throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry");
+				if(!getOptions().source.isPresent())
+					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry");
 				masterEntry=getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
-			getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-        	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
+			
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			ValidationPlanResult planResult=validationPlan.execute(masterEntry);
 			if(!planResult.isValid())
@@ -72,6 +79,11 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				{
 					addMessagekey(result);
 				}
+			}
+			else
+			{
+				if(!getOptions().isRemote)
+				new EmblEntryWriter(masterEntry).write(new PrintWriter("file path"));//TODO for pipeline
 			}
 
 		}catch(Exception e)
