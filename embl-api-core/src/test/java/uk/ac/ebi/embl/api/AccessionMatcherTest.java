@@ -3,7 +3,6 @@ package uk.ac.ebi.embl.api;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -167,6 +166,62 @@ public class AccessionMatcherTest {
         inValidWGSAccessions.forEach(x -> assertNull(AccessionMatcher.getAccessionPrefix(x, Entry.WGS_DATACLASS)));
         inValidWGSMaster.forEach(x -> assertNull(AccessionMatcher.getAccessionPrefix(x, Entry.SET_DATACLASS)));
         inValidNonWGSAccessions.forEach(x -> assertNull(AccessionMatcher.getAccessionPrefix(x, Entry.STD_DATACLASS)));
+
+    }
+
+    @Test
+    public void getSplittedAccession() {
+        AccessionMatcher.Accession accession = AccessionMatcher.getSplittedAccession(null);
+        assertNull(accession);
+
+        accession = AccessionMatcher.getSplittedAccession("");
+        assertNull(accession);
+
+        //Invalid
+        accession = AccessionMatcher.getSplittedAccession("ABC123");
+        assertNull(accession);
+
+        //STD old 1,5
+        accession = AccessionMatcher.getSplittedAccession("A12345");
+        assertEquals("A", accession.prefix);
+        assertEquals("12345", accession.number);
+        assertNull(accession.version);
+        assertNull(accession.s);
+
+        //STD old 2,6
+        accession = AccessionMatcher.getSplittedAccession("AB123456");
+        assertEquals("AB", accession.prefix);
+        assertEquals("123456", accession.number);
+        assertNull(accession.version);
+        assertNull(accession.s);
+
+        //STD new 2, 8
+        accession = AccessionMatcher.getSplittedAccession("AB12345678");
+        assertEquals("AB", accession.prefix);
+        assertEquals("12345678", accession.number);
+        assertNull(accession.version);
+        assertNull(accession.s);
+
+        //WGS old 4 2 6
+        accession = AccessionMatcher.getSplittedAccession("ABCD01123456");
+        assertEquals("ABCD", accession.prefix);
+        assertEquals("123456", accession.number);
+        assertEquals("01", accession.version);
+        assertEquals("", accession.s);
+
+        //WGS old 4 2 S 6
+        accession = AccessionMatcher.getSplittedAccession("ABCD01S123456");
+        assertEquals("ABCD", accession.prefix);
+        assertEquals("123456", accession.number);
+        assertEquals("01", accession.version);
+        assertEquals("S", accession.s);
+
+        //WGS new 6 2 S 9
+        accession = AccessionMatcher.getSplittedAccession("ABCDEF11S123456789");
+        assertEquals("ABCDEF", accession.prefix);
+        assertEquals("123456789", accession.number);
+        assertEquals("11", accession.version);
+        assertEquals("S", accession.s);
 
     }
 

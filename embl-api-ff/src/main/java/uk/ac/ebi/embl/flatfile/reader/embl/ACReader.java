@@ -46,7 +46,8 @@ public class ACReader extends MultiLineBlockReader {
 		for (String accession : FlatFileUtils.split(block, ";")) {
 			if (isFirstAccession) {
 				if (noPrimaryAccession) {
-					entry.addSecondaryAccession(new Text(accession, getOrigin()));
+					Text secAccession = new Text(accession, getOrigin());
+					entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
 				} else {
 					if (idLinePrimaryAccession != null
 							&& !idLinePrimaryAccession.equalsIgnoreCase(accession))
@@ -59,14 +60,10 @@ public class ACReader extends MultiLineBlockReader {
 				}
 				isFirstAccession = false;
 			} else {
-				entry.addSecondaryAccession(new Text(accession, getOrigin()));
+				Text secAccession = new Text(accession, getOrigin());
+				entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
 			}
 		}
 
-		if(entry.getSecondaryAccessions() != null && !entry.getSecondaryAccessions().isEmpty()) {
-			List<Text> secAccnsList = Utils.createRange(entry.getSecondaryAccessions(), getOrigin());
-			entry.clearAllSecondaryAccessions();
-			entry.addSecondaryAccessions(secAccnsList);
-		}
 	}	
 }

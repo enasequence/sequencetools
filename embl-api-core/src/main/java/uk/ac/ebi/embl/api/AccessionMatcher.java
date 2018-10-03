@@ -11,11 +11,12 @@ public class AccessionMatcher {
     private static final Pattern ANY_SEQ_ACC_PATTERN = Pattern.compile("(^([A-Z]{1,2})[0-9]{5,6}$|^([A-Z]{2})[0-9]{8}$|^([A-Z]{4})[0-9]{2}S?[0-9]{6,8}$|^([A-Z]{6})[0-9]{2}S?[0-9]{7,9}$)");
 
     //All non WGS
-    private static final Pattern STANDARD_SEQ_ACCESSION_PATTERN = Pattern.compile("(^([A-Z]{1,2})[0-9]{5,6}$|^([A-Z]{2})[0-9]{8}$)");
+    private static final Pattern STANDARD_SEQ_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{1,2})([0-9]{5,6})$");
+    private static final Pattern STANDARD_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{2})([0-9]{8})$");
 
     //All WGS
-    private static final Pattern WGS_SEQ_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{4})[0-9]{2}S?[0-9]{6,8}$");
-    private static final Pattern WGS_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})[0-9]{2}S?[0-9]{7,9}$");
+    private static final Pattern WGS_SEQ_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{4})([0-9]{2})(S?)([0-9]{6,8})$");
+    private static final Pattern WGS_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})([0-9]{2})(S?)([0-9]{7,9})$");
     private static final Pattern WGS_MASTER_SEQ_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{4})[0-9]{2}[0]{6,8}$");
     private static final Pattern WGS_MASTER_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})[0-9]{2}[0]{7,9}$");
 
@@ -40,13 +41,16 @@ public class AccessionMatcher {
         return m != null && m.matches();
     }
 
-    public static Matcher getSeqPrimaryAccMatcher(String input) {
-        return input == null? null: STANDARD_SEQ_ACCESSION_PATTERN.matcher(input);
+    public static Matcher getOldSeqPrimaryAccMatcher(String input) {
+        return input == null? null: STANDARD_SEQ_ACCESSION_PATTERN_OLD.matcher(input);
+    }
+
+    public static Matcher getNewSeqPrimaryAccMatcher(String input) {
+        return input == null? null: STANDARD_SEQ_ACCESSION_PATTERN_NEW.matcher(input);
     }
 
     public static boolean isSeqAccession(String input) {
-        Matcher m = getSeqPrimaryAccMatcher(input);
-        return m != null && m.matches();
+        return isAnyMatch(getOldSeqPrimaryAccMatcher(input), getNewSeqPrimaryAccMatcher(input));
     }
 
     public static Matcher getOldWgsAccMatcher(String input) {
@@ -130,14 +134,44 @@ public class AccessionMatcher {
                 accnPrefix = getPrefix(getNewWgsAccMatcher(primaryAccession), 1);
             }
         } else {
-            accnPrefix = getPrefix(getSeqPrimaryAccMatcher(primaryAccession), getPrimaryAccnPrefixGroup(primaryAccession));
+            accnPrefix = getPrefix(getOldSeqPrimaryAccMatcher(primaryAccession), 1);
+            if(accnPrefix == null) {
+                accnPrefix = getPrefix(getNewSeqPrimaryAccMatcher(primaryAccession), 1);
+            }
         }
 
         return accnPrefix;
     }
 
-    public static int getPrimaryAccnPrefixGroup(String primaryAccession) {
-        return primaryAccession.length() > 8 ? 3 : 2;
+    public static Accession getSplittedAccession(String accession) {
+
+        Accession accn = null;
+        if (accession == null || accession.isEmpty())
+            return null;
+
+        Matcher matcher = getOldWgsAccMatcher(accession);
+        if(matcher.matches()) {
+            accn = new Accession(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+        } else {
+            matcher = getNewWgsAccMatcher(accession);
+        }
+
+        if(matcher.matches()) {
+            accn = new Accession(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+        } else {
+            matcher = getOldSeqPrimaryAccMatcher(accession);
+            if (matcher.matches()) {
+                accn = new Accession(matcher.group(1), null, null, matcher.group(2));
+            }
+            else {
+                matcher = getNewSeqPrimaryAccMatcher(accession);
+                if (matcher.matches()) {
+                    accn = new Accession(matcher.group(1), null, null, matcher.group(2));
+                }
+            }
+        }
+
+        return accn;
     }
 
     private static boolean isAnyMatch(Matcher oldM, Matcher newM) {
@@ -147,4 +181,19 @@ public class AccessionMatcher {
     private static String getPrefix(Matcher matcher, int group) {
         return matcher == null ? null : matcher.matches() ? matcher.group(group) : null;
     }
+
+    public static class Accession {
+        public Accession(String pPrefix, String pVersion, String pS, String pNumber) {
+            prefix = pPrefix;
+            version = pVersion;
+            number = pNumber;
+            s = pS;
+        }
+        public String prefix;
+        public String version;
+        public String s;
+        public String number;
+    }
+
+
 }

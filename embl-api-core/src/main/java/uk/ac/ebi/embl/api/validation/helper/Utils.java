@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import org.apache.commons.lang.StringUtils;
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -33,6 +34,8 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static uk.ac.ebi.embl.api.AccessionMatcher.getSplittedAccession;
 
 public class Utils {
 
@@ -1150,5 +1153,50 @@ public class Utils {
 		}
 
 		return accessionRange;
+	}
+
+	public static List<Text> expandRanges(Text... secondaryAccessions) throws IllegalStateException {
+		List<Text> expandedAccessions = new ArrayList<>();
+
+		if(secondaryAccessions == null || secondaryAccessions.length == 0)
+			return expandedAccessions;
+
+		for (Text secAccn: secondaryAccessions) {
+
+			if(secAccn.getText().contains("-")) {
+
+				String[] accnRange = secAccn.getText().split("-");
+				expandedAccessions.add(new Text(accnRange[0], secAccn.getOrigin()));
+				AccessionMatcher.Accession startAccn = AccessionMatcher.getSplittedAccession(accnRange[0]);
+				AccessionMatcher.Accession endAccn = AccessionMatcher.getSplittedAccession(accnRange[1]);
+
+				if (startAccn == null || endAccn == null) {
+					throw new IllegalStateException("Secondary accession format is invalid:"+secAccn.getText());
+				}
+
+				Integer startNumber = Integer.parseInt(startAccn.number)+1;
+				int endNumber = Integer.parseInt(endAccn.number);
+				int numLength = startAccn.number.length();
+				String prefix = startAccn.prefix +
+						(startAccn.version == null ? "" : startAccn.version) +
+						(startAccn.s == null ? "" : startAccn.s);
+
+				while (startNumber <= endNumber) {
+					String accession = prefix;
+
+					for (int i = 0; i < (numLength - startNumber.toString().length()) ; i++) {
+						accession += '0';
+					}
+					accession += startNumber;
+					expandedAccessions.add(new Text(accession, secAccn.getOrigin()));
+					startNumber++;
+				}
+
+			} else {
+				expandedAccessions.add(secAccn);
+			}
+
+		}
+		return expandedAccessions;
 	}
 }

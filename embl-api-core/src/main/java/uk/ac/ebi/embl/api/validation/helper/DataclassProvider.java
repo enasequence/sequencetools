@@ -32,8 +32,6 @@ public class DataclassProvider {
 		  if(primaryAccession==null||"XXX".equals(primaryAccession)||primaryAccession.isEmpty())
 			return null;
 
-		   Matcher sequenceAccessionMatcher = AccessionMatcher.getSeqPrimaryAccMatcher(primaryAccession);
-
 		   String dataclass= null;
 		   if(AccessionMatcher.isWgsSeqAccession(primaryAccession))
 		   {
@@ -47,21 +45,33 @@ public class DataclassProvider {
 		   {
 			   dataclass = Entry.TPX_DATACLASS;
 		   }
-		   else if(sequenceAccessionMatcher.matches())
+		   else
 		   {
-			    String prefix = sequenceAccessionMatcher.group(AccessionMatcher.getPrimaryAccnPrefixGroup(primaryAccession));
-			    if(prefixDataclass.get(prefix)!=null)
-			    {
-			    	dataclass= prefixDataclass.get(prefix);
-			    }
-			    else if(entryDaoUtils!=null)
-			    {
-			    	dataclass=entryDaoUtils.getAccessionDataclass(prefix);
-			    }
+			   Matcher sequenceAccessionMatcher = AccessionMatcher.getOldSeqPrimaryAccMatcher(primaryAccession);
+
+			   if(sequenceAccessionMatcher.matches()){
+			   		dataclass = getDataclass(sequenceAccessionMatcher);
+			   } else {
+				   sequenceAccessionMatcher = AccessionMatcher.getNewSeqPrimaryAccMatcher(primaryAccession);
+				   if(sequenceAccessionMatcher.matches()){
+					   dataclass = getDataclass(sequenceAccessionMatcher);
+				   }
+			   }
+
 		   }
-	 return dataclass;
+	 	return dataclass;
 	}
-	 	
+
+	private static String getDataclass(Matcher matcher) throws SQLException {
+		String dataclass = null;
+		String prefix = matcher.group(1);
+		if (prefixDataclass.get(prefix) != null) {
+			dataclass = prefixDataclass.get(prefix);
+		} else if (entryDaoUtils != null) {
+			dataclass = entryDaoUtils.getAccessionDataclass(prefix);
+		}
+		return dataclass;
+	}
 	 /*
      * get the keyword dataclass from keywords in KW line(CV_DATACLASS_KEYWORD)
      */

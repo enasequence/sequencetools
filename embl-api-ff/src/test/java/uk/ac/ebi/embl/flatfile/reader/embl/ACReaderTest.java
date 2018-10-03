@@ -79,10 +79,11 @@ public class ACReaderTest extends EmblReaderTest {
 				"A00001",
 				entry.getPrimaryAccession());
 
-		assertEquals(1, entry.getSecondaryAccessions().size());
-		assertEquals(
-				"A00002-A00005",
-				entry.getSecondaryAccessions().get(0).getText());
+		assertEquals(4, entry.getSecondaryAccessions().size());
+		assertEquals("A00002", entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00003", entry.getSecondaryAccessions().get(1).getText());
+		assertEquals("A00004", entry.getSecondaryAccessions().get(2).getText());
+		assertEquals("A00005", entry.getSecondaryAccessions().get(3).getText());
         FlatFileOrigin origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(0).getOrigin();
         assertEquals(1, origin.getFirstLineNumber());
         assertEquals(3, origin.getLastLineNumber());
@@ -101,10 +102,11 @@ public class ACReaderTest extends EmblReaderTest {
 		ValidationResult result = (new ACReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNull(entry.getPrimaryAccession());
-		assertEquals(1, entry.getSecondaryAccessions().size());
-		assertEquals(
-				"A00002-A00005",
-				entry.getSecondaryAccessions().get(0).getText());
+		assertEquals(4, entry.getSecondaryAccessions().size());
+		assertEquals("A00002", entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00003", entry.getSecondaryAccessions().get(1).getText());
+		assertEquals("A00004", entry.getSecondaryAccessions().get(2).getText());
+		assertEquals("A00005", entry.getSecondaryAccessions().get(3).getText());
         FlatFileOrigin origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(0).getOrigin();
         assertEquals(1, origin.getFirstLineNumber());
         assertEquals(5, origin.getLastLineNumber());
