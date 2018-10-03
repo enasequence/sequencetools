@@ -5,13 +5,13 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 public class SubmissionValidator {
 	
  SubmissionOptions options;
+ 
  public SubmissionValidator(SubmissionOptions options) {
 	 this.options =options;
  }
  
  public boolean validate() throws ValidationEngineException
  {
-	 SubmissionValidationPlan validationPlan = new SubmissionValidationPlan(options);
-	 return validationPlan.execute().isValid();
+	 return new SubmissionValidationPlan(options).execute().isValid();
  }
 }

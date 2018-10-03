@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class ChromosomeListFileValidationCheckTest  extends FileValidationCheckTest
+public class TSVFileValidationCheckTest  extends FileValidationCheckTest
 {
 
 	@Before
@@ -44,39 +44,5 @@ public class ChromosomeListFileValidationCheckTest  extends FileValidationCheckT
 		options = new SubmissionOptions();
 		options.isRemote = true;
 	}
-
-	@Test
-	public void testvalidChromosomeList() throws ValidationEngineException
-	{
-		validateMaster(Context.genome);
-		SubmissionFile file=initSubmissionTestFile("chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
-		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
-		assertTrue(check.check(file));
-		assertTrue(check.getChromosomeQualifeirs().size()==2);
-		List<Qualifier> qualifiers =new ArrayList<Qualifier>();
-		for(String key:check.getChromosomeQualifeirs().keySet())
-		{
-			for(Qualifier qual:check.getChromosomeQualifeirs().get(key))
-			{
-				qualifiers.add(qual);
-			}
-		}
-
-		assertEquals("segment: II",qualifiers.get(0).getName()+": "+qualifiers.get(0).getValue());
-		assertEquals("organelle: mitochondrion",qualifiers.get(1).getName()+": "+qualifiers.get(1).getValue());
-
-
-	}
-
-	@Test
-	public void testInvalidChromosomeList() throws ValidationEngineException
-	{
-		validateMaster(Context.genome);
-		SubmissionFile file=initSubmissionTestFile("invalid_chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
-		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
-		assertTrue(!check.check(file));
-		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
-	}
-
 
 }

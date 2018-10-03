@@ -26,6 +26,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
@@ -71,21 +74,30 @@ public abstract class FileValidationCheckTest {
 		AssemblyInfoEntry infoEntry= new AssemblyInfoEntry();
 		infoEntry.setMinGapLength(3);
 		infoEntry.setProjectId("PRJEB0");
-		infoEntry.setBiosampleId("");
+		infoEntry.setBiosampleId("SMEA091");
+		infoEntry.setName("assembly");
+		infoEntry.setProgram("sdfsfg");
+		infoEntry.setPlatform("sdfsgf");
 		return infoEntry;
 	}
 	
-	protected void validateMaster() throws ValidationEngineException
+	protected void validateMaster(Context context) throws ValidationEngineException
 	{
 		SubmissionOptions options = new SubmissionOptions();
 		
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
 		options.isRemote =true;
-		options.context =Optional.of(Context.genome);
+		options.context =Optional.of(context);
 		options.getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		check.check();
-		
+    }
+	
+	protected boolean compareOutputFiles(File file) throws FlatFileComparatorException
+	{
+		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
+		FlatFileComparator comparator=new FlatFileComparator(options);
+		return comparator.compare(file.getAbsolutePath()+".expected", file.getAbsolutePath()+".fixed");
 	}
 }

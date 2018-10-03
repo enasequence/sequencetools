@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.io.File;
 import java.sql.SQLException;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -30,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -99,12 +101,12 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
 			masterEntry.getSequence().setMoleculeType("transcribed RNA");
 		} else {
-			masterEntry.getSequence().setMoleculeType("genomic DNA");
+			masterEntry.getSequence().setMoleculeType(infoEntry.getMoleculeType()==null?"genomic DNA":infoEntry.getMoleculeType());
 		}
 		masterEntry.getSequence().setTopology(Topology.LINEAR);		
 		source.setMasterLocation();
 		masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
-		masterEntry.addProjectAccession(new Text(infoEntry.getStudyId()));
+		masterEntry.addProjectAccession(new Text(infoEntry.getProjectId()));
 		masterEntry.addXRef(new XRef("BioSample", infoEntry.getBiosampleId()));
 		if(infoEntry.isTpa())
 		{
@@ -112,11 +114,24 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			masterEntry.addKeyword(new Text("TPA"));
 			masterEntry.addKeyword(new Text("assembly"));
 		}
-
+        
 		masterEntry.addFeature(source);
-		String description=SequenceEntryUtils.generateMasterEntryDescription(source);
-		masterEntry.setDescription(new Text(description));
+		if(getOptions().context.get()==Context.genome)
+			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source)));
+		if(getOptions().context.get()==Context.transcriptome)
+			addTranscriptomInfo(masterEntry);
 		return masterEntry;
+	}
+	
+	public Entry getMasterEntry()
+	{
+		return masterEntry;
+	}
+	
+	private void addTranscriptomInfo(Entry masterEntry)
+	{
+		String ccLine = "Assembly Name: " + getOptions().assemblyInfoEntry.get().getName() + "\nAssembly Method: " + getOptions().assemblyInfoEntry.get().getPlatform() + "\nSequencing Technology: " + getOptions().assemblyInfoEntry.get().getProgram();
+        masterEntry.getComment().setText(ccLine);
 	}
 
 }

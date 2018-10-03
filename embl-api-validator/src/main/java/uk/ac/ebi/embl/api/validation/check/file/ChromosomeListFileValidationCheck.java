@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.util.HashMap;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -45,6 +46,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			if(!parseResult.isValid())
 			{
 				valid = false;
+				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 				addMessagekey(parseResult);
 			}
@@ -75,6 +77,16 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
+	}
+
+ 	public HashMap<String,List<Qualifier>> getChromosomeQualifeirs()
+ 	{
+ 		return chromosomeNameQualifiers;
+ 	}
+
+	@Override
+	public boolean check() throws ValidationEngineException {
+		throw new UnsupportedOperationException();
 	}
 
 }

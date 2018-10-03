@@ -109,5 +109,9 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			throw new ValidationEngineException(e.getMessage());
 		}
     }
+	@Override
+	public boolean check() throws ValidationEngineException {
+		throw new UnsupportedOperationException();
+	}
 
 }

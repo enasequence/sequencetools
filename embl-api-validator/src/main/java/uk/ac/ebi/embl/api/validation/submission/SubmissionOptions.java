@@ -59,7 +59,7 @@ public class SubmissionOptions
 		default:
 			break;
 		}
-		if(enproConnection.get()==null||eraproConnection.get()==null)
+		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
 			if(!isRemote)
 			{

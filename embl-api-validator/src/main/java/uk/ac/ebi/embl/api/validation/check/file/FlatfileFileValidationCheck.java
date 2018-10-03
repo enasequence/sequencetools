@@ -96,5 +96,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}
 		return valid;
 	}
+	@Override
+	public boolean check() throws ValidationEngineException {
+		throw new UnsupportedOperationException();
+	}
 	
 }

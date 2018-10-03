@@ -23,9 +23,10 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
@@ -33,22 +34,24 @@ public class FastaFileValidationCheckTest extends FileValidationCheckTest
 {
    @Before
    public void init() throws SQLException
-   {
-	   
+   {   
 	   options = new SubmissionOptions();
-       options.context= Optional.of(Context.genome);
        options.source= Optional.of(getSource());
        options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
        options.isRemote = true;
-       
    }
 	
 	@Test
 	public void testValidFastaFile() throws ValidationEngineException
 	{
-		validateMaster();
-		SubmissionFile file=initSubmissionTestFile("valid_fasta.txt",SubmissionFile.FileType.FASTA);
+		validateMaster(Context.genome);
+		SubmissionFile file=initSubmissionTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+        options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
+        options.context = Optional.of(Context.genome);
+        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
 		
@@ -57,24 +60,49 @@ public class FastaFileValidationCheckTest extends FileValidationCheckTest
 	@Test
 	public void testInvalidFastaFile() throws ValidationEngineException
 	{
-		validateMaster();
+		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+        options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
+        options.context = Optional.of(Context.genome);
+        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(!check.check(file));
 		assertTrue(check.getMessageStats().get("SQ.1")!=null);
 	}
 	
 	@Test
-	public void testFixedFastaFile() throws ValidationEngineException
+	public void testTranscriptomFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
 	{
-		validateMaster();
-		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
+		validateMaster(Context.transcriptome);
+		SubmissionFile file=initSubmissionFixedTestFile("valid_transcriptom_fasta.txt",SubmissionFile.FileType.FASTA);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+        options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
+        options.context = Optional.of(Context.transcriptome);
+        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		assertTrue(!check.check(file));
-		assertTrue(check.getMessageStats().get("SQ.1")!=null);
+		assertTrue(check.check(file));
+        assertTrue(compareOutputFiles(file.getFile()));
 	}
 	
-	
+	@Test
+	public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
+	{
+		validateMaster(Context.genome);
+		SubmissionFile file=initSubmissionFixedTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+        options.submissionFiles =Optional.of(submissionFiles);
+        options.reportDir = Optional.of(file.getFile().getParent());
+        options.context = Optional.of(Context.genome);
+        options.init();
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		assertTrue(check.check(file));
+        assertTrue(compareOutputFiles(file.getFile()));
+	}
+		
 }

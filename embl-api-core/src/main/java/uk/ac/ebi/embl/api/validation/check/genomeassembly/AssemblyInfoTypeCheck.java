@@ -33,7 +33,7 @@ public class AssemblyInfoTypeCheck extends GenomeAssemblyValidationCheck<Assembl
 			return result;
 		String[] assmemblyTypes = new String[] {"CLONE OR ISOLATE","PRIMARY METAGENOME","BINNED METAGENOME","METAGENOME-ASSEMBLED GENOME (MAG)","ENVIRONMENTAL SINGLE-CELL AMPLIFIED GENOME (SAG)"};
 		if(!ArrayUtils.contains(assmemblyTypes, entry.getAssemblyType().toUpperCase()))
-		  reportError(entry.getOrigin(), MESSAGE_KEY_ASSEMBLY_TYPE_ERROR, entry.getCoverage());
+		  reportError(entry.getOrigin(), MESSAGE_KEY_ASSEMBLY_TYPE_ERROR, entry.getAssemblyType());
 		return result;
 	}
 }

@@ -15,20 +15,27 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.List;
-import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
+import java.util.stream.Collectors;
+
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.reader.genomeassembly.UnlocalisedListFileReader;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
-public class UnlocalisedListFileValidationCheck extends FileValidationCheck
+public class TSVFileValidationCheck extends FileValidationCheck
 {
 
-	public UnlocalisedListFileValidationCheck(SubmissionOptions options) 
+	public TSVFileValidationCheck(SubmissionOptions options) 
 	{
 		super(options);
 	}	
@@ -36,29 +43,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid =true;
-		try
-		{
-		UnlocalisedListFileReader reader = new UnlocalisedListFileReader(submissionFile.getFile());
-		ValidationResult parseResult = reader.read();
-		if(!parseResult.isValid())
-		{
-			valid = false;
-			if(getOptions().reportDir.isPresent())
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
-		}
-		getOptions().getEntryValidationPlanProperty().fileType.set(FileType.UNLOCALISEDLIST);
-		GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
-		List<UnlocalisedEntry> unlocalisedEntries=reader.getentries();
-		for(UnlocalisedEntry entry : unlocalisedEntries)
-		{
-			ValidationPlanResult result=plan.execute(entry);
-			if(getOptions().reportDir.isPresent())
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
-		}
-		}catch(Exception e)
-		{
-			throw new ValidationEngineException(e.getMessage());
-		}
+	
 		return valid;
 	}
 	@Override

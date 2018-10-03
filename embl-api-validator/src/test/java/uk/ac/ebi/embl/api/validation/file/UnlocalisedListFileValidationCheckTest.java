@@ -15,10 +15,54 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.submission.Context;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class UnlocalisedListFileValidationCheckTest
+public class UnlocalisedListFileValidationCheckTest extends FileValidationCheckTest
 {
 
+	@Before
+	   public void init() throws SQLException
+	   {   
+		   options = new SubmissionOptions();
+	       options.isRemote = true;
+	   }
+	
+	@Test
+	public void testvalidUnlocalisedList() throws ValidationEngineException
+	{
+		validateMaster(Context.genome);
+		SubmissionFile file=initSubmissionTestFile("unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
+		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
+		assertTrue(check.check(file));
+	}
+	
+	@Test
+	public void testInvalidChromosomeList() throws ValidationEngineException
+	{
+		validateMaster(Context.genome);
+		SubmissionFile file=initSubmissionTestFile("invalid_unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
+		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
+		assertTrue(!check.check(file));
+		assertTrue(check.getMessageStats().get("FileFormatCheck")!=null);
+	}
+	
+	
 }

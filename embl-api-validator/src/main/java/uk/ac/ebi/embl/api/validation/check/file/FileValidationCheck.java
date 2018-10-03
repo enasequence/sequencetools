@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
@@ -73,9 +74,7 @@ public abstract class FileValidationCheck {
 
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
-	public boolean check() throws ValidationEngineException {
-		return false;
-	}
+	public abstract boolean check() throws ValidationEngineException ;
 
 	protected SubmissionOptions getOptions() {
 		return options;
@@ -152,6 +151,7 @@ public abstract class FileValidationCheck {
 	protected ValidationScope getValidationScope(String entryName)
 	{
 		if(options.context.get()==Context.genome)
+		{
 			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
 				chromosomes.add(entryName.toUpperCase());
@@ -167,6 +167,8 @@ public abstract class FileValidationCheck {
 			contigs.add(entryName.toUpperCase());
 			return ValidationScope.ASSEMBLY_CONTIG;
 		}
+		}
+		return options.getEntryValidationPlanProperty().validationScope.get();
 	}
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
@@ -297,23 +299,28 @@ public abstract class FileValidationCheck {
 		entry.setDescription(masterEntry.getDescription());
 		entry.addProjectAccessions(masterEntry.getProjectAccessions());
 		entry.addXRefs(masterEntry.getXRefs());
+		entry.setComment(masterEntry.getComment());
 		if(entry.getSequence()!=null)
 		{
-		entry.getSequence().setMoleculeType(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.MOL_TYPE_QUALIFIER_NAME));
+		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
 		Order<Location>featureLocation = new Order<Location>();
 		featureLocation.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
 		entry.getPrimarySourceFeature().setLocations(featureLocation);
 		}
 		//add chromosome qualifiers to entry
-		if(entry.getSubmitterAccession()!=null)
+		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		entry.getPrimarySourceFeature().addQualifiers(chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase()));
 		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.transcriptome)
+			entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
+
 	}
  	
  	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws FileNotFoundException
  	{
  		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
- 			fixedFileWriter= new PrintWriter(submissionFile.getFile().getAbsolutePath());
+ 			fixedFileWriter= new PrintWriter(submissionFile.getFixedFile().getAbsolutePath());
  		return fixedFileWriter;
  	}
+ 	
 }
