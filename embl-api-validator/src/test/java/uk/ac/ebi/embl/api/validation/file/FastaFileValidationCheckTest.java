@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class FastaFileValidationCheckTest extends FileValidationCheckTest
+public class FastaFileValidationCheckTest extends SubmissionValidationTest
 {
    @Before
    public void init() throws SQLException

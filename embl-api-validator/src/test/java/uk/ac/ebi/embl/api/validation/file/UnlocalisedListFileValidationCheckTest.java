@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class UnlocalisedListFileValidationCheckTest extends FileValidationCheckTest
+public class UnlocalisedListFileValidationCheckTest extends SubmissionValidationTest
 {
 
 	@Before

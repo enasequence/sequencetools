@@ -73,7 +73,9 @@ public abstract class FileValidationCheck {
 		this.options =options;
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
 		taxonHelper =new TaxonHelperImpl();
-
+		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
 	public abstract boolean check() throws ValidationEngineException ;
@@ -112,15 +114,13 @@ public abstract class FileValidationCheck {
 
 	public void readAGPfiles() throws ValidationEngineException
 	{
-
-		boolean valid = true;
 		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP) ) 
 		{
 			try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
 
-				ValidationResult vr = reader.read();
+				reader.read();
 				int i=1;
 
 				while(reader.isEntry() )
@@ -135,7 +135,7 @@ public abstract class FileValidationCheck {
 							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
 						}
 					}
-					vr = reader.read();
+					 reader.read();
 				}
 
 			}catch(Exception e)

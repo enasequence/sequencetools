@@ -32,7 +32,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
+public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 {
 	 @Before
 	   public void init() throws SQLException
@@ -93,7 +93,6 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 		@Test
 		public void testTemplateFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
-			validateMaster(Context.sequence);
 			//TODO:
 			/*SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();

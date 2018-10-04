@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class TSVFileValidationCheckTest  extends FileValidationCheckTest
+public class TSVFileValidationCheckTest  extends SubmissionValidationTest
 {
 
 	@Before

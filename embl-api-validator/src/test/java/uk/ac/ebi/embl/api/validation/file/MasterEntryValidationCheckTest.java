@@ -37,7 +37,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
-public class MasterEntryValidationCheckTest extends FileValidationCheckTest
+public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
