@@ -61,7 +61,7 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 		public void testTranscriptomFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
 		{
 			validateMaster(Context.transcriptome);
-			SubmissionFile file=initSubmissionFixedTestFile("valid_flatfile.txt",SubmissionFile.FileType.FASTA);
+			SubmissionFile file=initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
 			submissionFiles.addFile(file);
 	        options.submissionFiles =Optional.of(submissionFiles);
@@ -77,7 +77,7 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 		public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
 		{
 			validateMaster(Context.genome);
-			SubmissionFile file=initSubmissionFixedTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
+			SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
 			submissionFiles.addFile(file);
 	        options.submissionFiles =Optional.of(submissionFiles);

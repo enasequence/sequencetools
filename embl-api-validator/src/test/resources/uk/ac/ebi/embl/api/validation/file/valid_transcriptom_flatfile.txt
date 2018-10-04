@@ -1,8 +1,6 @@
-ID   HF002583; SV 1; circular; genomic DNA; XXX; PLN; 1710 BP.
+ID   XXX; SV 1; circular; genomic DNA; XXX; PLN; 1710 BP.
 XX
 ST * private 31-DEC-3011
-XX
-AC   HF002583;
 XX
 AC * _ENTRY_NAME1
 XX
