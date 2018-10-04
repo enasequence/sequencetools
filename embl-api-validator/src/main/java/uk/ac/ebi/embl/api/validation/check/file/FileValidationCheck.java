@@ -42,6 +42,7 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
@@ -292,9 +293,9 @@ public abstract class FileValidationCheck {
 		entry.removeReferences();
 		SourceFeature source=entry.getPrimarySourceFeature();
 		entry.removeFeature(source);
+		entry.removeProjectAccessions();
 		entry.addFeature(masterEntry.getPrimarySourceFeature());
 		entry.addReferences(masterEntry.getReferences());
-		entry.setDescription(masterEntry.getDescription());
 		entry.addProjectAccessions(masterEntry.getProjectAccessions());
 		entry.addXRefs(masterEntry.getXRefs());
 		entry.setComment(masterEntry.getComment());
@@ -305,10 +306,17 @@ public abstract class FileValidationCheck {
 		featureLocation.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
 		entry.getPrimarySourceFeature().setLocations(featureLocation);
 		}
+		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 		//add chromosome qualifiers to entry
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
+		{
 		entry.getPrimarySourceFeature().addQualifiers(chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase()));
-		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+        Utils.setssemblyLevelDescription(masterEntry.getDescription().getText(), 
+        		    ValidationScope.ASSEMBLY_CONTIG==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 0 
+        		    : ValidationScope.ASSEMBLY_SCAFFOLD==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 1 
+        		    : ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,
+        		    entry);
+		}
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.transcriptome)
 			entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
 
