@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
@@ -58,13 +59,9 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			while(reader.isEntry())
 			{
 				Entry entry=reader.getEntry();
-				if(!contigRangeMap.isEmpty())
+				if(getOptions().context.get()==Context.genome)
 				{
-				List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
-            	for(String contigKey:contigKeys)
-            	{
-            		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
-            	}
+					collectContigInfo(entry);
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
             	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
@@ -98,5 +95,8 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public boolean check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
+	
+	
+	
 
 }

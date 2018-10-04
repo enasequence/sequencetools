@@ -42,22 +42,6 @@ public class FastaFileValidationCheckTest extends FileValidationCheckTest
    }
 	
 	@Test
-	public void testValidFastaFile() throws ValidationEngineException
-	{
-		validateMaster(Context.genome);
-		SubmissionFile file=initSubmissionTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
-		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(file);
-        options.submissionFiles =Optional.of(submissionFiles);
-        options.reportDir = Optional.of(file.getFile().getParent());
-        options.context = Optional.of(Context.genome);
-        options.init();
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		assertTrue(check.check(file));
-		
-	}
-	
-	@Test
 	public void testInvalidFastaFile() throws ValidationEngineException
 	{
 		validateMaster(Context.genome);

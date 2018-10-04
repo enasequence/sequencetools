@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -58,15 +59,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			Entry entry = emblReader.getEntry();
 			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
-
-			if(!contigRangeMap.isEmpty())
-			{
-			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
-        	for(String contigKey:contigKeys)
-        	{
-        		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
-        	}
-			}
+            if(getOptions().context.get()==Context.genome)
+            {
+            	collectContigInfo(entry);
+            }
+			
 			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());

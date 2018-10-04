@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -60,7 +62,6 @@ public abstract class FileValidationCheck {
 	protected static List<String> scaffolds =new ArrayList<String>();
 	protected static List<String> agpEntryNames =new ArrayList<String>();
 	protected static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
-	ArrayList<String> agpEntrynames = new ArrayList<String>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
@@ -123,7 +124,7 @@ public abstract class FileValidationCheck {
 
 				while(reader.isEntry() )
 				{
-					agpEntrynames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
+					agpEntryNames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
 
 					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
 					{
@@ -154,7 +155,7 @@ public abstract class FileValidationCheck {
 				chromosomes.add(entryName.toUpperCase());
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
-		if(agpEntrynames.contains(entryName.toUpperCase()))
+		if(agpEntryNames.contains(entryName.toUpperCase()))
 		{
 			scaffolds.add(entryName);
 			return ValidationScope.ASSEMBLY_SCAFFOLD;
@@ -234,7 +235,7 @@ public abstract class FileValidationCheck {
 				 dataclass= Entry.CON_DATACLASS;
 				 break;
 			case EMBL:
-				 if(agpEntrynames.contains(entryName.toUpperCase()))
+				 if(agpEntryNames.contains(entryName.toUpperCase()))
 					 dataclass= Entry.CON_DATACLASS;
 				 switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 					{
@@ -319,5 +320,21 @@ public abstract class FileValidationCheck {
  			fixedFileWriter= new PrintWriter(submissionFile.getFixedFile().getAbsolutePath());
  		return fixedFileWriter;
  	}
+ 	
+ 	protected void collectContigInfo(Entry entry)
+	{
+ 		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+ 		  return;
+ 		if(entry.getSequence()==null)
+ 		  return;
+		if(!contigRangeMap.isEmpty())
+		{
+		List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
+    	for(String contigKey:contigKeys)
+    	{
+    		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
+    	}
+		}
+	}
  	
 }
