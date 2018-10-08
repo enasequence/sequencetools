@@ -231,10 +231,14 @@ public class AGPValidationCheck extends EntryValidationCheck
 							else
 								if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) 
 								{
-									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())==null)
+									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())==null
+											& getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()+"_"+part_number)==null)
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
-										sequenceLength = getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()); 
+									{
+										if(getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())!=null&&getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()).getSequence()!=null)
+										sequenceLength = (long) getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()).getSequence().length;
+									}
 								}
 
 						}

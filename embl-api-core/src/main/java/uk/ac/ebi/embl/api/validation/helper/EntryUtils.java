@@ -235,6 +235,7 @@ public class EntryUtils
 			String gap_type=agpRow.getGap_type();
 			List<String> linkage_evidences=agpRow.getLinkageevidence();
 			String component_acc=agpRow.getComponent_acc();
+			String componentId= agpRow.getComponent_id();
 			
 		  if(agpRow.isGap())
 		  {
@@ -285,8 +286,10 @@ public class EntryUtils
 		  }
 		  else
 		  {
-			  if(component_acc==null)
+			  if(component_acc==null&componentId==null)
 				  continue;
+			  if(component_acc!=null)
+			  {
 			  String[] accessionWithVersion=component_acc.split("\\.");
 			  String accession=accessionWithVersion[0];
 			  Integer version=new Integer(accessionWithVersion[1]);
@@ -294,6 +297,16 @@ public class EntryUtils
 			  if(orientation=="-"||orientation=="minus")
 				  remoteLocation.setComplement(true);
 			  components.add(remoteLocation);
+			  }
+			  else
+			  {
+				 
+				  Location remoteLocation=locationFactory.createRemoteRange(componentId, 0, (long)component_begin, (long)component_end);
+				  if(orientation=="-"||orientation=="minus")
+					  remoteLocation.setComplement(true);
+				  components.add(remoteLocation);
+			  }
+			 
 		  }
 			  
    		  //reportMessage(Severity.FIX, entry.getOrigin(), ACCESSION_FIX_ID, agpRow.getComponent_acc(),componentID,agpRow.getObject());

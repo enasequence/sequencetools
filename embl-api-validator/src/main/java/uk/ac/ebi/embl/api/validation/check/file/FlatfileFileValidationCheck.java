@@ -60,7 +60,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             	collectContigInfo(entry);
             }
 			
-			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
+			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);

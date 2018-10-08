@@ -28,6 +28,7 @@ FH
 FT   source          1..1710
 FT                   /organism="Micrococcus sp. 5"
 FT                   /mol_type="genomic DNA"
+FT                   /note="contig: ENTRY_NAME1"
 FT   gene            212..1543
 FT                   /locus_tag="SPLC1_0001"
 FT   assembly_gap    1461..1490

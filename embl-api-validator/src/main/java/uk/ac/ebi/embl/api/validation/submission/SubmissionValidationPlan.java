@@ -16,9 +16,7 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import java.nio.file.Paths;
-
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
@@ -35,7 +33,7 @@ public class SubmissionValidationPlan
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
-	public ValidationPlanResult execute() throws ValidationEngineException {
+	public boolean execute() throws ValidationEngineException {
 		try
 		{
 		options.init();
@@ -62,7 +60,7 @@ public class SubmissionValidationPlan
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
 		}
-		return null;
+		return true;
 		}catch(Exception e)
 		{
 			try {
@@ -76,7 +74,6 @@ public class SubmissionValidationPlan
 
 		}
 	}
-
 
 	public void createMaster() throws ValidationEngineException
 	{
