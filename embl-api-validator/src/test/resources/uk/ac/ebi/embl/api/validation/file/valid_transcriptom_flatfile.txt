@@ -2,6 +2,8 @@ ID   XXX; SV 1; circular; genomic DNA; XXX; PLN; 1710 BP.
 XX
 ST * private 31-DEC-3011
 XX
+AC   ;
+XX
 AC * _ENTRY_NAME1
 XX
 PR   Project:PRJEB0;

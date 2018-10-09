@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
+
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
@@ -28,6 +30,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -36,6 +39,7 @@ import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
+	private int i=0;
 	public AGPFileValidationCheck(SubmissionOptions options) 
 	{
 		super(options);
@@ -44,7 +48,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid=true;
 		ValidationPlan validationPlan =null;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
@@ -57,14 +61,14 @@ public class AGPFileValidationCheck extends FileValidationCheck
     				addMessagekey(parseResult);
     			}
         		Entry entry =reader.getEntry();
-    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession()));
+    			getOptions().getEntryValidationPlanProperty().contigEntryNames.set(contigRangeMap);
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
     			ValidationPlanResult planResult=validationPlan.execute(entry);
     			if(!planResult.isValid())
     			{
     			    valid = false;
-    				if(getOptions().reportDir.isPresent())
     					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
     				for(ValidationResult result: planResult.getResults())
     				{
@@ -74,7 +78,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			else
 				{
 					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+					new EmblEntryWriter(entry).write(fixedFileWriter);
+					constructAGPSequence(entry);
+					//write AGP with sequence
+					entry.setNonExpandedCON(false);
+					new EmblEntryWriter(entry).write(sequenceFixedFileWriter);
+					
 				}
 				reader.read();
         	}
@@ -85,7 +94,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		return valid;
 	}
 	
-	public void constructAGPSequence(Entry entry,ValidationResult result,String fileName) throws ValidationEngineException
+	private void constructAGPSequence(Entry entry) throws ValidationEngineException
     {
 		int i=0;
 		try
@@ -113,5 +122,5 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	public boolean check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
-
+	
 }

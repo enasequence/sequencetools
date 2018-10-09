@@ -24,6 +24,7 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -31,7 +32,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
+public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 {
 	 @Before
 	   public void init() throws SQLException
@@ -58,7 +59,7 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 		}
 		
 		@Test
-		public void testTranscriptomFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
+		public void testTranscriptomFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
 			validateMaster(Context.transcriptome);
 			SubmissionFile file=initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt",SubmissionFile.FileType.FLATFILE);
@@ -68,13 +69,13 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 	        options.reportDir = Optional.of(file.getFile().getParent());
 	        options.context = Optional.of(Context.transcriptome);
 	        options.init();
-			FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
 	        assertTrue(compareOutputFiles(file.getFile()));
 		}
 		
 		@Test
-		public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
+		public void testgenomeFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
 			validateMaster(Context.genome);
 			SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
@@ -84,9 +85,25 @@ public class FlatfileFileValidationCheckTest extends FileValidationCheckTest
 	        options.reportDir = Optional.of(file.getFile().getParent());
 	        options.context = Optional.of(Context.genome);
 	        options.init();
-			FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
 	        assertTrue(compareOutputFiles(file.getFile()));
+		}
+		
+		@Test
+		public void testTemplateFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
+		{
+			//TODO:
+			/*SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
+			SubmissionFiles submissionFiles = new SubmissionFiles();
+			submissionFiles.addFile(file);
+	        options.submissionFiles =Optional.of(submissionFiles);
+	        options.reportDir = Optional.of(file.getFile().getParent());
+	        options.context = Optional.of(Context.genome);
+	        options.init();
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+			assertTrue(check.check(file));
+	        assertTrue(compareOutputFiles(file.getFile()));*/
 		}
 			
 }

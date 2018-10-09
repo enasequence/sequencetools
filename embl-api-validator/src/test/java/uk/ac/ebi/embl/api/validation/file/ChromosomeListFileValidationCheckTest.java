@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
-public class ChromosomeListFileValidationCheckTest  extends FileValidationCheckTest
+public class ChromosomeListFileValidationCheckTest  extends SubmissionValidationTest
 {
 
 	@Before

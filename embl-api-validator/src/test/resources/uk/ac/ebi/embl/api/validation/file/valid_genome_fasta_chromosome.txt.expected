@@ -1,4 +1,4 @@
-ID   XXX; SV XXX; linear; genomic DNA; WGS; XXX; 335 BP.
+ID   XXX; SV XXX; linear; genomic DNA; STD; XXX; 335 BP.
 XX
 AC   ;
 XX
@@ -6,12 +6,13 @@ AC * _IWGSC_CSS_6DL_contig_209591
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209591
+DE   Micrococcus sp. 5 genome assembly, organelle: mitochondrion
 XX
-KW   WGS.
+KW   .
 XX
 OS   Micrococcus sp. 5
 OC   unclassified sequences.
+OG   Mitochondrion
 XX
 DR   BioSample; SMEA091.
 XX
@@ -19,8 +20,8 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /organelle="mitochondrion"
 FT                   /mol_type="genomic DNA"
-FT                   /note="contig: IWGSC_CSS_6DL_contig_209591"
 XX
 SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac        60
@@ -30,7 +31,7 @@ SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       300
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaac                                  335
 //
-ID   XXX; SV XXX; linear; genomic DNA; WGS; XXX; 335 BP.
+ID   XXX; SV XXX; linear; genomic DNA; STD; XXX; 335 BP.
 XX
 AC   ;
 XX
@@ -38,9 +39,9 @@ AC * _IWGSC_CSS_6DL_contig_209592
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209592
+DE   Micrococcus sp. 5 genome assembly, segment: II
 XX
-KW   WGS.
+KW   .
 XX
 OS   Micrococcus sp. 5
 OC   unclassified sequences.
@@ -51,8 +52,8 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /segment="II"
 FT                   /mol_type="genomic DNA"
-FT                   /note="contig: IWGSC_CSS_6DL_contig_209592"
 XX
 SQ   Sequence 335 BP; 0 A; 0 C; 12 G; 323 T; 0 other;
      gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg        60

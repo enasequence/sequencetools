@@ -12,6 +12,6 @@ public class SubmissionValidator {
  
  public boolean validate() throws ValidationEngineException
  {
-	 return new SubmissionValidationPlan(options).execute().isValid();
+	 return new SubmissionValidationPlan(options).execute();
  }
 }

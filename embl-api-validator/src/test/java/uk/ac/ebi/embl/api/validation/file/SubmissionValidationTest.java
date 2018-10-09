@@ -15,18 +15,15 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
-
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
@@ -37,14 +34,19 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
-public abstract class FileValidationCheckTest {
+public abstract class SubmissionValidationTest {
 
 	protected SubmissionOptions options =null;
 
+	public SubmissionValidationTest() {
+		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
+	}
 	protected  SubmissionFile 
 	initSubmissionTestFile(String fileName,FileType fileType)
 	{
-		URL url = FileValidationCheckTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
 		if (url != null)
 		{
 			fileName = url.getPath().replaceAll("%20", " ");
@@ -56,7 +58,7 @@ public abstract class FileValidationCheckTest {
 	protected  File 
 	initFile(String fileName)
 	{
-		URL url = FileValidationCheckTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
 		if (url != null)
 		{
 			fileName = url.getPath().replaceAll("%20", " ");
@@ -68,7 +70,7 @@ public abstract class FileValidationCheckTest {
 	protected  SubmissionFile 
 	initSubmissionFixedTestFile(String fileName,FileType fileType)
 	{
-		URL url = FileValidationCheckTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
 		if (url != null)
 		{
 			fileName = url.getPath().replaceAll("%20", " ");

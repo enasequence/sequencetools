@@ -13,7 +13,9 @@ package uk.ac.ebi.embl.api.validation.report;
 
 import uk.ac.ebi.embl.api.validation.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -22,6 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultSubmissionReporter implements SubmissionReporter {
 
@@ -81,6 +86,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     public void
     writeToFile(Path reportFile, ValidationResult validationResult )
     {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationResult.getMessages() ) {
                 writeMessage(s, validationMessage, null /* targetOrigin */);
@@ -225,5 +232,19 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
         {
             return e.toString();
         }
+    }
+
+    @Override
+    public void writeToFile(Path reportDir, ConcurrentMap<String, AtomicLong> messageStats) throws IOException {
+    	if(reportDir==null)
+    		return;
+    	try(FileWriter fw = new FileWriter(reportDir.toFile().getAbsolutePath()+File.separator+"VALIDATION_STATS.log",true);BufferedWriter bw = new BufferedWriter(fw))
+    	{
+    		bw.write(String.format("%s\t%s\t%s\n", "COUNT","MESSAGE_KEY","MESSAGE"));
+    		for(String key:messageStats.keySet())
+    		{
+    			bw.write(String.format("%d\t%s\t%s\n", messageStats.get(key),key,ValidationMessageManager.getString(key)));
+    		}
+    	}		
     }
 }

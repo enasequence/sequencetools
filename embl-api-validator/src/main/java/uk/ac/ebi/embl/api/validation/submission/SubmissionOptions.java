@@ -8,6 +8,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -74,6 +75,16 @@ public class SubmissionOptions
 			{
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
+		}
+		if(context.get()==Context.genome)
+		{
+			FileValidationCheck.contigs.clear();
+			FileValidationCheck.agpEntryNames.clear();
+			FileValidationCheck.chromosomeNameQualifiers.clear();
+			FileValidationCheck.chromosomes.clear();
+			FileValidationCheck.contigRangeMap.clear();
+			FileValidationCheck.scaffolds.clear();
+			FileValidationCheck.contigRangeMap.clear();
 		}
 	}
 	

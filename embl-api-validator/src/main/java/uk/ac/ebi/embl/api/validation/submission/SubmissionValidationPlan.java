@@ -15,9 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
-import uk.ac.ebi.embl.api.entry.Entry;
+import java.nio.file.Paths;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
@@ -34,7 +33,9 @@ public class SubmissionValidationPlan
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
-	public ValidationPlanResult execute() throws ValidationEngineException {
+	public boolean execute() throws ValidationEngineException {
+		try
+		{
 		options.init();
 		//Validation Order shouldn't be changed
 		if(options.context.get().getFileTypes().contains(FileType.MASTER))
@@ -59,9 +60,20 @@ public class SubmissionValidationPlan
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
 		}
-		return null;
-	}
+		return true;
+		}catch(Exception e)
+		{
+			try {
+			if(!options.isRemote&&options.context.isPresent()&&options.context.get()==Context.genome&&check!=null&&check.getMessageStats()!=null)
+				check.getReporter().writeToFile(Paths.get(options.reportDir.get()),check.getMessageStats());
+			}catch(Exception ex)
+			{
+				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage());
+			}
+			throw new ValidationEngineException(e.getMessage());
 
+		}
+	}
 
 	public void createMaster() throws ValidationEngineException
 	{

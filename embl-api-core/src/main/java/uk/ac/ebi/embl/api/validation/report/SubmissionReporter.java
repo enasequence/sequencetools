@@ -12,7 +12,12 @@
 package uk.ac.ebi.embl.api.validation.report;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
+
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
@@ -27,6 +32,8 @@ public interface SubmissionReporter {
     void writeToFile(Path reportFile, ValidationMessage validationMessage );
     void writeToFile(Path reportFile, Severity severity, String message, Origin origin );
     void writeToFile(Path reportFile, Severity severity, String message );
+    void writeToFile(Path reportFile,ConcurrentMap<String,AtomicLong> messageStats) throws IOException;
+
 
     void writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin);
     void writeToFile(File reportFile, ValidationPlanResult validationPlanResult);
@@ -35,4 +42,5 @@ public interface SubmissionReporter {
     void writeToFile(File reportFile, ValidationMessage validationMessage );
     void writeToFile(File reportFile, Severity severity, String message, Origin origin );
     void writeToFile(File reportFile, Severity severity, String message );
+    
 }
