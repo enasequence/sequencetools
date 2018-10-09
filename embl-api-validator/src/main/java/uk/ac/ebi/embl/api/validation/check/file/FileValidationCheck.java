@@ -53,7 +53,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public abstract class FileValidationCheck {
 
-	private SubmissionOptions options =null;
+	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
 	protected static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
@@ -66,6 +66,7 @@ public abstract class FileValidationCheck {
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	private PrintWriter fixedFileWriter =null;
+	protected int sequenceCount;
 		   
 
 	public FileValidationCheck(SubmissionOptions options) {
@@ -79,6 +80,10 @@ public abstract class FileValidationCheck {
 
 	protected SubmissionOptions getOptions() {
 		return options;
+	}
+
+	public int getSequenceCount() {
+		return sequenceCount;
 	}
 
 	protected AnalysisType getAnalysisType()

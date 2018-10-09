@@ -15,40 +15,149 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Calendar;
+import java.util.Optional;
+import java.util.zip.GZIPInputStream;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.api.validation.template.*;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
-public class TSVFileValidationCheck extends FileValidationCheck
-{
+public class TSVFileValidationCheck extends FileValidationCheck {
+	public final static String TEMPLATE_FILE_NAME = "TEMPLATE_";
+	private final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
+	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
+	private final static int MAX_SEQUENCE_COUNT = 100000;
 
-	public TSVFileValidationCheck(SubmissionOptions options) 
-	{
+	public TSVFileValidationCheck(SubmissionOptions options) {
 		super(options);
-	}	
-	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
-	{
-		boolean valid =true;
-	
-		return valid;
 	}
+
+	@Override
+	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
+		boolean valid = true;
+		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath()), StandardCharsets.UTF_8))) {
+			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
+			File submittedDataFile =  submissionFile.getFile();
+			String templateDir = System.getProperty("user.dir") +"/src/main/resources/templates";
+			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);
+			TemplateLoader templateLoader = new TemplateLoader();
+			if (!submittedDataFile.exists())
+				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist");
+			TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
+			TemplateProcessor templateProcessor;
+			if (options.isRemote)
+				templateProcessor = new TemplateProcessor(templateInfo, null);
+			else {
+				templateProcessor = new TemplateProcessor(templateInfo, options.eraproConnection.get());
+				templateInfo.setAnalysisId(options.analysisId.get());
+			}
+			FileInputStream submittedDataFis = new FileInputStream(submittedDataFile);
+			BufferedInputStream bufferedInputStremSubmittedData = new BufferedInputStream(new GZIPInputStream(submittedDataFis));
+			CSVReader csvReader = new CSVReader(bufferedInputStremSubmittedData, templateInfo.getTokens(), 0);
+			CSVLine csvLine;
+			Entry entry;
+			TemplateProcessorResultSet templateProcessorResultSet;
+			while ((csvLine = csvReader.readTemplateSpreadsheetLine()) != null) {
+				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap());
+				entry = templateProcessorResultSet.getEntry();
+				entry.addProjectAccession(new Text(options.getProjectId()));
+				if (options.isRemote)
+					addDefaultCitationForOfflineValisation(entry);
+				else {
+					Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());
+					entry.addReference(reference);
+				}
+				if (sequenceCount == MAX_SEQUENCE_COUNT) {
+					// Todo - "Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file."
+					valid = false;
+					break;
+				}
+				ValidationPlanResult validationPlanResult = templateProcessorResultSet.getValidationPlanResult();
+				if (!validationPlanResult.isValid()) {
+					// Todo - log error.
+					valid = false;
+				}
+				new EmblEntryWriter(entry).write(writer);
+				sequenceCount++;
+			}
+			return valid;
+		} catch (TemplateUserError e) {
+			// Todo - log user error
+			return false;
+		} catch (Exception e) {
+			throw new ValidationEngineException(e.toString());
+		}
+	}
+
 	@Override
 	public boolean check() throws ValidationEngineException {
-		throw new UnsupportedOperationException();
+		return false;
 	}
-	
+
+	private File getTemplateFromResourceAndWriteToProcessDir(String templateId, String templateDir) throws ValidationEngineException {
+		try {
+			String template = new TemplateProcessor().getTemplate(templateId);
+			if (template == null || template.isEmpty())
+				throw  new ValidationEngineException("- Method getTemplateFromResourceAndWriteToProcessDir(): ");
+			if (template.contains("encoding=\"\""))
+				template = template.replace("encoding=\"\"", "encoding=\"UTF-8\"");
+			PrintWriter out = null;
+			Path path = Paths.get(templateDir + File.separator + TEMPLATE_FILE_NAME + templateId);
+			Files.deleteIfExists(path);
+			Files.createFile(path);
+			Files.write(path, template.getBytes());
+			return path.toFile();
+		} catch (Exception e) {
+			throw new ValidationEngineException("Method getTemplateFromResourceAndWriteToProcessDir: " + e.toString());
+		}
+	}
+
+	private String getTemplateIdFromTsvFile( File submittedFile ) throws ValidationEngineException {
+		String templateId = "";
+		try( BufferedReader reader = new BufferedReader( new InputStreamReader(new GZIPInputStream(new FileInputStream( submittedFile)), StandardCharsets.UTF_8)) ){
+			Optional<String> optional =  reader.lines()
+					.filter(line -> line.startsWith( TEMPLATE_ACCESSION_LINE))
+					.findFirst();
+			if (optional.isPresent()) {
+				templateId = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").trim();
+				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
+					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003");
+			} else
+				throw new ValidationEngineException("File " + submittedFile + " is missing the '" +  TEMPLATE_ACCESSION_LINE + "' line, please add it followed by the template id");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return templateId;
+	}
+
+	private void addDefaultCitationForOfflineValisation(Entry entry) {
+		ReferenceFactory referenceFactory = new ReferenceFactory();
+		Reference reference = referenceFactory.createReference();
+		Publication publication = new Publication();
+		Person person = referenceFactory.createPerson("CLELAND");
+		publication.addAuthor(person);
+		reference.setAuthorExists(true);
+		Submission submission = referenceFactory.createSubmission(publication);
+		submission.setSubmitterAddress(", The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus, CB10 1SD, United Kingdom");
+		submission.setDay(Calendar.getInstance().getTime());
+		publication = submission;
+		reference.setPublication(publication);
+		reference.setLocationExists(true);
+		reference.setReferenceNumber(1);
+		entry.addReference(reference);
+	}
 }
