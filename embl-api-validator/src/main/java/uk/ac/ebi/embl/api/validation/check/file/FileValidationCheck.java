@@ -152,8 +152,9 @@ public abstract class FileValidationCheck {
 
 	protected ValidationScope getValidationScopeandEntrynames(String entryName)
 	{
-		if(options.context.get()==Context.genome)
+		switch(options.context.get())
 		{
+		case genome:
 			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
 				chromosomes.add(entryName.toUpperCase());
@@ -169,8 +170,13 @@ public abstract class FileValidationCheck {
 				contigs.add(entryName.toUpperCase());
 				return ValidationScope.ASSEMBLY_CONTIG;
 			}
+		  case transcriptome:
+			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
+		case sequence:
+			 return ValidationScope.EMBL_TEMPLATE;
+		default:
+			 return null;
 		}
-		return options.getEntryValidationPlanProperty().validationScope.get();
 	}
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
@@ -301,6 +307,8 @@ public abstract class FileValidationCheck {
 		entry.setComment(masterEntry.getComment());
 		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 		addSourceQualifiers(entry);
+		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
+		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
 		//add chromosome qualifiers to entry
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{

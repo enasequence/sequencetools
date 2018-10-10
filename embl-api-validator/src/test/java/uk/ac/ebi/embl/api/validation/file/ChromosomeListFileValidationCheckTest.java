@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
@@ -61,11 +62,9 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 				qualifiers.add(qual);
 			}
 		}
-
-		assertEquals("segment: II",qualifiers.get(0).getName()+": "+qualifiers.get(0).getValue());
-		assertEquals("organelle: mitochondrion",qualifiers.get(1).getName()+": "+qualifiers.get(1).getValue());
-
-
+		
+		assertTrue(qualifiers.contains(new QualifierFactory().createQualifier(Qualifier.SEGMENT_QUALIFIER_NAME,"II")));
+		assertTrue(qualifiers.contains(new QualifierFactory().createQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME,"mitochondrion")));
 	}
 
 	@Test

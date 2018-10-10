@@ -71,7 +71,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
-	        assertTrue(compareOutputFiles(file.getFile()));
+	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 		
 		@Test
@@ -87,7 +87,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
-	        assertTrue(compareOutputFiles(file.getFile()));
+	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 		
 		@Test

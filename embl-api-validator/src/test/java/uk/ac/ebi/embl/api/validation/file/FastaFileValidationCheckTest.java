@@ -70,7 +70,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
-        assertTrue(compareOutputFiles(file.getFile()));
+        assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
-        assertTrue(compareOutputFiles(file.getFile()));
+        assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 		
 }

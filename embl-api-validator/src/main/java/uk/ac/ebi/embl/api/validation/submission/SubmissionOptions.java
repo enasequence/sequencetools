@@ -32,8 +32,6 @@ public class SubmissionOptions
 	public  boolean ignoreErrors = true;
 	public  boolean isRemote = false;
 
-	private  Optional<ValidationScope> validationScope = Optional.empty();
-
 	public void init() throws ValidationEngineException
 	{
 		if(!submissionFiles.isPresent())
@@ -49,17 +47,6 @@ public class SubmissionOptions
 		if(!(new File(reportDir.get())).isDirectory())
 			throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
 
-		switch(context.get())
-		{
-		case sequence:
-			validationScope = Optional.of(ValidationScope.EMBL_TEMPLATE);
-			break;
-		case transcriptome:
-			validationScope=Optional.of(ValidationScope.ASSEMBLY_TRANSCRIPTOME);
-			break;
-		default:
-			break;
-		}
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
 			if(!isRemote)
@@ -94,7 +81,6 @@ public class SubmissionOptions
 		if(assemblyInfoEntry.isPresent()) property.minGapLength.set(minGapLength.isPresent()?minGapLength.get():assemblyInfoEntry.get().getMinGapLength());
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
-		if(validationScope.isPresent())property.validationScope.set(validationScope.get());
 		property.isRemote.set(isRemote);
 		return property;
 	}

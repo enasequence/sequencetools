@@ -79,6 +79,18 @@ public abstract class SubmissionValidationTest {
 		return file;
 	}
 	
+	protected  SubmissionFile 
+	initSubmissionFixedSequenceTestFile(String fileName,FileType fileType)
+	{
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		SubmissionFile file = new SubmissionFile(fileType, new File(fileName),new File(fileName+".sequence"));
+		return file;
+	}
+	
 	protected SourceFeature getSource()
 	{
 		SourceFeature source = new FeatureFactory().createSourceFeature();
@@ -111,11 +123,17 @@ public abstract class SubmissionValidationTest {
 		check.check();
     }
 	
-	protected boolean compareOutputFiles(File file) throws FlatFileComparatorException
+	protected boolean compareOutputFixedFiles(File file) throws FlatFileComparatorException
 	{
 		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
 		FlatFileComparator comparator=new FlatFileComparator(options);
 		return comparator.compare(file.getAbsolutePath()+".expected", file.getAbsolutePath()+".fixed");
+	}
+	protected boolean compareOutputSequenceFiles(File file) throws FlatFileComparatorException
+	{
+		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
+		FlatFileComparator comparator=new FlatFileComparator(options);
+		return comparator.compare(file.getAbsolutePath()+".sequence.expected", file.getAbsolutePath()+".sequence");
 	}
 	
 }
