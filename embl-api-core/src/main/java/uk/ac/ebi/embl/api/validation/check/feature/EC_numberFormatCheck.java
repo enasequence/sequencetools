@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 public class EC_numberFormatCheck extends FeatureValidationCheck
 {
 	private static final String EC_numberFormatCheck_Error_ID = "EC_numberFormatCheck";
-	private static final Pattern PATTERN = Pattern.compile("^\\d+\\.(((\\d+|-)\\.(\\d+|-)\\.(\\d+|-))|((\\d+)\\.(\\d+)\\.(\\d+|n)))$");
+	private static final Pattern PATTERN = Pattern.compile("^\\d+\\.(((\\d+|-)\\.(\\d+|-)\\.(\\d+|-))|((\\d+)\\.(\\d+)\\.(\\d+|n([0-9]+)?)))$");
 
 	public ValidationResult check(Feature feature) throws ValidationEngineException
 	{
