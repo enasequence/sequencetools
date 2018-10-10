@@ -17,49 +17,37 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.helper.DataSetHelper;
+import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table;
-import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table.cv_fqual_value_fix_record;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.fixer.feature.QualifierValueFix;
 
-import java.sql.SQLException;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class QualifierValueFixTest
 {
 
-	private Entry entry;
 	private Feature feature;
 	private FeatureFactory featureFactory;
 	private QualifierValueFix check;
-	private EntryDAOUtils entryDAOUtils;
-	cv_fqual_value_fix_table cv_fqual_value_fix_table1;
 
 	@Before
 	public void setUp()
 	{
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
-		EntryFactory entryFactory = new EntryFactory();
 		featureFactory = new FeatureFactory();
-		entry = entryFactory.createEntry();
-		entryDAOUtils=createMock(EntryDAOUtils.class);
-		cv_fqual_value_fix_table1=new cv_fqual_value_fix_table();
+		DataRow dataRow1 = new DataRow("country","East Timor","Timor-Leste");
+		DataRow dataRow2 = new DataRow("country","UK","United Kingdom");
+		DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1,dataRow2);
 		feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
 		check = new QualifierValueFix();
-		check.setEntryDAOUtils(entryDAOUtils);
 	}
 
 	@Test
@@ -76,92 +64,6 @@ public class QualifierValueFixTest
 		assertTrue(result.isValid());
 	}
 
-	@Test
-	public void testCheck_with_cv_fqual_value_Qnamevalue_match() throws SQLException
-	{
-		cv_fqual_value_fix_record record1=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		cv_fqual_value_fix_record record2=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.4.99.14");
-		record1.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record1.setRegex("3\\.4\\.99\\.14");
-		record1.setValue("3\\.5\\.34\\.23");
-		cv_fqual_value_fix_table1.add(record1);
-		record2.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record2.setRegex("3\\.4\\.99\\.15");
-		record2.setValue("3\\.5\\.34\\.23");
-		cv_fqual_value_fix_table1.add(record2);
-		expect(entryDAOUtils.get_cv_fqual_value_fix()).andReturn(cv_fqual_value_fix_table1);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
-		ValidationResult result = check.check(feature);
-		assertTrue(result.isValid());
-		assertEquals(1, result.getMessages().size());
-	}
-
-	@Test
-	public void testCheck_with_cv_fqual_value_Qnamevalue_match_deleted() throws SQLException
-	{
-		cv_fqual_value_fix_record record1=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		cv_fqual_value_fix_record record2=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.4.99.14");
-		record1.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record1.setRegex("3\\.4\\.99\\.14");
-		record1.setValue("DELETED");
-		cv_fqual_value_fix_table1.add(record1);
-		record2.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record2.setRegex("3\\.4\\.99\\.15");
-		record2.setValue("3\\.5\\.34\\.23");
-		cv_fqual_value_fix_table1.add(record2);
-		expect(entryDAOUtils.get_cv_fqual_value_fix()).andReturn(cv_fqual_value_fix_table1);
-		replay(entryDAOUtils);
-		ValidationResult result = check.check(feature);
-		assertTrue(result.isValid());
-		assertEquals(2, result.getMessages().size());
-	}
-
-	@Test
-	public void testCheck_with_cv_fqual_value_fix_no_QValue_match() throws SQLException
-	{
-		cv_fqual_value_fix_record record1=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		cv_fqual_value_fix_record record2=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.4.99.14");
-		record1.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record1.setRegex("3\\.4\\.9\\.14");
-		record1.setValue("DELETED");
-		cv_fqual_value_fix_table1.add(record1);
-		record2.setFqualName(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-		record2.setRegex("3\\.4\\.9\\.15");
-		record2.setValue("3\\.5\\.34\\.23");
-		cv_fqual_value_fix_table1.add(record2);
-		expect(entryDAOUtils.get_cv_fqual_value_fix()).andReturn(cv_fqual_value_fix_table1);
-		replay(entryDAOUtils);
-		ValidationResult result = check.check(feature);
-		assertTrue(result.isValid());
-		assertEquals(0, result.getMessages().size());
-	}
-
-	@Test
-	public void testCheck_with_cv_fqual_value_fix_no_Qname_match() throws SQLException
-	{
-		cv_fqual_value_fix_record record1=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		cv_fqual_value_fix_record record2=cv_fqual_value_fix_table1.create_cv_fqual_value_fix_record();
-		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.4.99.14");
-		record1.setFqualName(Qualifier.ANTICODON_QUALIFIER_NAME);
-		record1.setRegex("3\\.4\\.9\\.14");
-		record1.setValue("DELETED");
-		cv_fqual_value_fix_table1.add(record1);
-		record2.setFqualName(Qualifier.ANTICODON_QUALIFIER_NAME);
-		record2.setRegex("3\\.4\\.9\\.15");
-		record2.setValue("3\\.5\\.34\\.23");
-		cv_fqual_value_fix_table1.add(record2);
-		expect(entryDAOUtils.get_cv_fqual_value_fix()).andReturn(cv_fqual_value_fix_table1);
-		replay(entryDAOUtils);
-		ValidationResult result = check.check(feature);
-		assertTrue(result.isValid());
-		assertEquals(0, result.getMessages().size());
-	}
-
-	
 	@Test
 	public void testCheck_ValueWithDoubleQuotes()
 	{
@@ -186,6 +88,16 @@ public class QualifierValueFixTest
 		ValidationResult result = check.check(feature);
 		assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
 		assertEquals("-3283m", feature.getSingleQualifierValue(Qualifier.ALTITUDE_QUALIFIER_NAME));
+	}
+	
+	@Test
+	public void testCheck_qualifierValueFix()
+	{
+		feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME,"UK");
+		ValidationResult result = check.check(feature);
+		assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
+		assertEquals("United Kingdom", feature.getSingleQualifierValue(Qualifier.COUNTRY_QUALIFIER_NAME));
+
 	}
 
 }

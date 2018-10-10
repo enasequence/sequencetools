@@ -28,8 +28,6 @@ public interface EntryDAOUtils
 	public boolean isValueExists(String tableName, String constraintKey,
 			String constraintValue) throws SQLException;
 
-	public cv_fqual_value_fix_table get_cv_fqual_value_fix() throws SQLException;
-
 	boolean isEntryExists(String accession) throws SQLException;
 
 	Long getSequenceLength(String accession) throws SQLException;

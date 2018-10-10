@@ -48,5 +48,7 @@ public class FileName {
     //A list of feature keys with old and new values
     public static final String FEATURE_RENAME = "feature-rename.tsv";
     public static final String OBSOLETE_FEATURE_TO_FEATURE = "obsoletefeature-to-feature.tsv";
+    public static final String QUALIFIER_VALUE_TO_FIX_VALUE = "obsoletefeature-to-feature.tsv";
+
 
 }
