@@ -36,12 +36,15 @@ import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
@@ -56,34 +59,31 @@ public abstract class FileValidationCheck {
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
-	protected static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
-	protected static List<String> chromosomes =new ArrayList<String>();
-	protected static List<String> contigs =new ArrayList<String>();
-	protected static List<String> scaffolds =new ArrayList<String>();
-	protected static List<String> agpEntryNames =new ArrayList<String>();
-	protected static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
+	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+	public static List<String> chromosomes =new ArrayList<String>();
+	public static List<String> contigs =new ArrayList<String>();
+	public static List<String> scaffolds =new ArrayList<String>();
+	public static List<String> agpEntryNames =new ArrayList<String>();
+	public static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	private PrintWriter fixedFileWriter =null;
-	protected int sequenceCount;
-		   
+
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
 		taxonHelper =new TaxonHelperImpl();
-
+		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
+		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
 	public abstract boolean check() throws ValidationEngineException ;
 
 	protected SubmissionOptions getOptions() {
 		return options;
-	}
-
-	public int getSequenceCount() {
-		return sequenceCount;
 	}
 
 	protected AnalysisType getAnalysisType()
@@ -116,15 +116,13 @@ public abstract class FileValidationCheck {
 
 	public void readAGPfiles() throws ValidationEngineException
 	{
-
-		boolean valid = true;
 		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP) ) 
 		{
 			try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
 
-				ValidationResult vr = reader.read();
+				reader.read();
 				int i=1;
 
 				while(reader.isEntry() )
@@ -133,13 +131,14 @@ public abstract class FileValidationCheck {
 
 					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
 					{
-						i++;
+						
 						if(!agpRow.isGap())
 						{
 							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
 						}
+						i++;
 					}
-					vr = reader.read();
+					reader.read();
 				}
 
 			}catch(Exception e)
@@ -151,27 +150,33 @@ public abstract class FileValidationCheck {
 
 	}
 
-	protected ValidationScope getValidationScope(String entryName)
+	protected ValidationScope getValidationScopeandEntrynames(String entryName)
 	{
-		if(options.context.get()==Context.genome)
+		switch(options.context.get())
 		{
+		case genome:
 			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
 				chromosomes.add(entryName.toUpperCase());
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
-		if(agpEntryNames.contains(entryName.toUpperCase()))
-		{
-			scaffolds.add(entryName);
-			return ValidationScope.ASSEMBLY_SCAFFOLD;
+			if(agpEntryNames.contains(entryName.toUpperCase()))
+			{
+				scaffolds.add(entryName);
+				return ValidationScope.ASSEMBLY_SCAFFOLD;
+			}
+			else
+			{
+				contigs.add(entryName.toUpperCase());
+				return ValidationScope.ASSEMBLY_CONTIG;
+			}
+		  case transcriptome:
+			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
+		case sequence:
+			 return ValidationScope.EMBL_TEMPLATE;
+		default:
+			 return null;
 		}
-		else
-		{
-			contigs.add(entryName.toUpperCase());
-			return ValidationScope.ASSEMBLY_CONTIG;
-		}
-		}
-		return options.getEntryValidationPlanProperty().validationScope.get();
 	}
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
@@ -185,7 +190,7 @@ public abstract class FileValidationCheck {
 		}
 		for(String entryName:scaffolds)
 		{
-			if(!entryNames.add(entryName));
+			if(!entryNames.add(entryName))
 			duplicateEntryNames.add(entryName);
 		}
 		for(String entryName:chromosomes)
@@ -214,7 +219,7 @@ public abstract class FileValidationCheck {
 			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes));
 		}
 	}
-	
+
 	public String getDataclass(String entryName)
 	{
 		String dataclass=null;
@@ -224,7 +229,7 @@ public abstract class FileValidationCheck {
 			switch(getOptions().getEntryValidationPlanProperty().fileType.get())
 			{
 			case FASTA:
-			  switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
+				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 				{
 				case ASSEMBLY_CONTIG :
 					dataclass= Entry.WGS_DATACLASS;
@@ -235,43 +240,43 @@ public abstract class FileValidationCheck {
 				default:
 					break;
 				}
-			  break;
+				break;
 			case AGP:
-				 dataclass= Entry.CON_DATACLASS;
-				 break;
+				dataclass= Entry.CON_DATACLASS;
+				break;
 			case EMBL:
-				 if(agpEntryNames.contains(entryName.toUpperCase()))
-					 dataclass= Entry.CON_DATACLASS;
-				 switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
-					{
-					case ASSEMBLY_CONTIG :
-						dataclass= Entry.WGS_DATACLASS;
-						break;
-					case ASSEMBLY_CHROMOSOME :
-						dataclass= Entry.STD_DATACLASS;
-						break;
-					default:
-						break;
-					}
-				 break;
+				if(agpEntryNames.contains(entryName.toUpperCase()))
+					dataclass= Entry.CON_DATACLASS;
+				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
+				{
+				case ASSEMBLY_CONTIG :
+					dataclass= Entry.WGS_DATACLASS;
+					break;
+				case ASSEMBLY_CHROMOSOME :
+					dataclass= Entry.STD_DATACLASS;
+					break;
+				default:
+					break;
+				}
+				break;
 			case MASTER :
 				dataclass = Entry.SET_DATACLASS;
 				break;
-				  
+
 			default:
 				break;
-				}
+			}
 			break;
 		case transcriptome:
 			dataclass= Entry.TSA_DATACLASS;
 			break;
 		default:
 			break;
-		
+
 		}
 		return dataclass;
 	}
-	
+
 	public ConcurrentMap<String,AtomicLong> getMessageStats()
 	{
 		return messageStats;
@@ -280,13 +285,13 @@ public abstract class FileValidationCheck {
 	{
 		for(ValidationMessage message: result.getMessages())
 		{
-		messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1));
-		messageStats.get(message.getMessageKey()).incrementAndGet();
+			messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1));
+			messageStats.get(message.getMessageKey()).incrementAndGet();
 		}
-		
+
 	}
-     
- 	protected void appendHeader(Entry entry) throws ValidationEngineException
+
+	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
 		if(masterEntry==null)
 		{
@@ -295,51 +300,105 @@ public abstract class FileValidationCheck {
 		if(entry==null)
 			return ;
 		entry.removeReferences();
-		SourceFeature source=entry.getPrimarySourceFeature();
-		entry.removeFeature(source);
-		entry.addFeature(masterEntry.getPrimarySourceFeature());
+		entry.removeProjectAccessions();
 		entry.addReferences(masterEntry.getReferences());
-		entry.setDescription(masterEntry.getDescription());
 		entry.addProjectAccessions(masterEntry.getProjectAccessions());
 		entry.addXRefs(masterEntry.getXRefs());
 		entry.setComment(masterEntry.getComment());
-		if(entry.getSequence()!=null)
-		{
+		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
-		Order<Location>featureLocation = new Order<Location>();
-		featureLocation.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
-		entry.getPrimarySourceFeature().setLocations(featureLocation);
-		}
+		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
 		//add chromosome qualifiers to entry
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
-		entry.getPrimarySourceFeature().addQualifiers(chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase()));
-		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+		{
+
+			Utils.setssemblyLevelDescription(masterEntry.getDescription().getText(), 
+					ValidationScope.ASSEMBLY_CONTIG==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 0 
+							: ValidationScope.ASSEMBLY_SCAFFOLD==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 1 
+									: ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,
+											entry);
+		}
+
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.transcriptome)
 			entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
 
 	}
- 	
- 	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws FileNotFoundException
- 	{
- 		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
- 			fixedFileWriter= new PrintWriter(submissionFile.getFixedFile().getAbsolutePath());
- 		return fixedFileWriter;
- 	}
- 	
- 	protected void collectContigInfo(Entry entry)
+
+	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws FileNotFoundException
 	{
- 		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
- 		  return;
- 		if(entry.getSequence()==null)
- 		  return;
+		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
+			fixedFileWriter= new PrintWriter(submissionFile.getFixedFile().getAbsolutePath());
+		return fixedFileWriter;
+	}
+
+	protected void collectContigInfo(Entry entry)
+	{
+		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+			return;
+		if(entry.getSequence()==null)
+			return;
 		if(!contigRangeMap.isEmpty())
 		{
-		List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
-    	for(String contigKey:contigKeys)
-    	{
-    		contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
-    	}
+			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
+			for(String contigKey:contigKeys)
+			{
+				contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
+			}
 		}
 	}
- 	
+
+	private void addSourceQualifiers(Entry entry)
+	{
+		if(entry.getPrimarySourceFeature() == null)
+		{
+			FeatureFactory featureFactory=new FeatureFactory();
+			Order<Location>featureLocation = new Order<Location>();
+			LocationFactory locationFactory=new LocationFactory();
+			if(entry.getSequence()!=null)
+			{
+				featureLocation.addLocation(locationFactory.createLocalRange(1l, entry.getSequence().getLength()));
+				entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
+			}
+			SourceFeature sourceFeature=featureFactory.createSourceFeature();
+			sourceFeature.setLocations(featureLocation);
+			entry.addFeature(sourceFeature);
+		}
+		SourceFeature source=null;
+		if(masterEntry!=null&&masterEntry.getPrimarySourceFeature()!=null)
+		{
+			source=masterEntry.getPrimarySourceFeature();
+		}
+		entry.getPrimarySourceFeature().removeAllQualifiers();
+		if(options.context.get()==Context.genome)
+		{
+
+			List<Qualifier> chromosomeQualifiers = chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase());
+
+			if(chromosomeQualifiers!=null)
+			{
+				for (Qualifier chromosomeQualifier : chromosomeQualifiers)
+				{
+					entry.getPrimarySourceFeature().addQualifier(chromosomeQualifier);
+
+				}
+			}
+			if(Entry.WGS_DATACLASS.equals(entry.getDataClass()))
+			{
+				Qualifier noteQualifier =(new QualifierFactory()).createQualifier(Qualifier.NOTE_QUALIFIER_NAME,"contig: "+entry.getSubmitterAccession());
+				entry.getPrimarySourceFeature().addQualifier(noteQualifier);
+			}
+		}
+		if(source!=null)
+		{
+			for (Qualifier sourceQualifier : source.getQualifiers())
+			{
+				entry.getPrimarySourceFeature().addQualifier(sourceQualifier);
+			}
+		}
+
+	}
+
+
+
 }

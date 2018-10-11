@@ -37,8 +37,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-        assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile()));
-        assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_genome_flatfile.txt", FileType.FASTA).getFile()));
+        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile()));
+        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_flatfile.txt", FileType.FASTA).getFile()));
 	}
 	
 	@Test
@@ -67,11 +67,11 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile()));
 	}
 	
 	@Test
-	public void testGenomeSubmissionwithFastaAGP() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -81,21 +81,44 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt.sequence", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_flatfileagp.txt.fixed", FileType.FLATFILE).getFile()));
 	}
 	
 	@Test
-	public void testValidTranscriptomSubmission()
+	public void testGenomeSubmissionwithAnnotationOnlyFile() throws FlatFileComparatorException, ValidationEngineException
 	{
-		
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
 	}
-
+	
 	@Test
-	public void testInvalidTranscriptomSubmission()
+	public void testValidTranscriptomFastaSubmission() throws ValidationEngineException, FlatFileComparatorException
 	{
-		
+		options.context = Optional.of(Context.transcriptome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile().getParent());
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile()));
+	
+	}
+	
+	@Test
+	public void testValidTranscriptomFlatFileSubmission() throws ValidationEngineException, FlatFileComparatorException
+	{
+		options.context = Optional.of(Context.transcriptome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile().getParent());
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
+	
 	}
 
 }
