@@ -18,29 +18,19 @@ package uk.ac.ebi.embl.api.validation.file;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -51,7 +41,7 @@ public class TSVFileValidationCheckTest {
 	private FileValidationCheck fileValidationCheck;
 	private SubmissionFile submissionFile;
 	private Path path = Paths.get(System.getProperty("user.dir") +"/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
-
+	private String reportsPath = System.getProperty("user.dir") +"/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
 	private final static String[] allTemplatesA = {"ERT000002-rRNA.tsv.gz",
 													"ERT000003-EST-1.tsv.gz",
 													"ERT000006-SCM.tsv.gz",
@@ -84,10 +74,6 @@ public class TSVFileValidationCheckTest {
 
 	@Before
 	public void init() throws Exception	{
-		options = new SubmissionOptions();
-		options.isRemote = true;
-		options.setProjectId(PROJECT_ID);
-		fileValidationCheck = new TSVFileValidationCheck(options);
 		try {
 			if (Files.exists(path))
 				Files.delete(path);
@@ -96,6 +82,11 @@ public class TSVFileValidationCheckTest {
 			e.printStackTrace();
 			return;
 		}
+		options = new SubmissionOptions();
+		options.isRemote = true;
+		options.setProjectId(PROJECT_ID);
+		options.reportDir = Optional.of(reportsPath);
+		fileValidationCheck = new TSVFileValidationCheck(options);
 	}
 
 	@Test
