@@ -15,20 +15,86 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.nio.ByteBuffer;
-import org.apache.commons.lang3.StringUtils;
-import uk.ac.ebi.embl.agp.reader.AGPFileReader;
-import uk.ac.ebi.embl.agp.reader.AGPLineReader;
-import uk.ac.ebi.embl.api.entry.AgpRow;
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.Description;
+import static org.junit.Assert.assertTrue;
+import java.sql.SQLException;
+import java.util.Optional;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
-public class AGPFileValidationCheckTest
+public class AGPFileValidationCheckTest extends SubmissionValidationTest
 {
-
+	 @Before
+	   public void init() throws SQLException
+	   {   
+		   options = new SubmissionOptions();
+	       options.source= Optional.of(getSource());
+	       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
+	       options.isRemote = true;
+	   }
+	 
+		@Test
+		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException
+		{
+			validateMaster(Context.genome);
+			options.context = Optional.of(Context.genome);
+			SubmissionFiles submissionFiles = new SubmissionFiles();
+			submissionFiles.addFile(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP));
+			options.submissionFiles = Optional.of(submissionFiles);
+			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
+			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
+			check.readAGPfiles();
+			validateContig("valid_flatfileforAgp.txt",  FileType.FLATFILE);
+			assertTrue(check.check(submissionFiles.getFiles().get(0)));
+			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
+			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.FLATFILE).getFile()));
+			assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_flatfileagp.txt.fixed", FileType.FLATFILE).getFile()));
+		}
+		
+		@Test
+		public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException
+		{
+			validateMaster(Context.genome);
+			options.context = Optional.of(Context.genome);
+			SubmissionFiles submissionFiles = new SubmissionFiles();
+			submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.AGP));
+			options.submissionFiles = Optional.of(submissionFiles);
+			options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
+			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
+			check.readAGPfiles();
+			validateContig("valid_fastaforAgp.txt",  FileType.FASTA);
+			assertTrue(check.check(submissionFiles.getFiles().get(0)));
+			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
+			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.FLATFILE).getFile()));
+			assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
+		}
+	 
+    	
+		private void validateContig(String contigFileName,FileType fileType) throws ValidationEngineException
+		{
+			SubmissionFile file=initSubmissionTestFile(contigFileName,fileType);
+			SubmissionFiles submissionFiles = new SubmissionFiles();
+			submissionFiles.addFile(file);
+	        options.submissionFiles =Optional.of(submissionFiles);
+	        options.reportDir = Optional.of(file.getFile().getParent());
+	        options.context = Optional.of(Context.genome);
+			FileValidationCheck check =null;
+			if(fileType==FileType.FASTA)
+			check=new FastaFileValidationCheck(options);
+			if(fileType==FileType.FLATFILE)
+			check=new FlatfileFileValidationCheck(options);
+            check.check(file);
+            options.submissionFiles.get().clear();
+         }
+		
 }

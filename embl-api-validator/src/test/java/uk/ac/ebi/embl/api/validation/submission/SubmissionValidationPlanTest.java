@@ -87,6 +87,22 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
+	public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException
+	{
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.AGP));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
+	}
+	
+	@Test
 	public void testGenomeSubmissionwithAnnotationOnlyFile() throws FlatFileComparatorException, ValidationEngineException
 	{
 		options.context = Optional.of(Context.genome);

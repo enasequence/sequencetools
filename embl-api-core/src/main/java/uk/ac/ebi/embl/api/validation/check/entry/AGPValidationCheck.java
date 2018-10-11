@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -218,7 +220,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 					reportError(agpRow.getOrigin(), MESSAGE_KEY_SAME_COMPONENT_AND_OBJECT_ERROR, agpRow.getComponent_id());
 				} else {
 					
-					Long sequenceLength =null;
+					int sequenceLength =0;
 					if (getEntryDAOUtils() == null)//if database connection is not available, then the following check doesn't work.
 					{
 
@@ -231,13 +233,11 @@ public class AGPValidationCheck extends EntryValidationCheck
 							else
 								if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) 
 								{
-									if (getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())==null
-											& getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()+"_"+part_number)==null)
+									if (!getContig(agpRow).isPresent())
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
 									{
-										if(getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase())!=null&&getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()).getSequence()!=null)
-										sequenceLength = (long) getEmblEntryValidationPlanProperty().contigEntryNames.get().get(agpRow.getComponent_id().toUpperCase()).getSequence().length;
+										sequenceLength =  getContig(agpRow).get().getSequence().length;
 									}
 								}
 
@@ -259,12 +259,12 @@ public class AGPValidationCheck extends EntryValidationCheck
 						if (null == contigSequenceInfo) 
 							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 						else  
-							sequenceLength = new Long(contigSequenceInfo.getSequenceLength());
+							sequenceLength = contigSequenceInfo.getSequenceLength();
 					}
 
 						// Check that component coordinates are valid.
 
-					if (sequenceLength!=null && (component_begin < 1 ||
+					if (sequenceLength!=0 && (component_begin < 1 ||
 							component_begin > sequenceLength ||
 							component_end > sequenceLength ||
 							component_end < component_begin)) 
@@ -291,6 +291,11 @@ public class AGPValidationCheck extends EntryValidationCheck
 			}
 			}
 		}
+	}
+	
+	private Optional<AgpRow> getContig(AgpRow agpRow)
+	{
+		return getEmblEntryValidationPlanProperty().contigEntryNames.get().values().stream().filter(row -> (row.getComponent_id().equals(agpRow.getComponent_id())&&row.getComponent_beg().equals(agpRow.getComponent_beg())&&row.getComponent_end().equals(agpRow.getComponent_end()))).findFirst();
 	}
 
 }

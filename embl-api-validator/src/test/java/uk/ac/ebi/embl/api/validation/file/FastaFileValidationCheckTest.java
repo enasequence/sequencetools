@@ -51,7 +51,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
-        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(!check.check(file));
 		assertTrue(check.getMessageStats().get("SQ.1")!=null);
@@ -67,7 +66,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.transcriptome);
-        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
         assertTrue(compareOutputFixedFiles(file.getFile()));
@@ -83,7 +81,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
-        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
         assertTrue(compareOutputFixedFiles(file.getFile()));

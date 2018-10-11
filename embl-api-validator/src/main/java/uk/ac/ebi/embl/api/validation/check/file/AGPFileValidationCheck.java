@@ -19,8 +19,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
-import java.nio.file.Paths;
-
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
@@ -30,7 +28,6 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -50,6 +47,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationPlan validationPlan =null;
 		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
+			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.AGP);
@@ -69,7 +67,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			if(!planResult.isValid())
     			{
     			    valid = false;
-    					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+    				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
     				for(ValidationResult result: planResult.getResults())
     				{
     					addMessagekey(result);
@@ -83,7 +81,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					//write AGP with sequence
 					entry.setNonExpandedCON(false);
 					new EmblEntryWriter(entry).write(sequenceFixedFileWriter);
-					
 				}
 				reader.read();
         	}
@@ -96,7 +93,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	
 	private void constructAGPSequence(Entry entry) throws ValidationEngineException
     {
-		int i=0;
 		try
 		{
  		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
@@ -105,12 +101,9 @@ public class AGPFileValidationCheck extends FileValidationCheck
          {
          	i++;
            	if(!agpRow.isGap())
-         	{
-           		sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
-           		
-         	}
-           	else
-           		sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
+         	  sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
+	       	else
+        	  sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
          }
          entry.getSequence().setSequence(sequenceBuffer);
 		}catch(Exception e)
