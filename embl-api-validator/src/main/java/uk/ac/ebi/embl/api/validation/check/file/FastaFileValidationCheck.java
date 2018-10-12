@@ -16,17 +16,8 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
-import uk.ac.ebi.embl.api.entry.location.Order;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -50,7 +41,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();

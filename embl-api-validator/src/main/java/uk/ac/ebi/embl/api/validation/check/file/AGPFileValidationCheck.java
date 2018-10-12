@@ -45,7 +45,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid=true;
 		ValidationPlan validationPlan =null;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
+		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));

@@ -24,6 +24,8 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
+import org.omg.CosNaming.NamingContextExtPackage.AddressHelper;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.reference.*;
@@ -76,12 +78,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap());
 				entry = templateProcessorResultSet.getEntry();
 				entry.addProjectAccession(new Text(options.getProjectId()));
-				if (options.isRemote)
-					addDefaultCitationForOfflineValisation(entry);
-				else {
-					Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());
-					entry.addReference(reference);
-				}
+				appendHeader(entry);
 				if (sequenceCount == MAX_SEQUENCE_COUNT) {
 					ValidationResult validationResult = new ValidationResult();
 					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
@@ -154,20 +151,4 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		return templateId;
 	}
 
-	private void addDefaultCitationForOfflineValisation(Entry entry) {
-		ReferenceFactory referenceFactory = new ReferenceFactory();
-		Reference reference = referenceFactory.createReference();
-		Publication publication = new Publication();
-		Person person = referenceFactory.createPerson("CLELAND");
-		publication.addAuthor(person);
-		reference.setAuthorExists(true);
-		Submission submission = referenceFactory.createSubmission(publication);
-		submission.setSubmitterAddress(", The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus, CB10 1SD, United Kingdom");
-		submission.setDay(Calendar.getInstance().getTime());
-		publication = submission;
-		reference.setPublication(publication);
-		reference.setLocationExists(true);
-		reference.setReferenceNumber(1);
-		entry.addReference(reference);
-	}
 }

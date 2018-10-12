@@ -16,12 +16,21 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
@@ -43,7 +55,13 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.entry.reference.Person;
+import uk.ac.ebi.embl.api.entry.reference.Publication;
+import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
+import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -293,6 +311,18 @@ public abstract class FileValidationCheck {
 
 	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
+		
+		if(Context.sequence==getOptions().context.get())
+		{
+			try
+			{
+			addTemplateHeader(entry);
+			return;
+			}catch(Exception e)
+			{
+				throw new ValidationEngineException(e.getMessage());
+			}
+		}
 		if(masterEntry==null)
 		{
 			throw new ValidationEngineException("Master entry must to validate sequences");
@@ -325,10 +355,10 @@ public abstract class FileValidationCheck {
 
 	}
 
-	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws FileNotFoundException
+	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws IOException
 	{
 		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
-			fixedFileWriter= new PrintWriter(submissionFile.getFixedFile().getAbsolutePath());
+			fixedFileWriter= new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath()), StandardCharsets.UTF_8));
 		return fixedFileWriter;
 	}
 
@@ -399,6 +429,46 @@ public abstract class FileValidationCheck {
 
 	}
 
-
+	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException {
+		if(getOptions().isRemote)
+		{
+			Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());
+			entry.addReference(reference);
+			return;
+		}
+		ReferenceFactory referenceFactory = new ReferenceFactory();
+		Reference reference = referenceFactory.createReference();
+		Publication publication = new Publication();
+		Person person = referenceFactory.createPerson("CLELAND");
+		publication.addAuthor(person);
+		reference.setAuthorExists(true);
+		Submission submission = referenceFactory.createSubmission(publication);
+		submission.setSubmitterAddress(", The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus, CB10 1SD, United Kingdom");
+		submission.setDay(Calendar.getInstance().getTime());
+		publication = submission;
+		reference.setPublication(publication);
+		reference.setLocationExists(true);
+		reference.setReferenceNumber(1);
+		entry.addReference(reference);
+	}
+	
+	protected BufferedReader 
+	getBufferedReader( File file ) throws FileNotFoundException, IOException 
+	{
+		if( file.getName().matches( "^.+\\.gz$" ) || file.getName().matches( "^.+\\.gzip$" ) ) 
+		{
+			GZIPInputStream gzip = new GZIPInputStream( new FileInputStream( file ) );
+			return new BufferedReader( new InputStreamReader( gzip ) );
+			
+		} else if( file.getName().matches( "^.+\\.bz2$" ) || file.getName().matches( "^.+\\.bzip2$" ) ) 
+		{
+			BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream( new FileInputStream( file ) );
+			return new BufferedReader( new InputStreamReader( bzIn ) );
+			
+		} else 
+		{
+			return new BufferedReader( new FileReader(file ) );
+		}
+	}
 
 }

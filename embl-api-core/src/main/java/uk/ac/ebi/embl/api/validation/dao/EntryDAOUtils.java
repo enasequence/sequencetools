@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table;
 
 public interface EntryDAOUtils
@@ -66,5 +70,9 @@ public interface EntryDAOUtils
 	public boolean isAssemblyUpdateSupported(String analysisId) throws SQLException;
 	public boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
 	public String associate_unlocalised_list_acc (String objectName, int assembly_level,String analysisId) throws SQLException;
+	public void registerSequences(List<String> sequences,String analysisId,int assemblyLevel) throws SQLException;
+	public ConcurrentHashMap<String,Integer> getAssemblysequences(String analysisId) throws SQLException;
+
+
 	
 }

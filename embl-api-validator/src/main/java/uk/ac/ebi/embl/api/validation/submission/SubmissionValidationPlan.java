@@ -24,6 +24,8 @@ import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
@@ -59,7 +61,9 @@ public class SubmissionValidationPlan
 		{
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
+			registerSequences();
 		}
+		
 		return true;
 		}catch(Exception e)
 		{
@@ -129,6 +133,20 @@ public class SubmissionValidationPlan
 			check = new UnlocalisedListFileValidationCheck(options);
 			if(!check.check(unlocalisedListFile))
 				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
+		}
+	}
+	
+	public void registerSequences() throws ValidationEngineException 
+	{
+		try
+		{
+			EntryDAOUtils entryDAOUtils= new EntryDAOUtilsImpl(options.enproConnection.get());
+			entryDAOUtils.registerSequences(FileValidationCheck.contigs, options.analysisId.get(), 0);
+			entryDAOUtils.registerSequences(FileValidationCheck.scaffolds, options.analysisId.get(),1);
+			entryDAOUtils.registerSequences(FileValidationCheck.chromosomes,options.analysisId.get(),2);
+		}catch(Exception e)
+		{
+          throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage());
 		}
 	}
 

@@ -41,7 +41,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid =true;
 		EmblEntryValidationPlan validationPlan=null;
-		try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile()));PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
 		ValidationResult parseResult = emblReader.read();

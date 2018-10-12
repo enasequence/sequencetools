@@ -55,6 +55,8 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
 		if(!(new File(reportDir.get())).isDirectory())
 			throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
+		if(!analysisId.isPresent()&&!isRemote&&context.get()==Context.genome)
+			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{

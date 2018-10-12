@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import uk.ac.ebi.embl.api.contant.AnalysisType;

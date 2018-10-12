@@ -93,8 +93,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testTemplateFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
-			//TODO:
-			/*SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
+			/*SubmissionFile file=initSubmissionFixedTestFile(".txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
 			submissionFiles.addFile(file);
 	        options.submissionFiles =Optional.of(submissionFiles);
