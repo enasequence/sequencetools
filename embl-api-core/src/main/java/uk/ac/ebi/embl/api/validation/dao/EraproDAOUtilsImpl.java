@@ -42,7 +42,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	
-	public enum SOURCEQUALIFIER
+	public enum MASTERSOURCEQUALIFIERS
 	{
 		ecotype, 
 		cultivar,
@@ -55,6 +55,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		serotype, 
 		serovar, 
 		environmental_sample,
+		isolation_source,
 		organelle;
 		
 		public static boolean isValid(String qualifier)
@@ -497,10 +498,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				{
 					tag = "PCR_primers";
 				}
-				if (SOURCEQUALIFIER.isValid(tag))
+				if (MASTERSOURCEQUALIFIERS.isValid(tag))
 				{
 					
-					if(!SOURCEQUALIFIER.isNoValue(tag)&&SOURCEQUALIFIER.isNullValue(value))
+					if(!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
 						continue;
 
 					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
@@ -508,7 +509,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 						addUniqueName=false;
 					}
 				    
-					if(SOURCEQUALIFIER.isNoValue(tag))
+					if(MASTERSOURCEQUALIFIERS.isNoValue(tag))
 					{
 						if(!"NO".equalsIgnoreCase(value))
 					     sourceFeature.addQualifier(tag);
