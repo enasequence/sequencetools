@@ -39,9 +39,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -70,7 +68,6 @@ import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public abstract class FileValidationCheck {
 
@@ -87,6 +84,7 @@ public abstract class FileValidationCheck {
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	private PrintWriter fixedFileWriter =null;
+	private boolean hasAnnotationOnlyFlatfile = false;
 
 
 	public FileValidationCheck(SubmissionOptions options) {
@@ -132,42 +130,6 @@ public abstract class FileValidationCheck {
 		return Paths.get(reportDir, fileName + REPORT_FILE_SUFFIX );
 	}
 
-	public void readAGPfiles() throws ValidationEngineException
-	{
-		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP) ) 
-		{
-			try(BufferedReader fileReader= new BufferedReader(new FileReader(submissionFile.getFile())))
-			{
-				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
-
-				reader.read();
-				int i=1;
-
-				while(reader.isEntry() )
-				{
-					agpEntryNames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
-
-					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
-					{
-						
-						if(!agpRow.isGap())
-						{
-							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
-						}
-						i++;
-					}
-					reader.read();
-				}
-
-			}catch(Exception e)
-			{
-				throw new ValidationEngineException(e.getMessage());
-			}
-
-		}
-
-	}
-
 	protected ValidationScope getValidationScopeandEntrynames(String entryName)
 	{
 		switch(options.context.get())
@@ -175,7 +137,7 @@ public abstract class FileValidationCheck {
 		case genome:
 			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
-				chromosomes.add(entryName.toUpperCase());
+				chromosomes.add(entryName);
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
 			if(agpEntryNames.contains(entryName.toUpperCase()))
@@ -185,7 +147,7 @@ public abstract class FileValidationCheck {
 			}
 			else
 			{
-				contigs.add(entryName.toUpperCase());
+				contigs.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
 			}
 		  case transcriptome:
@@ -471,4 +433,10 @@ public abstract class FileValidationCheck {
 		}
 	}
 
+	public boolean isHasAnnotationOnlyFlatfile() {
+		return hasAnnotationOnlyFlatfile;
+	}
+	public void setHasAnnotationOnlyFlatfile(boolean hasAnnotationOnlyFlatfile) {
+		this.hasAnnotationOnlyFlatfile = hasAnnotationOnlyFlatfile;
+	}
 }

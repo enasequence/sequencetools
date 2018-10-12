@@ -53,7 +53,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.submissionFiles = Optional.of(submissionFiles);
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
-			check.readAGPfiles();
+			check.getAGPEntries();
 			validateContig("valid_flatfileforAgp.txt",  FileType.FLATFILE);
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
@@ -71,7 +71,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.submissionFiles = Optional.of(submissionFiles);
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
-			check.readAGPfiles();
+			check.getAGPEntries();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA);
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));

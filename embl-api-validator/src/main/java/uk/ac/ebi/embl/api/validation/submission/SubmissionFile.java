@@ -11,7 +11,8 @@ public class SubmissionFile {
 		TSV,
 		CHROMOSOME_LIST,
 		UNLOCALISED_LIST,
-		MASTER
+		MASTER,
+		ANNOTATION_ONLY_FLATFILE
 	};
 
 	private final FileType fileType;

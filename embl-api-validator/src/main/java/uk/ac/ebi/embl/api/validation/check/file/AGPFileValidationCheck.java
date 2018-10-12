@@ -16,10 +16,14 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.commons.lang3.StringUtils;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
@@ -30,6 +34,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
@@ -50,7 +55,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
-			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.AGP);
+			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry())
         	{
         		if(!parseResult.isValid())
@@ -106,6 +111,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	  sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
          }
          entry.getSequence().setSequence(sequenceBuffer);
+         if(isHasAnnotationOnlyFlatfile())
+			{
+				DB db = DBMaker.fileDB("file.db").make();
+				ConcurrentMap map = db.hashMap("map").createOrOpen();
+				map.put(entry.getSubmitterAccession(), entry.getSequence().getSequenceBuffer());
+				db.close();
+			}
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
@@ -114,6 +126,42 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	@Override
 	public boolean check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
+	}
+	
+	public void getAGPEntries() throws ValidationEngineException
+	{
+		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP)) 
+		{
+			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile()))
+			{
+				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
+
+				reader.read();
+				int i=1;
+
+				while(reader.isEntry())
+				{
+					agpEntryNames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
+
+					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
+					{
+						
+						if(!agpRow.isGap())
+						{
+							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
+						}
+						i++;
+					}
+					reader.read();
+				}
+
+			}catch(Exception e)
+			{
+				throw new ValidationEngineException(e.getMessage());
+			}
+
+		}
+
 	}
 	
 }

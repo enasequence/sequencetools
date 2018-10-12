@@ -877,7 +877,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 
 		try(PreparedStatement ps = connection.prepareStatement(sql);)
 		{
-						
 			AtomicInteger  batchCount = new AtomicInteger(0);
 			sequences.forEach((objectName)->
 		    {

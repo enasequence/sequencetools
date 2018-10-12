@@ -17,6 +17,11 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.concurrent.ConcurrentMap;
+
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -37,6 +42,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		super(options);
 	}	
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
@@ -59,6 +65,10 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(getOptions().context.get()==Context.genome)
 				{
 					collectContigInfo(entry);
+					DB db = DBMaker.fileDB("file.db").make();
+					ConcurrentMap map = db.hashMap("map").createOrOpen();
+					map.put(entry.getSubmitterAccession(), entry.getSequence().getSequence(new Long(1), entry.getSequence().getLength()-1));
+					db.close();
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
             	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);

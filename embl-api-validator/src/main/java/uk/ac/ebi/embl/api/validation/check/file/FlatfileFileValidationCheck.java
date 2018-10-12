@@ -16,8 +16,15 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -25,7 +32,9 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
@@ -43,7 +52,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
-		EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
+		Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
+		EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
 		ValidationResult parseResult = emblReader.read();
 		
 		while(emblReader.isEntry())
@@ -55,15 +65,18 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			Entry entry = emblReader.getEntry();
 			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
-            if(getOptions().context.get()==Context.genome)
-            {
-            	collectContigInfo(entry);
-            }
+          
 			
 			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
-        	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
+        	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
+        	  if(getOptions().context.get()==Context.genome)
+              {
+              	collectContigInfo(entry);
+              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
+              		continue;
+              }
 			ValidationPlanResult planResult=validationPlan.execute(entry);
 			if(!planResult.isValid())
 			{
@@ -78,7 +91,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			else
 			{
 				if(fixedFileWriter!=null)
-				new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+				new EmblEntryWriter(entry).write(fixedFileWriter);
 			}
 			emblReader.read();
 		}
@@ -94,4 +107,32 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		throw new UnsupportedOperationException();
 	}
 	
+	public void getAnnotationFlatfile() throws ValidationEngineException, FileNotFoundException, IOException 
+	{
+		for(SubmissionFile submissionFile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
+		{
+			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter annotationOnyFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getAbsolutePath()+".annotationOnly"))))
+			{
+				EmblEntryReader emblReader = new EmblEntryReader(fileReader,EmblEntryReader.Format.EMBL_FORMAT,submissionFile.getFile().getName());
+				emblReader.read();
+				while(emblReader.isEntry())
+				{
+					Entry entry=emblReader.getEntry();
+					if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
+					{
+						EmblEntryWriter writer = new EmblEntryWriter(entry);
+						writer.write(annotationOnyFileWriter);
+						setHasAnnotationOnlyFlatfile(true);
+					}
+					
+				}
+			}
+			if(isHasAnnotationOnlyFlatfile())
+			{
+				SubmissionFile annotationonlysf= new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"));;
+                options.submissionFiles.get().addFile(annotationonlysf);
+			}
+			
+		}
+	}
 }

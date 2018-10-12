@@ -7,7 +7,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 public enum Context {
 	sequence(FileType.FLATFILE,FileType.TSV),
 	transcriptome(FileType.FASTA,FileType.FLATFILE,FileType.MASTER),
-	genome(FileType.FASTA,FileType.FLATFILE,FileType.AGP,FileType.CHROMOSOME_LIST,FileType.UNLOCALISED_LIST,FileType.MASTER);
+	genome(FileType.FASTA,FileType.FLATFILE,FileType.AGP,FileType.CHROMOSOME_LIST,FileType.UNLOCALISED_LIST,FileType.MASTER,FileType.ANNOTATION_ONLY_FLATFILE);
 
 	List<FileType> fileTypes;
 	private Context(FileType...fileTypes) {

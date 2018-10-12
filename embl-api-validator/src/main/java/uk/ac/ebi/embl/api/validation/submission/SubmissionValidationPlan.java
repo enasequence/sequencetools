@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.submission;
 import java.nio.file.Paths;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
@@ -32,22 +33,29 @@ public class SubmissionValidationPlan
 {
 	SubmissionOptions options;
 	FileValidationCheck check = null;
+	
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
 	public boolean execute() throws ValidationEngineException {
 		try
 		{
+		
 		options.init();
 		//Validation Order shouldn't be changed
 		if(options.context.get().getFileTypes().contains(FileType.MASTER))
 			createMaster();
 		if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST))
 			validateChromosomeList();
+		if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
+		 { 
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+			check.getAnnotationFlatfile();
+		 }
 		if(options.context.get().getFileTypes().contains(FileType.AGP))
 		{
-			check = new AGPFileValidationCheck(options);
-			check.readAGPfiles();
+			AGPFileValidationCheck check = new AGPFileValidationCheck(options);
+			check.getAGPEntries();
 		}
 		if(options.context.get().getFileTypes().contains(FileType.FASTA))
 			validateFasta();
@@ -55,6 +63,8 @@ public class SubmissionValidationPlan
 			validateFlatfile();
 		if(options.context.get().getFileTypes().contains(FileType.AGP))
 			validateAGP();
+		if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
+			validateAnnotationOnlyFlatfile();
 		if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
 			validateUnlocalisedList();
 		if(Context.genome==options.context.get())
@@ -63,7 +73,6 @@ public class SubmissionValidationPlan
 			check.validateSequencelessChromosomes();
 			registerSequences();
 		}
-		
 		return true;
 		}catch(Exception e)
 		{
@@ -75,18 +84,17 @@ public class SubmissionValidationPlan
 				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage());
 			}
 			throw new ValidationEngineException(e.getMessage());
-
 		}
 	}
 
-	public void createMaster() throws ValidationEngineException
+	private void createMaster() throws ValidationEngineException
 	{
 		check = new MasterEntryValidationCheck(options);
 		if(!check.check())
 			throw new ValidationEngineException("Master entry validation failed" );
 	}
 
-	public void validateChromosomeList() throws ValidationEngineException
+	private void validateChromosomeList() throws ValidationEngineException
 	{
 		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
 		{			
@@ -96,7 +104,7 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	public void validateFasta() throws ValidationEngineException
+	private void validateFasta() throws ValidationEngineException
 	{
 		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
 		{
@@ -106,7 +114,7 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	public void validateFlatfile() throws ValidationEngineException
+	private void validateFlatfile() throws ValidationEngineException
 	{
 		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
@@ -116,7 +124,7 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	public void validateAGP() throws ValidationEngineException
+	private void validateAGP() throws ValidationEngineException
 	{
 		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 		{
@@ -126,7 +134,7 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	public void validateUnlocalisedList() throws ValidationEngineException
+	private void validateUnlocalisedList() throws ValidationEngineException
 	{
 		for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
 		{
@@ -136,7 +144,7 @@ public class SubmissionValidationPlan
 		}
 	}
 	
-	public void registerSequences() throws ValidationEngineException 
+	private void registerSequences() throws ValidationEngineException 
 	{
 		try
 		{
@@ -149,5 +157,14 @@ public class SubmissionValidationPlan
           throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage());
 		}
 	}
-
+	
+	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
+	{
+		for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
+		{
+			check = new AnnotationOnlyFlatfileValidationCheck(options);
+     		if(!check.check())
+				throw new ValidationEngineException("flat file validation failed for annotation only entries : "+annotationOnlyFlatfile.getFile().getName());
+		}
+	}
 }
