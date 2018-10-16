@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.nio.file.Files;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.*;
@@ -38,6 +39,9 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+			if(getOptions().reportDir.isPresent())
+				Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
+
 		UnlocalisedListFileReader reader = new UnlocalisedListFileReader(submissionFile.getFile());
 		ValidationResult parseResult = reader.read();
 		if(!parseResult.isValid())

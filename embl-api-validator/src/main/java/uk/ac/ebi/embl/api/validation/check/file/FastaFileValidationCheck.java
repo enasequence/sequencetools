@@ -16,15 +16,16 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.concurrent.ConcurrentMap;
-
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -49,6 +50,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		boolean valid=true;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
 			EmblEntryValidationPlan validationPlan =null;
@@ -65,10 +67,12 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(getOptions().context.get()==Context.genome)
 				{
 					collectContigInfo(entry);
-					DB db = DBMaker.fileDB("file.db").make();
-					ConcurrentMap map = db.hashMap("map").createOrOpen();
-					map.put(entry.getSubmitterAccession(), entry.getSequence().getSequence(new Long(1), entry.getSequence().getLength()-1));
-					db.close();
+					if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
+					{
+					ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
+					map.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
+					getSequenceDB().commit();
+					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
             	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
@@ -93,6 +97,8 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				reader.read();
 			}
 		}catch (Exception e) {
+			if(getSequenceDB()!=null)
+	               getSequenceDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;	

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
@@ -40,6 +41,9 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+			if(getOptions().reportDir.isPresent())
+			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
+
 			ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
 
 			ValidationResult parseResult = reader.read();

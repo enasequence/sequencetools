@@ -19,11 +19,8 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentMap;
-
 import org.apache.commons.lang3.StringUtils;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-
+import java.nio.file.Files;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
@@ -32,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
@@ -52,6 +50,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationPlan validationPlan =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
+			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
@@ -84,13 +83,15 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					new EmblEntryWriter(entry).write(fixedFileWriter);
 					constructAGPSequence(entry);
 					//write AGP with sequence
-					entry.setNonExpandedCON(false);
-					new EmblEntryWriter(entry).write(sequenceFixedFileWriter);
+					//entry.setNonExpandedCON(false);
+					//new EmblEntryWriter(entry).write(sequenceFixedFileWriter);
 				}
 				reader.read();
         	}
 
 		}catch (Exception e) {
+			if(getSequenceDB()!=null)
+	               getSequenceDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
@@ -111,12 +112,14 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	  sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
          }
          entry.getSequence().setSequence(sequenceBuffer);
-         if(isHasAnnotationOnlyFlatfile())
+         if(getOptions().context.get()==Context.genome&&getSequenceDB()!=null)
 			{
-				DB db = DBMaker.fileDB("file.db").make();
-				ConcurrentMap map = db.hashMap("map").createOrOpen();
-				map.put(entry.getSubmitterAccession(), entry.getSequence().getSequenceBuffer());
-				db.close();
+        	 if(entry.getSubmitterAccession()!=null)
+        	 {
+				ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
+				map.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
+				getSequenceDB().commit();
+         	 }
 			}
 		}catch(Exception e)
 		{

@@ -40,8 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import uk.ac.ebi.embl.agp.reader.AGPFileReader;
-import uk.ac.ebi.embl.agp.reader.AGPLineReader;
+import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -68,6 +67,7 @@ import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 
 public abstract class FileValidationCheck {
 
@@ -85,7 +85,8 @@ public abstract class FileValidationCheck {
 	protected TaxonHelper taxonHelper= null;
 	private PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
-
+	protected String masterFileName = "master.dat";
+	private DB sequenceDB = null;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -94,6 +95,10 @@ public abstract class FileValidationCheck {
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
+		if(!EntryReader.getBlockCounter().isEmpty())
+            EntryReader.getBlockCounter().clear();
+         if(!EntryReader.getSkipTagCounter().isEmpty())
+             EntryReader.getSkipTagCounter().clear();
 	}
 	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
 	public abstract boolean check() throws ValidationEngineException ;
@@ -125,7 +130,7 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  Path getReportFile(String reportDir, String fileName) throws ValidationEngineException
+	public  Path getReportFile(String reportDir, String fileName)
 	{
 		return Paths.get(reportDir, fileName + REPORT_FILE_SUFFIX );
 	}
@@ -150,12 +155,12 @@ public abstract class FileValidationCheck {
 				contigs.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
 			}
-		  case transcriptome:
+		case transcriptome:
 			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
 		case sequence:
-			 return ValidationScope.EMBL_TEMPLATE;
+			return ValidationScope.EMBL_TEMPLATE;
 		default:
-			 return null;
+			return null;
 		}
 	}
 
@@ -165,17 +170,17 @@ public abstract class FileValidationCheck {
 		List<String> duplicateEntryNames = new ArrayList<String>();
 		for(String entryName:contigs)
 		{
-			if(!entryNames.add(entryName))
+			if(!entryNames.add(entryName.toUpperCase()))
 				duplicateEntryNames.add(entryName);
 		}
 		for(String entryName:scaffolds)
 		{
-			if(!entryNames.add(entryName))
-			duplicateEntryNames.add(entryName);
+			if(!entryNames.add(entryName.toUpperCase()))
+				duplicateEntryNames.add(entryName);
 		}
 		for(String entryName:chromosomes)
 		{
-			if(!entryNames.add(entryName))
+			if(!entryNames.add(entryName.toUpperCase()))
 				duplicateEntryNames.add(entryName);
 		}
 		if(duplicateEntryNames.size()>0)
@@ -265,7 +270,7 @@ public abstract class FileValidationCheck {
 	{
 		for(ValidationMessage message: result.getMessages())
 		{
-			messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1));
+			if(messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1))!=null)
 			messageStats.get(message.getMessageKey()).incrementAndGet();
 		}
 
@@ -273,13 +278,13 @@ public abstract class FileValidationCheck {
 
 	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
-		
+
 		if(Context.sequence==getOptions().context.get())
 		{
 			try
 			{
-			addTemplateHeader(entry);
-			return;
+				addTemplateHeader(entry);
+				return;
 			}catch(Exception e)
 			{
 				throw new ValidationEngineException(e.getMessage());
@@ -413,7 +418,7 @@ public abstract class FileValidationCheck {
 		reference.setReferenceNumber(1);
 		entry.addReference(reference);
 	}
-	
+
 	protected BufferedReader 
 	getBufferedReader( File file ) throws FileNotFoundException, IOException 
 	{
@@ -421,12 +426,12 @@ public abstract class FileValidationCheck {
 		{
 			GZIPInputStream gzip = new GZIPInputStream( new FileInputStream( file ) );
 			return new BufferedReader( new InputStreamReader( gzip ) );
-			
+
 		} else if( file.getName().matches( "^.+\\.bz2$" ) || file.getName().matches( "^.+\\.bzip2$" ) ) 
 		{
 			BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream( new FileInputStream( file ) );
 			return new BufferedReader( new InputStreamReader( bzIn ) );
-			
+
 		} else 
 		{
 			return new BufferedReader( new FileReader(file ) );
@@ -438,5 +443,15 @@ public abstract class FileValidationCheck {
 	}
 	public void setHasAnnotationOnlyFlatfile(boolean hasAnnotationOnlyFlatfile) {
 		this.hasAnnotationOnlyFlatfile = hasAnnotationOnlyFlatfile;
+	}
+
+	public void setSequenceDB(DB sequenceDB)
+	{
+		this.sequenceDB=sequenceDB;
+	}
+
+	public DB getSequenceDB()
+	{
+		return this.sequenceDB;
 	}
 }

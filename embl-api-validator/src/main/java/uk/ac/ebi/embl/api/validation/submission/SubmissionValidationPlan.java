@@ -71,7 +71,10 @@ public class SubmissionValidationPlan
 		{
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
+			if(!options.isRemote)
 			registerSequences();
+			if(check.getSequenceDB()!=null)
+				check.getSequenceDB().close();
 		}
 		return true;
 		}catch(Exception e)
@@ -163,7 +166,7 @@ public class SubmissionValidationPlan
 		for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
 		{
 			check = new AnnotationOnlyFlatfileValidationCheck(options);
-     		if(!check.check())
+     		if(!check.check(annotationOnlyFlatfile))
 				throw new ValidationEngineException("flat file validation failed for annotation only entries : "+annotationOnlyFlatfile.getFile().getName());
 		}
 	}

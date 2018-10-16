@@ -15,11 +15,15 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 import org.junit.Before;
 import org.junit.Test;
+import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
@@ -82,8 +86,14 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 		assertTrue(check.check(file));
         assertTrue(compareOutputFixedFiles(file.getFile()));
+        ConcurrentMap map = check.getSequenceDB().hashMap("map").createOrOpen();
+        assertEquals("caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",map.get("IWGSC_CSS_6DL_contig_209591".toUpperCase()));
+        assertEquals("gttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggtttttttttttttttttttttttttttttttttg",map.get("IWGSC_CSS_6DL_contig_209592".toUpperCase()));
+        assertEquals("aggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggga",map.get("IWGSC_CSS_6DL_contig_209593".toUpperCase()));
+        check.getSequenceDB().close();
 	}
 		
 }

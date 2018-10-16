@@ -7,7 +7,6 @@ import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
@@ -24,8 +23,9 @@ public class SubmissionOptions
 	public  Optional<Connection> eraproConnection = Optional.empty();
 	public  Optional<String> reportDir = Optional.empty();
 	public  Optional<Integer> minGapLength = Optional.empty();
+	public  Optional<String> processDir = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
-	
+		
 	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
@@ -55,8 +55,11 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
 		if(!(new File(reportDir.get())).isDirectory())
 			throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
-		if(!analysisId.isPresent()&&!isRemote&&context.get()==Context.genome)
+		if(!analysisId.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
+		if(!processDir.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
+			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
+
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -73,7 +74,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			{
 				valid = false;
 				if(getOptions().reportDir.isPresent())
-					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), getOptions().analysisId.get()+"_master" ), planResult);
+					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), "master" ), planResult);
 				for(ValidationResult result: planResult.getResults())
 				{
 					addMessagekey(result);
@@ -82,7 +83,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			else
 			{
 				if(!getOptions().isRemote)
-				new EmblEntryWriter(masterEntry).write(new PrintWriter("file path"));//TODO for pipeline
+				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
 
 		}catch(Exception e)

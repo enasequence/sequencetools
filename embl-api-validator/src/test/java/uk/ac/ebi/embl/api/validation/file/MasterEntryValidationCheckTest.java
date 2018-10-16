@@ -77,16 +77,17 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 		options.source= Optional.of(getSource());
 		options.context = Optional.of(Context.genome);
+		File file=initFile("genome_master.txt.expected");
+		options.processDir = Optional.of(file.getParent());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		check.check();
 		Entry entry =check.getMasterEntry();
-		File file=initFile("genome_master.txt.expected");
-		PrintWriter writer = new PrintWriter(file.getParent()+File.separator+"genome_master.txt");
+		PrintWriter writer = new PrintWriter(options.processDir.get()+File.separator+"master.dat");
 		EmblEntryWriter entryWriter= new EmblEntryWriter(entry);
 		entryWriter.write(writer);
 		FlatFileComparatorOptions coptions = new FlatFileComparatorOptions();
 		FlatFileComparator comparator = new FlatFileComparator(coptions);
-		assertTrue(comparator.compare(file.getAbsolutePath(), file.getParent()+File.separator+"genome_master.txt"));
+		assertTrue(comparator.compare(file.getAbsolutePath(), options.processDir.get()+File.separator+"master.dat"));
 	}
 
 	@Test
@@ -95,16 +96,16 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 		options.source= Optional.of(getSource());
 		options.context = Optional.of(Context.transcriptome);
+		File file=initFile("transcriptom_master.txt.expected");
+		options.processDir = Optional.of(file.getParent());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		check.check();
 		Entry entry =check.getMasterEntry();
-		File file=initFile("transcriptom_master.txt.expected");
-		PrintWriter writer = new PrintWriter(file.getParent()+File.separator+"transcriptom_master.txt");
+		PrintWriter writer = new PrintWriter(options.processDir.get()+File.separator+"master.dat");
 		EmblEntryWriter entryWriter= new EmblEntryWriter(entry);
 		entryWriter.write(writer);
 		FlatFileComparatorOptions coptions = new FlatFileComparatorOptions();
 		FlatFileComparator comparator = new FlatFileComparator(coptions);
-		assertTrue(comparator.compare(file.getAbsolutePath(), file.getParent()+File.separator+"transcriptom_master.txt"));
+		assertTrue(comparator.compare(file.getAbsolutePath(), options.processDir.get()+File.separator+"master.dat"));
 	}
-
 }
