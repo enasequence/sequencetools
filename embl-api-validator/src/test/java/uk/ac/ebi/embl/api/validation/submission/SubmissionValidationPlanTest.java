@@ -1,6 +1,9 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.net.URL;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,7 +14,9 @@ import org.mapdb.DB;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -107,7 +112,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
 	}
 	
-	/*@Test
+	@Test
 	public void testGenomeSubmissionwithAnnotationOnlyFile() throws FlatFileComparatorException, ValidationEngineException
 	{
 		options.context = Optional.of(Context.genome);
@@ -120,7 +125,12 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_AnnotationOnlyandSequenceFlatfile.txt", FileType.FLATFILE).getFile()));
-	}*/
+		String fixedannotationOnlyflatfile = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/valid_AnnotationOnlyandSequenceFlatfile.txt.fixed.annotationOnly").getPath().replaceAll("%20", " ");
+		String expectedannotationOnlyflatfile = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/valid_AnnotationOnlyandSequenceFlatfile.txt.annotationOnly.expected").getPath().replaceAll("%20", " ");
+		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
+		FlatFileComparator comparator=new FlatFileComparator(options);
+		assertTrue(comparator.compare(expectedannotationOnlyflatfile, fixedannotationOnlyflatfile));
+	}
 	
 	@Test
 	public void testValidTranscriptomFastaSubmission() throws ValidationEngineException, FlatFileComparatorException

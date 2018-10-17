@@ -63,10 +63,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
     				addMessagekey(parseResult);
     			}
         		Entry entry =reader.getEntry();
-    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession()));
+    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
     			getOptions().getEntryValidationPlanProperty().contigEntryNames.set(contigRangeMap);
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
+            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get());
     			ValidationPlanResult planResult=validationPlan.execute(entry);
     			if(!planResult.isValid())
     			{
@@ -118,14 +119,15 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	 {
 				ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
 				map.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
-				getSequenceDB().commit();
-         	 }
+			}
 			}
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}
-    }
+		if(getSequenceDB()!=null)
+		getSequenceDB().commit();  
+		}
 	@Override
 	public boolean check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();

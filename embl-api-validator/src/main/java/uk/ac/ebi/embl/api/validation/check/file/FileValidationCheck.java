@@ -86,7 +86,7 @@ public abstract class FileValidationCheck {
 	private PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
 	protected String masterFileName = "master.dat";
-	private DB sequenceDB = null;
+	private  DB sequenceDB = null;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -135,24 +135,21 @@ public abstract class FileValidationCheck {
 		return Paths.get(reportDir, fileName + REPORT_FILE_SUFFIX );
 	}
 
-	protected ValidationScope getValidationScopeandEntrynames(String entryName)
+	protected ValidationScope getValidationScope(String entryName)
 	{
 		switch(options.context.get())
 		{
 		case genome:
 			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
-				chromosomes.add(entryName);
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
 			if(agpEntryNames.contains(entryName.toUpperCase()))
 			{
-				scaffolds.add(entryName);
 				return ValidationScope.ASSEMBLY_SCAFFOLD;
 			}
 			else
 			{
-				contigs.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
 			}
 		case transcriptome:
@@ -161,6 +158,24 @@ public abstract class FileValidationCheck {
 			return ValidationScope.EMBL_TEMPLATE;
 		default:
 			return null;
+		}
+	}
+	
+	protected void addEntryName(String entryName,ValidationScope scope)
+	{
+		switch(scope)
+		{
+		case ASSEMBLY_CHROMOSOME:
+			chromosomes.add(entryName);
+			break;
+		case ASSEMBLY_SCAFFOLD:
+			scaffolds.add(entryName);
+			break;
+		case ASSEMBLY_CONTIG:
+			contigs.add(entryName);
+			break;
+		default:
+			break;
 		}
 	}
 

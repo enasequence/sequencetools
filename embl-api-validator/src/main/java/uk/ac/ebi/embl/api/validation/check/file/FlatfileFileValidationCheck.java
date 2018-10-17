@@ -63,20 +63,22 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
 			}
 			Entry entry = emblReader.getEntry();
+			if(getOptions().context.get()==Context.genome)
+            {
+             	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
+            	{  emblReader.read();
+            		continue;
+            	}
+            	else
+            		collectContigInfo(entry);
+            }
 			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
-   			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
+   			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
-        	  if(getOptions().context.get()==Context.genome)
-              {
-              	collectContigInfo(entry);
-              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
-              	{  emblReader.read();
-              		continue;
-              	}
-              }
-			ValidationPlanResult planResult=validationPlan.execute(entry);
+        	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get());
+        	ValidationPlanResult planResult=validationPlan.execute(entry);
 			if(!planResult.isValid())
 			{
 				valid = false;
@@ -132,9 +134,12 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			if(isHasAnnotationOnlyFlatfile())
 			{
-				SubmissionFile annotationonlysf= new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"));
+				SubmissionFile annotationonlysf=null;
+				if(submissionFile.getFixedFile()!=null)
+					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFixedFile().getAbsolutePath()+".annotationOnly"));
+				else
+					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"));
                 options.submissionFiles.get().addFile(annotationonlysf);
-                setSequenceDB(DBMaker.fileDB(getOptions().reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 			}
 			
 		}

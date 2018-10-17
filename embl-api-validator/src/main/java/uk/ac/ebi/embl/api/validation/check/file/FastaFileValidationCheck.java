@@ -71,13 +71,13 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					{
 					ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
 					map.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
-					getSequenceDB().commit();
 					}
 				}
-            	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
+            	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession().toUpperCase()));
             	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
+            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get());
 				ValidationPlanResult planResult=validationPlan.execute(entry);
 				if(!planResult.isValid())
 				{
@@ -95,6 +95,10 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
 				}
 				reader.read();
+			}
+			if(getSequenceDB()!=null)
+			{
+				getSequenceDB().commit();
 			}
 		}catch (Exception e) {
 			if(getSequenceDB()!=null)

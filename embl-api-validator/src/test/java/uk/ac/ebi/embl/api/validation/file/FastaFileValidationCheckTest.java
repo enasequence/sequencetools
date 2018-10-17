@@ -18,6 +18,9 @@ package uk.ac.ebi.embl.api.validation.file;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
@@ -70,13 +73,14 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.transcriptome);
+        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		assertTrue(check.check(file));
         assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 	
 	@Test
-	public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
+	public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException, IOException
 	{
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
@@ -85,9 +89,15 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
+        options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
+		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence1").closeOnJvmShutdown().fileDeleteAfterClose().transactionEnable().make());
 		assertTrue(check.check(file));
+		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));
+		String actualString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".fixed")));
+        System.out.println(expectedString);
+        System.out.println("=====================================================================");
+        System.out.println(actualString);
         assertTrue(compareOutputFixedFiles(file.getFile()));
         ConcurrentMap map = check.getSequenceDB().hashMap("map").createOrOpen();
         assertEquals("caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",map.get("IWGSC_CSS_6DL_contig_209591".toUpperCase()));
@@ -95,5 +105,4 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         assertEquals("aggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggga",map.get("IWGSC_CSS_6DL_contig_209593".toUpperCase()));
         check.getSequenceDB().close();
 	}
-		
 }

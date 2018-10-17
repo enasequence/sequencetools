@@ -15,7 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
+import java.io.File;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
@@ -33,7 +40,8 @@ public class SubmissionValidationPlan
 {
 	SubmissionOptions options;
 	FileValidationCheck check = null;
-	
+    DB sequenceDB =null;
+    private String sequenceDBName =null;
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
@@ -50,7 +58,9 @@ public class SubmissionValidationPlan
 		if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 		 { 
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-			check.getAnnotationFlatfile();
+    		check.getAnnotationFlatfile();
+    		if(check.isHasAnnotationOnlyFlatfile())
+              sequenceDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getSequenceDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 		 }
 		if(options.context.get().getFileTypes().contains(FileType.AGP))
 		{
@@ -73,9 +83,9 @@ public class SubmissionValidationPlan
 			check.validateSequencelessChromosomes();
 			if(!options.isRemote)
 			registerSequences();
-			if(check.getSequenceDB()!=null)
-				check.getSequenceDB().close();
 		}
+		if(sequenceDB!=null)
+			sequenceDB.close();
 		return true;
 		}catch(Exception e)
 		{
@@ -112,6 +122,8 @@ public class SubmissionValidationPlan
 		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
 		{
 			check = new FastaFileValidationCheck(options);
+			if(sequenceDB!=null)
+				check.setSequenceDB(sequenceDB);
 			if(!check.check(fastaFile))
 				throw new ValidationEngineException("fasta file validation failed: "+fastaFile.getFile().getName());
 		}
@@ -122,6 +134,8 @@ public class SubmissionValidationPlan
 		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
 			check = new FlatfileFileValidationCheck(options);
+			if(sequenceDB!=null)
+				check.setSequenceDB(sequenceDB);
 			if(!check.check(flatfile))
 				throw new ValidationEngineException("flat file validation failed: "+flatfile.getFile().getName());
 		}
@@ -132,6 +146,8 @@ public class SubmissionValidationPlan
 		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 		{
 			check = new AGPFileValidationCheck(options);
+			if(sequenceDB!=null)
+				check.setSequenceDB(sequenceDB);
 			if(!check.check(agpFile))
 				throw new ValidationEngineException("AGP file validation failed: "+agpFile.getFile().getName());
 		}
@@ -166,8 +182,17 @@ public class SubmissionValidationPlan
 		for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
 		{
 			check = new AnnotationOnlyFlatfileValidationCheck(options);
+			if(sequenceDB!=null)
+				check.setSequenceDB(sequenceDB);
      		if(!check.check(annotationOnlyFlatfile))
 				throw new ValidationEngineException("flat file validation failed for annotation only entries : "+annotationOnlyFlatfile.getFile().getName());
 		}
+	}
+	private String getSequenceDbname()
+	{
+		 Date dNow = new Date();
+	     SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+	     return ".sequence"+ft.format(dNow);
+	     
 	}
 }

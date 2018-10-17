@@ -42,7 +42,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class AGPFileValidationCheckTest extends SubmissionValidationTest
 {
-	AGPFileValidationCheck check=null;
 	 @Before
 	   public void init() throws SQLException
 	   {   
@@ -62,7 +61,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			submissionFiles.addFile(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP));
 			options.submissionFiles = Optional.of(submissionFiles);
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
-			check= new AGPFileValidationCheck(options);
+			 options.init();
+			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
 			check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 			check.getAGPEntries();
 			validateContig("valid_flatfileforAgp.txt",  FileType.FLATFILE);
@@ -85,8 +85,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.AGP));
 			options.submissionFiles = Optional.of(submissionFiles);
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
-			check= new AGPFileValidationCheck(options);
-			check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
+			options.init();
+			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
 			check.getAGPEntries();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA);
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));

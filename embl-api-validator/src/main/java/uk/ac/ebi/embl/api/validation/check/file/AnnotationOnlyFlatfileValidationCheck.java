@@ -60,7 +60,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					}
 				}
 
-				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScopeandEntrynames(entry.getSubmitterAccession().toUpperCase()));
+    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
 				validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				appendHeader(entry);
