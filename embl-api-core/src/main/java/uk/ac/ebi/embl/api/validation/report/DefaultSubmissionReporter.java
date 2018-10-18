@@ -55,6 +55,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     @Override
     public void
     writeToFile(Path reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
                 writeMessage(s, validationMessage, targetOrigin);
@@ -64,6 +66,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     @Override
     public void
     writeToFile(Path reportFile, ValidationPlanResult validationPlanResult) {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
                 writeMessage(s, validationMessage, null /* targetOrigin */);
@@ -74,6 +78,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     public void
     writeToFile(Path reportFile, ValidationResult validationResult, String targetOrigin )
     {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> {
             for( ValidationMessage validationMessage: validationResult.getMessages() ) {
                 writeMessage(s, validationMessage, targetOrigin);
@@ -96,6 +102,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     public void
     writeToFile(Path reportFile, ValidationMessage validationMessage )
     {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> writeMessage(s, validationMessage));
     }
 
@@ -103,6 +111,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     public void
     writeToFile(Path reportFile, Severity severity, String message, Origin origin )
     {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> writeMessage(s, createValidationMessage(severity, message, origin)));
     }
 
@@ -110,6 +120,8 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     public void
     writeToFile(Path reportFile, Severity severity, String message )
     {
+    	if(reportFile==null)
+    		return;
         writeMessages(reportFile, (s) -> writeMessage(s, createValidationMessage(severity, message, null /* origin */)));
     }
 
@@ -120,42 +132,56 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     @Override
     public void
     writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), validationPlanResult, targetOrigin);
     }
 
     @Override
     public void
     writeToFile(File reportFile, ValidationPlanResult validationPlanResult) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), validationPlanResult);
     }
 
     @Override
     public void
     writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin ) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), validationResult, targetOrigin);
     }
 
     @Override
     public void
     writeToFile(File reportFile, ValidationResult validationResult ) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), validationResult);
     }
 
     @Override
     public void
     writeToFile(File reportFile, ValidationMessage validationMessage ) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), validationMessage);
     }
 
     @Override
     public void
     writeToFile(File reportFile, Severity severity, String message, Origin origin ) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), severity, message, origin);
     }
 
     @Override
     public void
     writeToFile(File reportFile, Severity severity, String message ) {
+    	if(reportFile==null)
+    		return;
         writeToFile(reportFile.toPath(), severity, message);
     }
 

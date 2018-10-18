@@ -39,16 +39,12 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
-			if(getOptions().reportDir.isPresent())
-				Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
-
 		UnlocalisedListFileReader reader = new UnlocalisedListFileReader(submissionFile.getFile());
 		ValidationResult parseResult = reader.read();
 		if(!parseResult.isValid())
 		{
 			valid = false;
-			if(getOptions().reportDir.isPresent())
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+    		getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 		}
 		getOptions().getEntryValidationPlanProperty().fileType.set(FileType.UNLOCALISEDLIST);
 		GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -56,8 +52,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		for(UnlocalisedEntry entry : unlocalisedEntries)
 		{
 			ValidationPlanResult result=plan.execute(entry);
-			if(getOptions().reportDir.isPresent())
-			getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), result);
+			getReporter().writeToFile(getReportFile(submissionFile), result);
 		}
 		}catch(Exception e)
 		{

@@ -32,7 +32,6 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
-			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 			EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
 			ValidationResult parseResult = emblReader.read();
@@ -41,7 +40,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				if(!parseResult.isValid())
 				{
 					valid = false;
-					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 				}
 				Entry entry = emblReader.getEntry();
 				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
@@ -68,8 +67,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
 					valid = false;
-					if(getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					for(ValidationResult result: planResult.getResults())
 					{
 						addMessagekey(result);

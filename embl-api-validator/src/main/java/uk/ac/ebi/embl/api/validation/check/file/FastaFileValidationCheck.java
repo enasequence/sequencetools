@@ -50,7 +50,6 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		boolean valid=true;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
-			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
 			EmblEntryValidationPlan validationPlan =null;
@@ -58,7 +57,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			{
 				valid = false;
 				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 				addMessagekey(parseResult);
 			}
 			while(reader.isEntry())
@@ -82,8 +81,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
 					valid = false;
-					if(getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					for(ValidationResult result: planResult.getResults())
 					{
 						addMessagekey(result);

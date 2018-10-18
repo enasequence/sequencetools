@@ -41,9 +41,6 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
-			if(getOptions().reportDir.isPresent())
-			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
-
 			ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
 
 			ValidationResult parseResult = reader.read();
@@ -51,7 +48,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			{
 				valid = false;
 				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 				addMessagekey(parseResult);
 			}
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
@@ -64,8 +61,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
 					valid = false;
-					if(getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					for(ValidationResult result: planResult.getResults())
 					{
 						addMessagekey(result);

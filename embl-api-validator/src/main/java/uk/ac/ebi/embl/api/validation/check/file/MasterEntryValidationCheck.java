@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -73,8 +74,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(!planResult.isValid())
 			{
 				valid = false;
-				if(getOptions().reportDir.isPresent())
-					getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), "master" ), planResult);
+				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), planResult);
 				for(ValidationResult result: planResult.getResults())
 				{
 					addMessagekey(result);

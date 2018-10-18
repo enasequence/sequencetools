@@ -130,9 +130,20 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  Path getReportFile(String reportDir, String fileName)
+	public  Path getReportFile(SubmissionFile submissionFile) throws IOException
 	{
-		return Paths.get(reportDir, fileName + REPORT_FILE_SUFFIX );
+		Path reportfilePath=null;
+
+		if(submissionFile.getReportFile()!=null)
+			reportfilePath= submissionFile.getReportFile().toPath();
+		else
+			if(getOptions().reportDir.isPresent())
+				reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
+
+		if(reportfilePath!=null)
+			Files.deleteIfExists(reportfilePath);
+
+		return reportfilePath;
 	}
 
 	protected ValidationScope getValidationScope(String entryName)

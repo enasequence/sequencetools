@@ -50,7 +50,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationPlan validationPlan =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
-			Files.deleteIfExists(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()));
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
@@ -59,7 +58,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	{
         		if(!parseResult.isValid())
     			{	valid = false;
-    				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), parseResult);
+    				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
     				addMessagekey(parseResult);
     			}
         		Entry entry =reader.getEntry();
@@ -72,7 +71,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			if(!planResult.isValid())
     			{
     			    valid = false;
-    				getReporter().writeToFile(getReportFile(getOptions().reportDir.get(), submissionFile.getFile().getName()), planResult);
+    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
     				for(ValidationResult result: planResult.getResults())
     				{
     					addMessagekey(result);
