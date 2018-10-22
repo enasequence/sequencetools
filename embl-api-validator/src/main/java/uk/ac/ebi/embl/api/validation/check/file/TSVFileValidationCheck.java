@@ -43,14 +43,9 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	private final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
 	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
 	private final static int MAX_SEQUENCE_COUNT = 100000;
-	private int sequenceCount = 0;
 
 	public TSVFileValidationCheck(SubmissionOptions options) {
 		super(options);
-	}
-
-	public int getSequenceCount() {
-		return sequenceCount;
 	}
 
 	@Override

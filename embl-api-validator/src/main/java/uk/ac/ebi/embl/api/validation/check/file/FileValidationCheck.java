@@ -87,6 +87,7 @@ public abstract class FileValidationCheck {
 	private boolean hasAnnotationOnlyFlatfile = false;
 	protected String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
+	protected int sequenceCount = 0;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -106,6 +107,11 @@ public abstract class FileValidationCheck {
 	protected SubmissionOptions getOptions() {
 		return options;
 	}
+
+	public int getSequenceCount() {
+		return sequenceCount;
+	}
+
 
 	protected AnalysisType getAnalysisType()
 	{

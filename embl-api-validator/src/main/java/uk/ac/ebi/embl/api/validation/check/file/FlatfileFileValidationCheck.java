@@ -93,6 +93,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				new EmblEntryWriter(entry).write(fixedFileWriter);
 			}
 			emblReader.read();
+			sequenceCount++;
 		}
 		
 		}catch(Exception e)
