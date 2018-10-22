@@ -156,7 +156,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
-	
 	}
 
 }
