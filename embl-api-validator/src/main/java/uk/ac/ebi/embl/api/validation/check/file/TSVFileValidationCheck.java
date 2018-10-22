@@ -49,6 +49,10 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		super(options);
 	}
 
+	public int getSequenceCount() {
+		return sequenceCount;
+	}
+
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
 		boolean valid = true;
