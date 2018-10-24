@@ -41,6 +41,17 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.CHROMOSOME_LIST))
+			{
+				ValidationResult result = new ValidationResult();
+				valid = false;
+				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid CHROMOSOME_LIST File Format:Failed to read entry");
+				result.append(validationMessage);
+				if(getOptions().reportDir.isPresent())
+				getReporter().writeToFile(getReportFile(submissionFile), result);
+				addMessagekey(result);
+				return valid;
+			}
 			ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
 
 			ValidationResult parseResult = reader.read();

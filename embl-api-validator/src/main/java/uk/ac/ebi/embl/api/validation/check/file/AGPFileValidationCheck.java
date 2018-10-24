@@ -50,6 +50,17 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationPlan validationPlan =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile);PrintWriter sequenceFixedFileWriter=new PrintWriter(submissionFile.getFixedFile().getAbsolutePath()+".sequence"))
 		{
+			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
+			{
+				ValidationResult result = new ValidationResult();
+				valid = false;
+				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid AGP File Format:Failed to read entry");
+				result.append(validationMessage);
+				if(getOptions().reportDir.isPresent())
+				getReporter().writeToFile(getReportFile(submissionFile), result);
+				addMessagekey(result);
+				return valid;
+			}
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			ValidationResult parseResult = reader.read();
@@ -61,6 +72,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
     				addMessagekey(parseResult);
     			}
+				parseResult=new ValidationResult();
         		Entry entry =reader.getEntry();
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
     			getOptions().getEntryValidationPlanProperty().contigEntryNames.set(contigRangeMap);

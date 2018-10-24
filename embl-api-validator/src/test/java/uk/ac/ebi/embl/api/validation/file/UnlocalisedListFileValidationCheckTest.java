@@ -55,13 +55,13 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 	}
 	
 	@Test
-	public void testInvalidChromosomeList() throws ValidationEngineException
+	public void testInvalidUnlocalisedList() throws ValidationEngineException
 	{
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
-		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
+		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
 		assertTrue(!check.check(file));
-		assertTrue(check.getMessageStats().get("FileFormatCheck")!=null);
+		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
 	}
 	
 	

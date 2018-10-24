@@ -486,4 +486,62 @@ public abstract class FileValidationCheck {
 	{
 		return this.sequenceDB;
 	}
+	
+	protected boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
+	{  
+		String flat_file_token= "ID";
+		String fasta_file_token=">";
+		String agp_file_comment_token="#";
+		String spaceregex = "\\s+";
+		int agp_number_of_columns = 9;
+		int chromosome_min_number_of_columns = 3;
+		int chromosome_max_number_of_columns = 4;
+		String line=null;
+		
+		try(BufferedReader  fileReader=getBufferedReader(file))
+		{
+			int count=1;
+		while(line==null||line.isEmpty())
+   	   {
+			count++;
+   		 line=fileReader.readLine();
+   		 if(count>100)
+   			 return false;
+       }
+        
+		switch(fileType)
+         {
+         case FLATFILE:
+         case ANNOTATION_ONLY_FLATFILE:
+         case MASTER:
+        	 if(!line.startsWith(flat_file_token))
+        	 { 
+        	   return false;
+        	 }
+             break;
+         case FASTA:
+        	 if(!line.startsWith(fasta_file_token))
+        	 { 
+        		 return false;
+        	 }
+             break;
+         case AGP:
+        	 if(!line.startsWith(agp_file_comment_token)&&line.split(spaceregex).length!=agp_number_of_columns)
+        	 { 
+        	   return false;
+        	 }
+             break;
+         case CHROMOSOME_LIST:
+        	 if(line.split(spaceregex).length<chromosome_min_number_of_columns||line.split(spaceregex).length>chromosome_max_number_of_columns)
+        	 { 
+        		 return false;
+        	 }
+             break;
+           default:
+             return false;
+         }
+		}
+	
+		return true;
+		}
 }

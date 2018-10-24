@@ -16,12 +16,8 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.concurrent.ConcurrentMap;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -48,20 +44,32 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
+		
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FASTA))
+			{
+				ValidationResult result = new ValidationResult();
+				valid = false;
+				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid Fasta File Format:Failed to read entry");
+				result.append(validationMessage);
+				getReporter().writeToFile(getReportFile(submissionFile), result);
+				addMessagekey(result);
+				return valid;
+			}
 			FastaFileReader reader = new FastaFileReader( new FastaLineReader( fileReader));
 			ValidationResult parseResult = reader.read();
 			EmblEntryValidationPlan validationPlan =null;
-			if(!parseResult.isValid())
-			{
-				valid = false;
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-				addMessagekey(parseResult);
-			}
+		
 			while(reader.isEntry())
 			{
+				if(!parseResult.isValid())
+				{
+					valid = false;
+					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
+					addMessagekey(parseResult);
+				}
+				parseResult=new ValidationResult();
 				Entry entry=reader.getEntry();
 				if(getOptions().context.get()==Context.genome)
 				{
@@ -92,7 +100,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					if(fixedFileWriter!=null)
 					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
 				}
-				reader.read();
+				parseResult= reader.read();
 			}
 			if(getSequenceDB()!=null)
 			{

@@ -7,7 +7,10 @@ import java.nio.file.Files;
 import java.util.concurrent.ConcurrentMap;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -32,6 +35,17 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE))
+			{
+				ValidationResult result = new ValidationResult();
+				valid = false;
+				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid FLAT File Format:Failed to read entry");
+				result.append(validationMessage);
+				if(getOptions().reportDir.isPresent())
+				getReporter().writeToFile(getReportFile(submissionFile), result);
+				addMessagekey(result);
+				return valid;
+			}
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 			EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
 			ValidationResult parseResult = emblReader.read();
@@ -41,7 +55,9 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				{
 					valid = false;
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
+					addMessagekey(parseResult);
 				}
+				parseResult=new ValidationResult();
 				Entry entry = emblReader.getEntry();
 				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 				if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
