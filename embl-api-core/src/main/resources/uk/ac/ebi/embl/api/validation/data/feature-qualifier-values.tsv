@@ -3,6 +3,7 @@
 #Feature qualifier "{0}" does not have a value (mandatory for this type)
 #feature "{0}" value "{1}" failed to match the reqular expression "{2}"
 #Feature qualifier "{0}" value "{1}" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.
+#Change protein id pattern here as well
 EC_number	N	Y	Y	^(?:(\d{0,3}\-{0,1}\.)){3}n{0,1}\d{0,3}\-{0,1}$	70	(null)
 GO_term	N	N	Y	(null)	92	(null)
 PCR_conditions	N	Y	Y	(null)	73	(null)

@@ -41,6 +41,7 @@ public class ACWriter extends FlatFileWriter {
         	block.append(primaryAccession);
         }
         block.append(";");
+
         for (Text secondaryAccession : entry.getSecondaryAccessions()) {
             block.append(" ");
             block.append(secondaryAccession.getText());

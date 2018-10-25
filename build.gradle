@@ -1,6 +1,6 @@
  allprojects
  {
-    ext.version_base = '1.1.267'
+    ext.version_base = '1.1.278'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -131,7 +131,7 @@
 		 mavenDeployer 
 		 {
 		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
-//		   authentication(userName: artifactoryUsername, password: artifactoryPassword)
+		   authentication(userName: artifactoryUsername, password: artifactoryPassword)
           }
 			pom.project 
           {
@@ -183,10 +183,11 @@ project(':embl-api-validator') {
     
     manifest {
          attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.267",
+                     "Implementation-Version":"1.1.277",
                      "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
                      "Built-By": System.getProperty('user.name'),
                      "Built-Date": new Date())
     }
 }
   }
+

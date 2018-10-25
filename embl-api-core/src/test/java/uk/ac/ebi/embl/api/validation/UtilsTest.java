@@ -17,7 +17,11 @@ package uk.ac.ebi.embl.api.validation;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,6 +29,7 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
@@ -352,5 +357,100 @@ public class UtilsTest {
 		//non ascii html entity name and number
 		ip = new StringBuilder("gene &#127; protein &Ccedil; organ");
 		Assert.assertEquals("gene &#127; protein &Ccedil; organ", Utils.escapeASCIIHtmlEntities(ip).toString());
+	}
+
+	@Test
+	public void testCreateRange() {
+
+		//only one
+		List<Text> outpout = Utils.createRange(getSecondaryAccnList("ARZ001"), null);
+		assertEquals(1, outpout.size());
+		assertEquals("ARZ001", outpout.get(0).getText());
+
+		//empty input
+		outpout = Utils.createRange(new ArrayList<>(), null);
+		assertEquals(0, outpout.size());
+
+		outpout = Utils.createRange(null, null);
+		assertEquals(0, outpout.size());
+
+		//No ranges all single
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
+		assertEquals(2, outpout.size());
+		assertEquals("ARZ001-ARZ005", outpout.get(0).getText());
+		assertEquals("ARZ011", outpout.get(1).getText());
+
+		//Singles and ranges combined
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001-ARZ007", "ARZ011","ARZ012","ARZ013-ARZ017"), null);
+		assertEquals(3, outpout.size());
+		assertEquals("ARZ001-ARZ007", outpout.get(0).getText());
+		assertEquals("ARZ011-ARZ012", outpout.get(1).getText());
+		assertEquals("ARZ013-ARZ017", outpout.get(2).getText());
+
+		//different sequence
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ000", "ARZ001-ARZ007", "ARZ011","ARZ013", "ARZ019","CRX1"), null);
+		assertEquals(6, outpout.size());
+		assertEquals("ARZ000", outpout.get(0).getText());
+		assertEquals("ARZ001-ARZ007", outpout.get(1).getText());
+		assertEquals("ARZ011", outpout.get(2).getText());
+		assertEquals("ARZ013", outpout.get(3).getText());
+		assertEquals("ARZ019", outpout.get(4).getText());
+		assertEquals("CRX1", outpout.get(5).getText());
+
+		//"ARZ001", "ARZ0002"(ARZ0002 with an extra 0, should not form a range)
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
+		assertEquals(4, outpout.size());
+		assertEquals("ARZ001", outpout.get(0).getText());
+		assertEquals("ARZ0002", outpout.get(1).getText());
+		assertEquals("ARZ003-ARZ005", outpout.get(2).getText());
+		assertEquals("ARZ011", outpout.get(3).getText());
+
+		//"ARZ001","ARA001" numbers are contiguous but different prefix should not form range
+		outpout = Utils.createRange(getSecondaryAccnList("ARZ001","ARA002", "ARZ0002", "ARZ003","ARZ004","ARZ005","ARZ011"), null);
+		assertEquals(5, outpout.size());
+		assertEquals("ARZ001", outpout.get(0).getText());
+		assertEquals("ARA002", outpout.get(1).getText());
+		assertEquals("ARZ0002", outpout.get(2).getText());
+		assertEquals("ARZ003-ARZ005", outpout.get(3).getText());
+		assertEquals("ARZ011", outpout.get(4).getText());
+
+	}
+
+	@Test
+	public void expandRanges() {
+		List<Text> output = Utils.expandRanges(getSecondaryAccnListAsArray("ARZB01000005-ARZB01000009","BBZB01000009"));//old WGS
+		for(int i=0; i<=4;i++) {
+			assertEquals("ARZB0100000"+(5+i), output.get(i).getText());
+		}
+		assertEquals("BBZB01000009", output.get(output.size()-1).getText());
+
+		output = Utils.expandRanges(getSecondaryAccnListAsArray("ARZB01S000005-ARZB01000009","BBZB01000009","BBCCDD01S000005001-BBCCDD01S000005004"));//with S, new WGS format
+		for(int i=0; i<=4;i++) {
+			assertEquals("ARZB01S00000"+(5+i), output.get(i).getText());
+		}
+		assertEquals("BBZB01000009", output.get(5).getText());
+		for(int i=6; i<output.size();i++) {
+			assertEquals("BBCCDD01S00000500"+(i-5), output.get(i).getText());
+		}
+
+		output = Utils.expandRanges(getSecondaryAccnListAsArray("A12345-A12349"));//STD format 1 5
+		for(int i=0; i<=4;i++) {
+			assertEquals("A1234"+(5+i), output.get(i).getText());
+		}
+
+		output = Utils.expandRanges(getSecondaryAccnListAsArray("ARZB01000015-ARZB010000115"));// ok to reduce one leading 0 at end "ARZB01000015-ARZB01000115"
+		assertEquals(101, output.size());
+		assertEquals("ARZB01000115", output.get(output.size()-1).getText());//Note, one leading reduced 4 2 7 become 4 2 6
+		assertEquals("ARZB01000114", output.get(output.size()-2).getText());
+
+	}
+	private Text[] getSecondaryAccnListAsArray(String... accns) {
+		List<Text> list = getSecondaryAccnList(accns);
+		Text[] array = new Text[list.size()];
+		return list.toArray(array);
+	}
+
+	private List<Text> getSecondaryAccnList(String... accns) {
+		return Stream.of(accns).map(Text::new).collect(Collectors.toList());
 	}
 }

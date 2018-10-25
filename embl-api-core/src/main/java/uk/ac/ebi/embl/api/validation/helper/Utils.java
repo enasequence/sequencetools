@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import org.apache.commons.lang.StringUtils;
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -33,6 +34,8 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static uk.ac.ebi.embl.api.AccessionMatcher.getSplittedAccession;
 
 public class Utils {
 
@@ -60,7 +63,8 @@ public class Utils {
 		put("&lt;", '<');
 		put("&gt;", '>');
 	}};
-	
+	private static final Pattern splitDigitsPattern = Pattern.compile("^(\\D+)(\\d+)$");
+
 	//prevent instantiation
 	private Utils() {
 	}
@@ -1029,12 +1033,12 @@ public class Utils {
 	}
 
 
-	public static ValidationResult validateAssemblySequenceCount(EmblEntryValidationPlanProperty property,long contigCount,long scaffoldCount,long chromosomeCount )
+	public static ValidationResult validateAssemblySequenceCount(boolean ignoreErrors,long contigCount,long scaffoldCount,long chromosomeCount )
 	{
 
 		ValidationResult result = new ValidationResult();
 
-		if(property.ignore_errors.get())
+		if(ignoreErrors)
 			return result;
 
 		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
@@ -1073,4 +1077,126 @@ public class Utils {
 		return result;
 	}
 
+	private static boolean areContinuous(String prev, String curr) throws IllegalArgumentException {
+		Matcher mPrev = splitDigitsPattern.matcher(prev);
+		Matcher mCurr = splitDigitsPattern.matcher(curr);
+		if(mPrev.matches() && mCurr.matches()) {
+			String prevNumStr = mPrev.group(2);
+			String currNumStr = mCurr.group(2);
+			return (mPrev.group(1).equalsIgnoreCase(mCurr.group(1)) && prevNumStr.length() == currNumStr.length() && Integer.parseInt(prevNumStr)+1 == Integer.parseInt(currNumStr));
+		} else {
+			throw new IllegalArgumentException("Invalid accession format");
+		}
+	}
+
+	public static List<Text> createRange(List<Text> secondaryAccessions, Origin origin) {
+
+		List<Text> accessionRange = new ArrayList<>();
+
+		if(secondaryAccessions == null || secondaryAccessions.isEmpty())
+			return accessionRange;
+
+		Text prevAccn = null;
+		String firstAcc = null;
+		String lastAccn = null;
+
+		if(origin == null) {
+			origin = secondaryAccessions.get(0).getOrigin();
+			if(secondaryAccessions.size() > 1 && origin != null) {
+				if (origin instanceof FlatFileOrigin) {
+					FlatFileOrigin firstOrigin = (FlatFileOrigin) origin;
+					FlatFileOrigin lastOrigin = (FlatFileOrigin) secondaryAccessions.get(secondaryAccessions.size() - 1).getOrigin();
+					if(lastOrigin != null) {
+						origin = new FlatFileOrigin(firstOrigin.getFileId(), firstOrigin.getFirstLineNumber(), lastOrigin.getLastLineNumber());
+					}
+				}
+			}
+		}
+
+		for(Text currSecAccn: secondaryAccessions) {
+			if(currSecAccn.getText().contains("-") ) {
+				if(prevAccn != null) {
+					if(firstAcc == null) {
+						accessionRange.add(prevAccn);
+					} else {
+						accessionRange.add(new Text( firstAcc+"-"+lastAccn, origin) );
+						firstAcc = null;
+						lastAccn = null;
+					}
+					prevAccn = null;
+				}
+				accessionRange.add(currSecAccn);
+			} else  {
+				if(prevAccn == null) {
+					prevAccn = currSecAccn;
+				} else {
+					if(areContinuous(prevAccn.getText(), currSecAccn.getText())) {
+						if(firstAcc == null)
+							firstAcc = prevAccn.getText();
+						lastAccn = currSecAccn.getText();
+						prevAccn = currSecAccn;
+					} else if(firstAcc == null) {
+						accessionRange.add(prevAccn);
+						prevAccn = currSecAccn;
+					} else {
+						accessionRange.add(new Text( firstAcc+"-"+lastAccn, origin) );
+						firstAcc = null;
+						lastAccn = null;
+						prevAccn = currSecAccn;
+					}
+				}
+			}
+		}
+
+		if(null != prevAccn) {
+			accessionRange.add(firstAcc == null? prevAccn: new Text( firstAcc+"-"+lastAccn, origin) );
+		}
+
+		return accessionRange;
+	}
+
+	public static List<Text> expandRanges(Text... secondaryAccessions) throws IllegalStateException {
+		List<Text> expandedAccessions = new ArrayList<>();
+
+		if(secondaryAccessions == null || secondaryAccessions.length == 0)
+			return expandedAccessions;
+
+		for (Text secAccn: secondaryAccessions) {
+
+			if(secAccn.getText().contains("-")) {
+
+				String[] accnRange = secAccn.getText().split("-");
+				expandedAccessions.add(new Text(accnRange[0], secAccn.getOrigin()));
+				AccessionMatcher.Accession startAccn = AccessionMatcher.getSplittedAccession(accnRange[0]);
+				AccessionMatcher.Accession endAccn = AccessionMatcher.getSplittedAccession(accnRange[1]);
+
+				if (startAccn == null || endAccn == null) {
+					throw new IllegalStateException("Secondary accession format is invalid:"+secAccn.getText());
+				}
+
+				Integer startNumber = Integer.parseInt(startAccn.number)+1;
+				int endNumber = Integer.parseInt(endAccn.number);
+				int numLength = startAccn.number.length();
+				String prefix = startAccn.prefix +
+						(startAccn.version == null ? "" : startAccn.version) +
+						(startAccn.s == null ? "" : startAccn.s);
+
+				while (startNumber <= endNumber) {
+					String accession = prefix;
+
+					for (int i = 0; i < (numLength - startNumber.toString().length()) ; i++) {
+						accession += '0';
+					}
+					accession += startNumber;
+					expandedAccessions.add(new Text(accession, secAccn.getOrigin()));
+					startNumber++;
+				}
+
+			} else {
+				expandedAccessions.add(secAccn);
+			}
+
+		}
+		return expandedAccessions;
+	}
 }

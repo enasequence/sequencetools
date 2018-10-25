@@ -101,7 +101,8 @@ public class EC_numberFormatCheckTest
 		assertEquals(0, result.count("EC_numberFormatCheck", Severity.ERROR));
 		
 	}
-	@Test
+	
+    @Test
 	public void testCheck_validEcnumber2() throws SQLException, ValidationEngineException
 	{
 		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.5");
@@ -121,4 +122,13 @@ public class EC_numberFormatCheckTest
 		
 	}
 	
+	@Test
+	public void testCheck_validEcnumber4() throws SQLException, ValidationEngineException
+	{
+		feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.n234");
+		ValidationResult result=check.check(feature);
+		assertTrue(result.isValid());
+		assertEquals(0, result.count("EC_numberFormatCheck", Severity.ERROR));
+		
+	}
 }

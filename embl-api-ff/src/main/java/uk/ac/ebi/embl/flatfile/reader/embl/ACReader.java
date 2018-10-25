@@ -15,11 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
+
+import java.util.List;
 
 /** Reader for the flat file AC lines. Accession number
  * ranges will not be expanded.
@@ -43,7 +46,8 @@ public class ACReader extends MultiLineBlockReader {
 		for (String accession : FlatFileUtils.split(block, ";")) {
 			if (isFirstAccession) {
 				if (noPrimaryAccession) {
-					entry.addSecondaryAccession(new Text(accession, getOrigin()));
+					Text secAccession = new Text(accession, getOrigin());
+					entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
 				} else {
 					if (idLinePrimaryAccession != null
 							&& !idLinePrimaryAccession.equalsIgnoreCase(accession))
@@ -56,8 +60,10 @@ public class ACReader extends MultiLineBlockReader {
 				}
 				isFirstAccession = false;
 			} else {
-				entry.addSecondaryAccession(new Text(accession, getOrigin()));
+				Text secAccession = new Text(accession, getOrigin());
+				entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
 			}
 		}
+
 	}	
 }

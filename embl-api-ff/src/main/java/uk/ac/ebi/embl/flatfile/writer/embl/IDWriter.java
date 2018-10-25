@@ -43,11 +43,17 @@ public class IDWriter extends FlatFileWriter {
 		}
 		writer.write("; ");
 
-		writer.write("SV ");		
-		if (entry.getSequence() != null) {
+		writer.write("SV ");
+		if(entry.isMaster()) {
+			if(entry.getPrimaryAccession() != null) {
+				writer.write(entry.getPrimaryAccession().substring(4, 6));
+			} else {
+				writer.write("XX");
+			}
+		} else if (entry.getSequence() != null) {
 			Integer version = entry.getSequence().getVersion();
 			if (version != null) {
-				writer.write(version.toString());
+					writer.write(version.toString());
 			}
 			else {
 				writer.write("XXX");
@@ -109,7 +115,11 @@ public class IDWriter extends FlatFileWriter {
 		}
 		writer.write("; ");
 
-		if (entry.getSequence() != null)
+		if (entry.isMaster())
+		{
+			writer.write(String.valueOf(entry.getSequenceCount()));
+			writer.write(" SQ");
+		} else if (entry.getSequence() != null)
 		{
 			Long length = entry.getSequence().getLength();
 			if (length == 0L && entry.getIdLineSequenceLength() != 0)
@@ -123,15 +133,7 @@ public class IDWriter extends FlatFileWriter {
 			if (length != null)
 			{
 				writer.write(length.toString());
-
-				if (!entry.isMaster())
-				{
-					writer.write(" BP");
-				} else
-				{
-					writer.write(" SQ");
-				}
-				
+				writer.write(" BP");
 			}
 		}
 	

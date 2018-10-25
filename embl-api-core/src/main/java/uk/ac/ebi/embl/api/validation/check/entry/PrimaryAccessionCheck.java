@@ -15,17 +15,13 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import java.util.regex.Matcher;
-
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
-import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("invalid accession \"{0}\" for dataclass \"{1}\""
 		+ "invalid accession prefix : \"{0}\". Accession prefix is not registered in cv/prefix tables")
@@ -48,59 +44,21 @@ public class PrimaryAccessionCheck extends EntryValidationCheck {
 		{
 			return result;
 		}
-		
-		boolean invalidDataclass= false;
 
-		String accessionPrefix = null;
-	if ( Entry.WGS_DATACLASS.equals(entry.getDataClass()) )
-		{
-			Matcher m = DataclassProvider.WGS_PRIMARY_ACCESSION_PATTERN.matcher( entry.getPrimaryAccession() );			
-			if (!m.matches() )	
-				invalidDataclass=true;
+		String accessionPrefix = AccessionMatcher.getAccessionPrefix(entry.getPrimaryAccession(), entry.getDataClass());
+
+		if (accessionPrefix == null) {
+			reportError(entry.getOrigin(), INVALID_ACCESSION_FORMAT_ID, entry.getPrimaryAccession(), entry.getDataClass());
+		} else if (getEntryDAOUtils() != null) {
+			//check accession prefix is registered in cv_database_prefix table
+			try {
+				if (getEntryDAOUtils().getDbcode(accessionPrefix) == null) {
+					reportError(entry.getOrigin(), INVALID_ACCESSION_PREFIX_ID, accessionPrefix);
+				}
+			} catch (Exception e) {
+				throw new ValidationEngineException(e.getMessage());
+			}
 		}
-		else
-		if ( Entry.SET_DATACLASS.equals( entry.getDataClass() ) )			
-		{
-			Matcher m1 = DataclassProvider.WGSMASTER_PRIMARY_ACCESSION_PATTERN.matcher( entry.getPrimaryAccession() );
-			Matcher m2 = DataclassProvider.ASSEMBLYMASTER_PRIMARY_ACCESSION_PATTERN.matcher( entry.getPrimaryAccession() );
-			if (!m1.matches() && !m2.matches() )
-				invalidDataclass=true;
-		}
-		else
-		if ( Entry.TPX_DATACLASS.equals( entry.getDataClass() ) )			
-		{
-			Matcher m = DataclassProvider.TPX_PRIMARY_ACCESSION_PATTERN.matcher( entry.getPrimaryAccession() );
-			if (!m.matches() )
-				invalidDataclass =true;
-		}
-		else
-		{
-			Matcher m = DataclassProvider.SEQUENCE_PRIMARY_ACCESSION_PATTERN.matcher( entry.getPrimaryAccession() );
-			if (!m.matches())
-               invalidDataclass= true;
-		}
-			
-		if(invalidDataclass)
-		{
-			reportError(entry.getOrigin(),INVALID_ACCESSION_FORMAT_ID,entry.getPrimaryAccession(),entry.getDataClass());
-		}
-		//check accession prefix is registered in cv_database_prefix table
-	   else if(getEntryDAOUtils()!=null)
-	   {
-		   accessionPrefix=EntryUtils.getAccessionPrefix(entry.getPrimaryAccession());
-		   try
-		   {
-		   String dbcode=getEntryDAOUtils().getDbcode(accessionPrefix);
-		   if(dbcode==null)
-		   {
-				reportError(entry.getOrigin(),INVALID_ACCESSION_PREFIX_ID,accessionPrefix);
-		   }
-		   
-		   }catch(Exception e)
-		   {
-			   throw new ValidationEngineException(e.getMessage());
-		   }
-	   }
 		return result;
 	}
 

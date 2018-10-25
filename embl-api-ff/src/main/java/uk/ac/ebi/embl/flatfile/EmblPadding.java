@@ -52,4 +52,5 @@ public abstract class EmblPadding {
     public static final String MASTER_CON_PADDING = "CON  ";
     public static final String MASTER_WGS_PADDING = "WGS  ";
     public static final String MASTER_TPA_PADDING = "TPA  ";
+    public static final String MASTER_TSA_PADDING = "TSA  ";
 }

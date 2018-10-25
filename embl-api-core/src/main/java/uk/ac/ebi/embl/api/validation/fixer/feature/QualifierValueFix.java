@@ -18,10 +18,15 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -35,11 +40,8 @@ public class QualifierValueFix extends FeatureValidationCheck
 {
 
 	private static final String QualifierValueFix_ID_1 = "QualifierValueFix_1";
-	private static final String QualifierValueFix_ID_2 = "QualifierValueFix_2";
 	private static final String QualifierValueFix_ID_3 = "QualifierValueFix_3";
-	private static final String QualifierValueFix_ID_4 = "QualifierValueFix_4";
-
-    private Set<String> qualifierswithFixedValue=new HashSet<String>();
+  
 
 	public QualifierValueFix()
 	{
@@ -48,8 +50,7 @@ public class QualifierValueFix extends FeatureValidationCheck
 
 	public ValidationResult check(Feature feature)
 	{
-		ArrayList<Qualifier> deleteQualifierList = new ArrayList<Qualifier>();
-		ArrayList<Qualifier> invalidEcnumberList = new ArrayList<Qualifier>();
+		DataSet qualifierValuetoFixValue = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_TO_FIX_VALUE);
 		try
 		{ 
 			result = new ValidationResult();
@@ -67,16 +68,6 @@ public class QualifierValueFix extends FeatureValidationCheck
 					qual.setValue(qValue);
 					reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_3,qName);
 				}
-				if (qName.equals(Qualifier.EC_NUMBER_QUALIFIER_NAME))
-				{
-					String ec[] = qValue.split("\\.");
-					qValue = ec[0] + "\\." + ec[1] + "\\." + ec[2] + "\\." + ec[3];
-					if((qValue.equals("-\\.-\\.-\\.-")))
-					{
-						invalidEcnumberList.add(qual);
-					}
-				}
-
 				if(qName.equals(Qualifier.ALTITUDE_QUALIFIER_NAME) && qValue != null)
 				{
 					if(qValue.endsWith("m.")) {
@@ -91,32 +82,19 @@ public class QualifierValueFix extends FeatureValidationCheck
 					}
 
 				}
-				if (getEntryDAOUtils() != null)
+				
+				for (DataRow dataRow : qualifierValuetoFixValue.getRows())
 				{
-					cv_fqual_value_fix_table cv_fqual_value_fix_table=getEntryDAOUtils().get_cv_fqual_value_fix();
-					if(cv_fqual_value_fix_table!=null)
+					String qualifier = dataRow.getString(0);
+					String regex = dataRow.getString(1);
+					String fixValue=dataRow.getString(2);
+				
+					if (qualifier.equalsIgnoreCase(qName)&&regex.equalsIgnoreCase(qValue))
 					{
-					if(qualifierswithFixedValue.isEmpty())
-					qualifierswithFixedValue=cv_fqual_value_fix_table.getUniqueNames();
-					
-					if (qualifierswithFixedValue.contains(qName))
-					{
-							HashMap<String, String> regexMap = cv_fqual_value_fix_table.getQualifierValueMap(qName);
-							if (regexMap.containsKey(qValue))
-							{
-								qual.setValue(regexMap.get(qValue));
-								if((qValue.equals("-\\.-\\.-\\.-")&&qName.equals(Qualifier.EC_NUMBER_QUALIFIER_NAME)))
-								{
-									invalidEcnumberList.add(qual);
-								}
-
-								if ("DELETED".equals(regexMap.get(qValue)))
-									deleteQualifierList.add(qual);
-								reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_1, qName,qValue, regexMap.get(qValue));
-							}
-						
+						qual.setValue(fixValue);
+    					reportMessage(Severity.FIX, qual.getOrigin(), QualifierValueFix_ID_1, qName,qValue,fixValue);
 					}
-				}
+
 				}
 			}
 		} catch (Exception e)
@@ -124,15 +102,6 @@ public class QualifierValueFix extends FeatureValidationCheck
 			e.printStackTrace();
 		}
 
-		if (deleteQualifierList.size() != 0 && SequenceEntryUtils.deleteDeletedValueQualifiers(feature, deleteQualifierList))
-		{
-			reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_2, feature.getName());
-		}
-		if(invalidEcnumberList.size()!=0 && SequenceEntryUtils.deleteDeletedValueQualifiers(feature, invalidEcnumberList))
-		{
-			reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_4, feature.getName());
-
-		}
 		return result;
 	}
 

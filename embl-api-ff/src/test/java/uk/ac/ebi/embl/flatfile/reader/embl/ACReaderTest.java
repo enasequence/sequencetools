@@ -80,33 +80,14 @@ public class ACReaderTest extends EmblReaderTest {
 				entry.getPrimaryAccession());
 
 		assertEquals(4, entry.getSecondaryAccessions().size());
-		assertEquals(
-				"A00002",
-				entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00002", entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00003", entry.getSecondaryAccessions().get(1).getText());
+		assertEquals("A00004", entry.getSecondaryAccessions().get(2).getText());
+		assertEquals("A00005", entry.getSecondaryAccessions().get(3).getText());
         FlatFileOrigin origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(0).getOrigin();
         assertEquals(1, origin.getFirstLineNumber());
         assertEquals(3, origin.getLastLineNumber());
 
-        assertEquals(
-				"A00003",
-				entry.getSecondaryAccessions().get(1).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(1).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(3, origin.getLastLineNumber());
-
-		assertEquals(
-				"A00004",
-				entry.getSecondaryAccessions().get(2).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(2).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(3, origin.getLastLineNumber());
-
-		assertEquals(
-				"A00005",
-				entry.getSecondaryAccessions().get(3).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(3).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(3, origin.getLastLineNumber());
 
     }
 
@@ -122,34 +103,13 @@ public class ACReaderTest extends EmblReaderTest {
 		assertEquals(0, result.count(Severity.ERROR));
 		assertNull(entry.getPrimaryAccession());
 		assertEquals(4, entry.getSecondaryAccessions().size());
-		assertEquals(
-				"A00002",
-				entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00002", entry.getSecondaryAccessions().get(0).getText());
+		assertEquals("A00003", entry.getSecondaryAccessions().get(1).getText());
+		assertEquals("A00004", entry.getSecondaryAccessions().get(2).getText());
+		assertEquals("A00005", entry.getSecondaryAccessions().get(3).getText());
         FlatFileOrigin origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(0).getOrigin();
         assertEquals(1, origin.getFirstLineNumber());
         assertEquals(5, origin.getLastLineNumber());
-
-        assertEquals(
-				"A00003",
-				entry.getSecondaryAccessions().get(1).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(1).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(5, origin.getLastLineNumber());
-
-        assertEquals(
-				"A00004",
-				entry.getSecondaryAccessions().get(2).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(2).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(5, origin.getLastLineNumber());
-
-        assertEquals(
-				"A00005",
-				entry.getSecondaryAccessions().get(3).getText());
-        origin = (FlatFileOrigin) entry.getSecondaryAccessions().get(3).getOrigin();
-        assertEquals(1, origin.getFirstLineNumber());
-        assertEquals(5, origin.getLastLineNumber());
-
     }
 	
 	public void testRead_XXX() throws IOException {

@@ -36,7 +36,6 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
 	private Connection connection=null;
-	private cv_fqual_value_fix_table cv_fqual_value_fix_table=null;
 	private Entry masterEntry= null;
 	private Map<String, Entry> masterEntryCache = Collections.synchronizedMap(new HashMap<String, Entry>());
 	
@@ -48,8 +47,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	public EntryDAOUtilsImpl(Connection connection,boolean cvTable) throws SQLException
 	{
 		this.connection=connection;
-		if(cvTable)
-		cv_fqual_value_fix_table=get_cv_fqual_value_fix();
 	}
 	@Override
 	public String getPrimaryAcc(String analysisId,
@@ -452,40 +449,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 
 		}
 
-	}
-	
-	@Override
-	public cv_fqual_value_fix_table get_cv_fqual_value_fix()
-			throws SQLException
-	{
-		if (cv_fqual_value_fix_table != null)
-		{
-			return cv_fqual_value_fix_table;
-		}
-
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		cv_fqual_value_fix_table=new cv_fqual_value_fix_table();
-		try
-		{
-			ps = connection.prepareStatement("select fqual,regex,value from cv_fqual_value_fix fix,cv_fqual qual where fix.fqualid=qual.fqualid");
-			rs = ps.executeQuery();
-			while (rs.next())
-			{
-				cv_fqual_value_fix_record cv_fqual_value_fix_record =  cv_fqual_value_fix_table.create_cv_fqual_value_fix_record();
-				cv_fqual_value_fix_record.setFqualName(rs.getString(1));
-				cv_fqual_value_fix_record.setRegex(rs.getString(2));
-				cv_fqual_value_fix_record.setValue(rs.getString(3));
-				cv_fqual_value_fix_table.add(cv_fqual_value_fix_record);
-
-			}
-
-		} finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-		return cv_fqual_value_fix_table;
 	}
 	
 	@Override
