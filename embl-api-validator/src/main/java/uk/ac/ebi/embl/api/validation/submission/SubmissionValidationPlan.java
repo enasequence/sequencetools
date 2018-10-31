@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +25,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
@@ -89,15 +91,18 @@ public class SubmissionValidationPlan
 		if(sequenceDB!=null)
 			sequenceDB.close();
 		return true;
-		}catch(Exception e)
+		}catch(ValidationEngineException e)
 		{
 			try {
 			if(!options.isRemote&&options.context.isPresent()&&options.context.get()==Context.genome&&check!=null&&check.getMessageStats()!=null)
 				check.getReporter().writeToFile(Paths.get(options.reportDir.get()),check.getMessageStats());
 			}catch(Exception ex)
 			{
-				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage());
+				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e.getErrorType());
 			}
+			throw new ValidationEngineException(e.getMessage(),e.getErrorType());
+		}catch(Exception e)
+		{
 			throw new ValidationEngineException(e.getMessage());
 		}
 	}
@@ -115,7 +120,7 @@ public class SubmissionValidationPlan
 		{			
 			check = new ChromosomeListFileValidationCheck(options);
 			if(!check.check(chromosomeListFile))
-				throw new ValidationEngineException("chromosome list file validation failed: "+chromosomeListFile.getFile().getName());
+				throwException(FileType.CHROMOSOME_LIST,chromosomeListFile);
 		}
 	}
 
@@ -127,7 +132,7 @@ public class SubmissionValidationPlan
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(fastaFile))
-				throw new ValidationEngineException("fasta file validation failed: "+fastaFile.getFile().getName());
+				throwException(FileType.FASTA,fastaFile);
 		}
 	}
 
@@ -139,7 +144,7 @@ public class SubmissionValidationPlan
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(flatfile))
-				throw new ValidationEngineException("flat file validation failed: "+flatfile.getFile().getName());
+				throwException(FileType.FLATFILE,flatfile);
 		}
 	}
 
@@ -151,7 +156,7 @@ public class SubmissionValidationPlan
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(agpFile))
-				throw new ValidationEngineException("AGP file validation failed: "+agpFile.getFile().getName());
+				throwException(FileType.AGP,agpFile);
 		}
 	}
 
@@ -161,7 +166,7 @@ public class SubmissionValidationPlan
 		{
 			check = new UnlocalisedListFileValidationCheck(options);
 			if(!check.check(unlocalisedListFile))
-				throw new ValidationEngineException("unlocalised list file validation failed: "+unlocalisedListFile.getFile().getName());
+				throwException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
 		}
 	}
 	
@@ -187,8 +192,8 @@ public class SubmissionValidationPlan
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
      		if(!check.check(annotationOnlyFlatfile))
-				throw new ValidationEngineException("flat file validation failed for annotation only entries : "+annotationOnlyFlatfile.getFile().getName());
-		}
+     			throwException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
+     		}
 	}
 	
 	private void validateTsvfile() throws ValidationEngineException
@@ -197,12 +202,17 @@ public class SubmissionValidationPlan
 		{
 			check = new TSVFileValidationCheck(options);
 			if(!check.check(tsvFile))
-				throw new ValidationEngineException("TSV file validation failed : "+tsvFile.getFile().getName());
+				throwException(FileType.TSV,tsvFile);
 		}
 	}
 	private String getSequenceDbname()
 	{
 		 return ".sequence"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
 	     
+	}
+	
+	private void throwException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException
+	{
+		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.USER_ERROR);
 	}
 }

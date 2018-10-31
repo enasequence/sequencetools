@@ -136,18 +136,21 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  Path getReportFile(SubmissionFile submissionFile) throws IOException
+	public  Path getReportFile(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		Path reportfilePath=null;
-
-		if(submissionFile.getReportFile()!=null)
-			reportfilePath= submissionFile.getReportFile().toPath();
-		else
-			if(getOptions().reportDir.isPresent())
-				reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
-
-		if(reportfilePath!=null)
-			Files.deleteIfExists(reportfilePath);
+		try
+		{
+			if(submissionFile.getReportFile()!=null)
+				reportfilePath= submissionFile.getReportFile().toPath();
+			else
+				if(getOptions().reportDir.isPresent())
+					reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
+			if(reportfilePath!=null)
+				Files.deleteIfExists(reportfilePath);
+		}catch (Exception e) {
+			throw new ValidationEngineException("Failed to get report file : "+e.getMessage());
+		}
 
 		return reportfilePath;
 	}

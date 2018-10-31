@@ -89,10 +89,11 @@ public class ChromosomeEntry extends GCSEntry
 				chromosomeQualifeirs.add(new QualifierFactory().createQualifier(Qualifier.SEGMENT_QUALIFIER_NAME, chromosomeName));
 
 			}
-			else if("monopartite".equals(chromosomeType))
-			{
-				chromosomeQualifeirs.add(new QualifierFactory().createQualifier(Qualifier.NOTE_QUALIFIER_NAME, chromosomeType));
-			}
+
+		}
+		if("monopartite".equals(chromosomeType))
+		{
+			chromosomeQualifeirs.add(new QualifierFactory().createQualifier(Qualifier.NOTE_QUALIFIER_NAME, chromosomeType));
 		}
 		return chromosomeQualifeirs;
 	}

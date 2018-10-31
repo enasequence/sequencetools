@@ -5,4 +5,5 @@ dependencies {
     compile project(':embl-api-core')
     testCompile 'junit:junit:4.11'
     compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
+    
 }

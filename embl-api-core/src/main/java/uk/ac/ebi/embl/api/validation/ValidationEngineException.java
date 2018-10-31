@@ -24,6 +24,15 @@ package uk.ac.ebi.embl.api.validation;
 public class ValidationEngineException extends Exception {
 
 	private static final long serialVersionUID = 7675709957686224694L;
+   	ReportErrorType errorType = ReportErrorType.SYSTEM_ERROR;
+	
+    public ReportErrorType getErrorType() {
+		return errorType;
+	}
+
+	public void setErrorType(ReportErrorType errorType) {
+		this.errorType = errorType;
+	}
 
 	public ValidationEngineException() {
 		super();
@@ -37,9 +46,21 @@ public class ValidationEngineException extends Exception {
 		super(message);
 	}
 
+	public ValidationEngineException(String message, ReportErrorType type) {
+		super(message);
+		setErrorType(type);
+	}
 	public ValidationEngineException(Throwable cause) {
 		super(cause);
 	}
 	
+		
+	public enum ReportErrorType
+	{
+		USER_ERROR,
+		SYSTEM_ERROR;
+	}
 }
+
+
 
