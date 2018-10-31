@@ -157,11 +157,12 @@ public abstract class FileValidationCheck {
 		switch(options.context.get())
 		{
 		case genome:
-			if(chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
+			
+			if(entryName!=null&&chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
 			{
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
-			if(agpEntryNames.contains(entryName.toUpperCase()))
+			if(entryName!=null&&agpEntryNames.contains(entryName.toUpperCase()))
 			{
 				return ValidationScope.ASSEMBLY_SCAFFOLD;
 			}
@@ -180,6 +181,8 @@ public abstract class FileValidationCheck {
 	
 	protected void addEntryName(String entryName,ValidationScope scope)
 	{
+		if(entryName==null)
+			return;
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
@@ -262,7 +265,7 @@ public abstract class FileValidationCheck {
 				dataclass= Entry.CON_DATACLASS;
 				break;
 			case EMBL:
-				if(agpEntryNames.contains(entryName.toUpperCase()))
+				if(entryName!=null&&agpEntryNames.contains(entryName.toUpperCase()))
 					dataclass= Entry.CON_DATACLASS;
 				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 				{
@@ -402,6 +405,8 @@ public abstract class FileValidationCheck {
 		if(options.context.get()==Context.genome)
 		{
 
+			if(entry.getSubmitterAccession()!=null)
+			{
 			List<Qualifier> chromosomeQualifiers = chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase());
 
 			if(chromosomeQualifiers!=null)
@@ -411,6 +416,7 @@ public abstract class FileValidationCheck {
 					entry.getPrimarySourceFeature().addQualifier(chromosomeQualifier);
 
 				}
+			}
 			}
 			if(Entry.WGS_DATACLASS.equals(entry.getDataClass()))
 			{
@@ -429,7 +435,7 @@ public abstract class FileValidationCheck {
 	}
 
 	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException {
-		if(getOptions().isRemote)
+		if(!getOptions().isRemote)
 		{
 			Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());
 			entry.addReference(reference);

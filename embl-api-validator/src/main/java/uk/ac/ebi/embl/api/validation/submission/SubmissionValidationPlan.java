@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
@@ -41,7 +42,6 @@ public class SubmissionValidationPlan
 	SubmissionOptions options;
 	FileValidationCheck check = null;
     DB sequenceDB =null;
-    private String sequenceDBName =null;
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
@@ -77,6 +77,8 @@ public class SubmissionValidationPlan
 			validateAnnotationOnlyFlatfile();
 		if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
 			validateUnlocalisedList();
+		if(options.context.get().getFileTypes().contains(FileType.TSV))
+			validateTsvfile();
 		if(Context.genome==options.context.get())
 		{
 			check.validateDuplicateEntryNames();
@@ -188,11 +190,19 @@ public class SubmissionValidationPlan
 				throw new ValidationEngineException("flat file validation failed for annotation only entries : "+annotationOnlyFlatfile.getFile().getName());
 		}
 	}
+	
+	private void validateTsvfile() throws ValidationEngineException
+	{
+		for(SubmissionFile tsvFile:options.submissionFiles.get().getFiles(FileType.TSV))
+		{
+			check = new TSVFileValidationCheck(options);
+			if(!check.check(tsvFile))
+				throw new ValidationEngineException("TSV file validation failed : "+tsvFile.getFile().getName());
+		}
+	}
 	private String getSequenceDbname()
 	{
-		 Date dNow = new Date();
-	     SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
-	     return ".sequence"+ft.format(dNow);
+		 return ".sequence"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
 	     
 	}
 }

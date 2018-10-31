@@ -50,7 +50,9 @@ public class SubmissionOptions
 		if(!assemblyInfoEntry.isPresent()&&isRemote)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
 		if(!source.isPresent()&&isRemote)
+		{   if(Context.sequence!=context.get())
 			throw new ValidationEngineException("SubmissionOptions:source must be provided");
+		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
 		if(!(new File(reportDir.get())).isDirectory())
@@ -59,7 +61,6 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
 		if(!processDir.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
-
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
@@ -92,7 +93,12 @@ public class SubmissionOptions
 		if(enproConnection.isPresent())  property.enproConnection.set(enproConnection.get());
 		if(eraproConnection.isPresent())  property.eraproConnection.set(eraproConnection.get());
 		if(analysisId.isPresent()) property.analysis_id.set(analysisId.get());
-		if(assemblyInfoEntry.isPresent()) property.minGapLength.set(minGapLength.isPresent()?minGapLength.get():assemblyInfoEntry.get().getMinGapLength());
+		if(assemblyInfoEntry.isPresent())
+		{
+			Integer mgl =minGapLength.isPresent()?minGapLength.get():assemblyInfoEntry.get().getMinGapLength();
+			if(mgl!=null)
+		     property.minGapLength.set(mgl);
+		}
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
 		property.isRemote.set(isRemote);

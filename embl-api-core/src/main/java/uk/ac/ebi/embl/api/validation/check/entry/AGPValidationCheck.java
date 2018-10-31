@@ -237,6 +237,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
 									{
+										if( getContig(agpRow).get().getSequence()!=null)
 										sequenceLength =  getContig(agpRow).get().getSequence().length;
 									}
 								}

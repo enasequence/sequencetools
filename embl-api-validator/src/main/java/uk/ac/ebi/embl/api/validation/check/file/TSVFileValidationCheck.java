@@ -51,10 +51,10 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
 		boolean valid = true;
-		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath()), StandardCharsets.UTF_8))) {
+		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
 			File submittedDataFile =  submissionFile.getFile();
-			String templateDir = System.getProperty("user.dir") +"/src/main/resources/templates";
+			String templateDir = submittedDataFile.getParent();
 			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);
 			TemplateLoader templateLoader = new TemplateLoader();
 			if (!submittedDataFile.exists())
@@ -76,8 +76,11 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			while ((csvLine = csvReader.readTemplateSpreadsheetLine()) != null) {
 				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap());
 				entry = templateProcessorResultSet.getEntry();
-				entry.addProjectAccession(new Text(options.getProjectId()));
-				appendHeader(entry);
+				if(entry!=null)
+				{
+					entry.addProjectAccession(new Text(options.getProjectId()));
+					appendHeader(entry);
+				}
 				if (sequenceCount == MAX_SEQUENCE_COUNT) {
 					ValidationResult validationResult = new ValidationResult();
 					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
@@ -93,7 +96,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 						getReporter().writeToFile(getReportFile(submissionFile), validationPlanResult);
 					valid = false;
 				}
-				new EmblEntryWriter(entry).write(writer);
+				if(fixedFileWriter!=null)
+				new EmblEntryWriter(entry).write(fixedFileWriter);
 				sequenceCount++;
 			}
 			return valid;
