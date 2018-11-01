@@ -1,6 +1,6 @@
  allprojects
  {
-    ext.version_base = '1.1.278'
+    ext.version_base = '1.1.279'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -170,7 +170,7 @@
   }
  }
 
-project(':embl-api-validator') {
+/*project(':embl-api-validator') {
   jar {
     from {
         configurations.compile.collect {
@@ -189,5 +189,5 @@ project(':embl-api-validator') {
                      "Built-Date": new Date())
     }
 }
-  }
+  }*/
 
