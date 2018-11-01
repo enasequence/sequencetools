@@ -20,6 +20,7 @@ import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.*;
@@ -30,10 +31,10 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static uk.ac.ebi.embl.api.AccessionMatcher.getSplittedAccession;
 
@@ -1075,6 +1076,68 @@ public class Utils {
 		}
 
 		return result;
+	}
+	
+	public static void setssemblyLevelDescription(String masterDescription, Integer assemblyLevel,Entry entry)
+	{
+		if (null == entry.getSubmitterAccession() )
+		{
+			entry.setDescription( new Text(masterDescription ));
+		}
+		else if ( null != assemblyLevel && (0 == assemblyLevel||1 == assemblyLevel))
+		{
+			if(Entry.WGS_DATACLASS.equals(entry.getDataClass()))
+				entry.setDescription( new Text( String.format("%s, contig: %s", masterDescription, entry.getSubmitterAccession()) ) );
+		    else 
+			entry.setDescription( new Text( String.format("%s, scaffold: %s", masterDescription, entry.getSubmitterAccession() ) ) );
+		
+		}
+		else
+		{
+			SourceFeature feature = entry.getPrimarySourceFeature();
+			
+			Qualifier plasmid = feature.getSingleQualifier( Qualifier.PLASMID_QUALIFIER_NAME );
+			Qualifier chromosome = feature.getSingleQualifier( Qualifier.CHROMOSOME_QUALIFIER_NAME );
+			Qualifier organelle = feature.getSingleQualifier( Qualifier.ORGANELLE_QUALIFIER_NAME );
+			Qualifier segment = feature.getSingleQualifier( Qualifier.SEGMENT_QUALIFIER_NAME );
+			List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME );
+
+
+			if( null != plasmid && null != plasmid.getValue() )
+			{
+				entry.setDescription( new Text( String.format("%s, plasmid: %s", masterDescription, plasmid.getValue() ) ) );
+			}
+			else if( null != chromosome && null != chromosome.getValue() )
+			{
+				entry.setDescription( new Text( String.format("%s, chromosome: %s", masterDescription, chromosome.getValue() ) ) );
+			}
+			else if( null != organelle && null != organelle.getValue() )
+			{
+				entry.setDescription( new Text( String.format("%s, organelle: %s", masterDescription, organelle.getValue() ) ) );
+			}
+			else if( null != segment && null != segment.getValue() )
+			{
+				entry.setDescription( new Text( String.format("%s, segment: %s", masterDescription, segment.getValue() ) ) );
+			}
+			else if(note!=null&& note.size()!=0 )
+			{
+				List<Qualifier> monopartiteQualifier=note.stream().filter(qual ->"monopartite".equals(qual.getValue())).collect(Collectors.toList());
+				if(monopartiteQualifier.size()>0)
+        		{
+				StringBuilder descr=new StringBuilder(String.format("%s, complete genome: ", masterDescription));
+				monopartiteQualifier.forEach((q)->
+				{descr.append(q.getValue());
+				 });
+				entry.setDescription(new Text(descr.toString()));
+				}
+				else
+				entry.setDescription( new Text( String.format("%s, %s", masterDescription, entry.getSubmitterAccession() ) ) );
+			}
+			else
+			{
+				entry.setDescription( new Text( String.format("%s, %s", masterDescription, entry.getSubmitterAccession() ) ) );
+			}
+		}		
 	}
 
 	private static boolean areContinuous(String prev, String curr) throws IllegalArgumentException {

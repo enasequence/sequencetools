@@ -41,6 +41,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	private Connection connection;
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
+	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 	
 	public enum MASTERSOURCEQUALIFIERS
 	{
@@ -356,6 +357,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
+	   if(masterCache.containsKey(analysisId+"_"+analysisType))
+	   {
+		   return masterCache.get(analysisId+"_"+analysisType);
+	   }
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
 			return  masterEntry;
@@ -484,47 +489,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			while (select_sourcequalifers_rs.next())
 			{
 				String tag = select_sourcequalifers_rs.getString(1);
-				if(tag==null)
-					continue;
-				tag=tag.toLowerCase();
 				String value = select_sourcequalifers_rs.getString(2);
-				if(isolation_sourcePattern.matcher(tag).matches())
-				{
-					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
-					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
-					continue;
-				}
-				if (tag.equalsIgnoreCase("PCR_primers"))
-				{
-					tag = "PCR_primers";
-				}
-				if (MASTERSOURCEQUALIFIERS.isValid(tag))
-				{
-					
-					if(!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
-						continue;
+				addSourceQualifier(tag, value, sourceFeature, taxonHelper, uniqueName);
+			}
 
-					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
-					{
-						addUniqueName=false;
-					}
-				    
-					if(MASTERSOURCEQUALIFIERS.isNoValue(tag))
-					{
-						if(!"NO".equalsIgnoreCase(value))
-					     sourceFeature.addQualifier(tag);
-					}
-				    else
-					sourceFeature.addQualifier(tag, value);
-				}
-			}
-			if(addUniqueName&&taxonHelper.isProkaryotic(scientificName))
-			{
-				sourceFeature.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName);
-			}
 			masterEntry.addReference(getSubmitterReference(analysisId));
-			if(sourceFeature.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
-				sourceFeature.addQualifier(isolationSourceQualifier);				
+
 		}
 		catch (Exception ex)
 		{
@@ -537,8 +507,52 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		masterEntry.addFeature(sourceFeature);
 		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
 		masterEntry.setDescription(new Text(description));
-		
+		masterCache.put(analysisId+"_"+analysisType,masterEntry);
 		return masterEntry;
 	}
+   
+   public static void addSourceQualifier(String tag, String value,SourceFeature source,TaxonHelper taxonHelper,String uniqueName)
+   {
+	   Qualifier isolationSourceQualifier=null;
+	   String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
+	   Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
+	   boolean addUniqueName=true;
+				if(tag==null)
+		   return;
+				tag=tag.toLowerCase();
+				if(isolation_sourcePattern.matcher(tag).matches())
+				{
+					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
+					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
+				}
+
+				if (MASTERSOURCEQUALIFIERS.isValid(tag))
+				{
+					
+					if(!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
+			         return;
+
+					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
+					{
+						addUniqueName=false;
+					}
+				    
+					if(MASTERSOURCEQUALIFIERS.isNoValue(tag))
+					{
+						if(!"NO".equalsIgnoreCase(value))
+				   source.addQualifier(new QualifierFactory().createQualifier(tag));
+					}
+				    else
+			   source.addQualifier(new QualifierFactory().createQualifier(tag, value));
+				}
+
+	   if(addUniqueName&&taxonHelper.isProkaryotic(source.getScientificName())&&source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
+			{
+		   source.addQualifier( new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName));
+			}
+	   if(source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
+		   source.addQualifier(isolationSourceQualifier);	
+		}
+		
 
 }

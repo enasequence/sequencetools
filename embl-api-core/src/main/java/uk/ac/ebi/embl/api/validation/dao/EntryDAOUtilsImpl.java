@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.dbutils.DbUtils;
-
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
@@ -28,6 +30,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table;
 import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table.cv_fqual_value_fix_record;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -37,7 +40,8 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
 	private Connection connection=null;
 	private Entry masterEntry= null;
-	private Map<String, Entry> masterEntryCache = Collections.synchronizedMap(new HashMap<String, Entry>());
+	private ConcurrentHashMap<String, Entry> masterEntryCache = new ConcurrentHashMap<String, Entry>();
+	private ConcurrentHashMap<String, Integer> objectNameCache = new ConcurrentHashMap<String, Integer>();
 	
 	public EntryDAOUtilsImpl(Connection connection) throws SQLException
 	{
@@ -825,4 +829,74 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		} 
 		return null;
 	}
+	
+	@Override
+	public void registerSequences(List<String> sequences,String analysisId,int assemblyLevel) throws SQLException
+	{
+		AtomicInteger  assemblyOrder = new AtomicInteger(1);
+		int batchSize = 1000;
+
+		String sql = "insert into gcs_sequence (assembly_id, object_name, assembly_level, assembly_order) values (?, ?, ?, ?)";
+
+		try(PreparedStatement ps = connection.prepareStatement(sql);)
+		{
+			AtomicInteger  batchCount = new AtomicInteger(0);
+			sequences.forEach((objectName)->
+		    {
+		    	
+			try{
+				if(getAssemblysequences(analysisId).search(1,(k,v)->{
+					return k.equals(StringUtils.removeEnd(objectName, ";"))&&v==assemblyLevel? true:false;
+				}))
+					return;
+				ps.setString(1, analysisId);
+				ps.setString(2, StringUtils.removeEnd(objectName, ";"));
+				ps.setInt(3, assemblyLevel);
+				ps.setInt(4, assemblyOrder.get());
+				assemblyOrder.getAndIncrement();
+				ps.addBatch();
+				batchCount.getAndIncrement();
+
+				if (batchCount.get() >= batchSize)
+				{
+					ps.executeBatch();
+					ps.clearBatch();
+					batchCount.set(0);
+				}
+			}
+				catch(Exception e)
+				{
+					throw new RuntimeException(e);
+				}
+			});
+
+			if (batchCount.get() > 0)
+			{
+				ps.executeBatch();
+				ps.clearBatch();
+			}
+		} 
+	}
+	
+	@Override
+	public ConcurrentHashMap<String,Integer> getAssemblysequences(String analysisId) throws SQLException
+	{
+		if(!objectNameCache.isEmpty())
+			return objectNameCache;
+		String assemblySequencesQuery = "select object_name,assembly_level from gcs_sequence where assembly_id=?";
+		try(PreparedStatement pstsmt =connection.prepareStatement(assemblySequencesQuery))
+		{
+			pstsmt.setString(1, analysisId);
+			try(ResultSet rs = pstsmt.executeQuery();)
+			{
+			while(rs.next())
+			{
+				objectNameCache.put(rs.getString("object_name"), rs.getInt("assembly_level"));
+			}
+			return objectNameCache;
+			}
+		} 
+
+	}
+  
 }

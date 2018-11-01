@@ -40,7 +40,7 @@ import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.getQualifier;
 @Description("gap feature created for \"{0}\" n characters between \"{1}\" and \"{2}\" "
 		+ "{0} gap features created for the entry"
 		+ "greater than 90% of newly created gap features are 100bp long,so the estimated_length qualifier value for these gap features is set to :\"unknown\"")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
 public class SequenceToGapFeatureBasesFix extends
 		SequenceToGapFeatureBasesCheck
 {

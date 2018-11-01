@@ -41,7 +41,7 @@ public class AssemblyTopologyFix extends EntryValidationCheck
 			return result;
 		}
 		
-        if((ValidationScope.ASSEMBLY_CONTIG==getEmblEntryValidationPlanProperty().validationScope.get()||ValidationScope.ASSEMBLY_SCAFFOLD==getEmblEntryValidationPlanProperty().validationScope.get())&&Topology.LINEAR!=entry.getSequence().getTopology())
+        if((ValidationScope.ASSEMBLY_CONTIG==getEmblEntryValidationPlanProperty().validationScope.get()||ValidationScope.ASSEMBLY_SCAFFOLD==getEmblEntryValidationPlanProperty().validationScope.get()||ValidationScope.ASSEMBLY_TRANSCRIPTOME==getEmblEntryValidationPlanProperty().validationScope.get())&&Topology.LINEAR!=entry.getSequence().getTopology())
         {
         	entry.getSequence().setTopology(Topology.LINEAR);
 	   	    reportMessage(Severity.FIX, entry.getOrigin(), MESSAGE_ID);

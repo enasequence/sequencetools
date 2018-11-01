@@ -1,0 +1,68 @@
+ID   XXX; SV 1; linear; transcribed RNA; TSA; PLN; 1710 BP.
+XX
+ST * private 31-DEC-3011
+XX
+AC   ;
+XX
+AC * _ENTRY_NAME1
+XX
+PR   Project:PRJEB0;
+XX
+DT   23-OCT-2004 (Rel. 81, Created)
+DT   22-APR-2013 (Rel. 116, Last updated, Version 6)
+XX
+DE   TSA: Micrococcus sp. 5 ENTRY_NAME1
+XX
+KW   TSA.
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   ENA; AAAA020000000; SET.
+DR   ENA; AAAA000000000; SET.
+DR   ENA-CON; CH398081.
+DR   BioSample; SMEA091.
+XX
+CC   Assembly Name: assembly
+CC   Assembly Method: sdfsgf
+CC   Sequencing Technology: sdfsfg
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..1710
+FT                   /organism="Micrococcus sp. 5"
+FT                   /mol_type="transcribed RNA"
+FT   gene            212..1543
+FT                   /locus_tag="SPLC1_0001"
+XX
+SQ   Sequence 1710 BP; 372 A; 480 C; 473 G; 355 T; 30 other;
+     gggactctcc aacggctccc cgaggagctc gagaggacga ttaagtcatc ctcgagggac        60
+     ctcgcccgag gagcggtgga gctcgtactg gcgagttacc aggccaggac cccgacttct       120
+     ccccatggac ggcgctggac gagttccctc ccgggaccga ggacggcgcg cgcgcgcagg       180
+     tccgggacgc cgccgaccac atcgtccaca gcttcgaggg ttcggcccct cagctcgcgt       240
+     tctccctcaa ctccgacgag gaggacgatg acggcggagt gggcgacagt ggcgacgagg       300
+     ctggcgatcc gggtgcatcg gagtgagccc ccaggccccc gccaatttta aatagtttct       360
+     tctttcttct tcgaaggcct tcgggcctcc tttttgtata gattcactta atctgcaatc       420
+     aaaataaaga aatttctgtg tcaattttat tttgctatgt gtatgcgatg aggatgatct       480
+     gtgccgtggt ccttttgtgt cttagcttga ctaagggctc gtgcccaggt cccagtcctc       540
+     aaaaggcgcg ggtcggggct agtgcctggg gagatccacg tgtcgagact ggccaggccg       600
+     ggagcgtggt gaccgagggt tatgggtgac ccgattgtgg gtttttgccg attccccccc       660
+     ggagttcacc acgccccggg gcacggcttg gttctgggcc ccttttggcg attttagccg       720
+     acccgagccc ccgagggcaa gattgagcac gagtgaccta tttcaagtca agattcttca       780
+     aaagaaaata acagcacaga tacagccttt aggaaattga aaatgctttt attgaaatac       840
+     agatataaga gaaataagaa tatgcatatg tggtagcccc cggccaaccc tgcacgcccg       900
+     aggggggtgc ggggttggcc cgagcccgaa acctgacacc cgatccccct taggggtaga       960
+     agcgacgaag gtgttcgatg ttccacgggt taggcagctc tgtgccgtcg cccgtggcta      1020
+     gccgaacgga gcccagccgg gggacgccga tcactcgata cggaccctcc cacattggtg      1080
+     agagtttgct caatccagca cgcgtttgga cgcggcgtag gacgaggtcg tcgacgcaga      1140
+     gtgatcgggc ccggacgtgg cgctgatggt agcgccgcag gctctgctgg tagcgcgcgg      1200
+     ctcggagggc cgcgcgccgc cttcgctctt ccaagtagtc gagtgtcagg ctctggcgaa      1260
+     cgctgatcct tgatacagcc tccgcagtac actggtggcc acgaggggac ctcagggttg      1320
+     agctctggat gtggagaacc tgtcgcgtgc ccaaaacgat ctctgaaaat acatgcctcg      1380
+     aaattgtgcc atagaataat taaaatccca tgtgaaagcc tccaaccaat taaaatgtgc      1440
+     caaatttaaa agtgcaaata nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn ctaaaacgcc      1500
+     taaaatggcg taaacacact tttgagtgga attttgcaga gcaccaaata ataacctgag      1560
+     aacgaaataa accaaacgtt aaaaacggtt ttataaaaag aaaaaccgct aaaaagtctt      1620
+     ctttccaccc ccttcccttc ttgggccggc tcggcccagt cccctccctc tctctcctct      1680
+     cccccgcggc ccatcggccc ttccccgcgc                                       1710
+//
