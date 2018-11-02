@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
@@ -50,12 +51,12 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FLATFILE))
 			{
 				ValidationResult result = new ValidationResult();
 				valid = false;
-				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid FLAT File Format:Failed to read entry");
-				result.append(validationMessage);
+				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","flatfile"));
 				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), result);
 				addMessagekey(result);

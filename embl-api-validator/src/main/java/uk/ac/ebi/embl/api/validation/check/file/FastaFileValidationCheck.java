@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
@@ -47,12 +48,14 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			clearReportFile(getReportFile(submissionFile));
+
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FASTA))
 			{
 				ValidationResult result = new ValidationResult();
 				valid = false;
-				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid Fasta File Format:Failed to read entry");
-				result.append(validationMessage);
+				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","fasta"));
+				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), result);
 				addMessagekey(result);
 				return valid;

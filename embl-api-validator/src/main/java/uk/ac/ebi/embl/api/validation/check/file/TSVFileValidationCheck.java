@@ -52,6 +52,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
 		boolean valid = true;
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
+             clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
 			File submittedDataFile =  submissionFile.getFile();
 			String templateDir = submittedDataFile.getParent();

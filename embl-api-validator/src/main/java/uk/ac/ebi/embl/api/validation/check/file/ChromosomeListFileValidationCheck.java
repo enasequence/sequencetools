@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 @Description("")
 public class ChromosomeListFileValidationCheck extends FileValidationCheck
@@ -41,12 +42,13 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+			clearReportFile(getReportFile(submissionFile));
+
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.CHROMOSOME_LIST))
 			{
 				ValidationResult result = new ValidationResult();
 				valid = false;
-				ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Invalid CHROMOSOME_LIST File Format:Failed to read entry");
-				result.append(validationMessage);
+				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","chromosome_list"));
 				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), result);
 				addMessagekey(result);

@@ -39,6 +39,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
+         clearReportFile(getReportFile(submissionFile));
 		UnlocalisedListFileReader reader = new UnlocalisedListFileReader(submissionFile.getFile());
 		ValidationResult parseResult = reader.read();
 		if(!parseResult.isValid())

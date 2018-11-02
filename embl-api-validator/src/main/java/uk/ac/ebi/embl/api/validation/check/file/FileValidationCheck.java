@@ -146,8 +146,6 @@ public abstract class FileValidationCheck {
 			else
 				if(getOptions().reportDir.isPresent())
 					reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
-			if(reportfilePath!=null)
-				Files.deleteIfExists(reportfilePath);
 		}catch (Exception e) {
 			throw new ValidationEngineException("Failed to get report file : "+e.getMessage());
 		}
@@ -155,6 +153,11 @@ public abstract class FileValidationCheck {
 		return reportfilePath;
 	}
 
+	protected void clearReportFile(Path reportfilePath) throws IOException
+	{
+		if(reportfilePath!=null)
+			Files.deleteIfExists(reportfilePath);
+	}
 	protected ValidationScope getValidationScope(String entryName)
 	{
 		switch(options.context.get())
