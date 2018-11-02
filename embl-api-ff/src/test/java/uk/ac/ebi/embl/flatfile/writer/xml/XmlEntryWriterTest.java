@@ -15,6 +15,11 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.writer.xml;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -31,11 +36,6 @@ import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblLineReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.RAReader;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 public class XmlEntryWriterTest extends XmlWriterTest {
 	
@@ -453,7 +453,8 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 		//for ( ValidationMessage<Origin> message : messages) {
 		//	System.out.println(message.getMessage());			
 		//}
-		assertEquals(0, result.count(Severity.ERROR));				
+      assertEquals(1, result.count(Severity.ERROR));
+      assertEquals("Master entry must have a sequence", "FF.12", result.getMessages().iterator().next().getMessageKey());
 	    StringWriter writer = new StringWriter();
 	    assertTrue(new XmlEntryWriter(entry).write(writer));
 	    //System.out.print(writer.toString());
@@ -560,11 +561,12 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 				EmblEntryReader.Format.MASTER_FORMAT, null);
 		ValidationResult result = reader.read();
 		Entry entry = reader.getEntry();
-		//Collection<ValidationMessage<Origin>> messages = result.getMessages();
-		//for ( ValidationMessage<Origin> message : messages) {
-		//	System.out.println(message.getMessage());
-		//}
-		assertEquals(0, result.count(Severity.ERROR));
+//		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+//		for ( ValidationMessage<Origin> message : messages) {
+//			System.out.println(message.getMessage());
+//		}
+      assertEquals(1, result.count(Severity.ERROR));
+      assertEquals("Master entry must have a sequence", "FF.12", result.getMessages().iterator().next().getMessageKey());
 	    StringWriter writer = new StringWriter();
 	    assertTrue(new XmlEntryWriter(entry).write(writer));
 	    //System.out.print(writer.toString());
