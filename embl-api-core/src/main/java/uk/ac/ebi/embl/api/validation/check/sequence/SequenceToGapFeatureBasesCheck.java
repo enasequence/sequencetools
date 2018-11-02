@@ -37,7 +37,7 @@ import java.util.List;
 
 @Description("Sequence contains a stretch of 'n' characters between base {0} and {1} that is not " +
         "represented with a \"gap\" feature (stretches of n greater than {2} gives a warning, greater than {3} gives an error).")
-@ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE, ValidationScope.NCBI})//do not run in template mode - no ability to add gaps
+@ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE, ValidationScope.NCBI,ValidationScope.ASSEMBLY_TRANSCRIPTOME})//do not run in template mode - no ability to add gaps
 public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID = "SequenceToGapFeatureBasesCheck-1";

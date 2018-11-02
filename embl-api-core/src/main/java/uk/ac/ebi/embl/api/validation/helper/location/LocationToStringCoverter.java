@@ -15,27 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.helper.location;
 
+import uk.ac.ebi.embl.api.entry.location.*;
+
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.location.Base;
-import uk.ac.ebi.embl.api.entry.location.Between;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
-import uk.ac.ebi.embl.api.entry.location.Gap;
-import uk.ac.ebi.embl.api.entry.location.Join;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
-import uk.ac.ebi.embl.api.entry.location.Order;
-import uk.ac.ebi.embl.api.entry.location.Range;
-import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 public class LocationToStringCoverter
 {

@@ -16,6 +16,8 @@
 package uk.ac.ebi.embl.api.validation;
 
 import java.sql.SQLException;
+import java.util.List;
+
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;

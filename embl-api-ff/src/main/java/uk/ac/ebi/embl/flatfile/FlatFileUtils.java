@@ -236,7 +236,7 @@ public abstract class FlatFileUtils {
 		Locale.setDefault(Locale.UK);
 		Date date = null;
 		try {
-			date = (dateMonYear.parse(string));
+			date = ((SimpleDateFormat)dateMonYear.clone()).parse(string);
 		}
 		catch (ParseException ex) {
 			return null;
@@ -252,7 +252,7 @@ public abstract class FlatFileUtils {
 		}
 		Date date = null;
 		try {
-			date = (year.parse(string));
+			date = ((SimpleDateFormat)year.clone()) .parse(string);
 		}
 		catch (ParseException ex) {
 			return null;

@@ -16,17 +16,13 @@
 package uk.ac.ebi.embl.api.entry.qualifier;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.validation.ValidationException;
 
 public class ProteinIdQualifier extends Qualifier implements Serializable {
 	
 	private static final long serialVersionUID = -4130304812449439118L;
-	
-	private static final Pattern PATTERN = Pattern.compile(
-		"^\\s*([A-Z]{3}\\d{5})(\\.)(\\d+)\\s*$");
 
 	protected ProteinIdQualifier(String value) {
 		super(PROTEIN_ID_QUALIFIER_NAME, value);
@@ -36,21 +32,21 @@ public class ProteinIdQualifier extends Qualifier implements Serializable {
     	if (getValue() == null) {
     		return null;
     	}
-        Matcher matcher = PATTERN.matcher(getValue());
-        if (!matcher.matches()){
-        	throwValueException();
+        String proteinAccession = AccessionMatcher.getProteinAccession(getValue());
+        if (proteinAccession == null){
+            throwValueException();
         }
-        return matcher.group(1);
+        return proteinAccession;
     }	
 	
     public Integer getProteinVersion() throws ValidationException {
     	if (getValue() == null) {
     		return null;
     	}
-        Matcher matcher = PATTERN.matcher(getValue());
-        if (!matcher.matches()){
+        String versionStr = AccessionMatcher.getProteinVersion(getValue());
+        if (versionStr == null){
         	throwValueException();
         }
-        return Integer.parseInt(matcher.group(3));
+        return Integer.parseInt(versionStr);
     }	
 }

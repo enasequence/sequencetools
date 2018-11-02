@@ -1,14 +1,6 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.storage.DataRow;
@@ -17,13 +9,15 @@ import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+
 public class DataclassProvider {
 
-	public static final Pattern ASSEMBLYMASTER_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^(ERZ|GCA_)[0-9]+$");
-	public static final Pattern WGSMASTER_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{4})[0-9]{2}S?[0]{6,10}$");
-	public static final Pattern SEQUENCE_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{1,2})[0-9]{5,6}$");
-	public static final Pattern TPX_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^TPX_[0-9]{6}$");
-	public static final Pattern WGS_PRIMARY_ACCESSION_PATTERN = Pattern.compile("^([A-Z]{4})[0-9]{2}S?[0-9]{6,10}$");
 	private static EntryDAOUtils entryDaoUtils;
 	private static HashMap<String,String> prefixDataclass = new HashMap<String, String>();
 	
@@ -37,39 +31,47 @@ public class DataclassProvider {
 	{
 		  if(primaryAccession==null||"XXX".equals(primaryAccession)||primaryAccession.isEmpty())
 			return null;
-		   Matcher wgsAcessionMatcher = WGS_PRIMARY_ACCESSION_PATTERN.matcher( primaryAccession );
-		   Matcher assemblyMasterAccessionMatcher = ASSEMBLYMASTER_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		   Matcher wgsMasterAccessionMatcher = WGSMASTER_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		   Matcher sequenceAccessionMatcher = SEQUENCE_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		   Matcher tpxAccessionMatcher =TPX_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
+
 		   String dataclass= null;
-		   if(wgsAcessionMatcher.matches())
+		   if(AccessionMatcher.isWgsSeqAccession(primaryAccession))
 		   {
 			 dataclass = Entry.WGS_DATACLASS;
 		   }
-		   else if(assemblyMasterAccessionMatcher.matches()||wgsMasterAccessionMatcher.matches())
+		   else if(AccessionMatcher.isAssemblyMasterAccn(primaryAccession) || AccessionMatcher.isWgsMasterAccession(primaryAccession))
 		   {
 			   dataclass = Entry.SET_DATACLASS;
 		   }
-		   else if(tpxAccessionMatcher.matches())
+		   else if(AccessionMatcher.isTpxSeqAccession(primaryAccession))
 		   {
 			   dataclass = Entry.TPX_DATACLASS;
 		   }
-		   else if(sequenceAccessionMatcher.matches())
+		   else
 		   {
-			    String prefix=sequenceAccessionMatcher.group(1);
-			    if(prefixDataclass.get(prefix)!=null)
-			    {
-			    	dataclass= prefixDataclass.get(prefix);
-			    }
-			    else if(entryDaoUtils!=null)
-			    {
-			    	dataclass=entryDaoUtils.getAccessionDataclass(prefix);
-			    }
+			   Matcher sequenceAccessionMatcher = AccessionMatcher.getOldSeqPrimaryAccMatcher(primaryAccession);
+
+			   if(sequenceAccessionMatcher.matches()){
+			   		dataclass = getDataclass(sequenceAccessionMatcher);
+			   } else {
+				   sequenceAccessionMatcher = AccessionMatcher.getNewSeqPrimaryAccMatcher(primaryAccession);
+				   if(sequenceAccessionMatcher.matches()){
+					   dataclass = getDataclass(sequenceAccessionMatcher);
+				   }
+			   }
+
 		   }
-	 return dataclass;
+	 	return dataclass;
 	}
-	 	
+
+	private static String getDataclass(Matcher matcher) throws SQLException {
+		String dataclass = null;
+		String prefix = matcher.group(1);
+		if (prefixDataclass.get(prefix) != null) {
+			dataclass = prefixDataclass.get(prefix);
+		} else if (entryDaoUtils != null) {
+			dataclass = entryDaoUtils.getAccessionDataclass(prefix);
+		}
+		return dataclass;
+	}
 	 /*
      * get the keyword dataclass from keywords in KW line(CV_DATACLASS_KEYWORD)
      */

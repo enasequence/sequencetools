@@ -17,7 +17,10 @@ package uk.ac.ebi.embl.api.validation;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+
+import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -670,6 +673,7 @@ public class SequenceEntryUtils {
 	
 	public static String generateMasterEntryDescription(SourceFeature source)
 	{
+		
 		String strainValue=source.getSingleQualifierValue(Qualifier.STRAIN_QUALIFIER_NAME);
 		String scientificName= source.getScientificName();
 		String isolateValue =source.getSingleQualifierValue(Qualifier.ISOLATE_QUALIFIER_NAME);
@@ -687,5 +691,6 @@ public class SequenceEntryUtils {
 		return includeStrain ?(String.format(descriptionFormat, scientificName,"strain",strainValue)):
 			   includeIsolate?( String.format(descriptionFormat, scientificName,"isolate",isolateValue)): 
 			   (String.format(descriptionFormat,scientificName,"","" ).replaceAll("  ", ""));
+	
 	}
 }

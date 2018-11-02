@@ -311,7 +311,11 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		}
 		return this.secondaryAccessions.addAll(accessions);
 	}
-	
+
+	public void clearAllSecondaryAccessions() {
+		this.secondaryAccessions = new ArrayList<>();
+	}
+
 	public boolean removeSecondaryAccession(Text accession) {
 		return this.secondaryAccessions.remove(accession);
 	}

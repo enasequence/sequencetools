@@ -124,15 +124,6 @@ public class EntryUtils
 		
 	}
 	
-	public static boolean isPrimaryAcc(String name)
-	{
-		Pattern accVersionPattern = Pattern.compile("[A-Z]{1,4}[0-9]{5,8}(\\.)(\\d)+");
-		Pattern accPattern = Pattern.compile("[A-Z]{1,4}[0-9]{5,8}");
-		if (accPattern.matcher(name).matches() || accVersionPattern.matcher(name).matches())
-			return true;
-		return false;
-	}
-	
 	public static boolean isValidEntry_name(String entry_name)
 	{
 		if (entry_name.split(" ").length > 1)
@@ -192,31 +183,6 @@ public class EntryUtils
 		return date;
 	}
 	
-	public static String getAccessionPrefix(String primaryAccession)
-	{
-		if(primaryAccession==null)
-			return null;
-		Matcher assemblyMasterMatcher=DataclassProvider.ASSEMBLYMASTER_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		Matcher sequenceAccessionMatcher=DataclassProvider.SEQUENCE_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		Matcher tpxAccessionMatcher=DataclassProvider.TPX_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		Matcher wgsAccessionMatcher=DataclassProvider.WGS_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		Matcher wgsMasterAccessionMatcher=DataclassProvider.WGSMASTER_PRIMARY_ACCESSION_PATTERN.matcher(primaryAccession);
-		
-			if(assemblyMasterMatcher.matches())
-				return assemblyMasterMatcher.group(1);
-			if(sequenceAccessionMatcher.matches())
-				return sequenceAccessionMatcher.group(1);
-			if(tpxAccessionMatcher.matches())
-				return tpxAccessionMatcher.group(1);
-			if(wgsAccessionMatcher.matches())
-				return wgsAccessionMatcher.group(1);
-			if(wgsMasterAccessionMatcher.matches())
-				return wgsMasterAccessionMatcher.group(1);
-			
-			return null; 
-
-	}
-	
 	public static Entry convertAGPtofeatureNContigs(Entry entry)
 	{
 		FeatureFactory featureFactory=new FeatureFactory();
@@ -235,6 +201,7 @@ public class EntryUtils
 			String gap_type=agpRow.getGap_type();
 			List<String> linkage_evidences=agpRow.getLinkageevidence();
 			String component_acc=agpRow.getComponent_acc();
+			String componentId= agpRow.getComponent_id();
 			
 		  if(agpRow.isGap())
 		  {
@@ -285,8 +252,10 @@ public class EntryUtils
 		  }
 		  else
 		  {
-			  if(component_acc==null)
+			  if(component_acc==null&componentId==null)
 				  continue;
+			  if(component_acc!=null)
+			  {
 			  String[] accessionWithVersion=component_acc.split("\\.");
 			  String accession=accessionWithVersion[0];
 			  Integer version=new Integer(accessionWithVersion[1]);
@@ -294,6 +263,16 @@ public class EntryUtils
 			  if(orientation=="-"||orientation=="minus")
 				  remoteLocation.setComplement(true);
 			  components.add(remoteLocation);
+			  }
+			  else
+			  {
+				 
+				  Location remoteLocation=locationFactory.createRemoteRange(componentId, 0, (long)component_begin, (long)component_end);
+				  if(orientation=="-"||orientation=="minus")
+					  remoteLocation.setComplement(true);
+				  components.add(remoteLocation);
+			  }
+			 
 		  }
 			  
    		  //reportMessage(Severity.FIX, entry.getOrigin(), ACCESSION_FIX_ID, agpRow.getComponent_acc(),componentID,agpRow.getObject());

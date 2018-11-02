@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
@@ -40,8 +41,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	private Connection connection;
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
+	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 	
-	public enum SOURCEQUALIFIER
+	public enum MASTERSOURCEQUALIFIERS
 	{
 		ecotype, 
 		cultivar,
@@ -54,6 +56,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		serotype, 
 		serovar, 
 		environmental_sample,
+		isolation_source,
 		organelle;
 		
 		public static boolean isValid(String qualifier)
@@ -351,12 +354,20 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 		
 	}
-	
-   public Entry getMasterEntry(String analysisId) throws SQLException
+
+   public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
-		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
-		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex); 
+	   if(masterCache.containsKey(analysisId+"_"+analysisType))
+	   {
+		   return masterCache.get(analysisId+"_"+analysisType);
+	   }
 		Entry masterEntry = new Entry();
+		if(analysisType == null) {
+			return  masterEntry;
+		}
+
+		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
+		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
 		masterEntry.setPrimaryAccession(analysisId);
 		masterEntry.setIdLineSequenceLength(1);
 		FeatureFactory featureFactory = new FeatureFactory();
@@ -373,9 +384,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 		String masterQuery = "select st.project_id, st.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/SEQUENCE_ASSEMBLY/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
 			"join sample sam on(asam.sample_id=sam.sample_id) " +
@@ -393,7 +404,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		//sequence.setLength(1); // Required by putff.
 		masterEntry.setSequence(sequence);
 		masterEntry.setIdLineSequenceLength(1);
-		masterEntry.getSequence().setMoleculeType("genomic DNA");
+		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
+			masterEntry.getSequence().setMoleculeType("transcribed RNA");
+		} else {
+			masterEntry.getSequence().setMoleculeType("genomic DNA");
+		}
 		masterEntry.getSequence().setTopology(Topology.LINEAR);		
 		
 		sourceFeature.setMasterLocation();
@@ -474,47 +489,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			while (select_sourcequalifers_rs.next())
 			{
 				String tag = select_sourcequalifers_rs.getString(1);
-				if(tag==null)
-					continue;
-				tag=tag.toLowerCase();
 				String value = select_sourcequalifers_rs.getString(2);
-				if(isolation_sourcePattern.matcher(tag).matches())
-				{
-					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
-					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
-					continue;
-				}
-				if (tag.equalsIgnoreCase("PCR_primers"))
-				{
-					tag = "PCR_primers";
-				}
-				if (SOURCEQUALIFIER.isValid(tag))
-				{
-					
-					if(!SOURCEQUALIFIER.isNoValue(tag)&&SOURCEQUALIFIER.isNullValue(value))
-						continue;
+				addSourceQualifier(tag, value, sourceFeature, taxonHelper, uniqueName);
+			}
 
-					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
-					{
-						addUniqueName=false;
-					}
-				    
-					if(SOURCEQUALIFIER.isNoValue(tag))
-					{
-						if(!"NO".equalsIgnoreCase(value))
-					     sourceFeature.addQualifier(tag);
-					}
-				    else
-					sourceFeature.addQualifier(tag, value);
-				}
-			}
-			if(addUniqueName&&taxonHelper.isProkaryotic(scientificName))
-			{
-				sourceFeature.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName);
-			}
 			masterEntry.addReference(getSubmitterReference(analysisId));
-			if(sourceFeature.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
-				sourceFeature.addQualifier(isolationSourceQualifier);				
+
 		}
 		catch (Exception ex)
 		{
@@ -527,8 +507,52 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		masterEntry.addFeature(sourceFeature);
 		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
 		masterEntry.setDescription(new Text(description));
-		
+		masterCache.put(analysisId+"_"+analysisType,masterEntry);
 		return masterEntry;
 	}
+   
+   public static void addSourceQualifier(String tag, String value,SourceFeature source,TaxonHelper taxonHelper,String uniqueName)
+   {
+	   Qualifier isolationSourceQualifier=null;
+	   String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
+	   Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
+	   boolean addUniqueName=true;
+				if(tag==null)
+		   return;
+				tag=tag.toLowerCase();
+				if(isolation_sourcePattern.matcher(tag).matches())
+				{
+					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
+					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
+				}
+
+				if (MASTERSOURCEQUALIFIERS.isValid(tag))
+				{
+					
+					if(!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
+			         return;
+
+					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
+					{
+						addUniqueName=false;
+					}
+				    
+					if(MASTERSOURCEQUALIFIERS.isNoValue(tag))
+					{
+						if(!"NO".equalsIgnoreCase(value))
+				   source.addQualifier(new QualifierFactory().createQualifier(tag));
+					}
+				    else
+			   source.addQualifier(new QualifierFactory().createQualifier(tag, value));
+				}
+
+	   if(addUniqueName&&taxonHelper.isProkaryotic(source.getScientificName())&&source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
+			{
+		   source.addQualifier( new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName));
+			}
+	   if(source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
+		   source.addQualifier(isolationSourceQualifier);	
+		}
+		
 
 }
