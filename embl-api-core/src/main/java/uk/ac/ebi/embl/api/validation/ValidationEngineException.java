@@ -57,7 +57,7 @@ public class ValidationEngineException extends Exception {
 		
 	public enum ReportErrorType
 	{
-		USER_ERROR,
+		VALIDATION_ERROR,
 		SYSTEM_ERROR;
 	}
 }

@@ -3,11 +3,8 @@ package uk.ac.ebi.embl.api.validation.plan;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-
 import uk.ac.ebi.embl.api.entry.AgpRow;
-import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -30,5 +27,5 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<HashMap<String, AgpRow>> contigEntryNames= new ValidationPlanProperty<HashMap<String, AgpRow>>(new HashMap<String,AgpRow>());
 	public final ValidationPlanProperty<Boolean> isFixCds = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<Boolean> ignore_errors = new ValidationPlanProperty<Boolean>(false);
-
+	public final ValidationPlanProperty<Integer> sequenceNumber = new ValidationPlanProperty<Integer>(0);
 }

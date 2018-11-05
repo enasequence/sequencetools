@@ -25,6 +25,8 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 public class TemplateEntryProcessor {
     private StringBuilder template;
     private TemplateInfo templateInfo;
@@ -340,7 +342,7 @@ public class TemplateEntryProcessor {
             String values = "";
             for (TemplateProcessorConstants.SedimentE sedimentE: TemplateProcessorConstants.SedimentE.values())
                 values += sedimentE.getSediment() + ",";
-            ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "SedimentCheck", sediment, values);
+            ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "SedimentCheck", sediment, StringUtils.chompLast(values, ","));
             templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
         }
     }

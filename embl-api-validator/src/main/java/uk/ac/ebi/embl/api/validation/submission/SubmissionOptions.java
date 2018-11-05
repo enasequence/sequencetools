@@ -99,6 +99,10 @@ public class SubmissionOptions
 			if(mgl!=null)
 		     property.minGapLength.set(mgl);
 		}
+		if(Context.genome.equals(context))
+		{
+			property.sequenceNumber.set(1);
+		}
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
 		property.isRemote.set(isRemote);

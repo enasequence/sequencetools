@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
+import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
@@ -42,6 +43,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
+
 	
 	public enum MASTERSOURCEQUALIFIERS
 	{
@@ -480,7 +482,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()',value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
 		PreparedStatement select_sourcequalifiers_pstmt = null;
 		ResultSet select_sourcequalifers_rs = null;
-		Qualifier isolationSourceQualifier=null;
+		MasterSourceFeatureUtils sourceUtils= new MasterSourceFeatureUtils();
 		try
 		{
 			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
@@ -490,9 +492,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			{
 				String tag = select_sourcequalifers_rs.getString(1);
 				String value = select_sourcequalifers_rs.getString(2);
-				addSourceQualifier(tag, value, sourceFeature, taxonHelper, uniqueName);
+				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
 			}
 
+			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, uniqueName);
 			masterEntry.addReference(getSubmitterReference(analysisId));
 
 		}
@@ -511,48 +514,4 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return masterEntry;
 	}
    
-   public static void addSourceQualifier(String tag, String value,SourceFeature source,TaxonHelper taxonHelper,String uniqueName)
-   {
-	   Qualifier isolationSourceQualifier=null;
-	   String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
-	   Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
-	   boolean addUniqueName=true;
-				if(tag==null)
-		   return;
-				tag=tag.toLowerCase();
-				if(isolation_sourcePattern.matcher(tag).matches())
-				{
-					tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
-					isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
-				}
-
-				if (MASTERSOURCEQUALIFIERS.isValid(tag))
-				{
-					
-					if(!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
-			         return;
-
-					if(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)||Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)||Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag))
-					{
-						addUniqueName=false;
-					}
-				    
-					if(MASTERSOURCEQUALIFIERS.isNoValue(tag))
-					{
-						if(!"NO".equalsIgnoreCase(value))
-				   source.addQualifier(new QualifierFactory().createQualifier(tag));
-					}
-				    else
-			   source.addQualifier(new QualifierFactory().createQualifier(tag, value));
-				}
-
-	   if(addUniqueName&&taxonHelper.isProkaryotic(source.getScientificName())&&source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
-			{
-		   source.addQualifier( new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName));
-			}
-	   if(source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size()==0 && isolationSourceQualifier!=null)
-		   source.addQualifier(isolationSourceQualifier);	
-		}
-		
-
 }

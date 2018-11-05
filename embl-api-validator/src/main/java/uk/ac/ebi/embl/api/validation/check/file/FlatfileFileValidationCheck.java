@@ -78,6 +78,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			Entry entry = emblReader.getEntry();
 			if(getOptions().context.get()==Context.genome)
             {
+    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
             	{  emblReader.read();
             		continue;

@@ -99,9 +99,6 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			}
 			if (check instanceof EntryValidationCheck)
 			{
-				if(check instanceof AssemblyLevelEntryNameFix )
-					((AssemblyLevelEntryNameFix)check).setAssemblySeqNumber(assemblySeqnumber++);
-				
 				execute((EntryValidationCheck) check,entry);
 			}
 			if (check instanceof FeatureValidationCheck)

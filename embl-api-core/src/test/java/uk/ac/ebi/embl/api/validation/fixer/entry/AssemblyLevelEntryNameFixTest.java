@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -77,8 +78,8 @@ public class AssemblyLevelEntryNameFixTest
 	public void testCheck_noEntryName() throws SQLException, ValidationEngineException
 	{
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
+		property.sequenceNumber.set(1);
 		check.setEmblEntryValidationPlanProperty(property);
-		check.setAssemblySeqNumber(1);
 	    ValidationResult result=check.check(entry);
         assertNotNull(entry.getSubmitterAccession());
         assertEquals("contig1",entry.getSubmitterAccession());

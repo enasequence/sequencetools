@@ -10,8 +10,8 @@ public class SubmissionValidator {
 	 this.options =options;
  }
  
- public boolean validate() throws ValidationEngineException
+ public void validate() throws ValidationEngineException
  {
-	 return new SubmissionValidationPlan(options).execute();
+	 new SubmissionValidationPlan(options).execute();
  }
 }

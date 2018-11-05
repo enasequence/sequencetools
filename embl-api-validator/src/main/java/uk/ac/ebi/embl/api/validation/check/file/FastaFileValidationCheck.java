@@ -76,6 +76,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				Entry entry=reader.getEntry();
 				if(getOptions().context.get()==Context.genome)
 				{
+	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
 					collectContigInfo(entry);
 					if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
 					{

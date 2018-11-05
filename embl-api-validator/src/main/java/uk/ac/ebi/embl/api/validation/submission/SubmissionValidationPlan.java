@@ -47,10 +47,9 @@ public class SubmissionValidationPlan
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
-	public boolean execute() throws ValidationEngineException {
+	public void execute() throws ValidationEngineException {
 		try
 		{
-		
 		options.init();
 		//Validation Order shouldn't be changed
 		if(options.context.get().getFileTypes().contains(FileType.MASTER))
@@ -90,7 +89,6 @@ public class SubmissionValidationPlan
 		}
 		if(sequenceDB!=null)
 			sequenceDB.close();
-		return true;
 		}catch(ValidationEngineException e)
 		{
 			try {
@@ -111,24 +109,24 @@ public class SubmissionValidationPlan
 	{
 		check = new MasterEntryValidationCheck(options);
 		if(!check.check())
-			throw new ValidationEngineException("Master entry validation failed" );
+			throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
 	}
 
 	private void validateChromosomeList() throws ValidationEngineException
 	{
+		check = new ChromosomeListFileValidationCheck(options);
 		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
 		{			
-			check = new ChromosomeListFileValidationCheck(options);
-			if(!check.check(chromosomeListFile))
+				if(!check.check(chromosomeListFile))
 				throwException(FileType.CHROMOSOME_LIST,chromosomeListFile);
 		}
 	}
 
 	private void validateFasta() throws ValidationEngineException
 	{
+		check = new FastaFileValidationCheck(options);
 		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
 		{
-			check = new FastaFileValidationCheck(options);
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(fastaFile))
@@ -138,9 +136,9 @@ public class SubmissionValidationPlan
 
 	private void validateFlatfile() throws ValidationEngineException
 	{
+		check = new FlatfileFileValidationCheck(options);
 		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
-			check = new FlatfileFileValidationCheck(options);
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(flatfile))
@@ -150,9 +148,9 @@ public class SubmissionValidationPlan
 
 	private void validateAGP() throws ValidationEngineException
 	{
+		check = new AGPFileValidationCheck(options);
 		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 		{
-			check = new AGPFileValidationCheck(options);
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(!check.check(agpFile))
@@ -162,9 +160,9 @@ public class SubmissionValidationPlan
 
 	private void validateUnlocalisedList() throws ValidationEngineException
 	{
+		check = new UnlocalisedListFileValidationCheck(options);
 		for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
-		{
-			check = new UnlocalisedListFileValidationCheck(options);
+		{			
 			if(!check.check(unlocalisedListFile))
 				throwException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
 		}
@@ -186,22 +184,22 @@ public class SubmissionValidationPlan
 	
 	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
 	{
+		check = new AnnotationOnlyFlatfileValidationCheck(options);
 		for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
 		{
-			check = new AnnotationOnlyFlatfileValidationCheck(options);
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
-     		if(!check.check(annotationOnlyFlatfile))
-     			throwException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
-     		}
+			if(!check.check(annotationOnlyFlatfile))
+				throwException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
+		}
 	}
 	
 	private void validateTsvfile() throws ValidationEngineException
 	{
+		check = new TSVFileValidationCheck(options);
 		for(SubmissionFile tsvFile:options.submissionFiles.get().getFiles(FileType.TSV))
 		{
-			check = new TSVFileValidationCheck(options);
-			if(!check.check(tsvFile))
+		    	if(!check.check(tsvFile))
 				throwException(FileType.TSV,tsvFile);
 		}
 	}
@@ -213,6 +211,6 @@ public class SubmissionValidationPlan
 	
 	private void throwException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.USER_ERROR);
+		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 }

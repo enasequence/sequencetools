@@ -27,29 +27,24 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("EntryName is missing for a {0}, assigned new entryName : {1}")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
 public class AssemblyLevelEntryNameFix extends EntryValidationCheck
 {
 	private final String ENTRYNAME_FIX_ID = "AssemblyLevelEntryNameFix";
-	
-	private int assemblySeqNumber=0;
-
-	public void setAssemblySeqNumber(int assemblySeqNumber)
-	{
-		this.assemblySeqNumber = assemblySeqNumber;
-	}
 	
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 		result = new ValidationResult();
 
-		if (entry == null||assemblySeqNumber==0)
+		if (entry == null||(getEmblEntryValidationPlanProperty()!=null&&getEmblEntryValidationPlanProperty().sequenceNumber.get()==0))
 		{
 			return result;
 		}
 
+		if(entry.getSubmitterAccession()!=null)
+			return result;
 		String seqType = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "contig" : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "scaffold" : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "chromosome":"entry";
-		String entryName= seqType+ assemblySeqNumber;
+		String entryName= seqType+ getEmblEntryValidationPlanProperty().sequenceNumber.get();
 		
 		if(entry.getSubmitterAccession()==null)
 		{

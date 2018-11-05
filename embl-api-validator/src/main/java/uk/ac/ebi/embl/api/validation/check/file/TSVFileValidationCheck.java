@@ -87,14 +87,14 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
 					validationResult.append(validationMessage);
 					if(getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+						getReporter().writeToFile(getReportFile(submissionFile), validationResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 					valid = false;
 					break;
 				}
 				ValidationPlanResult validationPlanResult = templateProcessorResultSet.getValidationPlanResult();
 				if (!validationPlanResult.isValid()) {
 					if (getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(submissionFile), validationPlanResult);
+						getReporter().writeToFile(getReportFile(submissionFile), validationPlanResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 					valid = false;
 				}
 				if(fixedFileWriter!=null)
@@ -110,6 +110,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			{
 			if (getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+			
 			}catch(Exception ex)
 			{
 				throw new ValidationEngineException(ex.getMessage());
