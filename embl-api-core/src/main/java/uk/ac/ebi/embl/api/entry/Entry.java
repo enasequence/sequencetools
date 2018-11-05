@@ -15,6 +15,12 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.entry;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -25,15 +31,6 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.HasOrigin;
 import uk.ac.ebi.embl.api.validation.Origin;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import uk.ac.ebi.embl.api.entry.AgpRow;
 
 public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	
@@ -371,6 +368,9 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	}
 
     public void clearFeatures() {
+       for (Feature f : features) {
+          f.removeAllQualifiers();
+       }
         features.clear();
     }
 
@@ -693,7 +693,18 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		return null;
 	}
 
-	public int getSequenceCount() {
+	/**
+	 * Release resources allocated in this bean. Can help the GC to better cleanup the heap
+	 */
+	public void close() {
+      this.clearFeatures();
+      this.removeAssemblies();
+      this.removeKeywords();
+      this.removeProjectAccessions();
+      this.removeReferences();
+  }
+  
+  public int getSequenceCount() {
 		return sequenceCount;
 	}
 

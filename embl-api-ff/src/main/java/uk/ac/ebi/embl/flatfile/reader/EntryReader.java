@@ -294,4 +294,16 @@ OUTER:  while( true )
 	{
 		this.isIgnoreLocationParseError = isIgnoreLocationParseError;
 	}
+	
+	/**
+	 * Release resources used by the reader. Help the GC to cleanup the heap
+	 */
+	public void close() {
+	   entry.close();
+	   getBlockCounter().clear();
+	   getSkipTagCounter().clear();
+	   getCache().resetOrganismCache();
+	   getCache().resetReferenceCache();
+	}
+
 }
