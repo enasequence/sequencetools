@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -58,6 +59,7 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -164,7 +166,8 @@ public abstract class FileValidationCheck {
 		{
 		case genome:
 			
-			if(entryName!=null&&chromosomeNameQualifiers.get(entryName.toUpperCase())!=null)
+			
+			if(entryName!=null&&chromosomeNameQualifiers.keySet().stream().filter(s->s.equalsIgnoreCase(entryName)).findFirst().isPresent())
 			{
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
@@ -226,7 +229,7 @@ public abstract class FileValidationCheck {
 		}
 		if(duplicateEntryNames.size()>0)
 		{
-			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",",duplicateEntryNames));
+			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",",duplicateEntryNames),ReportErrorType.VALIDATION_ERROR);
 		}
 	}
 
@@ -237,12 +240,12 @@ public abstract class FileValidationCheck {
 		{
 			for(String chromosomeName: chromosomeNameQualifiers.keySet())
 			{
-				if(!chromosomes.contains(chromosomeName))
+				if(!chromosomes.stream().filter(s->s.equalsIgnoreCase(chromosomeName)).findFirst().isPresent())
 				{
 					sequencelessChromosomes.add(chromosomeName);
 				}
 			}
-			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes));
+			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
 		}
 	}
 
@@ -413,16 +416,20 @@ public abstract class FileValidationCheck {
 
 			if(entry.getSubmitterAccession()!=null)
 			{
-			List<Qualifier> chromosomeQualifiers = chromosomeNameQualifiers.get(entry.getSubmitterAccession().toUpperCase());
+				Optional<java.util.Map.Entry<String, List<Qualifier>>> chromosomeQualifierMap= chromosomeNameQualifiers.entrySet().stream().filter(x->x.getKey().equalsIgnoreCase(entry.getSubmitterAccession())).findFirst();
+				if(chromosomeQualifierMap.isPresent())
+				{	
+					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue();
 
-			if(chromosomeQualifiers!=null)
-			{
-				for (Qualifier chromosomeQualifier : chromosomeQualifiers)
-				{
-					entry.getPrimarySourceFeature().addQualifier(chromosomeQualifier);
+					if(chromosomeQualifiers!=null)
+					{
+						for (Qualifier chromosomeQualifier : chromosomeQualifiers)
+						{
+							entry.getPrimarySourceFeature().addQualifier(chromosomeQualifier);
 
+						}
+					}
 				}
-			}
 			}
 			if(Entry.WGS_DATACLASS.equals(entry.getDataClass()))
 			{

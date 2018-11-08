@@ -296,7 +296,8 @@ public class AGPValidationCheck extends EntryValidationCheck
 	
 	private Optional<AgpRow> getContig(AgpRow agpRow)
 	{
-		return getEmblEntryValidationPlanProperty().contigEntryNames.get().values().stream().filter(row -> (row.getComponent_id().equals(agpRow.getComponent_id())&&row.getComponent_beg().equals(agpRow.getComponent_beg())&&row.getComponent_end().equals(agpRow.getComponent_end()))).findFirst();
+		//assume if sequence is not null then only contig is valid.
+		return getEmblEntryValidationPlanProperty().contigEntryNames.get().values().stream().filter(row -> (row.getComponent_id().equals(agpRow.getComponent_id())&&row.getComponent_beg().equals(agpRow.getComponent_beg())&&row.getComponent_end().equals(agpRow.getComponent_end())&&row.getSequence()!=null)).findFirst();
 	}
 
 }

@@ -28,6 +28,7 @@ public class MasterSourceFeatureUtils {
 		if(isolation_sourcePattern.matcher(tag).matches())
 		{
 			tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
+			if(value!=null&&!value.isEmpty())
 			isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
 		}
 

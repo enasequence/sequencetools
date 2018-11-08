@@ -21,11 +21,16 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
+import difflib.StringUtills;
+import net.jpountz.util.Utils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
@@ -84,6 +89,7 @@ public class SubmissionValidationPlan
 		{
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
+			throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, FileValidationCheck.contigs.size(), FileValidationCheck.scaffolds.size(), FileValidationCheck.chromosomes.size()));
 			if(!options.isRemote)
 			registerSequences();
 		}
@@ -213,4 +219,19 @@ public class SubmissionValidationPlan
 	{
 		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
+	
+	@SuppressWarnings("deprecation")
+	private void throwValidationResult(ValidationResult result) throws ValidationEngineException
+	{
+		if(result==null||result.isValid())
+			return;
+		StringBuilder messages = new StringBuilder();
+		for(ValidationMessage message:result.getMessages())
+		{
+			messages.append(message.getMessage()+"\n");
+		}
+		
+		throw new ValidationEngineException(StringUtils.chopNewline(messages.toString()),ReportErrorType.VALIDATION_ERROR);
+	}
 }
+

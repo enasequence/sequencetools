@@ -34,6 +34,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
        options.isRemote = true;
 	   options.assemblyInfoEntry =Optional.of(getAssemblyinfoEntry());
 	   options.source = Optional.of(getSource());
+	   options.ignoreErrors = true;
 	}
 	
 	@Test
@@ -62,7 +63,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
-		thrown.expectMessage("Sequenceless chromosomes are not allowed in assembly : IWGSC_CSS_6DL_SCAFF_3330719,IWGSC_CSS_6DL_SCAFF_3330717,IWGSC_CSS_6DL_SCAFF_3330716");
+		thrown.expectMessage("Sequenceless chromosomes are not allowed in assembly : IWGSC_CSS_6DL_scaff_3330717,IWGSC_CSS_6DL_scaff_3330716,IWGSC_CSS_6DL_scaff_3330719");
 		plan.execute();
 	}
 	
