@@ -29,7 +29,6 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 @Description("Qualifier \"{0}\" can only exist if taxonomic division has one of the values \"{1}\"")
-@RemoteExclude
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class TaxonomicDivisionQualifierCheck extends EntryValidationCheck
 {

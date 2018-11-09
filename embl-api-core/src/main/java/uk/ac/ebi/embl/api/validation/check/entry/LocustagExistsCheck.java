@@ -35,7 +35,6 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 @Description("/locus_tag  must exist for annotated contigs/scaffolds/chromosomes")
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@RemoteExclude
 public class LocustagExistsCheck extends EntryValidationCheck {
 
     private final static String LOCUSTAG_MESSAGE_ID = "LocustagExistsCheck_1";

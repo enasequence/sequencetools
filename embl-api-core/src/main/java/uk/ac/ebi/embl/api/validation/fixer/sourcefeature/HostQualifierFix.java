@@ -28,7 +28,6 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import java.util.List;
 
 @Description("\"{0}\" qualifier value has been changed from \"{1}\" to scientific name \"{2}\"")
-@RemoteExclude
 public class HostQualifierFix extends FeatureValidationCheck
 {
 	private static final String HOST_QUALIFIER_VALUE_FIX_ID = "HostQualifierFix_1";

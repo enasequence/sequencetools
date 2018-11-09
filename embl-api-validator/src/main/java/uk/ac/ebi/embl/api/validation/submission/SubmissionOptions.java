@@ -29,7 +29,7 @@ public class SubmissionOptions
 	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
-	public  boolean ignoreErrors = true;
+	public  boolean ignoreErrors = false;
 	public  boolean isRemote = false;
 	private String projectId;
 

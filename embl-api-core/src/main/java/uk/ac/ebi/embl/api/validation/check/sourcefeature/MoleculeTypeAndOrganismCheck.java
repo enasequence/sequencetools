@@ -32,7 +32,6 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Organism must belong to one of {0} when molecule type is {1}.")
-@RemoteExclude
 @ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
 

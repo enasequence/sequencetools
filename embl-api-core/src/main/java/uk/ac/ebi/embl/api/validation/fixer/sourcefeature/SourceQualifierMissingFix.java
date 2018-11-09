@@ -32,7 +32,6 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 @Description("Added source qualifier {0} as qualifier {2} value matches the pattern {3}"
 		+ "Qualifier \"environment_sample\" has been added to the \"Source\" feature as Organism is a Metagenome.")
-@RemoteExclude
 @ExcludeScope(validationScope = { ValidationScope.NCBI })
 public class SourceQualifierMissingFix extends EntryValidationCheck
 {

@@ -43,7 +43,6 @@ import java.util.Vector;
 
 @Description("Translate the anticodon")
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
-@RemoteExclude
 public class AntiCodonTranslationCheck extends EntryValidationCheck
 {
 	private final static String ANTICODON_TRANSLATION_MESSAGE_ID = "AntiCodonTranslationCheck_1";

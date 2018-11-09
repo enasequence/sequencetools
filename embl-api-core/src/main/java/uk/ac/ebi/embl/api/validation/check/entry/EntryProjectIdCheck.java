@@ -34,7 +34,6 @@ import java.util.Collection;
 		+ "Entry must not have multiple project ids."
 		+ "\"{0}\" qualifier is not allowed in entries not having project id"
 		+ "Invalid projectId : \"{0}\"")
-@RemoteExclude
 public class EntryProjectIdCheck extends EntryValidationCheck {
 
 	private final static String SEQUENCE_LENGTH_MESSAGE = "EntryProjectIdCheck1";

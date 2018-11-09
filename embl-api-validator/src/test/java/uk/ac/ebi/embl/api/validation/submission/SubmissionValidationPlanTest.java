@@ -77,8 +77,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		thrown.expect(ValidationEngineException.class);
+		thrown.expectMessage(getmessage("fasta",initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getName(), options.reportDir.get()));
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile()));
+		//assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile()));
 	}
 	
 	@Test
@@ -159,4 +161,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
 	}
 
+	private String getmessage(String fileType,String fileName,String reportDir)
+	{
+		return fileType+" file validation failed : "+fileName+", Please see the error report: "+ reportDir+File.separator+fileName+".report";
+	}
 }
