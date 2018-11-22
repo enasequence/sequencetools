@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -17,6 +20,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 {
 	private final String MESSAGE_KEY_INVALID_NO_OF_FIELDS_ERRORS = "InvalidNoOfFields";
 	private final String MESSAGE_KEY_DUPLICATE_CHROMOSOME_NAME_ERROR = "ChromosomeListChromosomeNameDuplicationCheck";
+	private final String MESSAGE_KEY_DUPLICATE_OBJECT_NAME_ERROR = "ChromosomeListObjectNameDuplicationCheck";
 	private static final String INVALID_FILE_FORMAT_ERROR = "FileFormatCheck";
 	private static final String EMPTY_FILE_ERROR = "EmptyFileCheck";
 
@@ -29,6 +33,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 	private final static int CHROMOSOME_TYPE_COLUMN = 2;
 	private final static int CHROMOSOME_LOCATION_COLUMN = 3;
     private Set<String> chromosomeNames= new HashSet<String>();
+    private Set<String> objectNames= new HashSet<String>();
     List<ChromosomeEntry> chromosomeEntries =new ArrayList<ChromosomeEntry>();
 	
     public ChromosomeListFileReader(File file)
@@ -81,6 +86,12 @@ public class ChromosomeListFileReader extends GCSEntryReader
 					chromosomeEntry.setOrigin(new FlatFileOrigin(lineNumber));
 					if(!chromosomeNames.add(chromosomeEntry.getChromosomeName()))
 						error(lineNumber, MESSAGE_KEY_DUPLICATE_CHROMOSOME_NAME_ERROR,chromosomeEntry.getChromosomeName());
+					if(chromosomeEntry.getObjectName()!=null)
+					{
+						chromosomeEntry.setObjectName(StringUtils.removeEnd(chromosomeEntry.getObjectName().trim(),";"));
+						if(!objectNames.add(chromosomeEntry.getObjectName()))
+							error(lineNumber, MESSAGE_KEY_DUPLICATE_OBJECT_NAME_ERROR,chromosomeEntry.getObjectName());
+					}
 					chromosomeEntries.add(chromosomeEntry);
 				}
 				lineNumber++;

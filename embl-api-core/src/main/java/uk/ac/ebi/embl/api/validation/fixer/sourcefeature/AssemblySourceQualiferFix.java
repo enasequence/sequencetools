@@ -16,10 +16,12 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
+import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
 @ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER })
+@RemoteExclude
 public class AssemblySourceQualiferFix extends EntryValidationCheck
 {
 	private final static String QUALIFIER_FIX_ID_1 = "AssemblySourceQualiferFix_1";

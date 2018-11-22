@@ -70,7 +70,7 @@ public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
         Collection<Feature> assembly_gapFeatures =
             SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
         gapFeatures.addAll(assembly_gapFeatures); //assembly_gaps and gaps are mutually exclusive,there is other check to complain
-        if (entry.getSequence() == null || entry.getSequence().getSequenceByte() == null||(Entry.CON_DATACLASS).equals(entry.getDataClass())) {
+        if (entry.getSequence() == null || entry.getSequence().getSequenceByte() == null) {
             return result;
         }
 

@@ -2,7 +2,6 @@ package uk.ac.ebi.embl.api.validation.plan;
 
 import java.util.Arrays;
 import java.util.List;
-
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoAnalysisIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoCoverageCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoDuplicationCheck;
@@ -13,6 +12,7 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProgramChe
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSamplewithDifferentProjectCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSubmissionIdCheck;
+import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoTypeCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListAnalysisIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeNameCheck;
@@ -22,9 +22,9 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidati
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListChromosomeValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListObjectNameValidationCheck;
 
-@SuppressWarnings("unchecked")
 public enum GenomeAssemblyValidationUnit
 {
+			@SuppressWarnings("unchecked")
 			ASSEMBLYINFO_CHECKS
 			(
 			AssemblyInfoAnalysisIdCheck.class,
@@ -36,8 +36,10 @@ public enum GenomeAssemblyValidationUnit
 			AssemblyInfoProgramCheck.class,
 			AssemblyInfoProjectIdheck.class,
 			AssemblyInfoSamplewithDifferentProjectCheck.class,
-			AssemblyInfoSubmissionIdCheck.class
+			AssemblyInfoSubmissionIdCheck.class,
+			AssemblyInfoTypeCheck.class
 			),
+			@SuppressWarnings("unchecked")
 			CHROMOSOME_LIST_CHECKS
 			(
 				ChromosomeListAnalysisIdCheck.class,
@@ -46,6 +48,7 @@ public enum GenomeAssemblyValidationUnit
 				ChromosomeListChromosomeTypeCheck.class,
 				ChromosomeListObjectNameCheck.class
 			),
+			@SuppressWarnings("unchecked")
 			UNLOCALISED_LIST_CHECKS
 			(
 				UnlocalisedListChromosomeValidationCheck.class,

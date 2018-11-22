@@ -36,7 +36,7 @@ public class SubmitterAccessionFix extends EntryValidationCheck {
 		if (entry == null||entry.getSubmitterAccession()==null) {
 			return result;
 		}
-		  String entryName= entry.getSubmitterAccession();
+		  String entryName= entry.getSubmitterAccession().trim();
 		  if(entryName.endsWith(";"))
 		  {  
 			    entry.setSubmitterAccession(StringUtils.removeEnd(entryName, ";"));
