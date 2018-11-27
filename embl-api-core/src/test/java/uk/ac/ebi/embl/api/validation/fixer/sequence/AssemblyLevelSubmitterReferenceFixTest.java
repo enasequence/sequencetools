@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -82,6 +83,9 @@ public class AssemblyLevelSubmitterReferenceFixTest
 		reference.setReferenceNumber(1);
 		
 		entry = entryFactory.createEntry();
+		Sequence sequence=new SequenceFactory().createSequence();
+		sequence.setLength(12);
+		entry.setSequence(sequence);
 		eraproDAOUtils=createMock(EraproDAOUtils.class);
 		Connection con=createMock(Connection.class);
 		

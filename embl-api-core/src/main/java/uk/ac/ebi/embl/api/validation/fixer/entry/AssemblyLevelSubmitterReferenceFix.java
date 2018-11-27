@@ -16,6 +16,11 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
+import uk.ac.ebi.embl.api.entry.location.LocalRange;
+import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.LocationFactory;
+import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -53,7 +58,13 @@ public class AssemblyLevelSubmitterReferenceFix extends EntryValidationCheck
 		
 		Reference reference=getEraproDAOUtils().getSubmitterReference(analysisId);
 		if(reference!=null)
-		entry.addReference(reference);
+		{
+			Order<LocalRange> rp = new Order<LocalRange>();
+			rp.addLocation((new LocationFactory()).createLocalRange(1l,entry.getSequence().getLength()));
+			if(entry.getSequence()!=null)
+				reference.setLocations(rp);
+			entry.addReference(reference);
+		}
 		reportMessage(Severity.FIX, entry.getOrigin(), SUBMITTER_REFERENCEFIX_ID);
 		}
 		catch(Exception e)

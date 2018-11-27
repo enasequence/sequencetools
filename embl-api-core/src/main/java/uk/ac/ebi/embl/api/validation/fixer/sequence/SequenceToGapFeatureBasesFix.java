@@ -81,7 +81,8 @@ public class SequenceToGapFeatureBasesFix extends
 			compoundJoin.setSimpleLocation(true);
 			compoundJoin.addLocation(location);
 			Feature newGapFeature;
-			if (getEmblEntryValidationPlanProperty().validationScope.get().isInGroup(Group.ASSEMBLY)||getEmblEntryValidationPlanProperty().isAssembly.get())
+			List<Feature> assemblyGapFeatures=SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
+			if (getEmblEntryValidationPlanProperty().validationScope.get().isInGroup(Group.ASSEMBLY)||getEmblEntryValidationPlanProperty().isAssembly.get()||assemblyGapFeatures.size()>0)
 			{
 				newGapFeature = features
 						.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);

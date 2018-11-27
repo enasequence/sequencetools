@@ -144,7 +144,6 @@ public enum ValidationUnit
 					CountryQualifierFix.class,//include for all
 					MoleculeTypeAndQualifierFix.class,//include for all
 					CDS_RNA_LocusFix.class,//exclude for master
-					GaptoAssemblyGapFeatureFix.class,//exclude for master
 					GeneAssociatedwithFeatureFix.class,//exclude for master
 					GeneAssociationFix.class,//exclude for master
 					GeneSynonymFix.class,//exclude for master
@@ -177,10 +176,11 @@ public enum ValidationUnit
 					SequenceToGapFeatureBasesFix.class,//exclude for master
 	    		    AssemblyTopologyFix.class,//exclude for master
 					AssemblySourceQualiferFix.class,//exclude for master
-					//AssemblyLevelSubmitterReferenceFix.class,//exclude for master
+					AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 					AssemblyFeatureRemoteLocationFix.class,//exclude for master
 	    		    JournalFix.class,//include for all
-	    		    AssemblyLevelEntryNameFix.class
+	    		    AssemblyLevelEntryNameFix.class,
+	    		    GaptoAssemblyGapFeatureFix.class//exclude for master
 	        ),
 	
 	// GCS entry validation checks

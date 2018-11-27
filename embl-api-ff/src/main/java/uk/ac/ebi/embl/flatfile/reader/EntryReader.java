@@ -168,7 +168,7 @@ public abstract class EntryReader extends FlatFileEntryReader
     public void 
     readLines() throws IOException
     {
-    	resetSingleBlockReaders();
+       	resetSingleBlockReaders();
         lineReader.readLine();
     	isEntry = false;
         currentEntryLine = nextEntryLine;
@@ -256,6 +256,7 @@ OUTER:  while( true )
         {
             checkBlockCounts(entry);
         }
+    
     }
 
     protected abstract void checkBlockCounts(Entry entry);
