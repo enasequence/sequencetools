@@ -44,7 +44,16 @@ public class AssemblyInfoEntry extends GCSEntry
 	private String studyId;
 	private boolean tpa;
 	private String assemblyType;
+	private String organism;
   	
+	public String getOrganism() {
+		return organism;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
+
 	public String getAssemblyType() {
 		return assemblyType;
 	}
