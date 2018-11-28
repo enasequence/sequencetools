@@ -931,7 +931,7 @@ public class TranslatorTest {
     public void testInvalidTranslationShorterThanThree7() throws ValidationException {
         TranslatorTester test = new TranslatorTester();
         test.setTranslationTable(1);
-        test.setNonTranslating(true);
+        test.setNonTranslating(false);
         assertTrue(test.testInvalidTranslation(
             "a",
                 "Translator-10"
@@ -942,7 +942,7 @@ public class TranslatorTest {
     public void testInvalidTranslationShorterThanThree8() throws ValidationException {
         TranslatorTester test = new TranslatorTester();
         test.setTranslationTable(1);
-        test.setNonTranslating(true);
+        test.setNonTranslating(false);
         assertTrue(test.testInvalidTranslation(
             "at",
                 "Translator-10"
@@ -1016,7 +1016,7 @@ public class TranslatorTest {
         test.setTranslationTable(11);
         test.setCodonStart(1);
         test.setRightPartial(true);
-        test.setNonTranslating(true);
+        test.setNonTranslating(false);
         test.addCodonException("gag", 'R');
         test.addTranslationException(6, 8, 'E');
         assertTrue(test.testInvalidTranslation(
@@ -1031,7 +1031,7 @@ public class TranslatorTest {
         test.setTranslationTable(11);
         test.setCodonStart(1);
         test.setRightPartial(true);
-        test.setNonTranslating(true);
+        test.setNonTranslating(false);
         test.addCodonException("gag", 'R');
         test.addTranslationException(5, 7, 'E');
         assertTrue(test.testInvalidTranslation(

@@ -343,7 +343,11 @@ public class Translator extends AbstractTranslator
 
 		TranslationResult translationResult = new TranslationResult();
 		ExtendedResult<TranslationResult> extendedResult = new ExtendedResult<>(translationResult);
-
+         if(nonTranslating)
+         {
+        	 translationResult.setConceptualTranslationCodons(0);
+			return extendedResult;
+         }
 		if (sequence == null)
 		{
 			try
@@ -375,7 +379,7 @@ public class Translator extends AbstractTranslator
 			translateCodons(sequence, translationResult);
 			if (translationResult.getCodons().size() == 0)
 			{
-				if (exception || nonTranslating)
+				if (exception)
 				{
 					// no conceptual translation
 					translationResult.setConceptualTranslationCodons(0);
