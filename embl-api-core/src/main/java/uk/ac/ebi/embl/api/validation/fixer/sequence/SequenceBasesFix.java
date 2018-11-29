@@ -83,6 +83,9 @@ public class SequenceBasesFix extends EntryValidationCheck {
             else{
             	
             	 reportMessage(Severity.FIX, sequence.getOrigin(), SEQUENCE_BASES_FIX_ID_2);
+            	 if(getEmblEntryValidationPlanProperty().validationScope.get() == ValidationScope.EMBL_TEMPLATE) {
+            	 	entry.setIdLineSequenceLength(strippedSequence.array().length);
+				 }
                 }
 
             /**

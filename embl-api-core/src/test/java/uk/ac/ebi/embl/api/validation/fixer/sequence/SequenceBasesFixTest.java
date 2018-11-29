@@ -20,15 +20,22 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.fixer.sequence.SequenceBasesFix;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.plan.ValidationPlanProperty;
 
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,9 +46,11 @@ public class SequenceBasesFixTest {
 	private FeatureFactory featureFactory;
 	private LocationFactory locationFactory;
 	private SequenceBasesFix check;
+	public EmblEntryValidationPlanProperty planProperty;
 
 	@Before
 	public void setUp() throws Exception {
+		planProperty=new EmblEntryValidationPlanProperty();
 		ValidationMessageManager
 				.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		entryFactory = new EntryFactory();
@@ -49,6 +58,8 @@ public class SequenceBasesFixTest {
 		featureFactory = new FeatureFactory();
 		locationFactory = new LocationFactory();
 		check = new SequenceBasesFix();
+		planProperty.validationScope.set(ValidationScope.EMBL);
+		check.setEmblEntryValidationPlanProperty(planProperty);
 	}
 
 	@Test
