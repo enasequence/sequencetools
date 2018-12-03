@@ -71,12 +71,12 @@ public class SubmissionOptions
 		}
 		if(context.get()==Context.genome)
 		{
-			FileValidationCheck.contigs.clear();
+			FileValidationCheck.sequenceInfo.clear();
 			FileValidationCheck.agpEntryNames.clear();
 			FileValidationCheck.chromosomeNameQualifiers.clear();
-			FileValidationCheck.chromosomes.clear();
+			FileValidationCheck.entryNames.clear();
 			FileValidationCheck.contigRangeMap.clear();
-			FileValidationCheck.scaffolds.clear();
+			FileValidationCheck.duplicateEntryNames.clear();
 			FileValidationCheck.contigRangeMap.clear();
 		}
 	}

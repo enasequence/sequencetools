@@ -76,12 +76,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				parseResult=new ValidationResult();
         		Entry entry =reader.getEntry();
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-    			getOptions().getEntryValidationPlanProperty().contigEntryNames.set(contigRangeMap);
+    			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(sequenceInfo);
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
     			ValidationPlanResult planResult=validationPlan.execute(entry);
-            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get());
+            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength());
     			if(!planResult.isValid())
     			{
     			    valid = false;

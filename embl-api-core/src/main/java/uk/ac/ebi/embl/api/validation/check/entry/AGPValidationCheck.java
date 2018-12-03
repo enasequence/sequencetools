@@ -220,25 +220,24 @@ public class AGPValidationCheck extends EntryValidationCheck
 					reportError(agpRow.getOrigin(), MESSAGE_KEY_SAME_COMPONENT_AND_OBJECT_ERROR, agpRow.getComponent_id());
 				} else {
 					
-					int sequenceLength =0;
+					long sequenceLength =0l;
 					if (getEntryDAOUtils() == null)//if database connection is not available, then the following check doesn't work.
 					{
 
 						if (getEmblEntryValidationPlanProperty().isRemote.get()) 
 						{
-							if(getEmblEntryValidationPlanProperty().contigEntryNames.get().size() == 0) 
+							if(getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() == 0) 
 							{
-								throw new ValidationEngineException("Contig entry names must be given to validate AGP file");
+								throw new ValidationEngineException("AssemblySequenceInfo must be given to validate AGP file");
 							}
 							else
-								if (getEmblEntryValidationPlanProperty().contigEntryNames.get().size() > 0) 
+								if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 
 								{
-									if (!getContig(agpRow).isPresent())
+									if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id())==null)
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
 									{
-										if( getContig(agpRow).get().getSequence()!=null)
-										sequenceLength =  getContig(agpRow).get().getSequence().length;
+										sequenceLength =  getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id()).getSequenceLength();
 									}
 								}
 
@@ -294,10 +293,4 @@ public class AGPValidationCheck extends EntryValidationCheck
 		}
 	}
 	
-	private Optional<AgpRow> getContig(AgpRow agpRow)
-	{
-		//assume if sequence is not null then only contig is valid.
-		return getEmblEntryValidationPlanProperty().contigEntryNames.get().values().stream().filter(row -> (row.getComponent_id().equals(agpRow.getComponent_id())&&row.getComponent_beg().equals(agpRow.getComponent_beg())&&row.getComponent_end().equals(agpRow.getComponent_end())&&row.getSequence()!=null)).findFirst();
-	}
-
 }

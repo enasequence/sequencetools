@@ -44,6 +44,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
@@ -71,15 +72,16 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 
+ 
 public abstract class FileValidationCheck {
 
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
 	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
-	public static List<String> chromosomes =new ArrayList<String>();
-	public static List<String> contigs =new ArrayList<String>();
-	public static List<String> scaffolds =new ArrayList<String>();
+	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
+	public static List<String> duplicateEntryNames = new ArrayList<String>();
+	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
 	public static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
@@ -188,20 +190,25 @@ public abstract class FileValidationCheck {
 		}
 	}
 	
-	protected void addEntryName(String entryName,ValidationScope scope)
+	protected void addEntryName(String entryName,ValidationScope scope,long sequenceLength)
 	{
 		if(entryName==null)
 			return;
+		if(!entryNames.add(entryName.toUpperCase()))
+		{
+			duplicateEntryNames.add(entryName);
+		}
+			
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
-			chromosomes.add(entryName);
+			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,2,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
-			scaffolds.add(entryName);
+			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,1,null));
 			break;
 		case ASSEMBLY_CONTIG:
-			contigs.add(entryName);
+			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,0,null));
 			break;
 		default:
 			break;
@@ -210,23 +217,6 @@ public abstract class FileValidationCheck {
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
 	{
-		HashSet<String> entryNames = new HashSet<String>();
-		List<String> duplicateEntryNames = new ArrayList<String>();
-		for(String entryName:contigs)
-		{
-			if(!entryNames.add(entryName.toUpperCase()))
-				duplicateEntryNames.add(entryName);
-		}
-		for(String entryName:scaffolds)
-		{
-			if(!entryNames.add(entryName.toUpperCase()))
-				duplicateEntryNames.add(entryName);
-		}
-		for(String entryName:chromosomes)
-		{
-			if(!entryNames.add(entryName.toUpperCase()))
-				duplicateEntryNames.add(entryName);
-		}
 		if(duplicateEntryNames.size()>0)
 		{
 			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",",duplicateEntryNames),ReportErrorType.VALIDATION_ERROR);
@@ -235,18 +225,17 @@ public abstract class FileValidationCheck {
 
 	public void validateSequencelessChromosomes() throws ValidationEngineException
 	{
-		List<String> sequencelessChromosomes = new ArrayList<String>();
-		if(chromosomeNameQualifiers.size()!=chromosomes.size())
-		{
-			for(String chromosomeName: chromosomeNameQualifiers.keySet())
+		List<String> sequencelessChromosomes =new ArrayList<String>();
+		for(String chromosomeName: chromosomeNameQualifiers.keySet())
 			{
-				if(!chromosomes.stream().filter(s->s.equalsIgnoreCase(chromosomeName)).findFirst().isPresent())
+				if(!hasSequenceInfo(chromosomeName))
 				{
 					sequencelessChromosomes.add(chromosomeName);
 				}
 			}
-			throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
-		}
+		if(sequencelessChromosomes.size()>0)
+		throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
+
 	}
 
 	public String getDataclass(String entryName)
@@ -563,4 +552,11 @@ public abstract class FileValidationCheck {
 	
 		return true;
 		}
+	
+
+	public boolean hasSequenceInfo(String entryName)
+	{
+		return sequenceInfo.entrySet().stream().anyMatch(x->x.getKey().equalsIgnoreCase(entryName));
+
+	}
 }

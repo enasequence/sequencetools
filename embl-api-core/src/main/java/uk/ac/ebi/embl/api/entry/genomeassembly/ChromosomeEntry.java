@@ -14,7 +14,18 @@ public class ChromosomeEntry extends GCSEntry
 	private String chromosomeType;
 	private String chromosomeLocation;
 	private String objectName;
+	private String accession;
 	private List<Qualifier> chromosomeQualifeirs = new ArrayList<Qualifier>();
+	
+	public String getAccession() 
+	{
+		return accession;
+	}
+
+	public void setAccession(String accession) 
+	{
+		this.accession = accession;
+	}
 	
 	public String getObjectName()
 	{

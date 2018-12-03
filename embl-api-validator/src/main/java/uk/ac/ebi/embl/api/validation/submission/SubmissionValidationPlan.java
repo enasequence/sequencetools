@@ -16,17 +16,16 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-
-import difflib.StringUtills;
-import net.jpountz.util.Utils;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
@@ -40,8 +39,6 @@ import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
@@ -49,7 +46,7 @@ public class SubmissionValidationPlan
 	SubmissionOptions options;
 	FileValidationCheck check = null;
     DB sequenceDB =null;
-	public SubmissionValidationPlan(SubmissionOptions options) {
+    public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 	}
 	public void execute() throws ValidationEngineException {
@@ -89,8 +86,7 @@ public class SubmissionValidationPlan
 		{
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
-			throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, FileValidationCheck.contigs.size(), FileValidationCheck.scaffolds.size(), FileValidationCheck.chromosomes.size()));
-			if(!options.isRemote)
+			throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
 			registerSequences();
 		}
 		if(sequenceDB!=null)
@@ -176,12 +172,16 @@ public class SubmissionValidationPlan
 	
 	private void registerSequences() throws ValidationEngineException 
 	{
-		try
+		try {
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+AssemblySequenceInfo.fileName));
+		}catch(Exception e)
 		{
-			EntryDAOUtils entryDAOUtils= new EntryDAOUtilsImpl(options.enproConnection.get());
-			entryDAOUtils.registerSequences(FileValidationCheck.contigs, options.analysisId.get(), 0);
-			entryDAOUtils.registerSequences(FileValidationCheck.scaffolds, options.analysisId.get(),1);
-			entryDAOUtils.registerSequences(FileValidationCheck.chromosomes,options.analysisId.get(),2);
+			throw new ValidationEngineException("Failed to delete sequence info file: "+e.getMessage());
+		}
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.reportDir.get()+File.separator+AssemblySequenceInfo.fileName)))
+		{
+			oos.writeObject(FileValidationCheck.sequenceInfo);
+	               
 		}catch(Exception e)
 		{
           throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage());
@@ -233,5 +233,10 @@ public class SubmissionValidationPlan
 		
 		throw new ValidationEngineException(StringUtils.chopNewline(messages.toString()),ReportErrorType.VALIDATION_ERROR);
 	}
+	
+  private long getSequencecount(int assemblyLevel)
+  {
+	  return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==0).count();
+  }
 }
 
