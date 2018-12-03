@@ -98,6 +98,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
 	public static final String ARTIFICIAL_LOCATION="artificial_location";
 	public static final String TRANS_SPLICING="trans_splicing";
 	public static final String RIBOSOMAL_SLIPPAGE="ribosomal_slippage";
+	public static final String METAGENOME_SOURCE_QUALIFIER_NAME = "metagenome_source";
 
 
 	

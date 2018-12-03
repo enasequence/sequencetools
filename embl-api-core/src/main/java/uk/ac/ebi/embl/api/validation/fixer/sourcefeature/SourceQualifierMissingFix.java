@@ -15,18 +15,19 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
@@ -36,12 +37,14 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 public class SourceQualifierMissingFix extends EntryValidationCheck
 {
 
-	private static final String unculturedPatternEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_1";
-	private static final String metagenomeEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_2";
+	private static final String addEnvironmentalSampleForUnculturedOrg = "SourceQualifierMissingFix_1";
+	private static final String addEnvironmentalSampleForMetagenomeOrg = "SourceQualifierMissingFix_2";
 	private static final String metagenomeIsolationQualifierFix_ID = "SourceQualifierMissingFix_3";
 	private static final String lineageEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_4";
 	private static final String strainToIsolateFix = "SourceQualifierMissingFix_5";
 	private static final String strainRemovalFix = "SourceQualifierMissingFix_6";
+	private static final String METAGENOME_SOURCE_QUAL_REMOVED = "MetagenomeSourceQualifierRemoved";
+	private static final String QUALIFIER_VALUE_CHANGE = "QualifierValueChange";
 
 
 	public ValidationResult check(Entry entry)
@@ -52,7 +55,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-		if (entry.getPrimarySourceFeature() == null||entry.getPrimarySourceFeature().getQualifiers().size()==0)
+		if (entry.getPrimarySourceFeature() == null || entry.getPrimarySourceFeature().getQualifiers().size()==0)
 		{
 			return result;
 		}
@@ -81,50 +84,54 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 		if (scientificName != null)
 		{
+			boolean isSourceOrganismMetagenome = getEmblEntryValidationPlanProperty() != null
+					&&  getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(scientificName);
+
+			boolean hasMetagenomeSource = fixMetagenomeSource(entry.getPrimarySourceFeature(), scientificName);
+
+			if((isSourceOrganismMetagenome || hasMetagenomeSource) && !is_environment_sample_exists) {
+
+				entry.getPrimarySourceFeature().addQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
+				is_environment_sample_exists = true;
+				reportMessage(	Severity.FIX,
+						entry.getPrimarySourceFeature().getOrigin(),
+						addEnvironmentalSampleForMetagenomeOrg);
+			}
+
 			Pattern pattern = Pattern.compile("^(uncultured).*");
 			if (pattern.matcher(scientificName).matches() && !is_environment_sample_exists)
 			{
 				entry.getPrimarySourceFeature().addQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
-				is_environment_sample_exists=true;
+				is_environment_sample_exists = true;
 				reportMessage(	Severity.FIX,
 								entry.getPrimarySourceFeature().getOrigin(),
-								unculturedPatternEnvironmentQualifierFix_ID);
+						addEnvironmentalSampleForUnculturedOrg);
 			}
-			else
-				if (getEmblEntryValidationPlanProperty() != null && getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(scientificName))
+			else if (isSourceOrganismMetagenome && !is_isolation_source_exists)
 				{
-					if (!is_environment_sample_exists)
-					{
-						entry.getPrimarySourceFeature().addQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
-						is_environment_sample_exists=true;
-						reportMessage(	Severity.FIX,
-										entry.getPrimarySourceFeature().getOrigin(),
-										metagenomeEnvironmentQualifierFix_ID);
-					}
 
-					if (is_environment_sample_exists && !is_isolation_source_exists)
+					String isolation_source_value = null;
+					if (scientificName.contains("metagenome"))
 					{
-						String isolation_source_value = null;
-						if (scientificName.contains("metagenome"))
+						isolation_source_value = scientificName.replace("metagenome","");
+					}
+					else
+						if (scientificName.contains("metagenomes"))
 						{
-							isolation_source_value = scientificName.replace("metagenome","");
+							isolation_source_value = scientificName.replace("metagenomes","");
 						}
-						else
-							if (scientificName.contains("metagenomes"))
-							{
-								isolation_source_value = scientificName.replace("metagenomes","");
-							}
 
-						isolation_source_value = isolation_source_value == null ||isolation_source_value.isEmpty() ? "unknown" : isolation_source_value.trim();
+					isolation_source_value = isolation_source_value == null ||isolation_source_value.isEmpty() ? "unknown" : isolation_source_value.trim();
 
-						entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME,
-																		isolation_source_value);
-						reportMessage(	Severity.FIX,
-										entry.getPrimarySourceFeature().getOrigin(),
-										metagenomeIsolationQualifierFix_ID,
-										isolation_source_value);
-					}
+					entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME,
+																	isolation_source_value);
+					reportMessage(	Severity.FIX,
+									entry.getPrimarySourceFeature().getOrigin(),
+									metagenomeIsolationQualifierFix_ID,
+									isolation_source_value);
+
 				}
+
 			if(!is_environment_sample_exists)
 			{
 				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
@@ -157,5 +164,38 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 		return result;
 	}
+
+	private boolean fixMetagenomeSource(SourceFeature source, String organismScientificName) {
+
+		List<Qualifier> metagenomeSourceQualifiers = source.getQualifiers(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
+
+		if (metagenomeSourceQualifiers != null && !metagenomeSourceQualifiers.isEmpty() ) {
+
+			if (metagenomeSourceQualifiers.size() == 1) {
+				String metagenomeSourceScientificName = metagenomeSourceQualifiers.get(0).getValue();
+				if (getEmblEntryValidationPlanProperty() != null) {
+					Taxon taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(metagenomeSourceScientificName);
+					if(taxon != null) {
+						if (taxon.getScientificName().equalsIgnoreCase(organismScientificName)) {
+							source.removeSingleQualifier(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
+							reportMessage(Severity.FIX, source.getOrigin(), METAGENOME_SOURCE_QUAL_REMOVED);
+							return false;
+						} else {
+							if (!metagenomeSourceScientificName.equals(taxon.getScientificName())) {
+								metagenomeSourceQualifiers.get(0).setValue(taxon.getScientificName());
+								reportMessage(Severity.FIX, source.getOrigin(), QUALIFIER_VALUE_CHANGE, metagenomeSourceScientificName, taxon.getScientificName());
+							}
+						}
+					}
+				}
+
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+
 
 }

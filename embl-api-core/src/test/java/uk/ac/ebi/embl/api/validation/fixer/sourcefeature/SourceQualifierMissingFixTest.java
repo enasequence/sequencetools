@@ -32,7 +32,6 @@ import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.SourceQualifierMissingFix;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import static org.junit.Assert.assertEquals;
@@ -140,7 +139,80 @@ public class SourceQualifierMissingFixTest
 		assertTrue(SequenceEntryUtils.isQualifierAvailable(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME, entry));
 		assertTrue(SequenceEntryUtils.isQualifierAvailable(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, entry));
 	}
-	
+
+	@Test
+	public void testMetagenomeSourceSameAsSourceOrganism()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		Qualifier organismQualifier = qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(organismQualifier);
+		Qualifier metagenomeSourceQualifier = qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(metagenomeSourceQualifier);
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.count("MetagenomeSourceQualifierRemoved",Severity.FIX));
+	}
+
+	@Test
+	public void testMetagenomeSourceWithNoEnvSampleQual()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		Qualifier organismQualifier = qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(organismQualifier);
+		Qualifier metagenomeSourceQualifier = qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME,
+				"Anaerobic digester metagenome");//anaerobic
+		sourceFeature.addQualifier(metagenomeSourceQualifier);
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.count("SourceQualifierMissingFix_2",Severity.FIX));
+		assertEquals(1, validationResult.count("QualifierValueChange",Severity.FIX));
+	}
+
+	@Test
+	public void testMetagenomeSourceWithEnvSampleQual()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		Qualifier organismQualifier = qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME,
+				"Fusobacterium nucleatum subsp. animalis D11");
+		sourceFeature.addQualifier(organismQualifier);
+		Qualifier metagenomeSourceQualifier = qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME,
+				"anaerobic digester metagenome");
+		sourceFeature.addQualifier(metagenomeSourceQualifier);
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(0, validationResult.getMessages(Severity.FIX).size());
+
+	}
+
 	@Test
 	public void testCheck_withPrimarySourcewithenvironmentalLineage()
 	{

@@ -15,10 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import java.sql.SQLException;
-import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -26,16 +22,19 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.SourceFeatureQualifierCheck;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
+import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SourceFeatureQualifierCheckTest {
 	private Entry entry;
@@ -182,4 +181,101 @@ public class SourceFeatureQualifierCheckTest {
 		assertEquals(0,
 				result.count("SourceFeatureQualifierCheck8", Severity.ERROR));
 		}
+
+	@Test
+	public void testMetagenomeSourceWithEnvSampleQual()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME, "Fusobacterium nucleatum subsp. animalis D11"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, "anaerobic digester metagenome"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(validationResult.isValid());
+		assertEquals(0, validationResult.getMessages(Severity.ERROR).size());
+	}
+
+	@Test
+	public void testMetagenomeSourceWithNoEnvSampleQual()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME, "Fusobacterium nucleatum subsp. animalis D11"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, "anaerobic digester metagenome"));
+
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(!validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
+		assertEquals(1, validationResult.count("EnvSampleRequiredForMetagenome",Severity.ERROR));
+	}
+
+	@Test
+	public void testInvalidMetagenomeSource()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME, "Fusobacterium nucleatum subsp. animalis D11"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, "anaerobic digester "));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(!validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
+		assertEquals(1, validationResult.count("InvalidMetagenomeSource",Severity.ERROR));
+	}
+
+	@Test
+	public void testMoreThanOneMetagenomeSource()
+	{
+		Feature feature = featureFactory.createFeature("tRNA");
+		feature.addQualifier(new AnticodonQualifier(
+				"(pos:10..12,aa:Glu,seq:tta)"));
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.ORGANISM_QUALIFIER_NAME, "Fusobacterium nucleatum subsp. animalis D11"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, "anaerobic digester metagenome"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(
+				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, "anaerobic digester metagenome"));
+
+		sourceFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+
+		entry.addFeature(feature);
+		entry.addFeature(sourceFeature);
+		ValidationResult validationResult = check.check(entry);
+		assertTrue(!validationResult.isValid());
+		assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
+		assertEquals(1, validationResult.count("MorethanOneMetagenome", Severity.ERROR));
+	}
+
 }

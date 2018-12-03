@@ -19,6 +19,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -35,9 +36,6 @@ import java.util.List;
 @ExcludeScope( validationScope = {ValidationScope.NCBI})
 public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
-	private boolean sflag = false;
-	private final static String MESSAGE_ID = "SourceFeatureQualifierCheck1";
-
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";
 	private final static String MULTIPLE_FOCUS_MESSAGE_ID = "SourceFeatureQualifierCheck3";
 	private final static String MULTIPLE_TRANSEGENIC_MESSAGE_ID = "SourceFeatureQualifierCheck4";
@@ -45,6 +43,9 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	private final static String TRANSEGENIC_SOURCE_MESSAGE_ID = "SourceFeatureQualifierCheck6";
 	private final static String NON_UNIQUE_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck7";
 	private final static String NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck8";
+	private final static String ENV_SAMPLE_REQUIRED = "EnvSampleRequiredForMetagenome";
+	private final static String MORE_THAN_ONE_METAGENOME_SOURCE = "MorethanOneMetagenome";
+	private final static String INVALID_METAGENOME_SOURCE = "InvalidMetagenomeSource";
 
 
 	public SourceFeatureQualifierCheck() {
@@ -78,19 +79,22 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 		ArrayList<String> organismValues = null;
 		for (Feature feature : sources) {
 			SourceFeature source = (SourceFeature) feature;
-			if(source!=null&&source.getScientificName()!=null&&source.getTaxId()==null&&!isOrganismUnique(source.getScientificName()))
+
+			checkMetagenomeSource(entry.getOrigin(), source);
+
+			if(source !=null && source.getScientificName()!=null && source.getTaxId()==null && !isOrganismUnique(source.getScientificName()))
 				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
 			if(source!=null&&source.getScientificName()!=null)
 			{
-				boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName());
+				boolean isOrganismSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName());
 				boolean isTaxidSubmittable=isOrganismSubmittable;
 				boolean isAnyNameSubmittable=false;
 				Long taxId = source.getTaxId();
 				if(taxId!=null)		
-					isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+					isTaxidSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
 				if(!isOrganismSubmittable && !isTaxidSubmittable)
 				{
-					isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(source.getScientificName());
+					isAnyNameSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(source.getScientificName());
 					 if(!isAnyNameSubmittable)
 						 reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName());
 				}
@@ -137,7 +141,33 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
 		return result;
 	}
-	
+
+	//ENA-2825
+	private void checkMetagenomeSource(Origin origin, SourceFeature source) {
+		List<Qualifier> metagenomeSourceQual = source.getQualifiers(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
+
+		if(metagenomeSourceQual != null && !metagenomeSourceQual.isEmpty()) {
+			Qualifier envSample = source.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
+			if(envSample == null) {
+				reportError(origin, ENV_SAMPLE_REQUIRED);
+			}
+			if(metagenomeSourceQual.size() > 1) {
+				reportError(origin, MORE_THAN_ONE_METAGENOME_SOURCE);
+			}
+			String metegenomeSource = metagenomeSourceQual.get(0).getValue();
+			if(metegenomeSource == null || (!metegenomeSource.contains("metagenome") && metegenomeSource.contains("Metagenome"))) {
+				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
+			}
+
+			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(metegenomeSource);
+
+			if(taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L || !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
+				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
+			}
+
+		}
+	}
+
 	public boolean isOrganismValueDifferent(Collection<Feature> sources) {
 		ArrayList<String> organismValues = new ArrayList<String>();
 

@@ -7,7 +7,6 @@ import java.util.List;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public interface EraproDAOUtils
 {
