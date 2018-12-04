@@ -35,12 +35,13 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
 	}
 			
 	private static final Pattern PATTERN = Pattern.compile(
+			//Appl Plant Sci 2 (2), pii: apps.1300079 (2014)
 			// journal volume (issue), first page-last page (year)
 			"(?:^" +
 			"(.+)" + // journal + volume + issue
 			"\\," +
 			"\\s*" +
-			"([^\\(\\-\\)\\.]+)?" + // first page
+			"([^\\(\\-\\)]+)?" + // first page
 			"\\s*" +
 			"(?:-\\s*([^\\(\\)\\-\\.]+))?" + // last page
 			"\\s*" +
