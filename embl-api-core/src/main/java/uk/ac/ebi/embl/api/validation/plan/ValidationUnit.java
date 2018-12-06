@@ -20,7 +20,6 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProgramChe
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSamplewithDifferentProjectCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSubmissionIdCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListAnalysisIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeTypeCheck;
@@ -199,7 +198,6 @@ public enum ValidationUnit
 			),
 			CHROMOSOME_LIST_CHECKS
 			(
-				ChromosomeListAnalysisIdCheck.class,
 				ChromosomeListChromosomeLocationCheck.class,
 				ChromosomeListChromosomeNameCheck.class,
 				ChromosomeListChromosomeTypeCheck.class,
