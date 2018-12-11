@@ -61,7 +61,19 @@ public class FlatFileMatcher {
 		}
 		return value;
 	}
-		
+
+	public String getString(int group, Matcher matcher) {
+		String value = matcher.group(group);
+		if (value == null) {
+			return null;
+		}
+		value = value.trim();
+		if (value.length() == 0) {
+			return null;
+		}
+		return value;
+	}
+
 	public String getUpperString(int group) {
 		String value = matcher.group(group);
 		if (value == null) {
@@ -150,7 +162,19 @@ public class FlatFileMatcher {
 			error("FF.4", value);
 		}
 		return date;
-	}	
+	}
+
+    public Date getYear(int group, Matcher matcher) {
+        String value = matcher.group(group);
+        if (value == null) {
+            return null;
+        }
+        Date date = FlatFileUtils.getYear(value);
+        if (date == null) {
+            error("FF.4", value);
+        }
+        return date;
+    }
 	
     protected void error(String messageKey, Object... params) {
     	reader.error(messageKey, params);

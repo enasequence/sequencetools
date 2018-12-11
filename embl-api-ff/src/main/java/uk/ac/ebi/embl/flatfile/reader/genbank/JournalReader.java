@@ -86,9 +86,7 @@ public class JournalReader extends MultiLineBlockReader {
 		}
 		if (publication == null) {
 			GenbankArticleMatcher articleMatcher = new GenbankArticleMatcher(this);
-			if (articleMatcher.match(block)) {
-				publication = articleMatcher.getArticle(getCache().getPublication());
-			}
+			publication = articleMatcher.getArticle(getCache().getPublication(), block);
 		}
 		if (publication == null) {
 			ElectronicReferenceMatcher electronicReferenceMatcher = new ElectronicReferenceMatcher(this);
