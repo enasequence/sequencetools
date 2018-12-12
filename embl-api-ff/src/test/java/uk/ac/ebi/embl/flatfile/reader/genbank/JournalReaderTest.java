@@ -31,7 +31,6 @@ import uk.ac.ebi.embl.api.entry.reference.Unpublished;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.reader.genbank.JournalReader;
 
 public class JournalReaderTest extends GenbankReaderTest {
 
