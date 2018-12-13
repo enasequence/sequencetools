@@ -71,6 +71,12 @@ public class FlatFileMatcher {
 		if (value.length() == 0) {
 			return null;
 		}
+
+		if((value.lastIndexOf(".") == value.length()-1)
+				|| (value.lastIndexOf(",") == value.length()-1) ){
+			value = value.substring(0, value.length()-1);
+		}
+
 		return value;
 	}
 

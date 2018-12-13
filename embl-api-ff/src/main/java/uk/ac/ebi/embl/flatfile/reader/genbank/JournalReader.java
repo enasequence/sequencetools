@@ -85,15 +85,16 @@ public class JournalReader extends MultiLineBlockReader {
 			}
 		}
 		if (publication == null) {
-			GenbankArticleMatcher articleMatcher = new GenbankArticleMatcher(this);
-			publication = articleMatcher.getArticle(getCache().getPublication(), block);
-		}
-		if (publication == null) {
 			ElectronicReferenceMatcher electronicReferenceMatcher = new ElectronicReferenceMatcher(this);
 			if (electronicReferenceMatcher.match(block)) {
 				publication = electronicReferenceMatcher.getElectronicReference(getCache().getPublication());
 			}
 		}
+		if (publication == null) {
+			GenbankArticleMatcher articleMatcher = new GenbankArticleMatcher(this);
+			publication = articleMatcher.getArticle(getCache().getPublication(), block);
+		}
+
 		if (publication != null) {
 			getCache().setPublication(publication);
 			entry.addReference(getCache().getReference());

@@ -18,8 +18,6 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.api.entry.reference.Article;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
@@ -33,73 +31,91 @@ import uk.ac.ebi.embl.flatfile.reader.FlatFileMatcher;
 public class GenbankArticleMatcher extends FlatFileMatcher {
 
 	public GenbankArticleMatcher(FlatFileLineReader reader) {
-		super(reader, DEFAULT_PATTERN);
+		super(reader, ISSUE_FIRST_LAST_PAGE);
 	}
-	// journal volume (issue), first page-last page (year)
-	private static final Pattern DEFAULT_PATTERN = Pattern.compile("(?:^(.+)\\,\\s*([^\\(\\-\\)]+)?\\s*(?:-\\s*([^\\(\\)\\-\\.]+))?\\s*(?:\\(\\s*(\\d+)\\s*\\)\\s*)?.*$)" );
-	// journal volume (issue) (year) In press
-	private static final Pattern JOURNAL_VOl_ISSUE_YEAR = Pattern.compile("(?:^(.+)\\s*(?:\\(\\s*(\\d+)\\s*\\)\\s*)\\s*In\\s*press.*$)");
-	//Journal (year), In press
-	private static final Pattern JOURNAL_YEAR_IN_PRESS = Pattern.compile("^(.+)\\((\\d{4})\\).+In\\s+press$");
-	//journal volume (year)
-	private static final Pattern JOURNAL_VOL_YEAR = Pattern.compile("((?:^(.+)\\s*(?:\\((\\d{4})\\))\\s*$))");
-	// journal volume (issue) In Press
-	private static final Pattern JOURNAL_VOl_ISSUE_IN_PRESS = Pattern.compile("(?:^(.+)\\s*In\\s*press.*$)");
 
-	private static final  Pattern PAGE = Pattern.compile(".*\\d+.*");
+    private static final  Pattern YEAR = Pattern.compile("^(.+)\\s*\\(\\s*(\\d{4})\\s*\\)\\s*\\.?\\s*$");
+
+    private static final Pattern ISSUE_FIRST_LAST_PAGE = Pattern.compile("^(.+)\\s*\\(\\s*(\\S+)\\s*\\)\\,?\\s*([^\\s\\(\\)-\\,]+)\\s*\\-\\s*([^\\s\\(\\)\\-\\,]+)\\s*$");
+
+	private static final Pattern ISSUE_FIRST_PAGE = Pattern.compile("^(.+)\\s*\\(\\s*([^\\(\\)-\\.,]+)\\s*\\)\\,?\\s*([^\\s\\(\\)\\-\\,]+)\\s*\\-?\\s*$");
+
+	private static final  Pattern ISSUE = Pattern.compile("^(.+)\\s*\\(\\s*([^\\(\\)\\-\\.,]+)\\s*\\)\\s*$");
+
+    private static final  Pattern VOL_FIRST_LAST_PAGE = Pattern.compile("^(.+\\s*\\,)\\s*([^\\s\\(\\)-\\,]+)\\s*\\-\\s*([^\\s\\(\\)\\-\\,]+)\\s*$");
 
 	public Article getArticle(Publication publication, String block) {
 
-		Matcher m = DEFAULT_PATTERN.matcher(block);
+	    int index = block.indexOf("In press");
+	    if( index  > -1) {
+	        block = block.substring(0,index).trim();
+        }
+
+		Article article = createArticle(publication);
+
+		Matcher m = YEAR.matcher(block);
 
 		if (m.matches()) {
-			String firstPage = FlatFileUtils.shrink(getString(2, m));
-			if(null == firstPage || PAGE.matcher(firstPage).matches() ) {
-				Article article = createArticle(publication);
-				String journal = FlatFileUtils.shrink(getString(1, m));
-				article.setJournal(journal);
-				String lastPage = FlatFileUtils.shrink(getString(3, m));
-				article.setFirstPage(firstPage);
-				article.setLastPage(lastPage);
-				article.setYear(getYear(4, m));
-				return article;
+			article.setYear(getYear(2, m));
+			block = m.group(1).trim();
+		}
+
+		m = ISSUE_FIRST_LAST_PAGE.matcher(block);
+		if (m.matches()) {
+			article.setIssue(getString(2,m));
+			article.setFirstPage(getString(3, m));
+			article.setLastPage(getString(4, m));
+			block = m.group(1).trim();
+		} else {
+			m = ISSUE_FIRST_PAGE.matcher(block);
+			if(m.matches()) {
+				article.setIssue(getString(2,m));
+				article.setFirstPage(getString(3, m));
+				block = m.group(1).trim();
+			} else {
+				m = ISSUE.matcher(block);
+				if(m.matches()) {
+					article.setIssue(getString(2,m));
+					block = m.group(1).trim();
+				} else {
+                    m = VOL_FIRST_LAST_PAGE.matcher(block);
+                    if(m.matches()) {
+                        article.setFirstPage(getString(2, m));
+                        article.setLastPage(getString(3, m));
+                        block = m.group(1).trim();
+                    }
+                }
 			}
 		}
 
-		m = JOURNAL_VOl_ISSUE_YEAR.matcher(block);
-	 	if (m.matches()) {
-			return  parseArticle(publication, m, 1, 2);
+		if(hasVolume(block)) {
+			int lIndex = block.lastIndexOf(" ");
+			if (lIndex > -1) {
+			    String vol = block.substring(lIndex).trim();
+			    if(vol.length() > 0 && vol.endsWith(",")) {
+			        vol = vol.substring(0,vol.length()-1);
+                }
+				article.setVolume(vol);
+				block = block.substring(0, lIndex).trim();
+			}
 		}
 
-		m = JOURNAL_YEAR_IN_PRESS.matcher(block);
-		if(m.matches()){
-			return  parseArticle(publication, m, 1, 2);
-		}
+		article.setJournal(getStr(block));
 
-		m = JOURNAL_VOL_YEAR.matcher(block);
-		if(m.matches()){
-			return  parseArticle(publication, m, 2, 3);
-		}
-
-		m = JOURNAL_VOl_ISSUE_IN_PRESS.matcher(block);
-		if(m.matches()){
-			Article article = createArticle(publication);
-			String journal = FlatFileUtils.shrink(getString(1, m));
-			article.setJournal(journal);
-			return article;
-		}
-
-		return null;
+		return article;
 	}
 
-	private Article parseArticle(Publication publication, Matcher m , int first, int second) {
-		Article article = createArticle(publication);
-		String journal = FlatFileUtils.shrink(getString(first, m));
-		article.setJournal(journal);
-		article.setYear(getYear(second, m));
-		return  article;
+	private boolean hasVolume(String input) {
+		return  (input.lastIndexOf(",") == input.length()-1) || (input.lastIndexOf(".") != input.length()-1);
 	}
 
+	private String getStr(String input) {
+		input = input.trim();
+		if((input.lastIndexOf(",") == input.length()-1) ){
+			input = input.substring(0, input.length()-1);
+		}
+		return  input;
+	}
 	private Article createArticle(Publication publication) {
 		Article article;
 		if (publication != null) {
