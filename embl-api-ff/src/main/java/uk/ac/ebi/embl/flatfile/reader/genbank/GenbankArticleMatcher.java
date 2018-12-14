@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.reference.Article;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
@@ -31,91 +32,103 @@ import uk.ac.ebi.embl.flatfile.reader.FlatFileMatcher;
 public class GenbankArticleMatcher extends FlatFileMatcher {
 
 	public GenbankArticleMatcher(FlatFileLineReader reader) {
-		super(reader, ISSUE_FIRST_LAST_PAGE);
+		super(reader, YEAR);
 	}
 
     private static final  Pattern YEAR = Pattern.compile("^(.+)\\s*\\(\\s*(\\d{4})\\s*\\)\\s*\\.?\\s*$");
 
-    private static final Pattern ISSUE_FIRST_LAST_PAGE = Pattern.compile("^(.+)\\s*\\(\\s*(\\S+)\\s*\\)\\,?\\s*([^\\s\\(\\)-\\,]+)\\s*\\-\\s*([^\\s\\(\\)\\-\\,]+)\\s*$");
+    private static final  Pattern FIRST_LAST_PAGE = Pattern.compile("^(.+)\\s*\\,\\s*([^\\(\\)]+)$");
 
-	private static final Pattern ISSUE_FIRST_PAGE = Pattern.compile("^(.+)\\s*\\(\\s*([^\\(\\)-\\.,]+)\\s*\\)\\,?\\s*([^\\s\\(\\)\\-\\,]+)\\s*\\-?\\s*$");
+    private static final  Pattern ISSUE = Pattern.compile("^(.+)\\s*\\(\\s*([^\\(\\)]+)\\s*\\)\\s*$");
 
-	private static final  Pattern ISSUE = Pattern.compile("^(.+)\\s*\\(\\s*([^\\(\\)\\-\\.,]+)\\s*\\)\\s*$");
-
-    private static final  Pattern VOL_FIRST_LAST_PAGE = Pattern.compile("^(.+\\s*\\,)\\s*([^\\s\\(\\)-\\,]+)\\s*\\-\\s*([^\\s\\(\\)\\-\\,]+)\\s*$");
+    private static final  Pattern VOLUME = Pattern.compile("^[^\\s\\(\\)]+$");
 
 	public Article getArticle(Publication publication, String block) {
 
-	    int index = block.indexOf("In press");
-	    if( index  > -1) {
-	        block = block.substring(0,index).trim();
+        int inPressIndex = block.indexOf("In press");
+        if (inPressIndex > -1) {
+            block = block.substring(0, inPressIndex).trim();
         }
 
-		Article article = createArticle(publication);
+        Article article = createArticle(publication);
 
-		Matcher m = YEAR.matcher(block);
+        Matcher m = YEAR.matcher(block);
+        if (m.matches()) {
+            article.setYear(getYear(2, m));
+            block = m.group(1).trim();
+        }
 
-		if (m.matches()) {
-			article.setYear(getYear(2, m));
-			block = m.group(1).trim();
-		}
+        m = FIRST_LAST_PAGE.matcher(block);
+        if (m.matches()) {
+            String page = getString(2, m);
+            if (page.contains("-")) {
+                String[] pageRange = page.split("-");
+                if(pageRange.length>2) {
+                   return null;
+                }
+                if(pageRange.length == 2) {
+                    article.setFirstPage(pageRange[0].trim());
+                    article.setLastPage(pageRange[1].trim());
+                } else if(page.startsWith("-")) {
+                    article.setLastPage(pageRange[0].trim());
+                } else {
+                    article.setFirstPage(pageRange[0].trim());
+                }
+            } else {
+                article.setFirstPage(page);
+            }
+            block = m.group(1).trim();
+        }
 
-		m = ISSUE_FIRST_LAST_PAGE.matcher(block);
-		if (m.matches()) {
-			article.setIssue(getString(2,m));
-			article.setFirstPage(getString(3, m));
-			article.setLastPage(getString(4, m));
-			block = m.group(1).trim();
-		} else {
-			m = ISSUE_FIRST_PAGE.matcher(block);
-			if(m.matches()) {
-				article.setIssue(getString(2,m));
-				article.setFirstPage(getString(3, m));
-				block = m.group(1).trim();
-			} else {
-				m = ISSUE.matcher(block);
-				if(m.matches()) {
-					article.setIssue(getString(2,m));
-					block = m.group(1).trim();
-				} else {
-                    m = VOL_FIRST_LAST_PAGE.matcher(block);
-                    if(m.matches()) {
-                        article.setFirstPage(getString(2, m));
-                        article.setLastPage(getString(3, m));
-                        block = m.group(1).trim();
+        m = ISSUE.matcher(block);
+        if (m.matches()) {
+            article = getVolumeAndJournal(m.group(1).trim(), article);
+            if(StringUtils.isNotBlank(article.getVolume())) {
+                article.setIssue(getString(2, m));
+            } else {
+                article.setJournal(block);
+            }
+        }
+
+        if(StringUtils.isBlank(article.getJournal())) {
+            article = getVolumeAndJournal(block, article);
+        }
+
+		return article.getJournal() == null ? null : article;
+	}
+
+	private Article getVolumeAndJournal(String input, Article article) {
+	    String vol = null;
+	    String journal = null;
+
+        int lIndex = input.lastIndexOf(" ");
+        //should have min 2 token
+        if(lIndex > -1) {
+
+            if (input.lastIndexOf(".") != input.length() - 1) {
+
+                journal = input.substring(0, lIndex).trim();
+                vol = input.substring(lIndex).trim();
+                Matcher m = VOLUME.matcher(vol);
+                if(m.matches() ) {
+                    if (vol.length() > 0 && (vol.endsWith(",") || vol.endsWith("."))) {
+                        vol = vol.substring(0, vol.length() - 1).trim();
                     }
+                } else {
+                    vol = null;
                 }
-			}
-		}
 
-		if(hasVolume(block)) {
-			int lIndex = block.lastIndexOf(" ");
-			if (lIndex > -1) {
-			    String vol = block.substring(lIndex).trim();
-			    if(vol.length() > 0 && vol.endsWith(",")) {
-			        vol = vol.substring(0,vol.length()-1);
-                }
-				article.setVolume(vol);
-				block = block.substring(0, lIndex).trim();
-			}
-		}
+            }
+        }
 
-		article.setJournal(getStr(block));
-
-		return article;
+        if(vol == null) {
+            journal = input;
+        }
+        article.setVolume(vol);
+        article.setJournal(journal);
+        return article;
 	}
 
-	private boolean hasVolume(String input) {
-		return  (input.lastIndexOf(",") == input.length()-1) || (input.lastIndexOf(".") != input.length()-1);
-	}
-
-	private String getStr(String input) {
-		input = input.trim();
-		if((input.lastIndexOf(",") == input.length()-1) ){
-			input = input.substring(0, input.length()-1);
-		}
-		return  input;
-	}
 	private Article createArticle(Publication publication) {
 		Article article;
 		if (publication != null) {

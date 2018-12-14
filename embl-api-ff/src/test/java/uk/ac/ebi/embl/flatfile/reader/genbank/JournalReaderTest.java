@@ -160,9 +160,9 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Article);
 		Article article = (Article)reference.getPublication();
-		assertEquals("J. Biol. Chem.", article.getJournal());
-		assertEquals("48_V", article.getIssue());
-		assertNull(article.getVolume());
+		assertEquals("J. Biol. Chem. ( 48_V )", article.getJournal());
+		assertEquals(null, article.getIssue());
+		assertEquals(null, article.getVolume());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
 		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());	}	
@@ -184,8 +184,150 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
 		assertNull(article.getYear());	
-	}		
-	
+	}
+
+	public void testArticleNoVolIssue() throws IOException {
+		//Note: it may be //journal first_page-last_page (year) but
+		// we parse it as //journal (issue) first_page-last_page (year)
+		initLineReader(
+				"  JOURNAL   G3 (Bethesda) 0-0 (2018) In press\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("G3 (Bethesda)", article.getJournal());
+		assertEquals("0-0",article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals(null, article.getFirstPage());
+		assertEquals(null, article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2018"),article.getYear());
+	}
+
+	public void testArticleVolFirstpage() throws IOException {
+		//journal vol, firstpage (year)
+		initLineReader(
+				"  JOURNAL   Infect. Genet. Evol. VOL4, 34 (2017)\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Infect. Genet. Evol.", article.getJournal());
+		assertEquals("VOL4",article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals("34", article.getFirstPage());
+		assertEquals(null, article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+	}
+
+	public void testArticleVolPageRange() throws IOException {
+		//journal vol, firstpage (year)
+		initLineReader(
+				"  JOURNAL   Infect. Genet. Evol. VOL4, 34-100 (2017)\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Infect. Genet. Evol.", article.getJournal());
+		assertEquals("VOL4",article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals("34", article.getFirstPage());
+		assertEquals("100", article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+	}
+
+	public void testArticleInvalidVol() throws IOException {
+
+		initLineReader(
+				"  JOURNAL   Infect. Genet. Evol. ( (VOL4) ), 34-100 (2017)\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Infect. Genet. Evol. ( (VOL4) )", article.getJournal());
+		assertEquals(null,article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals("34", article.getFirstPage());
+		assertEquals("100", article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+	}
+
+	public void testArticleInvalidPage() throws IOException {
+		initLineReader(
+				"  JOURNAL   Infect. Genet. Evol. 12 (234), 34-100-100 (2017)\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(1, result.count("FF.1", Severity.ERROR));
+	}
+
+	public void testArticleOnlyVolAndIssue() throws IOException {
+		//journal vol  firstpage-lastpage (year)
+		initLineReader(
+				"  JOURNAL   Magallat Albasrat Liabhat Nahlat Altamr 15 (1-2) (2016) In press\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Magallat Albasrat Liabhat Nahlat Altamr", article.getJournal());
+		assertEquals("15",article.getVolume());
+		assertEquals("1-2",article.getIssue());
+		assertEquals(null, article.getFirstPage());
+		assertEquals(null, article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2016"),article.getYear());
+	}
+
+	public void testArticleOnlyPageRange() throws IOException {
+		//journal vol  firstpage-lastpage (year)
+		initLineReader(
+				"  JOURNAL   Biosci Microbiota Food Health 16-027 (2017)\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Biosci Microbiota Food Health", article.getJournal());
+		assertEquals("16-027",article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals(null, article.getFirstPage());
+		assertEquals(null, article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+	}
+
+	public void testArticleWithCommaNoPage() throws IOException {
+		initLineReader(
+				"  JOURNAL   Magallat Albasrat Liabhat Nahlat Altamr, Germany (2016) In press\n"
+		);
+		Reference reference = lineReader.getCache().getReference();
+		ValidationResult result = (new JournalReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNotNull(reference.getPublication());
+		assertTrue(reference.getPublication() instanceof Article);
+		Article article = (Article)reference.getPublication();
+		assertEquals("Magallat Albasrat Liabhat Nahlat", article.getJournal());
+		assertEquals("Altamr",article.getVolume());
+		assertEquals(null,article.getIssue());
+		assertEquals("Germany", article.getFirstPage());
+		assertEquals(null, article.getLastPage());
+		assertEquals(FlatFileUtils.getYear("2016"),article.getYear());
+	}
+
 	public void testRead_ArticleWithCommaNoLastPage() throws IOException {
 		initLineReader(
 	    		"  JOURNAL   BMC Biochem. 3 (1), 19 (2002)\n"
