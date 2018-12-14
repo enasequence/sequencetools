@@ -170,7 +170,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 	public void testReadArticleWithComma_NoYear() throws IOException {
 		initLineReader(
 	    		"  JOURNAL   J.  Biol. Chem. 273_II( 48_V ),\n" +
-	    		"            322X81 -32Y287.\n"
+	    		"            322X81 -32Y287 (2018).\n"
 	    );
 		Reference reference = lineReader.getCache().getReference();
 		ValidationResult result = (new JournalReader(lineReader)).read(entry);
@@ -183,7 +183,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("48_V",article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertNull(article.getYear());	
+		assertEquals(FlatFileUtils.getYear("2018"), article.getYear());
 	}
 
 	public void testArticleNoVolIssue() throws IOException {
@@ -388,7 +388,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 
 	public void testRead_ArticleWithoutComma_OnlyJournal() throws IOException {
 		initLineReader(
-	    		"  JOURNAL   Plant Dis. In press\n"
+	    		"  JOURNAL   Plant Dis. (1998) In press \n"
 	    );
 		
 		Reference reference = lineReader.getCache().getReference();
@@ -402,7 +402,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNull(article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertNull(article.getYear());
+		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
 	}	
 	
 	public void testRead_ArticleWithoutComma_NoIssue() throws IOException {
