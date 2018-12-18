@@ -174,8 +174,8 @@ public enum ValidationUnit
 					Mol_typeFix.class,//exclude for master
 					SequenceToGapFeatureBasesFix.class,//exclude for master
 	    		    AssemblyTopologyFix.class,//exclude for master
-					AssemblySourceQualiferFix.class,//exclude for master
-					AssemblyLevelSubmitterReferenceFix.class,//exclude for master
+					//AssemblySourceQualiferFix.class,//exclude for master
+					//AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 					AssemblyFeatureRemoteLocationFix.class,//exclude for master
 	    		    JournalFix.class,//include for all
 	    		    AssemblyLevelEntryNameFix.class,

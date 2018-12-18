@@ -359,9 +359,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
-	   if(masterCache.containsKey(analysisId+"_"+analysisType))
+	   if(masterCache.containsKey(analysisId))
 	   {
-		   return masterCache.get(analysisId+"_"+analysisType);
+		   return masterCache.get(analysisId);
 	   }
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
@@ -510,7 +510,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		masterEntry.addFeature(sourceFeature);
 		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
 		masterEntry.setDescription(new Text(description));
-		masterCache.put(analysisId+"_"+analysisType,masterEntry);
+		masterCache.put(analysisId,masterEntry);
 		return masterEntry;
 	}
    

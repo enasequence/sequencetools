@@ -368,7 +368,10 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		{
 			analysisId=getAssemblyMaster(analysisId);
 		}
-		
+		if(!isEntryExists(analysisId))
+		{
+            return null;
+		}
 		if(masterEntryCache.get(analysisId)!=null)
 		{
 			return masterEntryCache.get(analysisId);
@@ -431,6 +434,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			DbUtils.closeQuietly(ps);
 		}
 		
+		masterEntryCache.put(analysisId, masterEntry);
 		return masterEntry;
 	}	
 

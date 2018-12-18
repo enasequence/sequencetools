@@ -87,7 +87,7 @@ public abstract class FileValidationCheck {
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
-	private PrintWriter fixedFileWriter =null;
+	protected PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
 	protected String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
@@ -202,13 +202,13 @@ public abstract class FileValidationCheck {
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,2,null));
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,2,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,1,null));
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,1,null));
 			break;
 		case ASSEMBLY_CONTIG:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,0,null));
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,0,null));
 			break;
 		default:
 			break;
@@ -336,10 +336,11 @@ public abstract class FileValidationCheck {
 		entry.addXRefs(masterEntry.getXRefs());
 		entry.setComment(masterEntry.getComment());
 		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+		//add chromosome qualifiers to entry
+
 		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
 		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
-		//add chromosome qualifiers to entry
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{
 

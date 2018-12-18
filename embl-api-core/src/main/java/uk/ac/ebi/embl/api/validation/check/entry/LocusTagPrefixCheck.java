@@ -52,23 +52,7 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
     	   return result;
        }
        
-       if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null
-    	  && !getEmblEntryValidationPlanProperty().analysis_id.get().isEmpty())
-       {
-    	   Entry masterEntry=getEntryDAOUtils().getMasterEntry(getEmblEntryValidationPlanProperty().analysis_id.get());
-    	   projectAccessions.addAll(masterEntry.getProjectAccessions());
-    	   List<XRef> masterXrefs= masterEntry.getXRefs();
-    	   
-    	   for(XRef xref:masterXrefs)
-    	   {
-    		   if("BioSample".equals(xref.getDatabase()))
-    		   {
-    			   samplePrefix=xref.getPrimaryAccession();
-    		   }
-    	   }
-    	   //Add a check : master entries should have project_acc/study_id
-       }
-       else if(entry.getProjectAccessions()!=null&&entry.getProjectAccessions().size()!=0)
+       if(entry.getProjectAccessions()!=null&&entry.getProjectAccessions().size()!=0)
        {
     	   projectAccessions.addAll(entry.getProjectAccessions());
        }

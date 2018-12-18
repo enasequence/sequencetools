@@ -18,6 +18,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
 @ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER })
@@ -63,6 +64,10 @@ public class AssemblySourceQualiferFix extends EntryValidationCheck
 		{
 			Entry masterEntry = getEntryDAOUtils().getMasterEntry(getEmblEntryValidationPlanProperty().analysis_id.get());
 			
+			if(masterEntry==null&&getEraproDAOUtils()!=null)
+			{
+				masterEntry = getEraproDAOUtils().getMasterEntry(getEmblEntryValidationPlanProperty().analysis_id.get(), Utils.getAnalysisType(getEmblEntryValidationPlanProperty().validationScope.get()));
+			}
 			SourceFeature source=null;
 			if(masterEntry!=null&&masterEntry.getPrimarySourceFeature()!=null)
 			{

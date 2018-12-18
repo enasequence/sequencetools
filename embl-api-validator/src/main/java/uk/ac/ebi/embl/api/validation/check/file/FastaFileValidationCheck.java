@@ -45,7 +45,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid=true;
-		
+		fixedFileWriter =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));

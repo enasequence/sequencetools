@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;

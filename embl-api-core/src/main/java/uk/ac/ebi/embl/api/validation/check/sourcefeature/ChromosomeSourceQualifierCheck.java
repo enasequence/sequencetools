@@ -63,7 +63,7 @@ public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 		
 		SourceFeature source = (SourceFeature) feature;
 		
-		if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null)
+		/*if(getEmblEntryValidationPlanProperty().analysis_id.get()!=null)
 		{
 			try
 			{
@@ -75,7 +75,7 @@ public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 			{
 				throw new ValidationEngineException(e);
 			}
-		}
+		}*/
 		int cnt = 0;
 			
 		if(source.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME)!=null)

@@ -267,7 +267,7 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
     		bw.write(String.format("%s\t%s\t%s\n", "COUNT","MESSAGE_KEY","MESSAGE"));
     		for(String key:messageStats.keySet())
     		{
-    			bw.write(String.format("%d\t%s\t%s\n", messageStats.get(key),key,ValidationMessageManager.getString(key)));
+    			bw.write(String.format("%d\t%s\t%s\n", messageStats.get(key).intValue(),key,ValidationMessageManager.getString(key)));
     		}
     	}		
     }

@@ -221,29 +221,24 @@ public class AGPValidationCheck extends EntryValidationCheck
 				} else {
 					
 					long sequenceLength =0l;
-					if (getEntryDAOUtils() == null)//if database connection is not available, then the following check doesn't work.
-					{
-
 						if (getEmblEntryValidationPlanProperty().isRemote.get()) 
 						{
 							if(getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() == 0) 
 							{
 								throw new ValidationEngineException("AssemblySequenceInfo must be given to validate AGP file");
 							}
-							else
-								if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 
-								{
-									if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id())==null)
+						}
+						if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 
+						{
+									if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id().toUpperCase())==null)
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
 									{
-										sequenceLength =  getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id()).getSequenceLength();
+										sequenceLength =  getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id().toUpperCase()).getSequenceLength();
 									}
-								}
-
 						}
-					}
-					else
+
+					else if(getEntryDAOUtils()!=null)
 					{
 						int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
 

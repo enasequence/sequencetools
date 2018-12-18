@@ -5,6 +5,7 @@ import java.io.File;
 public class SubmissionFile {
 
 	public enum FileType {
+		ASSEMBLY_INFO,
 		FASTA,
 		FLATFILE,
 		AGP,

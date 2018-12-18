@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.AssemblyinfoEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
@@ -87,6 +88,7 @@ public class SubmissionValidationPlan
 			check.validateDuplicateEntryNames();
 			check.validateSequencelessChromosomes();
 			throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
+			if(!options.isRemote)
 			registerSequences();
 		}
 		if(sequenceDB!=null)
@@ -172,21 +174,9 @@ public class SubmissionValidationPlan
 	
 	private void registerSequences() throws ValidationEngineException 
 	{
-		try {
-		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+AssemblySequenceInfo.fileName));
-		}catch(Exception e)
-		{
-			throw new ValidationEngineException("Failed to delete sequence info file: "+e.getMessage());
-		}
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.reportDir.get()+File.separator+AssemblySequenceInfo.fileName)))
-		{
-			oos.writeObject(FileValidationCheck.sequenceInfo);
-	               
-		}catch(Exception e)
-		{
-          throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage());
-		}
+		AssemblySequenceInfo.writeObject(FileValidationCheck.sequenceInfo,options.reportDir.get());
 	}
+	
 	
 	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
 	{
