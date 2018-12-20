@@ -79,6 +79,7 @@ public abstract class FileValidationCheck {
 	protected SubmissionReporter reporter=null;
 	private static final String REPORT_FILE_SUFFIX = ".report";
 	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+	public static List<String> chromosomeNames =new ArrayList<String>();
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
@@ -237,7 +238,8 @@ public abstract class FileValidationCheck {
 		throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
 
 	}
-
+	
+	
 	public String getDataclass(String entryName)
 	{
 		String dataclass=null;

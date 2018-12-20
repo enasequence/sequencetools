@@ -81,6 +81,8 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 				}
 				if(entry.getObjectName()!=null)
 					chromosomeNameQualifiers.put(entry.getObjectName(),entry.getQualifiers(taxonHelper.isChildOf(masterEntry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME), "Viruses")));
+				if(entry.getChromosomeName()!=null)
+					chromosomeNames.add(entry.getChromosomeName().toUpperCase());
 
 			}
 
