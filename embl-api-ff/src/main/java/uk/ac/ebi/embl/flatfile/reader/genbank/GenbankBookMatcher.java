@@ -43,7 +43,7 @@ public class GenbankBookMatcher extends FlatFileMatcher {
 			"([^\\:]+)?" + // book title
 			"\\s*\\:\\s*" +
 			"([^-;]+)?" + // first page
-			"\\s*\\-\\s*" +
+			"\\s*\\-?\\s*" +
 			"([^-;]+)?" + // last page
 			"\\s*\\;\\s*" +
 			"([^\\(\\)\\.]+)?" + // publisher
