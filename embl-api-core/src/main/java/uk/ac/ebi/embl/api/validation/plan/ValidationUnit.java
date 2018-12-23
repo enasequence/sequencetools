@@ -205,8 +205,8 @@ public enum ValidationUnit
 			),
 			UNLOCALISED_LIST_CHECKS
 			(
-				UnlocalisedListChromosomeValidationCheck.class,
-				UnlocalisedListObjectNameValidationCheck.class
+				//UnlocalisedListChromosomeValidationCheck.class,
+				//UnlocalisedListObjectNameValidationCheck.class
 			);
 				
 			

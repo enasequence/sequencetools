@@ -53,12 +53,16 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 			for(UnlocalisedEntry entry : unlocalisedEntries)
 			{
 				ValidationPlanResult result=plan.execute(entry);
+				result.append(validateValidChromosomeEntry(entry));
 				result.append(validateValidUnlocalisedEntry(entry));
-				result.append(validateValidUnlocalisedEntry(entry));
+				if(!result.isValid())
+				{
+				valid=false;
 				getReporter().writeToFile(getReportFile(submissionFile), result);
 				for(ValidationResult planResult: result.getResults())
 				{
 					addMessagekey(planResult);
+				}
 				}
 			}
 		}catch(Exception e)
@@ -78,7 +82,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		ValidationResult result = new ValidationResult();
 		if(unlocalisedEntry.getChromosomeName()!=null)
 		{
-			if(chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
+			if(chromosomeNames.size()!=0&&chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
 			{
 				ValidationMessage message = new ValidationMessage<>(Severity.ERROR, "UnlocalisedListChromosomeValidCheck",unlocalisedEntry.getChromosomeName());
 				result.append(message);
@@ -92,7 +96,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		ValidationResult result = new ValidationResult();
 		if(unlocalisedEntry.getObjectName()!=null)
 		{
-			if(entryNames.contains(unlocalisedEntry.getObjectName().toUpperCase()))
+			if(entryNames.size()!=0&&!entryNames.contains(unlocalisedEntry.getObjectName().toUpperCase()))
 			{
 				ValidationMessage message = new ValidationMessage<>(Severity.ERROR, "UnlocalisedListUnlocalisedValidCheck",unlocalisedEntry.getObjectName());
 				result.append(message);
