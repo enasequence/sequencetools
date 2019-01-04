@@ -79,6 +79,11 @@ public class SubmissionOptions
 			FileValidationCheck.duplicateEntryNames.clear();
 			FileValidationCheck.contigRangeMap.clear();
 			FileValidationCheck.chromosomeNames.clear();
+			FileValidationCheck.unplacedEntryNames.clear();
+			FileValidationCheck.contigEntryNames.clear();
+			FileValidationCheck.scaffoldEntryNames.clear();
+			FileValidationCheck.chromosomeEntryNames.clear();
+
 		}
 	}
 	

@@ -15,13 +15,21 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -89,7 +97,10 @@ public class SubmissionValidationPlan
 			check.validateSequencelessChromosomes();
 			throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
 			if(!options.isRemote)
+			{
 			registerSequences();
+			writeUnplacedList();
+			}
 		}
 		if(sequenceDB!=null)
 			sequenceDB.close();
@@ -174,7 +185,10 @@ public class SubmissionValidationPlan
 	
 	private void registerSequences() throws ValidationEngineException 
 	{
-		AssemblySequenceInfo.writeObject(FileValidationCheck.sequenceInfo,options.reportDir.get());
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
+		AssemblySequenceInfo.writeListObject(FileValidationCheck.chromosomeEntryNames,options.reportDir.get(),AssemblySequenceInfo.chromosomefileName);
+		AssemblySequenceInfo.writeListObject(FileValidationCheck.contigEntryNames,options.reportDir.get(),AssemblySequenceInfo.contigfileName);
+		AssemblySequenceInfo.writeListObject(FileValidationCheck.scaffoldEntryNames,options.reportDir.get(),AssemblySequenceInfo.scaffoldfileName);
 	}
 	
 	
@@ -227,6 +241,25 @@ public class SubmissionValidationPlan
   private long getSequencecount(int assemblyLevel)
   {
 	  return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==0).count();
+  }
+  
+  private void writeUnplacedList() throws IOException, ValidationEngineException
+  {
+
+	  try {
+		  Files.deleteIfExists(Paths.get(options.processDir.get(),"unplaced.txt"));
+	  }catch(Exception e)
+	  {
+		  throw new ValidationEngineException("Failed to delete unplaced file: "+e.getMessage());
+	  }
+	  try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.processDir.get()+File.separator+"unplaced.txt")))
+	  {
+		  oos.writeObject(FileValidationCheck.unplacedEntryNames);
+
+	  }catch(Exception e)
+	  {
+		  throw new ValidationEngineException("Failed to write unplaced file: "+e.getMessage());
+	  }
   }
 }
 

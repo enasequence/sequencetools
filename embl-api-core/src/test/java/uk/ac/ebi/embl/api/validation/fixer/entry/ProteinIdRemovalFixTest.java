@@ -92,13 +92,6 @@ public class ProteinIdRemovalFixTest
 		property.analysis_id.set("ERZ00001");
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(
-				entryDAOUtils.isAssemblyEntryUpdate(
-						check.getEmblEntryValidationPlanProperty().analysis_id
-								.get(), entry.getSubmitterAccession(), 0))
-				.andReturn(false);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
 		assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());	}
@@ -113,13 +106,6 @@ public class ProteinIdRemovalFixTest
 		property.analysis_id.set("ERZ00001");
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(
-				entryDAOUtils.isAssemblyEntryUpdate(
-						check.getEmblEntryValidationPlanProperty().analysis_id
-								.get(), entry.getSubmitterAccession(), 0))
-				.andReturn(false);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
 		assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());		
@@ -137,11 +123,6 @@ public class ProteinIdRemovalFixTest
 		property.analysis_id.set("ERZ00001");
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(entryDAOUtils.isAssemblyEntryUpdate(check.getEmblEntryValidationPlanProperty().analysis_id
-				.get(), entry.getSubmitterAccession(), 0)).andReturn(
-				true);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
 		assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());

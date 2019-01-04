@@ -238,26 +238,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 									}
 						}
 
-					else if(getEntryDAOUtils()!=null)
-					{
-						int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
-
-						ContigSequenceInfo contigSequenceInfo = null;
-
-						try {
-							contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(), getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel);
-						} catch (SQLException e) {
-							e.printStackTrace();
-							throw new ValidationEngineException(e);
-						}
-
-						if (null == contigSequenceInfo) 
-							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
-						else  
-							sequenceLength = contigSequenceInfo.getSequenceLength();
-					}
-
-						// Check that component coordinates are valid.
+					// Check that component coordinates are valid.
 
 					if (sequenceLength!=0 && (component_begin < 1 ||
 							component_begin > sequenceLength ||

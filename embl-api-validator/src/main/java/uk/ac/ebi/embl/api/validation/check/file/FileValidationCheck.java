@@ -84,7 +84,11 @@ public abstract class FileValidationCheck {
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
+	public static List<String> unplacedEntryNames =new ArrayList<String>();
 	public static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
+	public static List<String> contigEntryNames = new ArrayList<String>();
+	public static List<String> scaffoldEntryNames = new ArrayList<String>();
+	public static List<String> chromosomeEntryNames = new ArrayList<String>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
@@ -180,7 +184,9 @@ public abstract class FileValidationCheck {
 			}
 			else
 			{
+				unplacedEntryNames.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
+				
 			}
 		case transcriptome:
 			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
@@ -203,12 +209,15 @@ public abstract class FileValidationCheck {
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
-			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,2,null));
+			chromosomeEntryNames.add(entryName);
+            sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,2,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
+			scaffoldEntryNames.add(entryName);
 			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,1,null));
 			break;
 		case ASSEMBLY_CONTIG:
+			contigEntryNames.add(entryName);
 			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,0,null));
 			break;
 		default:

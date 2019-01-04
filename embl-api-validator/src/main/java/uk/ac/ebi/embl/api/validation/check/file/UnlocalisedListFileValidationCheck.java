@@ -15,7 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -64,6 +67,8 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 					addMessagekey(planResult);
 				}
 				}
+				if(!unplacedEntryNames.isEmpty())
+				unplacedEntryNames=unplacedEntryNames.stream().filter(x->!entry.getObjectName().toUpperCase().equals(x.toUpperCase())).collect(Collectors.toCollection(ArrayList::new));	
 			}
 		}catch(Exception e)
 		{
