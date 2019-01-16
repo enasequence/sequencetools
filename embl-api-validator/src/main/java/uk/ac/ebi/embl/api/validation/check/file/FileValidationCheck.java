@@ -352,6 +352,12 @@ public abstract class FileValidationCheck {
 		entry.setComment(masterEntry.getComment());
 		//add chromosome qualifiers to entry
 
+        if(Context.sequence == options.context.get()) {
+            if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
+                entry.setDataClass(Entry.STD_DATACLASS);
+        } else {
+            entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+        }
 		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
 		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
