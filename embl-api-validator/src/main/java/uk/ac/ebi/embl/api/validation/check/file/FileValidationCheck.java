@@ -77,7 +77,7 @@ public abstract class FileValidationCheck {
 
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
-	private static final String REPORT_FILE_SUFFIX = ".report";
+	public static final String REPORT_FILE_SUFFIX = ".report";
 	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
 	public static List<String> chromosomeNames =new ArrayList<String>();
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
@@ -94,7 +94,7 @@ public abstract class FileValidationCheck {
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
-	protected String masterFileName = "master.dat";
+	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
 	protected int sequenceCount = 0;
 
