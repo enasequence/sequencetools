@@ -102,7 +102,7 @@ public class AssemblySequenceInfo implements Serializable
 	        throw new ValidationEngineException("Assembly names registration failed: "+e.getMessage());
 			}
   }
-  
+
   public static List<String> getListObject(String inputDir,String fileName) throws ValidationEngineException
   {
 	     List<String> infoObject=null;
@@ -118,5 +118,40 @@ public class AssemblySequenceInfo implements Serializable
 			
 			return infoObject;
   }
-  
+
+
+	public static void writeObject(Object o,String outputDir,String fileName) throws ValidationEngineException
+	{
+
+		try {
+			Files.deleteIfExists(Paths.get(outputDir+File.separator+fileName));
+		}catch(Exception e)
+		{
+			throw new ValidationEngineException("Failed to delete file: "+fileName+"\n"+e.getMessage());
+		}
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputDir+File.separator+fileName)))
+		{
+			oos.writeObject(o);
+
+		}catch(Exception e)
+		{
+			throw new ValidationEngineException("Assembly names registration failed: "+e.getMessage());
+		}
+	}
+
+	public static Object getObject(String inputDir,String fileName) throws ValidationEngineException
+	{
+		Object infoObject=null;
+
+		try(ObjectInputStream  oos = new ObjectInputStream (new FileInputStream(inputDir+File.separator+fileName)))
+		{
+			infoObject=  oos.readObject();
+
+		}catch(Exception e)
+		{
+			throw new ValidationEngineException("Failed to read assembly names information: "+fileName+"\n"+e.getMessage());
+		}
+
+		return infoObject;
+	}
 }

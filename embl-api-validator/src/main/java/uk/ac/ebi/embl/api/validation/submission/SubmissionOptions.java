@@ -69,6 +69,7 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
+		FileValidationCheck.setSequenceCount(0);
 		if(context.get()==Context.genome)
 		{
 			FileValidationCheck.sequenceInfo.clear();

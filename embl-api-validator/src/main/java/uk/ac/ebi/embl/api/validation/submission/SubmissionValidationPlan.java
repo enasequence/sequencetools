@@ -101,6 +101,8 @@ public class SubmissionValidationPlan
 			registerSequences();
 			writeUnplacedList();
 			}
+		} else {
+			writeSequenceInfo();
 		}
 		if(sequenceDB!=null)
 			sequenceDB.close();
@@ -189,6 +191,11 @@ public class SubmissionValidationPlan
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.chromosomeEntryNames,options.reportDir.get(),AssemblySequenceInfo.chromosomefileName);
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.contigEntryNames,options.reportDir.get(),AssemblySequenceInfo.contigfileName);
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.scaffoldEntryNames,options.reportDir.get(),AssemblySequenceInfo.scaffoldfileName);
+	}
+
+	private void writeSequenceInfo() throws ValidationEngineException
+	{
+		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 	
 	

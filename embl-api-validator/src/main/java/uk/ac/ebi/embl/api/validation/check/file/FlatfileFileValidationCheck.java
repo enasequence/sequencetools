@@ -87,7 +87,13 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             	else
             		collectContigInfo(entry);
             }
-			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+            if(Context.sequence == options.context.get()) {
+				if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
+					entry.setDataClass(Entry.STD_DATACLASS);
+			} else {
+				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+			}
+
    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
