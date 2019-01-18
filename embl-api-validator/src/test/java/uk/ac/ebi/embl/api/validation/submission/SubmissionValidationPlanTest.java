@@ -128,7 +128,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_AnnotationOnlyandSequenceFlatfile.txt", FileType.FLATFILE).getFile()));
-		String fixedannotationOnlyflatfile = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/valid_AnnotationOnlyandSequenceFlatfile.txt.fixed.annotationOnly").getPath().replaceAll("%20", " ");
+		String fixedannotationOnlyflatfile = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/valid_AnnotationOnlyandSequenceFlatfile.txt.annotationOnly.fixed").getPath().replaceAll("%20", " ");
 		String expectedannotationOnlyflatfile = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/valid_AnnotationOnlyandSequenceFlatfile.txt.annotationOnly.expected").getPath().replaceAll("%20", " ");
 		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
 		FlatFileComparator comparator=new FlatFileComparator(options);

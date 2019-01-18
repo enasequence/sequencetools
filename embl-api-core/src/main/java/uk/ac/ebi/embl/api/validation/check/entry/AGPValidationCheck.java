@@ -221,48 +221,24 @@ public class AGPValidationCheck extends EntryValidationCheck
 				} else {
 					
 					long sequenceLength =0l;
-					if (getEntryDAOUtils() == null)//if database connection is not available, then the following check doesn't work.
-					{
-
 						if (getEmblEntryValidationPlanProperty().isRemote.get()) 
 						{
 							if(getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() == 0) 
 							{
 								throw new ValidationEngineException("AssemblySequenceInfo must be given to validate AGP file");
 							}
-							else
-								if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 
-								{
-									if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id())==null)
+						}
+						if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 
+						{
+									if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id().toUpperCase())==null)
 										reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
 									else
 									{
-										sequenceLength =  getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id()).getSequenceLength();
+										sequenceLength =  getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().get(agpRow.getComponent_id().toUpperCase()).getSequenceLength();
 									}
-								}
-
-						}
-					}
-					else
-					{
-						int assemblyLevel = getEmblEntryValidationPlanProperty().validationScope.get().getAssemblyLevel();
-
-						ContigSequenceInfo contigSequenceInfo = null;
-
-						try {
-							contigSequenceInfo = getEntryDAOUtils().getSequenceInfoBasedOnEntryName(agpRow.getComponent_id(), getEmblEntryValidationPlanProperty().analysis_id.get(), assemblyLevel);
-						} catch (SQLException e) {
-							e.printStackTrace();
-							throw new ValidationEngineException(e);
 						}
 
-						if (null == contigSequenceInfo) 
-							reportError(agpRow.getOrigin(), MESSAGE_KEY_COMPONENT_VALID_ERROR, agpRow.getComponent_id());
-						else  
-							sequenceLength = contigSequenceInfo.getSequenceLength();
-					}
-
-						// Check that component coordinates are valid.
+					// Check that component coordinates are valid.
 
 					if (sequenceLength!=0 && (component_begin < 1 ||
 							component_begin > sequenceLength ||

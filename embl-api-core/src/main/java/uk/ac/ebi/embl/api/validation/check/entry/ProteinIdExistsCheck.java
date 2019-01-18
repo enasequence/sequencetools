@@ -51,21 +51,6 @@ public class ProteinIdExistsCheck extends EntryValidationCheck {
 			return result;
 		}
 
-		EntryDAOUtils entryDAOUtils = getEntryDAOUtils();
-		boolean isEntryUpdate=false;
-		try{
-			isEntryUpdate=entryDAOUtils.isAssemblyEntryUpdate(
-				getEmblEntryValidationPlanProperty().analysis_id.get(),
-				entry.getSubmitterAccession(),assemblyLevel);
-		}catch(SQLException e)
-		{
-			throw new ValidationEngineException(e);
-		}
-
-		if (isEntryUpdate)
-			return result;
-
-		
 			for (Feature feature : entry.getFeatures()) {
 
 				if (feature.getQualifiers(Qualifier.PROTEIN_ID_QUALIFIER_NAME) != null

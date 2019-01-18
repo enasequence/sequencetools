@@ -77,21 +77,26 @@ public abstract class FileValidationCheck {
 
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
-	private static final String REPORT_FILE_SUFFIX = ".report";
+	public static final String REPORT_FILE_SUFFIX = ".report";
 	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+	public static List<String> chromosomeNames =new ArrayList<String>();
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
+	public static List<String> unplacedEntryNames =new ArrayList<String>();
 	public static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
+	public static List<String> contigEntryNames = new ArrayList<String>();
+	public static List<String> scaffoldEntryNames = new ArrayList<String>();
+	public static List<String> chromosomeEntryNames = new ArrayList<String>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
-	private PrintWriter fixedFileWriter =null;
+	protected PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
-	protected String masterFileName = "master.dat";
+	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
-	protected int sequenceCount = 0;
+	protected static int sequenceCount = 0;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -112,7 +117,11 @@ public abstract class FileValidationCheck {
 		return options;
 	}
 
-	public int getSequenceCount() {
+	public static void setSequenceCount(int seqCount) {
+		sequenceCount = seqCount;
+	}
+
+	public static int getSequenceCount() {
 		return sequenceCount;
 	}
 
@@ -179,7 +188,9 @@ public abstract class FileValidationCheck {
 			}
 			else
 			{
+				unplacedEntryNames.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
+				
 			}
 		case transcriptome:
 			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
@@ -202,13 +213,16 @@ public abstract class FileValidationCheck {
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,2,null));
+			chromosomeEntryNames.add(entryName);
+            sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,2,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,1,null));
+			scaffoldEntryNames.add(entryName);
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,1,null));
 			break;
 		case ASSEMBLY_CONTIG:
-			sequenceInfo.put(entryName,new AssemblySequenceInfo(sequenceLength,0,null));
+			contigEntryNames.add(entryName);
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,0,null));
 			break;
 		default:
 			break;
@@ -237,7 +251,8 @@ public abstract class FileValidationCheck {
 		throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
 
 	}
-
+	
+	
 	public String getDataclass(String entryName)
 	{
 		String dataclass=null;
@@ -312,7 +327,7 @@ public abstract class FileValidationCheck {
 	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
 
-		if(Context.sequence==getOptions().context.get())
+		if(Context.sequence == getOptions().context.get())
 		{
 			try
 			{
@@ -335,11 +350,17 @@ public abstract class FileValidationCheck {
 		entry.addProjectAccessions(masterEntry.getProjectAccessions());
 		entry.addXRefs(masterEntry.getXRefs());
 		entry.setComment(masterEntry.getComment());
-		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+		//add chromosome qualifiers to entry
+
+        if(Context.sequence == options.context.get()) {
+            if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
+                entry.setDataClass(Entry.STD_DATACLASS);
+        } else {
+            entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+        }
 		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
 		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
-		//add chromosome qualifiers to entry
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{
 
@@ -349,9 +370,16 @@ public abstract class FileValidationCheck {
 									: ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,
 											entry);
 		}
+		if(Context.transcriptome == options.context.get()) {
+			entry.getSequence().setVersion(1);
+			Order<Location> order = new Order<Location>();
+			order.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
+			entry.getPrimarySourceFeature().setLocations(order);
+			if(entry.getSubmitterAccession() != null) {
+				entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
+			}
 
-		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.transcriptome)
-			entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
+		}
 
 	}
 
@@ -437,6 +465,11 @@ public abstract class FileValidationCheck {
 	}
 
 	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException {
+		entry.removeReferences();
+		entry.removeProjectAccessions();
+		entry.addProjectAccession(new Text(options.getProjectId()));
+		entry.getSequence().setVersion(1);
+		entry.setStatus(Entry.Status.PRIVATE);
 		if(!getOptions().isRemote)
 		{
 			Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());

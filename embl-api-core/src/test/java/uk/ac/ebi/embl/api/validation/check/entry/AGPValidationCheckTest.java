@@ -23,16 +23,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.ebi.embl.api.entry.AgpRow;
-import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
@@ -104,15 +102,14 @@ public class AGPValidationCheckTest
 		validGaprow1.setGap_length(24l);
 		validGaprow1.setGap_type("scaffold");
 		validGaprow1.setLinkageevidence(linkageEvidences);
-		ContigSequenceInfo sequenceInfo=new ContigSequenceInfo();
-		sequenceInfo.setSequenceLength(400);
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_contig_209591".toUpperCase(), sequenceInfo);
 		entry.getSequence().addAgpRow(validComponentrow1);
 		entry.getSequence().addAgpRow(validGaprow1);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_contig_209591", "ERZ00001",2)).andReturn(sequenceInfo);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
 		ValidationResult result = check.check(entry);
 		assertTrue(result.isValid());
@@ -145,14 +142,15 @@ public class AGPValidationCheckTest
 		inValidComponentrow1.setComponent_end(330l);
 		inValidComponentrow1.setComponent_id("IWGSC_CSS_6DL_contig_209591");
 		inValidComponentrow1.setOrientation("#");
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_contig_209592".toUpperCase(), sequenceInfo);
 		entry.getSequence().addAgpRow(inValidComponentrow1);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_contig_209591", "ERZ00001",2)).andReturn(null);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult result = check.check(entry);
 		assertEquals(4, result.getMessages().size());
 		assertEquals(1, result.count("AGPValidationCheck-3", Severity.ERROR));

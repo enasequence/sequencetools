@@ -77,6 +77,7 @@ public class TemplateEntryProcessor {
         EntryReader entryReader = new EmblEntryReader(stringReader);
         entryReader.read();
         Entry entry = entryReader.getEntry();
+        entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceNumber()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
         List<Text> kewordsL = entry.getKeywords();
@@ -123,11 +124,11 @@ public class TemplateEntryProcessor {
             }
         } else
             entry.setDataClass(Entry.STD_DATACLASS);
-        if (this.templateInfo.getAnalysisId() != null && !this.templateInfo.getAnalysisId().isEmpty()) {
+       /* if (this.templateInfo.getAnalysisId() != null && !this.templateInfo.getAnalysisId().isEmpty()) {
             Reference reference = getReferences();
             if (reference != null)
                 entry.getReferences().add(reference);
-        }
+        }*/
         templateProcessorResultSet.getValidationPlanResult().append((validationPlan.execute(entry)));
         validateSediment(templateProcessorResultSet, templateVariables);
         validateMarker(templateProcessorResultSet, templateVariables);

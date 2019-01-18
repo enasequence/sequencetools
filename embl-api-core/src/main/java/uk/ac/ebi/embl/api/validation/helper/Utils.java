@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.helper;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.AccessionMatcher;
+import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -1262,4 +1263,20 @@ public class Utils {
 		}
 		return expandedAccessions;
 	}
+	
+  public static AnalysisType getAnalysisType(ValidationScope scope)
+  {
+	  switch(scope)
+	  {
+	  case ASSEMBLY_TRANSCRIPTOME:
+		  return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
+	  case ASSEMBLY_CHROMOSOME:
+	  case ASSEMBLY_CONTIG:
+	  case ASSEMBLY_SCAFFOLD:
+	  case ASSEMBLY_MASTER:
+		  return AnalysisType.SEQUENCE_ASSEMBLY;
+		  default :
+			  return null;
+	  }
+  }
 }

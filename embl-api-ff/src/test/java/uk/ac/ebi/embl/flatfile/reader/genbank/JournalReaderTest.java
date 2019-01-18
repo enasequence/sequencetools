@@ -68,26 +68,6 @@ public class JournalReaderTest extends GenbankReaderTest {
 		);
 		ValidationResult result = (new JournalReader(lineReader)).read(entry);
 		assertEquals(1, result.count("RL.16", Severity.ERROR));
-	}		
-	
-	public void testRead_BookNoFirstPage() throws IOException {
-		initLineReader(
-				 "  JOURNAL   (in) Engberg J., Klenow H.., Leick V. (Eds.);\n" +
-			     "            SPECIFIC EUKARYOTIC GENES:-132;\n" +
-			     "            Munksgaard, Copenhagen (1979).\n"
-		);
-		ValidationResult result = (new JournalReader(lineReader)).read(entry);
-		assertEquals(1, result.count("RL.17", Severity.ERROR));
-	}		
-	
-	public void testRead_BookNoLastPage() throws IOException {
-		initLineReader(
-				 "  JOURNAL   (in) Engberg J., Klenow H.., Leick V. (Eds.);\n" +
-			     "            SPECIFIC EUKARYOTIC GENES:117-;\n" +
-			     "            Munksgaard, Copenhagen (1979).\n"
-		);
-		ValidationResult result = (new JournalReader(lineReader)).read(entry);
-		assertEquals(1, result.count("RL.18", Severity.ERROR));
 	}
 	
 	public void testRead_BookNoPublisher() throws IOException {

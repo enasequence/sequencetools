@@ -69,6 +69,7 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
+		FileValidationCheck.setSequenceCount(0);
 		if(context.get()==Context.genome)
 		{
 			FileValidationCheck.sequenceInfo.clear();
@@ -78,6 +79,12 @@ public class SubmissionOptions
 			FileValidationCheck.contigRangeMap.clear();
 			FileValidationCheck.duplicateEntryNames.clear();
 			FileValidationCheck.contigRangeMap.clear();
+			FileValidationCheck.chromosomeNames.clear();
+			FileValidationCheck.unplacedEntryNames.clear();
+			FileValidationCheck.contigEntryNames.clear();
+			FileValidationCheck.scaffoldEntryNames.clear();
+			FileValidationCheck.chromosomeEntryNames.clear();
+
 		}
 	}
 	

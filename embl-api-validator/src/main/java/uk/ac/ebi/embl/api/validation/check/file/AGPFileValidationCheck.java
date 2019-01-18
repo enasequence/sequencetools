@@ -49,6 +49,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid=true;
 		ValidationPlan validationPlan =null;
+		fixedFileWriter=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -155,11 +156,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
 
-				reader.read();
+				ValidationResult result=reader.read();
 				int i=1;
 
 				while(reader.isEntry())
 				{
+					if(result.isValid())
+					{
 					agpEntryNames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
 
 					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
@@ -171,7 +174,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						}
 						i++;
 					}
-					reader.read();
+					}
+				result=reader.read();
 				}
 
 			}catch(Exception e)

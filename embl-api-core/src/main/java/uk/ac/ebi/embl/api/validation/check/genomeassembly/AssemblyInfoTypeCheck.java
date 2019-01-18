@@ -15,8 +15,12 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
-import org.apache.commons.lang.ArrayUtils;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import org.apache.commons.lang.enums.EnumUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -24,16 +28,19 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 @Description("Invalid assembly type : {0}")
 public class AssemblyInfoTypeCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
-   private final String MESSAGE_KEY_ASSEMBLY_TYPE_ERROR = "AssemblyinfoAssemblyTypeCheck";
+	private final String MESSAGE_KEY_ASSEMBLY_TYPE_ERROR = "AssemblyinfoAssemblyTypeCheck";
 
-   @Override
+	@Override
 	public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException
 	{
+
 		if (entry == null||entry.getAssemblyType()==null)
 			return result;
-		String[] assmemblyTypes = new String[] {"CLONE OR ISOLATE","PRIMARY METAGENOME","BINNED METAGENOME","METAGENOME-ASSEMBLED GENOME (MAG)","ENVIRONMENTAL SINGLE-CELL AMPLIFIED GENOME (SAG)"};
-		if(!ArrayUtils.contains(assmemblyTypes, entry.getAssemblyType().toUpperCase()))
-		  reportError(entry.getOrigin(), MESSAGE_KEY_ASSEMBLY_TYPE_ERROR, entry.getAssemblyType());
+		if(!Arrays.stream(AssemblyType.class.getEnumConstants()).filter(x->entry.getAssemblyType().toUpperCase().equals(x.getValue())).findAny().isPresent())
+		{
+			reportError(entry.getOrigin(), MESSAGE_KEY_ASSEMBLY_TYPE_ERROR, entry.getAssemblyType());
+		}
+
 		return result;
 	}
 }

@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 @Description("CO line/foreign entry \"{0}\" doesn't exist." + "CO line Contig entry location \"{0}\" is not within entry \"{1}\" sequence length"
 		+ "Invalid Contig location \"{0}\" in CO line"
 		+ "gaps with /linkage_evidence=\"paired-ends\" are not allowed at the beginning or end of CO Join")
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CONTIG})
 public class EntryContigsCheck extends EntryValidationCheck
 {
 

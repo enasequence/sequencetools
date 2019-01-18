@@ -128,7 +128,7 @@ public class AccessionMatcher {
             }
         } else if ( Entry.TPX_DATACLASS.equals(dataClass)) {
             accnPrefix = getPrefix(getTpxPrimaryAccMatcher(primaryAccession), 1);
-        } else if ( Entry.WGS_DATACLASS.equals(dataClass)) {
+        } else if ( Entry.WGS_DATACLASS.equals(dataClass) || Entry.TSA_DATACLASS.equals(dataClass)) {
             accnPrefix = getPrefix(getOldWgsAccMatcher(primaryAccession), 1);
             if(accnPrefix == null) {
                 accnPrefix = getPrefix(getNewWgsAccMatcher(primaryAccession), 1);

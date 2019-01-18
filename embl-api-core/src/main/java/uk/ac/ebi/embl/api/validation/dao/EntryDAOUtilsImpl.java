@@ -11,16 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.StringUtils;
-import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -30,9 +23,6 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table;
-import uk.ac.ebi.embl.api.validation.cvtable.cv_fqual_value_fix_table.cv_fqual_value_fix_record;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
@@ -52,79 +42,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	{
 		this.connection=connection;
 	}
-	@Override
-	public String getPrimaryAcc(String analysisId,
-								String objectName,
-								int assemblyLevel) throws SQLException
-	{
-		String sql = "select assigned_acc from gcs_sequence where assembly_id = ? and upper(object_name) = upper(?) and assembly_level = ?";
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		String sequenceAccession=null;
-		
-		if(analysisId==null||objectName==null||connection==null)
-			return null;
-		try
-		{
-			stmt = connection.prepareStatement(sql);
-			stmt.setString(1, analysisId);
-			stmt.setString(2, objectName);
-			stmt.setInt(3, assemblyLevel);
-			rs = stmt.executeQuery();
-			
-			if(rs.next())	
-			{
-				sequenceAccession = rs.getString(1);
-			}
-			
-		  return sequenceAccession;
-		}
-		catch (SQLException ex)
-		{
-			throw new SQLException();
-		}
-		finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(stmt);
-		}
-		
-	}
-	
-	@Override
-	public String getDataclass(String analysisId,
-			                   String objectName,
-			                   int assemblyLevel) throws SQLException
-	{
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			String primaryAcc = getPrimaryAcc(analysisId, objectName, assemblyLevel);
-
-			if (primaryAcc == null)
-				return null;
-
-			else
-			{
-				String sql = "select dataclass from dbentry where primaryacc#=?";
-				pstmt = connection.prepareStatement(sql);
-				pstmt.setString(1, primaryAcc);
-				rs = pstmt.executeQuery();
-				if (rs.next())
-				{
-					return rs.getString(1);
-				}
-			}
-		} finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(pstmt);
-		}
-
-		return null;
-	}
-	
 	@Override
 	public byte[] getSequence(String primaryAcc)
 			throws SQLException, IOException
@@ -162,43 +79,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			}
 		}
 		return null;
-	}
-	
-	@Override
-	public ContigSequenceInfo getSequenceInfoBasedOnEntryName(String entry_name,String analysisID, int assemblyLevel)
-			throws SQLException
-	{
-		String sql =
-				"select assigned_acc,sequence_length from gcs_sequence where upper(object_name) = upper(?) and gcs_sequence.assembly_id = ? and gcs_sequence.assembly_level < ?";
-
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try
-		{
-			stmt = connection.prepareStatement(sql);
-			stmt.setString(	1,entry_name);
-			stmt.setString(	2,analysisID);
-			stmt.setInt(3,assemblyLevel);
-			rs = stmt.executeQuery();
-
-			if (!rs.next())
-			{
-				return null;
-			}
-
-			String accession = rs.getString(1);
-			int seqLen = rs.getInt(2);
-			ContigSequenceInfo sequenceInfo = new ContigSequenceInfo();
-			sequenceInfo.setPrimaryAccession(accession);
-			sequenceInfo.setSequenceVersion(1);
-			sequenceInfo.setSequenceLength(seqLen);
-			return sequenceInfo;
-		}
-		finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(stmt);
-		}
 	}
 	
 	@Override
@@ -368,7 +248,10 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		{
 			analysisId=getAssemblyMaster(analysisId);
 		}
-		
+		if(!isEntryExists(analysisId))
+		{
+            return null;
+		}
 		if(masterEntryCache.get(analysisId)!=null)
 		{
 			return masterEntryCache.get(analysisId);
@@ -431,6 +314,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			DbUtils.closeQuietly(ps);
 		}
 		
+		masterEntryCache.put(analysisId, masterEntry);
 		return masterEntry;
 	}	
 
@@ -503,78 +387,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		}
 	}
 
-	@Override
-	public boolean isAssemblyLevelExists(String analysisId, int assembly_level) throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		try
-		{
-			ps = connection.prepareStatement("select 1 from gcs_sequence where assembly_id=? and assembly_level=?");
-			ps.setString(1, analysisId);
-			ps.setInt(2,assembly_level);
-			rs = ps.executeQuery();
-			if (rs.next())
-			{
-				return true;
-			}
 
-			return false;
-		} finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-	}
-	
-	@Override
-	public boolean isAssemblyLevelObjectNameExists(String assembly_id,String entry_name,int assemblyLevel) throws SQLException
-	{
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		try
-		{
-			ps = connection.prepareStatement("select 1 from gcs_sequence where assembly_id=? and object_name=? and assembly_level=?");
-			ps.setString(1, assembly_id);
-			ps.setString(2, entry_name);
-			ps.setInt(3,assemblyLevel);
-			rs = ps.executeQuery();
-			if (rs.next())
-			{
-				return true;
-			}
-
-			return false;
-		} finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-	}
-	
-	@Override
-	public boolean isAssemblyEntryUpdate(String assembly_id,String entry_name,int assemblyLevel) throws SQLException
-	{
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		try
-		{
-			ps = connection.prepareStatement("select 1 from dbentry where primaryacc# in (select assigned_acc from gcs_sequence where assembly_id=? and assembly_level=? and object_name=?)");
-			ps.setString(1, assembly_id);
-			ps.setInt(2,assemblyLevel);
-			ps.setString(3, entry_name);
-			rs = ps.executeQuery();
-			if (rs.next())
-			{
-				return true;
-			}
-
-			return false;
-		} finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-	}
 	
 	@Override
 	public boolean isProjectValid(String project) throws SQLException
@@ -733,35 +546,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	}
 
 	@Override
-	public String getAssemblyEntryAccession(String remoteAccession,String assemblyId) throws SQLException
-	{
-		if(remoteAccession==null)
-			return null;
-		 String sql=	"select acc from gcs_sequence where assembly_id= ? and object_name=? or assigned_acc = ?";
-		  ResultSet rs = null;
-		  PreparedStatement ps = null;
-			try
-			{
-				ps = connection.prepareStatement(sql);
-				ps.setString(1,assemblyId);
-				ps.setString(2,remoteAccession);
-				ps.setString(3,remoteAccession);
-				rs = ps.executeQuery();
-				if(rs.next())
-				{
-	    			return rs.getString(1);
-				}
-			}finally
-			{
-				DbUtils.closeQuietly(rs);
-				DbUtils.closeQuietly(ps);
-			}
-			
-			
-		  return null;
-	}
-	
-	@Override
 	public boolean isAssemblyUpdateSupported (String analysisId) throws SQLException
 	{
 		String query = "select gcs_pkg.is_update_supported(?) from dual";
@@ -798,105 +582,8 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
            return true;
 		}
 	}
-	public String associate_unlocalised_list_acc (String objectName, int assembly_level,String analysisId) throws SQLException
-	{
-		String selectSql = "select primaryacc#, "
-				+ "sequence_version "
-				+ "from dbentry "
-				+ "join gcs_sequence on (primaryacc# = gcs_sequence.assigned_acc and upper(gcs_sequence.object_name) = upper(?) and gcs_sequence.assembly_id = ? and gcs_sequence.assembly_level < ?)";
 
-		String acc = null;
-		Integer seqVersion = null;
-
-		try(PreparedStatement selecstmt = connection.prepareStatement(selectSql))
-		{
-			
-			selecstmt.setString(1, objectName);
-			selecstmt.setString(2, analysisId);
-			selecstmt.setInt(3, assembly_level);
-			try(ResultSet rs = selecstmt.executeQuery();)
-			{
-			if (rs.next())
-			{
-				acc = rs.getString("primaryacc#");
-				seqVersion = rs.getInt("sequence_version");
-				if (acc != null && seqVersion != null)
-				{
-					return acc + "." + seqVersion;
-				}
-			}
-			}
-		} 
-		return null;
-	}
 	
-	@Override
-	public void registerSequences(List<String> sequences,String analysisId,int assemblyLevel) throws SQLException
-	{
-		AtomicInteger  assemblyOrder = new AtomicInteger(1);
-		int batchSize = 1000;
 
-		String sql = "insert into gcs_sequence (assembly_id, object_name, assembly_level, assembly_order) values (?, ?, ?, ?)";
-
-		try(PreparedStatement ps = connection.prepareStatement(sql);)
-		{
-			AtomicInteger  batchCount = new AtomicInteger(0);
-			sequences.forEach((objectName)->
-		    {
-		    	
-			try{
-				if(getAssemblysequences(analysisId).search(1,(k,v)->{
-					return k.equals(StringUtils.removeEnd(objectName, ";"))&&v==assemblyLevel? true:false;
-				}))
-					return;
-				ps.setString(1, analysisId);
-				ps.setString(2, StringUtils.removeEnd(objectName, ";"));
-				ps.setInt(3, assemblyLevel);
-				ps.setInt(4, assemblyOrder.get());
-				assemblyOrder.getAndIncrement();
-				ps.addBatch();
-				batchCount.getAndIncrement();
-
-				if (batchCount.get() >= batchSize)
-				{
-					ps.executeBatch();
-					ps.clearBatch();
-					batchCount.set(0);
-				}
-			}
-				catch(Exception e)
-				{
-					throw new RuntimeException(e);
-				}
-			});
-
-			if (batchCount.get() > 0)
-			{
-				ps.executeBatch();
-				ps.clearBatch();
-			}
-		} 
-	}
-	
-	@Override
-	public ConcurrentHashMap<String,Integer> getAssemblysequences(String analysisId) throws SQLException
-	{
-		if(!objectNameCache.isEmpty())
-			return objectNameCache;
-		String assemblySequencesQuery = "select object_name,assembly_level from gcs_sequence where assembly_id=?";
-		try(PreparedStatement pstsmt =connection.prepareStatement(assemblySequencesQuery))
-		{
-			pstsmt.setString(1, analysisId);
-			try(ResultSet rs = pstsmt.executeQuery();)
-			{
-			while(rs.next())
-			{
-				objectNameCache.put(rs.getString("object_name"), rs.getInt("assembly_level"));
-			}
-			return objectNameCache;
-			}
-		} 
-
-	}
   
 }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
@@ -82,6 +81,8 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 				}
 				if(entry.getObjectName()!=null)
 					chromosomeNameQualifiers.put(entry.getObjectName(),entry.getQualifiers(taxonHelper.isChildOf(masterEntry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME), "Viruses")));
+				if(entry.getChromosomeName()!=null)
+					chromosomeNames.add(entry.getChromosomeName().toUpperCase());
 
 			}
 

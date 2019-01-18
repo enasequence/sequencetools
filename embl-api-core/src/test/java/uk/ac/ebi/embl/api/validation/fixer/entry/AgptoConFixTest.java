@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.ContigSequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
@@ -39,6 +40,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.easymock.EasyMock.createMock;
@@ -105,15 +107,16 @@ public class AgptoConFixTest {
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
 		gaprow.setLinkageevidence(linkageEvidences);
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_contig_209591".toUpperCase(), sequenceInfo);
 		entry.getSequence().addAgpRow(Componentrow);
 		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_scaff_3330715", "ERZ00001",2)).andReturn(null);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 		check.check(entry);
 		List<Feature> assemblyGap_features=SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
 		assertEquals(0, assemblyGap_features.size());
@@ -147,19 +150,16 @@ public class AgptoConFixTest {
 		gaprow.setGap_type("scaffold");
 		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
-		
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_scaff_3330715".toUpperCase(), sequenceInfo);		
 		entry.getSequence().addAgpRow(Componentrow);
 		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
-		ContigSequenceInfo contigSequenceInfo=new ContigSequenceInfo();
-		contigSequenceInfo.setPrimaryAccession("CDRE01000271");
-		contigSequenceInfo.setSequenceVersion(1);
-		contigSequenceInfo.setSequenceLength(331);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_scaff_3330715", "ERZ00001",2)).andReturn(contigSequenceInfo);
-		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 	    check.check(entry);
 		assertEquals(2,entry.getSequence().getContigs().size());
@@ -228,20 +228,16 @@ public class AgptoConFixTest {
 		gaprow.setGap_type("scaffold");
 		gaprow.setLinkage("YES");
 		gaprow.setLinkageevidence(linkageEvidences);
-		
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_scaff_3330715".toUpperCase(), sequenceInfo);	
 		entry.getSequence().addAgpRow(Componentrow);
 		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
-		ContigSequenceInfo contigSequenceInfo=new ContigSequenceInfo();
-		contigSequenceInfo.setPrimaryAccession("CDRE01000271");
-		contigSequenceInfo.setSequenceVersion(1);
-		contigSequenceInfo.setSequenceLength(331);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_scaff_3330715", "ERZ00001",2)).andReturn(contigSequenceInfo);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
 	    check.check(entry);
 		assertEquals(2,entry.getSequence().getContigs().size());
 
@@ -306,21 +302,17 @@ public class AgptoConFixTest {
 		gaprow.setComponent_type_id("N");
 		gaprow.setGap_length(24l);
 		gaprow.setGap_type("scaffold");
-		
+		HashMap<String, AssemblySequenceInfo> assemblyseqinfo = new HashMap<String,AssemblySequenceInfo>();
+		AssemblySequenceInfo sequenceInfo=new AssemblySequenceInfo(400,2,null);
+		assemblyseqinfo.put("IWGSC_CSS_6DL_scaff_3330715".toUpperCase(), sequenceInfo);
 		entry.getSequence().addAgpRow(Componentrow);
 		entry.getSequence().addAgpRow(gaprow);
 		planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		planProperty.fileType.set(FileType.AGP);
 		planProperty.analysis_id.set("ERZ00001");
+		planProperty.assemblySequenceInfo.set(assemblyseqinfo);
 		check.setEmblEntryValidationPlanProperty(planProperty);
-		ContigSequenceInfo contigSequenceInfo=new ContigSequenceInfo();
-		contigSequenceInfo.setPrimaryAccession("CDRE01000271");
-		contigSequenceInfo.setSequenceVersion(1);
-		contigSequenceInfo.setSequenceLength(331);
-		expect(entryDAOUtils.getSequenceInfoBasedOnEntryName("IWGSC_CSS_6DL_scaff_3330715", "ERZ00001",2)).andReturn(contigSequenceInfo);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
-	    check.check(entry);
+		check.check(entry);
 		assertEquals(2,entry.getSequence().getContigs().size());
 
 		//contig1

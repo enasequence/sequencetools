@@ -671,7 +671,7 @@ public class SequenceEntryUtils {
 		return sourceQualifiers;
 	}
 	
-	public static String generateMasterEntryDescription(SourceFeature source)
+	public static String generateMasterEntryDescription(SourceFeature source, AnalysisType analysisType)
 	{
 		
 		String strainValue=source.getSingleQualifierValue(Qualifier.STRAIN_QUALIFIER_NAME);
@@ -687,7 +687,11 @@ public class SequenceEntryUtils {
 		boolean includeIsolate=!hasStrain&&hasIsolate&&!scientificName.toLowerCase().contains(isolateValue.toLowerCase());
 		
 		String descriptionFormat="%s %s %s genome assembly";
-		
+
+		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
+			return Entry.TSA_DATACLASS + ": " +scientificName;
+		}
+
 		return includeStrain ?(String.format(descriptionFormat, scientificName,"strain",strainValue)):
 			   includeIsolate?( String.format(descriptionFormat, scientificName,"isolate",isolateValue)): 
 			   (String.format(descriptionFormat,scientificName,"","" ).replaceAll("  ", ""));

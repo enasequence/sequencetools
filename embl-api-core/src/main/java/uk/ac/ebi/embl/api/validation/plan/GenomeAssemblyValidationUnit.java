@@ -18,8 +18,6 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromoso
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeTypeCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListObjectNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListChromosomeValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListObjectNameValidationCheck;
 
 public enum GenomeAssemblyValidationUnit
 {
@@ -49,8 +47,8 @@ public enum GenomeAssemblyValidationUnit
 			@SuppressWarnings("unchecked")
 			UNLOCALISED_LIST_CHECKS
 			(
-				UnlocalisedListChromosomeValidationCheck.class,
-				UnlocalisedListObjectNameValidationCheck.class
+				//UnlocalisedListChromosomeValidationCheck.class,
+				//UnlocalisedListObjectNameValidationCheck.class
 			);
 				
 			

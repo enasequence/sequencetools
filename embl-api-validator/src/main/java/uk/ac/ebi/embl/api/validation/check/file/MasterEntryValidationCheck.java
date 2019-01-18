@@ -68,6 +68,10 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry");
 				masterEntry=getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
+
+			if(Context.transcriptome == options.context.get()) {
+				addTranscriptomInfo(masterEntry);
+			}
 			
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 			ValidationPlanResult planResult=validationPlan.execute(masterEntry);
@@ -129,9 +133,8 @@ public class MasterEntryValidationCheck extends FileValidationCheck
         
 		masterEntry.addFeature(source);
 		if(getOptions().context.get()==Context.genome)
-			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source)));
-		if(getOptions().context.get()==Context.transcriptome)
-			addTranscriptomInfo(masterEntry);
+			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source, AnalysisType.SEQUENCE_ASSEMBLY)));
+
 		return masterEntry;
 	}
 	
@@ -144,6 +147,10 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 	{
 		String ccLine = "Assembly Name: " + getOptions().assemblyInfoEntry.get().getName() + "\nAssembly Method: " + getOptions().assemblyInfoEntry.get().getPlatform() + "\nSequencing Technology: " + getOptions().assemblyInfoEntry.get().getProgram();
         masterEntry.getComment().setText(ccLine);
+		masterEntry.getSequence().setMoleculeType("transcribed RNA");
+		masterEntry.setStatus(Entry.Status.getStatus(2));
+		masterEntry.addKeyword(new Text("Transcriptome Shotgun Assembly; TSA."));
+
 	}
 
 }

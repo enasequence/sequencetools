@@ -58,8 +58,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		serotype, 
 		serovar, 
 		environmental_sample,
-		isolation_source,
-		organelle;
+		isolation_source;
 		
 		public static boolean isValid(String qualifier)
 		{
@@ -359,9 +358,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
-	   if(masterCache.containsKey(analysisId+"_"+analysisType))
+	   if(masterCache.containsKey(analysisId))
 	   {
-		   return masterCache.get(analysisId+"_"+analysisType);
+		   return masterCache.get(analysisId);
 	   }
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
@@ -508,9 +507,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
 		}
 		masterEntry.addFeature(sourceFeature);
-		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
+		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType);
 		masterEntry.setDescription(new Text(description));
-		masterCache.put(analysisId+"_"+analysisType,masterEntry);
+		masterCache.put(analysisId,masterEntry);
 		return masterEntry;
 	}
    

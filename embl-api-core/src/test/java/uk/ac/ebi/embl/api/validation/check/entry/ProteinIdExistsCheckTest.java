@@ -89,12 +89,6 @@ public class ProteinIdExistsCheckTest {
 		property.analysis_id.set("ERZ00001");
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(
-				entryDAOUtils.isAssemblyEntryUpdate(
-						check.getEmblEntryValidationPlanProperty().analysis_id
-								.get(), entry.getSubmitterAccession(), 0))
-				.andReturn(false);
-		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
@@ -111,12 +105,6 @@ public class ProteinIdExistsCheckTest {
 		property.analysis_id.set("ERZ00001");
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(
-				entryDAOUtils.isAssemblyEntryUpdate(
-						check.getEmblEntryValidationPlanProperty().analysis_id
-								.get(), entry.getSubmitterAccession(), 0))
-				.andReturn(false);
-		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(!validationResult.isValid());
@@ -124,24 +112,6 @@ public class ProteinIdExistsCheckTest {
 				Severity.ERROR));
 	}
 
-	@Test
-	public void testCheck_withUpdateproteinID()
-			throws ValidationEngineException, SQLException {
-
-		cdsFeature
-				.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
-		entry.addFeature(cdsFeature);
-		property = new EmblEntryValidationPlanProperty();
-		property.analysis_id.set("ERZ00001");
-		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
-		check.setEmblEntryValidationPlanProperty(property);
-		expect(entryDAOUtils.isAssemblyEntryUpdate("ERZ00001", null, 0)).andReturn(
-				true);
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
-		ValidationResult validationResult = check.check(entry);
-		assertTrue(validationResult.isValid());
-	}
 	
 	@Test
 	public void testCheck_nonAssemblyWithproteinID()
@@ -153,9 +123,6 @@ public class ProteinIdExistsCheckTest {
 		property = new EmblEntryValidationPlanProperty();
 		property.analysis_id.set("ERZ00001");
 		check.setEmblEntryValidationPlanProperty(property);
-		expect(entryDAOUtils.isAssemblyEntryUpdate("ERZ00001", null, 0)).andReturn(
-				false);
-		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());

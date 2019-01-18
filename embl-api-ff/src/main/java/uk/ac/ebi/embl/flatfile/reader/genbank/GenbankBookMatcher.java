@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.reference.Book;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
@@ -40,11 +41,7 @@ public class GenbankBookMatcher extends FlatFileMatcher {
 			"^\\s*\\(\\s*in\\s*\\)\\s*" +
 			"([^\\(\\)\\;]+)?" + // editors
 			"\\s*\\(\\s*Eds?\\s*\\.\\s*\\)\\s*;\\s*" +
-			"([^\\:]+)?" + // book title
-			"\\s*\\:\\s*" +
-			"([^-;]+)?" + // first page
-			"\\s*\\-?\\s*" +
-			"([^-;]+)?" + // last page
+			"([^\\;]+)?" + // book title
 			"\\s*\\;\\s*" +
 			"([^\\(\\)\\.]+)?" + // publisher
 			"\\s*\\(\\s*" +
@@ -54,11 +51,10 @@ public class GenbankBookMatcher extends FlatFileMatcher {
 		);
 
 	private static int GROUP_EDITORS = 1;
-	private static int GROUP_BOOK_TITLE = 2;
-	private static int GROUP_FIRST_PAGE = 3;
-	private static int GROUP_LAST_PAGE = 4;
-	private static int GROUP_PUBLISHER = 5;
-	private static int GROUP_YEAR = 6;
+	private static int GROUP_BOOK_TITLE_PAGE = 2;
+	private static int GROUP_PUBLISHER = 3;
+	private static int GROUP_YEAR = 4;
+	
 	
 	public Book getBook(Publication publication) {
 		Book book = null;
@@ -79,27 +75,45 @@ public class GenbankBookMatcher extends FlatFileMatcher {
 				book.addEditor(personMatcher.getPerson());
 			}
 		}
-		String bookTitle = getString(GROUP_BOOK_TITLE);
+		String bookTitle = getString(GROUP_BOOK_TITLE_PAGE);
 		if (bookTitle == null) {
 			error("RL.16");
 		}
 		else {
-			book.setBookTitle(bookTitle);
-		}
-		String firstPage = getString(GROUP_FIRST_PAGE);
-		if (firstPage == null) {
-			error("RL.17");
-		}
-		else {
+			String firstPage = "0";
+			String lastPage ="0";
+			String arr[] = bookTitle.split(":");
+			if(arr.length == 2) {
+				if(arr[1].contains("-")) {
+					String pageRange[] = arr[1].split("-");
+					String fp = pageRange[0].trim();
+					if(pageRange.length == 2) {
+						if (StringUtils.isNumeric(fp) && StringUtils.isNumeric(pageRange[1].trim())) {
+							firstPage = fp;
+							lastPage = pageRange[1].trim();
+							bookTitle = arr[0].trim();
+						}
+					} else if(StringUtils.isNumeric(fp)) {
+						firstPage = fp;
+						bookTitle = arr[0].trim();
+					}
+				} else {
+					if(StringUtils.isNumeric(arr[1].trim()) ) {
+						firstPage = String.valueOf(arr[1].trim());
+						bookTitle = arr[0].trim();
+					}
+				}
+			}
 			book.setFirstPage(firstPage);
-		}		
-		String lastPage = getString(GROUP_LAST_PAGE);
-		if (lastPage == null) {
-			error("RL.18");
-		}
-		else {;
 			book.setLastPage(lastPage);
+			if(StringUtils.isBlank(bookTitle)) {
+				error("RL.16");
+			} else {
+				book.setBookTitle(bookTitle);
+			}
+
 		}
+
 		String publisher = getString(GROUP_PUBLISHER);
 		if (publisher == null) {
 			error("RL.19");

@@ -24,8 +24,6 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromoso
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeTypeCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListObjectNameCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListChromosomeValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.UnlocalisedListObjectNameValidationCheck;
 import uk.ac.ebi.embl.api.validation.fixer.entry.*;
 import uk.ac.ebi.embl.api.validation.fixer.feature.*;
 import uk.ac.ebi.embl.api.validation.fixer.sequence.*;
@@ -107,7 +105,6 @@ public enum ValidationUnit
 					MoleculeTypeAndFeatureCheck.class,//include for all
 					PeptideFeatureCheck.class,//exclude for master
 					CdsFeatureTranslationCheck.class,//exclude for master
-					AnnotationOnlySequenceCheck.class,//exclude for master
 					EntryContigsCheck.class, // CO line property will be
 											// moved to sequence //exclude for master
 					EntryMolTypeCheck.class,//include for all
@@ -123,7 +120,6 @@ public enum ValidationUnit
 	        		LocustagExistsCheck.class,//exclude for master
 	        		AssemblyLevelDataclassCheck.class,//exclude for master
 	        		AssemblyTopologyCheck.class,//exclude for master
-	        		AssemblyLevelEntryNameCheck.class,//exclude for master
 	        		ChromosomeSourceQualifierCheck.class,//exclude for master
 	        		EC_numberFormatCheck.class//include for all
 	        ),
@@ -166,17 +162,14 @@ public enum ValidationUnit
 					Linkage_evidenceFix.class,//exclude for master
 			   		TaxonomicDivisionNotQualifierFix.class,//include for all
 					AnticodonQualifierFix.class,//exclude for master
-				    AgpComponentAccessionFix.class,//exclude for master
 	    			AgptoConFix.class,//excude for master
 	    	        ContigstosequenceFix.class,//exclude for master
-	                AnnotationOnlySequenceFix.class,//exclude for master
 					SequenceBasesFix.class,//exclude for master
 					Mol_typeFix.class,//exclude for master
 					SequenceToGapFeatureBasesFix.class,//exclude for master
 	    		    AssemblyTopologyFix.class,//exclude for master
-					AssemblySourceQualiferFix.class,//exclude for master
-					AssemblyLevelSubmitterReferenceFix.class,//exclude for master
-					AssemblyFeatureRemoteLocationFix.class,//exclude for master
+					//AssemblySourceQualiferFix.class,//exclude for master
+					//AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 	    		    JournalFix.class,//include for all
 	    		    AssemblyLevelEntryNameFix.class,
 	    		    GaptoAssemblyGapFeatureFix.class//exclude for master
@@ -205,8 +198,8 @@ public enum ValidationUnit
 			),
 			UNLOCALISED_LIST_CHECKS
 			(
-				UnlocalisedListChromosomeValidationCheck.class,
-				UnlocalisedListObjectNameValidationCheck.class
+				//UnlocalisedListChromosomeValidationCheck.class,
+				//UnlocalisedListObjectNameValidationCheck.class
 			);
 				
 			

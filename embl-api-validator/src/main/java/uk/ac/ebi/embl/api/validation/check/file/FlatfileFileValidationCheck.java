@@ -49,6 +49,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid =true;
 		EmblEntryValidationPlan validationPlan=null;
+		fixedFileWriter =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -86,7 +87,13 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             	else
             		collectContigInfo(entry);
             }
-			entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+            if(Context.sequence == options.context.get()) {
+				if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
+					entry.setDataClass(Entry.STD_DATACLASS);
+			} else {
+				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+			}
+
    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
         	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -150,9 +157,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			{
 				SubmissionFile annotationonlysf=null;
 				if(submissionFile.getFixedFile()!=null)
-					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFixedFile().getAbsolutePath()+".annotationOnly"));
+					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly.fixed"),submissionFile.getReportFile());
 				else
-					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"));
+					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),null,submissionFile.getReportFile());
                 options.submissionFiles.get().addFile(annotationonlysf);
 			}
 			
