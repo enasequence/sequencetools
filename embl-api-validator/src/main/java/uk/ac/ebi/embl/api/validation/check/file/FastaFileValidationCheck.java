@@ -105,6 +105,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
 				}
 				parseResult= reader.read();
+				sequenceCount++;
 			}
 			if(getSequenceDB()!=null)
 			{

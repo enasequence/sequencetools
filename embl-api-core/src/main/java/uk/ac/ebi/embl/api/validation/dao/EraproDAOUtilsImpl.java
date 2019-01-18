@@ -508,7 +508,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
 		}
 		masterEntry.addFeature(sourceFeature);
-		String description=SequenceEntryUtils.generateMasterEntryDescription(sourceFeature);
+		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType);
 		masterEntry.setDescription(new Text(description));
 		masterCache.put(analysisId,masterEntry);
 		return masterEntry;

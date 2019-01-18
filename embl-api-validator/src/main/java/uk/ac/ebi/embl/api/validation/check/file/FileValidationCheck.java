@@ -96,7 +96,7 @@ public abstract class FileValidationCheck {
 	private boolean hasAnnotationOnlyFlatfile = false;
 	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
-	protected int sequenceCount = 0;
+	protected static int sequenceCount = 0;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -117,7 +117,11 @@ public abstract class FileValidationCheck {
 		return options;
 	}
 
-	public int getSequenceCount() {
+	public static void setSequenceCount(int seqCount) {
+		sequenceCount = seqCount;
+	}
+
+	public static int getSequenceCount() {
 		return sequenceCount;
 	}
 
@@ -323,7 +327,7 @@ public abstract class FileValidationCheck {
 	protected void appendHeader(Entry entry) throws ValidationEngineException
 	{
 
-		if(Context.sequence==getOptions().context.get())
+		if(Context.sequence == getOptions().context.get())
 		{
 			try
 			{
@@ -346,9 +350,14 @@ public abstract class FileValidationCheck {
 		entry.addProjectAccessions(masterEntry.getProjectAccessions());
 		entry.addXRefs(masterEntry.getXRefs());
 		entry.setComment(masterEntry.getComment());
-		entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 		//add chromosome qualifiers to entry
 
+        if(Context.sequence == options.context.get()) {
+            if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
+                entry.setDataClass(Entry.STD_DATACLASS);
+        } else {
+            entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+        }
 		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
 		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
@@ -361,9 +370,16 @@ public abstract class FileValidationCheck {
 									: ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,
 											entry);
 		}
+		if(Context.transcriptome == options.context.get()) {
+			entry.getSequence().setVersion(1);
+			Order<Location> order = new Order<Location>();
+			order.addLocation(new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
+			entry.getPrimarySourceFeature().setLocations(order);
+			if(entry.getSubmitterAccession() != null) {
+				entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
+			}
 
-		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.transcriptome)
-			entry.setDescription(new Text("TSA: " + entry.getPrimarySourceFeature().getScientificName() + " " + entry.getSubmitterAccession()));
+		}
 
 	}
 
@@ -449,6 +465,11 @@ public abstract class FileValidationCheck {
 	}
 
 	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException {
+		entry.removeReferences();
+		entry.removeProjectAccessions();
+		entry.addProjectAccession(new Text(options.getProjectId()));
+		entry.getSequence().setVersion(1);
+		entry.setStatus(Entry.Status.PRIVATE);
 		if(!getOptions().isRemote)
 		{
 			Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());

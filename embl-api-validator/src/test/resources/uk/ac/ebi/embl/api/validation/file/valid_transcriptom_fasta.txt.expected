@@ -1,4 +1,4 @@
-ID   XXX; SV XXX; linear; transcribed RNA; TSA; XXX; 335 BP.
+ID   XXX; SV 1; linear; transcribed RNA; TSA; XXX; 335 BP.
 XX
 AC   ;
 XX
@@ -33,7 +33,7 @@ SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       300
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaac                                  335
 //
-ID   XXX; SV XXX; linear; transcribed RNA; TSA; XXX; 335 BP.
+ID   XXX; SV 1; linear; transcribed RNA; TSA; XXX; 335 BP.
 XX
 AC   ;
 XX
@@ -68,7 +68,7 @@ SQ   Sequence 335 BP; 0 A; 0 C; 12 G; 323 T; 0 other;
      gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg       300
      gttttttttt tttttttttt tttttttttt ttttg                                  335
 //
-ID   XXX; SV XXX; linear; transcribed RNA; TSA; XXX; 335 BP.
+ID   XXX; SV 1; linear; transcribed RNA; TSA; XXX; 335 BP.
 XX
 AC   ;
 XX
