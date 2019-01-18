@@ -58,8 +58,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		serotype, 
 		serovar, 
 		environmental_sample,
-		isolation_source,
-		organelle;
+		isolation_source;
 		
 		public static boolean isValid(String qualifier)
 		{
