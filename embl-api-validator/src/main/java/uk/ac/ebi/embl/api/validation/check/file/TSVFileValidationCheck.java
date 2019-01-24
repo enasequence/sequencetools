@@ -20,22 +20,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Calendar;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
-import org.omg.CosNaming.NamingContextExtPackage.AddressHelper;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.template.*;
+
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.template.*;
 
 @Description("")
 public class TSVFileValidationCheck extends FileValidationCheck {
