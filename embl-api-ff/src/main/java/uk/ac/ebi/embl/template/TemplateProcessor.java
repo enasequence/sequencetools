@@ -40,13 +40,13 @@ public class TemplateProcessor {
         return molType;
     }
 
-    public TemplateProcessorResultSet process(TemplateVariables templateVariables) throws Exception {
+    public TemplateProcessorResultSet process(TemplateVariables templateVariables, String projectId) throws Exception {
         ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
         ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
         incrementAndDecrementTokans(templateVariables, templateInfo);
         String molType = getMolTypeFromTemplate();
         reportEntryCount(templateVariables.getSequenceNumber());
-        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables);
+        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables, projectId);
         /**
          * check no identical records
          */

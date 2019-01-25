@@ -55,7 +55,7 @@ public class TemplateEntryProcessor {
         return validationPlan.execute(entry);
     }
 
-    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables) throws Exception {
+    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables, String projectId) throws Exception {
         this.templateInfo = templateInfo;
         this.molType = molType;
         TemplateProcessorResultSet templateProcessorResultSet = new TemplateProcessorResultSet();
@@ -76,6 +76,7 @@ public class TemplateEntryProcessor {
         EntryReader entryReader = new EmblEntryReader(stringReader);
         entryReader.read();
         Entry entry = entryReader.getEntry();
+        entry.addProjectAccession(new Text(projectId));
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceNumber()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);

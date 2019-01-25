@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -36,7 +35,6 @@ import java.util.Collection;
 		+ "Invalid projectId : \"{0}\"")
 public class EntryProjectIdCheck extends EntryValidationCheck {
 
-	private final static String SEQUENCE_LENGTH_MESSAGE = "EntryProjectIdCheck1";
 	private final static String TOPOLOGY_MESSAGE = "EntryProjectIdCheck2";
 	private final static String WGS_PROJECTID_NOTFOUND_ID = "EntryProjectIdCheck3";
 	private final static String KEYWORD_PROJECTID_NOTFOUND_ID = "EntryProjectIdCheck4";
@@ -105,12 +103,6 @@ public class EntryProjectIdCheck extends EntryValidationCheck {
 				}
 			}
 
-			/**
-			 * check the sequence length
-			 */
-			if (sequence.getLength() >= 100000) {
-				reportError(entry.getOrigin(), SEQUENCE_LENGTH_MESSAGE);
-			}
 			/**
 			 * check the WGS Dataclass
 			 */

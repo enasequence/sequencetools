@@ -71,11 +71,10 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			Entry entry;
 			TemplateProcessorResultSet templateProcessorResultSet;
 			while ((csvLine = csvReader.readTemplateSpreadsheetLine()) != null) {
-				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap());
+				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap(), options.getProjectId());
 				entry = templateProcessorResultSet.getEntry();
 				if(entry!=null)
 				{
-					entry.addProjectAccession(new Text(options.getProjectId()));
 					appendHeader(entry);
 				}
 				if (sequenceCount == MAX_SEQUENCE_COUNT) {

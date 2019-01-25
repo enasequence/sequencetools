@@ -192,7 +192,7 @@ public class EntryProjectIdCheckTest {
 		assertTrue(result.isValid());
 	}
 
-	@Test
+/*	@Test
 	public void testCheck_SequenceLength2() throws ValidationEngineException {
 		Entry entry = new EntryFactory().createEntry();
 		Sequence sequence = new SequenceFactory().createSequenceofLength(100000,'a');
@@ -203,7 +203,7 @@ public class EntryProjectIdCheckTest {
 		ValidationResult result = check.check(entry);
 		assertTrue(!result.isValid());
 		assertEquals(1, result.count("EntryProjectIdCheck1", Severity.ERROR));
-	}
+	}*/
 
 	@Test
 	public void testCheck_WGSEntry() throws ValidationEngineException {
