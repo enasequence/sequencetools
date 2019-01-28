@@ -39,7 +39,7 @@ public class FastaFileWriter
 			header= String.format(">EM_%s:%s %s %s:%s",entry.getDivision(),entry.getPrimaryAccession(),entry.getSequence().getAccessionwithVersion(),entry.getDataClass(),entry.getDescription().getText());
 			break;
 		case ANALYSIS_HEADER_FORMAT:
-			header= String.format(">%s.%d %s",entry.getPrimaryAccession(),entry.getSequence().getVersion(),entry.getSubmitterAccession());
+			header= String.format(">%s %s",entry.getPrimaryAccession(),entry.getSubmitterAccession());
 			break;
 		default:
 			break;
