@@ -13,20 +13,29 @@ public class FastaSequenceWriter
 		this.writer = writer;
 		this.entry = entry;
 	}
-	
+
 	public void write() throws IOException
 	{
 		byte[] sequence=entry.getSequence().getSequenceByte();
 		StringBuffer line= new StringBuffer();
+		int i=0;
 		for(byte sequenceByte: sequence)
 		{
 			line.append((char)sequenceByte);
-			if((line.length())%60==0)
+			if((line.length())%60==0&&line.length()!=0)
 			{
-				writer.write(line.toString().toUpperCase()+"\n");
+				if(i>0)
+					writer.write("\n");	
+				writer.write(line.toString().toUpperCase().trim());
 				line =new StringBuffer();
+				i++;
 			}
 		}
-		writer.write(line.toString().toUpperCase()+"\n");
+		if(line.length()>0)
+		{
+			if(i>0)
+				writer.write("\n");	
+			writer.write(line.toString().toUpperCase());
+		}
 	}
 }

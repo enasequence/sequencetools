@@ -47,5 +47,6 @@ public class FastaFileWriter
 		FastaSequenceWriter sequenceWriter= new FastaSequenceWriter(writer, entry);
 		writer.write(header+"\n");
 		sequenceWriter.write();
+		writer.write("\n");
 	}
 }
