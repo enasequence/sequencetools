@@ -275,6 +275,30 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	@Override
+	public String getTemplateId(String analysisId) throws SQLException
+	{
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement("SELECT template_id from analysis where analysis_id = ?");
+			ps.setString(1,analysisId);
+
+			rs = ps.executeQuery();
+			if (rs.next())
+			{
+				return rs.getString(1);
+			}
+
+			return null;
+		} finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(ps);
+		}
+	}
+
+	@Override
 	public List<String> isAssemblyDuplicate(String analysisId) throws SQLException
 	{
 		

@@ -27,6 +27,8 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -47,9 +49,19 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	@Override
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
 		boolean valid = true;
+		EraproDAOUtils eraDaoUtils = null;
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
-			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
+			String templateId;
+			if (options.isRemote)
+				templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
+			else {
+				 eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
+				 templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
+			}
+			if(templateId == null)
+				throw new ValidationEngineException("Missing template id");
+			options.eraproConnection.get();
 			File submittedDataFile =  submissionFile.getFile();
 			String templateDir = submittedDataFile.getParent();
 			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);
@@ -140,7 +152,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	}
 
 	private String getTemplateIdFromTsvFile( File submittedFile ) throws ValidationEngineException {
-		String templateId = "";
+		String templateId = null;
 		try( BufferedReader reader = new BufferedReader( new InputStreamReader(new GZIPInputStream(new FileInputStream( submittedFile)), StandardCharsets.UTF_8)) ){
 			Optional<String> optional =  reader.lines()
 					.filter(line -> line.startsWith( TEMPLATE_ACCESSION_LINE))
@@ -149,8 +161,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				templateId = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").trim();
 				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
 					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003");
-			} else
-				throw new ValidationEngineException("File " + submittedFile + " is missing the '" +  TEMPLATE_ACCESSION_LINE + "' line, please add it followed by the template id");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
