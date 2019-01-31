@@ -243,13 +243,19 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
 	}
 
-	public void testArticleInvalidPage() throws IOException {
+	public void testArticlePageWithMultipleHyphen() throws IOException {
 		initLineReader(
 				"  JOURNAL   Infect. Genet. Evol. 12 (234), 34-100-100 (2017)\n"
 		);
 		Reference reference = lineReader.getCache().getReference();
 		ValidationResult result = (new JournalReader(lineReader)).read(entry);
-		assertEquals(1, result.count("FF.1", Severity.ERROR));
+		Article article = (Article)reference.getPublication();
+		assertEquals("Infect. Genet. Evol.", article.getJournal());
+		assertEquals("12",article.getVolume());
+		assertEquals("234",article.getIssue());
+		assertEquals("34", article.getFirstPage());
+		assertEquals("100-100", article.getLastPage());
+		assertEquals(0, result.count("FF.1", Severity.ERROR));
 	}
 
 	public void testArticleOnlyVolAndIssue() throws IOException {

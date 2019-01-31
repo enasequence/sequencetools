@@ -35,7 +35,7 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
 		super(reader, YEAR);
 	}
 
-    private static final  Pattern YEAR = Pattern.compile("^(.+)\\s*\\(\\s*(\\d{4})\\s*\\)\\s*\\.?\\s*$");
+    private static final  Pattern YEAR = Pattern.compile("^(.+)\\s*\\(\\s*(\\d{4})\\s*\\)\\s*\\.?,?\\s*$");
 
     private static final  Pattern FIRST_LAST_PAGE = Pattern.compile("^(.+)\\s*\\,\\s*([^\\(\\)]+)$");
 
@@ -63,23 +63,28 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
         m = FIRST_LAST_PAGE.matcher(block);
         if (m.matches()) {
             String page = getString(2, m);
-            if (page.contains("-")) {
-                String[] pageRange = page.split("-");
-                if(pageRange.length>2) {
-                   return null;
-                }
-                if(pageRange.length == 2) {
-                    article.setFirstPage(pageRange[0].trim());
-                    article.setLastPage(pageRange[1].trim());
-                } else if(page.startsWith("-")) {
-                    article.setLastPage(pageRange[0].trim());
+            if(page.length() <= 50) {
+                if (page.contains("-")) {
+                    String[] pageRange = page.split("-");
+                    if (pageRange.length > 2) {
+                        article.setFirstPage(pageRange[0]);
+                        article.setLastPage(pageRange[1]);
+                        for (int i = 2; i < pageRange.length; i++) {
+                            article.setLastPage(article.getLastPage() + "-" + pageRange[i]);
+                        }
+                    } else if (pageRange.length == 2) {
+                        article.setFirstPage(pageRange[0].trim());
+                        article.setLastPage(pageRange[1].trim());
+                    } else if (page.startsWith("-")) {
+                        article.setLastPage(pageRange[0].trim());
+                    } else {
+                        article.setFirstPage(pageRange[0].trim());
+                    }
                 } else {
-                    article.setFirstPage(pageRange[0].trim());
+                    article.setFirstPage(page);
                 }
-            } else {
-                article.setFirstPage(page);
+                block = m.group(1).trim();
             }
-            block = m.group(1).trim();
         }
 
         m = ISSUE.matcher(block);
