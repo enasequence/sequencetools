@@ -61,7 +61,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			}
 			if(templateId == null)
 				throw new ValidationEngineException("Missing template id");
-			options.eraproConnection.get();
 			File submittedDataFile =  submissionFile.getFile();
 			String templateDir = submittedDataFile.getParent();
 			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);
