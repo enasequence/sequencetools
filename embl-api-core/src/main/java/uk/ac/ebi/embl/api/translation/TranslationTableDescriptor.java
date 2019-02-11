@@ -193,6 +193,12 @@ public class TranslationTableDescriptor {
 				"FFLLSSSSYYEECCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG",
 				"----------**-----------------------M----------------------------")
 			);
+		TABLES.put(33, new TranslationTableDescriptor(
+				33, 
+				"Cephalodiscidae Mitochondrial UAA-Tyr Code",
+				"FFLLSSSSYYY*CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSSKVVVVAAAADDEEGGGG",
+				"--M-----*-----M-------------M-------------M-----------")
+			);
 		
 	}
 	
