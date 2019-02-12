@@ -1,6 +1,6 @@
  allprojects
  {
-    ext.version_base = 'submissioninterface-1.1.10'
+    ext.version_base = 'submissioninterface-1.1.11'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }

@@ -31,7 +31,8 @@ public class MasterSourceFeatureUtils {
 			if(value!=null&&!value.isEmpty())
 			isolationSourceQualifier= (new QualifierFactory()).createQualifier(tag,value);
 		}
-
+		else
+		{
 		if (MASTERSOURCEQUALIFIERS.isValid(tag))
 		{
 
@@ -51,7 +52,7 @@ public class MasterSourceFeatureUtils {
 			else
 				source.addQualifier(new QualifierFactory().createQualifier(tag, value));
 		}
-
+	}
 
 	}
 
