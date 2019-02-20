@@ -310,7 +310,7 @@ public class SubmissionValidationPlan
 
 	private long getSequencecount(int assemblyLevel)
 	{
-		return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==0).count();
+		return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
 	}
 
 	private void writeUnplacedList() throws IOException, ValidationEngineException
