@@ -123,8 +123,17 @@ public class AGPFileValidationCheck extends FileValidationCheck
          {
          	i++;
            	if(!agpRow.isGap())
-         	  sequenceBuffer.put(contigRangeMap.get(agpRow.getComponent_id().toUpperCase()+"_"+i).getSequence());
-	       	else
+           	{
+           		
+             	AgpRow row=null;
+               if(agpRow.getComponent_id()!=null)
+             	row=contigRangeMap.get(agpRow.getComponent_id().toUpperCase());
+               if(row!=null&&row.getSequence()!=null)
+         	  sequenceBuffer.put(row.getSequence());
+               else
+              throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:"+agpRow.getComponent_id());
+           	}
+	       	else if(agpRow.getGap_length()!=null)
         	  sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
          }
          entry.getSequence().setSequence(sequenceBuffer);
@@ -170,7 +179,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						
 						if(!agpRow.isGap())
 						{
-							contigRangeMap.put(agpRow.getComponent_id().toUpperCase()+"_"+i,agpRow);
+							contigRangeMap.put(agpRow.getComponent_id().toUpperCase(),agpRow);
 						}
 						i++;
 					}

@@ -398,7 +398,7 @@ public abstract class FileValidationCheck {
 			return;
 		if(!contigRangeMap.isEmpty())
 		{
-			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().contains(entry.getSubmitterAccession().toUpperCase())).map(e -> e.getKey()).collect(Collectors.toList());
+			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(entry.getSubmitterAccession())).map(e -> e.getKey()).collect(Collectors.toList());
 			for(String contigKey:contigKeys)
 			{
 				contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
