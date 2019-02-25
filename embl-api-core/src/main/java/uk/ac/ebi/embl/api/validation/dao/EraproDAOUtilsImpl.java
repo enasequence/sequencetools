@@ -407,7 +407,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String uniqueName=null;
 		boolean addUniqueName=true;
 		
-		String masterQuery = "select st.project_id, st.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
+		String masterQuery = "select a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
@@ -416,7 +416,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
 			"join sample sam on(asam.sample_id=sam.sample_id) " +
 			"join submission s on(s.submission_id=a.submission_id) " +
-			"join study st on(a.study_id=st.study_id) " +
+			"join project p on(a.bioproject_id=p.project_id) " +
 			"where a.analysis_id=?";
 
 		boolean masterExists = false;
@@ -454,7 +454,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 				sampleId = masterInfoRs.getString("sample_id");
 
-				projectId = masterInfoRs.getString("project_id");
+				projectId = masterInfoRs.getString("bioproject_id");
 				if (projectId != null && !projectId.equals(prevProjectId))
 				{
 					masterEntry.addProjectAccession(new Text(projectId));
