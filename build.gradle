@@ -45,8 +45,6 @@ configurations.all {
 
   group = 'uk.ac.ebi.ena.sequence'
 
-  def private_token=project.ext.properties.gitlab_private_token
-
   repositories 
    {
     mavenLocal()
@@ -162,7 +160,7 @@ configurations.all {
 		 mavenDeployer 
 		 {
 		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
-		   authentication(userName: artifactoryUsername, password: artifactoryPassword)
+		   authentication(userName: project.ext.properties.artifactoryUsername, password: project.ext.properties.artifactoryPassword)
           }
 			pom.project 
           {
