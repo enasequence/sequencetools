@@ -1,9 +1,28 @@
- allprojects
+allprojects
  {
     ext.version_base = 'submissioninterface-1.1.19'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
+
+configurations.all {
+	
+	if( !hasProperty( 'artifactoryUsername' ) )
+		project.ext.properties.artifactoryUsername = ''
+	else
+		project.ext.properties.artifactoryUsername = artifactoryUsername;
+		
+	if( !hasProperty( 'artifactoryPassword' ) )
+		project.ext.properties.artifactoryPassword = ''
+	else
+	 	project.ext.properties.artifactoryPassword = artifactoryPassword;
+
+	if( !hasProperty( 'gitlab_private_token' ) )
+		project.ext.properties.gitlab_private_token = ''
+	else
+		project.ext.properties.gitlab_private_token = gitlab_private_token;
+}
+
 
  if (JavaVersion.current().isJava6Compatible()) 
   {
@@ -25,6 +44,8 @@
    apply plugin: 'signing'
 
   group = 'uk.ac.ebi.ena.sequence'
+
+  def private_token=project.ext.properties.gitlab_private_token
 
   repositories 
    {
@@ -77,6 +98,16 @@
   {
     repositories 
      {
+	    maven { url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
+	            credentials(HttpHeaderCredentials) {
+	    	        name = "Private-Token"
+	        	    value = project.ext.properties.gitlab_private_token
+	        	}
+	        	authentication {
+	            	header( HttpHeaderAuthentication )
+	        	}
+	    }
+
     /* mavenDeployer 
           {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
@@ -168,25 +199,24 @@
 //local repository 
     }
   }
- }
 
-/*project(':embl-api-validator') {
-  jar {
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-        configurations.runtime.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
+ task writePom {
+    doLast {
+        pom {
+            project {
+                inceptionYear '2019'
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }.writeTo( "pom.xml" )
     }
-    
-    manifest {
-         attributes ("Implementation-Title": "embl-api-validator",
-                     "Implementation-Version":"1.1.277",
-                     "Main-Class": "uk.ac.ebi.embl.api.validation.EnaValidator",
-                     "Built-By": System.getProperty('user.name'),
-                     "Built-Date": new Date())
-    }
+ }   
+
+ compileJava.dependsOn( writePom )
+
 }
-  }*/
