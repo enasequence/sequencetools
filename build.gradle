@@ -108,8 +108,8 @@ configurations.all {
           maven {
               url "http://ena-dev:8081/artifactory/libs-release-local"
               credentials {
-                  username artifactoryUsername
-                  password artifactoryPassword
+                  username project.ext.properties.artifactoryUsername
+                  password project.ext.properties.artifactoryPassword
               }
           }
       }
