@@ -39,6 +39,7 @@ configurations.all {
   {
    apply plugin: 'java'
    apply plugin: 'maven'
+   apply plugin: 'maven-publish'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
    apply plugin: 'signing'
@@ -77,125 +78,41 @@ configurations.all {
     archives sourcesJar
  }
 
-      task wrapper(type: Wrapper) {
-          gradleVersion = '5.2'
+  task wrapper(type: Wrapper) {
+      gradleVersion = '5.2'
+  }
+
+  task sourceJar(type: Jar) {
+      from sourceSets.main.allJava
+      archiveClassifier = 'sources'
+  }
+
+  publishing {
+      publications {
+          mavenJava(MavenPublication) {
+              from components.java
+              artifact sourceJar
+          }
       }
- 
- /*if (gradle.startParameter.taskNames.contains("uploadArchives")) {
-        signing {
-            required true
-            sign configurations.archives
-        }
-    } else {
-        task signArchives {
-            // do nothing
-        }
-    }*/
- 
- uploadArchives 
-  {
-    repositories 
-     {
-	    maven { url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
-	            credentials(HttpHeaderCredentials) {
-	    	        name = "Private-Token"
-	        	    value = project.ext.properties.gitlab_private_token
-	        	}
-	        	authentication {
-	            	header( HttpHeaderAuthentication )
-	        	}
-	    }
-
-    /* mavenDeployer 
-          {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) 
+      repositories {
+          maven {
+              url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
+              credentials(HttpHeaderCredentials) {
+                  name = "Private-Token"
+                  value = project.ext.properties.gitlab_private_token
+              }
+              authentication {
+                  header( HttpHeaderAuthentication )
+              }
           }
-
-       if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) 
-       {
-        
-          repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") 
-          {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+          maven {
+              url "http://ena-dev:8081/artifactory/libs-release-local"
+              credentials {
+                  username artifactoryUsername
+                  password artifactoryPassword
+              }
           }
-
-          snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") 
-          {
-               authentication(userName: ossrhUsername, password: ossrhPassword)
-          }
-       }
-        pom.project 
-          {
-               name 'sequencetools'
-               packaging 'jar'
-               description 'flat file parser and validator'
-               url 'http://www.ebi.ac.uk/ena'
-
-                scm 
-                {
-                    url 'https://github.com/enasequence/sequencetools'
-                }
-
-                licenses 
-                {
-                    license 
-                    {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                developers 
-                {
-                    developer 
-                    {
-                        id 'kethi'
-                        name 'kethi reddy'
-                        email 'reddyk@ebi.ac.uk'
-                    }
-                }
-            }
-        }*/
-//local repository	
-		 mavenDeployer 
-		 {
-		    repository(url: "http://ena-dev:8081/artifactory/libs-release-local"){
-		   authentication(userName: project.ext.properties.artifactoryUsername, password: project.ext.properties.artifactoryPassword)
-          }
-			pom.project 
-          {
-               name 'sequencetools'
-               packaging 'jar'
-               description 'flat file parser and validator'
-               url 'http://www.ebi.ac.uk/ena'
-
-                scm 
-                {
-                    url 'https://github.com/enasequence/sequencetools'
-                }
-
-                licenses 
-                {
-                    license 
-                    {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                developers 
-                {
-                    developer 
-                    {
-                        id 'kethi'
-                        name 'kethi reddy'
-                        email 'reddyk@ebi.ac.uk'
-                    }
-                }
-            }
-		 }
-//local repository 
-    }
+      }
   }
 
  task writePom {
