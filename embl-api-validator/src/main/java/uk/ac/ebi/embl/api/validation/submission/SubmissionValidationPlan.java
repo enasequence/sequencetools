@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
@@ -91,6 +92,8 @@ public class SubmissionValidationPlan
 				if(!options.isRemote)
 				{
 					registerSequences();
+					if(!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())&&
+					   !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())	)
 					writeUnplacedList();
 				}
 			}
