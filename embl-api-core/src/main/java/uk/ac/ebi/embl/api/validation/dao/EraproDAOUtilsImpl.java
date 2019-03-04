@@ -478,7 +478,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				{
 					masterEntry.addKeyword(new Text("Third Party Data"));
 					masterEntry.addKeyword(new Text("TPA"));
-					masterEntry.addKeyword(new Text("assembly"));
+					masterEntry.addKeyword(new Text("TPA:assembly"));
 				}
 				if(molType!=null&&taxonHelper.isChildOf(scientificName, "Viruses"))
 				{
