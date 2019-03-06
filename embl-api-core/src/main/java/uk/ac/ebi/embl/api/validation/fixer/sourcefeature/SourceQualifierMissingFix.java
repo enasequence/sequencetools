@@ -155,7 +155,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		if(is_environment_sample_exists && entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME).size() != 0) {
 			entry.getPrimarySourceFeature().removeQualifier(Qualifier.STRAIN_QUALIFIER_NAME);
 			if(entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size() == 0) {
-				entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME);
+				entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,"unknown");
 				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainRemovalFix);
 			} else {
 				reportMessage( Severity.FIX, entry.getPrimarySourceFeature().getOrigin(),strainToIsolateFix);
