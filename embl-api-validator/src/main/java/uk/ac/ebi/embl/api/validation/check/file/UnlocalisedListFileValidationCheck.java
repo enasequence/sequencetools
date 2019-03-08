@@ -87,7 +87,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		ValidationResult result = new ValidationResult();
 		if(unlocalisedEntry.getChromosomeName()!=null)
 		{
-			if(chromosomeNames.size()!=0&&chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
+			if(chromosomeNames.size()!=0&&!chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
 			{
 				ValidationMessage message = new ValidationMessage<>(Severity.ERROR, "UnlocalisedListChromosomeValidCheck",unlocalisedEntry.getChromosomeName());
 				result.append(message);
