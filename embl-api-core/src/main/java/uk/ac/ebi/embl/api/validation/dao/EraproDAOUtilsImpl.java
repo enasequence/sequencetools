@@ -22,7 +22,6 @@ import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
@@ -411,7 +410,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/DESCRIPTION/text()' PASSING analysis_xml RETURNING CONTENT)) description " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
 			"join sample sam on(asam.sample_id=sam.sample_id) " +
@@ -484,6 +484,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				{
 					masterEntry.getSequence().setMoleculeType(molType);
 				}
+
+				String desc = masterInfoRs.getString("description");
+				if(StringUtils.isNotBlank(desc)) {
+					masterEntry.setComment(new Text(desc));
+				}
+
 				sourceFeature.setScientificName(scientificName);
 				uniqueName=masterInfoRs.getString("sample_alias");
 			}

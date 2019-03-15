@@ -70,7 +70,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			}
 
 			if(Context.transcriptome == options.context.get()) {
-				addTranscriptomInfo(masterEntry);
+				addTranscriptomeInfo(masterEntry);
 			}
 			
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -143,14 +143,11 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		return masterEntry;
 	}
 	
-	private void addTranscriptomInfo(Entry masterEntry)
+	private void addTranscriptomeInfo(Entry masterEntry)
 	{
-		String ccLine = "Assembly Name: " + getOptions().assemblyInfoEntry.get().getName() + "\nAssembly Method: " + getOptions().assemblyInfoEntry.get().getPlatform() + "\nSequencing Technology: " + getOptions().assemblyInfoEntry.get().getProgram();
-        masterEntry.getComment().setText(ccLine);
 		masterEntry.getSequence().setMoleculeType("transcribed RNA");
 		masterEntry.setStatus(Entry.Status.getStatus(2));
 		masterEntry.addKeyword(new Text("Transcriptome Shotgun Assembly; TSA."));
-
 	}
 
 }
