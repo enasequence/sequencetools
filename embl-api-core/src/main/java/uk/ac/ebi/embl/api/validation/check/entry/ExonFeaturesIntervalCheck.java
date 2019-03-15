@@ -85,7 +85,7 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck
 
 	public List<Feature> getSortedExonFeatures(List<Feature> exonFeatures)
 	{
-		Collections.sort(exonFeatures, (feature1, feature2)->(feature1.getLocations().getMinPosition() < feature2.getLocations().getMinPosition()) ? -1 : 1);
+		Collections.sort(exonFeatures, (feature1, feature2)->(feature1.getLocations().getMinPosition() < feature2.getLocations().getMinPosition()) ? -1 :(feature1.getLocations().getMinPosition() > feature2.getLocations().getMinPosition())?1:0);
 		return exonFeatures;
 	}
 }
