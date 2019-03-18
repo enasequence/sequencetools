@@ -18,6 +18,8 @@ package uk.ac.ebi.embl.api.validation.file;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +70,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.submissionFiles =Optional.of(submissionFiles);
 	        options.reportDir = Optional.of(file.getFile().getParent());
 	        options.context = Optional.of(Context.transcriptome);
+			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
@@ -84,6 +87,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.submissionFiles =Optional.of(submissionFiles);
 	        options.reportDir = Optional.of(file.getFile().getParent());
 	        options.context = Optional.of(Context.genome);
+			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 			assertTrue(check.check(file));
