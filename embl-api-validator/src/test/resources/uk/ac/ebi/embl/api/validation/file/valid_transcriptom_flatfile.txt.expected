@@ -23,10 +23,6 @@ DR   ENA; AAAA000000000; SET.
 DR   ENA-CON; CH398081.
 DR   BioSample; SMEA091.
 XX
-CC   Assembly Name: assembly
-CC   Assembly Method: sdfsgf
-CC   Sequencing Technology: sdfsfg
-XX
 FH   Key             Location/Qualifiers
 FH
 FT   source          1..1710

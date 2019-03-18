@@ -13,10 +13,6 @@ XX
 OS   Micrococcus sp. 5
 OC   unclassified sequences.
 XX
-CC   Assembly Name: assembly
-CC   Assembly Method: sdfsgf
-CC   Sequencing Technology: sdfsfg
-XX
 DR   BioSample; SMEA091.
 XX
 FH   Key             Location/Qualifiers
@@ -50,10 +46,6 @@ OC   unclassified sequences.
 XX
 DR   BioSample; SMEA091.
 XX
-CC   Assembly Name: assembly
-CC   Assembly Method: sdfsgf
-CC   Sequencing Technology: sdfsfg
-XX
 FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
@@ -84,10 +76,6 @@ OS   Micrococcus sp. 5
 OC   unclassified sequences.
 XX
 DR   BioSample; SMEA091.
-XX
-CC   Assembly Name: assembly
-CC   Assembly Method: sdfsgf
-CC   Sequencing Technology: sdfsfg
 XX
 FH   Key             Location/Qualifiers
 FH

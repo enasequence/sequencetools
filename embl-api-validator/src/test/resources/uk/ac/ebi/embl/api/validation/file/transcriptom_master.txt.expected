@@ -15,10 +15,6 @@ OC   unclassified sequences.
 XX
 DR   BioSample; SMEA091.
 XX
-CC   Assembly Name: assembly
-CC   Assembly Method: sdfsgf
-CC   Sequencing Technology: sdfsfg
-XX
 FH   Key             Location/Qualifiers
 FH
 FT   source          1
