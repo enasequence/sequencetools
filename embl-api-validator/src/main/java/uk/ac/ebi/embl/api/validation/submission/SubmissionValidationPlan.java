@@ -158,7 +158,7 @@ public class SubmissionValidationPlan
 
 	private void validateFasta() throws ValidationEngineException
 	{
-		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
+		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
 			return;
 
 		String fileName=null;
@@ -185,7 +185,7 @@ public class SubmissionValidationPlan
 
 	private void validateFlatfile() throws ValidationEngineException
 	{
-		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
+		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
 			return;
 		String fileName=null;
 
@@ -210,7 +210,7 @@ public class SubmissionValidationPlan
 
 	private void validateAGP() throws ValidationEngineException
 	{
-		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
+		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
 			return;
 		String fileName=null;
 		try
@@ -358,6 +358,9 @@ public class SubmissionValidationPlan
 	}
 	private void flagValidation(FileType fileType) throws IOException
 	{
+		if(!options.processDir.isPresent())
+			return;
+			
 		String fileName =null;
 		switch(fileType)
 		{
