@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,9 +49,13 @@ public class SubmissionValidationPlan
 	SubmissionOptions options;
 	FileValidationCheck check = null;
 	DB sequenceDB =null;
+    String fastaFlagFileName ="fasta.validated";
+    String agpFlagFileName ="agp.validated";
+    String flatfileFlagFileName ="flatfile.validated";
+
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
-	}
+		}
 	public void execute() throws ValidationEngineException {
 		try
 		{
@@ -153,6 +158,9 @@ public class SubmissionValidationPlan
 
 	private void validateFasta() throws ValidationEngineException
 	{
+		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
+			return;
+
 		String fileName=null;
 
 		try
@@ -165,8 +173,11 @@ public class SubmissionValidationPlan
 					check.setSequenceDB(sequenceDB);
 				if(!check.check(fastaFile))
 					throwValidationCheckException(FileType.FASTA,fastaFile);
+				else if(!options.isRemote)
+				     flagValidation(FileType.FASTA);
+					
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.FASTA,e,fileName);
 		}
@@ -174,6 +185,8 @@ public class SubmissionValidationPlan
 
 	private void validateFlatfile() throws ValidationEngineException
 	{
+		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
+			return;
 		String fileName=null;
 
 		try
@@ -186,8 +199,10 @@ public class SubmissionValidationPlan
 					check.setSequenceDB(sequenceDB);
 				if(!check.check(flatfile))
 					throwValidationCheckException(FileType.FLATFILE,flatfile);
+				else if(!options.isRemote)
+				     flagValidation(FileType.FLATFILE);
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.FLATFILE,e,fileName);
 		}
@@ -195,8 +210,9 @@ public class SubmissionValidationPlan
 
 	private void validateAGP() throws ValidationEngineException
 	{
+		if(Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
+			return;
 		String fileName=null;
-
 		try
 		{
 			check = new AGPFileValidationCheck(options);
@@ -207,8 +223,10 @@ public class SubmissionValidationPlan
 					check.setSequenceDB(sequenceDB);
 				if(!check.check(agpFile))
 					throwValidationCheckException(FileType.AGP,agpFile);
+				else if(!options.isRemote)
+				     flagValidation(FileType.AGP);
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.AGP,e,fileName);
 		}
@@ -292,9 +310,9 @@ public class SubmissionValidationPlan
 		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 
-	private void throwValidationEngineException(FileType fileTpe,ValidationEngineException e,String fileName) throws ValidationEngineException
+	private void throwValidationEngineException(FileType fileTpe,Exception e,String fileName) throws ValidationEngineException
 	{
-		throw new ValidationEngineException(String.format("%s file: %s validation failed with error: %s", fileTpe.name().toLowerCase(),fileName,e.getMessage()),ReportErrorType.VALIDATION_ERROR);
+		throw new ValidationEngineException(String.format("%s file: %s validation failed with error: %s", fileTpe.name().toLowerCase(),fileName,e.getStackTrace()),ReportErrorType.VALIDATION_ERROR);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -337,6 +355,27 @@ public class SubmissionValidationPlan
 	private void writeSequenceInfo() throws ValidationEngineException
 	{
 		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
+	}
+	private void flagValidation(FileType fileType) throws IOException
+	{
+		String fileName =null;
+		switch(fileType)
+		{
+		case FASTA:
+			fileName=fastaFlagFileName;
+			break;
+		case AGP:
+			fileName=agpFlagFileName;
+			break;
+		case FLATFILE:
+			fileName = flatfileFlagFileName;
+			break;
+		default:
+			break;
+		}
+		Path filePath= Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fileName));
+		if( !Files.exists(filePath))
+    	Files.createFile(filePath);
 	}
 }
 
