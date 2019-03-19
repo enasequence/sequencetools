@@ -54,7 +54,7 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
                 projectLocustagPrefixes.addAll(getEmblEntryValidationPlanProperty().locus_tag_prefixes.get());
             } else {
                 // The BioProject accession must be available in the flat file.
-                if(entry.getProjectAccessions() != null) {
+                if (entry.getProjectAccessions() != null) {
                     for (Text projectAccession : entry.getProjectAccessions()) {
                         HashSet<String> locusTagPrefixes = getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText());
                         if (!locusTagPrefixes.isEmpty()) {
@@ -65,14 +65,15 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
             }
 
             List<Qualifier> locusTagQualifiers = SequenceEntryUtils.getQualifiers(Qualifier.LOCUS_TAG_QUALIFIER_NAME, entry);
+            if (locusTagQualifiers != null) {
+                for (Qualifier qualifier : locusTagQualifiers) {
+                    String locusTagValue = qualifier.getValue();
 
-            for (Qualifier qualifier : locusTagQualifiers) {
-                String locusTagValue = qualifier.getValue();
-
-                if (locusTagValue != null) {
-                    String locustagPrefix = locusTagValue.split("_")[0];
-                    if (!projectLocustagPrefixes.contains(locustagPrefix)) {
-                        reportError(qualifier.getOrigin(), MESSAGE_ID_INVALID_PREFIX, locusTagValue, locustagPrefix);
+                    if (locusTagValue != null) {
+                        String locustagPrefix = locusTagValue.split("_")[0];
+                        if (!projectLocustagPrefixes.contains(locustagPrefix)) {
+                            reportError(qualifier.getOrigin(), MESSAGE_ID_INVALID_PREFIX, locusTagValue, locustagPrefix);
+                        }
                     }
                 }
             }
