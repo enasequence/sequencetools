@@ -26,7 +26,6 @@ public class EntryStringValidator {
         emblEntryValidationProperty.validationScope.set(ValidationScope.EMBL_TEMPLATE);
         emblEntryValidationProperty.isDevMode.set(false);
         emblEntryValidationProperty.isFixMode.set(true);
-        emblEntryValidationProperty.isAssembly.set(false);
         emblEntryValidationProperty.minGapLength.set(0);
         validator = new EmblEntryValidationPlan(emblEntryValidationProperty);
         validator.addMessageBundle(TemplateProcessorConstants.TEMPLATE_MESSAGES_BUNDLE);

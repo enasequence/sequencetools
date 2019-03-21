@@ -196,7 +196,6 @@ public class EnaValidator
 		emblEntryValidationPlanProperty.isDevMode.set(testMode);
 		emblEntryValidationPlanProperty.isFixMode.set(fixMode || fixDiagnoseMode);
 		emblEntryValidationPlanProperty.minGapLength.set(min_gap_length);
-		emblEntryValidationPlanProperty.isAssembly.set(assembly);
 		emblEntryValidationPlanProperty.isRemote.set(remote);
 		emblEntryValidationPlanProperty.fileType.set(fileType);
 		emblEntryValidationPlanProperty.enproConnection.set(con);

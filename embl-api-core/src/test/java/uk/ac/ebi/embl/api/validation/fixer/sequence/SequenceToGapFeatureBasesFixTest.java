@@ -228,8 +228,7 @@ public class SequenceToGapFeatureBasesFixTest {
 	public void testCheck_fix_assembly_flag() throws SQLException {
 		
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
-		property.validationScope.set(ValidationScope.EMBL);
+		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		property.minGapLength.set(7);
 		check.setEmblEntryValidationPlanProperty(property);		
 		entry.setSequence(sequenceFactory

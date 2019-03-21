@@ -58,7 +58,6 @@ public class MasterEntryDescriptionCheckTest {
 	@Test
 	public void testCheck_descriptionwithInvalidKeywords() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setDescription(new Text("Fusarium pseudograminearum genome assembly _12-15-34_1 ,contig A1A_CC1"));
@@ -70,7 +69,6 @@ public class MasterEntryDescriptionCheckTest {
 	@Test
 	public void testCheck_withValidDescription() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setSubmitterAccession("contig1");

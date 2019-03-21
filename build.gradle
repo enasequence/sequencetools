@@ -1,6 +1,6 @@
 allprojects
  {
-    ext.version_base = '1.3.10'
+    ext.version_base = '1.3.11'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
