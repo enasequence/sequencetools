@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
 import org.junit.After;
@@ -60,6 +60,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			SubmissionFiles submissionFiles = new SubmissionFiles();
 			submissionFiles.addFile(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP));
 			options.submissionFiles = Optional.of(submissionFiles);
+			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
 			 options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);

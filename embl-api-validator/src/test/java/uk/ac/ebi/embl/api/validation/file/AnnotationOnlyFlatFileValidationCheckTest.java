@@ -19,6 +19,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +60,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(file);
 		options.reportDir = Optional.of(file.getFile().getParent());
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence3").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);

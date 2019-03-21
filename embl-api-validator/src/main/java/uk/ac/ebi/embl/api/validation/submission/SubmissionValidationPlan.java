@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST))
 				validateChromosomeList();
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
-			{ 
+			{
 				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 				check.getAnnotationFlatfile();
 				if(check.isHasAnnotationOnlyFlatfile())
@@ -150,8 +150,8 @@ public class SubmissionValidationPlan
 		{
 			check = new ChromosomeListFileValidationCheck(options);
 			for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
-			{	
-				fileName= chromosomeListFile.getFile().getName();	
+			{
+				fileName= chromosomeListFile.getFile().getName();
 
 				if(!check.check(chromosomeListFile))
 					throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
@@ -174,7 +174,7 @@ public class SubmissionValidationPlan
 			check = new FastaFileValidationCheck(options);
 			for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
 			{
-				fileName= fastaFile.getFile().getName();	
+				fileName= fastaFile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
@@ -183,7 +183,7 @@ public class SubmissionValidationPlan
 					throwValidationCheckException(FileType.FASTA,fastaFile);
 				else if(!options.isRemote)
 				     flagValidation(FileType.FASTA);
-					
+
 			}
 		}catch(Exception e)
 		{
@@ -201,8 +201,8 @@ public class SubmissionValidationPlan
 		{
 			check = new FlatfileFileValidationCheck(options);
 			for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
-			{	
-				fileName= flatfile.getFile().getName();	
+			{
+				fileName= flatfile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
@@ -227,8 +227,8 @@ public class SubmissionValidationPlan
 		{
 			check = new AGPFileValidationCheck(options);
 			for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
-			{	
-				fileName= agpFile.getFile().getName();	
+			{
+				fileName= agpFile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(!check.check(agpFile))
@@ -250,7 +250,7 @@ public class SubmissionValidationPlan
 			check = new UnlocalisedListFileValidationCheck(options);
 
 			for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
-			{	fileName= unlocalisedListFile.getFile().getName();	
+			{	fileName= unlocalisedListFile.getFile().getName();
 			if(!check.check(unlocalisedListFile))
 				throwValidationCheckException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
 			}
@@ -260,7 +260,7 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	private void registerSequences() throws ValidationEngineException 
+	private void registerSequences() throws ValidationEngineException
 	{
 		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.chromosomeEntryNames,options.reportDir.get(),AssemblySequenceInfo.chromosomefileName);
@@ -325,10 +325,12 @@ public class SubmissionValidationPlan
 		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 
-	private void throwValidationEngineException(FileType fileTpe,Exception e,String fileName) throws ValidationEngineException
-	{
-		throw new ValidationEngineException(String.format("%s file: %s validation failed with error: %s", fileTpe.name().toLowerCase(),fileName,e.getStackTrace()),ReportErrorType.VALIDATION_ERROR);
-	}
+    private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
+        ValidationEngineException validationEngineException = new ValidationEngineException(
+                String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
+        validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
+        throw validationEngineException;
+    }
 
 	@SuppressWarnings("deprecation")
 	private void throwValidationResult(ValidationResult result) throws ValidationEngineException
@@ -375,7 +377,7 @@ public class SubmissionValidationPlan
 	{
 		if(!options.processDir.isPresent())
 			return;
-			
+
 		String fileName =null;
 		switch(fileType)
 		{
