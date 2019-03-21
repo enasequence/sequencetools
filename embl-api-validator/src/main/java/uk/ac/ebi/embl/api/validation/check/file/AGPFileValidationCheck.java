@@ -25,8 +25,10 @@ import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -108,6 +110,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		}catch (Exception e) {
 			if(getSequenceDB()!=null)
 	               getSequenceDB().close();
+			if(getContigDB()!=null)
+				   getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;
@@ -126,9 +130,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
            	{
            		
              	AgpRow row=null;
-               if(agpRow.getComponent_id()!=null)
-             	row=contigRangeMap.get(agpRow.getComponent_id().toUpperCase());
-               if(row!=null&&row.getSequence()!=null)
+             	if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
+				{
+					ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
+					if(map.get(agpRow.getComponent_id().toUpperCase())!=null)
+					row =(AgpRow) map.get(agpRow.getComponent_id().toUpperCase());
+				}
+              if(row!=null&&row.getSequence()!=null)
          	  sequenceBuffer.put(row.getSequence());
                else
               throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:"+agpRow.getComponent_id());
@@ -179,14 +187,19 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						
 						if(!agpRow.isGap())
 						{
-							contigRangeMap.put(agpRow.getComponent_id().toUpperCase(),agpRow);
+							if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
+							{
+							ConcurrentMap map = getContigDB().hashMap("map").createOrOpen();
+							map.put(agpRow.getComponent_id().toUpperCase(), agpRow);
+							}
 						}
 						i++;
 					}
 					}
 				result=reader.read();
 				}
-
+				if(getContigDB()!=null)
+					getContigDB().commit(); 
 			}catch(Exception e)
 			{
 				throw new ValidationEngineException(e.getMessage());

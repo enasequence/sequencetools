@@ -49,6 +49,7 @@ public class SubmissionValidationPlan
 	SubmissionOptions options;
 	FileValidationCheck check = null;
 	DB sequenceDB =null;
+	DB contigDB =null;
     String fastaFlagFileName ="fasta.validated";
     String agpFlagFileName ="agp.validated";
     String flatfileFlagFileName ="flatfile.validated";
@@ -76,6 +77,9 @@ public class SubmissionValidationPlan
 			{
 				AGPFileValidationCheck check = new AGPFileValidationCheck(options);
 				check.getAGPEntries();
+				if(check.agpEntryNames.size()!=0)
+					contigDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getcontigDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
+
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA))
 				validateFasta();
@@ -107,6 +111,8 @@ public class SubmissionValidationPlan
 			}
 			if(sequenceDB!=null)
 				sequenceDB.close();
+			if(contigDB!=null)
+				contigDB.close();
 		}catch(ValidationEngineException e)
 		{
 			try {
@@ -171,6 +177,8 @@ public class SubmissionValidationPlan
 				fileName= fastaFile.getFile().getName();	
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
+				if(contigDB!=null)
+					check.setSequenceDB(contigDB);
 				if(!check.check(fastaFile))
 					throwValidationCheckException(FileType.FASTA,fastaFile);
 				else if(!options.isRemote)
@@ -197,6 +205,8 @@ public class SubmissionValidationPlan
 				fileName= flatfile.getFile().getName();	
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
+				if(contigDB!=null)
+					check.setSequenceDB(contigDB);
 				if(!check.check(flatfile))
 					throwValidationCheckException(FileType.FLATFILE,flatfile);
 				else if(!options.isRemote)
@@ -302,6 +312,11 @@ public class SubmissionValidationPlan
 	private String getSequenceDbname()
 	{
 		return ".sequence"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
+
+	}
+	private String getcontigDbname()
+	{
+		return ".contig"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
 
 	}
 

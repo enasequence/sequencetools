@@ -111,9 +111,15 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			{
 				getSequenceDB().commit();
 			}
+			if(getContigDB()!=null)
+			{
+				getContigDB().commit();
+			}
 		}catch (Exception e) {
 			if(getSequenceDB()!=null)
 	               getSequenceDB().close();
+			if(getContigDB()!=null)
+				getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;	

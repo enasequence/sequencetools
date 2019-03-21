@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,6 +63,7 @@ import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -85,7 +87,6 @@ public abstract class FileValidationCheck {
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
 	public static List<String> unplacedEntryNames =new ArrayList<String>();
-	public static HashMap<String,AgpRow> contigRangeMap=new HashMap<String,AgpRow>();
 	public static List<String> contigEntryNames = new ArrayList<String>();
 	public static List<String> scaffoldEntryNames = new ArrayList<String>();
 	public static List<String> chromosomeEntryNames = new ArrayList<String>();
@@ -96,6 +97,7 @@ public abstract class FileValidationCheck {
 	private boolean hasAnnotationOnlyFlatfile = false;
 	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
+		private DB contigDB =null;
 	protected static int sequenceCount = 0;
 
 	public FileValidationCheck(SubmissionOptions options) {
@@ -390,21 +392,23 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
-	protected void collectContigInfo(Entry entry)
+	protected void collectContigInfo(Entry entry) 
 	{
 		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
 			return;
 		if(entry.getSequence()==null)
 			return;
-		if(!contigRangeMap.isEmpty())
-		{
-			List<String> contigKeys=contigRangeMap.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(entry.getSubmitterAccession())).map(e -> e.getKey()).collect(Collectors.toList());
-			for(String contigKey:contigKeys)
-			{
-				contigRangeMap.get(contigKey).setSequence(entry.getSequence().getSequenceByte(contigRangeMap.get(contigKey).getComponent_beg(),contigRangeMap.get(contigKey).getComponent_end()));
-			}
+		if(getContigDB()!=null&&entry.getSubmitterAccession()!=null)
+		{	
+			   ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
+				if(map.get(entry.getSubmitterAccession().toUpperCase())!=null)
+				{
+					byte[] sequence=entry.getSequence().getSequenceByte(((AgpRow)map.get(entry.getSubmitterAccession().toUpperCase())).getComponent_beg(),((AgpRow)map.get(entry.getSubmitterAccession().toUpperCase())).getComponent_end());
+				   ((AgpRow) map.get(entry.getSubmitterAccession().toUpperCase())).setSequence(sequence);
+				}		}
+			
 		}
-	}
+
 
 	private void addSourceQualifiers(Entry entry)
 	{
@@ -526,6 +530,13 @@ public abstract class FileValidationCheck {
 	public DB getSequenceDB()
 	{
 		return this.sequenceDB;
+	}
+
+	public DB getContigDB() {
+		return contigDB;
+	}
+	public void setContigDB(DB contigDB) {
+		this.contigDB = contigDB;
 	}
 	
 	protected boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException

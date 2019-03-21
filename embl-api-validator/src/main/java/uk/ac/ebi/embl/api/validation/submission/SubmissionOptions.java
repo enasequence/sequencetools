@@ -76,9 +76,7 @@ public class SubmissionOptions
 			FileValidationCheck.agpEntryNames.clear();
 			FileValidationCheck.chromosomeNameQualifiers.clear();
 			FileValidationCheck.entryNames.clear();
-			FileValidationCheck.contigRangeMap.clear();
 			FileValidationCheck.duplicateEntryNames.clear();
-			FileValidationCheck.contigRangeMap.clear();
 			FileValidationCheck.chromosomeNames.clear();
 			FileValidationCheck.unplacedEntryNames.clear();
 			FileValidationCheck.contigEntryNames.clear();
