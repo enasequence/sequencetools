@@ -122,6 +122,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		{
 			if(getSequenceDB()!=null)
 	               getSequenceDB().close();
+			if(getContigDB()!=null)
+				getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		return valid;

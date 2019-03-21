@@ -129,15 +129,16 @@ public class AGPFileValidationCheck extends FileValidationCheck
            	if(!agpRow.isGap())
            	{
            		
-             	AgpRow row=null;
+             	Object sequence=null;
              	if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
 				{
-					ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
-					if(map.get(agpRow.getComponent_id().toUpperCase())!=null)
-					row =(AgpRow) map.get(agpRow.getComponent_id().toUpperCase());
+             		String key =agpRow.getComponent_id()+":"+agpRow.getObject()+":"+agpRow.getComponent_beg()+":"+agpRow.getComponent_end();
+					ConcurrentMap map = getContigDB().hashMap("map").createOrOpen();
+					if(map.get(key)!=null)
+					  sequence=map.get(key);
 				}
-              if(row!=null&&row.getSequence()!=null)
-         	  sequenceBuffer.put(row.getSequence());
+              if(sequence!=null)
+         	  sequenceBuffer.put((byte[])sequence);
                else
               throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:"+agpRow.getComponent_id());
            	}
@@ -155,6 +156,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			}
 		}catch(Exception e)
 		{
+			if(getSequenceDB()!=null)
+				getSequenceDB().close();  
 			throw new ValidationEngineException(e.getMessage());
 		}
 		if(getSequenceDB()!=null)
@@ -190,7 +193,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 							if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
 							{
 							ConcurrentMap map = getContigDB().hashMap("map").createOrOpen();
-							map.put(agpRow.getComponent_id().toUpperCase(), agpRow);
+							map.put(agpRow.getComponent_id()+":"+agpRow.getObject()+":"+agpRow.getComponent_beg()+":"+agpRow.getComponent_end(), new byte[0]);
 							}
 						}
 						i++;
@@ -202,6 +205,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					getContigDB().commit(); 
 			}catch(Exception e)
 			{
+				if(getContigDB()!=null)
+					getContigDB().close();
 				throw new ValidationEngineException(e.getMessage());
 			}
 

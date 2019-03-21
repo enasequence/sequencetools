@@ -36,12 +36,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
@@ -97,7 +100,7 @@ public abstract class FileValidationCheck {
 	private boolean hasAnnotationOnlyFlatfile = false;
 	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
-		private DB contigDB =null;
+	private DB contigDB =null;
 	protected static int sequenceCount = 0;
 
 	public FileValidationCheck(SubmissionOptions options) {
@@ -394,19 +397,33 @@ public abstract class FileValidationCheck {
 
 	protected void collectContigInfo(Entry entry) 
 	{
+		try
+		{
 		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
 			return;
 		if(entry.getSequence()==null)
 			return;
 		if(getContigDB()!=null&&entry.getSubmitterAccession()!=null)
 		{	
-			   ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
-				if(map.get(entry.getSubmitterAccession().toUpperCase())!=null)
-				{
-					byte[] sequence=entry.getSequence().getSequenceByte(((AgpRow)map.get(entry.getSubmitterAccession().toUpperCase())).getComponent_beg(),((AgpRow)map.get(entry.getSubmitterAccession().toUpperCase())).getComponent_end());
-				   ((AgpRow) map.get(entry.getSubmitterAccession().toUpperCase())).setSequence(sequence);
-				}		}
+			   ConcurrentMap<String,byte[]> map = (ConcurrentMap<String, byte[]>) getContigDB().hashMap("map").createOrOpen();
+			   List<String> keys=map.keySet().stream().filter(k->k.toLowerCase().contains(entry.getSubmitterAccession().toLowerCase()+":")).collect(Collectors.toList());
+			   keys.forEach(k->{StringTokenizer tokens = new StringTokenizer(k, ":"); 
+			   tokens.nextToken();tokens.nextToken();
+			   long begin =Long.valueOf(tokens.nextToken());
+			   long end = Long.valueOf(tokens.nextToken());
+				byte[] sequence=entry.getSequence().getSequenceByte(begin,end);
+				map.put(k,sequence);
+			   } );
+		}
 			
+		if(getContigDB()!=null)
+			getContigDB().commit();
+		}catch(Exception e)
+		{
+			if(getContigDB()!=null)
+				getContigDB().close();
+    		throw e; 
+		}
 		}
 
 

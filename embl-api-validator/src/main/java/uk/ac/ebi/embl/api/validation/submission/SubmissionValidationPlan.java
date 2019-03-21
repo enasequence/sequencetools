@@ -75,11 +75,14 @@ public class SubmissionValidationPlan
 			}
 			if(options.context.get().getFileTypes().contains(FileType.AGP))
 			{
-				AGPFileValidationCheck check = new AGPFileValidationCheck(options);
+ 				AGPFileValidationCheck check = new AGPFileValidationCheck(options);
+ 				if(options.submissionFiles.get().getFiles(FileType.AGP).size()>0)
+ 				{
+ 				contigDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getcontigDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
+ 				check.setContigDB(contigDB);
+ 				}
 				check.getAGPEntries();
-				if(check.agpEntryNames.size()!=0)
-					contigDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getcontigDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
-
+				
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA))
 				validateFasta();
@@ -178,7 +181,7 @@ public class SubmissionValidationPlan
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
-					check.setSequenceDB(contigDB);
+					check.setContigDB(contigDB);
 				if(!check.check(fastaFile))
 					throwValidationCheckException(FileType.FASTA,fastaFile);
 				else if(!options.isRemote)
@@ -206,7 +209,7 @@ public class SubmissionValidationPlan
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
-					check.setSequenceDB(contigDB);
+					check.setContigDB(contigDB);
 				if(!check.check(flatfile))
 					throwValidationCheckException(FileType.FLATFILE,flatfile);
 				else if(!options.isRemote)
@@ -231,6 +234,8 @@ public class SubmissionValidationPlan
 				fileName= agpFile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
+				if(contigDB!=null)
+					check.setContigDB(contigDB);
 				if(!check.check(agpFile))
 					throwValidationCheckException(FileType.AGP,agpFile);
 				else if(!options.isRemote)
