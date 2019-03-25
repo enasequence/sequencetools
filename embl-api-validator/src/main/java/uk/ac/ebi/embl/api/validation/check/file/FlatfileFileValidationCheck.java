@@ -23,6 +23,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.mapdb.DBMaker;
+
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -99,7 +101,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
         	ValidationPlanResult planResult=validationPlan.execute(entry);
-        	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength());
+        	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),FileType.FLATFILE);
 			if(!planResult.isValid())
 			{
 				valid = false;
@@ -117,7 +119,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			emblReader.read();
 			sequenceCount++;
 		}
-		
 		}catch(Exception e)
 		{
 			if(getSequenceDB()!=null)
@@ -126,6 +127,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
+		if(valid)
+          registerFlatfileInfo();
 		return valid;
 	}
 	@Override
@@ -166,5 +169,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			
 		}
+	}
+	private void registerFlatfileInfo() throws ValidationEngineException
+	{
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.flatfileInfo,options.reportDir.get(),AssemblySequenceInfo.flatfilefileName);
 	}
 }

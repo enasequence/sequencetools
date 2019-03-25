@@ -18,13 +18,19 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentMap;
+
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
@@ -46,6 +52,10 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	{
 		boolean valid=true;
 		fixedFileWriter =null;
+		ConcurrentMap sequenceMap =null;
+		if(getSequenceDB()!=null)
+			sequenceMap= getSequenceDB().hashMap("map").createOrOpen();
+
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -80,16 +90,15 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					collectContigInfo(entry);
 					if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
 					{
-					ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
-					map.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
+					sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
 					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-            	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.FASTA);
+            	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
 				ValidationPlanResult planResult=validationPlan.execute(entry);
-            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength());
+            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FASTA);
 				if(!planResult.isValid())
 				{
 					valid = false;
@@ -122,7 +131,13 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
+		if(valid)
+			registerFastaInfo();
 		return valid;	
+	}
+	private void registerFastaInfo() throws ValidationEngineException
+	{
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.fastaInfo,options.reportDir.get(),AssemblySequenceInfo.fastafileName);
 	}
 
 	@Override

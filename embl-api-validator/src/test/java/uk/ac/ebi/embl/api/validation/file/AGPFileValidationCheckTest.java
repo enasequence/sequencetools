@@ -19,6 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
@@ -54,8 +57,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 	   }
 	
 		@Test
-		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException
-		{
+		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException
+		{  
 			validateMaster(Context.genome);
 			options.context = Optional.of(Context.genome);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -63,7 +66,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.submissionFiles = Optional.of(submissionFiles);
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
-			 options.init();
+        	options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
 			check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
@@ -77,6 +80,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagcccnnnnnnnnnnnnnnnnnnnnnnnngggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgagg",map.get("IWGSC_CSS_6DL_scaff_3330716".toUpperCase()));
 			assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagccc",map.get("IWGSC_CSS_6DL_scaff_3330717".toUpperCase()));
 	        check.getSequenceDB().close();
+	        check.getContigDB().close();
 		}
 		
 		@Test
@@ -90,13 +94,14 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
 			options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
-			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig1").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
+			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 			check.getAGPEntries();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.FLATFILE).getFile()));
 			//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
+			check.getContigDB().close();
 		}
 	 
     	

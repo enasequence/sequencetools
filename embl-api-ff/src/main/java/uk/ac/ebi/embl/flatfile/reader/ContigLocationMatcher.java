@@ -27,8 +27,8 @@ public class ContigLocationMatcher extends FlatFileMatcher {
 	}
 
 	private static final Pattern PATTERN = Pattern.compile(
-			"(?:(?:\\s*(complement\\s*\\()?(\\w+)\\s*\\.(\\d+)\\s*\\:\\s*(\\d+)\\s*\\.\\.\\s*(\\d+)\\)?)|(?:\\s*(gap)\\s*\\(?((?:\\d+)|(?:unk(\\d+)))\\s*\\)?))\\s*\\)?");	
-	private static final int GROUP_COMPLEMENT = 1;
+"(?:(?:\\s*(complement\\s*\\()?([\\w-\\.]+)\\s*\\.(\\d+)\\s*\\:\\s*(\\d+)\\s*\\.\\.\\s*(\\d+)\\)?)|(?:\\s*(gap)\\s*\\(?((?:\\d+)|(?:unk(\\d+)))\\s*\\)?))\\s*\\)?");
+			private static final int GROUP_COMPLEMENT = 1;
 	private static final int GROUP_ACCESSION = 2;
 	private static final int GROUP_VERSION = 3;
 	private static final int GROUP_BEGIN_POSITION = 4;

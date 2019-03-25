@@ -73,6 +73,8 @@ public class SubmissionOptions
 		if(context.get()==Context.genome)
 		{
 			FileValidationCheck.sequenceInfo.clear();
+			FileValidationCheck.fastaInfo.clear();
+			FileValidationCheck.flatfileInfo.clear();
 			FileValidationCheck.agpEntryNames.clear();
 			FileValidationCheck.chromosomeNameQualifiers.clear();
 			FileValidationCheck.entryNames.clear();

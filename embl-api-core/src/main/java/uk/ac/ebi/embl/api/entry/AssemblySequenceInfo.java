@@ -17,6 +17,8 @@ public class AssemblySequenceInfo implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	public static final String sequencefileName= "sequence.info";
+	public static final String fastafileName= "fasta.info";
+	public static final String flatfilefileName= "flatfile.info";
 	public static final String chromosomefileName= "chromosome.info";
 	public static final String contigfileName= "contig.info";
 	public static final String scaffoldfileName= "scaffold.info";

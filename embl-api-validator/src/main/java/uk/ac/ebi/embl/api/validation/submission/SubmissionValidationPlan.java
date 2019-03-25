@@ -22,8 +22,6 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -53,6 +51,9 @@ public class SubmissionValidationPlan
     String fastaFlagFileName ="fasta.validated";
     String agpFlagFileName ="agp.validated";
     String flatfileFlagFileName ="flatfile.validated";
+    String chromosomelistFlagFileName ="chromosomelist.validated";
+
+    AGPFileValidationCheck agpCheck=null;
 
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
@@ -75,21 +76,25 @@ public class SubmissionValidationPlan
 			}
 			if(options.context.get().getFileTypes().contains(FileType.AGP))
 			{
- 				AGPFileValidationCheck check = new AGPFileValidationCheck(options);
+ 				 agpCheck = new AGPFileValidationCheck(options);
  				if(options.submissionFiles.get().getFiles(FileType.AGP).size()>0)
  				{
  				contigDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getcontigDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
- 				check.setContigDB(contigDB);
+ 				agpCheck.setContigDB(contigDB);
  				}
-				check.getAGPEntries();
+ 				agpCheck.getAGPEntries();
 				
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA))
-				validateFasta();
+			  validateFasta();
+			  
 			if(options.context.get().getFileTypes().contains(FileType.FLATFILE))
 				validateFlatfile();
+
 			if(options.context.get().getFileTypes().contains(FileType.AGP))
+			{
 				validateAGP();
+			}
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 				validateAnnotationOnlyFlatfile();
 			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
@@ -147,6 +152,8 @@ public class SubmissionValidationPlan
 
 	private void validateChromosomeList() throws ValidationEngineException
 	{
+		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,chromosomelistFlagFileName))))
+         return;
 		String fileName=null;
 
 		try
@@ -158,8 +165,10 @@ public class SubmissionValidationPlan
 
 				if(!check.check(chromosomeListFile))
 					throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
+				else if(!options.isRemote)
+				     flagValidation(FileType.CHROMOSOME_LIST);
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.CHROMOSOME_LIST,e,fileName);
 		}
@@ -228,15 +237,12 @@ public class SubmissionValidationPlan
 		String fileName=null;
 		try
 		{
-			check = new AGPFileValidationCheck(options);
 			for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 			{
 				fileName= agpFile.getFile().getName();
 				if(sequenceDB!=null)
-					check.setSequenceDB(sequenceDB);
-				if(contigDB!=null)
-					check.setContigDB(contigDB);
-				if(!check.check(agpFile))
+					agpCheck.setSequenceDB(sequenceDB);
+				if(!agpCheck.check(agpFile))
 					throwValidationCheckException(FileType.AGP,agpFile);
 				else if(!options.isRemote)
 				     flagValidation(FileType.AGP);
@@ -272,8 +278,7 @@ public class SubmissionValidationPlan
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.contigEntryNames,options.reportDir.get(),AssemblySequenceInfo.contigfileName);
 		AssemblySequenceInfo.writeListObject(FileValidationCheck.scaffoldEntryNames,options.reportDir.get(),AssemblySequenceInfo.scaffoldfileName);
 	}
-
-
+	
 	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
 	{
 		String fileName=null;
@@ -316,12 +321,12 @@ public class SubmissionValidationPlan
 	}
 	private String getSequenceDbname()
 	{
-		return ".sequence"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
+		return ".sequence";
 
 	}
 	private String getcontigDbname()
 	{
-		return ".contig"+new SimpleDateFormat("yyMMddhhmmssMs").format(new Date());
+		return ".contig";
 
 	}
 
@@ -394,6 +399,9 @@ public class SubmissionValidationPlan
 			break;
 		case FLATFILE:
 			fileName = flatfileFlagFileName;
+			break;
+		case CHROMOSOME_LIST:
+			fileName = chromosomelistFlagFileName;
 			break;
 		default:
 			break;

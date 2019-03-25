@@ -74,6 +74,7 @@ import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 
@@ -86,6 +87,8 @@ public abstract class FileValidationCheck {
 	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
 	public static List<String> chromosomeNames =new ArrayList<String>();
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
+	public static HashMap<String,AssemblySequenceInfo> fastaInfo =new HashMap<String,AssemblySequenceInfo>();
+	public static HashMap<String,AssemblySequenceInfo> flatfileInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
@@ -206,7 +209,7 @@ public abstract class FileValidationCheck {
 		}
 	}
 	
-	protected void addEntryName(String entryName,ValidationScope scope,long sequenceLength)
+	protected void addEntryName(String entryName,ValidationScope scope,long sequenceLength,FileType fileType)
 	{
 		if(entryName==null)
 			return;
@@ -215,19 +218,35 @@ public abstract class FileValidationCheck {
 			duplicateEntryNames.add(entryName);
 		}
 			
+		int assemblyLevel=-1;
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
 			chromosomeEntryNames.add(entryName);
-            sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,2,null));
+			assemblyLevel=2;
+            sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
 			scaffoldEntryNames.add(entryName);
-			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,1,null));
+			assemblyLevel=1;
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		case ASSEMBLY_CONTIG:
 			contigEntryNames.add(entryName);
-			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,0,null));
+			assemblyLevel=0;
+			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
+			break;
+		default:
+			break;
+		}
+		
+		switch(fileType)
+		{
+		case FASTA:
+			fastaInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
+			break;
+		case FLATFILE:
+			flatfileInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		default:
 			break;

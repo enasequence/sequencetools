@@ -18,12 +18,16 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang3.StringUtils;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
@@ -67,6 +71,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			}
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
+			HashMap<String,AssemblySequenceInfo> contigInfo=new HashMap<String,AssemblySequenceInfo>();
+			if(Files.exists(Paths.get(options.reportDir.get(), AssemblySequenceInfo.fastafileName)))
+				contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
+			if(Files.exists(Paths.get(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName)))
+				contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
 			ValidationResult parseResult = reader.read();
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry())
@@ -79,12 +88,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				parseResult=new ValidationResult();
         		Entry entry =reader.getEntry();
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-    			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(sequenceInfo);
+    			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
     			ValidationPlanResult planResult=validationPlan.execute(entry);
-            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength());
+            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),FileType.AGP);
     			if(!planResult.isValid())
     			{
     			    valid = false;
@@ -123,6 +132,14 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		{
  		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
  
+		ConcurrentMap contigMap =null;
+		ConcurrentMap sequenceMap = null;
+		if(getContigDB()!=null)
+			contigMap=getContigDB().hashMap("map").createOrOpen();
+		if(getSequenceDB()!=null)
+		sequenceMap=getSequenceDB().hashMap("map").createOrOpen();
+
+
          for(AgpRow agpRow: entry.getSequence().getSortedAGPRows())
          {
          	i++;
@@ -133,9 +150,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
              	if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
 				{
              		String key =agpRow.getComponent_id()+":"+agpRow.getObject()+":"+agpRow.getComponent_beg()+":"+agpRow.getComponent_end();
-					ConcurrentMap map = getContigDB().hashMap("map").createOrOpen();
-					if(map.get(key)!=null)
-					  sequence=map.get(key);
+					if(contigMap.get(key)!=null)
+					  sequence=contigMap.get(key);
 				}
               if(sequence!=null)
          	  sequenceBuffer.put((byte[])sequence);
@@ -150,14 +166,17 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			{
         	 if(entry.getSubmitterAccession()!=null)
         	 {
-				ConcurrentMap map = getSequenceDB().hashMap("map").createOrOpen();
-				map.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
+				sequenceMap.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
 			}
 			}
+         if(getSequenceDB()!=null)
+        	 getContigDB().commit();
 		}catch(Exception e)
 		{
 			if(getSequenceDB()!=null)
-				getSequenceDB().close();  
+				getSequenceDB().close();
+			if(getContigDB()!=null)
+				getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
 		if(getSequenceDB()!=null)

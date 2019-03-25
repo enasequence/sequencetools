@@ -3,7 +3,10 @@ package uk.ac.ebi.embl.api.validation.submission;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -89,7 +92,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
-	public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -106,7 +109,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
-	public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
