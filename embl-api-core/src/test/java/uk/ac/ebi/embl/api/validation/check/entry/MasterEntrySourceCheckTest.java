@@ -63,7 +63,6 @@ public class MasterEntrySourceCheckTest {
 	@Test
 	public void testCheck_validSourcefeature() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
@@ -78,7 +77,6 @@ public class MasterEntrySourceCheckTest {
 	@Test
 	public void testCheck_InvalidSourcefeature() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
@@ -96,7 +94,6 @@ public class MasterEntrySourceCheckTest {
 	@Test
 	public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		TaxonHelper taxonHelper= new TaxonHelperImpl();
 		property.taxonHelper.set(taxonHelper);
@@ -114,7 +111,6 @@ public class MasterEntrySourceCheckTest {
 	@Test
 	public void testCheck_validSourcefeatureSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		TaxonHelper taxonHelper= new TaxonHelperImpl();
 		property.taxonHelper.set(taxonHelper);

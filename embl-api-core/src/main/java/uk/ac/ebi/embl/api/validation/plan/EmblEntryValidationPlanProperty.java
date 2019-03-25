@@ -18,7 +18,6 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Boolean> isDevMode = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<Boolean> isFixMode = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<Integer> minGapLength = new ValidationPlanProperty<Integer>(0);
-	public final ValidationPlanProperty<Boolean> isAssembly = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<TaxonHelper> taxonHelper = new ValidationPlanProperty<TaxonHelper>(null);
 	public final ValidationPlanProperty<Boolean> isRemote=new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<FileType> fileType=new ValidationPlanProperty<FileType>(FileType.EMBL);

@@ -58,7 +58,6 @@ public class EntryNameExistsCheckTest {
 	@Test
 	public void testCheckassembly_NoEntryName() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
 		ValidationResult result = check.check(entry);
@@ -69,7 +68,6 @@ public class EntryNameExistsCheckTest {
 	@Test
 	public void testCheckassembly_withEntryName() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setSubmitterAccession("contig1");
@@ -81,7 +79,6 @@ public class EntryNameExistsCheckTest {
 	@Test
 	public void testCheckassembly_withEntryNameMaxLength() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setSubmitterAccession("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -93,7 +90,6 @@ public class EntryNameExistsCheckTest {
 	@Test
 	public void testCheckassembly_masterWithEntryName() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setDataClass(Entry.SET_DATACLASS);

@@ -36,7 +36,7 @@ public class GaptoAssemblyGapFeatureFix extends EntryValidationCheck
 	
 	public ValidationResult check(Entry entry)
 	{
-		if(!getEmblEntryValidationPlanProperty().validationScope.get().isInGroup(Group.ASSEMBLY)&&!getEmblEntryValidationPlanProperty().isAssembly.get())
+		if(!getEmblEntryValidationPlanProperty().validationScope.get().isInGroup(Group.ASSEMBLY) )
     	{
     	  return result;
     	}

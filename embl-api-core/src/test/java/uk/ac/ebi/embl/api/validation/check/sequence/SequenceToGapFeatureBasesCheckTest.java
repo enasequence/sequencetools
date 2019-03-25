@@ -236,7 +236,6 @@ public class SequenceToGapFeatureBasesCheckTest {
 	{
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.minGapLength.set(5);
-		property.isAssembly.set(true);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setDataClass(Entry.WGS_DATACLASS);
 		entry.setSequence(sequenceFactory.createSequenceByte("aaannnnnnnnnnnnnnnnnnnnnaaaannnnnaaa".getBytes()));
@@ -251,7 +250,6 @@ public class SequenceToGapFeatureBasesCheckTest {
 	{
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.minGapLength.set(5);
-		property.isAssembly.set(false);
 		check.setEmblEntryValidationPlanProperty(property);
 		entry.setDataClass(Entry.STD_DATACLASS);
 		entry.setSequence(sequenceFactory.createSequenceByte("aaannnnnnnnnnnnnnnnnnnnnaaaannnnnaaa".getBytes()));

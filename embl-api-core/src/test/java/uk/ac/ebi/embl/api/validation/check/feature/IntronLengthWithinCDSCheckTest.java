@@ -74,7 +74,6 @@ public class IntronLengthWithinCDSCheckTest
 	{
 		Join<Location> locationJoin = new Join<Location>();
 		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		check.setEmblEntryValidationPlanProperty(property);
 		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
 		locationJoin.addLocation(locationFactory.createLocalRange(30l, 25l));
@@ -85,29 +84,12 @@ public class IntronLengthWithinCDSCheckTest
 	}
 	
 	@Test
-	public void testCheck_InvalidIntronNON_assembly() throws SQLException
-	{
-		Join<Location> locationJoin = new Join<Location>();
-		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-		locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
-		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
-		check.setEmblEntryValidationPlanProperty(property);
-		feature.addQualifier("artificial_location","low-quality sequence region");
-		feature.setLocations(locationJoin);
-		ValidationResult validationResult = check.check(feature);
-		assertTrue(!validationResult.isValid());
-		assertEquals(1, validationResult.count("IntronLengthWithinCDSCheck_1",
-				Severity.ERROR));
-	}
-	
-	@Test
 	public void testCheck_InvalidIntronAssemblywithArtificialLocation() throws SQLException
 	{
 		Join<Location> locationJoin = new Join<Location>();
 		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
 		locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
 		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		check.setEmblEntryValidationPlanProperty(property);
 		feature.setLocations(locationJoin);
 		feature.addQualifier("artificial_location","low-quality sequence region");
@@ -124,7 +106,6 @@ public class IntronLengthWithinCDSCheckTest
 		locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
 		locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
 		EmblEntryValidationPlanProperty  property=new EmblEntryValidationPlanProperty();
-		property.isAssembly.set(true);
 		check.setEmblEntryValidationPlanProperty(property);
 		feature.setLocations(locationJoin);
 		feature.addQualifier("ribosomal_slippage","low-quality sequence region");

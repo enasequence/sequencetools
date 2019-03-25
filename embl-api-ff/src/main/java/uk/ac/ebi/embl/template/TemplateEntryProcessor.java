@@ -43,7 +43,6 @@ public class TemplateEntryProcessor {
         emblEntryValidationProperty.validationScope.set(validationScope);
         emblEntryValidationProperty.isDevMode.set(false);
         emblEntryValidationProperty.isFixMode.set(true);
-        emblEntryValidationProperty.isAssembly.set(false);
         emblEntryValidationProperty.minGapLength.set(0);
         validationPlan = new EmblEntryValidationPlan(emblEntryValidationProperty);
         validationPlan.addMessageBundle(TemplateProcessorConstants.TEMPLATE_MESSAGES_BUNDLE);
