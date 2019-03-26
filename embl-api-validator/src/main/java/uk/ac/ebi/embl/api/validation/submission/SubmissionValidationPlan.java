@@ -52,6 +52,8 @@ public class SubmissionValidationPlan
     String agpFlagFileName ="agp.validated";
     String flatfileFlagFileName ="flatfile.validated";
     String chromosomelistFlagFileName ="chromosomelist.validated";
+    String masterFlagFileName ="master.validated";
+
 
     AGPFileValidationCheck agpCheck=null;
 
@@ -103,20 +105,19 @@ public class SubmissionValidationPlan
 				validateTsvfile();
 			if(Context.genome==options.context.get())
 			{
+				if(!options.isRemote)
+					registerSequences();
 				check.validateDuplicateEntryNames();
 				check.validateSequencelessChromosomes();
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
 				if(!options.isRemote)
 				{
-					registerSequences();
 					if(!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())&&
 					   !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())	)
 					writeUnplacedList();
 				}
 			}
-			else {
-				writeSequenceInfo();
-			}
+			
 			if(sequenceDB!=null)
 				sequenceDB.close();
 			if(contigDB!=null)
@@ -139,12 +140,16 @@ public class SubmissionValidationPlan
 
 	private void createMaster() throws ValidationEngineException
 	{
+		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName))))
+	         return;
 		try
 		{
 			check = new MasterEntryValidationCheck(options);
 			if(!check.check())
 				throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
-		}catch(ValidationEngineException e)
+			else if(!options.isRemote)
+			     flagValidation(FileType.MASTER);
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.MASTER,e,"master.dat");
 		}
@@ -273,10 +278,10 @@ public class SubmissionValidationPlan
 
 	private void registerSequences() throws ValidationEngineException
 	{
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.agpfileName));
 		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
-		AssemblySequenceInfo.writeListObject(FileValidationCheck.chromosomeEntryNames,options.reportDir.get(),AssemblySequenceInfo.chromosomefileName);
-		AssemblySequenceInfo.writeListObject(FileValidationCheck.contigEntryNames,options.reportDir.get(),AssemblySequenceInfo.contigfileName);
-		AssemblySequenceInfo.writeListObject(FileValidationCheck.scaffoldEntryNames,options.reportDir.get(),AssemblySequenceInfo.scaffoldfileName);
 	}
 	
 	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
@@ -379,10 +384,7 @@ public class SubmissionValidationPlan
 			throw new ValidationEngineException("Failed to write unplaced file: "+e.getMessage());
 		}
 	}
-	private void writeSequenceInfo() throws ValidationEngineException
-	{
-		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
-	}
+	
 	private void flagValidation(FileType fileType) throws IOException
 	{
 		if(!options.processDir.isPresent())
@@ -402,6 +404,9 @@ public class SubmissionValidationPlan
 			break;
 		case CHROMOSOME_LIST:
 			fileName = chromosomelistFlagFileName;
+			break;
+		case MASTER:
+			fileName = masterFlagFileName;
 			break;
 		default:
 			break;

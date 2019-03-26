@@ -19,10 +19,7 @@ public class AssemblySequenceInfo implements Serializable
 	public static final String sequencefileName= "sequence.info";
 	public static final String fastafileName= "fasta.info";
 	public static final String flatfilefileName= "flatfile.info";
-	public static final String chromosomefileName= "chromosome.info";
-	public static final String contigfileName= "contig.info";
-	public static final String scaffoldfileName= "scaffold.info";
-
+	public static final String agpfileName= "agp.info";
 	long sequenceLength;
 	int assemblyLevel;
 	String accession;
@@ -72,8 +69,11 @@ public class AssemblySequenceInfo implements Serializable
   
   public static HashMap<String,AssemblySequenceInfo> getMapObject(String inputDir,String fileName) throws ValidationEngineException
   {
-	  HashMap<String,AssemblySequenceInfo> infoObject=null;
+	  HashMap<String,AssemblySequenceInfo> infoObject=new HashMap<String,AssemblySequenceInfo>();
 	  
+	  if(!Files.exists(Paths.get(inputDir+File.separator+fileName)))
+		  return infoObject;
+		  
 			try(ObjectInputStream  oos = new ObjectInputStream (new FileInputStream(inputDir+File.separator+fileName)))
 			{
 				infoObject= (HashMap<String, AssemblySequenceInfo>) oos.readObject();

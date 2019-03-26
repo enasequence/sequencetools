@@ -75,16 +75,13 @@ public class SubmissionOptions
 			FileValidationCheck.sequenceInfo.clear();
 			FileValidationCheck.fastaInfo.clear();
 			FileValidationCheck.flatfileInfo.clear();
+			FileValidationCheck.agpInfo.clear();
 			FileValidationCheck.agpEntryNames.clear();
 			FileValidationCheck.chromosomeNameQualifiers.clear();
 			FileValidationCheck.entryNames.clear();
 			FileValidationCheck.duplicateEntryNames.clear();
 			FileValidationCheck.chromosomeNames.clear();
 			FileValidationCheck.unplacedEntryNames.clear();
-			FileValidationCheck.contigEntryNames.clear();
-			FileValidationCheck.scaffoldEntryNames.clear();
-			FileValidationCheck.chromosomeEntryNames.clear();
-
 		}
 	}
 	

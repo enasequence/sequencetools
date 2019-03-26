@@ -72,10 +72,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			HashMap<String,AssemblySequenceInfo> contigInfo=new HashMap<String,AssemblySequenceInfo>();
-			if(Files.exists(Paths.get(options.reportDir.get(), AssemblySequenceInfo.fastafileName)))
-				contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
-			if(Files.exists(Paths.get(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName)))
-				contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
+			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
+			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
+			if(contigInfo.isEmpty())
+				throw new ValidationEngineException("AGP validation can't be done : Contig Info is missing");
 			ValidationResult parseResult = reader.read();
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry())
@@ -123,6 +123,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				   getContigDB().close();
 			throw new ValidationEngineException(e.getMessage());
 		}
+		if(valid)
+	        registerAGPfileInfo();
 		return valid;
 	}
 	
@@ -231,6 +233,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 		}
 
+	}
+	private void registerAGPfileInfo() throws ValidationEngineException
+	{
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.agpInfo,options.reportDir.get(),AssemblySequenceInfo.agpfileName);
 	}
 	
 }

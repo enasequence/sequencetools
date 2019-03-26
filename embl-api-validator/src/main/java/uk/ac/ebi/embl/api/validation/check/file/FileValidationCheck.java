@@ -89,13 +89,11 @@ public abstract class FileValidationCheck {
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static HashMap<String,AssemblySequenceInfo> fastaInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static HashMap<String,AssemblySequenceInfo> flatfileInfo =new HashMap<String,AssemblySequenceInfo>();
+	public static HashMap<String,AssemblySequenceInfo> agpInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static List<String> agpEntryNames =new ArrayList<String>();
 	public static List<String> unplacedEntryNames =new ArrayList<String>();
-	public static List<String> contigEntryNames = new ArrayList<String>();
-	public static List<String> scaffoldEntryNames = new ArrayList<String>();
-	public static List<String> chromosomeEntryNames = new ArrayList<String>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
@@ -222,19 +220,13 @@ public abstract class FileValidationCheck {
 		switch(scope)
 		{
 		case ASSEMBLY_CHROMOSOME:
-			chromosomeEntryNames.add(entryName);
 			assemblyLevel=2;
-            sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		case ASSEMBLY_SCAFFOLD:
-			scaffoldEntryNames.add(entryName);
 			assemblyLevel=1;
-			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		case ASSEMBLY_CONTIG:
-			contigEntryNames.add(entryName);
 			assemblyLevel=0;
-			sequenceInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		default:
 			break;
@@ -247,6 +239,9 @@ public abstract class FileValidationCheck {
 			break;
 		case FLATFILE:
 			flatfileInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
+			break;
+		case AGP:
+			agpInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
 			break;
 		default:
 			break;
