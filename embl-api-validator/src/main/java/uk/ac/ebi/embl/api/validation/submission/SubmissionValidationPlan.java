@@ -117,11 +117,6 @@ public class SubmissionValidationPlan
 					writeUnplacedList();
 				}
 			}
-			
-			if(sequenceDB!=null)
-				sequenceDB.close();
-			if(contigDB!=null)
-				contigDB.close();
 		}catch(ValidationEngineException e)
 		{
 			try {
@@ -135,6 +130,14 @@ public class SubmissionValidationPlan
 		}catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
+		}
+		finally {
+			try {
+				if (sequenceDB != null)
+					sequenceDB.close();
+				if (contigDB != null)
+					contigDB.close();
+			} catch (Exception e) {}
 		}
 	}
 
