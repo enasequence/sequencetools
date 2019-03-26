@@ -69,6 +69,8 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
+		if(!isRemote)
+			ignoreErrors =true;
 		FileValidationCheck.setSequenceCount(0);
 		if(context.get()==Context.genome)
 		{
