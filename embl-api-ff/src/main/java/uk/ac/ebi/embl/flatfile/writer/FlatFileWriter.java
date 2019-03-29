@@ -99,8 +99,13 @@ public abstract class FlatFileWriter {
 	/** Writes a flat file block to an output stream. Does not write
 	 *  anything if the line is empty.
 	 */
-	protected void writeBlock(Writer writer, String firstLineHeader, 
-			String header, String block) throws IOException {
+	protected void writeBlock(Writer writer, String firstLineHeader,
+									 String header, String block) throws IOException {
+		writeBlock(writer, firstLineHeader, header, block, wrapType, wrapChar);
+	}
+
+	public static void writeBlock(Writer writer, String firstLineHeader,
+			String header, String block, WrapType wrapType, WrapChar wrapChar) throws IOException {
 
 		int headerLength = header.length();
 		int lineLength = block.length();
@@ -181,7 +186,7 @@ public abstract class FlatFileWriter {
 		}
 	}
 
-	protected void writeLine(Writer writer, String firstLineHeader, 
+	protected static void writeLine(Writer writer, String firstLineHeader,
 			String header, String line, int lineNumber) throws IOException {
 
         if (firstLineHeader != null && lineNumber == 1) {

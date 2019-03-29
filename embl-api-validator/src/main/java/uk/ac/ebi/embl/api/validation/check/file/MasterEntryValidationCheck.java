@@ -17,8 +17,11 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -36,6 +39,9 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
+import uk.ac.ebi.embl.flatfile.writer.WrapChar;
+import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
@@ -57,7 +63,17 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(!getOptions().isRemote)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
-				masterEntry=utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
+				masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
+				if(StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+					StringWriter strWriter = new StringWriter();
+					FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
+							WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK);
+					String comment = strWriter.toString().trim();
+					if( comment.length()-1 == comment.lastIndexOf("\n")) {
+						comment = comment.substring(0,comment.length()-1);
+					}
+					masterEntry.setComment(new Text(comment));
+				}
 			}
 			else
 			{
