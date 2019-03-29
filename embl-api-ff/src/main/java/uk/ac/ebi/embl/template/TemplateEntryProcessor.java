@@ -73,7 +73,11 @@ public class TemplateEntryProcessor {
         StringBuilderUtils.removeUnmatchedTokenLines(template);
         BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim()));
         EntryReader entryReader = new EmblEntryReader(stringReader);
-        entryReader.read();
+        ValidationResult validationResult = entryReader.read();
+        if(!validationResult.isValid()) {
+            templateProcessorResultSet.getValidationPlanResult().append(validationResult);
+            return templateProcessorResultSet;
+        }
         Entry entry = entryReader.getEntry();
         entry.addProjectAccession(new Text(projectId));
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceNumber()));

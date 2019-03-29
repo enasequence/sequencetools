@@ -15,16 +15,15 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -125,6 +124,31 @@ public class TSVFileValidationCheckTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void singleCDSInvalidLocation()  {
+		try {
+			String fileName = "cds29.tsv.gz";
+			submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + fileName), path.toFile());
+			Assert.assertFalse(fileValidationCheck.check(submissionFile));
+			Assert.assertTrue(checkReport(new File(reportsPath + File.separator + fileName +".report"),
+					"ERROR: Invalid feature location: <yes..>yes [Sequence: 1 ,  line: 22]"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private boolean checkReport(File file, String s) throws Exception {
+		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				if(line.contains(s))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	@Test
