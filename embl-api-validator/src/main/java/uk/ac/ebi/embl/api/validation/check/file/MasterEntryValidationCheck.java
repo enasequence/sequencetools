@@ -64,7 +64,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
 				masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
-				if(StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+				if(masterEntry != null && StringUtils.isNotBlank(masterEntry.getComment().getText())) {
 					StringWriter strWriter = new StringWriter();
 					FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
 							WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK);
