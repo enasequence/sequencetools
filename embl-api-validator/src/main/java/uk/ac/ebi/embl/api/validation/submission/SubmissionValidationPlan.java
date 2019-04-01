@@ -116,27 +116,26 @@ public class SubmissionValidationPlan
 					writeUnplacedList();
 				}
 			}
-		}catch(ValidationEngineException e)
+		}catch(Throwable e)
 		{
 			try {
 				if(!options.isRemote&&options.context.isPresent()&&options.context.get()==Context.genome&&check!=null&&check.getMessageStats()!=null)
 					check.getReporter().writeToFile(Paths.get(options.reportDir.get()),check.getMessageStats());
 			}catch(Exception ex)
 			{
-				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e.getErrorType());
+				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e);
 			}
-			throw new ValidationEngineException(e.getMessage(),e.getErrorType());
-		}catch(Exception e)
-		{
-			throw new ValidationEngineException(e.getMessage());
-		}
-		finally {
+			throw new ValidationEngineException(e.getMessage(),e);
+		}finally {
 			try {
 				if (sequenceDB != null)
 					sequenceDB.close();
 				if (contigDB != null)
 					contigDB.close();
-			} catch (Exception e) {}
+			} catch(Throwable e)
+			{
+				throw new ValidationEngineException(e.getMessage(),e);
+			}
 		}
 	}
 
