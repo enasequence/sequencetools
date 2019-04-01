@@ -105,7 +105,6 @@ public class SubmissionValidationPlan
 				validateTsvfile();
 			if(Context.genome==options.context.get())
 			{
-				if(!options.isRemote)
 					registerSequences();
 				check.validateDuplicateEntryNames();
 				check.validateSequencelessChromosomes();
@@ -173,8 +172,6 @@ public class SubmissionValidationPlan
 
 				if(!check.check(chromosomeListFile))
 					throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
-				else if(!options.isRemote)
-				     flagValidation(FileType.CHROMOSOME_LIST);
 			}
 		}catch(Exception e)
 		{

@@ -108,6 +108,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(submissionFile), planResult);
 				for(ValidationResult result: planResult.getResults())
 				{
+					if(!result.isValid())
 					addMessagekey(result);
 				}
 			}
