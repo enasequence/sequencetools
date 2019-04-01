@@ -60,7 +60,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
-	public void testGenomeSubmissionwithFastaChromosomeListsequenceless() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeSubmissionwithFastaChromosomeListsequenceless() throws ValidationEngineException, FlatFileComparatorException, IOException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -68,6 +68,9 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		submissionFiles.addFile(initSubmissionFixedTestFile("chromosome_list_sequenceless.txt", FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"fasta.info"));
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"agp.info"));
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"flatfile.info"));
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage("Sequenceless chromosomes are not allowed in assembly : IWGSC_CSS_6DL_scaff_3330717,IWGSC_CSS_6DL_scaff_3330716,IWGSC_CSS_6DL_scaff_3330719");
