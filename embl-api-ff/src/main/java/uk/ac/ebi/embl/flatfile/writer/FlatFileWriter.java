@@ -101,13 +101,12 @@ public abstract class FlatFileWriter {
 	 */
 	protected void writeBlock(Writer writer, String firstLineHeader,
 									 String header, String block) throws IOException {
-		writeBlock(writer, firstLineHeader, header, block, wrapType, wrapChar);
+		writeBlock(writer, firstLineHeader, header, block, wrapType, wrapChar, header.length());
 	}
 
 	public static void writeBlock(Writer writer, String firstLineHeader,
-			String header, String block, WrapType wrapType, WrapChar wrapChar) throws IOException {
+			String header, String block, WrapType wrapType, WrapChar wrapChar, int headerLength) throws IOException {
 
-		int headerLength = header.length();
 		int lineLength = block.length();
 
 		int maximumLineLength = MAXIMUM_LINE_LENGTH - headerLength;		

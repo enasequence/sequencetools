@@ -71,7 +71,12 @@ public class TemplateEntryProcessor {
         replaceTokens(templateVariables);
         new SectionExtractor().removeSections(template, this.templateInfo.getSections(), templateVariables);
         StringBuilderUtils.removeUnmatchedTokenLines(template);
-        BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim()));
+        validateSediment(templateProcessorResultSet, templateVariables);
+        validateMarker(templateProcessorResultSet, templateVariables);
+        if(!templateProcessorResultSet.getValidationPlanResult().isValid()) {
+            return templateProcessorResultSet;
+        }
+        BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim().concat("\n//")));
         EntryReader entryReader = new EmblEntryReader(stringReader);
         ValidationResult validationResult = entryReader.read();
         if(!validationResult.isValid()) {
@@ -133,8 +138,6 @@ public class TemplateEntryProcessor {
                 entry.getReferences().add(reference);
         }*/
         templateProcessorResultSet.getValidationPlanResult().append((validationPlan.execute(entry)));
-        validateSediment(templateProcessorResultSet, templateVariables);
-        validateMarker(templateProcessorResultSet, templateVariables);
         templateProcessorResultSet.setEntry(entry);
         return templateProcessorResultSet;
     }

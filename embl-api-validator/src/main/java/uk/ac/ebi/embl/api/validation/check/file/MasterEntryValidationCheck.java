@@ -39,6 +39,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -67,7 +68,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				if(masterEntry != null && StringUtils.isNotBlank(masterEntry.getComment().getText())) {
 					StringWriter strWriter = new StringWriter();
 					FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-							WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK);
+							WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
 					String comment = strWriter.toString().trim();
 					if( comment.length()-1 == comment.lastIndexOf("\n")) {
 						comment = comment.substring(0,comment.length()-1);
