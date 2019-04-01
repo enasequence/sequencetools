@@ -409,10 +409,14 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
-	protected void collectContigInfo(Entry entry) 
+	protected void collectContigInfo(Entry entry) throws Exception 
 	{
 		try
 		{
+		  if(entry.getSubmitterAccession()==null)
+			  entry.setSubmitterAccession(entry.getPrimaryAccession());
+		  if(entry.getSubmitterAccession()==null)
+			  throw new ValidationEngineException("Submitter accession missing for an entry");
 		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
 			return;
 		if(entry.getSequence()==null)

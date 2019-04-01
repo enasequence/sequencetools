@@ -120,13 +120,13 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			emblReader.read();
 			sequenceCount++;
 		}
-		}catch(Exception e)
+		}catch(Throwable e)
 		{
 			if(getSequenceDB()!=null)
 	               getSequenceDB().close();
 			if(getContigDB()!=null)
 				getContigDB().close();
-			throw new ValidationEngineException(e.getMessage());
+			throw new ValidationEngineException(e.getMessage(),e);
 		}
 		if(valid)
           registerFlatfileInfo();
