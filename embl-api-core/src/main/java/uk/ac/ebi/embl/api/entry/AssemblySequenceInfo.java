@@ -55,7 +55,7 @@ public class AssemblySequenceInfo implements Serializable
 			Files.deleteIfExists(Paths.get(outputDir+File.separator+fileName));
 			}catch(Exception e)
 			{
-				throw new ValidationEngineException("Failed to delete sequence info file: "+e.getMessage());
+				throw new ValidationEngineException("Failed to delete sequence info file: "+e.getMessage(), e);
 			}
 			try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputDir+File.separator+fileName)))
 			{
@@ -63,7 +63,7 @@ public class AssemblySequenceInfo implements Serializable
 		               
 			}catch(Exception e)
 			{
-	        throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage());
+	        throw new ValidationEngineException("Assembly sequence registration failed: "+e.getMessage(), e);
 			}
   }
   
@@ -80,7 +80,7 @@ public class AssemblySequenceInfo implements Serializable
 		               
 			}catch(Exception e)
 			{
-	        throw new ValidationEngineException("Failed to read assembly sequence information: "+e.getMessage());
+	        throw new ValidationEngineException("Failed to read assembly sequence information: "+e.getMessage(), e);
 			}
 			
 			return infoObject;
@@ -93,7 +93,7 @@ public class AssemblySequenceInfo implements Serializable
 			Files.deleteIfExists(Paths.get(outputDir+File.separator+fileName));
 			}catch(Exception e)
 			{
-				throw new ValidationEngineException("Failed to delete file: "+fileName+"\n"+e.getMessage());
+				throw new ValidationEngineException("Failed to delete file: "+fileName+"\n"+e.getMessage(), e);
 			}
 			try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputDir+File.separator+fileName)))
 			{
@@ -101,7 +101,7 @@ public class AssemblySequenceInfo implements Serializable
 		               
 			}catch(Exception e)
 			{
-	        throw new ValidationEngineException("Assembly names registration failed: "+e.getMessage());
+	        throw new ValidationEngineException("Assembly names registration failed: "+e.getMessage(), e);
 			}
   }
 
@@ -115,7 +115,7 @@ public class AssemblySequenceInfo implements Serializable
 		               
 			}catch(Exception e)
 			{
-	        throw new ValidationEngineException("Failed to read assembly names information: "+fileName+"\n"+e.getMessage());
+	        throw new ValidationEngineException("Failed to read assembly names information: "+fileName+"\n"+e.getMessage(), e);
 			}
 			
 			return infoObject;
@@ -129,7 +129,7 @@ public class AssemblySequenceInfo implements Serializable
 			Files.deleteIfExists(Paths.get(outputDir+File.separator+fileName));
 		}catch(Exception e)
 		{
-			throw new ValidationEngineException("Failed to delete file: "+fileName+"\n"+e.getMessage());
+			throw new ValidationEngineException("Failed to delete file: "+fileName+"\n"+e.getMessage(), e);
 		}
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputDir+File.separator+fileName)))
 		{
@@ -151,7 +151,7 @@ public class AssemblySequenceInfo implements Serializable
 
 		}catch(Exception e)
 		{
-			throw new ValidationEngineException("Failed to read assembly names information: "+fileName+"\n"+e.getMessage());
+			throw new ValidationEngineException("Failed to read assembly names information: "+fileName+"\n"+e.getMessage(), e);
 		}
 
 		return infoObject;

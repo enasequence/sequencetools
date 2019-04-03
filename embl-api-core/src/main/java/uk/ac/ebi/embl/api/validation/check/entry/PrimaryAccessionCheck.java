@@ -56,7 +56,7 @@ public class PrimaryAccessionCheck extends EntryValidationCheck {
 					reportError(entry.getOrigin(), INVALID_ACCESSION_PREFIX_ID, accessionPrefix);
 				}
 			} catch (Exception e) {
-				throw new ValidationEngineException(e.getMessage());
+				throw new ValidationEngineException(e.getMessage(), e);
 			}
 		}
 		return result;

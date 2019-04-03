@@ -89,7 +89,10 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 
 			}
 
-		}catch(Exception e)
+		} catch (ValidationEngineException e) {
+			throw e;
+		}
+		catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}

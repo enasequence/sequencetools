@@ -80,7 +80,7 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
 
             return result;
         } catch (SQLException e) {
-            throw new ValidationEngineException();
+            throw new ValidationEngineException(e);
         }
     }
 }

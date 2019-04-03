@@ -116,12 +116,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				reader.read();
         	}
 
-		}catch (Exception e) {
-			if(getSequenceDB()!=null)
-	               getSequenceDB().close();
-			if(getContigDB()!=null)
-				   getContigDB().close();
-			throw new ValidationEngineException(e.getMessage());
+		} catch (ValidationEngineException vee) {
+			closeDB(getContigDB(), getSequenceDB());
+			throw vee;
+		}
+		catch (Exception e) {
+			closeDB(getContigDB(), getSequenceDB());
+			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		if(valid)
 	        registerAGPfileInfo();

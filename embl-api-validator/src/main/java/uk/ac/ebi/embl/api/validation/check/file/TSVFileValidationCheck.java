@@ -60,13 +60,13 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				 templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
 			}
 			if(templateId == null)
-				throw new ValidationEngineException("Missing template id");
+				throw new ValidationEngineException("Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			File submittedDataFile =  submissionFile.getFile();
 			String templateDir = submittedDataFile.getParent();
 			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);
 			TemplateLoader templateLoader = new TemplateLoader();
 			if (!submittedDataFile.exists())
-				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist");
+				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
 			TemplateProcessor templateProcessor;
 			if (options.isRemote)
@@ -119,11 +119,11 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			
 			}catch(Exception ex)
 			{
-				throw new ValidationEngineException(ex.getMessage());
+				throw new ValidationEngineException(ex.getMessage(), ex);
 			}
 			return false;
 		} catch (Exception e) {
-			throw new ValidationEngineException(e.toString());
+			throw new ValidationEngineException(e.toString(), e);
 		}
 	}
 
@@ -146,7 +146,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			Files.write(path, template.getBytes());
 			return path.toFile();
 		} catch (Exception e) {
-			throw new ValidationEngineException("Method getTemplateFromResourceAndWriteToProcessDir: " + e.toString());
+			throw new ValidationEngineException("Method getTemplateFromResourceAndWriteToProcessDir: " + e.toString(), e);
 		}
 	}
 
@@ -159,7 +159,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			if (optional.isPresent()) {
 				templateId = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").trim();
 				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
-					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003");
+					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003",
+							ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -70,9 +70,12 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 				if(!unplacedEntryNames.isEmpty())
 				unplacedEntryNames=unplacedEntryNames.stream().filter(x->!entry.getObjectName().toUpperCase().equals(x.toUpperCase())).collect(Collectors.toCollection(ArrayList::new));	
 			}
-		}catch(Exception e)
+		} catch (ValidationEngineException e) {
+			throw e;
+		}
+		catch(Exception e)
 		{
-			throw new ValidationEngineException(e.getMessage());
+			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		return valid;
 	}

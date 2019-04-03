@@ -390,8 +390,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			return  masterEntry;
 		}
 
-		String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
-		Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
 		masterEntry.setPrimaryAccession(analysisId);
 		masterEntry.setIdLineSequenceLength(1);
 		FeatureFactory featureFactory = new FeatureFactory();
@@ -399,12 +397,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		SourceFeature sourceFeature = featureFactory.createSourceFeature();
 		TaxonHelper taxonHelper=new TaxonHelperImpl();
 		String sampleId = null;
-		String projectId = null;
-		String scientificName = null;
+		String projectId;
+		String scientificName;
 		String prevSampleId = null;
 		String prevProjectId = null;
 		String uniqueName=null;
-		boolean addUniqueName=true;
 		
 		String masterQuery = "select a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
@@ -420,7 +417,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			"where a.analysis_id=?";
 
 		boolean masterExists = false;
-		boolean biosampleExists=false;
 				
 		masterEntry.setDataClass(Entry.SET_DATACLASS);
 
@@ -465,7 +461,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				if (bioSampleId != null && !bioSampleId.equals(prevSampleId))
 				{
 					masterEntry.addXRef(new XRef("BioSample", bioSampleId));
-					biosampleExists=true;
 				}			
 				prevSampleId = bioSampleId;
 				
@@ -476,9 +471,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				String tpa=masterInfoRs.getString("tpa");
 				if("true".equalsIgnoreCase(tpa))
 				{
-					masterEntry.addKeyword(new Text("Third Party Data"));
-					masterEntry.addKeyword(new Text("TPA"));
-					masterEntry.addKeyword(new Text("TPA:assembly"));
+					EntryUtils.setKeyWords(masterEntry);
 				}
 				if(molType!=null&&taxonHelper.isChildOf(scientificName, "Viruses"))
 				{

@@ -96,11 +96,15 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				emblReader.read();
 			}
 
-		}catch(Exception e)
-		{
+		} catch(ValidationEngineException vee) {
 			if(getSequenceDB()!=null)
-	               getSequenceDB().close();
-			throw new ValidationEngineException(e.getMessage());
+				getSequenceDB().close();
+			throw vee;
+		}
+		catch(Exception e)
+		{
+			closeDB(getSequenceDB());
+			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		return valid;
 	}

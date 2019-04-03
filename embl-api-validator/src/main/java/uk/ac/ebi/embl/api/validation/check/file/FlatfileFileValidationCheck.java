@@ -120,14 +120,15 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			emblReader.read();
 			sequenceCount++;
 		}
-		}catch(Throwable e)
+		}catch(ValidationEngineException e)
 		{
-			if(getSequenceDB()!=null)
-	               getSequenceDB().close();
-			if(getContigDB()!=null)
-				getContigDB().close();
-			throw new ValidationEngineException(e.getMessage(),e);
+			closeDB(getContigDB(), getSequenceDB());
+			throw e;
+		} catch (Exception ex) {
+			closeDB(getContigDB(), getSequenceDB());
+			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
+
 		if(valid)
           registerFlatfileInfo();
 		return valid;
@@ -137,7 +138,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		throw new UnsupportedOperationException();
 	}
 	
-	public void getAnnotationFlatfile() throws ValidationEngineException, FileNotFoundException, IOException 
+	public void getAnnotationFlatfile() throws ValidationEngineException
 	{
 		for(SubmissionFile submissionFile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
@@ -159,6 +160,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					emblReader.read();
 				}
 			}
+			 catch (IOException e) {
+				throw new ValidationEngineException(e.getMessage(), e);
+			 }
 			if(isHasAnnotationOnlyFlatfile())
 			{
 				SubmissionFile annotationonlysf=null;

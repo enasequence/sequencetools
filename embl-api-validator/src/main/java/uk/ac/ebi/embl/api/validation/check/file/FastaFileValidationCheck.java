@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -124,13 +125,15 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			{
 				getContigDB().commit();
 			}
-		}catch (Exception e) {
-			if(getSequenceDB()!=null)
-	               getSequenceDB().close();
-			if(getContigDB()!=null)
-				getContigDB().close();
-			throw new ValidationEngineException(e.getMessage());
+		} catch (ValidationEngineException e) {
+			closeDB(getSequenceDB(), getContigDB());
+			throw e;
 		}
+		catch (Exception e) {
+			closeDB(getSequenceDB(), getContigDB());
+			throw new ValidationEngineException(e.getMessage(), e);
+		}
+
 		if(valid)
 			registerFastaInfo();
 		return valid;	

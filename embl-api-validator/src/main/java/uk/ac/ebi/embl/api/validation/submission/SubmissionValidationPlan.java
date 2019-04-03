@@ -115,27 +115,25 @@ public class SubmissionValidationPlan
 					   !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())	)
 					writeUnplacedList();
 				}
+			}	else {
+				writeSequenceInfo();
 			}
-		}catch(Throwable e)
+		}catch(ValidationEngineException e)
 		{
 			try {
-				if(!options.isRemote&&options.context.isPresent()&&options.context.get()==Context.genome&&check!=null&&check.getMessageStats()!=null)
+				if(!options.isRemote && options.context.isPresent() && options.context.get() == Context.genome && check!=null&&check.getMessageStats()!=null)
 					check.getReporter().writeToFile(Paths.get(options.reportDir.get()),check.getMessageStats());
 			}catch(Exception ex)
 			{
-				throw new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e);
+				e = new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e);
+				e.setErrorType(e.getErrorType());
 			}
-			throw new ValidationEngineException(e.getMessage(),e);
+			throw e;
 		}finally {
-			try {
-				if (sequenceDB != null)
-					sequenceDB.close();
-				if (contigDB != null)
-					contigDB.close();
-			} catch(Throwable e)
-			{
-				throw new ValidationEngineException(e.getMessage(),e);
-			}
+			if (sequenceDB != null)
+				sequenceDB.close();
+			if (contigDB != null)
+				contigDB.close();
 		}
 	}
 
@@ -365,14 +363,14 @@ public class SubmissionValidationPlan
 		return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
 	}
 
-	private void writeUnplacedList() throws IOException, ValidationEngineException
+	private void writeUnplacedList() throws ValidationEngineException
 	{
 
 		try {
 			Files.deleteIfExists(Paths.get(options.processDir.get(),"unplaced.txt"));
 		}catch(Exception e)
 		{
-			throw new ValidationEngineException("Failed to delete unplaced file: "+e.getMessage());
+			throw new ValidationEngineException("Failed to delete unplaced file: "+e.getMessage(), e);
 		}
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.processDir.get()+File.separator+"unplaced.txt")))
 		{
@@ -380,10 +378,15 @@ public class SubmissionValidationPlan
 
 		}catch(Exception e)
 		{
-			throw new ValidationEngineException("Failed to write unplaced file: "+e.getMessage());
+			throw new ValidationEngineException("Failed to write unplaced file: "+e.getMessage(), e);
 		}
 	}
-	
+
+	private void writeSequenceInfo() throws ValidationEngineException
+	{
+		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
+	}
+
 	private void flagValidation(FileType fileType) throws IOException
 	{
 		if(!options.processDir.isPresent())

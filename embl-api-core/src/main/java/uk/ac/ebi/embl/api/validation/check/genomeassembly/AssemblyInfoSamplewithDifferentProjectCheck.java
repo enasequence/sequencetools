@@ -52,7 +52,7 @@ public class AssemblyInfoSamplewithDifferentProjectCheck extends GenomeAssemblyV
 		return result;
 		}catch(SQLException e)
 		{
-			throw new ValidationEngineException(e.getMessage());
+			throw new ValidationEngineException(e.getMessage(), e);
 		}
 	}
 

@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -83,10 +84,10 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 					throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry");
 				if(!getOptions().source.isPresent())
 					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry");
-				masterEntry=getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
+				masterEntry = getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
 
-			if(Context.transcriptome == options.context.get()) {
+			if(Context.transcriptome == options.context.get() && masterEntry != null) {
 				addTranscriptomeInfo(masterEntry);
 			}
 			
@@ -107,7 +108,10 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
 
-		}catch(Exception e)
+		} catch (ValidationEngineException e) {
+			throw e;
+		}
+		catch(Exception e)
 		{
 			throw new ValidationEngineException(e.getMessage());
 		}
@@ -143,9 +147,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		masterEntry.addXRef(new XRef("BioSample", infoEntry.getBiosampleId()));
 		if(infoEntry.isTpa())
 		{
-			masterEntry.addKeyword(new Text("Third Party Data"));
-			masterEntry.addKeyword(new Text("TPA"));
-			masterEntry.addKeyword(new Text("assembly"));
+            EntryUtils.setKeyWords(masterEntry);
 		}
         
 		masterEntry.addFeature(source);
@@ -164,7 +166,6 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 	{
 		masterEntry.getSequence().setMoleculeType("transcribed RNA");
 		masterEntry.setStatus(Entry.Status.getStatus(2));
-		masterEntry.addKeyword(new Text("Transcriptome Shotgun Assembly; TSA."));
 	}
 
 }

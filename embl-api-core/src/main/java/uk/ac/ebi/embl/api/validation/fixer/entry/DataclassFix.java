@@ -111,7 +111,7 @@ public class DataclassFix extends EntryValidationCheck
             }
 			}catch(Exception e)
 			{
-				throw new ValidationEngineException(e.getMessage());
+				throw new ValidationEngineException(e.getMessage(), e);
 			}
 		} else
 		{

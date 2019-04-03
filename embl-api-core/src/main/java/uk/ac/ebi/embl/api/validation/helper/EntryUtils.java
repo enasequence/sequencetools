@@ -14,8 +14,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
@@ -73,7 +75,7 @@ public class EntryUtils
 			return topology;
 		}
 	}
-	
+
 	public static boolean isProject(String id)
 	{
 		return id.startsWith("PRJ");
@@ -286,4 +288,11 @@ public class EntryUtils
 		  entry.getSequence().addContigs(components);
 			  return entry;
 	 }
+
+	public static void setKeyWords(Entry masterEntry ) {
+		masterEntry.addKeyword(new Text("Third Party Data"));
+		masterEntry.addKeyword(new Text("TPA"));
+		masterEntry.addKeyword(new Text("TPA:assembly"));
+	}
+
 }
