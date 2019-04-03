@@ -689,7 +689,7 @@ public class SequenceEntryUtils {
 		String descriptionFormat="%s %s %s genome assembly";
 
 		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
-			return Entry.TSA_DATACLASS + ": " +scientificName;
+			return scientificName;
 		}
 
 		return includeStrain ?(String.format(descriptionFormat, scientificName,"strain",strainValue)):
