@@ -113,7 +113,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		}
 		catch(Exception e)
 		{
-			throw new ValidationEngineException(e.getMessage());
+			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		return valid;
 	}

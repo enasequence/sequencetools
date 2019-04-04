@@ -84,7 +84,9 @@ public class TemplateEntryProcessor {
             return templateProcessorResultSet;
         }
         Entry entry = entryReader.getEntry();
-        entry.addProjectAccession(new Text(projectId));
+        if(projectId != null) {
+            entry.addProjectAccession(new Text(projectId));
+        }
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceNumber()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
