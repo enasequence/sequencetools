@@ -140,7 +140,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	}
 	private void registerFastaInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.fastaInfo,options.reportDir.get(),AssemblySequenceInfo.fastafileName);
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.fastaInfo,options.processDir.get(),AssemblySequenceInfo.fastafileName);
 	}
 
 	@Override

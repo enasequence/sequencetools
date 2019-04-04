@@ -237,7 +237,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	}
 	private void registerAGPfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.agpInfo,options.reportDir.get(),AssemblySequenceInfo.agpfileName);
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.agpInfo,options.processDir.get(),AssemblySequenceInfo.agpfileName);
 	}
 	
 }

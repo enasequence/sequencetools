@@ -177,6 +177,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	}
 	private void registerFlatfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.flatfileInfo,options.reportDir.get(),AssemblySequenceInfo.flatfilefileName);
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.flatfileInfo,options.processDir.get(),AssemblySequenceInfo.flatfilefileName);
 	}
 }

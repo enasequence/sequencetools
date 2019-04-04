@@ -72,6 +72,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 		submissionFiles.addFile(file);
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
+        options.processDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.transcriptome);
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
@@ -88,6 +89,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 		submissionFiles.addFile(file);
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
+        options.processDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
