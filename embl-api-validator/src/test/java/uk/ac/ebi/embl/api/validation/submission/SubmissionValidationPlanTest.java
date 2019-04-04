@@ -53,6 +53,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
         assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile()));
@@ -68,6 +70,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		submissionFiles.addFile(initSubmissionFixedTestFile("chromosome_list_sequenceless.txt", FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+
 		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"fasta.info"));
 		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"agp.info"));
 		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"flatfile.info"));
@@ -87,6 +91,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		submissionFiles.addFile(initSubmissionFixedTestFile("chromosome_list.txt", FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
 		//thrown.expectMessage(getmessage("fasta",initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA).getFile().getName(), options.reportDir.get()));
@@ -104,6 +110,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
@@ -120,6 +128,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.AGP));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
@@ -137,6 +147,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
@@ -156,6 +168,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		submissionFiles.addFile(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile()));
@@ -170,6 +184,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.reportDir = Optional.of(initSubmissionTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile().getParent());
+
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
