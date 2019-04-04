@@ -7,6 +7,7 @@ import java.util.Set;
 public class TemplateVariables {
     private static final long serialVersionUID = 1L;
     private int sequenceNumber;
+    private String sequenceName;
     private Map<String, String> variables;
 
     public TemplateVariables() {
@@ -49,6 +50,14 @@ public class TemplateVariables {
 
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public String getSequenceName() {
+        return sequenceName;
+    }
+
+    public void setSequenceName(String sequenceName) {
+        this.sequenceName = sequenceName;
     }
 
     public Set<String> getTokenNames() {

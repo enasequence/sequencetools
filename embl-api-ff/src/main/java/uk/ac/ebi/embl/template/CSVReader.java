@@ -7,13 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CSVReader {
     private String currentLine;
     private final BufferedReader lineReader;
-    private int entryNumber;
+    private Set<String> entryNames = new HashSet<>();
     private List<String> headerKeys;
+    private int lineNumber = 0;
 
     public CSVReader(final InputStream inputReader,final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
         lineReader = new BufferedReader(new InputStreamReader(inputReader));
@@ -44,17 +47,15 @@ public class CSVReader {
                     lineSummary = currentLine.substring(0, 10);
                 throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + currentTokenLine.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
             }
-            Integer entryNumberCurr;
-            try {
-                entryNumberCurr = new Integer(currentTokenLine[0]);
-                if (entryNumber == 0 && entryNumberCurr != 1)
-                    throw new TemplateUserError("Numeric value for first entry " + CSVWriter.HEADER_TOKEN + " " + currentTokenLine[0] + " must start at 1 and increment sequentially by 1 for each entry.");
-                if (entryNumberCurr - entryNumber != 1)
-                    throw new TemplateUserError(CSVWriter.HEADER_TOKEN + " " + currentTokenLine[0] + " must sequentially be incremnted by 1.");
-                entryNumber = entryNumberCurr;
-            } catch (final NumberFormatException e) {
-                throw new TemplateUserError(CSVWriter.HEADER_TOKEN + " " + currentTokenLine[0] + " must be nummeric and in ascending order.");
+
+            String entryNumber = currentTokenLine[0];
+            if (entryNames.contains(entryNumber.toUpperCase())) {
+                throw new TemplateUserError(CSVWriter.HEADER_TOKEN + " must be unique. "+ currentTokenLine[0] + " exists more than once" );
+            } else {
+                entryNames.add(entryNumber.toUpperCase());
             }
+            entryTokensMap.setSequenceName(entryNumber);
+
             for (int i = 1; i < currentTokenLine.length; i++) {
                 String tokenValue = currentTokenLine[i];
                 checkTokenForBannedCharacters(tokenValue);
@@ -66,7 +67,7 @@ public class CSVReader {
                 }
                 entryTokensMap.addToken(headerKeys.get(i), tokenValue);
             }
-            csvLine = new CSVLine(entryNumberCurr, entryTokensMap);
+            csvLine = new CSVLine(++lineNumber, entryTokensMap);
         }
         currentLine = readLine();
         return csvLine;

@@ -152,7 +152,7 @@ public class TSVFileValidationCheckTest {
             }
         }
         if(!isFound)
-            assertEquals(lines.toString(), s);
+            assertEquals(s, lines.toString());
     }
 
     private void checkTSV(String fileName, boolean isValid, String expectedMesage) throws Exception {
@@ -178,15 +178,9 @@ public class TSVFileValidationCheckTest {
     }
 
     @Test
-    public void invalidAlphanumericEntrynumber() throws Exception {
-        checkTSV( "Sequence-invalid-alphanumeric-entrynumber-.tsv.gz" , false,
-                "ERROR: Missing message: ENTRYNUMBER A01 must be nummeric and in ascending order.");
-    }
-
-    @Test
-    public void invalidEntrynumberStart() throws Exception {
-        checkTSV("Sequence-invalid-entrynumber-start-.tsv.gz", false,
-                "ERROR: Missing message: Numeric value for first entry ENTRYNUMBER 2008896 must start at 1 and increment sequentially by 1 for each entry.");
+    public void invalidEntryNumberDuplicate() throws Exception {
+        checkTSV("Sequence-invalid-entrynumber-duplicate.tsv.gz", false,
+                "ERROR: Missing message: ENTRYNUMBER must be unique. test1 exists more than once");
     }
 
     @Test

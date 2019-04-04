@@ -58,7 +58,6 @@ public class TemplateEntryProcessor {
         this.templateInfo = templateInfo;
         this.molType = molType;
         TemplateProcessorResultSet templateProcessorResultSet = new TemplateProcessorResultSet();
-        templateProcessorResultSet.setEntryNumber(templateVariables.getSequenceNumber());
         if (!checkMandatoryFieldsArePresent(templateInfo, templateVariables, templateProcessorResultSet))
             return templateProcessorResultSet;
         if (!checkSelectedHeadersHaveValuesAndAreSupported(templateVariables, templateProcessorResultSet))
@@ -87,7 +86,7 @@ public class TemplateEntryProcessor {
         if(projectId != null) {
             entry.addProjectAccession(new Text(projectId));
         }
-        entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceNumber()));
+        entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceName()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
         List<Text> kewordsL = entry.getKeywords();

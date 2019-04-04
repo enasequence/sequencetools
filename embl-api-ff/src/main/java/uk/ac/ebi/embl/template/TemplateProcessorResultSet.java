@@ -6,13 +6,11 @@ import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 public class TemplateProcessorResultSet {
     private ValidationPlanResult validationPlanResult;
     private String entryString;
-    private Integer entryNumber;
     private Entry entry;
 
-    public TemplateProcessorResultSet(ValidationPlanResult validationResult, String entryString, Integer entryNumber) {
+    public TemplateProcessorResultSet(ValidationPlanResult validationResult, String entryString) {
         this.validationPlanResult = validationResult;
         this.entryString = entryString;
-        this.entryNumber = entryNumber;
     }
 
     public TemplateProcessorResultSet(String entryString) {
@@ -40,14 +38,6 @@ public class TemplateProcessorResultSet {
         return entryString;
     }
 
-    public void setEntryNumber(Integer entryNumber) {
-        this.entryNumber = entryNumber;
-    }
-
-    public Integer getEntryNumber() {
-        return entryNumber;
-    }
-
     public Entry getEntry() {
         return entry;
     }
@@ -61,7 +51,6 @@ public class TemplateProcessorResultSet {
         return "TemplateProcessorResultSet{" +
                 "validationPlanResult=" + validationPlanResult +
                 ", entryString='" + entryString + '\'' +
-                ", entryNumber=" + entryNumber +
                 '}';
     }
 }
