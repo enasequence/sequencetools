@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
@@ -54,6 +55,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		boolean valid=true;
 		fixedFileWriter =null;
 		ConcurrentMap sequenceMap =null;
+		Origin origin =null;
 		if(getSequenceDB()!=null)
 			sequenceMap= getSequenceDB().hashMap("map").createOrOpen();
 
@@ -85,6 +87,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				}
 				parseResult=new ValidationResult();
 				Entry entry=reader.getEntry();
+				origin=entry.getOrigin();
 				if(getOptions().context.get()==Context.genome)
 				{
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
@@ -126,10 +129,12 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				getContigDB().commit();
 			}
 		} catch (ValidationEngineException e) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			closeDB(getSequenceDB(), getContigDB());
 			throw e;
 		}
 		catch (Exception e) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			closeDB(getSequenceDB(), getContigDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}

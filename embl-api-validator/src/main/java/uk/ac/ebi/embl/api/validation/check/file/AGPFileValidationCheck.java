@@ -56,6 +56,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		boolean valid=true;
 		ValidationPlan validationPlan =null;
 		fixedFileWriter=null;
+		Origin origin =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -87,6 +88,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			}
 				parseResult=new ValidationResult();
         		Entry entry =reader.getEntry();
+        		origin =entry.getOrigin();
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
     			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
@@ -117,6 +119,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	}
 
 		} catch (ValidationEngineException vee) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, vee.getMessage(),origin);
 			closeDB(getContigDB(), getSequenceDB());
 			throw vee;
 		}

@@ -52,6 +52,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		EmblEntryValidationPlan validationPlan=null;
 		fixedFileWriter =null;
+		Origin origin =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -79,6 +80,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			parseResult=new ValidationResult();
 			Entry entry = emblReader.getEntry();
+			origin =entry.getOrigin();
 			if(getOptions().context.get()==Context.genome)
             {
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
@@ -122,6 +124,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}
 		}catch(ValidationEngineException e)
 		{
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			closeDB(getContigDB(), getSequenceDB());
 			throw e;
 		} catch (Exception ex) {

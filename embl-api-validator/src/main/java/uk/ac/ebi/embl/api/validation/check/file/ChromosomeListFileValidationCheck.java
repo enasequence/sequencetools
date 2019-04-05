@@ -42,6 +42,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		boolean valid =true;
+		Origin origin =null;
 		try
 		{
 			clearReportFile(getReportFile(submissionFile));
@@ -72,6 +73,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			List<ChromosomeEntry> chromosomeEntries = reader.getentries();
 			for(ChromosomeEntry entry : chromosomeEntries)
 			{
+				origin = entry.getOrigin();
 				ValidationPlanResult planResult=plan.execute(entry);
 				if(!planResult.isValid())
 				{
@@ -90,6 +92,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			}
 
 		} catch (ValidationEngineException e) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			throw e;
 		}
 		catch(Exception e)
