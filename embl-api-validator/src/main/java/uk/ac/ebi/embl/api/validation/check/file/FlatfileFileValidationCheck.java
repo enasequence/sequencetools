@@ -128,6 +128,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			closeDB(getContigDB(), getSequenceDB());
 			throw e;
 		} catch (Exception ex) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, ex.getMessage(),origin);
 			closeDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}

@@ -97,6 +97,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		}
 		catch(Exception e)
 		{
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		return valid;

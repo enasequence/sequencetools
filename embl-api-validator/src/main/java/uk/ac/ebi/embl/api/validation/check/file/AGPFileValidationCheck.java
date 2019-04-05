@@ -124,6 +124,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			throw vee;
 		}
 		catch (Exception e) {
+			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			closeDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
