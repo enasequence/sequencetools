@@ -73,8 +73,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			HashMap<String,AssemblySequenceInfo> contigInfo=new HashMap<String,AssemblySequenceInfo>();
-			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
-			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
+			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
+			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
 			if(contigInfo.isEmpty())
 				throw new ValidationEngineException("AGP validation can't be done : Contig Info is missing");
 			ValidationResult parseResult = reader.read();

@@ -128,6 +128,9 @@ public class TemplateEntryProcessor {
                 case Entry.EST_DATACLASS:
                     entry.setDataClass(Entry.EST_DATACLASS);
                     break;
+                case Entry.TLS_DATACLASS:
+                    entry.setDataClass(Entry.TLS_DATACLASS);
+                    break;
                 default:
                     entry.setDataClass(Entry.STD_DATACLASS);
             }

@@ -89,6 +89,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
     public static final String TSA_DATACLASS="TSA";
     public static final String TPX_DATACLASS="TPX";
     public static final String HTC_DATACLASS="HTC";
+	public static final String TLS_DATACLASS="TLS";
     public static final int DEFAULT_MIN_GAP_LENGTH=10;
     /**
      * mol_type statics

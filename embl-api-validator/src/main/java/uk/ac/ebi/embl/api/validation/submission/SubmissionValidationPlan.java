@@ -275,10 +275,10 @@ public class SubmissionValidationPlan
 
 	private void registerSequences() throws ValidationEngineException
 	{
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.fastafileName));
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.flatfilefileName));
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.reportDir.get(), AssemblySequenceInfo.agpfileName));
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
+		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
+		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 	
 	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException

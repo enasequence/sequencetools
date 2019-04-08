@@ -42,7 +42,8 @@ public class DataclassFix extends EntryValidationCheck
 		GSS(Arrays.asList(new Text(Entry.GSS_DATACLASS))), 
 		HTC(Arrays.asList(new Text(Entry.HTC_DATACLASS))),
 		STS(Arrays.asList(new Text(Entry.STS_DATACLASS))),
-		TSA(Arrays.asList(new Text(Entry.TSA_DATACLASS)));
+		TSA(Arrays.asList(new Text(Entry.TSA_DATACLASS))),
+		TLS(Arrays.asList(new Text(Entry.TLS_DATACLASS)));
 
 		List<Text> keyword;
 
