@@ -384,7 +384,7 @@ public class SubmissionValidationPlan
 
 	private void writeSequenceInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.reportDir.get(),AssemblySequenceInfo.sequencefileName);
+		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
 	private void flagValidation(FileType fileType) throws IOException

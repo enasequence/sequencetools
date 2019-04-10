@@ -865,6 +865,7 @@ source	organelle	N	Y	N
 source	serovar	N	Y	N
 source	environmental_sample	N	Y	N
 source	isolation_source	N	Y	N
+source	metagenome_source	N	Y	N
 source	segment	N	Y	N
 source	mol_type	N	Y	N
 source	ecotype	N	Y	N
