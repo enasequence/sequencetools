@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.ac.ebi.ena.sequence</groupId>
   <artifactId>embl-api-ff</artifactId>
-  <version>submissioninterface-1.1.19</version>
+  <version>1.3.31-01</version>
   <inceptionYear>2019</inceptionYear>
   <licenses>
     <license>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>uk.ac.ebi.ena.sequence</groupId>
       <artifactId>embl-api-core</artifactId>
-      <version>submissioninterface-1.1.19</version>
+      <version>1.3.31-01</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

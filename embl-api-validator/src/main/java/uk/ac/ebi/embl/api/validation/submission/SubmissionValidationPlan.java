@@ -103,10 +103,11 @@ public class SubmissionValidationPlan
 				validateUnlocalisedList();
 			if(options.context.get().getFileTypes().contains(FileType.TSV))
 				validateTsvfile();
+
+			check.validateDuplicateEntryNames();
 			if(Context.genome==options.context.get())
 			{
-					registerSequences();
-				check.validateDuplicateEntryNames();
+				registerSequences();
 				check.validateSequencelessChromosomes();
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
 				if(!options.isRemote)

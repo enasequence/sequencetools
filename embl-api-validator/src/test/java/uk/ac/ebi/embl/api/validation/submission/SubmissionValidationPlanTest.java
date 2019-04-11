@@ -165,14 +165,15 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	{
 		options.context = Optional.of(Context.transcriptome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA));
+		SubmissionFile subFile = initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA);
+		submissionFiles.addFile(subFile);
 		options.submissionFiles = Optional.of(submissionFiles);
-		options.reportDir = Optional.of(initSubmissionTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(subFile.getFile().getParent());
+		options.processDir = Optional.of(subFile.getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_fasta.txt", FileType.FASTA).getFile()));
+		assertTrue(compareOutputFixedFiles(subFile.getFile()));
 	}
 	
 	@Test
@@ -190,6 +191,25 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
 	}
+
+	@Test
+	public void testTranscriptomeSuplicateEntryNameFlatFile() throws ValidationEngineException
+	{
+		options.context = Optional.of(Context.transcriptome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		SubmissionFile subFile = initSubmissionFixedTestFile("transcriptom_flatfile_duplicate_entryname.txt", FileType.FLATFILE);
+		submissionFiles.addFile(subFile);
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		options.reportDir = Optional.of(subFile.getFile().getParent());
+		options.processDir = Optional.of(subFile.getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		thrown.expect(ValidationEngineException.class);
+		thrown.expectMessage("Entry names are duplicated in assembly : ENTRY_NAME1");
+		plan.execute();
+	}
+
 
 	private String getmessage(String fileType,String fileName,String reportDir)
 	{

@@ -72,19 +72,16 @@ public class SubmissionOptions
 		if(!isRemote)
 			ignoreErrors =true;
 		FileValidationCheck.setSequenceCount(0);
-		if(context.get()==Context.genome)
-		{
-			FileValidationCheck.sequenceInfo.clear();
-			FileValidationCheck.fastaInfo.clear();
-			FileValidationCheck.flatfileInfo.clear();
-			FileValidationCheck.agpInfo.clear();
-			FileValidationCheck.agpEntryNames.clear();
-			FileValidationCheck.chromosomeNameQualifiers.clear();
-			FileValidationCheck.entryNames.clear();
-			FileValidationCheck.duplicateEntryNames.clear();
-			FileValidationCheck.chromosomeNames.clear();
-			FileValidationCheck.unplacedEntryNames.clear();
-		}
+		FileValidationCheck.sequenceInfo.clear();
+		FileValidationCheck.fastaInfo.clear();
+		FileValidationCheck.flatfileInfo.clear();
+		FileValidationCheck.agpInfo.clear();
+		FileValidationCheck.agpEntryNames.clear();
+		FileValidationCheck.chromosomeNameQualifiers.clear();
+		FileValidationCheck.entryNames.clear();
+		FileValidationCheck.duplicateEntryNames.clear();
+		FileValidationCheck.chromosomeNames.clear();
+		FileValidationCheck.unplacedEntryNames.clear();
 	}
 	
 	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()
