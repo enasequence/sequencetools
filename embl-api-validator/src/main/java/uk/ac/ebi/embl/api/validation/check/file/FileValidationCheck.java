@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
+import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -387,40 +388,35 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
-	protected void collectContigInfo(Entry entry) throws Exception 
-	{
-		try
-		{
-		  if(entry.getSubmitterAccession()==null)
-			  entry.setSubmitterAccession(entry.getPrimaryAccession());
-		  if(entry.getSubmitterAccession()==null)
-			  throw new ValidationEngineException("Submitter accession missing for an entry");
-		if(!agpEntryNames.isEmpty()&&agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
-			return;
-		if(entry.getSequence()==null)
-			return;
-		if(getContigDB()!=null&&entry.getSubmitterAccession()!=null)
-		{	
-			   ConcurrentMap<String,byte[]> map = (ConcurrentMap<String, byte[]>) getContigDB().hashMap("map").createOrOpen();
-			   List<String> keys=map.keySet().stream().filter(k->k.toLowerCase().contains(entry.getSubmitterAccession().toLowerCase()+":")).collect(Collectors.toList());
-			   keys.forEach(k->{StringTokenizer tokens = new StringTokenizer(k, ":"); 
-			   tokens.nextToken();tokens.nextToken();
-			   long begin =Long.valueOf(tokens.nextToken());
-			   long end = Long.valueOf(tokens.nextToken());
-				byte[] sequence=entry.getSequence().getSequenceByte(begin,end);
-				map.put(k,sequence);
-			   } );
-		}
-			
-		if(getContigDB()!=null)
-			getContigDB().commit();
-		}catch(Exception e)
-		{
-			if(getContigDB()!=null)
+	protected void collectContigInfo(Entry entry) throws Exception {
+		try {
+			if (entry.getSubmitterAccession() == null)
+				entry.setSubmitterAccession(entry.getPrimaryAccession());
+			if (entry.getSubmitterAccession() == null)
+				throw new ValidationEngineException("Submitter accession missing for an entry");
+			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+				return;
+			if (entry.getSequence() == null)
+				return;
+			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
+				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
+				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());
+				if (agpRows != null) {
+					for (AgpRow agpRow : agpRows) {
+						agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+					}
+					contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
+				} else {
+					throw new ValidationEngineException("AgpRows can not be empty, could be a problem with agp parsing", ReportErrorType.SYSTEM_ERROR);
+				}
+			}
+
+		} catch (Exception e) {
+			if (getContigDB() != null)
 				getContigDB().close();
-    		throw e; 
+			throw e;
 		}
-		}
+	}
 
 
 	private void addSourceQualifiers(Entry entry)

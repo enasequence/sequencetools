@@ -18,12 +18,16 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang3.StringUtils;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
@@ -72,7 +76,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			}
 			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
-			HashMap<String,AssemblySequenceInfo> contigInfo=new HashMap<String,AssemblySequenceInfo>();
+			HashMap<String,AssemblySequenceInfo> contigInfo = new HashMap<>();
 			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
 			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
 			if(contigInfo.isEmpty())
@@ -91,7 +95,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
         		origin =entry.getOrigin();
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
     			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
-    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
+    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
     			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
     			ValidationPlanResult planResult=validationPlan.execute(entry);
@@ -147,44 +151,47 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		sequenceMap=getSequenceDB().hashMap("map").createOrOpen();
 
 
-         for(AgpRow agpRow: entry.getSequence().getSortedAGPRows())
-         {
-         	i++;
-           	if(!agpRow.isGap())
-           	{
-           		
-             	Object sequence=null;
-             	if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
-				{
-             		String key =agpRow.getComponent_id()+":"+agpRow.getObject()+":"+agpRow.getComponent_beg()+":"+agpRow.getComponent_end();
-					if(contigMap.get(key)!=null)
-					  sequence=contigMap.get(key);
-				}
-              if(sequence!=null)
-         	  sequenceBuffer.put((byte[])sequence);
-               else
-              throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:"+agpRow.getComponent_id());
-           	}
-	       	else if(agpRow.getGap_length()!=null)
-        	  sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());           	
-         }
+			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
+				i++;
+				if (!agpRow.isGap()) {
+
+					Object sequence;
+					if (agpRow.getComponent_id() != null && getContigDB() != null) {
+
+						Object rows = contigMap.get(agpRow.getComponent_id());
+						if (rows != null) {
+							for (AgpRow row : (List<AgpRow>) rows) {
+								if (row.getObject().toLowerCase().equals(agpRow.getObject().toLowerCase())) {
+									sequence = row.getSequence();
+
+									if (sequence != null)
+										sequenceBuffer.put((byte[]) sequence);
+									else
+										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
+								}
+							}
+						}
+					}
+
+				} else if (agpRow.getGap_length() != null)
+					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());
+			}
          entry.getSequence().setSequence(sequenceBuffer);
-         if(getOptions().context.get()==Context.genome&&getSequenceDB()!=null)
+         if(getOptions().context.get()==Context.genome && getSequenceDB()!=null)
 			{
         	 if(entry.getSubmitterAccession()!=null)
         	 {
 				sequenceMap.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
 			}
 			}
-         if(getSequenceDB()!=null)
-        	 getContigDB().commit();
+
 		}catch(Exception e)
 		{
 			if(getSequenceDB()!=null)
 				getSequenceDB().close();
 			if(getContigDB()!=null)
 				getContigDB().close();
-			throw new ValidationEngineException(e.getMessage());
+			throw new ValidationEngineException(e);
 		}
 		if(getSequenceDB()!=null)
 		getSequenceDB().commit();  
@@ -209,31 +216,33 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(result.isValid())
 					{
-					agpEntryNames.add( ( (Entry) reader.getEntry() ).getSubmitterAccession().toUpperCase() );
+						agpEntryNames.add((reader.getEntry()).getSubmitterAccession().toUpperCase());
 
-					for(AgpRow agpRow: ((Entry)reader.getEntry()).getSequence().getSortedAGPRows())
-					{
-						
-						if(!agpRow.isGap())
-						{
-							if(agpRow.getComponent_id()!=null&&getContigDB()!=null)
-							{
-							ConcurrentMap map = getContigDB().hashMap("map").createOrOpen();
-							map.put(agpRow.getComponent_id()+":"+agpRow.getObject()+":"+agpRow.getComponent_beg()+":"+agpRow.getComponent_end(), new byte[0]);
+						for (AgpRow agpRow : (reader.getEntry()).getSequence().getSortedAGPRows()) {
+							if (!agpRow.isGap()) {
+								if (agpRow.getComponent_id() != null && getContigDB() != null) {
+									ConcurrentMap<String, Object> map = getContigDB().hashMap("map", Serializer.STRING, getContigDB().getDefaultSerializer()).createOrOpen();
+									List<AgpRow> agpRows = (List<AgpRow>) map.get(agpRow.getComponent_id().toLowerCase());
+									if (agpRows == null) {
+										agpRows = new ArrayList<>();
+									}
+									agpRows.add(agpRow);
+									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
+								}
 							}
+							i++;
 						}
-						i++;
-					}
 					}
 				result=reader.read();
 				}
+
 				if(getContigDB()!=null)
-					getContigDB().commit(); 
+					getContigDB().commit();
 			}catch(Exception e)
 			{
 				if(getContigDB()!=null)
 					getContigDB().close();
-				throw new ValidationEngineException(e.getMessage());
+				throw new ValidationEngineException(e);
 			}
 
 		}

@@ -92,9 +92,9 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				{
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
 					collectContigInfo(entry);
-					if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
+					if(entry.getSubmitterAccession()!=null && getSequenceDB()!=null)
 					{
-					sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
+						sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
 					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));

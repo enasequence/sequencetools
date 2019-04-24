@@ -15,11 +15,12 @@
 	 ******************************************************************************/
 package uk.ac.ebi.embl.api.entry;
 
+import java.io.Serializable;
 import java.util.List;
 
 import uk.ac.ebi.embl.api.validation.Origin;
 
-public class AgpRow
+public class AgpRow implements Serializable
 {
 	/*
 	 * SCAFFOLD_NAME                VARCHAR2(100) 

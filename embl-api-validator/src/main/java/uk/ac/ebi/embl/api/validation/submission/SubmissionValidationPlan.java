@@ -74,18 +74,15 @@ public class SubmissionValidationPlan
 				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
 				check.getAnnotationFlatfile();
 				if(check.isHasAnnotationOnlyFlatfile())
-					sequenceDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getSequenceDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
+					sequenceDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 			}
-			if(options.context.get().getFileTypes().contains(FileType.AGP))
-			{
- 				 agpCheck = new AGPFileValidationCheck(options);
- 				if(options.submissionFiles.get().getFiles(FileType.AGP).size()>0)
- 				{
- 				contigDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getcontigDbname()).deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
- 				agpCheck.setContigDB(contigDB);
- 				}
- 				agpCheck.getAGPEntries();
-				
+			if (options.context.get().getFileTypes().contains(FileType.AGP)) {
+				agpCheck = new AGPFileValidationCheck(options);
+				if (options.submissionFiles.get().getFiles(FileType.AGP).size() > 0) {
+					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
+					agpCheck.setContigDB(contigDB);
+				}
+				agpCheck.getAGPEntries();
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA))
 			  validateFasta();

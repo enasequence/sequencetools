@@ -1,6 +1,6 @@
 allprojects
  {
-    ext.version_base = '1.3.30'
+    ext.version_base = '1.3.32'
     version = version_base
     tasks.withType(Javadoc).all { enabled = false }
  }
@@ -51,6 +51,16 @@ configurations.all {
     mavenLocal()
     maven { url "http://ena-dev:8081/artifactory/all" }
     mavenCentral()
+       maven {
+           url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
+           credentials(HttpHeaderCredentials) {
+               name = "Private-Token"
+               value = project.ext.properties.gitlab_private_token
+           }
+           authentication {
+               header( HttpHeaderAuthentication )
+           }
+       }
    }
 
   dependencies 
