@@ -55,7 +55,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 	       options.isRemote = true;
 
 	   }
-	
+
 		@Test
 		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException
 		{  
@@ -70,24 +70,27 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 
         	options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
-			check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").fileDeleteAfterClose().closeOnJvmShutdown().make());
-			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").fileDeleteAfterClose().closeOnJvmShutdown().make());
+			check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().make());
+			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").closeOnJvmShutdown().fileDeleteAfterOpen().make());
 
 			check.getAGPEntries();
 			validateContig("valid_flatfileforAgp.txt",  FileType.FLATFILE,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));
+
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP).getFile()));
 			//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_flatfileagp.txt.fixed", FileType.FLATFILE).getFile()));
 			ConcurrentMap seqMap = check.getSequenceDB().hashMap("map").createOrOpen();
-
+			String seq1 = seqMap.get("IWGSC_CSS_6DL_scaff_3330716".toUpperCase()).toString();
+			String seq2 = seqMap.get("IWGSC_CSS_6DL_scaff_3330717".toUpperCase()).toString();
+			check.getSequenceDB().close();
+			check.getContigDB().close();
 			assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagcccnnnnnnnnnnnnnnnnnnnnnnnngggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgagg",
-					seqMap.get("IWGSC_CSS_6DL_scaff_3330716".toUpperCase()));
+					seq1);
 			assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagccc",
-					seqMap.get("IWGSC_CSS_6DL_scaff_3330717".toUpperCase()));
+					seq2);
 
-	        check.getSequenceDB().close();
-	        check.getContigDB().close();
+
 		}
 		
 		@Test

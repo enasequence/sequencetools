@@ -158,7 +158,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					Object sequence;
 					if (agpRow.getComponent_id() != null && getContigDB() != null) {
 
-						Object rows = contigMap.get(agpRow.getComponent_id());
+						Object rows = contigMap.get(agpRow.getComponent_id().toLowerCase());
 						if (rows != null) {
 							for (AgpRow row : (List<AgpRow>) rows) {
 								if (row.getObject().toLowerCase().equals(agpRow.getObject().toLowerCase())) {
