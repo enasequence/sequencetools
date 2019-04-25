@@ -54,7 +54,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
  
@@ -78,6 +77,7 @@ public abstract class FileValidationCheck {
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
 	private boolean hasAnnotationOnlyFlatfile = false;
+	private boolean hasAgp = false;
 	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
 	private DB contigDB =null;
@@ -406,8 +406,6 @@ public abstract class FileValidationCheck {
 						agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
 					}
 					contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
-				} else {
-					throw new ValidationEngineException("AgpRows can not be empty, could be a problem with agp parsing", ReportErrorType.SYSTEM_ERROR);
 				}
 			}
 
@@ -617,5 +615,13 @@ public abstract class FileValidationCheck {
 	{
 		return sequenceInfo.entrySet().stream().anyMatch(x->x.getKey().equalsIgnoreCase(entryName));
 
+	}
+
+	public boolean isHasAgp() {
+		return hasAgp;
+	}
+
+	public void setHasAgp(boolean hasAgp) {
+		this.hasAgp = hasAgp;
 	}
 }
