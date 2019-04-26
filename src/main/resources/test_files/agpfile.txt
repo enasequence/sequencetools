@@ -1,0 +1,8 @@
+IWGSC_CSS_4AS_chr_57	1	211	1	W	IWGSC_CSS_4AS_contig_1	1	211	+
+IWGSC_CSS_4AS_chr_62	1	225	1	W	IWGSC_CSS_4AS_contig_2	1	225	+
+IWGSC_CSS_4AS_chr_62	226	235	2	N	10	scaffold	yes	paired-ends;within_clone
+IWGSC_CSS_4AS_chr_62	236	245	3	N	10	scaffold	no	paired-ends
+IWGSC_CSS_4AS_chr_62	246	345	4	U	100	scaffold	yes	paired-ends;within_clone
+IWGSC_CSS_4AS_chr_62	346	445	5	U	100	scaffold	no	paired-ends
+IWGSC_CSS_4AS_chr_62	446	446	6	N	1	scaffold	no	paired-ends
+IWGSC_CSS_4AS_chr_62	447	456	7	W	IWGSC_CSS_4AS_contig_1	1	10	+

@@ -1,8 +1,0 @@
-archivesBaseName = 'embl-api-ff'
-
-dependencies {
-  compile project(':embl-api-core')
-  compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
-  compile 'org.apache.commons:commons-compress:1.10'
-  
-}

@@ -1,8 +1,0 @@
-#Feature {0} is required by qualifier {1} and its value pattern {2}.
-tRNA	product	^(transfer RNA-)(?!synthetase).*$
-rRNA	product	^(5.8S ribosomal RNA)$
-rRNA	product	^(12S ribosomal RNA)$
-rRNA	product	^(16S ribosomal RNA)$
-rRNA	product	^(18S ribosomal RNA)$
-rRNA	product	^(23S ribosomal RNA)$
-rRNA	product	^(28S ribosomal RNA)$

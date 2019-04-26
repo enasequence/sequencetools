@@ -1,6 +1,0 @@
-#Qualifier {0} must not exist if taxonomic divison has value {1}.	
-tissue_type	PRO
-dev_stage	PRO
-collected_by	HUM
-identified_by	HUM
-lat_lon	HUM

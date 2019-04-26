@@ -1,8 +1,0 @@
-#One of qualifiers {0} must exist when qualifier {1} exists within the same feature.	
-#The qualifier {0} must exist when qualifier {1} exists within the same feature.
-#REQUIRED QUALIFIERS    PRESENT QUALIFIER
-chromosome,segment,organelle	map
-clone	sub_clone
-strain	sub_strain
-isolation_source	environmental_sample
-locus_tag	old_locus_tag

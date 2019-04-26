@@ -1,2 +1,0 @@
-IWGSC_CSS_6DL_contig_209591;	I	chromosome	mitochondrion
-IWGSC_CSS_6DL_contig_209592	II	multipartite

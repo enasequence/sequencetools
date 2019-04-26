@@ -1,7 +1,0 @@
-#The {0} qualifier is deprecated.
-#The {0} qualifier is deprecated, please replace with {1}.
-#The {0} qualifier is deprecated and is replaced by {1} - this change will be made automatically during curation of your entry.
-#deprecated qual    replacement qual    autoreplaced
-Partial	(null)	N
-Pseudo	(null)	N
-specific_host	host	Y

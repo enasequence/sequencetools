@@ -1,0 +1,3 @@
+#Value \"{0}\" of qualifier \"{1}\" is only allowed when source qualifier \"{2}\" has one of values {3} or contains the word 'plastid' or organism belongs to one of {4}.				
+16S ribosomal RNA	product	organelle	mitochondrion,chloroplast	Bacteria,Archaea
+16S rRNA	gene	organelle	mitochondrion	Bacteria,Archaea

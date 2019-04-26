@@ -1,0 +1,7 @@
+#Qualifier {0} must have one of values {1} when qualifier {2} starts with value {3}.
+#{0}=Qualifier  {1}=Qualifier Value {2}=Dependant Qualifier {3}=Dependant Qualifier start Value
+product	MHC class I antigen	gene	HLA-A
+product	MHC class I antigen	gene	HLA-B
+product	MHC class I antigen	gene	HLA-C
+product	MHC class II antigen	gene	HLA-D
+rpt_type	tandem	satellite	microsatellite

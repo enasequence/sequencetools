@@ -1,0 +1,24 @@
+ID   XXX; SV XXX; linear; transcribed RNA; SET; XXX; 1 BP.
+XX
+ST * private
+XX
+AC   ;
+XX
+PR   Project:PRJEB0;
+XX
+DE   .
+XX
+KW   .
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1
+FT                   /organism="Micrococcus sp. 5"
+FT                   /mol_type="transcribed RNA"
+XX
+//

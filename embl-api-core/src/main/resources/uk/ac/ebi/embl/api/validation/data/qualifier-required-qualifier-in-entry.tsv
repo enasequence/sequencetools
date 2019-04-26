@@ -1,4 +1,0 @@
-#One of qualifiers {0} must exist when qualifier {1} exists in any feature.	
-#The qualifier {0} must exist when qualifier {1} exists in any feature.
-#REQUIRED QUALIFIERS    PRESENT QUALIFIER
-map,PCR_primers	satellite

@@ -1,0 +1,73 @@
+ID   XXX; SV XXX; linear; genomic DNA; STD; XXX; 1320 BP.
+XX
+ST * draft
+XX
+AC   ;
+XX
+DE   Caenorhabditis briggsae contig cb25.fpc4171, from assembly cb3, whole
+DE   genome shotgun sequence. (SequinID: CAAC02000567)
+XX
+KW   WGS.
+XX
+OS   Caenorhabditis briggsae
+OC   Eukaryota; Metazoa; Nematoda; Chromadorea; Rhabditida; Rhabditoidea;
+OC   Rhabditidae; Peloderinae; Caenorhabditis.
+XX
+RN   [1]
+RP   1-232404
+RG   WormBase Consortium
+RA   ;
+RT   ;
+RL   Submitted (05-OCT-2010) to the INSDC.
+RL   Department of Genetics, Washington University, Genome Sequencing Center,
+RL   4444 Forest Park Avenue, St. Louis, MO 63110, USA.
+XX
+RN   [2]
+RX   PUBMED; 14624247.
+RG   WormBase Consortium
+RA   ;
+RT   "The genome sequence of Caenorhabditis briggsae: a platform for comparative
+RT   genomics. The C. briggsae Sequencing Consortium";
+RL   PLoS Biology 1:.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..1260
+FT                   /organism="Caenorhabditis briggsae"
+FT                   /strain="AF16"
+FT                   /mol_type="genomic DNA"
+FT                   /clone="cb25.fpc4171"
+FT                   /db_xref="taxon:6238"
+FT   CDS             complement(join(<85..350,399..546,590..973,1020..1118,
+FT                   1160..>1261))
+FT                   /translation="VAAETEEIKNSQKQIAEKLQSIEDAISKMSILSKNTSHAAPEANR
+FT                   FMVKHEFKKLSKMFDGDYSEDVPLSFFSHFRWLGVERMDDRFTFYISCETKQHNMSIET
+FT                   ELKFRLIGYNNITKTMKHGYLRKKTIDDTLELEDIEDEGQVLDNLTLEVEVEIIKMTGS
+FT                   KKEKMRTFDESQKDVSDVVLVVQDTQFYVSEMYLASQSTYLKTLFLGGFSESKKSEIAL
+FT                   TGIDADEFQHFLEVLYGEFSIDDFTVEGILLIADFYDTPMVAKKYEMFLFRKIETLNSV
+FT                   TFRRKEAKGKKEMGKDPTEFRKKTFILKSCVKNESKSTNYSQIVCSLEKAF"
+XX
+SQ   Sequence 1320 BP; 385 A; 250 C; 216 G; 469 T; 0 other;
+     tagtcaaaca gtaattgccc aatttgatgg atactgtgaa ttaaatcgat ccgaatttca        60
+     ctacggaaca atttattgaa gcattcaaaa ggctttttct aaagagcaaa caatttgaga       120
+     gtagtttgta gatttcgatt cgttttttac acaacttttt aaaataaatg ttttttttcg       180
+     gaattctgtt gggtcctttc ccatttcttt ttttcctttt gcttctttcc ttcgaaatgt       240
+     cacagaattt aatgtttcta tcttgcgaaa aagaaacatc tcatatttct tagccaccat       300
+     tggagtatcg taaaaatcgg cgatcagaag aattccttcc actgtgaaat ctaaaaaatc       360
+     ggagaattaa aaatcgtcaa agaagatttc aaaatcacca tcaattgaga attctccata       420
+     tagaacttcc agaaaatgtt gaaactcatc tgcatcgatt ccagtcaagg cgatttcgga       480
+     tttttttgat tcggagaaac ccccgaggaa cagagtcttg agatatgtag attgagaggc       540
+     gaggtactga aaggaaatct cattttaaga agaatgagtg aatttgaacc atttctgaga       600
+     cgtagaattg ggtatcctgt accaccaaaa caacatcgga gacgtctttt tgtgattcat       660
+     caaatgttcg cattttctct tttttggatc cagtcatttt tataatttca acttctactt       720
+     caagtgtcaa attatctaga acttgccctt cgtcttcaat atcttccaat tccagagtat       780
+     catcaatagt ctttttccgt agataaccgt gtttcatagt tttagtgata ttgttgtagc       840
+     ctatcagtct gaacttcaat tcagtttcaa ttgacatatt gtgttgtttt gtttcgcaac       900
+     taatataaaa tgtgaagcga tcgtccatgc gctctactcc taaccacctg aaatgtgaga       960
+     aaaacgataa gggctggaca ctaatttatt gaaaactaac atgtcgcatt ggagcacact      1020
+     acatcttcgc tgtaatcacc atcgaacatt ttgctcagct ttttgaattc atgcttcacc      1080
+     atgaatctat tcgcttctgg tgccgcgtgg gaagtattct aaaaaatgaa ttgtcatatt      1140
+     tctcttccac agatctcacc ttcgacaaaa tagacatttt tgaaattgca tcttcaatta      1200
+     tttgaagttt ttccgcgatt tgtttttgcg aatttttgat ttcttccgtt tcagcagcca      1260
+     ccactgtttt tagctttttc aagcttttca ttcatttctg actgcgaata tgtcttgaga      1320
+//

@@ -1,7 +1,0 @@
-#Feature {0} is required when molecule type is {1}.	
-rRNA	rRNA
-tmRNA	tmRNA
-tRNA	tRNA
-ncRNA	scRNA
-ncRNA	snRNA
-ncRNA	snoRNA

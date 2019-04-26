@@ -1,0 +1,2 @@
+#Qualifier {0} must not have a value which matches the pattern {1} + <value> + {2} where <value> is a value of qualifier {3}.
+organism	.+\\s(var.)\\s	(null)	cultivar

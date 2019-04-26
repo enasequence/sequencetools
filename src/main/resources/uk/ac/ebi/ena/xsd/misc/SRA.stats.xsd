@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="STATS">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="SUMMARY_STATS" type="StatsType"/>
+                <xs:sequence maxOccurs="unbounded" minOccurs="1">
+                    <xs:element name="EVENT_STATS">
+                        <xs:complexType>
+                            <xs:all>
+                                <xs:element name="EVENT" type="StatsType"/>
+                            </xs:all>
+                            <xs:attribute name="cycleIndex" type="xs:int" use="required"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="total_spot_count" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:long"> </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="total_base_count" type="xs:long" use="required"/>
+            <xs:attribute name="ave_base_count" type="xs:long" use="required"/>
+            <xs:attribute name="max_base_count" type="xs:long" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="StatsType">
+        <xs:sequence maxOccurs="40" minOccurs="40">
+            <xs:element name="PHRED_SCORE_COUNT" type="CountType"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="EventsType"/>
+    </xs:complexType>
+    <xs:attributeGroup name="EventsType">
+        <xs:attribute name="event_a_count" type="xs:long"/>
+        <xs:attribute name="event_c_count" type="xs:long"/>
+        <xs:attribute name="event_g_count" type="xs:long"/>
+        <xs:attribute name="event_t_count" type="xs:long"/>
+        <xs:attribute name="event_n_count" type="xs:long"/>
+        <xs:attribute name="ave_phred_score" type="xs:double"/>
+    </xs:attributeGroup>
+    <xs:complexType name="CountType">
+        <xs:attribute name="phred_score" type="xs:int" use="required"> </xs:attribute>
+        <xs:attribute name="phred_score_count" type="xs:long" use="required"/>
+    </xs:complexType>
+</xs:schema>

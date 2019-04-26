@@ -1,0 +1,130 @@
+<?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000036" version="3">
+<name>MHC gene 2 exons</name>
+<description>For partial MHC class I or II antigens containing two exons ONLY. An intron feature should only be used when the intron region has actually been sequenced. If the intron has not been sequenced, or only partially sequenced, please fill the non-sequenced gap with 100 Ns.</description>
+<token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species). Formal names should include subspecies (subsp.) if applicable." tip="Homo sapiens,Macaca mulatta,Ovis aries"/>
+<token name="CHROMOSOME" type="TEXT_FIELD" mandatory="false" display_name="chromosome" description="Chromosome from which the sequence was obtained." tip="6"/>
+<token name="MAP" type="TEXT_FIELD" mandatory="false" display_name="map" description="Genomic map position of the submitted sequence." tip="8q12-q13"/>
+<token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="haplotype" description="Name for a combination of alleles that are linked together on the same physical chromosome." tip="Dw3 B5 Cw1 A1"/>
+<token name="ALLELE" type="TEXT_FIELD" mandatory="true" display_name="allele" description="Name of one particular form for the given gene. Plese provide here only the specification behind the asterisk '*' symbol. Remaining info will be amended automatically from the variable 'gene'." tip="03, 00705"/>
+<token name="BREED" type="TEXT_FIELD" mandatory="false" display_name="breed" description="Name of genetically-modified or artifically-selected for animal." tip="Barbado, Large White"/>
+<token name="SEX" type="TEXT_FIELD" mandatory="false" display_name="sex of organism" description="Sex of organism sequenced." tip="male, female"/>
+<token name="CELL_LINE" type="TEXT_FIELD" mandatory="false" display_name="cell line name" description="Name or identifier for cell line." tip="4064"/>
+<token name="CELL_TYPE" type="TEXT_FIELD" mandatory="false" display_name="cell type name" description="Name or identifier for cell type." tip="B-lymphocytes"/>
+<token name="TISSUE" type="TEXT_FIELD" mandatory="false" display_name="tissue type" description="The tissue type from which the DNA was extracted." tip="peripheral blood"/>
+<token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+<token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="isolate name" description="Name given to the sample that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
+<token name="SPEC_VOUCH" type="TEXT_FIELD" mandatory="false" display_name="specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
+<token name="BIO_MAT" type="TEXT_FIELD" mandatory="false" display_name="biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
+<token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
+<token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
+<token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="FWD_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
+<token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
+<token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="GENE" type="TEXT_CHOICE_FIELD" cv_name="mhcGenes" mandatory="true" display_name="gene" description="Gene symbol corresponding to a sequence region, please choose from the list. If the appropriate symbol is not in the list please choose 'other' and specify the symbol in comments to a curator. " tip="HLA-A, HLA-DPB1, Gogo-A"/>
+<token name="PRODUCT" type="TEXT_CHOICE_FIELD" cv_name="mhcProducts" mandatory="true" display_name="product" description="Name of the product associated with the feature." tip="MHC class I antigen"/>
+<token name="INFERTYPE" type="TEXT_CHOICE_FIELD" cv_name="inference_type" mandatory="false" display_name="inference type" description="Type of non-experimental evidence that supports the feature identification. Must have the field 'Inference Accession' selected." tip="similar to DNA sequence"/>
+<token name="INFER_ACC" type="TEXT_FIELD" mandatory="false" display_name="inference accession" description="A reference to a database entry, must contain an accession and version, or an algorithm including version. Must have the field 'Inference Type' selected." tip="FM123456.1"/>
+<token name="PSEUDO" type="BOOLEAN_FIELD" mandatory="true" display_name="Pseudogene?" description="Is this allele a known pseudogene?" tip="yes or no"/>
+<token name="EXPERIMENT" type="TEXT_FIELD" mandatory="false" display_name="experiment" description="Brief description of the nature of the experimental evidence that supports the feature." tip="Northern blot"/>
+<token name="5'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="5' CDS location" description="Start of the coding region relative to the submitted sequence. For a 5' complete CDS this is the position of the first base of the start codon." tip=""/>
+<token name="3'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="3' CDS location" description="End of the coding region relative to the submitted sequence. For a 3' complete CDS this is the position of the last base of the stop codon." tip=""/>
+<token name="CODONSTART" type="TEXT_CHOICE_FIELD" cv_name="reading_frame" mandatory="false" display_name="Reading Frame" description="Mandatory if your CDS is 5' partial as it defines the reading frame. Location of the first base of the first fully-encoded amino acid." tip="1, 2 or 3"/>
+<token name="5'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 5' ? (yes/no)" description="For an incomplete CDS with the start codon upstream of the submitted sequence."/>
+<token name="3'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 3' ? (yes/no)" description="For an incomplete CDS with the stop codon downstream of the submitted sequence."/>
+<token name="EXON_NUMBER_A" type="INTEGER_FIELD" mandatory="true" display_name="exon_A" description="Number of the sequenced exon_A relative to the whole MHC gene." tip="2"/>"
+<token name="5'_EXON_A" type="INTEGER_FIELD" mandatory="true" display_name="5' exon_A location" description="Start of the exon_A region relative to the submitted sequence. If the exon boundary is upstream, please use 1." tip=""/>
+<token name="3'_EXON_A" type="INTEGER_FIELD" mandatory="true" display_name="3' exon_A location" description="End of the exon_A region relative to the submitted sequence. " tip=""/>
+<token name="5'_INTRON" type="INTEGER_FIELD" mandatory="false" display_name="5' intron location" description="Start of the sequenced intron region relative to the submitted sequence. If the intron region has not been sequenced please do NOT include this feature. Please insert 100 times 'n' in the sequence where the intron is expected. Gap features will be amended automatically." tip=""/>
+<token name="3'_INTRON" type="INTEGER_FIELD" mandatory="false" display_name="3' intron location" description="End of the sequenced intron region relative to the submitted sequence. If the intron region has not been sequenced please do NOT include this feature. Please insert 100 times 'n' in the sequence where the intron is expected. Gap features will be amended automatically." tip=""/>
+<token name="EXON_NUMBER_B" type="INTEGER_FIELD" mandatory="true" display_name="exon_B" description="Number of the sequenced exon_B relative to the whole MHC gene." tip="3"/>"
+<token name="5'_EXON_B" type="INTEGER_FIELD" mandatory="true" display_name="5' exon_B location" description="Start of the exon_B region relative to the submitted sequence." tip=""/>
+<token name="3'_EXON_B" type="INTEGER_FIELD" mandatory="true" display_name="3' exon_B location" description="End of the exon_B region relative to the submitted sequence. If the exon boundary is downstream, please use the last base in your sequence." tip=""/>
+<token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
+<token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,GENE,ALLELE,PSEUDO,PRODUCT,5'_CDS,3'_CDS,5'_PARTIAL,3'_PARTIAL,CODONSTART,EXON_NUMBER_A,5'_EXON_A,3'_EXON_A,EXON_NUMBER_B,5'_EXON_B,3'_EXON_B" description="Mandatory template-specific fields and questions."/>
+<token_group name="Intron details" mandatory="false" contains="5'_INTRON,3'_INTRON" description="Locations of the sequenced intron."/>
+<token_group name="Chromosome-related details" mandatory="false" contains="CHROMOSOME,MAP,HAPLOTYPE" description="Chromosome related information."/>
+<token_group name="Further sample data" mandatory="false" contains="BREED,SEX,CELL_LINE,CELL_TYPE,TISSUE,CLONE,ISOLATE,SPEC_VOUCH,BIO_MAT" description="Further detailes on sequenced sample."/>
+<token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1,FWD_NAME2,FWD_SEQ2,REV_NAME2,REV_SEQ2" description="Details of the PCR primers used."/>
+<token_group name="Supporting evidence" mandatory="false" contains="INFERTYPE,INFER_ACC,EXPERIMENT" description="Supporting Evidence"/>
+<token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
+<section name="PARTIAL_5_SCT" mandatory="5'_PARTIAL"/>
+<section name="PARTIAL_3_SCT" mandatory="3'_PARTIAL"/>
+<section name="BREED_SCT" mandatory="BREED"/>
+<section name="CLONE_SCT" mandatory="CLONE"/>
+<section name="PSEUDO_SCT" mandatory="PSEUDO"/>
+<section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+<section name="SPECVOUCH_SCT" mandatory="SPEC_VOUCH"/>
+<section name="HAPLO_SCT" mandatory="HAPLOTYPE"/>
+<section name="PCR1f_SCT" mandatory="FWD_NAME1"/>
+<section name="PCR2f_SCT" mandatory="FWD_NAME2"/>
+<section name="PCR1r_SCT" mandatory="REV_NAME1"/>
+<section name="PCR2r_SCT" mandatory="REV_NAME2"/>
+<section name="INTRON_SCT" mandatory="5'_INTRON"/>
+<template_string>
+ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM_NAME} {{PARTIAL_5_SCT}}partial {{/PARTIAL_5_SCT}}{GENE} {{PSEUDO_SCT}}pseudo{{/PSEUDO_SCT}}gene for {PRODUCT}{{BREED_SCT}}, breed {BREED}{{/BREED_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPEC_VOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{HAPLO_SCT}}, haplotype {HAPLOTYPE}{{/HAPLO_SCT}}, allele {GENE}*{ALLELE}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}, exons {EXON_NUMBER_A}-{EXON_NUMBER_B}
+XX
+KW   .
+XX
+OS   {ORGANISM_NAME}
+OC   .
+XX
+{CITATIONS}
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism="{ORGANISM_NAME}"
+FT                   /mol_type="genomic DNA"
+FT                   /chromosome="{CHROMOSOME}"
+FT                   /map="{MAP}"
+FT                   /haplotype="{HAPLOTYPE}"
+{{BREED_SCT}}
+FT                   /note="Breed:{BREED}"
+{{/BREED_SCT}}
+FT                   /sex="{SEX}"
+FT                   /cell_line="{CELL_LINE}"
+FT                   /cell_type="{CELL_TYPE}"
+FT                   /tissue_type="{TISSUE}"
+FT                   /clone="{CLONE}"
+FT                   /isolate="{ISOLATE}"
+FT                   /specimen_voucher="{SPEC_VOUCH}"
+FT                   /bio_material="{BIO_MAT}"
+FT                   /PCR_primers="fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}{{PCR2f_SCT}}, fwd_name: {FWD_NAME2}, fwd_seq: {FWD_SEQ2}{{/PCR2f_SCT}}{{PCR1r_SCT}}, rev_name: {REV_NAME1}, rev_seq: {REV_SEQ1}{{/PCR1r_SCT}}{{PCR2r_SCT}}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}{{/PCR2r_SCT}}"
+FT   CDS             join({{PARTIAL_5_SCT}}<![CDATA[<]]>{{/PARTIAL_5_SCT}}{5'_CDS}..{3'_EXON_A},{5'_EXON_B}..{{PARTIAL_3_SCT}}<![CDATA[>]]>{{/PARTIAL_3_SCT}}{3'_CDS})
+FT                   /transl_table=1
+FT                   /codon_start={CODONSTART}
+FT                   /gene="{GENE}"
+{{PSEUDO_SCT}}
+FT                   /pseudogene="allelic"
+{{/PSEUDO_SCT}}
+FT                   /product="{PRODUCT}"
+FT                   /function="antigen presenting molecule"
+FT                   /allele="{GENE}*{ALLELE}"
+FT                   /experiment="{EXPERIMENT}"
+FT                   /inference="{INFERTYPE}:{INFER_ACC}"
+FT   exon            {5'_EXON_A}..{3'_EXON_A}
+FT                   /gene="{GENE}"
+FT                   /allele="{GENE}*{ALLELE}"
+FT                   /number={EXON_NUMBER_A}
+{{INTRON_SCT}}
+FT   intron          {5'_INTRON}..{3'_INTRON}
+FT                   /gene="{GENE}"
+FT                   /allele="{GENE}*{ALLELE}"
+FT                   /number={EXON_NUMBER_A}
+{{/INTRON_SCT}}
+FT   exon            {5'_EXON_B}..{3'_EXON_B}
+FT                   /gene="{GENE}"
+FT                   /allele="{GENE}*{ALLELE}"
+FT                   /number={EXON_NUMBER_B}
+XX
+{SEQUENCE}//
+</template_string><![CDATA[After receiving your INSDC accession number you might also wish to submit to the specialist databases IPD-IMGT/HLA and the IPD-MHC. Further details about submission to these databases can be found at http://www.ebi.ac.uk/ipd/index.html]]><example_string/>
+</template>

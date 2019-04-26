@@ -1,3 +1,0 @@
-#Qualifier {0} must exist when qualifier {1} value matches the pattern {2}.		
-proviral	note	.*endogenous retrovirus$
-environmental_sample	organism	^(uncultured).*

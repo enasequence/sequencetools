@@ -1,0 +1,12 @@
+#Qualifiers {0} and {1} cannot exist together.
+proviral	virion
+rearranged	germline
+environmental_sample	strain
+environmental_sample	cultivar
+environmental_sample	variety
+pseudo	pseudogene
+pseudo	product
+pseudogene	product
+cultivar	variety
+environmental_sample	culture_collection
+environmental_sample	specimen_voucher

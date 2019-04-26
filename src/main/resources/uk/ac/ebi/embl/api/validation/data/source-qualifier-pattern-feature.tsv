@@ -1,0 +1,2 @@
+#Feature {0} is required by qualifier {1} and its value pattern {2}.
+LTR	note	.*endogenous retrovirus$

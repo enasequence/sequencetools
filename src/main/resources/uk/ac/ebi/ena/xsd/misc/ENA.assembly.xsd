@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:com="ENA.common">
+  <xs:import schemaLocation="ENA.common.xsd" namespace="ENA.common"/>
+  <xs:complexType name="AssemblyUnitType">
+    <xs:sequence>
+      <xs:element name="taxon" type="com:TaxonType"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="replicon">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="placed" type="SequenceSetType"/>
+            <xs:element minOccurs="0" name="unlocalized" type="SequenceSetType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="xref" type="com:XrefType">
+              <xs:annotation>
+                <xs:documentation/>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+          <xs:attributeGroup ref="com:AccessionType"/>
+          <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Replicon name.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="type" use="required">
+            <xs:annotation>
+              <xs:documentation>Replicon type.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="unknown"/>
+                <xs:enumeration value="genomic"/>
+                <xs:enumeration value="chloroplast"/>
+                <xs:enumeration value="chromoplast"/>
+                <xs:enumeration value="kinetoplast"/>
+                <xs:enumeration value="mitochondrion"/>
+                <xs:enumeration value="plastid"/>
+                <xs:enumeration value="macronuclear"/>
+                <xs:enumeration value="extrachrom"/>
+                <xs:enumeration value="plasmid"/>
+                <xs:enumeration value="transposon"/>
+                <xs:enumeration value="insertion-seq"/>
+                <xs:enumeration value="cyanelle"/>
+                <xs:enumeration value="proviral"/>
+                <xs:enumeration value="virion"/>
+                <xs:enumeration value="nucleomorph"/>
+                <xs:enumeration value="apicoplast"/>
+                <xs:enumeration value="leucoplast"/>
+                <xs:enumeration value="proplastid"/>
+                <xs:enumeration value="endogenous-virus"/>
+                <xs:enumeration value="hydrogenosome"/>
+                <xs:enumeration value="chromosome"/>
+                <xs:enumeration value="chromatophore"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="unplaced" maxOccurs="unbounded" minOccurs="0" type="SequenceSetType"> </xs:element>
+      <xs:element name="fragment" maxOccurs="unbounded" minOccurs="0" type="SequenceSetType"> </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="fix_patch" type="AltSequenceSetType">
+        <xs:annotation>
+          <xs:documentation/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="novel_patch" type="AltSequenceSetType">
+        <xs:annotation>
+          <xs:documentation/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="alt_loci" type="AltSequenceSetType">
+        <xs:annotation>
+          <xs:documentation/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="xref" type="com:XrefType">
+        <xs:annotation>
+          <xs:documentation/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="stats" type="AssemblyStatsType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="com:AccessionType"/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>Assembly unit name.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="title" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>Assembly unit title.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="AssemblySetType">
+    <xs:sequence>
+      <xs:element name="taxon" type="com:TaxonType"/>
+      <xs:element name="primary" type="AssemblyUnitType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Primary assembly unit.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="other" type="AssemblyUnitType" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Other (non-primary) assembly unit.
+</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="xref" type="com:XrefType">
+        <xs:annotation>
+          <xs:documentation/>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="com:AccessionType"/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>The (short) name for the assembly.
+</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="title" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>The (long) title for the assembly.
+</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" use="required">
+      <xs:annotation>
+        <xs:documentation>Assembly set type.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="haploid"/>
+          <xs:enumeration value="diploid"/>
+          <xs:enumeration value=""/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="SequenceSetType">
+    <xs:annotation>
+      <xs:documentation/>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="1" name="sequence">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="xref" type="com:XrefType">
+              <xs:annotation>
+                <xs:documentation/>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+          <xs:attributeGroup ref="com:AccessionType"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="structure" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="range" maxOccurs="1" minOccurs="1" type="com:RangeType"> </xs:element>
+            <xs:element maxOccurs="1" minOccurs="1" name="gap">
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension base="com:GapType">
+                    <xs:attribute name="type">
+                      <xs:annotation>
+                        <xs:documentation>Gap type.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="fragment"/>
+                          <xs:enumeration value="clone"/>
+                          <xs:enumeration value="short-arm"/>
+                          <xs:enumeration value="heterochromatin"/>
+                          <xs:enumeration value="centromere"/>
+                          <xs:enumeration value="telomere"/>
+                          <xs:enumeration value="repeat"/>
+                          <xs:enumeration value="contig"/>
+                          <xs:enumeration value="other"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                  </xs:extension>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="stats" type="AssemblyStatsType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AltSequenceSetType">
+    <xs:annotation>
+      <xs:documentation/>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="SequenceSetType">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="region">
+            <xs:complexType>
+              <xs:attribute name="name" use="required" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>The region name.
+</xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+              <xs:attribute name="replicon" use="optional" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>The replicon name.
+</xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+              <xs:attributeGroup ref="com:PlacementType"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AssemblyStatsType">
+    <xs:attribute name="scope" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="all-scaf"/>
+          <xs:enumeration value="ordered-scaf"/>
+          <xs:enumeration value="unordered-scaf"/>
+          <xs:enumeration value="unplacecd-scaf"/>
+          <xs:enumeration value="aligned-scaf"/>
+          <xs:enumeration value="unaligned-scaf"/>
+          <xs:enumeration value=""/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="category" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="replicon-count"/>
+          <xs:enumeration value="scaffold-count"/>
+          <xs:enumeration value="component-count"/>
+          <xs:enumeration value="component-span-count"/>
+          <xs:enumeration value="total-length"/>
+          <xs:enumeration value="ungapped-length"/>
+          <xs:enumeration value="min-gapped-scaf-length"/>
+          <xs:enumeration value="max-gapped-scaf-length"/>
+          <xs:enumeration value="min-ungapped-scaf-length"/>
+          <xs:enumeration value="max-ungapped-scaf-length"/>
+          <xs:enumeration value="active-finishing-bases"/>
+          <xs:enumeration value="draft-bases"/>
+          <xs:enumeration value="finished-bases"/>
+          <xs:enumeration value="whole-genome-finishing-bases"/>
+          <xs:enumeration value="other-sequences"/>
+          <xs:enumeration value="pre-draft"/>
+          <xs:enumeration value="wgs-bases"/>
+          <xs:enumeration value="bases-in-spanned-gaps"/>
+          <xs:enumeration value="bases-in-unspanned-gaps"/>
+          <xs:enumeration value="n50"/>
+          <xs:enumeration value="spanned-gaps"/>
+          <xs:enumeration value="unspanned-gaps"/>
+          <xs:enumeration value="is-there-unplaced-scaf"/>
+          <xs:enumeration value="count-singleton-unordered-scaffold"/>
+          <xs:enumeration value="count-chr-made-of-singleton-ordered-scaffold"/>
+          <xs:enumeration value="count-chr-with-single-component"/>
+          <xs:enumeration value="count-singleton-in-minus-orientation"/>
+          <xs:enumeration value="count-placed-scaf"/>
+          <xs:enumeration value="count-unlocalized-scaf"/>
+          <xs:enumeration value="count-unplaced-scaf"/>
+          <xs:enumeration value="count-unknown-gaps"/>
+          <xs:enumeration value="count-unplaced-singleton-scaf"/>
+          <xs:enumeration value="count-implicit-scaf-src-name"/>
+          <xs:enumeration value="count-explicit-scaf-src-name"/>
+          <xs:enumeration value="all-chr-has-single-component"/>
+          <xs:enumeration value="count-scaf-with-terminal-gaps"/>
+          <xs:enumeration value="count-chr-with-terminal-gaps"/>
+          <xs:enumeration value="count-uniq-components"/>
+          <xs:enumeration value="count-uniq-component-diff-from-last-release"/>
+          <xs:enumeration value="count-dropped-components"/>
+          <xs:enumeration value="count-non-chromosome-replicon"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="value" type="xs:integer" use="required"/>
+  </xs:complexType>
+  <xs:element name="assemblySet" type="AssemblySetType">
+    <xs:annotation>
+      <xs:documentation>An assembly set.
+
+When parsing gencoll_report.xsd XMLs we should generated one ASSEMBLY_SET for each:
+
+assembly-set/GC-AssemblySet/set-type@value = full-assembly (0)
+</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+</xs:schema>

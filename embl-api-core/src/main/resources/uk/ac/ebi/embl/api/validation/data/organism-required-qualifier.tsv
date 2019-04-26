@@ -1,6 +1,0 @@
-#At least one of the following qualifiers {0} must exist when organism belongs to {1}.		
-#required qualifier	organism	severity
-ecotype	Arabidopsis thaliana	WARNING
-strain	Mus musculus	ERROR
-serotype	Influenza A virus	ERROR
-strain,environmental_sample,isolate	Bacteria,Archaea	WARNING

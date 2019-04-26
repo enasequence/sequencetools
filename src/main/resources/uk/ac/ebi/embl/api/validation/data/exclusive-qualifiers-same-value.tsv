@@ -1,0 +1,3 @@
+#Qualifiers {0} and {1} cannot have the same value.
+clone	sub_clone
+clone	clone_lib

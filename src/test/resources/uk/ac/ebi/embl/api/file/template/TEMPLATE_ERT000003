@@ -1,0 +1,115 @@
+<?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000003" version="4">
+<name>Expressed Sequence Tag (EST)</name>
+<forms_name>EST</forms_name>
+<description>For submission of Sanger-sequenced Expressed Sequence Tags (ESTs). ESTs are short transcripts ~500-800bp long usually of low quality as they are the result of only single pass reads. No feature annotation is recorded on ESTs.</description>
+<comment>For EST sequences, EMBL-bank requires additional source information, other than the organism name. Please provide as much detail as possible by selecting at least one relevant field below (e.g., tissue type, development stage)</comment>
+<token name="COMMENTS" type="TEXT_AREA_FIELD" mandatory="true" display_name="Experimental details" description="Please provide a brief experimental overview including library construction details. This will appear in a CC line."/>
+<token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism." tip="Mus musculus, Drosophila melanogaster, Homo sapiens"/>
+<token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number." tip="DSM 5432, BALB/c"/>
+<token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which these sequence belongs."/>
+<token name="CLONE" type="TEXT_FIELD" mandatory="true" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+<token name="CLONELIB" type="TEXT_FIELD" mandatory="false" display_name="Clone library name" description="Name given to the clone library that has been sequenced." tip="lowlight3, lib1"/>
+<token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the environmental isolate that has been sequenced." tip="isolate#3, 654g14"/>
+<token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
+<token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridge, Bordeaux, North Altantic Ridge"/>
+<token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
+<token name="LATLON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
+<token name="ISOSOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="fast-flowing river, microbial mat"/>
+<token name="BREED" type="TEXT_FIELD" mandatory="false" display_name="Breed" description="The recognised breed name of the organism, please use cultivar or variety for plants/fungi." tip="Bull terrier, Friesian Holstein, Large white"/>
+<token name="SEX" type="TEXT_FIELD" mandatory="false" display_name="Sex" description="sex of the organism from which the sequence was obtained; sex is used for eukaryotic organisms that undergo meiosis and have sexually dimorphic gametes." tip="male, dioecious"/>
+<token name="DEVSTAGE" type="TEXT_FIELD" mandatory="false" display_name="Development stage" description="Developmental stage of the organism, either a named stage, or a measurement of time." tip="fourth instar larva, 3 day old, blastula"/>
+<token name="CELLTYPE" type="TEXT_FIELD" mandatory="false" display_name="Cell type" description="Cell type (in a multicellular organism) from which sequence was generated." tip="CD4+ lymphocyte, palisade cell."/>
+<token name="TISSUETYPE" type="TEXT_FIELD" mandatory="false" display_name="Tissue type" description="Tissue type from which sequence was generated." tip="liver, root, fruiting body."/>
+<token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
+<token name="COLBY" type="TEXT_FIELD" mandatory="false" display_name="Collected by" description="Collector(s) of the sample."/>
+<token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety" description="variety (= varietas, a formal Linnaean rank) of organism from which sequence was derived.  Use the cultivar qualifier for cultivated plant varieties, i.e., products of artificial selection."/>
+<token name="ECOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Ecotype" description="A population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat."/>
+<token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="cultivar (cultivated variety) of plant from which sequence was obtained, and is applied solely to products of artificial selection; use the variety qualifier for natural, named plant and fungal varieties."/>
+<token name="HOST" type="TEXT_FIELD" mandatory="false" display_name="Natural host" description="The natural host of the organism from which the sequenced material was taken."/>
+<token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" variable_only="true" display_name="Sequence" description="Nucleotide sequence that has been generated."/>
+<token name="CULTCOLL" type="TEXT_FIELD" mandatory="false" display_name="Culture collection" description="Reference to a live microbial or fungal culture or cell line in a curated culture collection see http://www.ebi.ac.uk/ena/WebFeat/qualifiers/culture_collection.html" tip="ATCC:26370"/>
+<token name="SPECVOUCH" type="TEXT_FIELD" mandatory="false" display_name="Specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
+<token name="BIOMAT" type="TEXT_FIELD" mandatory="false" display_name="Biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Culture Collection or Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
+<!-- Primer Details -->
+<token name="PFNAME1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer name" description="Name of the forward direction PCR primer."/>
+<token name="PRNAME1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer name" description="Name of the reverse direction PCR primer."/>
+<token name="PFSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="PRSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="PFNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
+<token name="PRNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
+<token name="PFSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token name="PRSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+<token_group name="Basic Details" mandatory="true" contains="ORGANISM,STRAIN,HAPLOTYPE,CLONE,ISOLATE,DEVSTAGE,CLONELIB,CELLTYPE,TISSUETYPE,BREED,SEX" description="Organism from which the sequenced material was taken."/>
+<token_group name="Plant/Fungal specific" mandatory="false" contains="VARIETY,CULTIVAR,ECOTYPE" description="Qualifiers specifically for samples of plants or fungi."/>
+<token_group name="Collection details" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LATLON,ISOSOURCE,HOST,COLDATE,COLBY" description="Sampling details for the organism."/>
+<token_group name="Repository Data" mandatory="false" contains="CULTCOLL,SPECVOUCH,BIOMAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials.)"/>
+<token_group name="Experimental Details" mandatory="true" contains="COMMENTS" description="Details of the experiment and library."/>
+<token_group name="PCR Primers" mandatory="false" contains="PFNAME1,PFSEQ1,PRNAME1,PRSEQ1,PFNAME2,PFSEQ2,PRNAME2,PRSEQ2" description="Details of the PCR primers used."/>
+<token_group name="Sequence" contains="SEQUENCE" description="Sequence"/>
+<section name="CLONE_SCT" mandatory="CLONE"/>
+<section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+<section name="STRAIN_SCT" mandatory="STRAIN"/>
+<section name="CULT_SCT" mandatory="CULTIVAR"/>
+<section name="BREED_SCT" mandatory="BREED"/>
+<section name="HAPLO_SCT" mandatory="HAPLOTYPE"/>
+<section name="SPECVOUCH_SCT" mandatory="SPECVOUCH"/>
+<section name="AREA_SCT" mandatory="AREA"/>
+<section name="LOCALITY_SCT" mandatory="LOCALITY"/>
+<section name="PFNAME1_SCT" mandatory="PFNAME1"/>
+<section name="PRNAME1_SCT" mandatory="PRNAME1"/>
+<section name="PFNAME2_SCT" mandatory="PFNAME2"/>
+<section name="PRNAME2_SCT" mandatory="PRNAME2"/>
+<section name="PFSEQ2_SCT" mandatory="PFSEQ2"/>
+<section name="PRSEQ2_SCT" mandatory="PRSEQ2"/>
+<section name="PF2_SCT" mandatory="PFSEQ2"/>
+<section name="PR2_SCT" mandatory="PRSEQ2"/>
+<template_string>
+ID   XXX; SV XXX; linear; mRNA; EST; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM} EST{{BREED_SCT}}, breed {BREED}{{/BREED_SCT}}{{CULT_SCT}}, cultivar {CULTIVAR}{{/CULT_SCT}}{{HAPLO_SCT}}, haplotype {HAPLOTYPE}{{/HAPLO_SCT}}{{STRAIN_SCT}}, strain {STRAIN}{{/STRAIN_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPECVOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
+XX
+KW   EST; expressed sequence tag.
+XX
+OS
+OC   .
+XX
+{CITATIONS}
+{COMMENTS}
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism="{ORGANISM}"
+FT                   /mol_type="mRNA"
+FT                   /strain="{STRAIN}"
+FT                   /clone="{CLONE}"
+FT                   /clone_lib="{CLONELIB}"
+FT                   /isolate="{ISOLATE}"
+FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
+FT                   /lat_lon="{LATLON}"
+FT                   /note="breed:{BREED}"
+FT                   /haplotype="{HAPLOTYPE}"
+FT                   /sex="{SEX}"
+FT                   /isolation_source="{ISOSOURCE}"
+FT                   /collection_date="{COLDATE}"
+FT                   /collected_by="{COLBY}"
+FT                   /culture_collection="{CULTCOLL}"
+FT                   /specimen_voucher="{SPECVOUCH}"
+FT                   /bio_material="{BIOMAT}"
+FT                   /cultivar="{CULTIVAR}"
+FT                   /variety="{VARIETY}"
+FT                   /ecotype="{ECOTYPE}"
+FT                   /host="{HOST}"
+FT                   /dev_stage="{DEVSTAGE}"
+FT                   /cell_type="{CELLTYPE}"
+FT                   /tissue_type="{TISSUETYPE}"
+FT                   /PCR_primers="{{PFNAME1_SCT}}fwd_name: {PFNAME1}, {{/PFNAME1_SCT}}fwd_seq: {PFSEQ1}, {{PF2_SCT}}{{PFNAME2_SCT}}fwd_name: {PFNAME2}, {{/PFNAME2_SCT}}{{PFSEQ2_SCT}}fwd_seq: {PFSEQ2}, {{/PFSEQ2_SCT}}{{/PF2_SCT}}{{PRNAME1_SCT}}rev_name: {PRNAME1}, {{/PRNAME1_SCT}}rev_seq: {PRSEQ1}{{PR2_SCT}}{{PRNAME2_SCT}}, rev_name: {PRNAME2}{{/PRNAME2_SCT}}{{PRSEQ2_SCT}}, rev_seq: {PRSEQ2}{{/PRSEQ2_SCT}}{{/PR2_SCT}}"
+XX
+{SEQUENCE}//
+</template_string>
+<example_string><![CDATA[ESTs are single pass reads generated from transcribed DNA (cDNA) and represent a portion of an expressed transcript. The only quality restriction placed on EST submissions is the removal of terminal uncalled (n) bases.<br/><br/>The EST sequence record <b>contains only a source feature</b> with the following relevant information:<br/>organism name, unique sequence identifier (e.g. clone or isolate name), tissue type, developmental stage, organism modifiers (e.g.strain) and clone (or tissue) library name.]]></example_string>
+</template>
