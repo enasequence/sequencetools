@@ -8,6 +8,8 @@
       <module name="embl-api-ff_test" target="1.8" />
       <module name="embl-api-validator_main" target="1.8" />
       <module name="embl-api-validator_test" target="1.8" />
+      <module name="sequencetools-single_main" target="1.8" />
+      <module name="sequencetools-single_test" target="1.8" />
       <module name="sequencetools_main" target="1.8" />
       <module name="sequencetools_test" target="1.8" />
     </bytecodeTargetLevel>
