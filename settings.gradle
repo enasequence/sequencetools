@@ -1,1 +1,1 @@
-include "embl-api-core", "embl-api-ff", "embl-api-validator"
+rootProject.name = 'sequencetools'
