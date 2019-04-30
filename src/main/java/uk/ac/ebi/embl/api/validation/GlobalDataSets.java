@@ -31,8 +31,8 @@ public class GlobalDataSets {
         dataSets.put(dataSetName, dataSet);
     }
 
-    public static void clear() {
-       dataSets = new HashMap<>();
+    public static synchronized void clear() {
+       dataSets.clear();
     }
 
     public static synchronized DataSet getDataSet(String dataSetName) {
