@@ -59,7 +59,7 @@ public class OrganismAndRequiredQualifierCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		check.check(source);
 	}
 

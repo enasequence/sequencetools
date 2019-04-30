@@ -69,7 +69,7 @@ public class OrganismAndPermittedQualifierCheckTest {
 
 	@Test
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		check.check(entry);
 	}
 

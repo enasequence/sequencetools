@@ -53,7 +53,7 @@ public class QualifierAndRequiredQualifierinEntryCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		check.check(entry);
 	}
 

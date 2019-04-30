@@ -70,7 +70,7 @@ public class MoleculeTypeAndOrganismCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		entry.getSequence().setMoleculeType("genomic RNA");
 		source.addQualifier("organism", "Deltavirus");
 		check.check(entry);

@@ -69,7 +69,7 @@ public class MoleculeTypeAndSourceQualifierCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		entry.getSequence().setMoleculeType("mRNA");
 		source.addQualifier("tissue_type", "Deltavirus");
 		check.check(entry);

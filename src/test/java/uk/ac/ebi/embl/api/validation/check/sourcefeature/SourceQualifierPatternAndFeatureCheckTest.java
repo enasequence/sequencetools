@@ -59,7 +59,7 @@ public class SourceQualifierPatternAndFeatureCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		source.addQualifier(qualifierFactory.createQualifier("note",
 				"X endogenous retrovirus"));
 		entry.addFeature(featureFactory.createFeature("LTR"));

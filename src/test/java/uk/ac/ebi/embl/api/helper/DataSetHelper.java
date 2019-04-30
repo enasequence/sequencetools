@@ -13,8 +13,4 @@ public class DataSetHelper {
         Stream.of(dataRows).forEach(ds::addRow);
         GlobalDataSets.add(dataSetName, ds);
     }
-
-    public static void clear() {
-        GlobalDataSets.clear();
-    }
 }
