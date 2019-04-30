@@ -14,15 +14,13 @@ public class GlobalDataSets {
     private static Map<String, DataSet> dataSets = new HashMap<>();
     private static DataManager dataManager;
     private static CheckFileManager fileManager;
-    private static boolean devMode;
 
     private GlobalDataSets(){
     }
 
-    public static void init(DataManager dm, CheckFileManager fm, boolean dev) {
+    public static void init(DataManager dm, CheckFileManager fm) {
         dataManager = dm;
         fileManager = fm;
-        devMode = dev;
     }
 
     public static boolean isPopulated(String dataSetName) {
@@ -44,10 +42,11 @@ public class GlobalDataSets {
                 dataSet = dataSets.get(dataSetName);
             } else {
                 try {
-                    dataSet = dataManager.getDataSet(fileManager.filePath(dataSetName, devMode), devMode);
+                    dataSet = dataManager.getDataSet(fileManager.filePath(dataSetName, false));
                     add(dataSetName, dataSet);
                 } catch(Exception e) {
-                    System.out.println("Could not load dataset "+dataSetName+" Exception got: "+e.getMessage()+"\tDev Mode:"+devMode);
+                    e.printStackTrace();
+                    System.out.println("Could not load dataset "+dataSetName+" Exception got: "+e.getMessage());
                 }
             }
         }

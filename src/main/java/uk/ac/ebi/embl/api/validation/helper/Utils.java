@@ -866,7 +866,7 @@ public class Utils {
 	
 	public static String getValidFeatureName(String featureName)
 	{
-		DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath(FileName.FEATURE_KEYS, false), false);
+		DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath(FileName.FEATURE_KEYS, false));
 
 		if (!dataSet.contains(0, featureName))
 		{

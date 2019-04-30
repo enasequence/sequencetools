@@ -21,9 +21,8 @@ public interface DataManager {
 	 * Retrieves DataSet object for provided name 
 	 * 
 	 * @param name data set name (e.g. file name)
-	 * @param testMode if test mode, dataset is sources from the file system, rather than the classpath
      * @return loaded DataSet object
 	 */
-	DataSet getDataSet(String name, boolean testMode);
+	DataSet getDataSet(String name);
 
 }

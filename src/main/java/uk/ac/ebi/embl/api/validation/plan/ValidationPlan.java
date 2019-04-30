@@ -69,7 +69,7 @@ public abstract class ValidationPlan {
 		this.dataManager = new CachedFileDataManager();
 		this.fileManager = new CheckFileManager();
         this.devMode = devMode;
-		GlobalDataSets.init(dataManager, fileManager, devMode);
+		GlobalDataSets.init(dataManager, fileManager);
     }
 
     public void addMessageBundle(String bundleName){

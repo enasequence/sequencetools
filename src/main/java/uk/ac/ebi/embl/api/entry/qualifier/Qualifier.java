@@ -112,7 +112,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
         DataManager dataManager = new CachedFileDataManager();
         CheckFileManager tsvFileManager = new CheckFileManager();
 
-        DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath(FileName.FEATURE_QUALIFIER_VALUES, false), false);
+        DataSet dataSet = dataManager.getDataSet(tsvFileManager.filePath(FileName.FEATURE_QUALIFIER_VALUES, false));
         if (dataSet != null) {
 
             for (DataRow row : dataSet.getRows()) {
