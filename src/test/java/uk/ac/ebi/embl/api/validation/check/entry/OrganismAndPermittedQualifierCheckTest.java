@@ -67,7 +67,7 @@ public class OrganismAndPermittedQualifierCheckTest {
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
 		GlobalDataSets.clear();
 		check.check(entry);

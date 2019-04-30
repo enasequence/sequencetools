@@ -33,7 +33,7 @@ public class GlobalDataSets {
 
     public static synchronized void clear() {
        dataSets.clear();
-        dataManager = null;
+       dataManager = null;
     }
 
     public static synchronized DataSet getDataSet(String dataSetName) {
@@ -42,13 +42,8 @@ public class GlobalDataSets {
             if (isPopulated(dataSetName)) {
                 dataSet = dataSets.get(dataSetName);
             } else {
-                try {
-                    dataSet = dataManager.getDataSet(fileManager.filePath(dataSetName, false));
-                    add(dataSetName, dataSet);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Could not load dataset "+dataSetName+" Exception got: "+e.getMessage());
-                }
+                dataSet = dataManager.getDataSet(fileManager.filePath(dataSetName, false));
+                add(dataSetName, dataSet);
             }
         }
         return dataSet;
