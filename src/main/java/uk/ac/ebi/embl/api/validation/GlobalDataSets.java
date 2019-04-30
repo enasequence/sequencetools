@@ -47,7 +47,7 @@ public class GlobalDataSets {
                     dataSet = dataManager.getDataSet(fileManager.filePath(dataSetName, devMode), devMode);
                     add(dataSetName, dataSet);
                 } catch(Exception e) {
-                    System.out.println("Could not load dataset "+dataSetName+" Exception got: "+e.getMessage());
+                    System.out.println("Could not load dataset "+dataSetName+" Exception got: "+e.getMessage()+"\tDev Mode:"+devMode);
                 }
             }
         }

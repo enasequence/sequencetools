@@ -23,9 +23,6 @@ public class CheckFileManager {
     public final static String DEV_PATH = "/ebi/production/seqdb/embl/tools/lib/validator_tsvs/embl-api/embl-api-core/src/main/resources/uk/ac/ebi/embl/api/validation/data/";
 
 	public String filePath(String fileName, boolean devMode) {
-        if(devMode){
-            return DEV_PATH + fileName;
-        }
         return PATH + fileName;
 	}
 
