@@ -59,7 +59,7 @@ public class MoleculeTypeAndFeatureCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		entry.getSequence().setMoleculeType("rRNA");
 		entry.addFeature(featureFactory.createFeature("rRNA"));
 		check.check(entry);

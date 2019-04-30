@@ -55,7 +55,7 @@ public class FeatureAndSourceQualifierCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		source.setSingleQualifier("map");
 		entry.addFeature(featureFactory.createFeature("STS"));
 		check.check(entry);

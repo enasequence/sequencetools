@@ -56,7 +56,7 @@ public class DataclassCheckTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCheck_NoDataSet() throws ValidationEngineException {
-		DataSetHelper.clear();
+		GlobalDataSets.clear();
 		entry.setDataClass("STD");
 		assertTrue(check.check(entry).isValid());
 	}
