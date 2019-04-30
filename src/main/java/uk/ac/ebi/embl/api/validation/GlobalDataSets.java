@@ -33,6 +33,7 @@ public class GlobalDataSets {
 
     public static synchronized void clear() {
        dataSets.clear();
+        dataManager = null;
     }
 
     public static synchronized DataSet getDataSet(String dataSetName) {
