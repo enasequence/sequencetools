@@ -1,31 +1,26 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mapdb.DB;
-
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
-import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
 
 public class SubmissionValidationPlanTest extends SubmissionValidationTest 
 {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -82,6 +83,7 @@ public class SubmissionOptions
 		FileValidationCheck.duplicateEntryNames.clear();
 		FileValidationCheck.chromosomeNames.clear();
 		FileValidationCheck.unplacedEntryNames.clear();
+		GlobalDataSets.clear();
 	}
 	
 	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()

@@ -37,7 +37,7 @@ public class GlobalDataSets {
        dataSets = new HashMap<>();
     }
 
-    public static DataSet getDataSet(String dataSetName) {
+    public static synchronized DataSet getDataSet(String dataSetName) {
         DataSet dataSet = null;
         if (null != dataSetName) {
             if (isPopulated(dataSetName)) {

@@ -1,0 +1,1 @@
+WARNING: Sequence contains a stretch of n characters between base 2 and 3 that is not represented with a "gap" feature (stretches of n greater than 0 gives a warning, greater than 10 gives an error). [ line: 43-44]
