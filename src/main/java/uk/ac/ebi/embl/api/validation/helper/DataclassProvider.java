@@ -7,71 +7,28 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.FileName;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 public class DataclassProvider {
-
-	private static EntryDAOUtils entryDaoUtils;
-	private static HashMap<String,String> prefixDataclass = new HashMap<String, String>();
 	
-	public DataclassProvider(EntryDAOUtils entryDaoUtils)
+	public static String getAccessionDataclass(String primaryAccession)
 	{
-		DataclassProvider.entryDaoUtils=entryDaoUtils;
-	}
-	
-	
-	public static String getAccessionDataclass(String primaryAccession) throws SQLException
-	{
-		  if(primaryAccession==null||"XXX".equals(primaryAccession)||primaryAccession.isEmpty())
+		if (primaryAccession == null || "XXX".equals(primaryAccession) || primaryAccession.isEmpty())
 			return null;
 
-		   String dataclass= null;
-		   if(AccessionMatcher.isWgsSeqAccession(primaryAccession))
-		   {
-			 dataclass = Entry.WGS_DATACLASS;
-		   }
-		   else if(AccessionMatcher.isAssemblyMasterAccn(primaryAccession) || AccessionMatcher.isWgsMasterAccession(primaryAccession))
-		   {
-			   dataclass = Entry.SET_DATACLASS;
-		   }
-		   else if(AccessionMatcher.isTpxSeqAccession(primaryAccession))
-		   {
-			   dataclass = Entry.TPX_DATACLASS;
-		   }
-		   else
-		   {
-			   Matcher sequenceAccessionMatcher = AccessionMatcher.getOldSeqPrimaryAccMatcher(primaryAccession);
-
-			   if(sequenceAccessionMatcher.matches()){
-			   		dataclass = getDataclass(sequenceAccessionMatcher);
-			   } else {
-				   sequenceAccessionMatcher = AccessionMatcher.getNewSeqPrimaryAccMatcher(primaryAccession);
-				   if(sequenceAccessionMatcher.matches()){
-					   dataclass = getDataclass(sequenceAccessionMatcher);
-				   }
-			   }
-
-		   }
-	 	return dataclass;
-	}
-
-	private static String getDataclass(Matcher matcher) throws SQLException {
 		String dataclass = null;
-		String prefix = matcher.group(1);
-		if (prefixDataclass.get(prefix) != null) {
-			dataclass = prefixDataclass.get(prefix);
-		} else if (entryDaoUtils != null) {
-			dataclass = entryDaoUtils.getAccessionDataclass(prefix);
+		if (AccessionMatcher.isAssemblyMasterAccn(primaryAccession) || AccessionMatcher.isMasterAccession(primaryAccession)) {
+			dataclass = Entry.SET_DATACLASS;
+		} else if (AccessionMatcher.isTpxSeqAccession(primaryAccession)) {
+			dataclass = Entry.TPX_DATACLASS;
 		}
 		return dataclass;
 	}
+
 	 /*
      * get the keyword dataclass from keywords in KW line(CV_DATACLASS_KEYWORD)
      */
@@ -165,6 +122,8 @@ public class DataclassProvider {
 
 	public static boolean isValidDataclass(String dataClass) {
 
+		if(dataClass == null)
+			return false;
 		for (DataRow row : GlobalDataSets.getDataSet(FileName.DATACLASS).getRows()) {
 			String validDataclass = row.getString(0);
 			if (validDataclass != null && validDataclass.trim().equalsIgnoreCase(dataClass))

@@ -77,7 +77,7 @@ public class DataclassFixTest
 		entry.addKeyword(new Text(Entry.WGS_DATACLASS));
 		ValidationResult result=check.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
-		assertEquals(1, result.count("DataclassFix_1", Severity.FIX));
+		assertEquals(1, result.count("DataclassFix_2", Severity.FIX));
 	}
 
 	@Test

@@ -48,6 +48,14 @@ public class KWCheckTest {
 		DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS, new DataRow("TSA","TSA","TSA"),
 				new DataRow("TSA","TRANSCRIPTOMESHOTGUNASSEMBLY","Transcriptome Shotgun Assembly"),
 				new DataRow("WGS","WGS","WGS"));
+		DataSetHelper.createAndAdd(FileName.DATACLASS, new DataRow("TSA"),
+				new DataRow("TLS"),
+				new DataRow("STD"),
+				new DataRow("CON"),
+				new DataRow("PAT"),
+				new DataRow("TPX"),
+				new DataRow("HTG"),
+				new DataRow("WGS"));
 		check = new KWCheck();
 	}
 

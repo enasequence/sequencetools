@@ -37,8 +37,6 @@ public interface EntryDAOUtils
 
 	Entry getEntryInfo(String primaryAcc) throws SQLException;
 	
-	public String getAccessionDataclass(String prefix) throws SQLException;
-	
 	public String getDbcode(String prefix) throws SQLException;
 	
 	

@@ -14,9 +14,10 @@ public class FastaFileWriter
 	public enum FastaHeaderFormat
 	{
 		DEFAULT_HEADER_FORMAT,
-		ANALYSIS_HEADER_FORMAT;
+		ANALYSIS_HEADER_FORMAT,
+		ENA_HEADER_FORMAT
 	}
-	
+
 	public FastaFileWriter(Entry entry,Writer writer)
 	{
 		this.entry =entry;
@@ -41,6 +42,9 @@ public class FastaFileWriter
 		case ANALYSIS_HEADER_FORMAT:
 			header= String.format(">%s %s",entry.getPrimaryAccession(),entry.getSubmitterAccession());
 			break;
+		case ENA_HEADER_FORMAT:
+            header = String.format(">ENA|%s|%s %s", entry.getPrimaryAccession(), entry.getSequence().getAccessionwithVersion(), entry.getDescription().getText());
+            break;
 		default:
 			break;
 		}

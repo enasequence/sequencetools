@@ -125,8 +125,8 @@ public class AccessionMatcherTest {
     public void isWgsMasterAccession() {
         //NEW: 6L 2D 7-9D
         //OLD: 4L 2D 6-8D
-        validWGSMaster.forEach(x -> assertTrue(AccessionMatcher.isWgsMasterAccession(x)));
-        inValidWGSMaster.forEach(x -> assertFalse(AccessionMatcher.isWgsMasterAccession(x)));
+        validWGSMaster.forEach(x -> assertTrue(AccessionMatcher.isMasterAccession(x)));
+        inValidWGSMaster.forEach(x -> assertFalse(AccessionMatcher.isMasterAccession(x)));
     }
 
     @Test

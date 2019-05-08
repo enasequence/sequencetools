@@ -73,7 +73,7 @@ public class AccessionMatcher {
         return isAnyMatch(getOldWgsAccMatcher(accText),  getNewWgsAccMatcher(accText));
     }
 
-    public static boolean isWgsMasterAccession(String accText) {
+    public static boolean isMasterAccession(String accText) {
         boolean rtn =  isAnyMatch( getOldWgsMasterAccMatcher(accText), getNewWgsMasterAccMatcher(accText));
         return rtn;
     }

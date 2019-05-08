@@ -63,8 +63,8 @@ public class SubmissionValidationPlan
 	public void execute() throws ValidationEngineException {
 		try
 		{
-			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			options.init();
+			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			//Validation Order shouldn't be changed
 			if(options.context.get().getFileTypes().contains(FileType.MASTER))
 				createMaster();

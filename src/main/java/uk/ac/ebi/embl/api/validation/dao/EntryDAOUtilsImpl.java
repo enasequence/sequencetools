@@ -495,31 +495,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 	}
 
 	@Override
-	public String getAccessionDataclass(String prefix)	throws SQLException 
-	{
-	  String sql=	"select datclass from cv_database_prefix where prefix= ?";
-	  ResultSet rs = null;
-	  PreparedStatement ps = null;
-		try
-		{
-			ps = connection.prepareStatement(sql);
-			ps.setString(1, prefix);
-			rs = ps.executeQuery();
-			if(rs.next())
-			{
-    			return rs.getString(1);
-			}
-		}finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-		
-		
-	  return null;
-	}
-
-	@Override
 	public String getDbcode(String prefix) throws SQLException {
 		if(prefix==null)
 			return null;

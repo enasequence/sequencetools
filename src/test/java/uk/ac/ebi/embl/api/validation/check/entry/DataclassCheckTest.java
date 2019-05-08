@@ -110,13 +110,6 @@ public class DataclassCheckTest {
 	}
 
 	@Test
-	public void testCheck_invalidAccessionDatclass() throws ValidationEngineException {
-		entry.setPrimaryAccession("ABCD01000001");
-		entry.setDataClass("STD");
-		ValidationResult result = check.check(entry);
-		assertEquals(1, result.count("DataclassCheck4", Severity.ERROR));
-	}
-	@Test
 	public void testCheck_validAccessionDatclass() throws ValidationEngineException {
 		entry.setPrimaryAccession("ABCD01000001");
 		entry.setDataClass("WGS");

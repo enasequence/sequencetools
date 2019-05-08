@@ -69,7 +69,7 @@ public class DataclassCheck extends EntryValidationCheck {
 			reportError(entry.getOrigin(), MASTER_DATACLASS_MESSAGE_ID, entryDataclass);
 		}
 		try{
-			String accessionDataclass=DataclassProvider.getAccessionDataclass(entry.getPrimaryAccession());
+
 			ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS));
 
 			if(keywordDataclasses.size()==1&&!keywordDataclasses.get(0).equals("XXX")&&!keywordDataclasses.get(0).equals(entryDataclass))
@@ -78,7 +78,8 @@ public class DataclassCheck extends EntryValidationCheck {
 
 			}
 
-			if(accessionDataclass!=null &&!accessionDataclass.equals(entryDataclass))
+			String accessionDataclass=DataclassProvider.getAccessionDataclass(entry.getPrimaryAccession());
+			if(accessionDataclass != null && !accessionDataclass.equals(entryDataclass))
 			{
 				reportError(entry.getOrigin(), ACCESSION_DATACLASS_MESSAGE_ID, accessionDataclass,entryDataclass);
 			}

@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -86,6 +87,25 @@ public class DataclassFix extends EntryValidationCheck
 
 		if ((dataclass == null || "XXX".equals(dataclass)) && keywords.size() == 0)
 		{
+			return result;
+		}
+
+		//Do not set dataclass from KW if there are multiple dataclass exists in KW
+		String dataClassFromKw = null;
+        for (DataRow row : dataSet.getRows()) {
+            if (keywords.stream().anyMatch(kw -> kw.getText().equalsIgnoreCase(row.getString(1))) ||
+                    keywords.stream().anyMatch(kw -> kw.getText().equalsIgnoreCase(row.getString(2)))) {
+            	if(dataClassFromKw == null)
+					dataClassFromKw = row.getString(0);
+            	else if(!dataClassFromKw.equals(row.getString(0))){
+					dataClassFromKw = null;
+					break;
+				}
+            }
+        }
+		if(dataClassFromKw != null) {
+			entry.setDataClass(dataClassFromKw);
+			reportMessage(Severity.FIX, entry.getOrigin(), KEYWORD_FIX_ID, dataClassFromKw);
 			return result;
 		}
 
