@@ -103,11 +103,15 @@ public class SubmissionValidationPlan
 				validateTsvfile();
 
 			check.validateDuplicateEntryNames();
-			if(Context.genome==options.context.get())
-			{
+			if(Context.genome == options.context.get()) {
 				registerSequences();
 				check.validateSequencelessChromosomes();
-				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
+
+				if (options.assemblyInfoEntry.isPresent() && !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())) {
+					throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
+							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
+				}
+
 				if(!options.isRemote)
 				{
 					if(!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())&&
