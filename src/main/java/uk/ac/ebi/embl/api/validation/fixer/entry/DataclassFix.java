@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 
@@ -30,6 +31,7 @@ import java.util.List;
 
 @Description("dataclass has been fixed to \"{0}\"" + 
              "Dataclass Keyword \"{0}\" has been added to the entry")
+@ExcludeScope(validationScope = ValidationScope.ASSEMBLY_MASTER)
 public class DataclassFix extends EntryValidationCheck
 {
 

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
+import uk.ac.ebi.embl.flatfile.reader.embl.*;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
@@ -81,6 +82,11 @@ public class GenbankEntryReader extends EntryReader {
     	addBlockReader(new BaseCountReader(lineReader));
     	addBlockReader(new StandardReader(lineReader));
     	addBlockReader(new SegmentReader(lineReader));
+		addBlockReader(new MasterWGSReader(lineReader));
+		addBlockReader(new MasterCONReader(lineReader));
+		addBlockReader(new MasterTLSReader(lineReader));
+		addBlockReader(new MasterTSAReader(lineReader));
+		addBlockReader(new MasterTPAReader(lineReader));
 
         /**
          * Have to add the line types seperatly as are not registered with the main hash of readers.

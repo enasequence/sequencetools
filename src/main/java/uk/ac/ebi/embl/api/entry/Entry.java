@@ -126,6 +126,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private List<Text> masterWgsAccessions;
 	private List<Text> masterTpaAccessions;
 	private List<Text> masterTsaAccessions;
+	private List<Text> masterTlsAccessions;
 	protected List<Assembly> assemblies;
 	private boolean isAnnotationOnlyCON=false;
 	private boolean isSingletonAgp=false;
@@ -146,6 +147,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.masterWgsAccessions = new ArrayList<Text>();
 		this.masterTpaAccessions = new ArrayList<Text>();
 		this.masterTsaAccessions = new ArrayList<Text>();
+		this.masterTlsAccessions = new ArrayList<>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
 
@@ -549,6 +551,14 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public boolean addMasterTsaAccession(Text accession) {
 		return this.masterTsaAccessions.add(accession);
 	}
+
+	public List<Text> getMasterTlsAccessions() {
+		return this.masterTlsAccessions;
+	}
+
+	public boolean addMasterTlsAccession(Text accession) {
+		return this.masterTlsAccessions.add(accession);
+	}
 	
 	public boolean addMasterTsaAccessions(Collection<Text> accessions) {
 		if (accessions == null) {
@@ -560,12 +570,17 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public boolean removeMasterTsaAccession(Text accession) {
 		return this.masterTsaAccessions.remove(accession);
 	}
+
+	public boolean removeMasterTlsAccession(Text accession) {
+		return this.masterTlsAccessions.remove(accession);
+	}
 	
 	public boolean isMaster() {
 		return (this.masterConAccessions.size() > 0 ||
 		        this.masterWgsAccessions.size() > 0 ||
 		        this.masterTpaAccessions.size() > 0||
-		        this.masterTsaAccessions.size() > 0);
+		        this.masterTsaAccessions.size() > 0 ||
+				this.masterTlsAccessions.size() > 0);
 	}
 	
 	public SourceFeature getPrimarySourceFeature () {

@@ -114,10 +114,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					if(fixedFileWriter!=null)
 					new EmblEntryWriter(entry).write(fixedFileWriter);
 					if(valid)
-					constructAGPSequence(entry);
-					//write AGP with sequence
-					//entry.setNonExpandedCON(false);
-					//new EmblEntryWriter(entry).write(sequenceFixedFileWriter);
+						if(isHasAnnotationOnlyFlatfile())
+							constructAGPSequence(entry);
 				}
 				reader.read();
         	}

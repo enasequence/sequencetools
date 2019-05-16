@@ -53,5 +53,6 @@ public abstract class EmblTag {
     public static final String MASTER_TPA_TAG = "TPA";
     public static final String MASTER_WGS_TAG = "WGS";
     public static final String MASTER_TSA_TAG = "TSA";
+    public static final String MASTER_TLS_TAG = "TLS";
 }
 
