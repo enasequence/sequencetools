@@ -125,6 +125,9 @@ public class EmblEntryWriter extends EntryWriter {
 		if((new MasterTPAWriter(entry, wrapType)).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
+		if((new MasterTLSWriter(entry, wrapType)).write(writer)) {
+			writer.write(SEPARATOR_LINE);
+		}
 
 		(new MasterTSAWriter(entry, wrapType)).write(writer);
 

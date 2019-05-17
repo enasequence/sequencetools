@@ -36,7 +36,7 @@ import java.util.List;
 
 @Description("RP line location range \"{0}\" - \"{1}\" has been fixed")
 
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_MASTER})
 
 public class ReferencePositionFix extends EntryValidationCheck {
 
