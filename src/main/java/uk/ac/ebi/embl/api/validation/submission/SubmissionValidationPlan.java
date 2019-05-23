@@ -22,6 +22,8 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -70,21 +72,25 @@ public class SubmissionValidationPlan
 				createMaster();
 			if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST))
 				validateChromosomeList();
-			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
-			{
-				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-				check.getAnnotationFlatfile();
-				if(check.isHasAnnotationOnlyFlatfile())
-					sequenceDB=DBMaker.fileDB(options.reportDir.get()+File.separator+getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-			}
+			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
+				validateUnlocalisedList();
 			if (options.context.get().getFileTypes().contains(FileType.AGP)) {
 				agpCheck = new AGPFileValidationCheck(options);
 				if (FileValidationCheck.isHasAgp()) {
 					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.setContigDB(contigDB);
 				}
-				agpCheck.getAGPEntries();
 			}
+			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
+			{
+				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+				check.getAnnotationFlatfile();
+				if(FileValidationCheck.isHasAnnotationOnlyFlatfile()) {
+					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
+					agpCheck.getAGPEntries();
+				}
+			}
+
 			if(options.context.get().getFileTypes().contains(FileType.FASTA))
 			  validateFasta();
 			  
@@ -97,8 +103,6 @@ public class SubmissionValidationPlan
 			}
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 				validateAnnotationOnlyFlatfile();
-			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
-				validateUnlocalisedList();
 			if(options.context.get().getFileTypes().contains(FileType.TSV))
 				validateTsvfile();
 
@@ -140,6 +144,9 @@ public class SubmissionValidationPlan
 		}
 	}
 
+	public static Set<String> getUnplacedEntryNames() {
+		return FileValidationCheck.unplacedEntryNames;
+	}
 	private void createMaster() throws ValidationEngineException
 	{
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName))))

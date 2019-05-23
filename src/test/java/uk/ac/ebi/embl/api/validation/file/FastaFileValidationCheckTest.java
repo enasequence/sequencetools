@@ -101,10 +101,10 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         System.out.println("=====================================================================");
         System.out.println(actualString);
         assertTrue(compareOutputFixedFiles(file.getFile()));
-        ConcurrentMap map = check.getSequenceDB().hashMap("map").createOrOpen();
+     /*   ConcurrentMap map = check.getSequenceDB().hashMap("map").createOrOpen();
         assertEquals("caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",map.get("IWGSC_CSS_6DL_contig_209591".toUpperCase()));
         assertEquals("gttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggtttttttttttttttttttttttttttttttttg",map.get("IWGSC_CSS_6DL_contig_209592".toUpperCase()));
         assertEquals("aggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggga",map.get("IWGSC_CSS_6DL_contig_209593".toUpperCase()));
-        check.getSequenceDB().close();
+        check.getSequenceDB().close();*/
 	}
 }

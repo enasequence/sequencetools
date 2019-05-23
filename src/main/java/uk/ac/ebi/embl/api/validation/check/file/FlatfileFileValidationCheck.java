@@ -88,7 +88,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             	{  emblReader.read();
             		continue;
             	}
-            	else
+            	else if(isHasAnnotationOnlyFlatfile())
             		collectContigInfo(entry);
             }
             if(Context.sequence == options.context.get()) {
@@ -103,7 +103,14 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
         	ValidationPlanResult planResult=validationPlan.execute(entry);
-        	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),FileType.FLATFILE);
+
+        	if(null != entry.getSubmitterAccession()) {
+				addEntryName(entry.getSubmitterAccession());
+				int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
+				AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
+				FileValidationCheck.flatfileInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+			}
+
 			if(!planResult.isValid())
 			{
 				valid = false;

@@ -83,6 +83,8 @@ public class SubmissionOptions
 		FileValidationCheck.duplicateEntryNames.clear();
 		FileValidationCheck.chromosomeNames.clear();
 		FileValidationCheck.unplacedEntryNames.clear();
+		FileValidationCheck.unlocalisedEntryNames.clear();
+		FileValidationCheck.setHasAnnotationOnlyFlatfile(false);
 		GlobalDataSets.clear();
 	}
 	

@@ -88,7 +88,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				parseResult=new ValidationResult();
 				Entry entry=reader.getEntry();
 				origin=entry.getOrigin();
-				if(getOptions().context.get()==Context.genome)
+				if(getOptions().context.get()==Context.genome && isHasAnnotationOnlyFlatfile())
 				{
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
 					collectContigInfo(entry);
@@ -102,7 +102,14 @@ public class FastaFileValidationCheck extends FileValidationCheck
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
 				ValidationPlanResult planResult=validationPlan.execute(entry);
-            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FASTA);
+
+				if(null != entry.getSubmitterAccession()) {
+					addEntryName(entry.getSubmitterAccession());
+					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
+					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
+					FileValidationCheck.fastaInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+				}
+
 				if(!planResult.isValid())
 				{
 					valid = false;

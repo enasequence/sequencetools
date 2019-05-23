@@ -67,16 +67,17 @@ public abstract class FileValidationCheck {
 	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static HashMap<String,AssemblySequenceInfo> fastaInfo =new HashMap<String,AssemblySequenceInfo>();
 	public static HashMap<String,AssemblySequenceInfo> flatfileInfo =new HashMap<String,AssemblySequenceInfo>();
-	public static HashMap<String,AssemblySequenceInfo> agpInfo =new HashMap<String,AssemblySequenceInfo>();
+	public static HashMap<String,AssemblySequenceInfo> agpInfo =new HashMap<>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
-	public static List<String> agpEntryNames =new ArrayList<String>();
-	public static List<String> unplacedEntryNames =new ArrayList<String>();
+	public static Set<String> agpEntryNames =new HashSet<>();
+	public static Set<String> unplacedEntryNames =new HashSet<>();
+	public static Set<String> unlocalisedEntryNames =new HashSet<>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
-	private boolean hasAnnotationOnlyFlatfile = false;
+	private static boolean hasAnnotationOnlyFlatfile = false;
 	private static boolean hasAgp = false;
 	public static final String masterFileName = "master.dat";
 	private  DB sequenceDB = null;
@@ -156,26 +157,30 @@ public abstract class FileValidationCheck {
 		if(reportfilePath!=null)
 			Files.deleteIfExists(reportfilePath);
 	}
-	protected ValidationScope getValidationScope(String entryName)
+	protected ValidationScope getValidationScope(String entryName1)
 	{
+		final String entryNameUpper = entryName1.toUpperCase();
 		switch(options.context.get())
 		{
 		case genome:
-			
-			
-			if(entryName!=null&&chromosomeNameQualifiers.keySet().stream().filter(s->s.equalsIgnoreCase(entryName)).findFirst().isPresent())
+
+
+			if(chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper)))
 			{
 				return ValidationScope.ASSEMBLY_CHROMOSOME;
 			}
-			if(entryName!=null&&agpEntryNames.contains(entryName.toUpperCase()))
+
+			if( agpEntryNames.contains(entryNameUpper))
 			{
+				if(!unlocalisedEntryNames.contains(entryNameUpper)) {
+
+					unplacedEntryNames.add(entryNameUpper);
+				}
 				return ValidationScope.ASSEMBLY_SCAFFOLD;
 			}
 			else
 			{
-				unplacedEntryNames.add(entryName);
 				return ValidationScope.ASSEMBLY_CONTIG;
-				
 			}
 		case transcriptome:
 			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
@@ -186,45 +191,33 @@ public abstract class FileValidationCheck {
 		}
 	}
 	
-	protected void addEntryName(String entryName,ValidationScope scope,long sequenceLength,FileType fileType)
+	protected void addEntryName(String entryName)
 	{
-		if(entryName==null)
-			return;
 		if(!entryNames.add(entryName.toUpperCase()))
 		{
 			duplicateEntryNames.add(entryName);
 		}
-			
+	}
+
+	protected int getAssemblyLevel(ValidationScope scope)
+	{
 		int assemblyLevel=-1;
+
 		switch(scope)
 		{
-		case ASSEMBLY_CHROMOSOME:
-			assemblyLevel=2;
-			break;
-		case ASSEMBLY_SCAFFOLD:
-			assemblyLevel=1;
-			break;
-		case ASSEMBLY_CONTIG:
-			assemblyLevel=0;
-			break;
-		default:
-			break;
+			case ASSEMBLY_CHROMOSOME:
+				assemblyLevel=2;
+				break;
+			case ASSEMBLY_SCAFFOLD:
+				assemblyLevel=1;
+				break;
+			case ASSEMBLY_CONTIG:
+				assemblyLevel=0;
+				break;
+			default:
+				break;
 		}
-		
-		switch(fileType)
-		{
-		case FASTA:
-			fastaInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
-			break;
-		case FLATFILE:
-			flatfileInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
-			break;
-		case AGP:
-			agpInfo.put(entryName.toUpperCase(),new AssemblySequenceInfo(sequenceLength,assemblyLevel,null));
-			break;
-		default:
-			break;
-		}
+		return assemblyLevel;
 	}
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
@@ -416,7 +409,11 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-
+	protected void addAgpEntryName(String entryName) throws ValidationEngineException {
+			 if(!agpEntryNames.add(entryName)) {
+			 	throw new ValidationEngineException( " Object name should be unique in AGP files."+ entryName);
+			 }
+	}
 	private void addSourceQualifiers(Entry entry)
 	{
 		if(entry.getPrimarySourceFeature() == null)
@@ -522,11 +519,11 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	public boolean isHasAnnotationOnlyFlatfile() {
+	public static boolean isHasAnnotationOnlyFlatfile() {
 		return hasAnnotationOnlyFlatfile;
 	}
-	public void setHasAnnotationOnlyFlatfile(boolean hasAnnotationOnlyFlatfile) {
-		this.hasAnnotationOnlyFlatfile = hasAnnotationOnlyFlatfile;
+	public static void setHasAnnotationOnlyFlatfile(boolean annotationOnlyFile) {
+		hasAnnotationOnlyFlatfile = annotationOnlyFile;
 	}
 
 	public void setSequenceDB(DB sequenceDB)

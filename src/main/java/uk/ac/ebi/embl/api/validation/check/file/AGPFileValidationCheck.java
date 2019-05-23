@@ -15,6 +15,24 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import org.apache.commons.lang3.StringUtils;
+import org.mapdb.Serializer;
+import uk.ac.ebi.embl.agp.reader.AGPFileReader;
+import uk.ac.ebi.embl.agp.reader.AGPLineReader;
+import uk.ac.ebi.embl.api.entry.AgpRow;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
+import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
@@ -22,29 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
-import org.apache.commons.lang3.StringUtils;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.mapdb.HTreeMap;
-import org.mapdb.Serializer;
-import uk.ac.ebi.embl.agp.reader.AGPFileReader;
-import uk.ac.ebi.embl.agp.reader.AGPLineReader;
-import uk.ac.ebi.embl.api.entry.AgpRow;
-import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
-import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-import uk.ac.ebi.embl.api.validation.submission.Context;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 @Description("")
 public class AGPFileValidationCheck extends FileValidationCheck
@@ -83,23 +78,44 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				throw new ValidationEngineException("AGP validation can't be done : Contig Info is missing");
 			ValidationResult parseResult = reader.read();
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
-        	while(reader.isEntry())
-        	{
-        		if(!parseResult.isValid())
-    			{	valid = false;
-    				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-    				addMessagekey(parseResult);
-    			}
-				parseResult=new ValidationResult();
-        		Entry entry =reader.getEntry();
-        		origin =entry.getOrigin();
-    			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-    			getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
-    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-    			validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-            	appendHeader(entry);
-    			ValidationPlanResult planResult=validationPlan.execute(entry);
-            	addEntryName(entry.getSubmitterAccession(),getOptions().getEntryValidationPlanProperty().validationScope.get(),entry.getSequence().getLength(),FileType.AGP);
+        	while(reader.isEntry()) {
+				if (!parseResult.isValid()) {
+					valid = false;
+					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
+					addMessagekey(parseResult);
+				}
+				parseResult = new ValidationResult();
+				Entry entry = reader.getEntry();
+				origin = entry.getOrigin();
+				if(!isHasAnnotationOnlyFlatfile()) {
+					addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
+				}
+				//set validation scope and collect unplacedEntries
+				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+				//level 2 placed entries should be removed from unplaced set
+				if (!unplacedEntryNames.isEmpty()) {
+					for (AgpRow agpRow : entry.getSequence().getAgpRows()) {
+						if (agpRow.getComponent_type_id() != null && !agpRow.getComponent_type_id().equalsIgnoreCase("N")
+								&& agpRow.getComponent_id() != null) {
+							unplacedEntryNames.remove(agpRow.getComponent_id().toUpperCase());
+						}
+					}
+				}
+
+				getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
+				getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get() + 1);
+				validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+				appendHeader(entry);
+				ValidationPlanResult planResult = validationPlan.execute(entry);
+
+				if(null != entry.getSubmitterAccession()) {
+					addEntryName(entry.getSubmitterAccession());
+					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
+					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
+					FileValidationCheck.agpInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+					contigInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+				}
+
     			if(!planResult.isValid())
     			{
     			    valid = false;
@@ -113,7 +129,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(fixedFileWriter!=null)
 					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(valid)
+					if(isHasAnnotationOnlyFlatfile())
 						constructAGPSequence(entry);
 				}
 				reader.read();
@@ -160,11 +176,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 							for (AgpRow row : (List<AgpRow>) rows) {
 								if (row.getObject().toLowerCase().equals(agpRow.getObject().toLowerCase())) {
 									sequence = row.getSequence();
-
 									if (sequence != null)
 										sequenceBuffer.put((byte[]) sequence);
-									else
+									else {
+									//	agpInfo.containsKey()
 										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
+									}
 								}
 							}
 						}
@@ -213,7 +230,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(result.isValid())
 					{
-						agpEntryNames.add((reader.getEntry()).getSubmitterAccession().toUpperCase());
+						addAgpEntryName((reader.getEntry()).getSubmitterAccession().toUpperCase());
 
 						for (AgpRow agpRow : (reader.getEntry()).getSequence().getSortedAGPRows()) {
 							if (!agpRow.isGap()) {

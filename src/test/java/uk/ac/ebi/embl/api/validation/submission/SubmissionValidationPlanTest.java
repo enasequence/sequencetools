@@ -5,6 +5,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
@@ -13,14 +14,14 @@ import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SubmissionValidationPlanTest extends SubmissionValidationTest 
 {
@@ -131,7 +132,100 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.FLATFILE).getFile()));
 		//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
 	}
-	
+
+	@Test
+	public void testGenomeSubmissionwithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException, IOException
+	{
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scafoold_levels.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels.txt";
+
+		options.context = Optional.of(Context.genome);
+
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
+		options.submissionFiles = Optional.of(submissionFiles);
+
+		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertEquals(1, SubmissionValidationPlan.getUnplacedEntryNames().size());
+		assertTrue( SubmissionValidationPlan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+	}
+
+	@Test
+	public void testGenomeSubmissionwithFastaAGPWithUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
+	{
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scafoold_levels.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels.txt";
+		String unlocalisedListFile = "unlocalised_list_agp.txt";
+
+		options.context = Optional.of(Context.genome);
+
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(unlocalisedListFile, FileType.UNLOCALISED_LIST));
+		options.submissionFiles = Optional.of(submissionFiles);
+
+		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+	}
+
+	@Test
+	public void testGenomeSubmissionwithFastaAGPWithChrList() throws FlatFileComparatorException, ValidationEngineException, IOException
+	{
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scafoold_levels_1.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels_1.txt";
+
+		options.context = Optional.of(Context.genome);
+
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
+		options.submissionFiles = Optional.of(submissionFiles);
+
+		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+	}
+
+	private void compareUnplacedList(String processDir) {
+		List<String> unplacedEntryNames;
+		try(ObjectInputStream oos = new ObjectInputStream (new FileInputStream(processDir+File.separator+"unplaced.txt")))
+		{
+			unplacedEntryNames = (List<String>) oos.readObject();
+			assertNotNull(unplacedEntryNames);
+			assertEquals(1, unplacedEntryNames.size());
+			assertEquals("IWGSC_CSS_6DL_scaff_3330718", unplacedEntryNames.get(0));
+
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
 	@Test
 	public void testGenomeSubmissionwithAnnotationOnlyFile() throws FlatFileComparatorException, ValidationEngineException
 	{

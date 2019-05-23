@@ -67,8 +67,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 					addMessagekey(planResult);
 				}
 				}
-				if(!unplacedEntryNames.isEmpty())
-				unplacedEntryNames=unplacedEntryNames.stream().filter(x->!entry.getObjectName().toUpperCase().equals(x.toUpperCase())).collect(Collectors.toCollection(ArrayList::new));	
+				unlocalisedEntryNames.add(entry.getObjectName().toUpperCase());
 			}
 		} catch (ValidationEngineException e) {
 			throw e;

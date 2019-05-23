@@ -1,0 +1,82 @@
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 654 BP.
+XX
+AC   ;
+XX
+AC * _IWGSC_CSS_6DL_scaff_3330716
+XX
+PR   Project:PRJEB0;
+XX
+DE   Micrococcus sp. 5 genome assembly, segment: I
+XX
+KW   .
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..654
+FT                   /organism="Micrococcus sp. 5"
+FT                   /segment="I"
+FT                   /mol_type="genomic DNA"
+FT   assembly_gap    331..354
+FT                   /estimated_length=24
+FT                   /gap_type="within scaffold"
+FT                   /linkage_evidence="paired-ends"
+XX
+CO   join(IWGSC_CSS_6DL_contig_209591.0:1..330,gap(24),
+CO   IWGSC_CSS_6DL_contig_209592.0:1..300)
+//
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 330 BP.
+XX
+AC   ;
+XX
+AC * _IWGSC_CSS_6DL_scaff_3330717
+XX
+PR   Project:PRJEB0;
+XX
+DE   Micrococcus sp. 5 genome assembly, scaffold: IWGSC_CSS_6DL_scaff_3330717
+XX
+KW   .
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..330
+FT                   /organism="Micrococcus sp. 5"
+FT                   /mol_type="genomic DNA"
+XX
+CO   join(complement(IWGSC_CSS_6DL_contig_209593.0:1..330))
+//
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 330 BP.
+XX
+AC   ;
+XX
+AC * _IWGSC_CSS_6DL_scaff_3330718
+XX
+PR   Project:PRJEB0;
+XX
+DE   Micrococcus sp. 5 genome assembly, segment: II
+XX
+KW   .
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..330
+FT                   /organism="Micrococcus sp. 5"
+FT                   /segment="II"
+FT                   /mol_type="genomic DNA"
+XX
+CO   join(complement(IWGSC_CSS_6DL_scaff_3330717.0:1..330))
+//

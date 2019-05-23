@@ -75,7 +75,6 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 				check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
 				check.setContigDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".contig").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
 
-				check.getAGPEntries();
 				validateContig("valid_flatfileforAgp.txt", FileType.FLATFILE, check.getContigDB());
 				assertTrue(check.check(submissionFiles.getFiles().get(0)));
 
@@ -100,21 +99,21 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException
 		{
+			String agpFileName = "valid_fastaagp.txt";
 			validateMaster(Context.genome);
 			options.context = Optional.of(Context.genome);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
-			submissionFiles.addFile(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.AGP));
+			submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
 			options.submissionFiles = Optional.of(submissionFiles);
-			options.reportDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
-			options.processDir = Optional.of(initSubmissionTestFile("valid_fastaagp.txt", FileType.AGP).getFile().getParent());
+			options.reportDir = Optional.of(initSubmissionTestFile(agpFileName, FileType.AGP).getFile().getParent());
+			options.processDir = Optional.of(initSubmissionTestFile(agpFileName, FileType.AGP).getFile().getParent());
 			options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
 			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
-			check.getAGPEntries();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)));
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
-			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaagp.txt", FileType.FLATFILE).getFile()));
+			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 			//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
 			check.getContigDB().close();
 		}

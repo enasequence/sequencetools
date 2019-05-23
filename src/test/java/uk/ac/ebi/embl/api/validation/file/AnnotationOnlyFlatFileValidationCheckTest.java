@@ -62,6 +62,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		FileValidationCheck.setHasAnnotationOnlyFlatfile(true);
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence3").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);
@@ -83,6 +84,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		submissionFiles.addFile(file);
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
+		FileValidationCheck.setHasAnnotationOnlyFlatfile(true);
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence2").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);
