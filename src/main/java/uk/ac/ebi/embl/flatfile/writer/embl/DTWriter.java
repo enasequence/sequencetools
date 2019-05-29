@@ -36,6 +36,12 @@ public class DTWriter extends FlatFileWriter {
             entry.getLastUpdated() == null ||
             entry.getLastUpdatedRelease() == null ||
             entry.getVersion() == null) {
+    	    if( entry.getLastUpdated() != null) {
+                writer.write(EmblPadding.DT_PADDING);
+                writer.write(DAY_FORMAT.format(entry.getLastUpdated()).toUpperCase());
+                writer.write("(Last updated)\n");
+                return true;
+            }
     		return false;
     	}
         writer.write(EmblPadding.DT_PADDING);        

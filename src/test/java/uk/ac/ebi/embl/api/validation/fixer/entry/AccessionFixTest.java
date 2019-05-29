@@ -19,32 +19,17 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
-import uk.ac.ebi.embl.api.entry.location.Order;
-import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.entry.CDS_RNA_LocusFix;
-
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SubmitterAccessionFixTest {
+public class AccessionFixTest {
 
 	private Entry entry;
-	private SubmitterAccessionFix check;
+	private AccessionFix check;
 	public EntryFactory entryFactory;
 	
 	@Before
@@ -53,7 +38,7 @@ public class SubmitterAccessionFixTest {
 				.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 		entryFactory = new EntryFactory();
 		entry = entryFactory.createEntry();
-		check = new SubmitterAccessionFix();
+		check = new AccessionFix();
 	}
 
 	@Test

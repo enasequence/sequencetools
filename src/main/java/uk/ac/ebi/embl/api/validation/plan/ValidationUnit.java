@@ -129,7 +129,7 @@ public enum ValidationUnit
 					ReferencePositionFix.class,//include for all
 					DataclassFix.class,//include for all
 					TPA_dataclass_Fix.class,//exclude for master
-					SubmitterAccessionFix.class,//exclude for master
+					AccessionFix.class,//exclude for master
 					CollectionDateQualifierFix.class,//include for all
 					Isolation_sourceQualifierFix.class,//include for all
 					HostQualifierFix.class,//include for all

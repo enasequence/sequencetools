@@ -15,7 +15,9 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -23,26 +25,42 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Description("Entryname has been fixed from \"{0}\" to \"{1}\"")
-public class SubmitterAccessionFix extends EntryValidationCheck {
+public class AccessionFix extends EntryValidationCheck {
 
 	private final static String FIX_ID = "SubmitterAccessionFix";
+	private final static String REMOVE_MASTER_ACCESSION_FIX = "MaterAccessionRemovalFix";
 
-	public SubmitterAccessionFix() {
+	public AccessionFix() {
 	}
 
 	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
-		if (entry == null||entry.getSubmitterAccession()==null) {
+		if(entry == null)
 			return result;
-		}
-		  String entryName= entry.getSubmitterAccession().trim();
-		  if(entryName.endsWith(";"))
-		  {  
-			    entry.setSubmitterAccession(StringUtils.removeEnd(entryName, ";"));
-				reportMessage(Severity.FIX, entry.getOrigin(), FIX_ID,entryName,entry.getSecondaryAccessions());
+
+		if (entry.getSubmitterAccession() != null) {
+			String entryName = entry.getSubmitterAccession().trim();
+			if (entryName.endsWith(";")) {
+				entry.setSubmitterAccession(StringUtils.removeEnd(entryName, ";"));
+				reportMessage(Severity.FIX, entry.getOrigin(), FIX_ID, entryName, entry.getSubmitterAccession());
 			}
-	
+		}
+		if (entry.getSecondaryAccessions() != null) {
+			List<Text> masterAccnsToRemove = new ArrayList<>();
+			for (Text accn : entry.getSecondaryAccessions()) {
+				if (AccessionMatcher.isMasterAccession(accn.getText())) {
+					masterAccnsToRemove.add(accn);
+				}
+			}
+			if (!masterAccnsToRemove.isEmpty()) {
+				entry.getSecondaryAccessions().removeAll(masterAccnsToRemove);
+				reportMessage(Severity.FIX, entry.getOrigin(), REMOVE_MASTER_ACCESSION_FIX, masterAccnsToRemove, entry.getSubmitterAccession());
+			}
+		}
 
 		return result;
 	}

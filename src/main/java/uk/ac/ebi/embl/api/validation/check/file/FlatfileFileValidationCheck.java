@@ -83,7 +83,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			origin =entry.getOrigin();
 			if(getOptions().context.get()==Context.genome)
             {
-    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
+				if (entry.getSubmitterAccession() == null)
+					entry.setSubmitterAccession(entry.getPrimaryAccession());
+    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
             	{  emblReader.read();
             		continue;

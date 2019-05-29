@@ -638,7 +638,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		);
 		Reference reference = lineReader.getCache().getReference();
 		Publication publication = lineReader.getCache().getPublication();
-		publication.setTitle("title");
+		publication.setTitle(null);
 		publication.setConsortium("consortium");
 		publication.addAuthor((new ReferenceFactory()).createPerson("surname", "firstName"));
 		publication.addXRef((new EntryFactory()).createXRef("UniProtKB", "A00001"));  

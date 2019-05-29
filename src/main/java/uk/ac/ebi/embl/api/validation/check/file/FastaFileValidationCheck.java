@@ -88,13 +88,16 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				parseResult=new ValidationResult();
 				Entry entry=reader.getEntry();
 				origin=entry.getOrigin();
-				if(getOptions().context.get()==Context.genome && isHasAnnotationOnlyFlatfile())
+				if(getOptions().context.get()==Context.genome)
 				{
-	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(new Integer(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1));
-					collectContigInfo(entry);
-					if(entry.getSubmitterAccession()!=null && getSequenceDB()!=null)
-					{
-						sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
+					if (entry.getSubmitterAccession() == null)
+						entry.setSubmitterAccession(entry.getPrimaryAccession());
+	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
+					if(isHasAnnotationOnlyFlatfile()) {
+						collectContigInfo(entry);
+						if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
+							sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
+						}
 					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));

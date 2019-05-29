@@ -84,6 +84,7 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 			{
 				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+				//TODO: discuss with Kethi possibly it can be simplified
 				check.getAnnotationFlatfile();
 				if(FileValidationCheck.isHasAnnotationOnlyFlatfile()) {
 					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();

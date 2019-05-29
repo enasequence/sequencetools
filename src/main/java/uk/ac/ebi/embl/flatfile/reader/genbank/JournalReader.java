@@ -70,6 +70,7 @@ public class JournalReader extends MultiLineBlockReader {
 			SubmissionMatcher submissionMatcher = new SubmissionMatcher(this);
 			if (submissionMatcher.match(block)) {
 				publication = submissionMatcher.getSubmission(getCache().getPublication());
+				publication.setTitle(null);
 			}
 		}
 		if (publication == null) {
