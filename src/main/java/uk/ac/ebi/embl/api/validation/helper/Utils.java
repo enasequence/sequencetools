@@ -1045,7 +1045,8 @@ public class Utils {
 
 		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
 		{
-			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR, contigCount,"CONTIG", MIN_CONTIG_CNT);
+			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR,
+					contigCount,"CONTIG", MIN_CONTIG_CNT);
 			result.append(message);
 		}
 		if (scaffoldCount != 0 && scaffoldCount < MIN_SCAFFOLD_CNT)

@@ -58,6 +58,7 @@ public class SubmissionValidationPlan
 
 
     AGPFileValidationCheck agpCheck=null;
+    MasterEntryValidationCheck masterCheck = null;
 
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
@@ -84,7 +85,6 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 			{
 				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-				//TODO: discuss with Kethi possibly it can be simplified
 				check.getAnnotationFlatfile();
 				if(FileValidationCheck.isHasAnnotationOnlyFlatfile()) {
 					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
@@ -150,12 +150,16 @@ public class SubmissionValidationPlan
 	}
 	private void createMaster() throws ValidationEngineException
 	{
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName))))
-	         return;
 		try
 		{
-			check = new MasterEntryValidationCheck(options);
-			if(!check.check())
+			masterCheck = new MasterEntryValidationCheck(options);
+			if(options.processDir.isPresent()
+					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
+					&& masterCheck.getMasterEntry() != null ) {
+				return;
+			}
+
+			if(!masterCheck.check())
 				throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
 			else if(!options.isRemote)
 			     flagValidation(FileType.MASTER);

@@ -5,7 +5,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
@@ -299,9 +298,4 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 	}
 
-
-	private String getmessage(String fileType,String fileName,String reportDir)
-	{
-		return fileType+" file validation failed : "+fileName+", Please see the error report: "+ reportDir+File.separator+fileName+".report";
-	}
 }
