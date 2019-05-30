@@ -18,7 +18,6 @@ build:
   script: gradle --build-cache assemble
   cache:
     key: "$CI_COMMIT_REF_NAME"
-    policy: push
     paths:
       - ./build
       - ./.gradle
@@ -30,7 +29,6 @@ test:
     - gradle test --info
   cache:
     key: "$CI_COMMIT_REF_NAME"
-    policy: pull
     paths:
       - ./build
       - ./.gradle

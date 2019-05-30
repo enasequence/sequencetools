@@ -52,7 +52,6 @@ configurations.all {
 repositories
         {
             mavenLocal()
-            maven { url "http://ena-dev:8081/artifactory/all" }
             mavenCentral()
             maven {
                 url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
@@ -121,14 +120,7 @@ publishing {
             authentication {
                 header( HttpHeaderAuthentication )
             }
-        }
-        maven {
-            url "http://ena-dev:8081/artifactory/libs-release-local"
-            credentials {
-                username project.ext.properties.artifactoryUsername
-                password project.ext.properties.artifactoryPassword
-            }
-        }
+        }       
     }
 }
 
