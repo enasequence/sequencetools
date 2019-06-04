@@ -55,8 +55,17 @@ public class ACStarReaderTest extends EmblReaderTest {
 		assertEquals(0, result.count(Severity.ERROR));
 		assertEquals("CNS12NF0.1", entry.getSubmitterAccession());
 		assertNull(entry.getSubmitterWgsVersion());
-	}	
-	
+	}
+
+	public void testRead_Accession4() throws IOException {
+		initLineReader(
+				"AC * CNS12NF0;"
+		);
+		ValidationResult result = (new ACStarReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertEquals("CNS12NF0", entry.getSubmitterAccession());
+		assertNull(entry.getSubmitterWgsVersion());
+	}
 	
 	public void testRead_WgsVersion() throws IOException {
 		initLineReader(
@@ -86,6 +95,6 @@ public class ACStarReaderTest extends EmblReaderTest {
 		assertEquals(0, result.count(Severity.ERROR));
 		assertEquals("CNS12NF0", entry.getSubmitterAccession());
 		assertEquals(new Integer(5), entry.getSubmitterWgsVersion());
-	}		
+	}
 
 }

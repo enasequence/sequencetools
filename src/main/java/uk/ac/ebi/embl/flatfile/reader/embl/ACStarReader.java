@@ -51,12 +51,18 @@ public class ACStarReader extends SingleLineBlockReader {
 			return;
 		}
 		String submitterAccession = matcher.getString(GROUP_SUBMITTER_ACCESSION);
+
 		int i = 0;
-		while (submitterAccession!=null && submitterAccession.length()>i && submitterAccession.charAt(i) == '_') {
-			++i;
-		}
-		if (i > 0) {
-			submitterAccession = submitterAccession.substring(i);
+		if(submitterAccession != null) {
+			if(submitterAccession.endsWith(";")) {
+				submitterAccession = submitterAccession.substring(0,submitterAccession.length()-1);
+			}
+			while ( submitterAccession.length()>i && submitterAccession.charAt(i) == '_') {
+				++i;
+			}
+			if (i > 0) {
+				submitterAccession = submitterAccession.substring(i);
+			}
 		}
 		
 		entry.setSubmitterAccession(submitterAccession);
