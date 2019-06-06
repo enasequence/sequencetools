@@ -1,3 +1,3 @@
 #Organism must belong to one of {0} when molecule type is {1}.	
 Viruses	viral cRNA
-Deltavirus,Retro-transcribing viruses,ssRNA viruses,dsRNA viruses,Satellites,Virus-associated RNAs,Viroids	genomic RNA
+Riboviria,Deltavirus,Retro-transcribing viruses,ssRNA viruses,dsRNA viruses,Satellites,Virus-associated RNAs,Viroids	genomic RNA
