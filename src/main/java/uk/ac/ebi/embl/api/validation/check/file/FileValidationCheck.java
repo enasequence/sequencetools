@@ -159,35 +159,28 @@ public abstract class FileValidationCheck {
 	}
 	protected ValidationScope getValidationScope(String entryName1)
 	{
-		final String entryNameUpper = entryName1.toUpperCase();
-		switch(options.context.get())
-		{
-		case genome:
-
-
-			if(chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper)))
-			{
-				return ValidationScope.ASSEMBLY_CHROMOSOME;
-			}
-
-			if( agpEntryNames.contains(entryNameUpper))
-			{
-				if(!unlocalisedEntryNames.contains(entryNameUpper)) {
-
-					unplacedEntryNames.add(entryNameUpper);
+		switch (options.context.get()) {
+			case genome:
+				final String entryNameUpper = entryName1.toUpperCase();
+				if (chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
+					return ValidationScope.ASSEMBLY_CHROMOSOME;
 				}
-				return ValidationScope.ASSEMBLY_SCAFFOLD;
-			}
-			else
-			{
-				return ValidationScope.ASSEMBLY_CONTIG;
-			}
-		case transcriptome:
-			return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
-		case sequence:
-			return ValidationScope.EMBL_TEMPLATE;
-		default:
-			return null;
+
+				if (agpEntryNames.contains(entryNameUpper)) {
+					if (!unlocalisedEntryNames.contains(entryNameUpper)) {
+
+						unplacedEntryNames.add(entryNameUpper);
+					}
+					return ValidationScope.ASSEMBLY_SCAFFOLD;
+				} else {
+					return ValidationScope.ASSEMBLY_CONTIG;
+				}
+			case transcriptome:
+				return ValidationScope.ASSEMBLY_TRANSCRIPTOME;
+			case sequence:
+				return ValidationScope.EMBL_TEMPLATE;
+			default:
+				return null;
 		}
 	}
 	

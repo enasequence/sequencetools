@@ -38,8 +38,8 @@ public class RAReaderTest extends EmblReaderTest {
 		assertEquals("A.",publication.getAuthors().get(1).getFirstName());
 		assertEquals("Ebneth", publication.getAuthors().get(2).getSurname());
 		assertEquals("M.",publication.getAuthors().get(2).getFirstName());
-		assertEquals("Cook.A",publication.getAuthors().get(3).getFirstName());
-		assertEquals(null,publication.getAuthors().get(3).getSurname());
+		assertNull(publication.getAuthors().get(3).getFirstName());
+		assertEquals("Cook.A",publication.getAuthors().get(3).getSurname());
 	}	
 	
 	public void testRead_Authors2() throws IOException {

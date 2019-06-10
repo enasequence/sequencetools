@@ -205,6 +205,7 @@ OUTER:  while( true )
             }
             catch(Exception e)
             {
+                e.printStackTrace();
             	String entryname=entry.getPrimaryAccession()==null?entry.getSubmitterAccession():entry.getPrimaryAccession();
             	if(entryname==null)
             	throw new IOException("Invalid Sequence:Failed to read the Sequence at line :"+lineReader.getCurrentLine());
