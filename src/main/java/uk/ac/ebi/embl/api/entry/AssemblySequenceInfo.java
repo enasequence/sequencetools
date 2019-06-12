@@ -8,8 +8,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
@@ -48,7 +49,7 @@ public class AssemblySequenceInfo implements Serializable
 		this.accession = accession;
 	}
 	
-  public static void writeMapObject(HashMap<String,AssemblySequenceInfo> sequenceInfo,String outputDir,String fileName) throws ValidationEngineException
+  public static void writeMapObject(Map<String,AssemblySequenceInfo> sequenceInfo, String outputDir, String fileName) throws ValidationEngineException
   {
 	  
 	  try {
@@ -67,16 +68,16 @@ public class AssemblySequenceInfo implements Serializable
 			}
   }
   
-  public static HashMap<String,AssemblySequenceInfo> getMapObject(String inputDir,String fileName) throws ValidationEngineException
+  public static Map<String,AssemblySequenceInfo> getMapObject(String inputDir,String fileName) throws ValidationEngineException
   {
-	  HashMap<String,AssemblySequenceInfo> infoObject=new HashMap<String,AssemblySequenceInfo>();
+	  Map<String,AssemblySequenceInfo> infoObject = new LinkedHashMap<>();
 	  
 	  if(!Files.exists(Paths.get(inputDir+File.separator+fileName)))
 		  return infoObject;
 		  
 			try(ObjectInputStream  oos = new ObjectInputStream (new FileInputStream(inputDir+File.separator+fileName)))
 			{
-				infoObject= (HashMap<String, AssemblySequenceInfo>) oos.readObject();
+				infoObject = (LinkedHashMap<String,AssemblySequenceInfo>) oos.readObject();
 		               
 			}catch(Exception e)
 			{

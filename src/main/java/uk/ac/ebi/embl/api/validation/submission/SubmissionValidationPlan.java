@@ -67,6 +67,12 @@ public class SubmissionValidationPlan
 		try
 		{
 			options.init();
+			if (options.processDir.isPresent() && (Files.exists(Paths.get(String.format("%s%s%s", options.processDir.get(), File.separator, "fasta.loaded")))
+					|| Files.exists(Paths.get(String.format("%s%s%s", options.processDir.get(), File.separator, "flatfile.loaded")))
+					|| Files.exists(Paths.get(String.format("%s%s%s", options.processDir.get(), File.separator, "agp.loaded"))))) {
+				throw new ValidationEngineException("Can not re-execute the pipeline for the assembly already processed");
+			}
+
 			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			//Validation Order shouldn't be changed
 			if(options.context.get().getFileTypes().contains(FileType.MASTER))

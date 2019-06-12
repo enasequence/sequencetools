@@ -40,7 +40,6 @@ import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 
@@ -62,12 +61,12 @@ public abstract class FileValidationCheck {
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	public static final String REPORT_FILE_SUFFIX = ".report";
-	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<String,List<Qualifier>>();
+	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<>();
 	public static List<String> chromosomeNames =new ArrayList<String>();
-	public static HashMap<String,AssemblySequenceInfo> sequenceInfo =new HashMap<String,AssemblySequenceInfo>();
-	public static HashMap<String,AssemblySequenceInfo> fastaInfo =new HashMap<String,AssemblySequenceInfo>();
-	public static HashMap<String,AssemblySequenceInfo> flatfileInfo =new HashMap<String,AssemblySequenceInfo>();
-	public static HashMap<String,AssemblySequenceInfo> agpInfo =new HashMap<>();
+	public static Map<String,AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
+	public static Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
+	public static Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>();
+	public static Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>();
 	public static List<String> duplicateEntryNames = new ArrayList<String>();
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static Set<String> agpEntryNames =new HashSet<>();
