@@ -28,7 +28,6 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
@@ -106,7 +105,7 @@ public class FeatureReader extends FlatFileLineReader {
 				}
 				else if (qualifier.getName().equals("mol_type")) {
 					if (!(feature instanceof SourceFeature)) {
-						error("FT.6", qualifier.getName());
+						error("FT.14", qualifier.getName(), "source");
 					}
 					else {
 						moltypeFound = true;

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
@@ -35,14 +35,16 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class EC_numberfromProductValueFix extends FeatureValidationCheck
 {
 	
-	private static final String EC_numberfromProductValueFix_ID_1 = "EC_numberfromProductValueFix_1";
-	
-	private static final String EC_numberfromProductValueFix_ID_2 = "EC_numberfromProductValueFix_2";
-	private static final String EC_numberfromProductValueFix_ID_3 = "EC_numberfromProductValueFix_3";
-	private static final String EC_numberfromProductValueFix_ID_4 = "EC_numberfromProductValueFix_4";
-	
-	private final static String EC_NUMBER_PATTERN = "((\\()?(\\[)?(\\s*)?(EC||ec)?(\\s*)?([=:])?(\\s*)?([0-9\\-]+)\\.([0-9\\-]+)(\\.([0-9\\-]+))(\\.([0-9\\-]+))(\\s*)?(\\))?(\\])?)";
-	private final static Pattern PATTERN = Pattern.compile(EC_NUMBER_PATTERN, Pattern.CASE_INSENSITIVE);
+	private static final String PRODUCT_QUALIFIER_VALUE_CHANGED = "EC_numberfromProductValueFix_1";
+	private static final String ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT = "EC_numberfromProductValueFix_2";
+	private static final String REMOVED_ECNUMBER_QUAL_FROM_FEATURE = "EC_numberfromProductValueFix_3";
+	private static final String REMOVED_ECNUMBER_VALUE_FROM_PRODUCT = "EC_numberfromProductValueFix_4";
+
+	private static String ecRegex = "[\\d-]{1,3}\\.(?:(\\d{0,3}\\-{0,1}\\.)){2}n{0,1}\\d{0,3}\\-{0,1}";
+	private static Pattern ecPattern = Pattern.compile(ecRegex);
+	private static String productEcNumberSplitRegex = "\\[?\\(?(?:EC|ec)?:?=?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1})(?:\\s*,\\s*" +
+			"(?:EC|ec)?:?=?)?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1}){0,}(?:\\]?\\)?)";
+	private static Pattern productEcNumberSplitPattern = Pattern.compile(productEcNumberSplitRegex);
 	
 	public ValidationResult check(Feature feature)
 	{
@@ -56,77 +58,66 @@ public class EC_numberfromProductValueFix extends FeatureValidationCheck
 		for (Qualifier productQualifier : productQualifiers)
 		{
 			String productValue = productQualifier.getValue();
-			String non_EC_Value = productValue.replaceAll(EC_NUMBER_PATTERN, "");
-			if (non_EC_Value!=null&&non_EC_Value.equals(productValue))
-			{
-				if (productValue.toLowerCase().contains("hypothetical protein") || productValue.toLowerCase().contains("unknown"))
-				{
-					ArrayList<Qualifier> ec_numberQualifiers = (ArrayList<Qualifier>) feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-					for (Qualifier ec_qualifier : ec_numberQualifiers)
-					{
-						feature.removeQualifier(ec_qualifier);
-						reportMessage(Severity.FIX, feature.getOrigin(), EC_numberfromProductValueFix_ID_3, feature.getName());
-					}
+			boolean ecNumbersAllowed = true;
+
+			if (productValue.toLowerCase().contains("hypothetical protein") || productValue.toLowerCase().contains("unknown")) {
+				ecNumbersAllowed = false;
+				ArrayList<Qualifier> ecNumberQualifiers = (ArrayList<Qualifier>) feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
+				for (Qualifier ecQualifier : ecNumberQualifiers) {
+					feature.removeQualifier(ecQualifier);
+					reportMessage(Severity.FIX, feature.getOrigin(), REMOVED_ECNUMBER_QUAL_FROM_FEATURE, feature.getName());
 				}
+			}
+
+			ImmutablePair<String,List<String>> productAndEcNumber = getEcNumberAndProduct(productValue);
+			//if derived product and existing product value are same, no ec_numbers found
+			if (productAndEcNumber.left.equals(productValue)) {
 				continue;
 			}
-			String[] productValues = productValue.split(EC_NUMBER_PATTERN);
-			non_EC_Value.replaceAll("  ", " ");
-			String ec_numberValue = null;
-			String tempValue = productValue;
-			if (productValues.length == 0)
-			{
-				return result;
+
+			productQualifier.setValue(productAndEcNumber.left);
+			if (!ecNumbersAllowed) {
+				reportMessage(Severity.FIX, feature.getOrigin(), REMOVED_ECNUMBER_VALUE_FROM_PRODUCT);
 			}
-			if (productValues.length == 1)
-			{
-				ec_numberValue = StringUtils.remove(tempValue, productValues[0]);
-				
+			reportMessage(Severity.FIX, feature.getOrigin(), PRODUCT_QUALIFIER_VALUE_CHANGED, productValue, productAndEcNumber.left);
+
+			for (String ecNumber : productAndEcNumber.right) {
+				feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, ecNumber);
+				if (!SequenceEntryUtils.deleteDuplicatedQualfiier(feature, Qualifier.EC_NUMBER_QUALIFIER_NAME))
+					reportMessage(Severity.FIX, feature.getOrigin(), ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT, ecNumber, productValue);
 			}
-			else
-			{
-				for (String productvalue : productValues)
-				{
-					ec_numberValue = StringUtils.remove(tempValue, productvalue);
-					tempValue = ec_numberValue;
-				}
-			}
-			if (ec_numberValue != null)
-			{
-				Matcher matcher = PATTERN.matcher(ec_numberValue);
-				if (matcher.find())
-				{
-					ec_numberValue = (matcher.group(9) == null ? "-" : matcher.group(9)) + "."
-							+ (matcher.group(10) == null ? "-" : matcher.group(10)) + "." + (matcher.group(12) == null ? "-" : matcher.group(12))
-							+ "." + (matcher.group(14) == null ? "-" : matcher.group(14));
-					
-				}
-				
-				productQualifier.setValue(StringUtils.trim((non_EC_Value)));
-				reportMessage(Severity.FIX, feature.getOrigin(), EC_numberfromProductValueFix_ID_1, productValue, productQualifier.getValue());
-				
-				if (!non_EC_Value.toLowerCase().contains("hypothetical protein") && !non_EC_Value.toLowerCase().contains("unknown"))
-				{
-					feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, ec_numberValue);
-					if (!SequenceEntryUtils.deleteDuplicatedQualfiier(feature, Qualifier.EC_NUMBER_QUALIFIER_NAME))
-						reportMessage(Severity.FIX, feature.getOrigin(), EC_numberfromProductValueFix_ID_2, productValue);
-				}
-				else
-				{
-					reportMessage(Severity.FIX, feature.getOrigin(), EC_numberfromProductValueFix_ID_4, productValue, productQualifier.getValue());
-       				ArrayList<Qualifier> ec_numberQualifiers = (ArrayList<Qualifier>) feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-					for (Qualifier ec_qualifier : ec_numberQualifiers)
-					{
-						feature.removeQualifier(ec_qualifier);
-						reportMessage(Severity.FIX, feature.getOrigin(), EC_numberfromProductValueFix_ID_3, feature.getName());
-					}
-				}
-				
-			}
-			
+
 		}
 		return result;
 	}
-	
+
+	ImmutablePair<String, List<String>> getEcNumberAndProduct(String product) {
+		String originalProduct = product;
+		List<String> ecNumbersL = new ArrayList<>();
+		Matcher matcher = productEcNumberSplitPattern.matcher(product);
+		String matched;
+		while (matcher.find()) {
+			matched = matcher.group();
+			product =  product.replaceAll(productEcNumberSplitRegex, "").trim();
+
+			if (matched != null) {
+				String[] ecs = matched.split(",");
+				for (String ec : ecs) {
+					Matcher ecMatcher = ecPattern.matcher(ec);
+
+					if (ecMatcher.find()) {
+						String grp = ecMatcher.group();
+						ecNumbersL.add(grp);
+					}
+				}
+			}
+		}
+
+		if(ecNumbersL.isEmpty()) {
+			return new ImmutablePair<>(originalProduct, ecNumbersL);
+		}
+		return new ImmutablePair<>(product, ecNumbersL);
+
+	}
 		
 }
