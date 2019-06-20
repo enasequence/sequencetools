@@ -20,17 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,7 +33,7 @@ public class Linkage_evidenceFixTest
 {
 
 	private Feature feature;
-	private Qualifier qualifier;
+	private Qualifier linkageEvidenceQual;
 	private Linkage_evidenceFix check;
 
 	@Before
@@ -48,7 +43,7 @@ public class Linkage_evidenceFixTest
 		FeatureFactory featureFactory = new FeatureFactory();
 		QualifierFactory qualifierFactory = new QualifierFactory();
 		feature = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
-		qualifier = qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
+		linkageEvidenceQual = qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
 		check = new Linkage_evidenceFix();
 	}
 
@@ -68,28 +63,79 @@ public class Linkage_evidenceFixTest
 	@Test
 	public void testCheck_Linkage_evidence_withUnderscore()
 	{
-		qualifier.setValue("align_genus");
-		feature.addQualifier(qualifier);
+		linkageEvidenceQual.setValue("align_genus");
+		feature.addQualifier(linkageEvidenceQual);
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count("Linkage_evidenceFix_1", Severity.FIX));
+		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
 	}
 
 	@Test
 	public void testCheck_Linkage_evidence_withInvalid()
 	{
-		qualifier.setValue("alignnus");
-		feature.addQualifier(qualifier);
+		linkageEvidenceQual.setValue("alignnus");
+		feature.addQualifier(linkageEvidenceQual);
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(0, validationResult.count("Linkage_evidenceFix_1", Severity.FIX));
+		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
 	}
 	@Test
 	public void testCheck_Linkage_evidencevalid()
 	{
-		qualifier.setValue("align genus");
-		feature.addQualifier(qualifier);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(0, validationResult.count("Linkage_evidenceFix_1", Severity.FIX));
 	}
 
+	@Test
+	public void testCheckLinkageEvidenceRemoval() {
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		Qualifier gaptypQual = qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		gaptypQual.setValue("between scaffolds");
+		feature.addQualifier(gaptypQual);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(1, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
+		assertEquals(0, validationResult.count("Linkage_evidenceFix_1", Severity.FIX));
+	}
 
+	@Test
+	public void testCheckLinkageEvidenceWithValidGapType() {
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		Qualifier gaptypQual = qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		gaptypQual.setValue("within scaffold");
+		feature.addQualifier(gaptypQual);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
+	}
+
+	@Test
+	public void testCheckLinkageEvidenceWithValidGapType1() {
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		Qualifier gaptypQual = qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		gaptypQual.setValue("repeat within scaffold");
+		feature.addQualifier(gaptypQual);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
+	}
+
+	@Test
+	public void testCheckNonGapFeature() {
+		FeatureFactory featureFactory = new FeatureFactory();
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		Feature feature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
+		Qualifier gaptypQual = qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		gaptypQual.setValue("between scaffolds");
+		feature.addQualifier(gaptypQual);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
+	}
 }

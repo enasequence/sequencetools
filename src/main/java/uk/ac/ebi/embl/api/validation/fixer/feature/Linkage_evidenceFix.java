@@ -30,16 +30,29 @@ public class Linkage_evidenceFix extends FeatureValidationCheck
 {
 
 	private static final String LINKAGE_EVIDENCE_FIX_ID_1 = "Linkage_evidenceFix_1";
+	private static final String LINKAGE_EVIDENCE_REMOVAL_FIX = "LinkageEvidenceRemovalFix";
 
 	public ValidationResult check(Feature feature)
 	{
 		result = new ValidationResult();
 
-		if (feature == null)
-		{
+		if (feature == null) {
 			return result;
 		}
+
 		List<Qualifier> linkageQualifiers = feature.getQualifiers(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
+
+		if (feature.getName() != null && feature.getName().equals(Feature.ASSEMBLY_GAP_FEATURE_NAME)) {
+			Qualifier gapTypeQualifier = feature.getSingleQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+			if (gapTypeQualifier != null
+					&& !gapTypeQualifier.getValue().equals("within scaffold")
+					&& !gapTypeQualifier.getValue().equals("repeat within scaffold") ) {
+				feature.removeQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
+				reportMessage(Severity.FIX, feature.getOrigin(), LINKAGE_EVIDENCE_REMOVAL_FIX, gapTypeQualifier.getValue());
+				return result;
+			}
+		}
+
 		for (Qualifier qualifier : linkageQualifiers)
 		{
 			String linkageValue = qualifier.getValue();
