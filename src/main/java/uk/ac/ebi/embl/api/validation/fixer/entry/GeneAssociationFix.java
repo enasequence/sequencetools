@@ -22,8 +22,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
@@ -39,6 +37,7 @@ import java.util.List;
 public class GeneAssociationFix extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID = "GeneAssociationFix";
+	protected final static String PSEUDOGENE_QUOTE_REMOVAL_FIX = "PseudogeneQuoteRemovalFix";
 
     /**
      * Adds gene qualifiers to features sharing the same locus_tag qualifier where there is a 1 to 1 mapping with
@@ -61,6 +60,24 @@ public class GeneAssociationFix extends EntryValidationCheck {
 		Collection<Feature> pseudogeneFeatures = SequenceEntryUtils
 				.getFeaturesContainingQualifier(
 						Qualifier.PSEUDOGENE_QUALIFIER_NAME, entry);
+
+		//remove single quotes if pseudogene surrounded with
+		if(!pseudogeneFeatures.isEmpty()) {
+			for (Feature pseudogeneFeat : pseudogeneFeatures) {
+				Qualifier qual = pseudogeneFeat.getSingleQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME);
+				String qualVal = qual.getValue();
+				if(qualVal != null) {
+					if (qualVal.startsWith("'"))
+						qualVal = qualVal.substring(1);
+					if (qualVal.endsWith("'"))
+						qualVal = qualVal.substring(0, qualVal.length() - 1);
+					if (!qualVal.equals(qual.getValue())) {
+						reportMessage(Severity.FIX, pseudogeneFeat.getOrigin(), PSEUDOGENE_QUOTE_REMOVAL_FIX, qual.getValue(), qualVal);
+						qual.setValue(qualVal);
+					}
+				}
+			}
+		}
 
         if (locusFeatures.isEmpty()&& pseudogeneFeatures.isEmpty()) {
             return result;

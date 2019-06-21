@@ -64,6 +64,7 @@ public enum ValidationUnit
 					ExonFeaturesIntervalCheck.class,//exclude for assembly master
 					FeaturewithRemoteLocationCheck.class,//exclude for assembly master
 					GeneAssociationCheck.class,//exclude for assembly master
+					PseudogeneValueCheck.class,
 					GeneFeatureLocusTagCheck.class,//exclude for assembly master
 					LocusTagAssociationCheck.class,//exclude for assembly master
 					LocusTagPrefixCheck.class,//exclude for assembly master

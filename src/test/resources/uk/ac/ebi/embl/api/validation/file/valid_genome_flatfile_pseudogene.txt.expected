@@ -1,0 +1,75 @@
+ID   KP893538; SV 1; linear; genomic DNA; WGS; HUM; 1213 BP.
+XX
+AC   KP893538;
+XX
+AC * _KP893538
+XX
+PR   Project:PRJEB0;
+XX
+DT   19-OCT-2015 (Rel. 126, Created)
+DT   24-SEP-2016 (Rel. 130, Last updated, Version 2)
+XX
+DE   Micrococcus sp. 5 genome assembly, contig: KP893538
+XX
+KW   WGS.
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..1213
+FT                   /organism="Micrococcus sp. 5"
+FT                   /mol_type="genomic DNA"
+FT                   /note="contig: KP893538"
+FT   gene            <1..>1213
+FT                   /gene="KIR3DP1"
+FT                   /locus_tag="SPLC1_0001"
+FT                   /allele="KIR3DP1*015"
+FT   mRNA            join(<1..34,135..419,520..819,920..>1212)
+FT                   /gene="KIR3DP1"
+FT                   /locus_tag="SPLC1_0001"
+FT                   /allele="KIR3DP1*015"
+FT                   /product="KIR protein"
+FT   CDS             join(1..34,135..419,520..819,920..>1212)
+FT                   /codon_start=1
+FT                   /gene="KIR3DP1"
+FT                   /locus_tag="SPLC1_0001"
+FT                   /allele="KIR3DP1*015"
+FT                   /note="KIR protein"
+FT                   /pseudogene="unknown"
+FT   assembly_gap    35..134
+FT                   /estimated_length=unknown
+FT                   /gap_type="unknown"
+FT   assembly_gap    420..519
+FT                   /estimated_length=unknown
+FT                   /gap_type="unknown"
+FT   assembly_gap    820..919
+FT                   /estimated_length=unknown
+FT                   /gap_type="unknown"
+XX
+SQ   Sequence 1213 BP; 188 A; 277 C; 229 G; 219 T; 300 other;
+     atgtcgctca tggtcgtcag catggcgtgt gttgnnnnnn nnnnnnnnnn nnnnnnnnnn        60
+     nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn       120
+     nnnnnnnnnn nnnngtggtc aggacaagcc cttcctctct gcctggccca gccctgtggt       180
+     gtctgaagga gaacatgtgg ctcttcagtg tcgctctcgt cttgggttta acgaattcag       240
+     tctgtccaaa gaagacggga tgcctgtccc tgagctctac aacagagtat tccgaaacac       300
+     cgttttcata ggccctgtga ccccagcaca tgcagggacc tacagatgtc ggggttcaca       360
+     cccacacttc ctcactgggt ggtcagcacc cagcaacccc ctggtgatca tggtcacagn       420
+     nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn       480
+     nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnng agtccacaga aaaccttccc       540
+     tcctggccca cccaggtccc ctggtgaaat cagaagagac agtcatcctg caatgttggt       600
+     cagatgtcat gtttgagcac ttccttctgc acagagaggg gaagtttaat gacactttgc       660
+     gcctcactgg agagctccct gatggggtct ccaaggccaa cttctccatc ggtcgcatga       720
+     cgcaagacct tgcagggacc tacagatgct acggttctgt tcctcattcc ccctatcagt       780
+     tgtcagctcc cagtgaccct ctggacatcg tgattacagn nnnnnnnnnn nnnnnnnnnn       840
+     nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn nnnnnnnnnn       900
+     nnnnnnnnnn nnnnnnnnng tctatgtggg aaaccttctc tctcagccca gccgcgcccc       960
+     atggttaagg caggagagag cgtgaccttg tcctgcagct cccggagctc ctatgacatc      1020
+     taccatctat caagggaggg ggaggctcat gaacttaggt tccctgcagt gcccaaggtc      1080
+     aatggaacct tccaggccaa ctttcctctg ggccctgcca cccacggagg gacctacaga      1140
+     tgcttcggct ctttccgtga ctctccctac gagtggtcag accttagtga cccactgctt      1200
+     gtttctgtca cag                                                         1213
+//
