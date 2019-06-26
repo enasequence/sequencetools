@@ -108,6 +108,16 @@ public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
             }
         	baseCount++;
         }
+        if (lastBaseN) 
+        {
+            matchEnd = baseCount;
+            lastBaseN = false;
+//            System.out.println("matchStart = " + matchStart);
+//            System.out.println("matchEnd = " + matchEnd);
+//          System.out.println("matchedString = " + matchedString);
+            NRegion regionMatch = new NRegion(matchStart, matchEnd);
+            nRegions.add(regionMatch);
+        }
     
         for (NRegion nRegion : nRegions) {
         	 

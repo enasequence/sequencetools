@@ -247,5 +247,25 @@ public class SequenceToGapFeatureBasesFixTest {
         assertTrue(assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition() == 11);
 	}
 
+	@Test
+	public void testCheck_fix_assembly_gaps() throws SQLException {
+
+		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
+		property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
+		property.minGapLength.set(3);
+		check.setEmblEntryValidationPlanProperty(property);		
+		entry.setSequence(sequenceFactory
+				.createSequenceByte("nnnnnactggaaattttcaagccaacacttcaccgttagaaagaagagattctgttcaatcgaaccgtgcataaactatgatatgtttccgggnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn".getBytes()));// 2 lots of n
+		// stretches
+		ValidationResult result = check.check(entry);
+		List<Feature> assemblyGapFeatures =
+				new ArrayList<Feature>(SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry));
+		assertEquals(2, assemblyGapFeatures.size());
+		assertEquals(new Long(1), assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
+		assertEquals(new Long(5),assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
+		assertEquals(new Long(94), assemblyGapFeatures.get(1).getLocations().getLocations().get(0).getBeginPosition());
+		assertEquals(new Long(191),assemblyGapFeatures.get(1).getLocations().getLocations().get(0).getEndPosition());
+	}
+	
 	
 }
