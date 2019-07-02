@@ -53,14 +53,13 @@ public class GenbankSequenceReaderTest extends GenbankReaderTest {
 		);
 		ValidationResult result = (new SequenceReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals( 
-                "gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattg" +
-                "ccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagct" +
-                "ctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaa" +
-                "gaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccg",
+		String expected = "gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattg" +
+				"ccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagct" +
+				"ctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaa" +
+				"gaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccg";
+		assertEquals(expected.length(), entry.getSequence().getLength());
+		assertEquals(expected,
 				new String(entry.getSequence().getSequenceByte()));
-		assertEquals(240, 
-				entry.getSequence().getLength());
 	}
 
 	public void testRead_Origin() throws IOException {

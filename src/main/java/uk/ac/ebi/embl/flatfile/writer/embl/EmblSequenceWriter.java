@@ -17,8 +17,6 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
