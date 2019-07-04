@@ -15,6 +15,34 @@ public class GlobalDataSets {
     private static DataManager dataManager;
     private static CheckFileManager fileManager;
 
+    public static final HashMap<String, String> gapType= new HashMap<String, String>();
+    public static final HashMap<String, String> linkageEvidence= new HashMap<String, String>();
+    static
+    {
+
+        gapType.put("within scaffold","scaffold");
+        gapType.put("between scaffolds","contig");
+        gapType.put("between scaffold","contig");
+        gapType.put("centromere","centromere");
+        gapType.put("short arm","short_arm");
+        gapType.put("heterochromatin","heterochromatin");
+        gapType.put("telomere","telomere");
+        gapType.put("repeat within scaffold","repeat");
+        gapType.put("unknown","unknown");
+        gapType.put("repeat between scaffolds","repeat");
+        linkageEvidence.put("unspecified","na");
+        linkageEvidence.put("paired-ends","paired-ends");
+        linkageEvidence.put("align genus","align_genus");
+        linkageEvidence.put("align xgenus","align_xgenus");
+        linkageEvidence.put("align trnscpt","align_trnscpt");
+        linkageEvidence.put("within clone","within_clone");
+        linkageEvidence.put("clone contig","clone_contig");
+        linkageEvidence.put("map","map");
+        linkageEvidence.put("strobe","strobe");
+        linkageEvidence.put("unspecified","unspecified");
+        linkageEvidence.put("pcr","pcr");
+    }
+
     private GlobalDataSets(){
     }
 

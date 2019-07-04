@@ -17,12 +17,12 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.Gap;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -33,39 +33,11 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 @Description("")
 public class ContoAGPFix extends EntryValidationCheck
 {
-	static final HashMap<String, String> gapType= new HashMap<String, String>();
-	static final HashMap<String, String> linkageEvidence= new HashMap<String, String>();
-	static
-	{
-		
-		gapType.put("within scaffold","scaffold");
-		gapType.put("between scaffolds","contig");
-		gapType.put("centromere","centromere");
-		gapType.put("short arm","short_arm");
-		gapType.put("heterochromatin","heterochromatin");
-		gapType.put("telomere","telomere");
-		gapType.put("repeat within scaffold","repeat");
-		gapType.put("unknown","unknown");
-		gapType.put("repeat between scaffolds","repeat");
-		linkageEvidence.put("unspecified","na");
-		linkageEvidence.put("paired-ends","paired-ends");
-		linkageEvidence.put("align genus","align_genus");
-		linkageEvidence.put("align xgenus","align_xgenus");
-		linkageEvidence.put("align trnscpt","align_trnscpt");
-		linkageEvidence.put("within clone","within_clone");
-		linkageEvidence.put("clone contig","clone_contig");
-		linkageEvidence.put("map","map");
-		linkageEvidence.put("strobe","strobe");
-		linkageEvidence.put("unspecified","unspecified");
-		linkageEvidence.put("pcr","pcr");
-    }
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
 		try{
@@ -154,7 +126,7 @@ public class ContoAGPFix extends EntryValidationCheck
         return result;
 	}
 
-	 AgpRow generateGapAgpRow(Feature gapFeature,AgpRow gapRow) 
+	 AgpRow generateGapAgpRow(Feature gapFeature,AgpRow gapRow) throws ValidationEngineException
 	{
 	  List<Qualifier> qualifiers=gapFeature.getQualifiers();
 	  List<String> linkageEvidences= new ArrayList<String>();
@@ -165,13 +137,15 @@ public class ContoAGPFix extends EntryValidationCheck
 		  			
 			if(qualifier.getName().equals(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME))
 			{
-				linkageEvidences.add(linkageEvidence.get(qualifier.getValue()));
+				linkageEvidences.add(GlobalDataSets.linkageEvidence.get(qualifier.getValue()));
 			}
-			
-			if(qualifier.getName().equals(Qualifier.GAP_TYPE_QUALIFIER_NAME))
-			{
-				gapRow.setGap_type(gapType.get(qualifier.getValue()));
-			
+
+			if (qualifier.getName().equals(Qualifier.GAP_TYPE_QUALIFIER_NAME)) {
+				if (GlobalDataSets.gapType.containsKey(qualifier.getValue())) {
+					gapRow.setGap_type(GlobalDataSets.gapType.get(qualifier.getValue()));
+				} else {
+					throw new ValidationEngineException(String.format("Invalid gap type %s", qualifier.getValue()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				}
 			}
 			
 			if(qualifier.getName().equals(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME))
