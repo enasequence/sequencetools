@@ -129,15 +129,11 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 			}
 		}
 		return qualifiers;
-	}	
-	
+	}
+
 	public Qualifier getSingleQualifier(String name) {
 		List<Qualifier> qualifiers = getQualifiers(name);
-		if (qualifiers == null || qualifiers.isEmpty()) {
-			return null;
-		}
-		Qualifier qualifier = qualifiers.get(0);
-		return qualifier;
+		return (qualifiers == null || qualifiers.isEmpty())? null : qualifiers.get(0);
 	}
 		
 	public String getSingleQualifierValue(String name) {

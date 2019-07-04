@@ -21,9 +21,9 @@ public class AssemblySequenceInfo implements Serializable
 	public static final String fastafileName= "fasta.info";
 	public static final String flatfilefileName= "flatfile.info";
 	public static final String agpfileName= "agp.info";
-	long sequenceLength;
-	int assemblyLevel;
-	String accession;
+	private long sequenceLength;
+	private int assemblyLevel;
+	private String accession;
 	public AssemblySequenceInfo(long sequenceLength,int assemblyLevel,String accession) {
       this.sequenceLength =sequenceLength;
       this.assemblyLevel=assemblyLevel;

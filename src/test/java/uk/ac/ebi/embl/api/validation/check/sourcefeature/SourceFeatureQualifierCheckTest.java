@@ -117,6 +117,66 @@ public class SourceFeatureQualifierCheckTest {
 	}
 
 	@Test
+	public void testMultipleSourceDifferentOrganismFocus() {
+		source1 = featureFactory.createSourceFeature();
+		entry.addFeature(source1);
+		source.addQualifier(qualifierFactory.createQualifier("organism",
+				"Homo sapiens"));
+		source1.addQualifier(qualifierFactory.createQualifier("organism",
+				"Cloning vector pBeloBAC11"));
+		source.setFocus(true);
+		source1.setFocus(false);
+		source.setTransgenic(false);
+		source1.setTransgenic(false);
+
+		ValidationResult result = check.check(entry);
+		assertEquals(0, result.count( Severity.ERROR));
+	}
+
+	@Test
+	public void testMultipleSourceMultipleFocus() {
+		source1 = featureFactory.createSourceFeature();
+		entry.addFeature(source1);
+		source.addQualifier(qualifierFactory.createQualifier("organism",
+				"Homo sapiens"));
+		source1.addQualifier(qualifierFactory.createQualifier("organism",
+				"Cloning vector pBeloBAC11"));
+		source.setFocus(true);
+		source1.setFocus(false);
+		source.setTransgenic(false);
+		source1.setTransgenic(false);
+
+		Feature geneFeature = featureFactory.createFeature("gene");
+		geneFeature.addQualifier("gene", "b");
+		geneFeature.addQualifier(Qualifier.FOCUS_QUALIFIER_NAME);
+		entry.addFeature(geneFeature);
+		ValidationResult result = check.check(entry);
+		assertEquals(1,
+				result.count("SourceFeatureQualifierCheck3", Severity.ERROR));
+	}
+
+	@Test
+	public void testFocusMisplacement() {
+		source1 = featureFactory.createSourceFeature();
+		entry.addFeature(source1);
+		source.addQualifier(qualifierFactory.createQualifier("organism",
+				"Homo sapiens"));
+		source1.addQualifier(qualifierFactory.createQualifier("organism",
+				"Cloning vector pBeloBAC11"));
+		source.setFocus(false);
+		source1.setFocus(false);
+		source.setTransgenic(false);
+		source1.setTransgenic(false);
+
+		Feature geneFeature = featureFactory.createFeature("gene");
+		geneFeature.addQualifier("gene", "b");
+		geneFeature.addQualifier(Qualifier.FOCUS_QUALIFIER_NAME);
+		entry.addFeature(geneFeature);
+		ValidationResult result = check.check(entry);
+		assertEquals(1,
+				result.count("FocusAllowedOnlyInPrimarySource", Severity.ERROR));
+	}
+	@Test
 	public void testCheck_GeneWithNoPattern() {
 		feature = featureFactory.createFeature("gene");
 		feature.addQualifier("gene", "b");

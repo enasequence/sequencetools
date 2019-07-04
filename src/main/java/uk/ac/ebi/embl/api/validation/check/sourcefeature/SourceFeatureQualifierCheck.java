@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	private final static String ENV_SAMPLE_REQUIRED = "EnvSampleRequiredForMetagenome";
 	private final static String MORE_THAN_ONE_METAGENOME_SOURCE = "MorethanOneMetagenome";
 	private final static String INVALID_METAGENOME_SOURCE = "InvalidMetagenomeSource";
-
+	private final static String FOCUS_MISPLACED_MESSAGE_ID = "FocusAllowedOnlyInPrimarySource";
 
 	public SourceFeatureQualifierCheck() {
 	}
@@ -74,8 +75,8 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			}
 		}
 		
-		int focus=0;
-		int transgenic=0;
+		int focus = 0;
+		int transgenic = 0;
 		ArrayList<String> organismValues = null;
 		for (Feature feature : sources) {
 			SourceFeature source = (SourceFeature) feature;
@@ -112,31 +113,32 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 			}
 			if(source.isTransgenic())
 				transgenic=source.getQualifiers(Qualifier.TRANSGENIC_QUALIFIER_NAME).size();
-			
-			
            }
-		
-		if(focus>0&&transgenic>0)
-		{//focus not allowed when /transgenic is used
+
+		List<Qualifier> focusQuals = SequenceEntryUtils.getQualifiers(Qualifier.FOCUS_QUALIFIER_NAME, entry);
+		if (focusQuals != null && focusQuals.size() > 0) {
+			if (focusQuals.size() == 1) {
+				//focus qualifier is allowed only in primary source feature
+				if (null == entry.getPrimarySourceFeature() ||
+						null == entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.FOCUS_QUALIFIER_NAME)) {
+					reportError(entry.getOrigin(), FOCUS_MISPLACED_MESSAGE_ID);
+				}
+			} else {
+				reportError(entry.getOrigin(), MULTIPLE_FOCUS_MESSAGE_ID);
+			}
+		}
+
+		if (focus > 0 && transgenic > 0) {//focus not allowed when /transgenic is used
 			reportError(entry.getOrigin(), FOCUS_TRANSEGENIC_EXCLUDE_MESSAGE_ID);
 		}
-		
-		if(sources.size()<2&&transgenic>0)
-		{
+
+		if (sources.size() < 2 && transgenic > 0) {
 			//entries with /transgenic must have at least 2 source features
 			reportError(entry.getOrigin(), TRANSEGENIC_SOURCE_MESSAGE_ID);
 		}
-		if(focus>1)
-		{
-			//multiple /focus qualifiers not allowed
-			reportError(entry.getOrigin(), MULTIPLE_FOCUS_MESSAGE_ID);
-			
-		}
-		if(transgenic>1)
-		{
+		if (transgenic > 1) {
 			//multiple /transgenic qualifiers not allowed
 			reportError(entry.getOrigin(), MULTIPLE_TRANSEGENIC_MESSAGE_ID);
-
 		}
 
 		return result;
