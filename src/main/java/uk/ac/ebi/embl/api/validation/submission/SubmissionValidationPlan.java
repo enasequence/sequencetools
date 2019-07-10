@@ -399,6 +399,9 @@ public class SubmissionValidationPlan
 
 	private void writeSequenceInfo() throws ValidationEngineException
 	{
+		if(options.processDir.isPresent() && Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,AssemblySequenceInfo.sequencefileName))))
+			return;
+
 		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
