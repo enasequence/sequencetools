@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.translation;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
@@ -216,6 +217,9 @@ public class Translator extends AbstractTranslator
 		int i = codonStart - 1;
 		for (; i + 3 <= bases; i += 3)
 		{
+			/*if(i>1430) {
+				System.out.println("Debug point");
+			}*/
 			Codon codon = new Codon();
 			codon.setCodon(new String(Arrays.copyOfRange(sequence, i, i + 3)));
 			codon.setPos(i + 1);
@@ -754,34 +758,34 @@ public class Translator extends AbstractTranslator
 		return true;
 	}
 
-	public boolean equalsTranslation(String expectedTranslation,
-			String conceptualTranslation)
-	{
-		if (expectedTranslation.length() < conceptualTranslation.length())
-		{
-			return false;
+	public ImmutablePair<Boolean, Integer> equalsTranslation(String expectedTranslation,
+															 String conceptualTranslation) {
+		int xMismatch = 0;
+		if (expectedTranslation.length() < conceptualTranslation.length()) {
+			return new ImmutablePair<>(false, 0);
 		}
-		for (int i = 0; i < conceptualTranslation.length(); i++)
-		{
+		for (int i = 0; i < conceptualTranslation.length(); i++) {
 			if (expectedTranslation.charAt(i) != conceptualTranslation
-					.charAt(i) && expectedTranslation.charAt(i) != 'X')
-			{
-				return false;
-			}
-		}
-		// Ignore trailing X.
-		if (expectedTranslation.length() > conceptualTranslation.length())
-		{
-			for (int i = conceptualTranslation.length(); i < expectedTranslation
-					.length(); i++)
-			{
-				if (expectedTranslation.charAt(i) != 'X')
-				{
-					return false;
+					.charAt(i)) {
+				if (expectedTranslation.charAt(i) == 'X') {
+					xMismatch++;
+				} else {
+					return new ImmutablePair<>(false, 0);
 				}
 			}
 		}
-		return true;
+		// Ignore trailing X.
+		if (expectedTranslation.length() > conceptualTranslation.length()) {
+			for (int i = conceptualTranslation.length(); i < expectedTranslation
+					.length(); i++) {
+				if (expectedTranslation.charAt(i) == 'X') {
+					xMismatch++;
+				} else {
+					return new ImmutablePair<>(false, 0);
+				}
+			}
+		}
+		return new ImmutablePair<>(xMismatch == 0, xMismatch);
 	}
 
 }

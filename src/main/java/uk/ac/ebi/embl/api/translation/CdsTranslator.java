@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -166,25 +167,24 @@ public class CdsTranslator {
 			expectedTranslation.length() == 0 ) {
         	if(!(cds instanceof PeptideFeature))
 			cds.setTranslation(conceptualTranslation); // Accept the translation.
-		}
-		else if (acceptTranslation 
-				&& !translator.equalsTranslation(expectedTranslation, conceptualTranslation)) {
-			cds.setTranslation(conceptualTranslation); // Accept the translation.
-			// Add warning
-			extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.WARNING,
-                    "CDSTranslator-2"));
-		}
-		else if (!cds.isException() && !cds.isPseudo() &&
-                !translator.equalsTranslation(expectedTranslation, conceptualTranslation)) {
-			// Reject the translation.
-			extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.ERROR,
-                    "CDSTranslator-2"));
-		}
-		else if (cds.isException() && translator.equalsTranslation(expectedTranslation, conceptualTranslation)) {
-			extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.WARNING,
-                    "CDSTranslator-3"));
-		}
+		} else {
+            ImmutablePair<Boolean, Integer> comparisonRes = translator.equalsTranslation(expectedTranslation, conceptualTranslation);
+            if (comparisonRes.left) {
+                if (cds.isException()) {
+                    extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.WARNING, "CDSTranslator-3"));
+                }
+            } else if (!cds.isException() && !cds.isPseudo()) {
+                if (acceptTranslation || comparisonRes.right > 0) {
+                    cds.setTranslation(conceptualTranslation); // Accept the translation.
+                    // Add warning
+                    extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.WARNING, "CDSTranslator-2"));
+                } else {
+                    //Reject teh translation
+                    extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.ERROR, "CDSTranslator-16"));
+                }
+            }
 
+        }
 		Set<String> fixes = translator.getFixes();
 		if(fixes != null && !fixes.isEmpty()) {
 		    fixes.forEach(f -> extendedTranslatorResult.append(EntryValidations.createMessage(cds.getOrigin(), Severity.FIX, f)));

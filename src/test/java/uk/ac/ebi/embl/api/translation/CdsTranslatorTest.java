@@ -15,10 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.translation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -26,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.*;
 import static uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter.renderCompoundLocation;
 
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -120,7 +117,8 @@ public class CdsTranslatorTest {
                     if (!(validationResult.count(expectedMessageKey, Severity.WARNING) >= 1 ||
                           validationResult.count(expectedMessageKey, Severity.ERROR) >= 1 ||
                            validationResult.count(expectedMessageKey, Severity.FIX) >= 1 )) {
-                        isSuccess = false;
+                        System.out.println("Expected message not found: "+expectedMessageKey);
+                        return false;
                     }
                 }
 
@@ -225,6 +223,7 @@ public class CdsTranslatorTest {
         }
     }
 
+
     @Test
     public void testTranslate1() {
         setSequenceAndOrganismForJcPolyomavirus();
@@ -237,6 +236,72 @@ public class CdsTranslatorTest {
         ));
     }
 
+    private String getValidConceptualTranslation() {
+        return "MFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAVMCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVG" +
+                "AARVFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAV" + // expecting AAR
+                "MCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVGAATRLIGGGASAAAAKATAGMANCLGKNIVSGAVEGAIDGGASNGLQYLTSGQPITVAGFARAVGEGAGEG" +
+                "ALGGGASGALSKVTGVSRYGCFTADTPVVMADGTTKRIDQVEVGEEVLAHDPATGEDVPATVERTFVHENVPTLRVTTTEGCVETTATHPFYVEGRGYTPADQLHEGDTLHTPDGQTV" +
+                "QVVSVQATGHTQTVHNLAIGGLHNYHVATNTGQPILVHNQTKKSCDPVEPYEVGTYDDLKARSVTGDGLDIHHVPQAHAAEQVIDGYDRKTGTAIALPRKEHAAIPTKKGIIDCTPEQ" +
+                "QLTNDINDLRKHTQAPSSAVQEIEDRARAKYGIGGN";
+    }
+    @Test
+    public void testTranslationCorrection() {
+        setSeqAndOrganismForBacteria();
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 1839L));
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.setTranslation("MFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAVMCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVG" +
+                "AXRVFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAV" +//starting three aminoacids AXR has to be replaced by AAR
+                "MCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVGAATRLIGGGASAAAAKATAGMANCLGKNIVSGAVEGAIDGGASNGLQYLTSGQPITVAGFARAVGEGAGEG" +
+                "ALGGGASGALSKVTGVSRYGCFTADTPVVMADGTTKRIDQVEVGEEVLAHDPATGEDVPATVERTFVHENVPTLRVTTTEGCVETTATHPFYVEGRGYTPADQLHEGDTLHTPDGQTV" +
+                "QVVSVQATGHTQTVHNLAIGGLHNYHVATNTGQPILVHNQTKKSCDPVEPYEVGTYDDLKARSVTGDGLDIHHVPQAHAAEQVIDGYDRKTGTAIALPRKEHAAIPTKKGIIDCTPEQ" +
+                "QLTNDINDLRKHTQAPSSAVQEIEDRARAKYGIGGN");
+        assertTrue(testValidTranslation(getValidConceptualTranslation() , "CDSTranslator-2"));
+    }
+
+    @Test
+    public void testTranslationCorrectionTrailingX() {
+        setSeqAndOrganismForBacteria();
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 1839L));
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.setTranslation("MFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAVMCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVG" +
+                "AARVFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAV" +//starting three aminoacids AXR has to be replaced by AAR
+                "MCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVGAATRLIGGGASAAAAKATAGMANCLGKNIVSGAVEGAIDGGASNGLQYLTSGQPITVAGFARAVGEGAGEG" +
+                "ALGGGASGALSKVTGVSRYGCFTADTPVVMADGTTKRIDQVEVGEEVLAHDPATGEDVPATVERTFVHENVPTLRVTTTEGCVETTATHPFYVEGRGYTPADQLHEGDTLHTPDGQTV" +
+                "QVVSVQATGHTQTVHNLAIGGLHNYHVATNTGQPILVHNQTKKSCDPVEPYEVGTYDDLKARSVTGDGLDIHHVPQAHAAEQVIDGYDRKTGTAIALPRKEHAAIPTKKGIIDCTPEQ" +
+                "QLTNDINDLRKHTQAPSSAVQEIEDRARAKYGIGGNXXXXX");//trailing X as well
+        assertTrue(testValidTranslation(getValidConceptualTranslation() , "CDSTranslator-2"));
+    }
+
+    @Test
+    public void testTranslationCorrectionInvalid() {
+        setSeqAndOrganismForBacteria();
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 1839L));
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.setTranslation("MFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAVMCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVG" +
+                "ARRVFLSADPLEPVTGAAWAANPYSYAGNDPVGSADPLGLRPVSEEDLRAYQQASNGMLQNAAGAVTGWVSENWEYIAAGAMVVAGFAV" +//starting three aminoacids ARR is invalid, should be AAR
+                "MCTGVGGPIGAAMMAGALTSAGGSIWSQKSSNGSVDWGTVLRDGAVGAATRLIGGGASAAAAKATAGMANCLGKNIVSGAVEGAIDGGASNGLQYLTSGQPITVAGFARAVGEGAGEG" +
+                "ALGGGASGALSKVTGVSRYGCFTADTPVVMADGTTKRIDQVEVGEEVLAHDPATGEDVPATVERTFVHENVPTLRVTTTEGCVETTATHPFYVEGRGYTPADQLHEGDTLHTPDGQTV" +
+                "QVVSVQATGHTQTVHNLAIGGLHNYHVATNTGQPILVHNQTKKSCDPVEPYEVGTYDDLKARSVTGDGLDIHHVPQAHAAEQVIDGYDRKTGTAIALPRKEHAAIPTKKGIIDCTPEQ" +
+                "QLTNDINDLRKHTQAPSSAVQEIEDRARAKYGIGGN");
+        assertTrue(testInvalidTranslation("CDSTranslator-16"));
+    }
+
+    @Test
+    public void testTranslationCorrectionTrailingAminoAcids() {
+        setSeqAndOrganismForBacteria();
+        cdsFeature.setStartCodon(1);
+        cdsFeature.setTranslationTable(11);
+        cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 1839L));
+        cdsFeature.getLocations().setComplement(true);
+        cdsFeature.setTranslation(getValidConceptualTranslation()+ "GIGG");//extra four characters GIGG at end
+        assertTrue(testInvalidTranslation("CDSTranslator-16"));
+    }
     @Test
     public void testTranslate2() {
         setSequenceAndOrganismForJcPolyomavirus();
@@ -1043,6 +1108,32 @@ public class CdsTranslatorTest {
         assertTrue(cdsFeature.getLocations().isRightPartial());
         assertEquals("complement(1..>13)", renderCompoundLocation(cdsFeature.getLocations()));
     }
+
+    private void setSeqAndOrganismForBacteria() {
+        //UNQJ01000044
+        sourceFeature.setScientificName("Propionibacterium australiense");
+        entry.setSequence(sequenceFactory.createSequenceByte(
+                ("tcagtttcctccaattccatactttgctcttgcgcgatcttcaatctcttgaactgcagaagatggcgcctgtgtatgttttctcaggtcgtttatgtcgtttgtcagctg" +
+                        "ttgttccggagtacagtcaattattcccttcttcgtagggatagcagcgtgttctttccttggtagtgcgatcgctgttcctgttttcctgtcatacccgtcga" +
+                        "tcacctgttctgcagcgtgggcttgagggacatggtggatatcgaggccatcgccagtgactgacctggccttcaggtcgtcgtaggtacctacttcgtaaggt" +
+                        "tctactgggtcacaactctttttggtttggttgtggacgaggatgggttgtccggtgttggtggccacgtggtagttgtgtaggccaccgatggcgaggttgtg" +
+                        "gacggtctgggtgtgtccggtggcctggaccgagaccacttggacggtctggccgtccggggtgtggagggtgtcgccttcgtgcaactggtcggccggggtgt" +
+                        "agccccggccctccacgtagaaggggtgggtggcggtggtctccacacacccttcggtggtggtgacccgcagggtcgggacgttctcgtggacgaaggtgcgt" +
+                        "tccacggtcgccggcacatcctcacccgtggcggggtcgtgggcgagaacctcctcacccacctcgacttggtcaatccgcttggtcgtgccgtcggccatgac" +
+                        "caccggcgtgtcagcagtgaagcagccgtagcgggacacgccggtgaccttggacagggcaccactggccccgccgccaagagcaccctccccggcgccctcgc" +
+                        "caacggcccgagcgaacccggccaccgtgatgggctggccgctggtcaggtactgcaggccgttgctggccccaccatcaatagcgccctcgaccgccccggaa" +
+                        "acgatgttcttgcccaggcagttggccatgccggcggtggctttcgcggccgcggcggaggcgccgcccccgatgaggcgggtcgcggcgccgaccgccccgtc" +
+                        "gcgtaggacggtgccccagtcaacgctcccgttggaggacttctgcgaccagatactcccaccggcgctggtcagggcgccggccatcatcgccgcgccgatgg" +
+                        "gcccgccgacaccggtgcacatgaccgcgaaaccggccaccaccatcgcgccggcggcgatgtactcccagttctcgctcacccagccggtcaccgcaccagcg" +
+                        "gcgttctgcaacatcccgttggacgcctgctgataggcccgcaggtcctcctcggagacgggccgcaaacccagcggatcagcggacccgacggggtcgttacc" +
+                        "ggcgtacgagtacgggttcgccgcccacgccgcgccagtgaccggttcgaggggatcggccgacaggaacaccctngcggcgccgaccgccccgtcgcgtagga" +
+                        "cggtgccccagtcaacgctcccgttggaggacttctgcgaccagatactcccaccggcgctggtcagggcgccggccatcatcgccgcgccgatgggcccgccg" +
+                        "acaccggtgcacatgaccgcgaaaccggccaccaccatcgcgccggcggcgatgtactcccagttctcgctcacccagccggtcaccgcaccagcggcgttctg" +
+                        "caacatcccgttggacgcctgctgataggcccgcaggtcctcctcggagacgggccgcaaacccagcggatcagcggacccgacggggtcgttaccggcgtacg" +
+                        "agtacgggttcgccgcccacgccgcgccagtgaccggttcgagggggtcggccgacaggaacac").getBytes()
+        ));
+    }
+
     private void setSequenceAndOrganismForJcPolyomavirus() {
         sourceFeature.setScientificName("JC polyomavirus");
         entry.setSequence(sequenceFactory.createSequenceByte(
