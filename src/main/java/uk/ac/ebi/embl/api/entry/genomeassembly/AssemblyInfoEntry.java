@@ -16,6 +16,8 @@
 package uk.ac.ebi.embl.api.entry.genomeassembly;
 
 
+import java.util.Date;
+
 public class AssemblyInfoEntry extends GCSEntry
 {
 	private String submissionId;
@@ -45,7 +47,34 @@ public class AssemblyInfoEntry extends GCSEntry
 	private boolean tpa;
 	private String assemblyType;
 	private String organism;
-  	
+	private String authors;
+	private String address;
+	private Date date;
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public String getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(String authors) {
+		this.authors = authors;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public String getOrganism() {
 		return organism;
 	}

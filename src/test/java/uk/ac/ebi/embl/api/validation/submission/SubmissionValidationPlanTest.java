@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -37,7 +40,32 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	   options.source = Optional.of(getSource());
 	   options.ignoreErrors = true;
 	}
-	
+
+	@Test
+	public void testGenomeSubmissionWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
+		String fileName = "valid_genome_flatfile.txt";
+		options.context = Optional.of(Context.genome);
+		options.assemblyInfoEntry.get().setAuthors("Kirstein I., Wichels A.;");
+		options.assemblyInfoEntry.get().setAddress("Biologische Anstalt Helgoland, Alfred-Wegener-Institut, Helmholtz Zentrum " +
+				"fur Polar- und Meeresforschung, Kurpromenade 27498 Helgoland, Germany");
+
+		DateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+		options.assemblyInfoEntry.get().setDate(format.parse("17-JUL-2019"));
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(fileName , FileType.FLATFILE));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		options.reportDir = Optional.of(initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		String expectedFile = "valid_genome_flatfile_ref_change.txt.expected";
+		FlatFileComparator comparator=new FlatFileComparator(new FlatFileComparatorOptions());
+		assertTrue( comparator.compare(initSubmissionFixedTestFile(expectedFile, FileType.FLATFILE).getFile().getAbsolutePath(),
+				initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getAbsolutePath()+".fixed"));
+	}
+
 	@Test
 	public void testGenomeSubmissionwithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
 	{

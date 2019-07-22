@@ -31,10 +31,12 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
 
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
@@ -380,6 +382,34 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 	}
 
+	public Reference getReference(String analysisId, AnalysisType analysisType) throws SQLException , ValidationEngineException {
+
+		String analysisQuery = "select first_created, " +
+				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
+				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address " +
+				"from analysis a where a.analysis_id=?";
+		PreparedStatement analysisStmt = null;
+		ResultSet analysisRs = null;
+
+		try {
+			analysisStmt = connection.prepareStatement(analysisQuery);
+			analysisStmt.setString(1, analysisId);
+			analysisRs = analysisStmt.executeQuery();
+			while (analysisRs.next()) {
+				String author = analysisRs.getString("authors");
+				String address = analysisRs.getString("address");
+				Date firstCreated = analysisRs.getDate("first_created");
+				if (StringUtils.isNotBlank(author) && StringUtils.isNotBlank(address)) {
+					return new ReferenceReader().getReference(author, address, firstCreated);
+				}
+			}
+		}  finally {
+			DbUtils.closeQuietly(analysisRs);
+			DbUtils.closeQuietly(analysisStmt);
+		}
+		return null;
+	}
+
    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
 	   if(masterCache.containsKey(analysisId))
@@ -403,12 +433,17 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String prevSampleId = null;
 		String prevProjectId = null;
 		String uniqueName=null;
-		
-		String masterQuery = "select a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
+		String author = null;
+		String address = null;
+		Date firstCreated = null;
+
+		String masterQuery = "select a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
+			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/DESCRIPTION/text()' PASSING analysis_xml RETURNING CONTENT)) description " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
@@ -466,7 +501,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				prevSampleId = bioSampleId;
 				
 				sourceFeature.setTaxId(Long.valueOf(masterInfoRs.getString("tax_id")));
-				
+
+				author = masterInfoRs.getString("authors");
+				address = masterInfoRs.getString("address");
+				firstCreated = masterInfoRs.getDate("first_created");
 				scientificName = masterInfoRs.getString("scientific_name");
 				String molType=masterInfoRs.getString("mol_type");
 				String tpa=masterInfoRs.getString("tpa");
@@ -519,7 +557,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			}
 
 			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, uniqueName);
-			masterEntry.addReference(getSubmitterReference(analysisId));
+			if(StringUtils.isNotBlank(author) && StringUtils.isNotBlank(address)) {
+				masterEntry.addReference(new ReferenceReader().getReference(author, address, firstCreated));
+			} else {
+				masterEntry.addReference(getSubmitterReference(analysisId));
+			}
 
 		}
 		catch (Exception ex)

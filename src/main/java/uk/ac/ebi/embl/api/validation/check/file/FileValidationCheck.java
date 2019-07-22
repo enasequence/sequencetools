@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
@@ -32,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -42,6 +44,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
+import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -464,32 +467,46 @@ public abstract class FileValidationCheck {
 
 	}
 
-	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException {
+	protected void addTemplateHeader(Entry entry) throws UnsupportedEncodingException, SQLException, ValidationEngineException {
 		entry.removeReferences();
 		entry.removeProjectAccessions();
 		entry.addProjectAccession(new Text(options.getProjectId()));
 		entry.getSequence().setVersion(1);
 		entry.setStatus(Entry.Status.PRIVATE);
-		if(!getOptions().isRemote)
-		{
-			Reference reference =  new EraproDAOUtilsImpl(options.eraproConnection.get()).getSubmitterReference(options.analysisId.get());
+
+		if (options.assemblyInfoEntry.isPresent()
+				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
+				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
+			entry.removeReferences();
+			Reference reference = new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate());
 			entry.addReference(reference);
-			return;
+		} else {
+
+			if (!getOptions().isRemote) {
+				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get());
+				Reference reference =  eraProDao.getReference(options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
+				if(reference == null) {
+					eraProDao.getSubmitterReference(options.analysisId.get());
+				}
+				entry.addReference(reference);
+				return;
+			}
+			ReferenceFactory referenceFactory = new ReferenceFactory();
+			Reference reference = referenceFactory.createReference();
+			Publication publication = new Publication();
+			Person person = referenceFactory.createPerson("CLELAND");
+			publication.addAuthor(person);
+			reference.setAuthorExists(true);
+			Submission submission = referenceFactory.createSubmission(publication);
+			submission.setSubmitterAddress(", The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus, CB10 1SD, United Kingdom");
+			submission.setDay(Calendar.getInstance().getTime());
+			publication = submission;
+			reference.setPublication(publication);
+			reference.setLocationExists(true);
+			reference.setReferenceNumber(1);
+			entry.addReference(reference);
 		}
-		ReferenceFactory referenceFactory = new ReferenceFactory();
-		Reference reference = referenceFactory.createReference();
-		Publication publication = new Publication();
-		Person person = referenceFactory.createPerson("CLELAND");
-		publication.addAuthor(person);
-		reference.setAuthorExists(true);
-		Submission submission = referenceFactory.createSubmission(publication);
-		submission.setSubmitterAddress(", The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus, CB10 1SD, United Kingdom");
-		submission.setDay(Calendar.getInstance().getTime());
-		publication = submission;
-		reference.setPublication(publication);
-		reference.setLocationExists(true);
-		reference.setReferenceNumber(1);
-		entry.addReference(reference);
 	}
 
 	protected BufferedReader 

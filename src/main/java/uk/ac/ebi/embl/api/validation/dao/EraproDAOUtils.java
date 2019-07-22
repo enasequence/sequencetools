@@ -7,6 +7,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public interface EraproDAOUtils
 {
@@ -15,6 +16,7 @@ public interface EraproDAOUtils
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
 	public List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
 	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
+	Reference getReference(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	public String getTemplateId(String analysisId) throws SQLException;
 	public class AssemblySubmissionInfo
 	{

@@ -15,12 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -29,8 +23,8 @@ import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -41,10 +35,16 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
+import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Paths;
 
 @Description("")
 public class MasterEntryValidationCheck extends FileValidationCheck
@@ -123,7 +123,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		return false;
 	}
 
-	public Entry getMasterEntry(AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws SQLException
+	public Entry getMasterEntry(AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws ValidationEngineException
 	{
 		Entry masterEntry = new Entry();
 		if(analysisType == null) {
@@ -149,11 +149,16 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		{
             EntryUtils.setKeyWords(masterEntry);
 		}
-        
 		masterEntry.addFeature(source);
 		if(getOptions().context.get()==Context.genome)
 			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source, AnalysisType.SEQUENCE_ASSEMBLY)));
 
+		if (StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
+				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
+			masterEntry.removeReferences();
+			masterEntry.addReference(new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate()));
+		}
 		return masterEntry;
 	}
 	
