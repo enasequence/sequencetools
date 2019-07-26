@@ -37,7 +37,7 @@ public class GenbankLineReader extends LineReader {
     }
 		
 	private static final Pattern TAG = Pattern.compile(			
-			"^\\s{0,4}[A-Z]{3,11}((\\s*)|(\\s+.*))$");
+			"^\\s{0,4}[A-Z_]{3,11}((\\s*)|(\\s+.*))$");
 	
     @Override
     protected boolean isTag(String line) {

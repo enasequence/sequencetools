@@ -87,6 +87,10 @@ public class GenbankEntryReader extends EntryReader {
 		addBlockReader(new MasterTLSReader(lineReader));
 		addBlockReader(new MasterTSAReader(lineReader));
 		addBlockReader(new MasterTPAReader(lineReader));
+		addBlockReader(new MasterScaffoldWGSReader(lineReader));
+		addBlockReader(new MasterScaffoldTLSReader(lineReader));
+		addBlockReader(new MasterScaffoldTSAReader(lineReader));
+		addBlockReader(new MasterScaffoldTPAReader(lineReader));
 
         /**
          * Have to add the line types seperatly as are not registered with the main hash of readers.

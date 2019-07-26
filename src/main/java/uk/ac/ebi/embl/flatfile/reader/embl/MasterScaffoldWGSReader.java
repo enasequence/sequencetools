@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012-2013 EMBL-EBI, Hinxton outstation
+ * Copyright 2012 EMBL-EBI, Hinxton outstation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,22 @@ import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
 
-public class MasterTSAReader extends MultiLineBlockReader {
-	
-	public MasterTSAReader(LineReader lineReader) {
+public class MasterScaffoldWGSReader extends MultiLineBlockReader {
+
+	public MasterScaffoldWGSReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
 	}
 
 	@Override
 	public String getTag() {
-		return EmblTag.MASTER_TSA_TAG;
+		return EmblTag.MASTER_SCAFFOLD_WGS_TAG;
 	}
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.TSA_DATACLASS);
+		entry.setSetDataclass(Entry.WGS_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterTsaAccession(new Text(accession, getOrigin()));
+			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

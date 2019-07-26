@@ -54,4 +54,8 @@ public abstract class EmblPadding {
     public static final String MASTER_TPA_PADDING = "TPA  ";
     public static final String MASTER_TSA_PADDING = "TSA  ";
     public static final String MASTER_TLS_PADDING = "TLS  ";
+    public static final String MASTER_SCAFFOLD_WGS_PADDING = "WGS_SCAFLD  ";
+    public static final String MASTER_SCAFFOLD_TPA_PADDING = "TPA_SCAFLD  ";
+    public static final String MASTER_SCAFFOLD_TSA_PADDING = "TSA_SCAFLD  ";
+    public static final String MASTER_SCAFFOLD_TLS_PADDING = "TLS_SCAFLD  ";
 }

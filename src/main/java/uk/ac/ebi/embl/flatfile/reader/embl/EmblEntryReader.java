@@ -157,6 +157,10 @@ EmblEntryReader extends EntryReader
 			addBlockReader(new MasterTPAReader(lineReader));
 			addBlockReader(new MasterTSAReader(lineReader));
 			addBlockReader(new MasterTLSReader(lineReader));
+			addBlockReader(new MasterScaffoldWGSReader(lineReader));
+			addBlockReader(new MasterScaffoldTPAReader(lineReader));
+			addBlockReader(new MasterScaffoldTLSReader(lineReader));
+			addBlockReader(new MasterScaffoldTSAReader(lineReader));
         } else if( format.equals( Format.CDS_FORMAT ) )
         {
 			addBlockReader(new IDReader(lineReader));

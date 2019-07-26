@@ -131,6 +131,10 @@ public class EmblEntryWriter extends EntryWriter {
 
 		(new MasterTSAWriter(entry, wrapType)).write(writer);
 
+		if(entry.getMasterScaffoldAccessions() != null && !entry.getMasterScaffoldAccessions().isEmpty()) {
+			new MasterScaffoldWriter(entry, wrapType).write(writer);
+		}
+
 		if(!entry.isNonExpandedCON())
         new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
 		writer.write(TERMINATOR_LINE);

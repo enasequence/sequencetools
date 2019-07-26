@@ -23,22 +23,22 @@ import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
 
-public class MasterTSAReader extends MultiLineBlockReader {
-	
-	public MasterTSAReader(LineReader lineReader) {
+public class MasterScaffoldTSAReader extends MultiLineBlockReader {
+
+	public MasterScaffoldTSAReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
 	}
 
 	@Override
 	public String getTag() {
-		return EmblTag.MASTER_TSA_TAG;
+		return EmblTag.MASTER_SCAFFOLD_TSA_TAG;
 	}
 	
 	@Override
 	protected void read(String block) {
 		entry.setSetDataclass(Entry.TSA_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterTsaAccession(new Text(accession, getOrigin()));
+			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

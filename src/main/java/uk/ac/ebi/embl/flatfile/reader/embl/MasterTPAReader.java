@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
+import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
@@ -35,6 +36,7 @@ public class MasterTPAReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
+		entry.setSetDataclass(Entry.TPA_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
 			entry.addMasterTpaAccession(new Text(accession, getOrigin()));
 		}

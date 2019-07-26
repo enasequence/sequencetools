@@ -127,6 +127,8 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private List<Text> masterTpaAccessions;
 	private List<Text> masterTsaAccessions;
 	private List<Text> masterTlsAccessions;
+	private List<Text> masterScaffoldAccessions;
+	private String setDataclass;
 	protected List<Assembly> assemblies;
 	private boolean isAnnotationOnlyCON=false;
 	private boolean isSingletonAgp=false;
@@ -134,20 +136,21 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private int sequenceCount;
 
 	public Entry() {
-		this.secondaryAccessions = new ArrayList<Text>();
-		this.keywords = new ArrayList<Text>();
-		this.projectAccessions = new ArrayList<Text>();
-		this.references = new ArrayList<Reference>();
-		this.features = new ArrayList<Feature>();
-		this.xRefs = new ArrayList<XRef>();
-		this.assemblies = new ArrayList<Assembly>();
+		this.secondaryAccessions = new ArrayList<>();
+		this.keywords = new ArrayList<>();
+		this.projectAccessions = new ArrayList<>();
+		this.references = new ArrayList<>();
+		this.features = new ArrayList<>();
+		this.xRefs = new ArrayList<>();
+		this.assemblies = new ArrayList<>();
         this.description = new Text();
         this.comment = new Text();
-		this.masterConAccessions = new ArrayList<Text>();
-		this.masterWgsAccessions = new ArrayList<Text>();
-		this.masterTpaAccessions = new ArrayList<Text>();
-		this.masterTsaAccessions = new ArrayList<Text>();
+		this.masterConAccessions = new ArrayList<>();
+		this.masterWgsAccessions = new ArrayList<>();
+		this.masterTpaAccessions = new ArrayList<>();
+		this.masterTsaAccessions = new ArrayList<>();
 		this.masterTlsAccessions = new ArrayList<>();
+		masterScaffoldAccessions = new ArrayList<>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
 
@@ -574,7 +577,32 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public boolean removeMasterTlsAccession(Text accession) {
 		return this.masterTlsAccessions.remove(accession);
 	}
-	
+
+
+	public List<Text> getMasterScaffoldAccessions() {
+		return masterScaffoldAccessions;
+	}
+
+	public boolean addMasterScaffoldAccession(Text masterScaffoldAccessions) {
+		return this.masterScaffoldAccessions.add(masterScaffoldAccessions);
+	}
+
+	public boolean addMasterScaffoldAccessions(Collection<Text> masterScaffoldAccessions) {
+		if (masterScaffoldAccessions == null) {
+			return false;
+		}
+		return this.masterScaffoldAccessions.addAll(masterScaffoldAccessions);
+	}
+
+	public String getSetDataclass() {
+		return setDataclass;
+	}
+
+	public void setSetDataclass(String setDataclass) {
+		this.setDataclass = setDataclass;
+	}
+
+
 	public boolean isMaster() {
 		return (this.masterConAccessions.size() > 0 ||
 		        this.masterWgsAccessions.size() > 0 ||
