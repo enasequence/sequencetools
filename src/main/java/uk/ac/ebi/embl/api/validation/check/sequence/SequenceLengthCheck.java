@@ -82,7 +82,7 @@ public class SequenceLengthCheck extends EntryValidationCheck
 			{
 				if (length < MIN_SEQUENCE_LENGTH_GSS || length > MAX_SEQUENCE_LENGTH_GSS)
 				{
-					reportError(entry.getOrigin(), SEQUENCE_LENGTH_GSS_MESSAGE_ID, MIN_SEQUENCE_LENGTH_GSS, MAX_SEQUENCE_LENGTH_GSS);
+					reportError(entry.getOrigin(), SEQUENCE_LENGTH_GSS_MESSAGE_ID, MIN_SEQUENCE_LENGTH_GSS, MAX_SEQUENCE_LENGTH_GSS, entry.getSubmitterAccession());
 				}
 
 			} else if (dataclass != null && dataclass.equals(Entry.TSA_DATACLASS))
@@ -90,7 +90,7 @@ public class SequenceLengthCheck extends EntryValidationCheck
 				if (length < MIN_SEQUENCE_LENGTH_TSA)
 				{
 					entry.setDelete(true);
-					reportError(entry.getOrigin(), SEQUENCE_LENGTH_TSA_MESSAGE_ID, MIN_SEQUENCE_LENGTH_TSA);
+					reportError(entry.getOrigin(), SEQUENCE_LENGTH_TSA_MESSAGE_ID, MIN_SEQUENCE_LENGTH_TSA, entry.getSubmitterAccession());
 				}
 
 			} else
