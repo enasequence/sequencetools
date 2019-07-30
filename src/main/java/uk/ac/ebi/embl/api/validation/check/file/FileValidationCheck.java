@@ -485,9 +485,9 @@ public abstract class FileValidationCheck {
 
 			if (!getOptions().isRemote) {
 				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get());
-				Reference reference =  eraProDao.getReference(options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
+				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {
-					eraProDao.getSubmitterReference(options.analysisId.get());
+					reference = eraProDao.getSubmitterReference(options.analysisId.get());
 				}
 				entry.addReference(reference);
 				return;

@@ -16,7 +16,7 @@ public interface EraproDAOUtils
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
 	public List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
 	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
-	Reference getReference(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
+	Reference getReference(Entry entry , String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	public String getTemplateId(String analysisId) throws SQLException;
 	public class AssemblySubmissionInfo
 	{
