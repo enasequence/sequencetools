@@ -183,6 +183,12 @@ public class FeatureReader extends FlatFileLineReader {
 		if (location == null) {
 			return null;
 		}
+		for(Location loc: location.getLocations()) {
+			if(loc.getBeginPosition() < 1 || loc.getEndPosition() < 1 ) {
+				error("FT.15", featureName, loc.getBeginPosition(), loc.getEndPosition());
+				return null;
+			}
+		}
 		int lastLineNumber = lineReader.getCurrentLineNumber();
 
 		Feature feature = (new FeatureFactory()).createFeature(featureName);
