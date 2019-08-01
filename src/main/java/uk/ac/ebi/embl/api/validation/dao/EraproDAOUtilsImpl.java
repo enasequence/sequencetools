@@ -387,8 +387,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String analysisQuery = "select first_created, " +
 				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
 				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address, " +
-				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/RUN_REF/IDENTIFIERS/PRIMARY_ID/text()' PASSING analysis_xml RETURNING CONTENT)) run_ref, " +
-				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_REF/IDENTIFIERS/PRIMARY_ID/text()' PASSING analysis_xml RETURNING CONTENT)) analysis_ref " +
+				"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/RUN_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS run_ref, " +
+				"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/ANALYSIS_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS analysis_ref, " +
 				"from analysis a where a.analysis_id=?";
 		PreparedStatement analysisStmt = null;
 		ResultSet analysisRs = null;
@@ -405,13 +405,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 					return new ReferenceReader().getReference(author, address, firstCreated);
 				}
 				String runRef = analysisRs.getString("run_ref");
+				setXrefs(runRef, entry);
 				String analysisRef = analysisRs.getString("analysis_ref");
-				if (StringUtils.isNotBlank(runRef) ) {
-					entry.addXRef(new XRef("ENA", runRef));
-				}
-				if (StringUtils.isNotBlank(analysisRef) ) {
-					entry.addXRef(new XRef("ENA", analysisRef));
-				}
+				setXrefs(analysisRef, entry);
 			}
 		}  finally {
 			DbUtils.closeQuietly(analysisRs);
@@ -454,8 +450,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/RUN_REF/IDENTIFIERS/PRIMARY_ID/text()' PASSING analysis_xml RETURNING CONTENT)) run_ref, " +
-			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_REF/IDENTIFIERS/PRIMARY_ID/text()' PASSING analysis_xml RETURNING CONTENT)) analysis_ref, " +
+			"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/RUN_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS run_ref, " +
+			"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/ANALYSIS_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS analysis_ref, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/DESCRIPTION/text()' PASSING analysis_xml RETURNING CONTENT)) description " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
@@ -510,14 +506,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				{
 					masterEntry.addXRef(new XRef("BioSample", bioSampleId));
 				}
-				String runRef = masterInfoRs.getString("run_ref");
+
+				String runRefs = masterInfoRs.getString("run_ref");
+				setXrefs(runRefs, masterEntry);
 				String analysisRef = masterInfoRs.getString("analysis_ref");
-				if (StringUtils.isNotBlank(runRef) ) {
-					masterEntry.addXRef(new XRef("ENA", runRef));
-				}
-				if (StringUtils.isNotBlank(analysisRef) ) {
-					masterEntry.addXRef(new XRef("ENA", analysisRef));
-				}
+				setXrefs(analysisRef, masterEntry);
+
 				prevSampleId = bioSampleId;
 				
 				sourceFeature.setTaxId(Long.valueOf(masterInfoRs.getString("tax_id")));
@@ -597,6 +591,16 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		masterEntry.setDescription(new Text(description));
 		masterCache.put(analysisId,masterEntry);
 		return masterEntry;
+	}
+
+	private void setXrefs(String refs, Entry masterEntry) {
+
+		if (StringUtils.isNotBlank(refs) ) {
+			String[] runRefArr = refs.split(",");
+			for(String runRef: runRefArr) {
+				masterEntry.addXRef(new XRef("ENA", runRef));
+			}
+		}
 	}
    
 }
