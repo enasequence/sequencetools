@@ -41,10 +41,12 @@ import java.util.List;
 public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID = "SequenceToGapFeatureBasesCheck-1";
+    protected final static String MESSAGE_SEQ_WITH_MORE_N = "SequenceWithMoreNs";
     public static int ERROR_THRESHOLD = Entry.DEFAULT_MIN_GAP_LENGTH;
     public static int WARNING_THRESHOLD = 0;
     public static int GAP_ESTIMATED_LENGTH = 100;
     public static String GAP_ESTIMATED_LENGTH_STRING = Integer.toString(GAP_ESTIMATED_LENGTH);
+    public static int N_PERCENTAGE = 100;
   
     /**
      * Checks the coverage of sequence by source features' locations.
@@ -79,12 +81,14 @@ public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
         boolean lastBaseN = false;
         int matchStart = 0;
         int matchEnd = 0;
+        int nCount = 0;
         byte[] sequenceByte=entry.getSequence().getSequenceByte();
         for(byte base:sequenceByte)
         {
         	
         	if('n'==(char)base)
         	{
+        	    nCount++;
         		if (!lastBaseN) 
         		{
                     matchStart = baseCount + 1;//as arrays are from 0 and sequence starts from 1
@@ -108,6 +112,11 @@ public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
             }
         	baseCount++;
         }
+
+        if ((Float.valueOf(nCount) / sequenceByte.length) * 100 >= N_PERCENTAGE) {
+            reportError(entry.getSequence().getOrigin(), MESSAGE_SEQ_WITH_MORE_N, N_PERCENTAGE);
+        }
+
         if (lastBaseN) 
         {
             matchEnd = baseCount;

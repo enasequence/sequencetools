@@ -258,5 +258,15 @@ public class SequenceToGapFeatureBasesCheckTest {
 		assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
 		assertEquals(5,SequenceToGapFeatureBasesCheck.ERROR_THRESHOLD);
 	}
-	
+
+    @Test
+    public void testCheckOnlyNSequence() {
+
+        entry.setSequence(sequenceFactory.createSequenceByte("nnnnnnnnnnnnnnnnnnnn".getBytes()));
+
+        ValidationResult result = check.check(entry);
+        assertTrue(!result.isValid());
+        assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_SEQ_WITH_MORE_N, Severity.ERROR));
+    }
+
 }
