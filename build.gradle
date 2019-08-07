@@ -8,7 +8,7 @@ apply plugin: 'signing'
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-ext.version_base = '2.0.29'
+ext.version_base = '2.0.30'
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -49,21 +49,22 @@ configurations.all {
     }
   }
 
-repositories
-        {
-            mavenLocal()
-            mavenCentral()
-            maven {
-                url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
-                credentials(HttpHeaderCredentials) {
-                    name = "Private-Token"
-                    value = project.ext.properties.gitlab_private_token
-                }
-                authentication {
-                    header( HttpHeaderAuthentication )
-                }
-            }
+repositories {
+    mavenLocal()
+    maven {
+        url "https://gitlab.ebi.ac.uk/api/v4/groups/enasequence/-/packages/maven"
+
+        credentials(HttpHeaderCredentials) {
+            name = "Private-Token"
+            value = gitlab_private_token
         }
+        authentication {
+            header( HttpHeaderAuthentication )
+        }
+
+    }
+    mavenCentral()
+}
 
 dependencies
         {
@@ -78,6 +79,7 @@ dependencies
             compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
             compile 'org.apache.commons:commons-compress:1.10'
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
+            compile group: 'uk.ac.ebi.ena.model', name: 'ena-models', version: '1.0.0'
             testCompile 'org.easymock:easymock:3.1'
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.7')
         }
