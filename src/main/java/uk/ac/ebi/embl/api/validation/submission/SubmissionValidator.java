@@ -7,16 +7,20 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-import uk.ac.ebi.ena.api.SubmissionInterface;
-import uk.ac.ebi.ena.model.manifest.GenomeManifest;
-import uk.ac.ebi.ena.model.manifest.Manifest;
-import uk.ac.ebi.ena.model.reference.Attribute;
+
+import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
+import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.util.Optional;
 
-public class SubmissionValidator implements SubmissionInterface {
+public class SubmissionValidator implements Validator {
 
-    SubmissionOptions options;
+    private SubmissionOptions options;
 
     public SubmissionValidator() {
 
@@ -30,60 +34,122 @@ public class SubmissionValidator implements SubmissionInterface {
         new SubmissionValidationPlan(options).execute();
     }
 
+    /**
+     * Manifest to SubmissionOptions mapping.This is only for webin-cli.
+     * @param manifest
+     * @return
+     */
     @Override
-    public void validate(Manifest manifest) throws ValidationEngineException{
+    public ValidationResponse validate(Manifest manifest) {
+        ValidationResponse response = new ValidationResponse(ValidationResponse.status.VALIDATION_SUCCESS);
+        try {
+            options = mapManifestToSubmissionOptions(manifest);
+            validate();
+        } catch (ValidationEngineException vee) {
+            switch (vee.getErrorType()) {
+                case VALIDATION_ERROR:
+                    response.setStatus(ValidationResponse.status.VALIDATION_ERROR);
+                    response.addMessage(vee.getMessage());
+                    break;
+                default:
+                    throw new RuntimeException(vee);
+            }
+        }
+        return response;
+    }
 
-        GenomeManifest gManifest = (GenomeManifest) manifest;
-        SubmissionOptions submissionOptions = new SubmissionOptions();
-        submissionOptions.context = Optional.of( Context.genome );
+
+    SubmissionOptions mapManifestToSubmissionOptions(Manifest manifest) throws ValidationEngineException {
+        if(manifest == null)
+            throw new ValidationEngineException("Manifest can not be null.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+        if(manifest.getReportDir() == null ) {
+            throw new ValidationEngineException("Report directory is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+        }
+        if(manifest.getProcessDir() == null ) {
+            throw new ValidationEngineException("Process directory is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+        }
+        SubmissionOptions options = new SubmissionOptions();
+        //Set all common options
         AssemblyInfoEntry assemblyInfo = new AssemblyInfoEntry();
         MasterSourceFeatureUtils sourceUtils = new MasterSourceFeatureUtils();
-        SubmissionFiles submissionFiles = new SubmissionFiles();
 
-        assemblyInfo.setName( gManifest.getName() );
-        assemblyInfo.setAssemblyType( gManifest.getAssemblyType() );
-        assemblyInfo.setPlatform( gManifest.getPlatform() );
-        assemblyInfo.setProgram( gManifest.getProgram() );
-        assemblyInfo.setMoleculeType( gManifest.getMoleculeType());
-        assemblyInfo.setCoverage( gManifest.getCoverage() );
-        assemblyInfo.setMinGapLength( gManifest.getMinGapLength());
-        assemblyInfo.setTpa(gManifest.isTpa());
-        assemblyInfo.setAuthors(gManifest.getAuthors());
-        assemblyInfo.setAddress(gManifest.getAddress());
+        assemblyInfo.setName(manifest.getName());
+        assemblyInfo.setAuthors(manifest.getAuthors());
+        assemblyInfo.setAddress(manifest.getAddress());
 
-        if (gManifest.getStudy() != null) {
-            assemblyInfo.setStudyId(gManifest.getStudy().getBioProjectId());
-            if (gManifest.getStudy().getLocusTags()!= null) {
-                submissionOptions.locusTagPrefixes = Optional.of(gManifest.getStudy().getLocusTags());
+        if (manifest.getStudy() != null) {
+            assemblyInfo.setStudyId(manifest.getStudy().getBioProjectId());
+            if (manifest.getStudy().getLocusTags() != null) {
+                options.locusTagPrefixes = Optional.of(manifest.getStudy().getLocusTags());
             }
         }
-        if (gManifest.getSample() != null) {
-            assemblyInfo.setBiosampleId(gManifest.getSample().getBioSampleId());
+        if (manifest.getSample() != null) {
+            assemblyInfo.setBiosampleId(manifest.getSample().getBioSampleId());
 
             SourceFeature sourceFeature = new FeatureFactory().createSourceFeature();
-            sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(gManifest.getSample().getTaxId()));
-            sourceFeature.setScientificName(gManifest.getSample().getOrganism());
-            for (Attribute attribute: gManifest.getSample().getAttributes()) {
+            sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
+            sourceFeature.setScientificName(manifest.getSample().getOrganism());
+            for (Attribute attribute : manifest.getSample().getAttributes()) {
                 sourceUtils.addSourceQualifier(attribute.getName(), attribute.getValue(), sourceFeature);
             }
-            sourceUtils.addExtraSourceQualifiers(sourceFeature, new TaxonHelperImpl(), gManifest.getName());
-            submissionOptions.source = Optional.of( sourceFeature );
+            sourceUtils.addExtraSourceQualifiers(sourceFeature, new TaxonHelperImpl(), manifest.getName());
+            options.source = Optional.of(sourceFeature);
+        }
+        options.isRemote = true;
+        options.ignoreErrors = manifest.isIgnoreErrors();
+        options.reportDir = Optional.of(manifest.getReportDir().getAbsolutePath());
+        options.processDir = Optional.of(manifest.getProcessDir().getAbsolutePath());
+
+        //Set options specific to context
+        if(manifest instanceof GenomeManifest) {
+            options.context = Optional.of(Context.genome);
+            options.submissionFiles = Optional.of(setGenomeOptions((GenomeManifest)manifest, assemblyInfo));
+        } else if(manifest instanceof TranscriptomeManifest) {
+            options.context = Optional.of(Context.transcriptome);
+            options.submissionFiles = Optional.of(setTranscriptomeOptions((TranscriptomeManifest)manifest, assemblyInfo));
+        } else {
+            options.context = Optional.of(Context.sequence);
+            options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
         }
 
-        gManifest.files().get(GenomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile( new SubmissionFile( SubmissionFile.FileType.FASTA, file.getFile() )));
-        gManifest.files().get(GenomeManifest.FileType.AGP).forEach(file -> submissionFiles.addFile( new SubmissionFile( SubmissionFile.FileType.AGP,file.getFile() )));
-        gManifest.files().get(GenomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile( new SubmissionFile( SubmissionFile.FileType.FLATFILE, file.getFile() )));
-        gManifest.files().get(GenomeManifest.FileType.CHROMOSOME_LIST).forEach(file -> submissionFiles.addFile( new SubmissionFile( SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile() )));
-        gManifest.files().get(GenomeManifest.FileType.UNLOCALISED_LIST).forEach(file -> submissionFiles.addFile( new SubmissionFile( SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile() )));
+        options.assemblyInfoEntry = Optional.of(assemblyInfo);
+        return options;
+    }
 
-        submissionOptions.assemblyInfoEntry = Optional.of( assemblyInfo );
-        submissionOptions.isRemote = true;
-        submissionOptions.ignoreErrors = gManifest.isIgnoreErrors();
-        submissionOptions.reportDir = Optional.of(gManifest.getReportDir().getAbsolutePath());
-        submissionOptions.processDir = Optional.of( gManifest.getProcessDir().getAbsolutePath());
-        submissionOptions.submissionFiles = Optional.of( submissionFiles );
+    private SubmissionFiles setGenomeOptions(GenomeManifest manifest, AssemblyInfoEntry assemblyInfo) {
+        assemblyInfo.setAssemblyType(manifest.getAssemblyType());
+        assemblyInfo.setPlatform(manifest.getPlatform());
+        assemblyInfo.setProgram(manifest.getProgram());
+        assemblyInfo.setMoleculeType(manifest.getMoleculeType());
+        assemblyInfo.setCoverage(manifest.getCoverage());
+        assemblyInfo.setMinGapLength(manifest.getMinGapLength());
+        assemblyInfo.setTpa(manifest.isTpa());
 
-        this.options = submissionOptions;
-        validate();
+        SubmissionFiles submissionFiles = new SubmissionFiles();
+        manifest.files().get(GenomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile())));
+        manifest.files().get(GenomeManifest.FileType.AGP).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.AGP, file.getFile())));
+        manifest.files().get(GenomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
+        manifest.files().get(GenomeManifest.FileType.CHROMOSOME_LIST).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile())));
+        manifest.files().get(GenomeManifest.FileType.UNLOCALISED_LIST).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile())));
+        return submissionFiles;
+    }
+
+    private SubmissionFiles setSequenceOptions(SequenceManifest manifest) {
+        SubmissionFiles submissionFiles = new SubmissionFiles();
+        manifest.files().get(SequenceManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
+        manifest.files().get(SequenceManifest.FileType.TAB).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.TSV, file.getFile())));
+        return submissionFiles;
+    }
+
+    private SubmissionFiles setTranscriptomeOptions(TranscriptomeManifest manifest, AssemblyInfoEntry assemblyInfo) {
+        assemblyInfo.setName(manifest.getName());
+        assemblyInfo.setPlatform(manifest.getPlatform());
+        assemblyInfo.setProgram(manifest.getProgram());
+        assemblyInfo.setTpa(manifest.isTpa());
+
+        SubmissionFiles submissionFiles = new SubmissionFiles();
+        manifest.files().get(TranscriptomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile())));
+        manifest.files().get(TranscriptomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
+        return submissionFiles;
     }
 }

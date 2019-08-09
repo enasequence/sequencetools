@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.ac.ebi.ena.sequence</groupId>
   <artifactId>sequencetools</artifactId>
-  <version>2.0.30</version>
+  <version>2.0.31-snapshot7</version>
   <inceptionYear>2019</inceptionYear>
   <licenses>
     <license>
@@ -75,9 +75,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>uk.ac.ebi.ena.model</groupId>
-      <artifactId>ena-models</artifactId>
-      <version>1.0.0</version>
+      <groupId>uk.ac.ebi.ena.webin-cli</groupId>
+      <artifactId>webin-cli-validator</artifactId>
+      <version>1.0.1-snapshot4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
