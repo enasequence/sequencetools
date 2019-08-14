@@ -75,13 +75,16 @@ public class DataclassFix extends EntryValidationCheck
 
 	public ValidationResult check(Entry entry) throws ValidationEngineException
 	{
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
-		result = new ValidationResult();
-
-		if (entry == null)
-		{
+		if (entry == null) {
 			return result;
 		}
+
+		if (entry.getDataClass() != null && Entry.CON_DATACLASS.equals(entry.getDataClass())) {
+			return result;
+		}
+
+		DataSet dataSet = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
+		result = new ValidationResult();
 
 		String dataclass = entry.getDataClass();
 		String accession = entry.getPrimaryAccession();
