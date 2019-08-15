@@ -71,38 +71,34 @@ public class EntryContigsCheck extends EntryValidationCheck
 			return result;
 		
 		
-		for (Location location : entry.getSequence().getContigs())
-		{
-			if(!(location instanceof RemoteLocation) &&!(location instanceof Gap) )
-			{
-				StringBuilder locationString=new StringBuilder();
+		for (Location location : entry.getSequence().getContigs()) {
+			if (!(location instanceof RemoteLocation) && !(location instanceof Gap)) {
+				StringBuilder locationString = new StringBuilder();
 				LocationToStringCoverter.renderLocation(locationString, location, false, false);
 				reportError(location.getOrigin(), CONTIG_LOCATION_MESSAGE_ID_1, locationString);
 			}
-			if (location instanceof RemoteLocation)
-			{
-				RemoteLocation remoteLocation = (RemoteLocation) location;
-				String accession = remoteLocation.getAccession() + (remoteLocation.getVersion() == null ? "" : "." + remoteLocation.getVersion());
-				try
-				{
-					if (!getEntryDAOUtils().isEntryExists(accession))
-					{
-						reportError(location.getOrigin(), CONTIG_EXISTS_MESSAGE_ID, accession);
-						continue;
-					}
+			if (!getEmblEntryValidationPlanProperty().ncbiCon.get()) {
 
-					// contig entry location check
-					Long seqLength = getEntryDAOUtils().getSequenceLength(accession);
+				if (location instanceof RemoteLocation) {
+					RemoteLocation remoteLocation = (RemoteLocation) location;
+					String accession = remoteLocation.getAccession() + (remoteLocation.getVersion() == null ? "" : "." + remoteLocation.getVersion());
+					try {
+						if (!getEntryDAOUtils().isEntryExists(accession)) {
+							reportError(location.getOrigin(), CONTIG_EXISTS_MESSAGE_ID, accession);
+							continue;
+						}
 
-					if (location.getBeginPosition() < 0 || location.getIntBeginPosition() > seqLength || location.getEndPosition() > seqLength || location.getEndPosition() < 0)
-					{
-						StringBuilder locationBlock = new StringBuilder();
-						LocationToStringCoverter.renderLocation(locationBlock, location, false, false);
-						reportError(location.getOrigin(), CONTIG_LOCATION_MESSAGE_ID, locationBlock, accession);
+						// contig entry location check
+						Long seqLength = getEntryDAOUtils().getSequenceLength(accession);
+
+						if (location.getBeginPosition() < 0 || location.getIntBeginPosition() > seqLength || location.getEndPosition() > seqLength || location.getEndPosition() < 0) {
+							StringBuilder locationBlock = new StringBuilder();
+							LocationToStringCoverter.renderLocation(locationBlock, location, false, false);
+							reportError(location.getOrigin(), CONTIG_LOCATION_MESSAGE_ID, locationBlock, accession);
+						}
+					} catch (SQLException e) {
+						throw new ValidationEngineException(e);
 					}
-				} catch (SQLException e)
-				{
-					throw new ValidationEngineException(e);
 				}
 			}
 		}

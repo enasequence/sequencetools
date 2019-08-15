@@ -29,4 +29,5 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Boolean> isFixCds = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<Boolean> ignore_errors = new ValidationPlanProperty<Boolean>(false);
 	public final ValidationPlanProperty<Integer> sequenceNumber = new ValidationPlanProperty<Integer>(0);
+	public final ValidationPlanProperty<Boolean> ncbiCon = new ValidationPlanProperty<Boolean>(false);
 }
