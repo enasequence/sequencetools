@@ -20,15 +20,18 @@ import static org.junit.Assert.assertEquals;
 public class SubmissionValidatorTest {
     @Test
     public void testMapGenomeManifestToSubmissionOptions() throws ValidationEngineException {
+        String fasta = "/home/abc/fastaFile.fa";
+        String agp = "/home/abc/agpFile.agp";
+        String unlocalised = "/home/abc/unlocalisedListFile.txt";
         Manifest manifest = new GenomeManifest();
         manifest.setName("test_manifest");
         SubmissionFiles<GenomeManifest.FileType> submissionFiles = new SubmissionFiles<>();
-        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.FASTA, new File("fastaFile")));
-        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.AGP, new File("agpFile")));
-        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.UNLOCALISED_LIST, new File("unlocalisedListFile")));
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.FASTA, new File(fasta),new File(fasta+".report")));
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.AGP, new File(agp),  new File(agp+".report")));
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.UNLOCALISED_LIST, new File(unlocalised), new File(unlocalised+".report")));
         manifest.setFiles(submissionFiles);
 
-        manifest.setReportDir(new File("/home/reports"));
+        manifest.setReportFile(new File("/home/reports/other_reports.report"));
         manifest.setProcessDir(new File("/home/process"));
         Sample sample = new Sample();
         sample.setBioSampleId("SAM1234");
@@ -63,6 +66,19 @@ public class SubmissionValidatorTest {
         SourceFeature source = options.source.get();
         assertEquals("9606",source.getSingleQualifier(Qualifier.DB_XREF_QUALIFIER_NAME).getValue());
         assertEquals("Homo sapiens", source.getScientificName());
+        for(uk.ac.ebi.embl.api.validation.submission.SubmissionFile f : options.submissionFiles.get().getFiles()){
+            switch(f.getFileType()) {
+                case FASTA:
+                    assertEquals(f.getReportFile().getAbsolutePath(), new File(fasta+".report").getAbsolutePath());
+                    break;
+                case AGP:
+                    assertEquals(f.getReportFile().getAbsolutePath(), new File(agp+".report").getAbsolutePath());
+                    break;
+                case UNLOCALISED_LIST:
+                    assertEquals(f.getReportFile().getAbsolutePath(), new File(unlocalised+".report").getAbsolutePath());
+                    break;
+            }
+        }
     }
 
 

@@ -16,6 +16,7 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
+import java.io.File;
 import java.util.Optional;
 
 public class SubmissionValidator implements Validator {
@@ -37,7 +38,7 @@ public class SubmissionValidator implements Validator {
     /**
      * Manifest to SubmissionOptions mapping.This is only for webin-cli.
      * @param manifest
-     * @return
+     * @return ValidationResponse
      */
     @Override
     public ValidationResponse validate(Manifest manifest) {
@@ -62,8 +63,8 @@ public class SubmissionValidator implements Validator {
     SubmissionOptions mapManifestToSubmissionOptions(Manifest manifest) throws ValidationEngineException {
         if(manifest == null)
             throw new ValidationEngineException("Manifest can not be null.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
-        if(manifest.getReportDir() == null ) {
-            throw new ValidationEngineException("Report directory is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+        if(manifest.getReportFile() == null ) {
+            throw new ValidationEngineException("Report file is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
         }
         if(manifest.getProcessDir() == null ) {
             throw new ValidationEngineException("Process directory is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
@@ -97,7 +98,8 @@ public class SubmissionValidator implements Validator {
         }
         options.isRemote = true;
         options.ignoreErrors = manifest.isIgnoreErrors();
-        options.reportDir = Optional.of(manifest.getReportDir().getAbsolutePath());
+        options.reportDir = Optional.of(new File(manifest.getReportFile().getAbsolutePath()).getParent());
+        options.reportFile = Optional.of(manifest.getReportFile());
         options.processDir = Optional.of(manifest.getProcessDir().getAbsolutePath());
 
         //Set options specific to context
@@ -126,18 +128,25 @@ public class SubmissionValidator implements Validator {
         assemblyInfo.setTpa(manifest.isTpa());
 
         SubmissionFiles submissionFiles = new SubmissionFiles();
-        manifest.files().get(GenomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile())));
-        manifest.files().get(GenomeManifest.FileType.AGP).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.AGP, file.getFile())));
-        manifest.files().get(GenomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
-        manifest.files().get(GenomeManifest.FileType.CHROMOSOME_LIST).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile())));
-        manifest.files().get(GenomeManifest.FileType.UNLOCALISED_LIST).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile())));
+        manifest.files().get(GenomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(), new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(GenomeManifest.FileType.AGP).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.AGP, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(GenomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(GenomeManifest.FileType.CHROMOSOME_LIST).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(GenomeManifest.FileType.UNLOCALISED_LIST).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
         return submissionFiles;
     }
 
     private SubmissionFiles setSequenceOptions(SequenceManifest manifest) {
         SubmissionFiles submissionFiles = new SubmissionFiles();
-        manifest.files().get(SequenceManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
-        manifest.files().get(SequenceManifest.FileType.TAB).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.TSV, file.getFile())));
+        manifest.files().get(SequenceManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(SequenceManifest.FileType.TAB).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.TSV, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
         return submissionFiles;
     }
 
@@ -148,8 +157,10 @@ public class SubmissionValidator implements Validator {
         assemblyInfo.setTpa(manifest.isTpa());
 
         SubmissionFiles submissionFiles = new SubmissionFiles();
-        manifest.files().get(TranscriptomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile())));
-        manifest.files().get(TranscriptomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile())));
+        manifest.files().get(TranscriptomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+        manifest.files().get(TranscriptomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
         return submissionFiles;
     }
 }

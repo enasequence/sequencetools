@@ -53,7 +53,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 	       options.source= Optional.of(getSource());
 	       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 	       options.isRemote = true;
-
+		   options.isDevMode = true;
 	   }
 
 		@Test
@@ -67,7 +67,6 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
 			options.processDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
-
 			options.init();
 			AGPFileValidationCheck check = new AGPFileValidationCheck(options);
 			try {

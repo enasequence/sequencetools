@@ -43,6 +43,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	       options.source= Optional.of(getSource());
 	       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 	       options.isRemote = true;
+		   options.isDevMode = true;
 	   }
 		
 		@Test

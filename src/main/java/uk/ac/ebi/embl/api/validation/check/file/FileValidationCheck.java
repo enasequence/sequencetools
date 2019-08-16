@@ -129,7 +129,7 @@ public abstract class FileValidationCheck {
 
 	public SubmissionReporter getReporter()
 	{
-		HashSet<Severity> severity = new HashSet<Severity>();
+		HashSet<Severity> severity = new HashSet<>();
 		severity.add(Severity.ERROR);
 		if(reporter==null)
 			return new DefaultSubmissionReporter(severity);

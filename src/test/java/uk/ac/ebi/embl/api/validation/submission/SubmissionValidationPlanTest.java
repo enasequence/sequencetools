@@ -30,15 +30,15 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
     SubmissionOptions options =null;
     @Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Before
-	public void init()
-	{
-       options = new SubmissionOptions();
-       options.isRemote = true;
-	   options.assemblyInfoEntry =Optional.of(getAssemblyinfoEntry());
-	   options.source = Optional.of(getSource());
-	   options.ignoreErrors = true;
+	public void init() {
+		options = new SubmissionOptions();
+		options.isRemote = true;
+		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
+		options.source = Optional.of(getSource());
+		options.ignoreErrors = true;
+		options.isDevMode = true;
 	}
 
 	@Test

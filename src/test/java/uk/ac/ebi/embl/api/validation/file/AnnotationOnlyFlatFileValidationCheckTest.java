@@ -50,6 +50,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.source= Optional.of(getSource());
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 		options.isRemote = true;
+		options.isDevMode = true;
 	}
 
 	@Test

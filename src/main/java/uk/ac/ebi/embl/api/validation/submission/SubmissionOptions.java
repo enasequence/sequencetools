@@ -25,6 +25,7 @@ public class SubmissionOptions
 	public  Optional<String> reportDir = Optional.empty();
 	public  Optional<Integer> minGapLength = Optional.empty();
 	public  Optional<String> processDir = Optional.empty();
+	public  Optional<File> reportFile = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 		
 	public  boolean isDevMode = false;
@@ -56,8 +57,16 @@ public class SubmissionOptions
 		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
-		if(!(new File(reportDir.get())).isDirectory())
-			throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
+		if(!isRemote || isDevMode) {
+			if (!(new File(reportDir.get())).isDirectory())
+				throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
+        } else {
+			for(SubmissionFile file: submissionFiles.get().getFiles()) {
+				if(file.getReportFile() == null ) {
+					throw new ValidationEngineException("SubmissionOptions:reportFile is mandatory for each file.");
+				}
+			}
+        }
 		if(!analysisId.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
 		if(!processDir.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))

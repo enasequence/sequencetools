@@ -22,6 +22,8 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +31,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
+import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
@@ -42,6 +45,7 @@ import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
@@ -126,18 +130,20 @@ public class SubmissionValidationPlan
 			}	else {
 				writeSequenceInfo();
 			}
-		}catch(ValidationEngineException e)
-		{
+		} catch (ValidationEngineException e) {
 			try {
-				if(!options.isRemote && options.context.isPresent() && options.context.get() == Context.genome && check!=null&&check.getMessageStats()!=null)
-					check.getReporter().writeToFile(Paths.get(options.reportDir.get()),check.getMessageStats());
-			}catch(Exception ex)
-			{
-				e = new ValidationEngineException(e.getMessage()+"\n Failed to write error message stats: "+ex.getMessage(),e);
+				if (options.reportFile.isPresent()) {
+					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
+							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage());
+				}
+				if (!options.isRemote && options.context.isPresent() && options.context.get() == Context.genome && check != null && check.getMessageStats() != null)
+					check.getReporter().writeToFile(Paths.get(options.reportDir.get()), check.getMessageStats());
+			} catch (Exception ex) {
+				e = new ValidationEngineException(e.getMessage() + "\n Failed to write error message stats: " + ex.getMessage(), e);
 				e.setErrorType(e.getErrorType());
 			}
 			throw e;
-		}finally {
+		} finally {
 			if (sequenceDB != null)
 				sequenceDB.close();
 			if (contigDB != null)
