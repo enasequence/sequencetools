@@ -19,6 +19,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -44,6 +45,7 @@ public class Assembly_gapFeatureCheck extends EntryValidationCheck
 	protected static final String LINKAGE_EVIDENCE_NOTALLOWED_MESSAGE = "Assembly_gapFeatureCheck_6";
 	protected static final String INVALID_LOCATION_MESSAGE = "Assembly_gapFeatureCheck_7";
 	protected static final String INVALID_QUALIFIER_MESSAGE = "Assembly_gapFeatureCheck_8";
+	protected static final String INVALID_GAP_TYPE = "InvalidGapType";
 
 	public Assembly_gapFeatureCheck()
 	{
@@ -95,6 +97,9 @@ public class Assembly_gapFeatureCheck extends EntryValidationCheck
 			Qualifier gap_typeQualifier = assemblygapFeature.getSingleQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
 			boolean linkageEvidenceExists = (!assemblygapFeature.getQualifiers(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME).isEmpty());
 			boolean isTsa = entry.getDataClass()!=null&&entry.getDataClass().equals(Entry.TSA_DATACLASS);
+			if(!GlobalDataSets.gapType.containsKey(gap_typeQualifier.getValue())) {
+				reportError(assemblygapFeature.getOrigin(), INVALID_GAP_TYPE, gap_typeQualifier.getValue());
+			}
 			/*
 			 * mandatory qualifiers for assembly_gaps in TSAs :
 			 * ====================================== 
