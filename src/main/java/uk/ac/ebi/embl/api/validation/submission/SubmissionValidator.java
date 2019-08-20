@@ -4,10 +4,13 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
+import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
@@ -17,6 +20,8 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 
 public class SubmissionValidator implements Validator {
@@ -50,9 +55,10 @@ public class SubmissionValidator implements Validator {
             switch (vee.getErrorType()) {
                 case VALIDATION_ERROR:
                     response.setStatus(ValidationResponse.status.VALIDATION_ERROR);
-                    response.addMessage(vee.getMessage());
                     break;
                 default:
+                    new DefaultSubmissionReporter(new HashSet<>(Collections.singletonList(Severity.ERROR))).
+                            writeToFile(manifest.getReportFile(), Severity.ERROR, vee.getMessage());
                     throw new RuntimeException(vee);
             }
         }
@@ -66,7 +72,9 @@ public class SubmissionValidator implements Validator {
         if(manifest.getReportFile() == null ) {
             throw new ValidationEngineException("Report file is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
         }
+        DefaultSubmissionReporter reporter = new DefaultSubmissionReporter(new HashSet<>(Collections.singletonList(Severity.ERROR)));
         if(manifest.getProcessDir() == null ) {
+            reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, "Process directory is missing.");
             throw new ValidationEngineException("Process directory is missing.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
         }
         SubmissionOptions options = new SubmissionOptions();
@@ -104,6 +112,10 @@ public class SubmissionValidator implements Validator {
 
         //Set options specific to context
         if(manifest instanceof GenomeManifest) {
+            if(!new AssemblyInfoNameCheck().isValidName(manifest.getName())) {
+                reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, "Invalid assembly name:"+manifest.getName());
+                throw new ValidationEngineException("Invalid assembly name:"+manifest.getName(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            }
             options.context = Optional.of(Context.genome);
             options.submissionFiles = Optional.of(setGenomeOptions((GenomeManifest)manifest, assemblyInfo));
         } else if(manifest instanceof TranscriptomeManifest) {
@@ -113,7 +125,6 @@ public class SubmissionValidator implements Validator {
             options.context = Optional.of(Context.sequence);
             options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
         }
-
         options.assemblyInfoEntry = Optional.of(assemblyInfo);
         return options;
     }

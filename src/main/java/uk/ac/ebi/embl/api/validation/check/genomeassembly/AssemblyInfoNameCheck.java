@@ -51,4 +51,8 @@ public class AssemblyInfoNameCheck extends GenomeAssemblyValidationCheck<Assembl
 		return result;
 	}
 
+	public boolean isValidName(String name) {
+   		return name != null && !name.trim().isEmpty() && assemblyNamePattern.matcher(name).matches();
+	}
+
 }

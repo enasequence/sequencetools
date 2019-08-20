@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SubmissionValidatorTest {
     @Test
@@ -81,5 +82,43 @@ public class SubmissionValidatorTest {
         }
     }
 
+    @Test(expected = ValidationEngineException.class)
+    public void testInvalidAssemblyNameInManifest() throws ValidationEngineException {
+        String fasta = "/home/abc/fastaFile.fa";
+        String agp = "/home/abc/agpFile.agp";
+        String unlocalised = "/home/abc/unlocalisedListFile.txt";
+        Manifest manifest = new GenomeManifest();
+        //Invalid anme
+        manifest.setName("test_%smanifest");
+        SubmissionFiles<GenomeManifest.FileType> submissionFiles = new SubmissionFiles<>();
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.FASTA, new File(fasta),new File(fasta+".report")));
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.AGP, new File(agp),  new File(agp+".report")));
+        submissionFiles.add(new SubmissionFile( GenomeManifest.FileType.UNLOCALISED_LIST, new File(unlocalised), new File(unlocalised+".report")));
+        manifest.setFiles(submissionFiles);
+
+        manifest.setReportFile(new File("/home/reports/other_reports.report"));
+        manifest.setProcessDir(new File("/home/process"));
+        Sample sample = new Sample();
+        sample.setBioSampleId("SAM1234");
+        sample.setOrganism("Homo sapiens");
+        sample.setTaxId(9606);
+        manifest.setSample(sample);
+
+        Study study = new Study();
+        study.setBioProjectId("PRJ1234");
+        study.setLocusTags(Collections.singletonList("SPLJ"));
+        manifest.setStudy(study);
+
+        ((GenomeManifest) manifest).setAssemblyType("SEQUENCE_ASSEMBLY");
+        ((GenomeManifest) manifest).setMoleculeType("genomic DNA");
+        manifest.setAddress("wellcome genome campus");
+        manifest.setAuthors("Senthil.V");
+        try {
+            new SubmissionValidator().mapManifestToSubmissionOptions(manifest);
+        } catch( ValidationEngineException e) {
+            assertTrue(e.getMessage().contains("Invalid assembly name"));
+            throw e;
+        }
+    }
 
 }
