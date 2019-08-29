@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -450,8 +451,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address, " +
-			"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/RUN_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS run_ref, " +
-			"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/ANALYSIS_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS analysis_ref, " +
+			"XMLSERIALIZE(CONTENT xmlquery('/ANALYSIS_SET/ANALYSIS/RUN_REF/IDENTIFIERS/PRIMARY_ID' PASSING analysis_xml  RETURNING CONTENT) ) AS run_ref, " +
+			"XMLSERIALIZE(CONTENT xmlquery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_REF/IDENTIFIERS/PRIMARY_ID' PASSING analysis_xml  RETURNING CONTENT) ) AS analysis_ref, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/DESCRIPTION/text()' PASSING analysis_xml RETURNING CONTENT)) description " +
 			"from analysis a " +
 			"join analysis_sample asam on (asam.analysis_id=a.analysis_id) " +
@@ -594,11 +595,13 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	private void setXrefs(String refs, Entry masterEntry) {
-
-		if (StringUtils.isNotBlank(refs) ) {
-			String[] runRefArr = refs.split(",");
-			for(String runRef: runRefArr) {
-				masterEntry.addXRef(new XRef("ENA", runRef));
+		if (StringUtils.isNotBlank(refs)) {
+			String patternS = "<PRIMARY_ID>(.*)<\\/PRIMARY_ID>";
+			Pattern p = Pattern.compile(patternS);
+			Matcher m = p.matcher(refs);
+			while (m.find()) {
+				masterEntry.addXRef(new XRef("ENA", m.group(1)));
+				System.out.println(m.group(1));
 			}
 		}
 	}

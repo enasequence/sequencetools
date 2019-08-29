@@ -97,7 +97,7 @@ public class Assembly_gapFeatureCheck extends EntryValidationCheck
 			Qualifier gap_typeQualifier = assemblygapFeature.getSingleQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
 			boolean linkageEvidenceExists = (!assemblygapFeature.getQualifiers(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME).isEmpty());
 			boolean isTsa = entry.getDataClass()!=null&&entry.getDataClass().equals(Entry.TSA_DATACLASS);
-			if(!GlobalDataSets.gapType.containsKey(gap_typeQualifier.getValue())) {
+			if(gap_typeQualifier != null && !GlobalDataSets.gapType.containsKey(gap_typeQualifier.getValue())) {
 				reportError(assemblygapFeature.getOrigin(), INVALID_GAP_TYPE, gap_typeQualifier.getValue());
 			}
 			/*

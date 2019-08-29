@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Assembly_gapFeatureCheckTest {
@@ -125,7 +126,7 @@ public class Assembly_gapFeatureCheckTest {
 		entry.getSequence().addContigs(location1.getLocations());
 		entry.getSequence().addContigs(location2.getLocations());
 		ValidationResult validationResult = check.check(entry);
-		assertTrue(validationResult.isValid());//but it will give QualifierCheck-4 error
+		assertFalse(validationResult.isValid());//but it will give QualifierCheck-4 error
 	}
 	@Test
 	public void testCheck_assembly_gap_feature() {
