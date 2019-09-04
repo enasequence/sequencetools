@@ -131,6 +131,7 @@ public class SubmissionValidationPlan
 				writeSequenceInfo();
 			}
 		} catch (ValidationEngineException e) {
+			String msg = (e.getCause() != null && e.getCause().getMessage() != null) ? e.getMessage()+":"+e.getCause().getMessage():e.getMessage();
 			try {
 				if (options.reportFile.isPresent()) {
 					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))

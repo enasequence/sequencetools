@@ -601,7 +601,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			Matcher m = p.matcher(refs);
 			while (m.find()) {
 				masterEntry.addXRef(new XRef("ENA", m.group(1)));
-				System.out.println(m.group(1));
 			}
 		}
 	}

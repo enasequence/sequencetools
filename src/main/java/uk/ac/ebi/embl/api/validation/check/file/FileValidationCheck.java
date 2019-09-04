@@ -74,7 +74,7 @@ public abstract class FileValidationCheck {
 	public static HashSet<String> entryNames = new HashSet<String>();
 	public static Set<String> agpEntryNames =new HashSet<>();
 	public static Set<String> unplacedEntryNames =new HashSet<>();
-	public static Set<String> unlocalisedEntryNames =new HashSet<>();
+	public static Set<String> unlocalisedEntryNames = new HashSet<>();
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
@@ -159,12 +159,15 @@ public abstract class FileValidationCheck {
 		if(reportfilePath!=null)
 			Files.deleteIfExists(reportfilePath);
 	}
-	protected ValidationScope getValidationScope(String entryName1)
+	protected ValidationScope getValidationScope(String entryName1) throws ValidationEngineException
 	{
 		switch (options.context.get()) {
 			case genome:
 				final String entryNameUpper = entryName1.toUpperCase();
 				if (chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
+					if(unlocalisedEntryNames.contains(entryNameUpper) ) {
+						throw new ValidationEngineException("Sequence can not exist in both chromosome and unlocalised list");
+					}
 					return ValidationScope.ASSEMBLY_CHROMOSOME;
 				}
 

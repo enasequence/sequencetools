@@ -15,18 +15,16 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
-import java.util.List;
-
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+
+import java.util.List;
 
 @Description(
         "Locations swapped from - ({0},{1}) to ({1},{0}) and made complement")
@@ -53,7 +51,13 @@ public class FeatureLocationFix extends FeatureValidationCheck {
         }
         
 
-        List<Location> locations = compoundLocation.getLocations();
+        List<Location> locations = compoundLocation.getLocations();//TODO
+
+        if (locations.size() > 1 && !compoundLocation.isComplement()) {
+            if (locations.stream().allMatch(Location::isComplement)) { //if all splits are complement,convert it to global complement
+                compoundLocation.setGlobalComplement();
+            }
+        }
 
         for (Location location : locations) {
 

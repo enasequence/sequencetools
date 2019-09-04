@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 
-public class SubmissionValidator implements Validator {
+public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
     private SubmissionOptions options;
 
