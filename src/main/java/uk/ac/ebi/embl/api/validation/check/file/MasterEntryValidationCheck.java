@@ -151,7 +151,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		}
 		masterEntry.addFeature(source);
 		if(getOptions().context.get()==Context.genome)
-			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source, AnalysisType.SEQUENCE_ASSEMBLY)));
+			masterEntry.setDescription(new Text(SequenceEntryUtils.generateMasterEntryDescription(source, AnalysisType.SEQUENCE_ASSEMBLY , infoEntry.isTpa())));
 
 		if (StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {

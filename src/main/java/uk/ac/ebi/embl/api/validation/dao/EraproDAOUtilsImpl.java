@@ -443,6 +443,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String author = null;
 		String address = null;
 		Date firstCreated = null;
+		boolean isTpa = false;
 
 		String masterQuery = "select a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
 			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
@@ -525,6 +526,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				String tpa=masterInfoRs.getString("tpa");
 				if("true".equalsIgnoreCase(tpa))
 				{
+					isTpa = true;
 					EntryUtils.setKeyWords(masterEntry);
 				}
 				if(molType!=null&&taxonHelper.isChildOf(scientificName, "Viruses"))
@@ -588,7 +590,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
 		}
 		masterEntry.addFeature(sourceFeature);
-		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType);
+		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
 		masterEntry.setDescription(new Text(description));
 		masterCache.put(analysisId,masterEntry);
 		return masterEntry;

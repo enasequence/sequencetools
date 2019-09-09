@@ -671,7 +671,7 @@ public class SequenceEntryUtils {
 		return sourceQualifiers;
 	}
 	
-	public static String generateMasterEntryDescription(SourceFeature source, AnalysisType analysisType)
+	public static String generateMasterEntryDescription(SourceFeature source, AnalysisType analysisType, boolean isTpa)
 	{
 		
 		String strainValue=source.getSingleQualifierValue(Qualifier.STRAIN_QUALIFIER_NAME);
@@ -688,8 +688,8 @@ public class SequenceEntryUtils {
 		
 		String descriptionFormat="%s %s %s genome assembly";
 
-		if(analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
-			return scientificName;
+		if (analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
+			return isTpa ? Entry.TPA_DATACLASS + ": " + scientificName : Entry.TSA_DATACLASS + ": " + scientificName;
 		}
 
 		return includeStrain ?(String.format(descriptionFormat, scientificName,"strain",strainValue)):
