@@ -112,6 +112,19 @@ public class Linkage_evidenceFixTest
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(0, validationResult.count("LinkageEvidenceRemovalFix", Severity.FIX));
 	}
+	@Test
+	public void testCheckLinkageEvidenceWithGapTypeContamination() {
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		Qualifier gaptypQual = qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
+		gaptypQual.setValue("contamination");
+		feature.addQualifier(gaptypQual);
+		linkageEvidenceQual.setValue("align genus");
+		feature.addQualifier(linkageEvidenceQual);
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(1, validationResult.count("Linkage_evidenceFix_2", Severity.FIX));
+		assertEquals("unspecified", feature.getSingleQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME).getValue());
+	}
+
 
 	@Test
 	public void testCheckLinkageEvidenceWithValidGapType1() {

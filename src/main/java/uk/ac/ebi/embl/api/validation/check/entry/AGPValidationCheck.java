@@ -253,18 +253,16 @@ public class AGPValidationCheck extends EntryValidationCheck
 		
 		return result;
 	}
-	
-	private void validateLinkageCombination(AgpRow agpRow)
-	{
-		
-		if(agpRow.isGap())
-		{
-			if(agpRow.hasLinkage())
-			{
-			if(!agpRow.getGap_type().toLowerCase().equals("scaffold")&&!agpRow.getGap_type().toLowerCase().equals("repeat"))
-			{
-		         reportError(agpRow.getOrigin(),MESSAGE_KEY_INVALID_LINKAGE_ERROR,agpRow.getGap_type());		
-			}
+
+	private void validateLinkageCombination(AgpRow agpRow) {
+
+		if (agpRow.isGap()) {
+			if (agpRow.hasLinkage()) {
+				if (!agpRow.getGap_type().toLowerCase().equals("contamination")
+						&& !agpRow.getGap_type().toLowerCase().equals("scaffold")
+						&& !agpRow.getGap_type().toLowerCase().equals("repeat")) {
+					reportError(agpRow.getOrigin(), MESSAGE_KEY_INVALID_LINKAGE_ERROR, agpRow.getGap_type());
+				}
 			}
 		}
 	}

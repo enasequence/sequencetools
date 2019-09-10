@@ -30,7 +30,7 @@ public class GlobalDataSets {
         gapType.put("repeat within scaffold","repeat");
         gapType.put("unknown","unknown");
         gapType.put("repeat between scaffolds","repeat");
-        linkageEvidence.put("unspecified","na");
+        gapType.put("contamination","contamination");
         linkageEvidence.put("paired-ends","paired-ends");
         linkageEvidence.put("align genus","align_genus");
         linkageEvidence.put("align xgenus","align_xgenus");
@@ -41,6 +41,7 @@ public class GlobalDataSets {
         linkageEvidence.put("strobe","strobe");
         linkageEvidence.put("unspecified","unspecified");
         linkageEvidence.put("pcr","pcr");
+        linkageEvidence.put("proximity ligation", "proximity_ligation");
     }
 
     private GlobalDataSets(){

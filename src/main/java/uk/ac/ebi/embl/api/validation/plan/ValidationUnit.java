@@ -160,7 +160,6 @@ public enum ValidationUnit
 					Transl_exceptLocationFix.class,//exclude for master
 					ProteinIdRemovalFix.class,//exclude for master
 					LocusTagValueFix.class,//exclude for master
-					Linkage_evidenceFix.class,//exclude for master
 			   		TaxonomicDivisionNotQualifierFix.class,//include for all
 					AnticodonQualifierFix.class,//exclude for master
 	    			AgptoConFix.class,//excude for master
@@ -173,7 +172,8 @@ public enum ValidationUnit
 					//AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 	    		    JournalFix.class,//include for all
 	    		    AssemblyLevelEntryNameFix.class,
-	    		    GaptoAssemblyGapFeatureFix.class//exclude for master
+	    		    GaptoAssemblyGapFeatureFix.class,//exclude for master
+					Linkage_evidenceFix.class//exclude for master
 	        ),
 	
 	// GCS entry validation checks

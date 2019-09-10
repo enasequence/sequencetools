@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
-import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -31,8 +30,8 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 public class EntryUtils
 {
 	
-	static final HashMap<String, String> gapType= new HashMap<String, String>();
-	static final HashMap<String, String> linkageEvidence= new HashMap<String, String>();
+	public static final HashMap<String, String> gapType= new HashMap<>();
+	public static final HashMap<String, String> linkageEvidence= new HashMap<>();
 
 	static
 	{
@@ -45,6 +44,7 @@ public class EntryUtils
 		gapType.put("heterochromatin","heterochromatin");
 		gapType.put("telomere","telomere");
 		gapType.put("repeatwithLinkage","repeat within scaffold");
+		gapType.put("contamination","contamination");
 		linkageEvidence.put("pcr","pcr");
 		linkageEvidence.put("na","unspecified");
 		linkageEvidence.put("paired-ends","paired-ends");
@@ -56,6 +56,7 @@ public class EntryUtils
 		linkageEvidence.put("map","map");
 		linkageEvidence.put("strobe","strobe");
 		linkageEvidence.put("unspecified","unspecified");
+		linkageEvidence.put("proximity_ligation","proximity ligation");
     }
 	
 	public enum Topology
