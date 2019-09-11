@@ -687,6 +687,9 @@ public class SequenceEntryUtils {
 		boolean includeIsolate=!hasStrain&&hasIsolate&&!scientificName.toLowerCase().contains(isolateValue.toLowerCase());
 		
 		String descriptionFormat="%s %s %s genome assembly";
+		if(isTpa) {
+			descriptionFormat="TPA: %s %s %s genome assembly";
+		}
 
 		if (analysisType == AnalysisType.TRANSCRIPTOME_ASSEMBLY) {
 			return isTpa ? Entry.TPA_DATACLASS + ": " + scientificName : Entry.TSA_DATACLASS + ": " + scientificName;
