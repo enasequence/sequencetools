@@ -3,6 +3,7 @@ package uk.ac.ebi.embl.api.validation.dao;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -12,13 +13,14 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 public interface EraproDAOUtils
 {
 	Reference getSubmitterReference(String analysisId) throws SQLException,UnsupportedEncodingException;
-	public List<String> isAssemblyDuplicate(String analysisId) throws SQLException;
+	List<String> isAssemblyDuplicate(String analysisId) throws SQLException;
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
-	public List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
-	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
+	List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
+	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
 	Reference getReference(Entry entry , String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
-	public String getTemplateId(String analysisId) throws SQLException;
-	public class AssemblySubmissionInfo
+	String getTemplateId(String analysisId) throws SQLException;
+	Set<String> getLocusTags(String projectId) throws SQLException;
+	class AssemblySubmissionInfo
 	{
 		String studyId;
 		String projectId;

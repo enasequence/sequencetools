@@ -50,13 +50,14 @@ public class LocusTagPrefixCheck extends EntryValidationCheck {
             }
 
             // Get the registered locus tags for the project.
-            if (getEntryDAOUtils() == null) {
+            if (getEntryDAOUtils() == null && getEraproDAOUtils() == null) {
                 projectLocustagPrefixes.addAll(getEmblEntryValidationPlanProperty().locus_tag_prefixes.get());
             } else {
                 // The BioProject accession must be available in the flat file.
                 if (entry.getProjectAccessions() != null) {
                     for (Text projectAccession : entry.getProjectAccessions()) {
-                        HashSet<String> locusTagPrefixes = getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText());
+                        Set<String> locusTagPrefixes = getEraproDAOUtils() == null? getEntryDAOUtils().getProjectLocutagPrefix(projectAccession.getText()):
+                                getEraproDAOUtils().getLocusTags(projectAccession.getText());
                         if (!locusTagPrefixes.isEmpty()) {
                             projectLocustagPrefixes.addAll(locusTagPrefixes);
                         }

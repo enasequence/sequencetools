@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 import java.sql.SQLException;
@@ -51,6 +52,7 @@ public class LocusTagPrefixCheckTest {
 	private FeatureFactory featureFactory;
 	private LocusTagPrefixCheck check;
 	private EntryDAOUtils entryDAOUtils;
+    private EraproDAOUtils eraProDAOUtils;
 	private EmblEntryValidationPlanProperty property;
 	private EntryFactory entryFactory;
 
@@ -62,6 +64,7 @@ public class LocusTagPrefixCheckTest {
 		entry = entryFactory.createEntry();
 		check = new LocusTagPrefixCheck();
         entryDAOUtils=createMock(EntryDAOUtils.class);
+        eraProDAOUtils=createMock(EraproDAOUtils.class);
 		property=new EmblEntryValidationPlanProperty();
 		check.setEmblEntryValidationPlanProperty(property);
      }
@@ -101,8 +104,9 @@ public class LocusTagPrefixCheckTest {
         HashSet<String> projectLocusTagPrefixes=new HashSet<String>();
         projectLocusTagPrefixes.add("BC03BB108");
         projectLocusTagPrefixes.add("BC03BB107");
-		expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(projectLocusTagPrefixes);
-		replay(entryDAOUtils);
+		expect(eraProDAOUtils.getLocusTags("PRJNA19959")).andReturn(projectLocusTagPrefixes);
+		replay(eraProDAOUtils);
+		check.setEraproDAOUtils(eraProDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
         ValidationResult result = check.check(entry);
         assertTrue(result.isValid());
@@ -170,9 +174,10 @@ public class LocusTagPrefixCheckTest {
         entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
         HashSet<String> projectLocusTagPrefixes=new HashSet<String>();
         projectLocusTagPrefixes.add("BC03BB108");
-		expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(projectLocusTagPrefixes);
+		expect(eraProDAOUtils.getLocusTags("PRJNA19959")).andReturn(projectLocusTagPrefixes);
 		expect(entryDAOUtils.getMasterEntry("ERZ00001")).andReturn(masterEntry);
-		replay(entryDAOUtils);
+        replay(eraProDAOUtils);
+        check.setEraproDAOUtils(eraProDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.setEmblEntryValidationPlanProperty(property);
         ValidationResult result = check.check(entry);

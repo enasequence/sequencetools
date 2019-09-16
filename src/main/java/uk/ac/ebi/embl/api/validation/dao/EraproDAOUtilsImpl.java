@@ -5,12 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
@@ -299,6 +294,30 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(ps);
 		}
+	}
+
+	@Override
+	public Set<String> getLocusTags(String projectId) throws SQLException {
+		Set<String> locusTags= new HashSet<>();
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement("select upper(locus_tag) from locus_tag where project_id =?");
+			ps.setString(1,projectId);
+
+			rs = ps.executeQuery();
+			if (rs.next())
+			{
+				locusTags.add( rs.getString(1));
+			}
+
+		} finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(ps);
+		}
+		return locusTags;
 	}
 
 	@Override
