@@ -19,6 +19,7 @@ import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -40,8 +41,10 @@ public class FeatureLocationFix extends FeatureValidationCheck {
             return result;
         }
 
-        if(feature instanceof CdsFeature)
-        	return result;
+        if(feature.getSingleQualifier(Qualifier.TRANS_SPLICING) != null) {
+            return result;
+        }
+
         CompoundLocation<Location> compoundLocation = feature.getLocations();
 
         if (compoundLocation == null
