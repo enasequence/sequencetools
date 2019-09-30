@@ -307,9 +307,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			ps.setString(1,projectId);
 
 			rs = ps.executeQuery();
-			if (rs.next())
-			{
-				locusTags.add( rs.getString(1));
+			while (rs.next()) {
+				locusTags.add(rs.getString(1));
 			}
 
 		} finally
