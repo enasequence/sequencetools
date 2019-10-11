@@ -134,6 +134,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private boolean isSingletonAgp=false;
 	private boolean isNonExpandedCON=false;
 	private int sequenceCount;
+	private int entryType;
 
 	public Entry() {
 		this.secondaryAccessions = new ArrayList<>();
@@ -754,5 +755,14 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 
 	public void setSequenceCount(int sequenceCount) {
 		this.sequenceCount = sequenceCount;
+	}
+
+
+	public int getEntryType() {
+		return entryType;
+	}
+
+	public void setEntryType(int entryType) {
+		this.entryType = entryType;
 	}
 }
