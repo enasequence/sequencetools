@@ -158,3 +158,32 @@ SQ   Sequence 335 BP; 0 A; 0 C; 12 G; 323 T; 0 other;
      gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg       300
      gttttttttt tttttttttt tttttttttt ttttg                                  335
 //
+ID   XXX; SV XXX; linear; genomic DNA; WGS; XXX; 155 BP.
+XX
+AC   ;
+XX
+AC * _IWGSC_CSS_6DL_contig_209596
+XX
+PR   Project:PRJEB0;
+XX
+DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209596
+XX
+KW   WGS.
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SMEA091.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..155
+FT                   /organism="Micrococcus sp. 5"
+FT                   /mol_type="genomic DNA"
+FT                   /note="contig: IWGSC_CSS_6DL_contig_209596"
+XX
+SQ   Sequence 155 BP; 0 A; 0 C; 6 G; 149 T; 0 other;
+     gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg        60
+     gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg       120
+     gttttttttt tttttttttt tttttttttt ttttg                                  155
+//

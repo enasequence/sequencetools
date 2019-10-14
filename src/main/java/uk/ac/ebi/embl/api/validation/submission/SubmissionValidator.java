@@ -11,6 +11,7 @@ import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
+import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
 import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
@@ -50,6 +51,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         ValidationResponse response = new ValidationResponse(ValidationResponse.status.VALIDATION_SUCCESS);
         try {
             options = mapManifestToSubmissionOptions(manifest);
+            FeatureReader.isWebinCli = true;
             validate();
         } catch (ValidationEngineException vee) {
             switch (vee.getErrorType()) {

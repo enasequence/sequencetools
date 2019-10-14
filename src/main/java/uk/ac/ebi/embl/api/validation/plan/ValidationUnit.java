@@ -122,7 +122,8 @@ public enum ValidationUnit
 	        		AssemblyLevelDataclassCheck.class,//exclude for master
 	        		AssemblyTopologyCheck.class,//exclude for master
 	        		ChromosomeSourceQualifierCheck.class,//exclude for master
-	        		EC_numberFormatCheck.class//include for all
+	        		EC_numberFormatCheck.class,//include for all
+					ScaffoldComponentCheck.class // only for scaffolds
 	        ),
 	        SEQUENCE_ENTRY_FIXES
 	        (

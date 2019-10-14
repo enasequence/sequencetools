@@ -27,14 +27,16 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 
 public class FeatureReader extends FlatFileLineReader {
-	
-	boolean skipSource=false;
+
+	public static boolean isWebinCli = false;
+	private boolean skipSource = false;
 
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
@@ -186,6 +188,10 @@ public class FeatureReader extends FlatFileLineReader {
 		for(Location loc: location.getLocations()) {
 			if(loc.getBeginPosition() < 1 || loc.getEndPosition() < 1 ) {
 				error("FT.15", featureName, loc.getBeginPosition(), loc.getEndPosition());
+				return null;
+			}
+			if(loc instanceof RemoteLocation && isWebinCli) {
+				error("FT.16");
 				return null;
 			}
 		}

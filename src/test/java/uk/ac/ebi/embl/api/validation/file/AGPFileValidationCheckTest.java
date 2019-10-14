@@ -60,13 +60,14 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException
 		{
 			validateMaster(Context.genome);
+			String fileName = "valid_flatfileagp.txt";
 			options.context = Optional.of(Context.genome);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
-			submissionFiles.addFile(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP));
+			submissionFiles.addFile(initSubmissionFixedTestFile(fileName, FileType.AGP));
 			options.submissionFiles = Optional.of(submissionFiles);
+			options.reportDir = Optional.of(initSubmissionTestFile(fileName, FileType.AGP).getFile().getParent());
+			options.processDir = Optional.of(initSubmissionTestFile(fileName, FileType.AGP).getFile().getParent());
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-			options.reportDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
-			options.processDir = Optional.of(initSubmissionTestFile("valid_flatfileagp.txt", FileType.AGP).getFile().getParent());
 			options.init();
 			AGPFileValidationCheck check = new AGPFileValidationCheck(options);
 			try {
