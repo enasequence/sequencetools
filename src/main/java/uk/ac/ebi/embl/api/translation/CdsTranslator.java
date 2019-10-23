@@ -424,6 +424,13 @@ public class CdsTranslator {
         translator.setTranslationTable(translationTable);
         if (feature == null) // if it is not CDSfeature ex:tRNA
             return validationResult;
+
+        if(feature.getSingleQualifier(Qualifier.TRANSL_TABLE_QUALIFIER_NAME) == null
+                && translationTable.equals(TranslationTable.DEFAULT_TRANSLATION_TABLE) ){
+            Qualifier ttQual = new QualifierFactory().createTranslTableQualifier(String.valueOf(translationTable));
+            feature.addQualifier(ttQual);
+            validationResult.append(EntryValidations.createMessage(entry.getOrigin(), Severity.FIX, "CDSTranslator-17", translationTable));
+        }
         if (!translationTable
                 .equals(TranslationTable.DEFAULT_TRANSLATION_TABLE))
         {
