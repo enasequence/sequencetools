@@ -425,18 +425,18 @@ public class CdsTranslator {
         if (feature == null) // if it is not CDSfeature ex:tRNA
             return validationResult;
 
-        if(feature.getSingleQualifier(Qualifier.TRANSL_TABLE_QUALIFIER_NAME) == null
-                && translationTable.equals(TranslationTable.DEFAULT_TRANSLATION_TABLE) ){
-            Qualifier ttQual = new QualifierFactory().createTranslTableQualifier(String.valueOf(translationTable));
-            feature.addQualifier(ttQual);
-            validationResult.append(EntryValidations.createMessage(entry.getOrigin(), Severity.FIX, "CDSTranslator-17", translationTable));
-        }
-        if (!translationTable
-                .equals(TranslationTable.DEFAULT_TRANSLATION_TABLE))
-        {
+        if (!translationTable.equals(TranslationTable.DEFAULT_TRANSLATION_TABLE) && !translator.isPeptideFeature()) {
             // Set feature translation table.
-            if (!translator.isPeptideFeature())
-                feature.setTranslationTable(translationTable);
+            feature.setTranslationTable(translationTable);
+        }
+
+        if (!translationTable.equals(1) && !translator.isPeptideFeature()) {
+            feature.setTranslationTable(translationTable);
+            if (feature.getSingleQualifier(Qualifier.TRANSL_TABLE_QUALIFIER_NAME) == null) {
+                Qualifier ttQual = new QualifierFactory().createTranslTableQualifier(String.valueOf(translationTable));
+                feature.addQualifier(ttQual);
+                validationResult.append(EntryValidations.createMessage(entry.getOrigin(), Severity.FIX, "CDSTranslator-17", translationTable));
+            }
         }
 
         // Set the start codon.
