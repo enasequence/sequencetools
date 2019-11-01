@@ -205,10 +205,10 @@ public class KWCheckTest {
 		entry.setDescription(new Text("TPA: Bos taurus contig xy, transcriptiome shotgun assembly."));
 		ValidationResult result = check.check(entry);
 		assertTrue(!result.isValid());
-		assertEquals(2, result.count("KWCheck_6", Severity.ERROR));
+		assertEquals(1, result.count("KWCheck_6", Severity.ERROR));
 	}
 
-	@Test
+	/*@Test
 	public void testCheck_DEinValidKeywords2()
 	{
 		entry.setDataClass("WGS");
@@ -217,7 +217,7 @@ public class KWCheckTest {
 		assertTrue(!result.isValid());
 		assertEquals(1, result.count("KWCheck_6", Severity.ERROR));
 	}
-
+*/
 	@Test
 	public void testCheck_DEValidKeywords1()
 	{
