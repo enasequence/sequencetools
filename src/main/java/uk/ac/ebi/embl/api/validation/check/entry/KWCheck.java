@@ -280,7 +280,8 @@ public class KWCheck extends EntryValidationCheck {
      */
     public void checkTPAandTSADescriptionAndKeyword(Entry entry, String description) {
         String dataclass = entry.getDataClass();
-        if (description == null || dataclass == null) return;
+
+        if (description == null || dataclass == null || description.length() < 6) return;
 
         if (Entry.CON_DATACLASS.equals(dataclass) || Entry.STD_DATACLASS.equals(dataclass) || Entry.TSA_DATACLASS.equals(dataclass)) {
 
