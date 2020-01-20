@@ -24,7 +24,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 import java.util.HashSet;
@@ -40,7 +39,7 @@ public class CountryQualifierFix extends FeatureValidationCheck
 
 	private Set<String> getCountries() {
 		Set<String> countries = new HashSet<>();
-		DataSet valuesSet = GlobalDataSets.getDataSet("feature-regex-groups.tsv");
+		DataSet valuesSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
 
 		if (valuesSet != null) {
 			for (DataRow regexpRow : valuesSet.getRows()) {

@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
@@ -52,10 +53,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		EraproDAOUtils eraDaoUtils = null;
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
-			String templateId;
-			if (options.isRemote)
-				templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			else {
+			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
+			if(StringUtils.isBlank(templateId ) ) {
 				 eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
 				 templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
 			}
