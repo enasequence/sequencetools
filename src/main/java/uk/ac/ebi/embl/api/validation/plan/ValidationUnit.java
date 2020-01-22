@@ -174,7 +174,8 @@ public enum ValidationUnit
 	    		    JournalFix.class,//include for all
 	    		    AssemblyLevelEntryNameFix.class,
 	    		    GaptoAssemblyGapFeatureFix.class,//exclude for master
-					Linkage_evidenceFix.class//exclude for master
+					Linkage_evidenceFix.class,//exclude for master
+					DescriptionCheck.class//only for template submissions
 	        ),
 	
 	// GCS entry validation checks
