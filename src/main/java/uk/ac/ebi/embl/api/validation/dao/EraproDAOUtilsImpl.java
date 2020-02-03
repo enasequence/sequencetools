@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -26,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
@@ -435,7 +437,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
-   public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
+	@Override
+	public SourceFeature getSourceFeature(String sampleId) throws Exception {
+		return addSourceQualifiers( new TaxonHelperImpl(),  getSampleInfo(sampleId));
+	}
+
+	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
 	{
 	   if(masterCache.containsKey(analysisId))
 	   {
@@ -448,23 +455,21 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		masterEntry.setPrimaryAccession(analysisId);
 		masterEntry.setIdLineSequenceLength(1);
-		FeatureFactory featureFactory = new FeatureFactory();
+
 		SequenceFactory sequenceFactory = new SequenceFactory();
-		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		SourceFeature sourceFeature = null;
 		TaxonHelper taxonHelper=new TaxonHelperImpl();
 		String sampleId = null;
 		String projectId;
-		String scientificName;
+		SampleInfo sampleInfo = null;
 		String prevSampleId = null;
 		String prevProjectId = null;
-		String uniqueName=null;
 		String author = null;
 		String address = null;
 		Date firstCreated = null;
 		boolean isTpa = false;
 
-		String masterQuery = "select a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, sam.sample_alias, " +
-			"nvl(sam.fixed_tax_id, sam.tax_id) tax_id, nvl(sam.fixed_scientific_name, sam.scientific_name) scientific_name, " +
+		String masterQuery = "select a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
@@ -494,9 +499,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		} else {
 			masterEntry.getSequence().setMoleculeType("genomic DNA");
 		}
-		masterEntry.getSequence().setTopology(Topology.LINEAR);		
-		
-		sourceFeature.setMasterLocation();
+		masterEntry.getSequence().setTopology(Topology.LINEAR);
 		
 		PreparedStatement masterInfoStmt = null;
 		ResultSet masterInfoRs = null;
@@ -533,13 +536,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				setXrefs(analysisRef, masterEntry);
 
 				prevSampleId = bioSampleId;
-				
-				sourceFeature.setTaxId(Long.valueOf(masterInfoRs.getString("tax_id")));
 
 				author = masterInfoRs.getString("authors");
 				address = masterInfoRs.getString("address");
 				firstCreated = masterInfoRs.getDate("first_created");
-				scientificName = masterInfoRs.getString("scientific_name");
+
 				String molType=masterInfoRs.getString("mol_type");
 				String tpa=masterInfoRs.getString("tpa");
 				if("true".equalsIgnoreCase(tpa))
@@ -547,7 +548,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 					isTpa = true;
 					EntryUtils.setKeyWords(masterEntry);
 				}
-				if(molType!=null&&taxonHelper.isChildOf(scientificName, "Viruses"))
+
+				sampleInfo = getSampleInfo(sampleId);
+				sampleInfo.setSampleId(sampleId);
+
+				if(molType!=null&&taxonHelper.isChildOf(sampleInfo.getScientificName(), "Viruses"))
 				{
 					masterEntry.getSequence().setMoleculeType(molType);
 				}
@@ -557,8 +562,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 					masterEntry.setComment(new Text(desc));
 				}
 
-				sourceFeature.setScientificName(scientificName);
-				uniqueName=masterInfoRs.getString("sample_alias");
 			}
 		}
 		
@@ -572,46 +575,87 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		{
 			return null;
 		}
-		
-			
-		// SOURCE QUALIFIERS
-		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()',value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
-		PreparedStatement select_sourcequalifiers_pstmt = null;
-		ResultSet select_sourcequalifers_rs = null;
-		MasterSourceFeatureUtils sourceUtils= new MasterSourceFeatureUtils();
 		try
 		{
-			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
-			select_sourcequalifiers_pstmt.setString(1, sampleId);
-			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
-			while (select_sourcequalifers_rs.next())
-			{
-				String tag = select_sourcequalifers_rs.getString(1);
-				String value = select_sourcequalifers_rs.getString(2);
-				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
-			}
-
-			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, uniqueName);
 			if(StringUtils.isNotBlank(author) && StringUtils.isNotBlank(address)) {
 				masterEntry.addReference(new ReferenceReader().getReference(author, address, firstCreated));
 			} else {
 				masterEntry.addReference(getSubmitterReference(analysisId));
 			}
 
+			sourceFeature = addSourceQualifiers(taxonHelper, sampleInfo);
 		}
-		catch (Exception ex)
+		catch (SQLException | ValidationEngineException | UnsupportedEncodingException ex)
 		{
+		   //ex.printStackTrace();
 		}
-		finally
-		{
-			DbUtils.closeQuietly(select_sourcequalifers_rs);
-			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
-		}
+
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
 		masterEntry.setDescription(new Text(description));
 		masterCache.put(analysisId,masterEntry);
 		return masterEntry;
+	}
+
+
+	private SampleInfo getSampleInfo(String sampleId) throws SQLException {
+
+		SampleInfo sampleInfo = new SampleInfo();
+		String sampleTaxonQuery = "select sample_alias, nvl(fixed_tax_id, tax_id) tax_id, nvl(fixed_scientific_name, scientific_name) scientific_name" +
+				" from sample where sample_id=?";
+
+		PreparedStatement selectTaxonPstmt = null;
+		ResultSet selectTaxonRs = null;
+
+		try {
+			selectTaxonPstmt = connection.prepareStatement(sampleTaxonQuery);
+			selectTaxonPstmt.setString(1, sampleId);
+			selectTaxonRs = selectTaxonPstmt.executeQuery();
+			if (selectTaxonRs.next()) {
+				sampleInfo.setUniqueName(selectTaxonRs.getString("sample_alias"));
+				sampleInfo.setScientificName(selectTaxonRs.getString("scientific_name"));
+				sampleInfo.setTaxId(Long.valueOf(selectTaxonRs.getString("tax_id")));
+			}
+		} finally {
+			DbUtils.closeQuietly(selectTaxonRs);
+			DbUtils.closeQuietly(selectTaxonPstmt);
+		}
+		sampleInfo.setSampleId(sampleId);
+		return sampleInfo;
+	}
+
+	private SourceFeature addSourceQualifiers( TaxonHelper taxonHelper, SampleInfo sampleInfo) throws SQLException {
+		FeatureFactory featureFactory = new FeatureFactory();
+		SourceFeature sourceFeature = featureFactory.createSourceFeature();
+		sourceFeature.setTaxId(sampleInfo.getTaxId());
+		sourceFeature.setScientificName(sampleInfo.getScientificName());
+
+		// SOURCE QUALIFIERS
+
+		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()'," +
+				"value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
+		PreparedStatement select_sourcequalifiers_pstmt = null;
+		ResultSet select_sourcequalifers_rs = null;
+		MasterSourceFeatureUtils sourceUtils = new MasterSourceFeatureUtils();
+
+		sourceFeature.setMasterLocation();
+		try {
+			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
+			select_sourcequalifiers_pstmt.setString(1, sampleInfo.getSampleId());
+			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
+			while (select_sourcequalifers_rs.next()) {
+				String tag = select_sourcequalifers_rs.getString(1);
+				String value = select_sourcequalifers_rs.getString(2);
+				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
+			}
+
+			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
+
+		} finally {
+			DbUtils.closeQuietly(select_sourcequalifers_rs);
+			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
+		}
+		return sourceFeature;
 	}
 
 	private void setXrefs(String refs, Entry masterEntry) {
