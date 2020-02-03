@@ -7,6 +7,7 @@ import java.util.Set;
 
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
@@ -20,6 +21,7 @@ public interface EraproDAOUtils
 	Reference getReference(Entry entry , String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	String getTemplateId(String analysisId) throws SQLException;
 	Set<String> getLocusTags(String projectId) throws SQLException;
+	SourceFeature getSourceFeature(String sampleId) throws Exception;
 	class AssemblySubmissionInfo
 	{
 		String studyId;
