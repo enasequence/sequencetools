@@ -476,6 +476,8 @@ public abstract class FileValidationCheck {
 		entry.addProjectAccession(new Text(options.getProjectId()));
 		entry.getSequence().setVersion(1);
 		entry.setStatus(Entry.Status.PRIVATE);
+   		if (entry.getSecondaryAccessions() != null && !entry.getSecondaryAccessions().isEmpty())
+      		entry.getSecondaryAccessions().clear();
 
 		if (options.assemblyInfoEntry.isPresent()
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
