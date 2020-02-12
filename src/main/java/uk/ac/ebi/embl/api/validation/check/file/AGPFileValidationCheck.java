@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -92,6 +93,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				}
 				//set validation scope and collect unplacedEntries
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+				setTopology(entry);
 				//level 2 placed entries should be removed from unplaced set
 				if (!unplacedEntryNames.isEmpty()) {
 					for (AgpRow agpRow : entry.getSequence().getAgpRows()) {
@@ -149,7 +151,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	        registerAGPfileInfo();
 		return valid;
 	}
-	
+
 	private void constructAGPSequence(Entry entry) throws ValidationEngineException
     {
 		try

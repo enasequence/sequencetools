@@ -34,16 +34,18 @@ public class AssemblyTopologyCheck extends EntryValidationCheck {
 	public ValidationResult check(Entry entry) throws ValidationEngineException {
 		result = new ValidationResult();
 
-		if (entry == null||entry.getSequence()==null)
-		{
-			return result;
-		}
+    if (entry == null || entry.getSequence() == null) {
+      return result;
+    }
 
-        if((ValidationScope.ASSEMBLY_CONTIG==getEmblEntryValidationPlanProperty().validationScope.get()||ValidationScope.ASSEMBLY_SCAFFOLD==getEmblEntryValidationPlanProperty().validationScope.get())&&Topology.CIRCULAR==entry.getSequence().getTopology())
-		{
-			reportError(entry.getOrigin(), MESSAGE_ID);
-		}
-		
+    if ((ValidationScope.ASSEMBLY_CONTIG
+                == getEmblEntryValidationPlanProperty().validationScope.get()
+            || ValidationScope.ASSEMBLY_SCAFFOLD
+                == getEmblEntryValidationPlanProperty().validationScope.get())
+        && Topology.CIRCULAR == entry.getSequence().getTopology()) {
+      reportError(entry.getOrigin(), MESSAGE_ID);
+    }
+
 		return result;
 	}
 

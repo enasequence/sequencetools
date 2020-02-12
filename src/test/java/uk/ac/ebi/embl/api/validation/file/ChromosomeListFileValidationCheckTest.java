@@ -15,17 +15,8 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -35,12 +26,18 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 @Description("")
 public class ChromosomeListFileValidationCheckTest  extends SubmissionValidationTest
 {
 
 	@Before
-	public void init() throws SQLException
+	public void init()
 	{   
 		options = new SubmissionOptions();
 		options.isRemote = true;
@@ -53,11 +50,11 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 		SubmissionFile file=initSubmissionTestFile("chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
 		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
 		assertTrue(check.check(file));
-		assertTrue(check.getChromosomeQualifeirs().size()==2);
-		List<Qualifier> qualifiers =new ArrayList<Qualifier>();
+		assertEquals(check.getChromosomeQualifeirs().size(),2);
+		List<Qualifier> qualifiers =new ArrayList<>();
 		for(String key:check.getChromosomeQualifeirs().keySet())
 		{
-			for(Qualifier qual:check.getChromosomeQualifeirs().get(key))
+			for(Qualifier qual:check.getChromosomeQualifeirs().get(key).setAndGetQualifiers(false))
 			{
 				qualifiers.add(qual);
 			}

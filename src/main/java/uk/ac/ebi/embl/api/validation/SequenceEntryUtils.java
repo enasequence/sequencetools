@@ -700,4 +700,19 @@ public class SequenceEntryUtils {
 			   (String.format(descriptionFormat,scientificName,"","" ).replaceAll("  ", ""));
 	
 	}
+
+	public static Sequence.Topology getTopology(String topology) {
+		if (topology == null) {
+			return null;
+		}
+		topology = topology.toLowerCase();
+		if ( topology.equals("linear")) {
+			return Sequence.Topology.LINEAR;
+		}
+		else if ( topology.equals( "circular" )) {
+			return Sequence.Topology.CIRCULAR;
+		}
+
+		return null;
+	}
 }

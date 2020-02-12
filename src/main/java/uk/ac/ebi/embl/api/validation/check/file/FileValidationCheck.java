@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
@@ -64,7 +65,7 @@ public abstract class FileValidationCheck {
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
 	public static final String REPORT_FILE_SUFFIX = ".report";
-	public static HashMap<String,List<Qualifier>> chromosomeNameQualifiers = new HashMap<>();
+	public static HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>();
 	public static List<String> chromosomeNames =new ArrayList<String>();
 	public static Map<String,AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
 	public static Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
@@ -349,7 +350,9 @@ public abstract class FileValidationCheck {
         }
 		addSourceQualifiers(entry);
 		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
-		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
+   		if (entry.getSequence().getTopology() == null) {
+      		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
+		}
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{
 
@@ -370,6 +373,14 @@ public abstract class FileValidationCheck {
 
 		}
 
+	}
+
+	protected void setTopology (Entry entry) {
+		if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME && chromosomeNameQualifiers!=null) {
+			ChromosomeEntry chrEntry = chromosomeNameQualifiers.get(entry.getSubmitterAccession());
+			if(chrEntry != null && chrEntry.getTopology() != null)
+				entry.getSequence().setTopology(chrEntry.getTopology());
+		}
 	}
 
 	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws IOException
@@ -439,10 +450,17 @@ public abstract class FileValidationCheck {
 
 			if(entry.getSubmitterAccession()!=null)
 			{
-				Optional<java.util.Map.Entry<String, List<Qualifier>>> chromosomeQualifierMap= chromosomeNameQualifiers.entrySet().stream().filter(x->x.getKey().equalsIgnoreCase(entry.getSubmitterAccession())).findFirst();
+				Optional<java.util.Map.Entry<String, ChromosomeEntry>> chromosomeQualifierMap =
+					chromosomeNameQualifiers.entrySet().stream()
+						.filter(x -> x.getKey().equalsIgnoreCase(entry.getSubmitterAccession()))
+						.findFirst();
 				if(chromosomeQualifierMap.isPresent())
 				{	
-					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue();
+					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue().setAndGetQualifiers(taxonHelper.isChildOf(
+							masterEntry
+									.getPrimarySourceFeature()
+									.getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME),
+							"Viruses"));
 
 					if(chromosomeQualifiers!=null)
 					{

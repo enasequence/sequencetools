@@ -15,13 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
@@ -29,6 +23,9 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Description("")
 public class ChromosomeListFileValidationCheck extends FileValidationCheck
@@ -84,8 +81,8 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 						addMessagekey(result);
 					}
 				}
-				if(entry.getObjectName()!=null)
-					chromosomeNameQualifiers.put(entry.getObjectName(),entry.getQualifiers(taxonHelper.isChildOf(masterEntry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME), "Viruses")));
+				if (entry.getObjectName() != null)
+				  chromosomeNameQualifiers.put(entry.getObjectName(), entry);
 				if(entry.getChromosomeName()!=null)
 					chromosomeNames.add(entry.getChromosomeName().toUpperCase());
 
@@ -103,7 +100,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		return valid;
 	}
 
- 	public HashMap<String,List<Qualifier>> getChromosomeQualifeirs()
+ 	public HashMap<String,ChromosomeEntry> getChromosomeQualifeirs()
  	{
  		return chromosomeNameQualifiers;
  	}

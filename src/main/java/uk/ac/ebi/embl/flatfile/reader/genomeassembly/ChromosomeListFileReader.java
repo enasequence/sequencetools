@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 public class ChromosomeListFileReader extends GCSEntryReader
@@ -78,7 +79,13 @@ public class ChromosomeListFileReader extends GCSEntryReader
 					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
 					chromosomeEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
 					chromosomeEntry.setChromosomeName(fields[CHROMOSOME_NAME_COLUMN]);
-					chromosomeEntry.setChromosomeType(fields[CHROMOSOME_TYPE_COLUMN]);
+					String[] topologyAndChrType = fields[CHROMOSOME_TYPE_COLUMN].split("-");
+					if (topologyAndChrType.length == 2) {
+						chromosomeEntry.setTopology(SequenceEntryUtils.getTopology(topologyAndChrType[0].trim()));
+						chromosomeEntry.setChromosomeType(topologyAndChrType[1]);
+					} else {
+						  chromosomeEntry.setChromosomeType(topologyAndChrType[0]);
+					}
 					if (numberOfColumns == MAX_NUMBER_OF_COLUMNS)
 					{
 						chromosomeEntry.setChromosomeLocation(fields[CHROMOSOME_LOCATION_COLUMN].toLowerCase());

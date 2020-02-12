@@ -140,7 +140,8 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		} else {
 			masterEntry.getSequence().setMoleculeType(infoEntry.getMoleculeType()==null?"genomic DNA":infoEntry.getMoleculeType());
 		}
-		masterEntry.getSequence().setTopology(Topology.LINEAR);		
+		if(masterEntry.getSequence().getTopology() == null )
+			masterEntry.getSequence().setTopology(Topology.LINEAR);
 		source.setMasterLocation();
 		masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
 		masterEntry.addProjectAccession(new Text(infoEntry.getProjectId()));

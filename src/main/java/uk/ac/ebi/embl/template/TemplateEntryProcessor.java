@@ -279,15 +279,19 @@ public class TemplateEntryProcessor {
                     break;
                 }
             }
+            Sequence.Topology topology = Sequence.Topology.LINEAR;
             for (String tokenName: templateVariables.getTokenNames()) {
                 String tokenValue = templateVariables.getTokenValue(tokenName);
                 if (tokenValue == null || tokenValue.isEmpty())
                     continue;
+                if(tokenName.equals(TemplateProcessorConstants.TOPOLOGY_TOKEN)) {
+                    topology = SequenceEntryUtils.getTopology(tokenValue.trim());
+                }
                 if (tokenName.equals(TemplateProcessorConstants.SEQUENCE_TOKEN)) {
                     Sequence sequence = new SequenceFactory().createSequence();
                     sequence.setSequence(ByteBuffer.wrap(tokenValue.toLowerCase().getBytes()));
                     sequence.setVersion(1);
-                    sequence.setTopology(Sequence.Topology.LINEAR);
+                    sequence.setTopology(topology == null ? Sequence.Topology.LINEAR: topology);
                     sequence.setMoleculeType(molType);
                     entry.setSequence(sequence);
                 } else if (tokenName.equals(TemplateProcessorConstants.COMMENTS_TOKEN)) {

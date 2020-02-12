@@ -5,6 +5,7 @@ import java.util.List;
 
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 
 public class ChromosomeEntry extends GCSEntry
@@ -15,7 +16,9 @@ public class ChromosomeEntry extends GCSEntry
 	private String chromosomeLocation;
 	private String objectName;
 	private String accession;
-	private List<Qualifier> chromosomeQualifeirs = new ArrayList<Qualifier>();
+	private Sequence.Topology topology;
+
+	private List<Qualifier> chromosomeQualifeirs = new ArrayList<>();
 	
 	public String getAccession() 
 	{
@@ -66,7 +69,15 @@ public class ChromosomeEntry extends GCSEntry
 	{
 		this.chromosomeLocation = chromosomeLocation;
 	}
-	
+
+	public Sequence.Topology getTopology() {
+		return topology;
+	}
+
+	public void setTopology(Sequence.Topology topology) {
+		this.topology = topology;
+	}
+
 	public boolean equals(ChromosomeEntry entry)
 	{
 		return (entry.getObjectName()!=null&&this.getObjectName()!=null&&this.getObjectName().equals(entry.getObjectName()))
@@ -75,8 +86,14 @@ public class ChromosomeEntry extends GCSEntry
 				&&(entry.getChromosomeType()!=null&&this.getChromosomeType()!=null&&this.getChromosomeType().equals(entry.getChromosomeType()));
 	}
 	
-	public List<Qualifier> getQualifiers(boolean virus)
+	public List<Qualifier> setAndGetQualifiers(boolean virus)
 	{
+		//This method has been already called somewhere and calling it twice will add duplicate qualifiers as chromosomeQualifeirs is List.
+		//This is the only place we add data into chromosomeQualifeirs, so it is safe to return here
+		//Check and changechromosomeQualifeirs to Set if required.
+		if(!chromosomeQualifeirs.isEmpty()){
+			return chromosomeQualifeirs;
+		}
 		if (chromosomeLocation != null && !chromosomeLocation.isEmpty()&& !virus&&!chromosomeLocation.equalsIgnoreCase("Phage"))
 		{
 			String organelleValue =  SequenceEntryUtils.getOrganelleValue(chromosomeLocation);
