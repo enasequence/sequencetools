@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -104,8 +105,20 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			} else {
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 			}
-			setTopology(entry);
-        	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
+
+			Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+			if (chrListToplogy != null) {
+			  if (entry.getSequence().getTopology() != null
+				  && entry.getSequence().getTopology() != chrListToplogy) {
+				throw new ValidationEngineException(
+					String.format(
+						"The topology in the ID line \'%s\' conflicts with the topology specified in the chromsome list file \'%s\'.",
+						entry.getSequence().getTopology(), chrListToplogy));
+			  }
+			  entry.getSequence().setTopology(chrListToplogy);
+			}
+
+			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
         	ValidationPlanResult planResult=validationPlan.execute(entry);

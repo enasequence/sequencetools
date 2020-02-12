@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -93,7 +94,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				}
 				//set validation scope and collect unplacedEntries
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-				setTopology(entry);
+				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+				if (chrListToplogy != null) {
+					entry.getSequence().setTopology(chrListToplogy);
+				}
 				//level 2 placed entries should be removed from unplaced set
 				if (!unplacedEntryNames.isEmpty()) {
 					for (AgpRow agpRow : entry.getSequence().getAgpRows()) {

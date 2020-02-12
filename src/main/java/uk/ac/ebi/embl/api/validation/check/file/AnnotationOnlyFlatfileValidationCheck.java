@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentMap;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -75,7 +76,19 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				}
 
     			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-				setTopology(entry);
+
+				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+				if (chrListToplogy != null) {
+					if (entry.getSequence().getTopology() != null
+							&& entry.getSequence().getTopology() != chrListToplogy) {
+						throw new ValidationEngineException(
+								String.format(
+										"The topology in the ID line \'%s\' conflicts with the topology specified in the chromsome list file \'%s\'.",
+										entry.getSequence().getTopology(), chrListToplogy));
+					}
+					entry.getSequence().setTopology(chrListToplogy);
+				}
+
 				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
 				validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				appendHeader(entry);

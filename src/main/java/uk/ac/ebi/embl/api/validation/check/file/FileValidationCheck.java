@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -375,13 +376,14 @@ public abstract class FileValidationCheck {
 
 	}
 
-	protected void setTopology (Entry entry) {
-		if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME && chromosomeNameQualifiers!=null) {
-			ChromosomeEntry chrEntry = chromosomeNameQualifiers.get(entry.getSubmitterAccession());
-			if(chrEntry != null && chrEntry.getTopology() != null)
-				entry.getSequence().setTopology(chrEntry.getTopology());
+  	protected Sequence.Topology getTopology(String submitterAccn)  {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get()
+				== ValidationScope.ASSEMBLY_CHROMOSOME
+			&& chromosomeNameQualifiers != null) {
+			return chromosomeNameQualifiers.get(submitterAccn).getTopology();
 		}
-	}
+		return null;
+  	}
 
 	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws IOException
 	{

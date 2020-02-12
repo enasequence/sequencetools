@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
@@ -98,7 +99,11 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-				setTopology(entry);
+
+				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+				if (chrListToplogy != null) {
+					entry.getSequence().setTopology(chrListToplogy);
+				}
             	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
             	appendHeader(entry);
