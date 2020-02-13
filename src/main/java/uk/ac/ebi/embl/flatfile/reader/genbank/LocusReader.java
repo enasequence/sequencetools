@@ -47,7 +47,7 @@ public class LocusReader extends SingleLineBlockReader {
 				"([\\w-]+)" + // date
 		        "$");
 
-	//private static int GROUP_LOCUS_NAME = 1;
+	private static int GROUP_ACCESSION = 1;
 	private static int GROUP_SEQUENCE_LENGTH = 2;
 	//private static int GROUP_MOLECULE_TYPE = 3;
 	private static int GROUP_TOPOLOGY = 4;
@@ -67,8 +67,12 @@ public class LocusReader extends SingleLineBlockReader {
 			error("FF.1", getTag());
 			return;
 		}
-		
-		// Locus name is not the same as primary accession number.
+
+		String accn = matcher.getString(GROUP_ACCESSION);
+		if (accn != null && !accn.equals("XXX")) {
+		    entry.setPrimaryAccession(accn);
+		    entry.getSequence().setAccession(accn);
+		}
 		
 		Long sequenceLength = matcher.getLong(GROUP_SEQUENCE_LENGTH);
 		if (sequenceLength != null) {
