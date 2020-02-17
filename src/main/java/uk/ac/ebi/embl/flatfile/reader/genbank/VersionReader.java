@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.util.regex.Pattern;
 
+import uk.ac.ebi.embl.api.AccessionMatcher;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileMatcher;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -59,6 +61,20 @@ public class VersionReader extends SingleLineBlockReader {
 		}
 		if (matcher.isValueXXX(GROUP_SEQUENCE_VERSION)) {
 			entry.getSequence().setVersion(matcher.getInteger(GROUP_SEQUENCE_VERSION));
+			if(AccessionMatcher.isMasterAccession(entry.getPrimaryAccession())) {
+				AccessionMatcher.Accession accn = AccessionMatcher.getSplittedAccession(entry.getPrimaryAccession());
+				if(accn == null || accn.version == null) {
+					error("FF.16", getTag(), entry.getPrimaryAccession());
+					return;
+				}
+				String seqVersion = String.valueOf(entry.getSequence().getVersion());
+				if(seqVersion.length() < 2 ) {
+					seqVersion = "0" + seqVersion;
+				}
+				if( !accn.version.equals(seqVersion)) {
+					entry.setPrimaryAccession(accn.prefix+seqVersion+accn.number);
+				}
+			}
 		}
 		if (matcher.isValue(GROUP_GI_ACCESSION)) {
 			entry.getSequence().setGIAccession(matcher.getString(GROUP_GI_ACCESSION));
