@@ -32,9 +32,9 @@ public class LocusReaderTest extends GenbankReaderTest {
 		);
 		ValidationResult result = (new LocusReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
+		assertNull(entry.getPrimaryAccession());
 		assertNull(entry.getSequence().getMoleculeType());
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
-		assertEquals("SCU49845", entry.getPrimaryAccession());
 		assertEquals("PLN", entry.getDivision());
 		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
@@ -45,7 +45,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		);
 		ValidationResult result = (new LocusReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals("SCU49845", entry.getPrimaryAccession());
+		assertNull(entry.getPrimaryAccession());
 		assertNull(entry.getSequence().getMoleculeType());
 		assertEquals(Topology.CIRCULAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
@@ -58,7 +58,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		);
 		ValidationResult result = (new LocusReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals("SCU49845", entry.getPrimaryAccession());
+		assertNull(entry.getPrimaryAccession());
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
 		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());

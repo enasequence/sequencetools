@@ -29,11 +29,10 @@ public class AccessionReaderTest extends GenbankReaderTest {
 			"ACCESSION   A00001"
 		);
 		ValidationResult result = (new AccessionReader(lineReader)).read(entry);
-		assertNull(entry.getPrimaryAccession());
+		assertEquals(
+				"A00001",
+				entry.getPrimaryAccession());
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(1, entry.getSecondaryAccessions().size());
-		assertEquals("A00001", entry.getSecondaryAccessions().get(0).getText());
-
 	}
 
 	public void testRead_NoPrimaryAccession() throws IOException {
@@ -47,13 +46,15 @@ public class AccessionReaderTest extends GenbankReaderTest {
 	
 	public void testRead_SecondaryAccessionWithPrimaryAccession() throws IOException {
 		initLineReader(
-			"ACCESSION   A00002\n" +
+			"ACCESSION   A00001 A00002\n" +
 			"            A00003 A00004\n"  +
 			"            A00005\n"
 		);
 		ValidationResult result = (new AccessionReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertNull(entry.getPrimaryAccession());
+		assertEquals(
+				"A00001",
+				entry.getPrimaryAccession());
 
 		assertEquals(4, entry.getSecondaryAccessions().size());
 		assertEquals(
