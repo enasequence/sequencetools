@@ -6,7 +6,7 @@ AC   ;
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly
+DE   Micrococcus sp. 5 strain PR1 genome assembly
 XX
 KW   .
 XX
@@ -19,6 +19,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 XX
 //

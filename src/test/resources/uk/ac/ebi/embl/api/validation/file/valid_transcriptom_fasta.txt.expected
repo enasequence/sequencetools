@@ -19,6 +19,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="transcribed RNA"
 XX
 SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
@@ -50,6 +51,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="transcribed RNA"
 XX
 SQ   Sequence 335 BP; 0 A; 0 C; 12 G; 323 T; 0 other;
@@ -81,6 +83,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="transcribed RNA"
 XX
 SQ   Sequence 335 BP; 12 A; 0 C; 323 G; 0 T; 0 other;

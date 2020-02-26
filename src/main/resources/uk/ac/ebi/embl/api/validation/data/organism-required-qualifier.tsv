@@ -3,4 +3,4 @@
 ecotype	Arabidopsis thaliana	WARNING
 strain	Mus musculus	ERROR
 serotype	Influenza A virus	ERROR
-strain,environmental_sample,isolate	Bacteria,Archaea	WARNING
+strain,environmental_sample,isolate	Bacteria,Archaea	ERROR

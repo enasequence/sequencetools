@@ -95,6 +95,7 @@ public abstract class SubmissionValidationTest {
 	{
 		SourceFeature source = new FeatureFactory().createSourceFeature();
 		source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME,"Micrococcus sp. 5");
+		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"PR1");
 		return source;
 	}
 	

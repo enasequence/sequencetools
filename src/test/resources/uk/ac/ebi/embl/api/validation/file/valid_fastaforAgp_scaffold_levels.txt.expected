@@ -6,7 +6,8 @@ AC * _IWGSC_CSS_6DL_contig_209591
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209591
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209591
 XX
 KW   WGS.
 XX
@@ -19,6 +20,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209591"
 XX
@@ -38,7 +40,8 @@ AC * _IWGSC_CSS_6DL_contig_209592
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209592
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209592
 XX
 KW   WGS.
 XX
@@ -51,6 +54,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209592"
 XX
@@ -70,7 +74,8 @@ AC * _IWGSC_CSS_6DL_contig_209593
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209593
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209593
 XX
 KW   WGS.
 XX
@@ -83,6 +88,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209593"
 XX
@@ -102,7 +108,8 @@ AC * _IWGSC_CSS_6DL_contig_209594
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209594
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209594
 XX
 KW   WGS.
 XX
@@ -115,6 +122,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209594"
 XX
@@ -134,7 +142,8 @@ AC * _IWGSC_CSS_6DL_contig_209595
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209595
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209595
 XX
 KW   WGS.
 XX
@@ -147,6 +156,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..335
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209595"
 XX
@@ -166,7 +176,8 @@ AC * _IWGSC_CSS_6DL_contig_209596
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: IWGSC_CSS_6DL_contig_209596
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig:
+DE   IWGSC_CSS_6DL_contig_209596
 XX
 KW   WGS.
 XX
@@ -179,6 +190,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..155
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209596"
 XX

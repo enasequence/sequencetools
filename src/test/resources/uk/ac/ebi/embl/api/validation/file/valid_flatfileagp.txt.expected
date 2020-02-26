@@ -6,7 +6,8 @@ AC * _IWGSC_CSS_6DL_scaff_3330716
 XX
 PR   Project:PRJEB0;
 XX
-DE   Micrococcus sp. 5 genome assembly, scaffold: IWGSC_CSS_6DL_scaff_3330716
+DE   Micrococcus sp. 5 strain PR1 genome assembly, scaffold:
+DE   IWGSC_CSS_6DL_scaff_3330716
 XX
 KW   .
 XX
@@ -19,6 +20,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..654
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT   assembly_gap    331..354
 FT                   /estimated_length=24

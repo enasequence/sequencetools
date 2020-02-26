@@ -9,7 +9,7 @@ XX
 DT   23-OCT-2004 (Rel. 81, Created)
 DT   22-APR-2013 (Rel. 116, Last updated, Version 6)
 XX
-DE   Micrococcus sp. 5 genome assembly, contig: ENTRY_NAME1
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig: ENTRY_NAME1
 XX
 KW   WGS.
 XX
@@ -22,6 +22,7 @@ FH   Key             Location/Qualifiers
 FH
 FT   source          1..1710
 FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: ENTRY_NAME1"
 FT   gene            212..1543

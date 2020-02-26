@@ -15,23 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
-
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
@@ -40,14 +27,23 @@ import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
 
 public class AGPFileValidationCheckTest extends SubmissionValidationTest
 {
 	 @Before
-	   public void init() throws SQLException
+	   public void init()
 	   {   
 		   options = new SubmissionOptions();
 	       options.source= Optional.of(getSource());
