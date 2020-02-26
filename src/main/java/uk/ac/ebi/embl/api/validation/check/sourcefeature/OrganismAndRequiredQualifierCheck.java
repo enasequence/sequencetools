@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("At least one of the following qualifiers {0} must exist when organism belongs to {1}.")
-@ExcludeScope(validationScope = { ValidationScope.EPO,ValidationScope.EPO_PEPTIDE, ValidationScope.NCBI })
+@ExcludeScope(validationScope = { ValidationScope.EPO,ValidationScope.EPO_PEPTIDE, ValidationScope.NCBI  , ValidationScope.ASSEMBLY_TRANSCRIPTOME, ValidationScope.EMBL_TEMPLATE})
 public class OrganismAndRequiredQualifierCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "OrganismAndRequiredQualifierCheck";

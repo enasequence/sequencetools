@@ -377,10 +377,10 @@ public abstract class FileValidationCheck {
 	}
 
   	protected Sequence.Topology getTopology(String submitterAccn)  {
-		if (getOptions().getEntryValidationPlanProperty().validationScope.get()
+		if (submitterAccn != null && getOptions().getEntryValidationPlanProperty().validationScope.get()
 				== ValidationScope.ASSEMBLY_CHROMOSOME
 			&& chromosomeNameQualifiers != null) {
-			return chromosomeNameQualifiers.get(submitterAccn).getTopology();
+			return chromosomeNameQualifiers.get(submitterAccn.toUpperCase()).getTopology();
 		}
 		return null;
   	}

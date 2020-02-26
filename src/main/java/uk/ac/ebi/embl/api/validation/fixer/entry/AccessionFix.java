@@ -44,11 +44,23 @@ public class AccessionFix extends EntryValidationCheck {
 
 		if (entry.getSubmitterAccession() != null) {
 			String entryName = entry.getSubmitterAccession().trim();
+			int i = 0;
+			while ( entryName.length()>i && entryName.charAt(i) == '_') {
+				++i;
+			}
+			if (i > 0) {
+				entryName = entryName.substring(i);
+			}
+
 			if (entryName.endsWith(";")) {
-				entry.setSubmitterAccession(StringUtils.removeEnd(entryName, ";"));
+				entryName = StringUtils.removeEnd(entryName, ";");
+			}
+			if(!entryName.equals(entry.getSubmitterAccession())) {
+				entry.setSubmitterAccession(entryName);
 				reportMessage(Severity.FIX, entry.getOrigin(), FIX_ID, entryName, entry.getSubmitterAccession());
 			}
 		}
+
 		if (entry.getSecondaryAccessions() != null) {
 			List<Text> masterAccnsToRemove = new ArrayList<>();
 			for (Text accn : entry.getSecondaryAccessions()) {

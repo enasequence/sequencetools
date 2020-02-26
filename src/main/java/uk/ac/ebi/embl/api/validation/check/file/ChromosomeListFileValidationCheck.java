@@ -82,7 +82,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 					}
 				}
 				if (entry.getObjectName() != null)
-				  chromosomeNameQualifiers.put(entry.getObjectName(), entry);
+				  chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(), entry);
 				if(entry.getChromosomeName()!=null)
 					chromosomeNames.add(entry.getChromosomeName().toUpperCase());
 

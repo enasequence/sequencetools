@@ -58,9 +58,17 @@ public class AccessionFixTest {
 		ValidationResult validationResult = check.check(entry);
 		assertEquals(0, validationResult.getMessages(Severity.FIX).size());
 	}
-	
+
 	@Test
 	public void testCheck_inValidEntryName() {
+		entry.setSubmitterAccession("_entryname;");
+		ValidationResult validationResult = check.check(entry);
+		assertEquals("entryname", entry.getSubmitterAccession());
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+	}
+
+	@Test
+	public void testCheck_inValidEntryName1() {
 		entry.setSubmitterAccession("entryname;");
 		ValidationResult validationResult = check.check(entry);
 		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
