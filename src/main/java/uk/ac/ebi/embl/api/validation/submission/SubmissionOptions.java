@@ -45,7 +45,7 @@ public class SubmissionOptions
 
 	public void init() throws ValidationEngineException
 	{
-		if(!submissionFiles.isPresent())
+		if(!submissionFiles.isPresent() || submissionFiles.get().getFiles() == null || submissionFiles.get().getFiles().isEmpty())
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");

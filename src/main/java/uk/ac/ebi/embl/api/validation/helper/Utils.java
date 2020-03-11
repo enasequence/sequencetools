@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.*;
@@ -1035,7 +1036,7 @@ public class Utils {
 	}
 
 
-	public static ValidationResult validateAssemblySequenceCount(boolean ignoreErrors,long contigCount,long scaffoldCount,long chromosomeCount )
+	public static ValidationResult validateAssemblySequenceCount(boolean ignoreErrors, long contigCount, long scaffoldCount, long chromosomeCount, String assemblyType)
 	{
 
 		ValidationResult result = new ValidationResult();
@@ -1043,7 +1044,7 @@ public class Utils {
 		if(ignoreErrors)
 			return result;
 
-		if (contigCount!=0 && contigCount<MIN_CONTIG_CNT)
+		if (!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) && (contigCount != 0 && contigCount < MIN_CONTIG_CNT) )
 		{
 			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR,
 					contigCount,"CONTIG", MIN_CONTIG_CNT);
@@ -1061,17 +1062,21 @@ public class Utils {
 			result.append(message);
 		}
 
-		if(contigCount!=0&&contigCount>MAX_CONTIG_CNT)
+		if( AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)) {
+			return  result;
+		}
+
+		if(contigCount != 0 && contigCount > MAX_CONTIG_CNT)
 		{
 			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, contigCount,"CONTIG", MAX_CONTIG_CNT);
 			result.append(message);
 		}
-		if(scaffoldCount!=0&&scaffoldCount>MAX_SCAFFOLD_CNT)
+		if(scaffoldCount !=0 && scaffoldCount > MAX_SCAFFOLD_CNT)
 		{
 			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, scaffoldCount,"SCAFFOLD", MAX_SCAFFOLD_CNT);
 			result.append(message);
 		}
-		if(chromosomeCount!=0&&chromosomeCount>MAX_CHROMOSOME_CNT)
+		if(chromosomeCount !=0 && chromosomeCount>MAX_CHROMOSOME_CNT)
 		{
 			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR, chromosomeCount,"CHROMOSOME", MAX_CHROMOSOME_CNT);
 			result.append(message);

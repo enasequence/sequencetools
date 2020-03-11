@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,6 +71,7 @@ public class SubmissionValidationPlan
 	public void execute() throws ValidationEngineException {
 		try
 		{
+			//TODO: check for a way to log INFO messages
 			options.init();
 			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			//Validation Order shouldn't be changed
@@ -116,15 +118,14 @@ public class SubmissionValidationPlan
 				registerSequences();
 				check.validateSequencelessChromosomes();
 
-				if (options.assemblyInfoEntry.isPresent() && !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())) {
-					throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
-							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2)));
-				}
+				String assemblyType = options.assemblyInfoEntry.isPresent()? options.assemblyInfoEntry.get().getAssemblyType(): null;
+				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
+							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2), assemblyType));
 
 				if(!options.isRemote)
 				{
-					if(!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())&&
-					   !AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(options.assemblyInfoEntry.get().getAssemblyType())	)
+					if(!(AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
+					   AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)	))
 					writeUnplacedList();
 				}
 			}	else {

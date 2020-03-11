@@ -20,14 +20,16 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.List;
 
 @Description("\"{0}\" qualifier value has been changed from \"{1}\" to scientific name \"{2}\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
 public class HostQualifierFix extends FeatureValidationCheck
 {
 	private static final String HOST_QUALIFIER_VALUE_FIX_ID = "HostQualifierFix_1";
@@ -35,7 +37,7 @@ public class HostQualifierFix extends FeatureValidationCheck
 	public ValidationResult check(Feature feature) {
 		result = new ValidationResult();
 
-		if (feature == null || !(feature instanceof SourceFeature)) {
+		if (!(feature instanceof SourceFeature)) {
 			return result;
 		}
 
