@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -25,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -42,7 +42,9 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck
 	{
 		result = new ValidationResult();
 		List<Feature> exonFeatures = SequenceEntryUtils.getFeatures(Feature.EXON_FEATURE_NAME, entry);
-		List<Feature> filteredExonFeatures = new ArrayList<Feature>();
+		List<Feature> filteredExonFeatures = new ArrayList<>();
+
+		//filter non remote location exons
 		for (Feature exonFeature : exonFeatures)
 		{
 			if (!(exonFeature.getLocations() instanceof RemoteLocation))
@@ -61,23 +63,54 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck
 			}
 
 		}
+
 		if (filteredExonFeatures.size() == 0)
 			return result;
+
 		List<Feature> sortedFeatures = getSortedExonFeatures(filteredExonFeatures);
+		String prevLocusTag = null;
+		String prevGene = null;
 		Long prevEndLocation = null;
+
 		for (Feature feature : sortedFeatures)
 		{
+			String currLocusTag = feature.getSingleQualifierValue(Qualifier.LOCUS_TAG_QUALIFIER_NAME);
+			String currGene = feature.getSingleQualifierValue(Qualifier.GENE_QUALIFIER_NAME);
+
 			if (prevEndLocation != null)
 			{
 				Long beginLocation = feature.getLocations().getMinPosition();
 
-				if (beginLocation - prevEndLocation == 1)
+				if (beginLocation - prevEndLocation == 1 )
 				{
-					reportError(feature.getOrigin(), MESSAGE_ID);
+
+					//if both feature has gene and locus_tag gene has priority, compare both gene and add error message if same.
+					//if one feature has one of them and the other is not add error.
+					//if gene is missing in one of them and locus is available in both then just compare local and add error if same
+					if( (currGene == null && prevGene == null) ) {
+						if (currLocusTag == null || (prevLocusTag == null || currLocusTag.equalsIgnoreCase(prevLocusTag)) ) {
+							reportError(feature.getOrigin(), MESSAGE_ID);
+						}
+					} else {
+						if(currGene != null && prevGene != null) {
+							if(currGene.equalsIgnoreCase(prevGene)){
+								reportError(feature.getOrigin(), MESSAGE_ID);
+							}
+						} else if(currLocusTag != null && prevLocusTag != null) {
+							if(currLocusTag.equalsIgnoreCase(prevLocusTag)){
+								reportError(feature.getOrigin(), MESSAGE_ID);
+							}
+						} else  {
+							reportError(feature.getOrigin(), MESSAGE_ID);
+						}
+					}
+
 				}
 			}
 
 			prevEndLocation = feature.getLocations().getMaxPosition();
+			prevLocusTag = currLocusTag;
+			prevGene = currGene;
 		}
 
 		return result;

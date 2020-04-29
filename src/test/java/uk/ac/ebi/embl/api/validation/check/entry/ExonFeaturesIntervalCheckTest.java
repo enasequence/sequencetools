@@ -30,6 +30,8 @@ import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class ExonFeaturesIntervalCheckTest
@@ -180,6 +182,160 @@ public class ExonFeaturesIntervalCheckTest
 		assertTrue(!result.isValid());
 
 	}
+	@Test
+	public void testCheck_withExonFeaturesAdjacentDiffGene()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(result.isValid());
+
+	}
+	@Test
+	public void testCheck_withExonFeaturesAdjacentSameGene()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(!result.isValid());
+
+	}
+
+	@Test//invalid
+	public void testExonFeaturesAdjacentOneWithGeneBothWithSameLocus()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(!result.isValid());
+
+	}
+	@Test//invalid
+	public void testExonFeaturesAdjacentOneWithNoGeneBothWithSameLocus()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(!result.isValid());
+
+	}
+
+
+	@Test//valid
+	public void testExonFeaturesAdjacentOneWithGeneBothWithDiffLocus()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "ghg"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(result.isValid());
+
+	}
+
+	@Test//valid
+	public void testExonFeaturesAdjacentOneWithNoGeneBothWithDiffLocus()
+	{
+		QualifierFactory qualFact = new QualifierFactory();
+
+		Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "ghg"));
+		LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+		CompoundLocation<Location> join1 = new Join<Location>();
+		join1.addLocation(location1);
+		feature1.setLocations(join1);
+
+		Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
+		feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
+		LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+		CompoundLocation<Location> join2 = new Join<Location>();
+		join2.addLocation(location2);
+		feature2.setLocations(join2);
+		entry.addFeature(feature1);
+		entry.addFeature(feature2);
+		ValidationResult result = check.check(entry);
+		assertTrue(result.isValid());
+
+	}
+
 
 	@Test
 	public void testCheck_withExonFeaturesAdjacentwithPartialLocation()
