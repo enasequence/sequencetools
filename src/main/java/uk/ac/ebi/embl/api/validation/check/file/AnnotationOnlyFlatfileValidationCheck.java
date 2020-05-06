@@ -15,8 +15,10 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
+import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
@@ -35,8 +37,9 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
+			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 
-			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE))
+			if(!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE))
 			{
 				ValidationResult result = new ValidationResult();
 				valid = false;
@@ -47,9 +50,10 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				return valid;
 			}
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
-			EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
-			ValidationResult parseResult = emblReader.read();
-			while(emblReader.isEntry())
+			EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
+					new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
+			ValidationResult parseResult = entryReader.read();
+			while(entryReader.isEntry())
 			{
 				if(!parseResult.isValid())
 				{
@@ -58,7 +62,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					addMessagekey(parseResult);
 				}
 				parseResult=new ValidationResult();
-				Entry entry = emblReader.getEntry();
+				Entry entry = entryReader.getEntry();
 				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 				if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
 				{
@@ -107,7 +111,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					if(fixedFileWriter!=null)
 						new EmblEntryWriter(entry).write(fixedFileWriter);
 				}
-				emblReader.read();
+				entryReader.read();
 			}
 
 		} catch(ValidationEngineException vee) {

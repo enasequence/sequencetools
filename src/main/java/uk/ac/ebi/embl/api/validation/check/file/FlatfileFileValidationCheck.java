@@ -26,15 +26,14 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
+import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -55,8 +54,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		Origin origin =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
+			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			clearReportFile(getReportFile(submissionFile));
-			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FLATFILE))
+			if(!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FLATFILE))
 			{
 				ValidationResult result = new ValidationResult();
 				valid = false;
@@ -67,10 +67,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				return valid;
 			}
 		Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
-		EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
-		ValidationResult parseResult = emblReader.read();
+		EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
+				new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
+		ValidationResult parseResult = entryReader.read();
 		
-		while(emblReader.isEntry())
+		while(entryReader.isEntry())
 		{
 			if(!parseResult.isValid())
 			{
@@ -79,7 +80,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				addMessagekey(parseResult);
 			}
 			parseResult=new ValidationResult();
-			Entry entry = emblReader.getEntry();
+			Entry entry = entryReader.getEntry();
 			origin =entry.getOrigin();
 			if(getOptions().context.get()==Context.genome)
             {
@@ -87,7 +88,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					entry.setSubmitterAccession(entry.getPrimaryAccession());
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
-            	{  emblReader.read();
+            	{  entryReader.read();
             		continue;
             	}
             	else if(isHasAnnotationOnlyFlatfile())
@@ -145,7 +146,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				if(fixedFileWriter!=null)
 				new EmblEntryWriter(entry).write(fixedFileWriter);
 			}
-			emblReader.read();
+			entryReader.read();
 			sequenceCount++;
 		}
 		}catch(ValidationEngineException e)
@@ -172,22 +173,25 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	{
 		for(SubmissionFile submissionFile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
+			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 
 			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter annotationOnyFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getAbsolutePath()+".annotationOnly"))))
 			{
-				EmblEntryReader emblReader = new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
-				emblReader.read();
-				while(emblReader.isEntry())
+				EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
+						new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
+
+				entryReader.read();
+				while(entryReader.isEntry())
 				{
-					Entry entry=emblReader.getEntry();
-					if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
+					Entry entry=entryReader.getEntry();
+					if(entry.getSequence() == null || entry.getSequence().getSequenceBuffer() == null)
 					{
 						EmblEntryWriter writer = new EmblEntryWriter(entry);
 						writer.write(annotationOnyFileWriter);
 						setHasAnnotationOnlyFlatfile(true);
 					}
-					emblReader.read();
+					entryReader.read();
 				}
 			}
 			 catch (IOException e) {

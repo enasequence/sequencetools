@@ -553,6 +553,19 @@ public abstract class FileValidationCheck {
 		}
 	}
 
+
+	public  boolean isGenbank(File f) throws ValidationEngineException {
+		try(BufferedReader br = getBufferedReader(f)) {
+			String line;
+			if((line = br.readLine()) != null){
+				return line.trim().startsWith("LOCUS");
+			}
+		} catch (Exception e) {
+			throw new ValidationEngineException("Could not read the file :"+f, e);
+		}
+		return false;
+	}
+
 	public static boolean isHasAnnotationOnlyFlatfile() {
 		return hasAnnotationOnlyFlatfile;
 	}
