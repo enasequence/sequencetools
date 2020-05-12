@@ -32,7 +32,11 @@ public abstract class GCSEntryReader implements FlatFileReader<Object>
 	    protected void warning(int lineNumber,String messageKey, Object... params) {
 	    	validationResult.append(FlatFileValidations.message(lineNumber, Severity.WARNING, messageKey, params));
 	    }
-	
+
+	protected void fix(int lineNumber,String messageKey, Object... params) {
+		validationResult.append(FlatFileValidations.message(lineNumber, Severity.FIX, messageKey, params));
+	}
+
 	public static BufferedReader getBufferedReader (File file) throws FileNotFoundException, IOException
 	{
 		

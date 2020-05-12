@@ -33,7 +33,6 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 	private final String MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR = "ChromosomeListNameInvalidCheck";
 	
 	private Pattern ChromosomeNamePattern = Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
-	private String[] chromosomeNamesToFixArray = new String[] { "chr", "chrm", "chrom", "chromosome", "linkage group", "linkage-group", "plasmid"};
 	private String[] chromosomeNamesToRejectArray = new String[] { "Un", "chrUn", "random", "rnd" , "unknown"};
     	
 
@@ -58,9 +57,7 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 		if(Arrays.stream(chromosomeNamesToRejectArray).anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(),x ))) {
 			reportError(entry.getOrigin(), MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR, entry.getChromosomeName());
 		}
-        Arrays.stream(chromosomeNamesToFixArray).filter(x->StringUtils.containsIgnoreCase(entry.getChromosomeName(),x)).forEach(x->
-    	    entry.setChromosomeName(StringUtils.remove(entry.getChromosomeName(),entry.getChromosomeName().substring(StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x),StringUtils.indexOfIgnoreCase(entry.getChromosomeName(),x)+x.length())))
-        );
+
         if(entry.getChromosomeName().trim().equalsIgnoreCase("Mitocondria"))
         {
            entry.setChromosomeName("MT");	

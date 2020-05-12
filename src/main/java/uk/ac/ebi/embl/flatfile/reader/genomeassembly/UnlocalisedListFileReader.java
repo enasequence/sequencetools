@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -47,7 +46,11 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 				{
 				   UnlocalisedEntry unlocalisedEntry = new UnlocalisedEntry();
 					unlocalisedEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
-					unlocalisedEntry.setChromosomeName(fields[CHROMOSOME_NAME_COLUMN]);
+					String chrName = fields[CHROMOSOME_NAME_COLUMN];
+					unlocalisedEntry.setChromosomeName(ChromosomeListFileReader.fixChromosomeName(chrName));
+					if(!chrName.equals(unlocalisedEntry.getChromosomeName()))
+						fix(lineNumber, "ChromosomeListNameFix",chrName, unlocalisedEntry.getChromosomeName() );
+
 					unlocalisedEntry.setOrigin(new FlatFileOrigin(lineNumber));
 					unlocalisedEntries.add(unlocalisedEntry);
 				}

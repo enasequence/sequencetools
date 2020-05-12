@@ -1,0 +1,46 @@
+LOCUS       JAABOM010243455          200 bp    DNA     linear   PLN 31-MAR-2020
+DEFINITION  Solanum clarkiae isolate JEOTBHNURJ 243455, whole genome shotgun
+            sequence.
+ACCESSION   JAABOM010243455 JAABOM010000000
+VERSION     JAABOM010243455.1
+DBLINK      BioProject: PRJNA551615
+            BioSample: SAMN12161631
+KEYWORDS    WGS.
+SOURCE      Solanum clarkiae
+  ORGANISM  Solanum clarkiae
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; asterids; lamiids; Solanales; Solanaceae;
+            Solanoideae; Solaneae; Solanum.
+REFERENCE   1  (bases 1 to 200)
+  AUTHORS   Roy,S., Cantley,J. and Pirro,S.
+  TITLE     The complete genome sequence of Solanum clarkiae
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 200)
+  AUTHORS   Roy,S., Cantley,J. and Pirro,S.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-JAN-2020) Biodiversity, Iridian Genomes, 6213 Swords
+            Way, Bethesda, MD 20817, USA
+COMMENT     ##Genome-Assembly-Data-START##
+            Assembly Method        :: SOAPdenovo v. 2019
+            Genome Representation  :: Full
+            Expected Final Version :: Yes
+            Genome Coverage        :: 120.0x
+            Sequencing Technology  :: Illumina
+            ##Genome-Assembly-Data-END##
+FEATURES             Location/Qualifiers
+     source          1..200
+                     /organism="Solanum clarkiae"
+                     /mol_type="genomic DNA"
+                     /isolate="JEOTBHNURJ"
+                     /db_xref="taxon:329767"
+                     /submitter_seqid="JAABOM01:E1"
+                     /tissue_type="leaf"
+                     /dev_stage="adult"
+                     /country="USA"
+ORIGIN      
+        1 tggtttggtg agaaaacgtt tggtttggcg gttataaaga tttgagcttg taaaggggag
+       61 aaaaaggcat gttacttcct agcctagttt atgttaatta aaacttgtgg gagtgtcgag
+      121 gaagttgtaa ataacatgta aaccacaaga taagggttgg ttatgagtta taccacgtaa
+      181 ttgatcatag gagtcgaatt
+//

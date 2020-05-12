@@ -8,7 +8,7 @@ apply plugin: 'signing'
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-ext.version_base = '2.0.63'
+ext.version_base = '2.0.66'
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -75,6 +75,7 @@ dependencies
             compile 'commons-dbutils:commons-dbutils:1.5'
             compile 'commons-lang:commons-lang:2.6'
             compile 'org.json:json:20131018'
+            compile 'com.beust:jcommander:1.72'
             compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
             compile 'org.apache.commons:commons-compress:1.10'
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'

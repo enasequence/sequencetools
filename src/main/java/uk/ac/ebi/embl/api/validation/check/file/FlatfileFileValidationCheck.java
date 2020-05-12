@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -84,8 +85,12 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			origin =entry.getOrigin();
 			if(getOptions().context.get()==Context.genome)
             {
-				if (entry.getSubmitterAccession() == null)
-					entry.setSubmitterAccession(entry.getPrimaryAccession());
+
+				if (entry.getSubmitterAccession() == null) {
+					String subAcc = entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME);
+					entry.setSubmitterAccession(subAcc == null ? entry.getPrimaryAccession() : subAcc);
+				}
+
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
              	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
             	{  entryReader.read();

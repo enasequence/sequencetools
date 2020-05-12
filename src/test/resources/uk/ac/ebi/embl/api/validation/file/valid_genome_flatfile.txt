@@ -72,6 +72,7 @@ FH
 FT   source          1..1710
 FT                   /organism="Oryza sativa Indica Group"
 FT                   /mol_type="genomic DNA"
+FT                   /submitter_seqid="AAAA02:E1"
 FT                   /db_xref="taxon:39946"
 FT   gene            212..1543
 FT                   /locus_tag="SPLC1_0001"

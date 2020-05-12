@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 public class ChromosomeListFileReader extends GCSEntryReader
@@ -36,6 +34,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
     private Set<String> chromosomeNames= new HashSet<String>();
     private Set<String> objectNames= new HashSet<String>();
     List<ChromosomeEntry> chromosomeEntries =new ArrayList<ChromosomeEntry>();
+	private static String[] chromosomeNamesToFixArray = new String[] { "chromosome", "chrom", "chrm", "chr", "linkage-group", "linkage group", "plasmid"};
 	
     public ChromosomeListFileReader(File file)
     {
@@ -78,7 +77,11 @@ public class ChromosomeListFileReader extends GCSEntryReader
 				{
 					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
 					chromosomeEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
-					chromosomeEntry.setChromosomeName(fields[CHROMOSOME_NAME_COLUMN]);
+					String chrName = fields[CHROMOSOME_NAME_COLUMN];
+					chromosomeEntry.setChromosomeName(fixChromosomeName(chrName));
+					if(!chrName.equals(chromosomeEntry.getChromosomeName()))
+						fix(lineNumber, "ChromosomeListNameFix",chrName, chromosomeEntry.getChromosomeName() );
+
 					String[] topologyAndChrType = fields[CHROMOSOME_TYPE_COLUMN].split("-");
 					if (topologyAndChrType.length == 2) {
 						chromosomeEntry.setTopology(SequenceEntryUtils.getTopology(topologyAndChrType[0].trim()));
@@ -107,6 +110,28 @@ public class ChromosomeListFileReader extends GCSEntryReader
 		}
 		return validationResult;
 	}
+
+
+	public static String fixChromosomeName(String field) {
+    	if(field == null )
+    		return field;
+
+		String fixedChrName = field.trim();
+
+		if(fixedChrName.isEmpty())
+    		return field;
+
+
+		for(String match: chromosomeNamesToFixArray ) {
+			if(StringUtils.containsIgnoreCase(fixedChrName,match)) {
+				fixedChrName = StringUtils.remove(fixedChrName,fixedChrName
+						.substring(StringUtils.indexOfIgnoreCase(fixedChrName,match),StringUtils.indexOfIgnoreCase(fixedChrName,match)+match.length()));
+			}
+		}
+
+    	return fixedChrName;
+	}
+
 	@Override
 	public ValidationResult skip() throws IOException
 	{

@@ -98,6 +98,24 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		}
 
 	@Test
+	public void testGenBankFixedValidFlatFile() throws ValidationEngineException, FlatFileComparatorException
+	{
+		validateMaster(Context.genome);
+		SubmissionFile file=initSubmissionFixedTestFile("valid_genbank_flatfile.txt",SubmissionFile.FileType.FLATFILE);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+		options.submissionFiles =Optional.of(submissionFiles);
+		options.reportDir = Optional.of(file.getFile().getParent());
+		options.processDir = Optional.of(file.getFile().getParent());
+		options.context = Optional.of(Context.genome);
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		options.init();
+		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+		assertTrue(check.check(file));
+		assertTrue(compareOutputFixedFiles(file.getFile()));
+	}
+
+	@Test
 	public void testgenomeFlatFilePseudogeneQualWithSingleQuote() throws ValidationEngineException, FlatFileComparatorException
 	{
 		validateMaster(Context.genome);

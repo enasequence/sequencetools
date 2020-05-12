@@ -65,6 +65,20 @@ public class ChromosomeListFileReaderTest
 	}
 
 	@Test
+	public void testChromosomeNameFix() throws IOException
+	{
+		String fileName=null;
+		URL url = ChromosomeListFileReaderTest.class.getClassLoader().getResource( "chr_name_fix_chromosome_list.txt");
+		if (url != null)
+			fileName = url.getPath().replaceAll("%20", " ");
+		ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
+		ValidationResult parseResult=reader.read();
+		assertTrue(parseResult.isValid());
+		assertEquals(1,parseResult.getMessages("ChromosomeListNameFix").size());
+		assertEquals("test1", reader.chromosomeEntries.get(1).getChromosomeName());
+	}
+
+	@Test
 	public void testRead_invalidnoofColumns() throws IOException 
 	{
 		String fileName=null;

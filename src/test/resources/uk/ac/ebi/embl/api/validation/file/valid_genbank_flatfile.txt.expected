@@ -1,0 +1,36 @@
+ID   JAABOM010243455; SV 1; linear; genomic DNA; WGS; PLN; 200 BP.
+XX
+AC   JAABOM010243455;
+XX
+AC * _JAABOM01:E1
+XX
+PR   Project:PRJEB0;
+XX
+DT   31-MAR-2020 (Last updated)
+XX
+DE   Micrococcus sp. 5 strain PR1 genome assembly, contig: JAABOM01:E1
+XX
+KW   WGS.
+XX
+OS   Micrococcus sp. 5
+OC   unclassified sequences.
+XX
+DR   BioSample; SAMN12161631.
+DR   BioSample; SAMEA5528917.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..200
+FT                   /organism="Micrococcus sp. 5"
+FT                   /strain="PR1"
+FT                   /mol_type="genomic DNA"
+FT                   /note="contig: JAABOM01:E1"
+FT                   /submitter_seqid="JAABOM01:E1"
+FT                   /db_xref="15368"
+XX
+SQ   Sequence 200 BP; 63 A; 20 C; 54 G; 63 T; 0 other;
+     tggtttggtg agaaaacgtt tggtttggcg gttataaaga tttgagcttg taaaggggag        60
+     aaaaaggcat gttacttcct agcctagttt atgttaatta aaacttgtgg gagtgtcgag       120
+     gaagttgtaa ataacatgta aaccacaaga taagggttgg ttatgagtta taccacgtaa       180
+     ttgatcatag gagtcgaatt                                                   200
+//

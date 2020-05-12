@@ -427,6 +427,7 @@ public abstract class FileValidationCheck {
 	}
 	private void addSourceQualifiers(Entry entry)
 	{
+		Qualifier subSeqIdQual = null;
 		if(entry.getPrimarySourceFeature() == null)
 		{
 			FeatureFactory featureFactory=new FeatureFactory();
@@ -440,12 +441,16 @@ public abstract class FileValidationCheck {
 			SourceFeature sourceFeature=featureFactory.createSourceFeature();
 			sourceFeature.setLocations(featureLocation);
 			entry.addFeature(sourceFeature);
+		} else {
+			subSeqIdQual = entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME);
 		}
+
 		SourceFeature source=null;
 		if(masterEntry!=null&&masterEntry.getPrimarySourceFeature()!=null)
 		{
 			source=masterEntry.getPrimarySourceFeature();
 		}
+
 		entry.getPrimarySourceFeature().removeAllQualifiers();
 		if(options.context.get()==Context.genome)
 		{
@@ -486,6 +491,9 @@ public abstract class FileValidationCheck {
 			{
 				entry.getPrimarySourceFeature().addQualifier(sourceQualifier);
 			}
+		}
+		if( subSeqIdQual != null ) {
+			entry.getPrimarySourceFeature().addQualifier(subSeqIdQual);
 		}
 
 	}
