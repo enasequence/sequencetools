@@ -1,0 +1,3 @@
+IWGSC_CSS_6DL_scaff_3330716	I	chromosome	mitochondrion
+IWGSC_CSS_6DL_scaff_3330717	20_jun_2019	multipartite
+IWGSC_CSS_6DL_scaff_3330718	Mitochondria	multipartite

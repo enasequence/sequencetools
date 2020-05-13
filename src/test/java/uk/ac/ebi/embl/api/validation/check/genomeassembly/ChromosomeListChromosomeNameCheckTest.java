@@ -100,15 +100,5 @@ public class ChromosomeListChromosomeNameCheckTest
 			assertEquals(1, result.count("ChromosomeListNameInvalidCheck", Severity.ERROR));
 		}
 	}
-	@Test
-	public void testCheck_chromosomeNameFix() throws ValidationEngineException
-	{
-		ChromosomeEntry entry = new ChromosomeEntry();
-		entry.setAnalysisId("ERZ00000");
-		entry.setObjectName("chrjkhjg");
-		entry.setChromosomeName("Mitocondria");
-		check.check(entry);
-		assertEquals("MT",entry.getChromosomeName());
-	}
 	
 }

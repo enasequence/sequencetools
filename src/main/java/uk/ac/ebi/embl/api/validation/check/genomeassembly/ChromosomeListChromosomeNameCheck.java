@@ -38,7 +38,7 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 
 	public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException
 	{
-          if(entry==null)
+          if(entry == null)
         	  return result;
 	
 		if (null == entry.getChromosomeName())
@@ -54,14 +54,10 @@ public class ChromosomeListChromosomeNameCheck extends GenomeAssemblyValidationC
 		{
 			reportError(entry.getOrigin(), MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR, entry.getObjectName());
 		}
-		if(Arrays.stream(chromosomeNamesToRejectArray).anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(),x ))) {
+		if(!(getEmblEntryValidationPlanProperty() != null && getEmblEntryValidationPlanProperty().ignore_errors.get()) && Arrays.stream(chromosomeNamesToRejectArray).anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(),x ))) {
 			reportError(entry.getOrigin(), MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR, entry.getChromosomeName());
 		}
 
-        if(entry.getChromosomeName().trim().equalsIgnoreCase("Mitocondria"))
-        {
-           entry.setChromosomeName("MT");	
-        }
 		return result;				
 	}	
 

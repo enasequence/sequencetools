@@ -129,6 +129,10 @@ public class ChromosomeListFileReader extends GCSEntryReader
 			}
 		}
 
+		if(fixedChrName.equalsIgnoreCase("mitocondria") || fixedChrName.equalsIgnoreCase("mitochondria") ) {
+			fixedChrName = "MT";
+		}
+
     	return fixedChrName;
 	}
 
