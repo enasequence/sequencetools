@@ -1,4 +1,5 @@
 ERROR: Invalid feature location: <yes..>yes [Sequence: 1 ,  line: 22]
+ERROR: Feature "CDS" has invalid locations. [Sequence: 1 ,  line: 22]
 ERROR: Missing feature name [Sequence: 1 ,  line: 23]
 ERROR: Missing feature name [Sequence: 1 ,  line: 24]
 ERROR: Missing feature name [Sequence: 1 ,  line: 25]

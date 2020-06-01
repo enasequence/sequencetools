@@ -183,6 +183,7 @@ public class FeatureReader extends FlatFileLineReader {
 		String locationString = line.substring(LOCATION_BEGIN_POS);
 		CompoundLocation<Location> location = readLocation(locationString);
 		if (location == null) {
+			error("FT.17",featureName);
 			return null;
 		}
 		for(Location loc: location.getLocations()) {
