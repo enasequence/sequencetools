@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
@@ -438,6 +439,29 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	@Override
+	public boolean isProjectValid(String project) throws SQLException
+	{
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement("select 1 from project where project_id=? or ncbi_project_id=?");
+			ps.setString(1, project);
+			ps.setString(2, project);
+			rs = ps.executeQuery();
+			if (rs.next())
+			{
+				return true;
+			}
+			return false;
+		} finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(ps);
+		}
+	}
+
+	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		return addSourceQualifiers( new TaxonHelperImpl(),  getSampleInfo(sampleId));
 	}
@@ -649,6 +673,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
 			}
 
+			Taxon taxon = taxonHelper.getTaxonById(sampleInfo.getTaxId());
+			if(taxon != null)
+				sourceFeature.setTaxon(taxon);
 			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
 
 		} finally {

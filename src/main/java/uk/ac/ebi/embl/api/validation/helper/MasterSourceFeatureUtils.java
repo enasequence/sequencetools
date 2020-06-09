@@ -58,7 +58,7 @@ public class MasterSourceFeatureUtils {
 
 	public void addExtraSourceQualifiers(SourceFeature source,TaxonHelper taxonHelper,String uniqueName)
 	{
-		if(addUniqueName&&taxonHelper.isProkaryotic(source.getScientificName())&&source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
+		if(addUniqueName && taxonHelper.isProkaryotic(source.getScientificName()) && source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
 		{
 			source.addQualifier( new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName));
 		}

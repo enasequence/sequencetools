@@ -136,7 +136,9 @@ public class EntryProjectIdCheck extends EntryValidationCheck {
 			for (Text project : entry.getProjectAccessions()) {
 
 			try{
-				if (getEntryDAOUtils()!=null&&!getEntryDAOUtils().isProjectValid(project.getText())) {
+				if(getEraproDAOUtils() != null && !getEraproDAOUtils().isProjectValid(project.getText())) {
+					reportError(entry.getOrigin(), INVALID_PROJECT_MESSAGE,project.getText());
+				} else if (getEntryDAOUtils() != null && !getEntryDAOUtils().isProjectValid(project.getText())) {
 					reportError(entry.getOrigin(), INVALID_PROJECT_MESSAGE,project.getText());
 				}
 			}catch(SQLException e)

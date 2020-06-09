@@ -22,7 +22,10 @@ public interface EraproDAOUtils
 	String getTemplateId(String analysisId) throws SQLException;
 	Set<String> getLocusTags(String projectId) throws SQLException;
 	SourceFeature getSourceFeature(String sampleId) throws Exception;
-	class AssemblySubmissionInfo
+
+    boolean isProjectValid(String text) throws SQLException;
+
+    class AssemblySubmissionInfo
 	{
 		String studyId;
 		String projectId;
