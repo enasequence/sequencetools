@@ -32,11 +32,20 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
  */
 public class EmblEntryWriter extends EntryWriter {
 
+	private boolean isConvff = false;
 	public EmblEntryWriter(Entry entry) {
 		super(entry);
 		wrapType = WrapType.EMBL_WRAP;
 	}
-		
+
+
+	public EmblEntryWriter(Entry entry, boolean isConvff) {
+		super(entry);
+		wrapType = WrapType.EMBL_WRAP;
+		this.isConvff = isConvff;
+	}
+
+
 	public final static String SEPARATOR_LINE = EmblTag.XX_TAG  + "\n";
 	public final static String TERMINATOR_LINE = EmblTag.TERMINATOR_TAG  + "\n";
 	
@@ -59,7 +68,7 @@ public class EmblEntryWriter extends EntryWriter {
 		if(new PRWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);	
 		}
-		if(new DTWriter(entry).write(writer)) {
+		if(new DTWriter(entry, isConvff).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
 		if(new DEWriter(entry, wrapType).write(writer)) {

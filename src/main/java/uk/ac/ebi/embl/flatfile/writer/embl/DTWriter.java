@@ -25,6 +25,12 @@ import java.io.Writer;
 /** Flat file writer for the DT lines.
  */
 public class DTWriter extends FlatFileWriter {
+    private boolean isConvff = false;
+
+    public DTWriter(Entry entry, boolean isConvff) {
+        super(entry);
+        this.isConvff = isConvff;
+    }
 
     public DTWriter(Entry entry) {
       super(entry);
@@ -37,6 +43,12 @@ public class DTWriter extends FlatFileWriter {
             entry.getLastUpdatedRelease() == null ||
             entry.getVersion() == null) {
     	    if( entry.getLastUpdated() != null) {
+                if(isConvff) {
+                    writer.write(EmblPadding.DT_PADDING);
+                    writer.write(DAY_FORMAT.format(entry.getFirstPublic() == null? entry.getLastUpdated() : entry.getFirstPublic() ).toUpperCase());
+                    writer.write(" (Created)\n");
+                }
+
                 writer.write(EmblPadding.DT_PADDING);
                 writer.write(DAY_FORMAT.format(entry.getLastUpdated()).toUpperCase());
                 writer.write(" (Last updated)\n");
