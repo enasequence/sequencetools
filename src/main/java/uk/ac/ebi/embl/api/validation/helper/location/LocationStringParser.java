@@ -19,6 +19,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Join;
@@ -164,7 +165,7 @@ public class LocationStringParser
 	{
 
 		final Pattern PATTERN = Pattern
-				.compile("(\\s*complement\\s*\\()?\\s*(?:(\\w+)\\s*(?:\\.(\\d+))?\\s*\\:\\s*)?\\s*(<)?(?:(\\d+)\\s*(?:((?:\\.\\.)|(?:\\^))\\s*(>)?\\s*(\\d+))?)\\)?\\s*\\)?");
+				.compile("(\\s*complement\\s*\\()?\\s*(?:(\\w+)\\s*(?:\\.(\\d+))?\\s*\\:\\s*)?\\s*(<)?(?:(\\d*)\\s*(?:((?:\\.\\.)|(?:\\^))?\\s*(>)?\\s*(\\d+))?)\\)?\\s*\\)?");
 
 		final int GROUP_COMPLEMENT = 1;
 		final int GROUP_ACCESSION = 2;
@@ -179,7 +180,7 @@ public class LocationStringParser
          {
         	 matcher=null;
          }
-		if (!match(locationString, PATTERN))
+		if (StringUtils.isBlank(locationString) ||  !match(locationString, PATTERN))
 		{
 			throwValueException(object);
 		}
@@ -198,7 +199,7 @@ public class LocationStringParser
 				location = locationFactory.createRemoteBase(accession, version, getLong(GROUP_BEGIN_POSITION));
 			} else
 			{
-				location = locationFactory.createLocalBase(getLong(GROUP_BEGIN_POSITION));
+				location = locationFactory.createLocalBase(getLong(rightPartial? GROUP_END_POSITION: GROUP_BEGIN_POSITION));
 			}
 		} else if (operator.equals(".."))
 		{
