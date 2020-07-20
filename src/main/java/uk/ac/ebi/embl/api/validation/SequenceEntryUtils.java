@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 public class SequenceEntryUtils {
 
+	public static final String FIXED_FILE_SUFFIX = ".tmp";
 	private SequenceEntryUtils() {
 	}
 

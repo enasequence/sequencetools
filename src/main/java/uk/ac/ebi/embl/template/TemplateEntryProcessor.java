@@ -142,6 +142,16 @@ public class TemplateEntryProcessor {
                 entry.getReferences().add(reference);
         }*/
         templateProcessorResultSet.getValidationPlanResult().append((validationPlan.execute(entry)));
+
+        if(entry.getPrimarySourceFeature().getTaxon() != null && entry.getDescription() != null ){
+            Long taxId = entry.getPrimarySourceFeature().getTaxon().getTaxId();
+            if(taxId != null && entry.getPrimarySourceFeature().getTaxon().getScientificName() != null) {
+                String taxIdStr = String.valueOf(taxId);
+                if(entry.getDescription().getText().trim().startsWith(taxIdStr)) {
+                    entry.getDescription().setText(entry.getDescription().getText().trim().replace(taxIdStr, entry.getPrimarySourceFeature().getTaxon().getScientificName()));
+                }
+            }
+        }
         templateProcessorResultSet.setEntry(entry);
         return templateProcessorResultSet;
     }

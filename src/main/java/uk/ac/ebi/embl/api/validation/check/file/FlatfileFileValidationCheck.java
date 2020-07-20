@@ -206,7 +206,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			{
 				SubmissionFile annotationonlysf=null;
 				if(submissionFile.getFixedFile()!=null)
-					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly.fixed"),submissionFile.getReportFile());
+					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"+SequenceEntryUtils.FIXED_FILE_SUFFIX),submissionFile.getReportFile());
 				else
 					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),null,submissionFile.getReportFile());
                 options.submissionFiles.get().addFile(annotationonlysf);

@@ -4,6 +4,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
@@ -142,24 +143,24 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
         SubmissionFiles submissionFiles = new SubmissionFiles();
         manifest.files().get(GenomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(), new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(), new File(file.getFile()+ SequenceEntryUtils.FIXED_FILE_SUFFIX ), file.getReportFile())));
         manifest.files().get(GenomeManifest.FileType.AGP).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.AGP, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.AGP, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         manifest.files().get(GenomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         manifest.files().get(GenomeManifest.FileType.CHROMOSOME_LIST).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.CHROMOSOME_LIST, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         manifest.files().get(GenomeManifest.FileType.UNLOCALISED_LIST).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.UNLOCALISED_LIST, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         return submissionFiles;
     }
 
     private SubmissionFiles setSequenceOptions(SequenceManifest manifest) {
         SubmissionFiles submissionFiles = new SubmissionFiles();
         manifest.files().get(SequenceManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         manifest.files().get(SequenceManifest.FileType.TAB).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.TSV, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.TSV, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         return submissionFiles;
     }
 
@@ -171,9 +172,9 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
         SubmissionFiles submissionFiles = new SubmissionFiles();
         manifest.files().get(TranscriptomeManifest.FileType.FASTA).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.FASTA, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         manifest.files().get(TranscriptomeManifest.FileType.FLATFILE).forEach(file -> submissionFiles.addFile(
-                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+".fixed"), file.getReportFile())));
+                new SubmissionFile(SubmissionFile.FileType.FLATFILE, file.getFile(),new File(file.getFile()+SequenceEntryUtils.FIXED_FILE_SUFFIX), file.getReportFile())));
         return submissionFiles;
     }
 }
