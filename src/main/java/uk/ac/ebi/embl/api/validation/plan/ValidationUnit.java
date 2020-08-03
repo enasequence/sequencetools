@@ -136,6 +136,7 @@ public enum ValidationUnit
 					Isolation_sourceQualifierFix.class,//include for all
 					HostQualifierFix.class,//include for all
 					SourceQualifierMissingFix.class,//include for all
+					SourceQualifierFix.class,
 					StrainQualifierValueFix.class,//include for all
 					Lat_lonValueFix.class,//include for all
 					CountryQualifierFix.class,//include for all

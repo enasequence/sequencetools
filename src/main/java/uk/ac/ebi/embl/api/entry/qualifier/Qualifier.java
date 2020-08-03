@@ -100,6 +100,8 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
 	public static final String RIBOSOMAL_SLIPPAGE="ribosomal_slippage";
 	public static final String METAGENOME_SOURCE_QUALIFIER_NAME = "metagenome_source";
 	public static final String SUBMITTER_SEQID_QUALIFIER_NAME = "submitter_seqid";
+	public static final String SEROVAR_QUALIFIER_NAME = "serovar";
+	public static final String SEROTYPE_QUALIFIER_NAME = "serotype";
 
 
 	
