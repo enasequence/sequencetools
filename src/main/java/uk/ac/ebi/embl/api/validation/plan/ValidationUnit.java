@@ -41,7 +41,6 @@ public enum ValidationUnit
 					EntryProjectIdCheck.class,//exclude for all assemblies
 					HoldDateCheck.class,//include for all
 					//ReferenceCheck.class,
-					MasterEntryDescriptionCheck.class,//include only for assembly master
 					MasterEntrySourceCheck.class,//include only for assembly master
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
