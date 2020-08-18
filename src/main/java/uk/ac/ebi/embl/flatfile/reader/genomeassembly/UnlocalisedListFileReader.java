@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.DataFormatException;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
@@ -47,7 +48,11 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 				   UnlocalisedEntry unlocalisedEntry = new UnlocalisedEntry();
 					unlocalisedEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
 					String chrName = fields[CHROMOSOME_NAME_COLUMN];
-					unlocalisedEntry.setChromosomeName(ChromosomeListFileReader.fixChromosomeName(chrName));
+					try {
+						unlocalisedEntry.setChromosomeName(ChromosomeListFileReader.fixChromosomeName(chrName));
+					} catch(DataFormatException e) {
+						error(lineNumber, e.getMessage());
+					}
 					if(!chrName.equals(unlocalisedEntry.getChromosomeName()))
 						fix(lineNumber, "ChromosomeListNameFix",chrName, unlocalisedEntry.getChromosomeName() );
 
