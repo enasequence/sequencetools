@@ -42,6 +42,7 @@ public class LocationStringParser
 	boolean leftPartial;
 	boolean rightPartial;
 	Object object;
+	public static boolean ignorePartialCheck = false;
 
 	public LocationStringParser()
 	{
@@ -54,6 +55,9 @@ public class LocationStringParser
 	
 	public CompoundLocation<Location> getCompoundLocation(String locationString,boolean ignoreError) throws ValidationException
 	{
+		if(!ignoreError && ignorePartialCheck) {
+			ignoreError = true;
+		}
 		CompoundLocation<Location> compoundLocation = new Join<Location>();
 		
 		if(matcher!=null)
