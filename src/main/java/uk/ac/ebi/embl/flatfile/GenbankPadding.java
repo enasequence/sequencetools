@@ -39,5 +39,6 @@ public abstract class GenbankPadding {
 	public static final String ORIGIN_PADDING =               "ORIGIN";
 	public static final String BLANK_PADDING =                "            ";
 	public static final String FEATURE_PADDING = "     ";
-    public static final String QUALIFIER_PADDING = "                     ";    
+    public static final String QUALIFIER_PADDING = "                     ";
+	public static final String ERROR_MSG_PADDING =           "ERROR  ";
 }

@@ -6,7 +6,9 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 import java.io.BufferedReader;
 import java.util.regex.Pattern;
 
+import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.GenbankTag;
+import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 
 public class GenbankLineReader extends LineReader {
@@ -24,6 +26,13 @@ public class GenbankLineReader extends LineReader {
     }
 
     private final static int TAG_WIDTH = 12;
+
+	@Override
+	protected boolean
+	isSkipLine(String line)
+	{
+		return line.trim().startsWith(GenbankTag.ERROR_MSG_TAG);
+	}
 
 	@Override
     protected int getTagWidth(String line) {

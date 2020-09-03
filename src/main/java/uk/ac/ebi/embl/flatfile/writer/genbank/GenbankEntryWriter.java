@@ -30,17 +30,26 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
  */
 public class GenbankEntryWriter extends EntryWriter {
 
+	String errorMsg;
 	public GenbankEntryWriter(Entry entry) {
 		super(entry);
 		wrapType = WrapType.GENBANK_WRAP;
 	}
-	
+
+	public GenbankEntryWriter(Entry entry, String errorMsg) {
+		super(entry);
+		this.errorMsg = errorMsg;
+		wrapType = WrapType.GENBANK_WRAP;
+	}
+
 	public final static String TERMINATOR_LINE = GenbankTag.TERMINATOR_TAG + "\n";
 	
 	public boolean write(Writer writer) throws IOException {
 		if (entry == null) {
 			return false;
 		}
+		if(errorMsg != null)
+			new ErrorMsgWriter(entry, wrapType, errorMsg).write(writer);
 		new LocusWriter(entry).write(writer);
 		new DefinitionWriter(entry, wrapType).write(writer);
 		new AccessionWriter(entry, wrapType).write(writer);
