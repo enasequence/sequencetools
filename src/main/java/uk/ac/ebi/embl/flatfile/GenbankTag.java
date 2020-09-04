@@ -42,5 +42,6 @@ public abstract class GenbankTag {
     public static final String STANDARD_TAG = "STANDARD";
     public static final String SEGMENT_TAG = "SEGMENT";
     public static final String DBLINK_TAG = "DBLINK";
+    public static final String ERROR_MSG_TAG = "ERROR";
 
 }

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.zip.DataFormatException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,6 +15,7 @@ import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 public class ChromosomeListFileReader extends GCSEntryReader
 {
@@ -78,7 +80,11 @@ public class ChromosomeListFileReader extends GCSEntryReader
 					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
 					chromosomeEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
 					String chrName = fields[CHROMOSOME_NAME_COLUMN];
-					chromosomeEntry.setChromosomeName(fixChromosomeName(chrName));
+					try {
+						chromosomeEntry.setChromosomeName(fixChromosomeName(chrName));
+					} catch (DataFormatException e) {
+						error(lineNumber, e.getMessage());
+					}
 					if(!chrName.equals(chromosomeEntry.getChromosomeName()))
 						fix(lineNumber, "ChromosomeListNameFix",chrName, chromosomeEntry.getChromosomeName() );
 
@@ -112,7 +118,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 	}
 
 
-	public static String fixChromosomeName(String field) {
+	public  static String fixChromosomeName(String field) throws DataFormatException {
     	if(field == null )
     		return field;
 
@@ -122,10 +128,13 @@ public class ChromosomeListFileReader extends GCSEntryReader
     		return field;
 
 
-		for(String match: chromosomeNamesToFixArray ) {
+		for(String match: chromosomeNamesToFixArray )  {
 			if(StringUtils.containsIgnoreCase(fixedChrName,match)) {
 				fixedChrName = StringUtils.remove(fixedChrName,fixedChrName
 						.substring(StringUtils.indexOfIgnoreCase(fixedChrName,match),StringUtils.indexOfIgnoreCase(fixedChrName,match)+match.length()));
+				if(StringUtils.isBlank(fixedChrName.trim())) {
+					throw new DataFormatException( "ChromosomeListNameInvalidReaderMsg");
+				}
 			}
 		}
 

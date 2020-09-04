@@ -41,7 +41,6 @@ public enum ValidationUnit
 					EntryProjectIdCheck.class,//exclude for all assemblies
 					HoldDateCheck.class,//include for all
 					//ReferenceCheck.class,
-					MasterEntryDescriptionCheck.class,//include only for assembly master
 					MasterEntrySourceCheck.class,//include only for assembly master
 					HostQualifierCheck.class,//include for all
 					OrganismAndRequiredQualifierCheck.class, //include for all
@@ -136,6 +135,7 @@ public enum ValidationUnit
 					Isolation_sourceQualifierFix.class,//include for all
 					HostQualifierFix.class,//include for all
 					SourceQualifierMissingFix.class,//include for all
+					SourceQualifierFix.class,
 					StrainQualifierValueFix.class,//include for all
 					Lat_lonValueFix.class,//include for all
 					CountryQualifierFix.class,//include for all
