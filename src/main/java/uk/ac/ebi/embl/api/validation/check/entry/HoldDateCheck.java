@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Description("The hold date must not be in the past")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 
 public class HoldDateCheck extends EntryValidationCheck {
 

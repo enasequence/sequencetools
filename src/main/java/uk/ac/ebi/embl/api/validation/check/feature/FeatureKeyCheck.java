@@ -33,7 +33,7 @@ import java.util.ArrayList;
 @Description("The feature name \\\"{0}\\\" is not recognized\\\\Mandatory qualifier \\\"{0}\\\" not present in feature {1}\\\\" +
         "Qualifier \\\"{0}\\\" must occur exactly 1 time for feature \\\"{1}\\\", not \"{2}\".\\\\Qualifier \\\"{0}\\\" " +
         "is recomended for feature \\\"{1}\\\".")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class FeatureKeyCheck extends FeatureValidationCheck {
 
     private HashMap<String, FeatureKeyInfo> keysMap = new HashMap<String, FeatureKeyInfo>();

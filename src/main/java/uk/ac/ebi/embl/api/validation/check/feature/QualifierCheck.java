@@ -30,7 +30,7 @@ import java.util.regex.PatternSyntaxException;
 @Description("Feature qualifier \\\"{0}\\\" is not recognized\\Feature qualifier \\\"{0}\\\" does not have a value (mandatory for this type)\\" +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" is invalid. Refer to the feature documentation or ask a curator for guidance." +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.\"")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class QualifierCheck extends FeatureValidationCheck {
 
     private static final String NO_QUALIFIER_FOUND_ID = "QualifierCheck-1";

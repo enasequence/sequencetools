@@ -29,7 +29,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Description("invalid protein_id {0}: protein_id can only be assigned by EMBL")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class ProteinIdExistsCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "ProteinIdExistsCheck_1";

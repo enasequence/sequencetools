@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Qualifier \"{0}\" must have value which matches the pattern \"{1}\" when qualifier \"{2}\" has value \"{3}\".")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class NcRNAQualifierValueAndQualifierPatternCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "NcRNAQualifierValueAndQualifierPatternCheck";

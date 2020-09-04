@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class AssemblyInfoProgramCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
    

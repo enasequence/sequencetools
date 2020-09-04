@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import java.util.Collection;
 
 @Description("Qualifier {0} must not exist when qualifier {1} has value {2} in any feature.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class QualifierValueNotQualifierEntryCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "QualifierValueNotQualifierEntryCheck";

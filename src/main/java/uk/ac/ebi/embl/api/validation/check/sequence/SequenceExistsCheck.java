@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("The entry has no sequence.")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class SequenceExistsCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "SequenceExistsCheck";

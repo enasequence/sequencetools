@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 @Deprecated
 @Description("Invalid EC number : \"{0}\" "
 		+ " Non existent EC number : \"{0}\"  ")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class EC_numberCheck extends FeatureValidationCheck
 {
 	private static final String EC_numberCheck_Warning_ID = "EC_numberCheck_1";

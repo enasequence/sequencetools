@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("One of qualifiers {0} must exist when qualifier {1} exists within the same feature.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidationCheck {
 
     private static final String SINGLE_MESSAGE_ID = "QualifierAndRequiredQualifierinFeatureCheck";

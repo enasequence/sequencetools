@@ -33,7 +33,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("Submitter Reference has been added to assembly entries")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class AssemblyLevelSubmitterReferenceFix extends EntryValidationCheck
 {
 	private final String SUBMITTER_REFERENCEFIX_ID = "AssemblyLevelSubmitterReferenceFix_1";

@@ -60,7 +60,9 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		boolean valid =true;
 		try
 		{
-			getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+			if(getOptions().getEntryValidationPlanProperty() != null && getOptions().getEntryValidationPlanProperty().validationScope.get() != ValidationScope.NCBI_MASTER) {
+				getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+			}
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
 			if(!getOptions().isRemote)
 			{

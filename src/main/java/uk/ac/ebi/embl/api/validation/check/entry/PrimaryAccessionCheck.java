@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("invalid accession \"{0}\" for dataclass \"{1}\""
 		+ "invalid accession prefix : \"{0}\". Accession prefix is not registered in cv/prefix tables")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class PrimaryAccessionCheck extends EntryValidationCheck {
 
 	private final static String INVALID_ACCESSION_FORMAT_ID = "PrimaryAccessionCheck1";

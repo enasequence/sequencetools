@@ -28,7 +28,7 @@ import java.util.*;
  * Checks that there is a one-to-one association between gene features and locus tag qualifier values 
  */
 @Description("Different gene features can not share the same \"locus_tag\" qualifier \\\"{0}\\\".")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class GeneFeatureLocusTagCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID = "GeneFeatureLocusTagCheck";

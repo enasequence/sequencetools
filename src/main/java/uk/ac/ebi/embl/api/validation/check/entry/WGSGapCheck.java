@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import java.util.Collection;
 
 @Description("Entries of type \"WGS\" must not contain \"gap\" features.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class WGSGapCheck extends EntryValidationCheck {
 
     private final static String GAPS_PRESENT_ID = "WGSGapCheck";

@@ -31,7 +31,7 @@ import java.util.List;
 
 @Description("dataclass has been fixed to \"{0}\"" + 
              "Dataclass Keyword \"{0}\" has been added to the entry")
-@ExcludeScope(validationScope = ValidationScope.ASSEMBLY_MASTER)
+@ExcludeScope(validationScope = {ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class DataclassFix extends EntryValidationCheck
 {
 

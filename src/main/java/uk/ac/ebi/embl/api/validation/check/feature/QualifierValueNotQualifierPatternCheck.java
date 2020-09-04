@@ -32,7 +32,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Qualifier {0} must not have value which matches the pattern {1} + <value> + {2} where <value> is a value of qualifier {3}.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class QualifierValueNotQualifierPatternCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "QualifierValueNotQualifierPatternCheck";

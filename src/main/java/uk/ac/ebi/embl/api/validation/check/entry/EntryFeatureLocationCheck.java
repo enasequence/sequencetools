@@ -30,7 +30,7 @@ import java.util.List;
 
 @Description("No feature end position exceeds the entry sequence length")
 
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 
 public class EntryFeatureLocationCheck extends EntryValidationCheck {
 

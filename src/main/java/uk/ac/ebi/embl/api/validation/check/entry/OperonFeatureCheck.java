@@ -26,7 +26,7 @@ import java.util.*;
 
 @Description("Feature \"{0}\" refers to operon \"{1}\". Please provide an operon feature which spans the entire operon region. Refer to (http://www.ebi.ac.uk/ena/WebFeat/operon_s.html) for details"
 		+ "\"{0}\" number of features refer to operon \"{1}\". Please provide an operon feature which spans the entire operon region. Refer to (http://www.ebi.ac.uk/ena/WebFeat/operon_s.html) for details")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class OperonFeatureCheck extends EntryValidationCheck
 {
 

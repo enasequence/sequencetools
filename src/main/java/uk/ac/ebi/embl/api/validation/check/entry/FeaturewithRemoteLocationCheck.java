@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 @Description("Feature \"{0}\" has remote location,validator requires database connection to validate features having remote locations"
 		+ "Invalid remote feature Location \"{0}\" , Location range is not within entry \"{1}\" sequence length.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class FeaturewithRemoteLocationCheck extends EntryValidationCheck
 {
 

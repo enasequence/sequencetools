@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 		+ "\"{0}\" dataclass allowed only for Master entries"
 		+ "Keyword dataclass \"{0}\" is not matching with ID line dataclass \"{1}\""
 		+ "Accession dataclass \"{0}\" is not matching with ID line dataclass \"{1}\" ")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class DataclassCheck extends EntryValidationCheck {
 
 

@@ -38,7 +38,7 @@ import java.util.List;
  */
 @Description("The sequence is not fully covered by source features. The source features exceed the total sequence length.")
 
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class SequenceCoverageCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID_SHORT = "SequenceCoverageCheck-1";

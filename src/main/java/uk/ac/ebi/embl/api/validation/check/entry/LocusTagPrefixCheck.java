@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Description("Illegal /locus_tag value \"{0} \". locus_tag prefix \"{1}\" is not registered with the project")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class LocusTagPrefixCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID_INVALID_PREFIX = "LocusTagPrefixCheck1";

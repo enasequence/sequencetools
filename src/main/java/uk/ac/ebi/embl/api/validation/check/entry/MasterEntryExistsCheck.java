@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 
 @Description("Invalid Master entry \"{0}\", not exists in database.")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER })
 public class MasterEntryExistsCheck extends EntryValidationCheck {
 
 	private final static String MASTER_EXISTS_MESSAGE_ID = "MasterEntryExistsCheck_1";

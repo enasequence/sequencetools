@@ -31,7 +31,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Qualifiers {0} and {1} cannot have the same value.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class ExclusiveQualifiersWithSameValueCheck extends FeatureValidationCheck {
 
 	private final static String MESSAGE_ID = "ExclusiveQualifiersWithSameValueCheck";

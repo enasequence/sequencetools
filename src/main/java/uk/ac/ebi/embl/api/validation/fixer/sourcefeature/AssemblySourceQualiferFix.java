@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER })
+@ExcludeScope(validationScope = { ValidationScope.ASSEMBLY_MASTER , ValidationScope.NCBI_MASTER})
 @RemoteExclude
 public class AssemblySourceQualiferFix extends EntryValidationCheck
 {

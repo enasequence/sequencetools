@@ -30,7 +30,7 @@ import java.util.*;
  * Checks pseudogene qualifier has valid allowed value
  */
 @Description("pseudogene qualifier value \"{0}\" is invalid. Allowed values are: {1}")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class PseudogeneValueCheck extends EntryValidationCheck {
 
     protected final static String PSEUDOGENE_INVALID_VALUE_CHECK = "PseudogeneInvalidValueCheck";

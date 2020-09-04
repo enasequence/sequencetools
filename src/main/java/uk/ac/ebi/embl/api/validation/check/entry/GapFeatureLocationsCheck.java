@@ -31,7 +31,7 @@ import java.util.Iterator;
  * gene and a stable list of gene_synonyms
  */
 @Description("bases immediately adjacent to gap location should not be 'n'")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class GapFeatureLocationsCheck extends EntryValidationCheck {
 
 	protected final static String MESSAGE_ID = "GapFeatureLocationsCheck";

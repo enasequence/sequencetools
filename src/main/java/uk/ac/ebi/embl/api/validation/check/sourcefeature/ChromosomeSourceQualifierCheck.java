@@ -31,7 +31,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 
 	private final static String CHROMOSOME_SOURCE_QUALIFIER_ERROR = "ChromosomeSourceQualiferCheck_1";	

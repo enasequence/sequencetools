@@ -34,7 +34,7 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Any of Qualifiers \"{0}\" must exist in Source feature if Molecule Type matches the Value \"{1}\""
 		+ "mol_type must have value \"{0}\" when qualifier \"{1}\" exists")
-@ExcludeScope( validationScope = {ValidationScope.NCBI})
+@ExcludeScope( validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class MoleculeTypeAndSourceQualifierCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndSourceQualifierCheck";

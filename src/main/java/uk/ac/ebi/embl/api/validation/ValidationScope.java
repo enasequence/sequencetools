@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.api.validation;
 public enum ValidationScope {
 	EMBL(Group.SEQUENCE),
 	NCBI(Group.SEQUENCE),
+	NCBI_MASTER(Group.SEQUENCE),
 	EMBL_TEMPLATE(Group.SEQUENCE),
 	EPO_PEPTIDE(Group.SEQUENCE),
 	EPO(Group.SEQUENCE),

@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("EntryName is missing for a {0}, assigned new entryName : {1}")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER,ValidationScope.ASSEMBLY_TRANSCRIPTOME, ValidationScope.NCBI_MASTER})
 public class AssemblyLevelEntryNameFix extends EntryValidationCheck
 {
 	private final String ENTRYNAME_FIX_ID = "AssemblyLevelEntryNameFix";

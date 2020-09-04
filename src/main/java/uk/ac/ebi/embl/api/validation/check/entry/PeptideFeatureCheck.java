@@ -45,7 +45,7 @@ import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
         "Translation of peptide feature must be a part of the translation of CDS feature unless \\\"exception\\\" or \\\"transl_except\\\" qualifiers are present\n" +
         "Translation of peptide feature must have a length equal to a multiple of 3\n" +
         "Translations are permitted to not be a multiple of 3 if the parent CDS feature is partial, as a start codon of 2 or 3 and the peptide feature has a start or end position equal to that of the parent CDS")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class PeptideFeatureCheck extends EntryValidationCheck {
 
     protected static final String NO_PSEUDO_MESSAGE = "PeptideFeatureCheck_1";

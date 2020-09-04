@@ -1272,16 +1272,16 @@ public class Utils {
 	
   public static AnalysisType getAnalysisType(ValidationScope scope)
   {
-	  switch(scope)
-	  {
-	  case ASSEMBLY_TRANSCRIPTOME:
-		  return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
-	  case ASSEMBLY_CHROMOSOME:
-	  case ASSEMBLY_CONTIG:
-	  case ASSEMBLY_SCAFFOLD:
-	  case ASSEMBLY_MASTER:
-		  return AnalysisType.SEQUENCE_ASSEMBLY;
-		  default :
+	  switch (scope) {
+		  case ASSEMBLY_TRANSCRIPTOME:
+			  return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
+		  case ASSEMBLY_CHROMOSOME:
+		  case ASSEMBLY_CONTIG:
+		  case ASSEMBLY_SCAFFOLD:
+		  case NCBI_MASTER:
+		  case ASSEMBLY_MASTER:
+			  return AnalysisType.SEQUENCE_ASSEMBLY;
+		  default:
 			  return null;
 	  }
   }

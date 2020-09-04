@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Description("The feature name \\\"{0}\\\" must have at least one qualifier.\\\\")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
 	private List<String> featuresList = new ArrayList<>();

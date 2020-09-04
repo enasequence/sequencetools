@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Anticodon validation")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class AntiCodonQualifierCheck extends FeatureValidationCheck
 	{
 		private final static String ANTICODON_LOCATION_RANGE_MESSAGE_ID = "AntiCodonQualifierCheck_1";

@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("\"CIRCULAR\" topology  is not allowed for assembly contigs")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
-@ExcludeScope(validationScope={ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.NCBI , ValidationScope.NCBI_MASTER})
 public class AssemblyTopologyCheck extends EntryValidationCheck {
 
 	private final static String MESSAGE_ID = "assemblyTopologyCheck_1";

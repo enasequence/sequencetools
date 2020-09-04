@@ -31,7 +31,7 @@ import java.util.List;
         + "ID Line Dataclass \"{0}\" and Keyword Dataclass \"{1}\" are not identical" + "Multiple keyword dataclasses are not allowed "
         + "Keyword \"{0}\" must not exist in the CON dataclass Entry" + "missing keyword \"{0}\" for dataclass \"{1}\""
         + "\"{0}\" keywords are not valid for dataclass \"{1}\"")
-@ExcludeScope(validationScope = {ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class KWCheck extends EntryValidationCheck {
     private final static String DATACLASS_KEYWORD_ID = "KWCheck_1";
     private final static String MULTIPLE_DATACLASS_KEYWORD_ID = "KWCheck_2";

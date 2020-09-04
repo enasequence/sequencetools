@@ -12,7 +12,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("Entry Set has Duplicated entry_names \"{0}\"")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
 public class Entry_NameCheck extends EntriesValidationCheck
 {

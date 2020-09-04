@@ -34,7 +34,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
  * Checks that any duplicate features exist
  */
 @Description("")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI , ValidationScope.NCBI_MASTER})
 public class DuplicateFeatureCheck extends EntryValidationCheck
 {
 

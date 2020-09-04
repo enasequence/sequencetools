@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Feature {0} is required when molecule type is {1}. \"Join\" locations are only permitted in CDS features on mRNA entries when \"ribosomal_slippage\" or \"exception\" qualifiers are present.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 
 

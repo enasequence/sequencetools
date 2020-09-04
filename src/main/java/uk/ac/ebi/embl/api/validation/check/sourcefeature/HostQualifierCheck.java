@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
-@ExcludeScope( validationScope = {ValidationScope.NCBI})
+@ExcludeScope( validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class HostQualifierCheck extends FeatureValidationCheck
 {
 

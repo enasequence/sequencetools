@@ -34,7 +34,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Feature qualifier \"{0}\" has invalid date i.e.{1}" +
 		"Feature Qualifier \"{0}\" value must not be future date i.e {1}.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class CollectionDateQualifierCheck extends FeatureValidationCheck 
 {
 

@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-@ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE, ValidationScope.NCBI})//do not run in template mode - no control over what they type so could run into problems
+@ExcludeScope(validationScope={ValidationScope.EMBL_TEMPLATE, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})//do not run in template mode - no control over what they type so could run into problems
 @Description("Qualifier {0} must exist when qualifier {1} value matches the pattern {2}.")
 public class QualifierPatternAndQualifierCheck extends FeatureValidationCheck {
 

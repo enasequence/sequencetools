@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 @Description("sequence length must not be shorter than 100 bps" +
 		"Sequence length must not be shorter than 10 and must not be greater than 1000 for GSS dataclass entries" +
 		"Sequence length must not be shorter than 200 for TSA dataclass entries")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class SequenceLengthCheck extends EntryValidationCheck
 {
 	private final static int MIN_SEQUENCE_LENGTH = 100;

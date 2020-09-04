@@ -24,7 +24,8 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 
 @Description("contig/scaffold/chromosome keywords are not allowed in master entry description")
 @GroupIncludeScope(group={ValidationScope.Group.ASSEMBLY})
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.NCBI,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,
+		ValidationScope.NCBI,ValidationScope.ASSEMBLY_TRANSCRIPTOME, ValidationScope.NCBI_MASTER})
 public class MasterEntryDescriptionCheck extends EntryValidationCheck {
 
 	private final static String MASTER_ENTRY_DESCRIPTION_MESSAGE_ID = "MasterEntryDescriptionCheck_1";

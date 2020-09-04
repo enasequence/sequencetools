@@ -34,7 +34,7 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 		+ "Qualifier \"{0}\" has illegal modified bases format:\"{1}\""
 		+ "Qualifier \"{0}\" has no modified bases within <>"
 		+ "Qualifier \"{0}\" has invalid nucleotide:\"{1}\"")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class PCRPrimersQualifierCheck extends FeatureValidationCheck {
 
 	private final static String PCR_FORMAT_MESSAGE_ID = "PCRPrimersQualifierCheck_1";

@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Description("Scaffold \"{0}\" has only \"{1}\" component, minimum two components expected.")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_CONTIG, ValidationScope.ASSEMBLY_MASTER})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CHROMOSOME, ValidationScope.ASSEMBLY_CONTIG, ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class ScaffoldComponentCheck extends EntryValidationCheck {
 
 

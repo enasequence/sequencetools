@@ -33,7 +33,7 @@ import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Qualifier {0} is only permitted when organism belongs to {1}.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class OrganismAndPermittedQualifierCheck extends EntryValidationCheck {
 
     Pattern genePattern =Pattern.compile("^(.)*(rrna)$");

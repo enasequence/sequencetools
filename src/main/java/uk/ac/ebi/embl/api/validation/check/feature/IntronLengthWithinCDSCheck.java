@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Intron usually expected to be at least 10 nt long. Please check the accuracy.")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class IntronLengthWithinCDSCheck extends FeatureValidationCheck {
 
     private final static String MESSAGE_ID = "IntronLengthWithinCDSCheck_1";

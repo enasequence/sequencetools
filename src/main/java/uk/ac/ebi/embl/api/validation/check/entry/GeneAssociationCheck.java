@@ -28,7 +28,7 @@ import java.util.*;
  * Checks that features sharing the same gene tag are associated with the same locus_tag
  */
 @Description("Features sharing gene \\\"{0}\\\" are associated with \\\"{3}\\\" qualifiers with different values (\\\"{1}\\\" and \\\"{2}\\\")\".")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class GeneAssociationCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID_DIFFERENT_LOCUS_VALUES = "GeneAssociationCheck";

@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Description("Any of Qualifiers \"{0}\"   must exist in Source feature if there is an rRNA gene.")
-@ExcludeScope( validationScope = {ValidationScope.NCBI})
+@ExcludeScope( validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 
 	private final static String DIFFERENT_ORGANISM_MESSAGE_ID = "SourceFeatureQualifierCheck2";

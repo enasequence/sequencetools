@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Qualifier \\\"{0}\\\" must have one of values {1} when qualifier \\\"{2}\\\" value starts with \\\"{3}\\\".")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class QualifierValueRequiredQualifierStartsWithValueCheck extends
 		FeatureValidationCheck
 {

@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Flatfile contains non-ascii characters: \"{0}\"")
-@ExcludeScope(validationScope = {ValidationScope.NCBI})
+@ExcludeScope(validationScope = {ValidationScope.NCBI , ValidationScope.NCBI_MASTER})
 public class AsciiCharacterCheck extends EntryValidationCheck
 {
 	private static String ASCII_CHARACTER_CHECK = "AsciiCharacterCheck_1";
