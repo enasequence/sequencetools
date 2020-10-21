@@ -41,7 +41,7 @@ public class GeneAssociatedwithFeatureFix extends EntryValidationCheck
 		
 		result = new ValidationResult();
 		
-		List<Feature> geneAssociatedFeatures=new ArrayList<Feature>();
+		List<Feature> geneAssociatedFeatures=new ArrayList<>();
 
 		if (entry == null)
 		{

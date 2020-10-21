@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.writer.embl;
 
+import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
@@ -46,7 +47,8 @@ public class IDWriter extends FlatFileWriter {
 		writer.write("SV ");
 		if(entry.isMaster()) {
 			if(entry.getPrimaryAccession() != null) {
-				writer.write(entry.getPrimaryAccession().substring(4, 6));
+				AccessionMatcher.Accession accn = AccessionMatcher.getSplittedAccession(entry.getPrimaryAccession());
+				writer.write(accn != null ? accn.version: entry.getPrimaryAccession().substring(4, 6));
 			} else {
 				writer.write("XX");
 			}
