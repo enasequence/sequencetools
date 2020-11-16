@@ -83,6 +83,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		public void testgenomeFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
 			validateMaster(Context.genome);
+			//FT                   /circular_RNA
 			SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
 			submissionFiles.addFile(file);
@@ -116,7 +117,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testgenomeFlatFilePseudogeneQualWithSingleQuote() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeFlatFilePseudogeneQualWithSingleQuote() throws ValidationEngineException, FlatFileComparatorException
 	{
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile_pseudogene.txt",SubmissionFile.FileType.FLATFILE);

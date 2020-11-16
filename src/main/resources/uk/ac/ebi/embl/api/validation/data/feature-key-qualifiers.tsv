@@ -102,6 +102,7 @@ CDS	inference	N	N	N
 CDS	experiment	N	N	N
 CDS	ribosomal_slippage	N	Y	N
 CDS	trans_splicing	N	Y	N
+CDS	circular_RNA	N	Y	N
 D-loop	gene_synonym	N	N	N
 D-loop	db_xref	N	N	N
 D-loop	citation	N	N	N
@@ -267,6 +268,7 @@ mRNA	old_locus_tag	N	N	N
 mRNA	inference	N	N	N
 mRNA	experiment	N	N	N
 mRNA	trans_splicing	N	Y	N
+mRNA	circular_RNA	N	Y	N
 mat_peptide	gene_synonym	N	N	N
 mat_peptide	pseudogene	N	Y	N
 mat_peptide	db_xref	N	N	N
@@ -547,6 +549,7 @@ rRNA	old_locus_tag	N	N	N
 rRNA	inference	N	N	N
 rRNA	experiment	N	N	N
 rRNA	operon	N	N	N
+rRNA	circular_RNA	N	Y	N
 rep_origin	gene_synonym	N	N	N
 rep_origin	db_xref	N	N	N
 rep_origin	citation	N	N	N

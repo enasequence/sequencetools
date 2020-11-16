@@ -55,6 +55,7 @@ FT                   /locus_tag="SPLC1_0001"
 FT   mRNA            join(<1..34,135..419,520..819,920..>1212)
 FT                   /gene="KIR3DP1"
 FT                   /allele="KIR3DP1*015"
+FT                   /circular_RNA
 FT                   /product="KIR protein"
 FT   CDS             join(1..34,135..419,520..819,920..>1212)
 FT                   /codon_start=1
