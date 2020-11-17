@@ -8,7 +8,7 @@ apply plugin: 'signing'
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-ext.version_base = '2.0.88'
+ext.version_base = '2.0.89-snapshot'
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
 
