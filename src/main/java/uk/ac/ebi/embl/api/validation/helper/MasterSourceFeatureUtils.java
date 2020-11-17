@@ -1,5 +1,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -14,7 +16,10 @@ public class MasterSourceFeatureUtils {
 	private final  String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
 	private final  Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
 	private boolean addUniqueName=true;
+	private final Map<String,String> qualifierSynonyms = new HashMap<>();
+
 	public MasterSourceFeatureUtils() {
+		qualifierSynonyms.put("metagenomic source","metagenome_source");
 		isolationSourceQualifier=null;
 		addUniqueName =true;
 	}
@@ -24,7 +29,12 @@ public class MasterSourceFeatureUtils {
 
 		if(tag==null)
 			return;
-		tag=tag.toLowerCase();
+		tag = tag.toLowerCase();
+
+		if(qualifierSynonyms.containsKey(tag)) {
+			tag = qualifierSynonyms.get(tag);
+		}
+
 		if(isolation_sourcePattern.matcher(tag).matches())
 		{
 			tag=Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
