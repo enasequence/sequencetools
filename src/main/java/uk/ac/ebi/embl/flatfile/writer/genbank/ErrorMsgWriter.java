@@ -24,22 +24,24 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /** Flat file writer for the ERROR_MSG lines.
  */
 public class ErrorMsgWriter extends FlatFileWriter {
 
-	private String errorMsg;
-    public ErrorMsgWriter(Entry entry, WrapType wrapType, String errorMsg) {
+	private List<String> errorMsgs;
+    public ErrorMsgWriter(Entry entry, WrapType wrapType, List<String> errorMsgList) {
         super(entry, wrapType);
-        this.errorMsg = errorMsg;
-        setWrapChar(WrapChar.WRAP_CHAR_SPACE);
+        this.errorMsgs = errorMsgList;
+        setWrapChar(WrapChar.WRAP_CHAR_BREAK);
     }
 
     public boolean write(Writer writer) throws IOException {
-
-    	writeBlock(writer, GenbankPadding.ERROR_MSG_PADDING,
-    			GenbankPadding.BLANK_PADDING, errorMsg);
+        for(String errorMsg: errorMsgs) {
+            writeBlock(writer, GenbankPadding.ERROR_MSG_PADDING,
+                    GenbankPadding.BLANK_PADDING, errorMsg);
+        }
     	return true;
     }
 }

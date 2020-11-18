@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import uk.ac.ebi.embl.flatfile.writer.EntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -30,15 +31,15 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
  */
 public class GenbankEntryWriter extends EntryWriter {
 
-	String errorMsg;
+	List<String> errorMsgs;
 	public GenbankEntryWriter(Entry entry) {
 		super(entry);
 		wrapType = WrapType.GENBANK_WRAP;
 	}
 
-	public GenbankEntryWriter(Entry entry, String errorMsg) {
+	public GenbankEntryWriter(Entry entry, List<String> errorMsgList) {
 		super(entry);
-		this.errorMsg = errorMsg;
+		this.errorMsgs = errorMsgList;
 		wrapType = WrapType.GENBANK_WRAP;
 	}
 
@@ -48,8 +49,8 @@ public class GenbankEntryWriter extends EntryWriter {
 		if (entry == null) {
 			return false;
 		}
-		if(errorMsg != null)
-			new ErrorMsgWriter(entry, wrapType, errorMsg).write(writer);
+		if(errorMsgs != null && !errorMsgs.isEmpty() )
+			new ErrorMsgWriter(entry, WrapType.NO_WRAP, errorMsgs).write(writer);
 		new LocusWriter(entry).write(writer);
 		new DefinitionWriter(entry, wrapType).write(writer);
 		new AccessionWriter(entry, wrapType).write(writer);
