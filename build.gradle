@@ -8,7 +8,7 @@ apply plugin: 'signing'
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-ext.version_base = '2.0.89'
+ext.version_base = '2.0.91'
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
 
@@ -81,7 +81,7 @@ dependencies
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
             compile group: 'uk.ac.ebi.ena.webin-cli', name: 'webin-cli-validator', version: '1.0.5'
             testCompile 'org.easymock:easymock:3.1'
-            compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.7')
+            compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
         }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
