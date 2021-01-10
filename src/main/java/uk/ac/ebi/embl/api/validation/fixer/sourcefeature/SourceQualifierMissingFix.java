@@ -40,6 +40,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 	private static final String addEnvironmentalSampleForUnculturedOrg = "SourceQualifierMissingFix_1";
 	private static final String addEnvironmentalSampleForMetagenomeOrg = "SourceQualifierMissingFix_2";
 	private static final String metagenomeIsolationQualifierFix_ID = "SourceQualifierMissingFix_3";
+	private static final String unculturedOrgIsolationQualifierFix_ID = "SourceQualifierMissingFix_3";
 	private static final String lineageEnvironmentQualifierFix_ID = "SourceQualifierMissingFix_4";
 	private static final String strainToIsolateFix = "SourceQualifierMissingFix_5";
 	private static final String strainRemovalFix = "SourceQualifierMissingFix_6";
@@ -59,7 +60,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-		
+		boolean inEnvSampleAdded = false;
 		if(entry.getPrimarySourceFeature().getTaxId()!=null)//set the scientific name based on taxid
 		{
             Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(entry.getPrimarySourceFeature().getTaxId());
@@ -106,6 +107,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				reportMessage(	Severity.FIX,
 								entry.getPrimarySourceFeature().getOrigin(),
 						addEnvironmentalSampleForUnculturedOrg);
+				inEnvSampleAdded = true;
 			}
 			else if (isSourceOrganismMetagenome && !is_isolation_source_exists)
 				{
@@ -125,12 +127,20 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 					entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME,
 																	isolation_source_value);
+					is_isolation_source_exists = true;
 					reportMessage(	Severity.FIX,
 									entry.getPrimarySourceFeature().getOrigin(),
 									metagenomeIsolationQualifierFix_ID,
 									isolation_source_value);
 
 				}
+
+			if(!is_isolation_source_exists && inEnvSampleAdded) {
+				entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "unknown");
+				reportMessage(	Severity.FIX,
+						entry.getPrimarySourceFeature().getOrigin(),
+						unculturedOrgIsolationQualifierFix_ID, "unknown");
+			}
 
 			if(!is_environment_sample_exists)
 			{
