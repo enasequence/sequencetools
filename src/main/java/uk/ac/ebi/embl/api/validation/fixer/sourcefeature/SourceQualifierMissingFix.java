@@ -60,7 +60,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		{
 			return result;
 		}
-		boolean inEnvSampleAdded = false;
+
 		if(entry.getPrimarySourceFeature().getTaxId()!=null)//set the scientific name based on taxid
 		{
             Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(entry.getPrimarySourceFeature().getTaxId());
@@ -107,7 +107,6 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				reportMessage(	Severity.FIX,
 								entry.getPrimarySourceFeature().getOrigin(),
 						addEnvironmentalSampleForUnculturedOrg);
-				inEnvSampleAdded = true;
 			}
 			else if (isSourceOrganismMetagenome && !is_isolation_source_exists)
 				{
@@ -135,13 +134,6 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 				}
 
-			if(!is_isolation_source_exists && inEnvSampleAdded) {
-				entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "unknown");
-				reportMessage(	Severity.FIX,
-						entry.getPrimarySourceFeature().getOrigin(),
-						unculturedOrgIsolationQualifierFix_ID, "unknown");
-			}
-
 			if(!is_environment_sample_exists)
 			{
 				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
@@ -160,6 +152,13 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 				}
 			}
 			
+		}
+
+		if(!is_isolation_source_exists && is_environment_sample_exists) {
+			entry.getPrimarySourceFeature().addQualifier(	Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "unknown");
+			reportMessage(	Severity.FIX,
+					entry.getPrimarySourceFeature().getOrigin(),
+					unculturedOrgIsolationQualifierFix_ID, "unknown");
 		}
 
 		if(is_environment_sample_exists && entry.getPrimarySourceFeature().getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME).size() != 0) {
