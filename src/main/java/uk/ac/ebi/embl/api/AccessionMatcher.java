@@ -152,6 +152,13 @@ public class AccessionMatcher {
             if(accnPrefix == null) {
                 accnPrefix = getPrefix(getNewSeqPrimaryAccMatcher(primaryAccession), 1);
             }
+            if(accnPrefix == null && dataClass.toUpperCase().equals(Entry.CON_DATACLASS)) {
+                Accession accn = getSplittedAccession(primaryAccession);
+                if(accn != null && accn.s != null ) {
+                    return  accn.prefix;
+                }
+            }
+
         }
 
         return accnPrefix;
