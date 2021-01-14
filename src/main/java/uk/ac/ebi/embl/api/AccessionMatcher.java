@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 import java.util.regex.Matcher;
@@ -154,7 +155,7 @@ public class AccessionMatcher {
             }
             if(accnPrefix == null && dataClass.toUpperCase().equals(Entry.CON_DATACLASS)) {
                 Accession accn = getSplittedAccession(primaryAccession);
-                if(accn != null && accn.s != null ) {
+                if(accn != null &&  StringUtils.isNotBlank(accn.s)) {
                     return  accn.prefix;
                 }
             }

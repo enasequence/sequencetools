@@ -118,7 +118,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
 	}
 	
 	@Test
@@ -182,7 +182,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(3, validationResult.getMessages(Severity.FIX).size());
 		assertEquals(1, validationResult.count("SourceQualifierMissingFix_2",Severity.FIX));
 		assertEquals(1, validationResult.count("QualifierValueChange",Severity.FIX));
 	}
@@ -209,7 +209,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(0, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
 
 	}
 
@@ -223,7 +223,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
 		assertEquals(1, validationResult.count("SourceQualifierMissingFix_4", Severity.FIX));
 		assertTrue(SequenceEntryUtils.isQualifierAvailable(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME, entry));
 	}
@@ -245,7 +245,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
 		assertEquals(1, validationResult.count("SourceQualifierMissingFix_6", Severity.FIX));
 	}
 
@@ -267,7 +267,7 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
 		assertEquals(1, validationResult.count("SourceQualifierMissingFix_5", Severity.FIX));
 	}
 
