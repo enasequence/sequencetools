@@ -32,17 +32,14 @@ import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static uk.ac.ebi.embl.api.AccessionMatcher.getSplittedAccession;
 
 public class Utils {
 
-	private static Object FeatureFactory;
 	private final static String UTILS_2= "Utility_shift_Location_2";
 	private final static String UTILS_3 = "Utility_shift_Location_3";
 	private final static String UTILS_4 = "Utility_shift_Location_4";
@@ -1044,11 +1041,12 @@ public class Utils {
 		if(ignoreErrors)
 			return result;
 
-		if (!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) && (contigCount != 0 && contigCount < MIN_CONTIG_CNT) )
-		{
-			ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR,
-					contigCount,"CONTIG", MIN_CONTIG_CNT);
-			result.append(message);
+		if (!AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) && (contigCount != 0 && contigCount < MIN_CONTIG_CNT)) {
+			if (chromosomeCount < MIN_CHROMOSOME_CNT) {
+				ValidationMessage<Origin> message = EntryValidations.createMessage(new FlatFileOrigin(1), Severity.ERROR, MESSAGE_KEY_MIN_NUMBER_OF_SEQUENCES_ERROR,
+						contigCount, "CONTIG", MIN_CONTIG_CNT);
+				result.append(message);
+			}
 		}
 		if (scaffoldCount != 0 && scaffoldCount < MIN_SCAFFOLD_CNT)
 		{
