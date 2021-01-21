@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -83,9 +84,10 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 					addMessagekey(parseResult);
 				}
-				parseResult=new ValidationResult();
+
 				Entry entry=reader.getEntry();
 				origin=entry.getOrigin();
+				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(getOptions().context.get()==Context.genome)
 				{
 					if (entry.getSubmitterAccession() == null)

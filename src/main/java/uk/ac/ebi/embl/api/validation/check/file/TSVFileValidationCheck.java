@@ -30,6 +30,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -83,8 +84,9 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			while ((csvLine = csvReader.readTemplateSpreadsheetLine()) != null) {
 				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap(), options.getProjectId());
 				entry = templateProcessorResultSet.getEntry();
-				if(entry!=null)
+				if(entry != null)
 				{
+					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 					appendHeader(entry);
 				}
 				if (sequenceCount == MAX_SEQUENCE_COUNT) {
@@ -122,6 +124,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			}
 			return false;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ValidationEngineException(e.toString(), e);
 		}
 	}
