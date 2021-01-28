@@ -32,11 +32,8 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
@@ -71,7 +68,6 @@ public class SubmissionValidationPlan
 	public void execute() throws ValidationEngineException {
 		try
 		{
-			//TODO: check for a way to log INFO messages
 			options.init();
 			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			//Validation Order shouldn't be changed
@@ -153,9 +149,10 @@ public class SubmissionValidationPlan
 		}
 	}
 
-	public static Set<String> getUnplacedEntryNames() {
+	static Set<String> getUnplacedEntryNames() {
 		return FileValidationCheck.unplacedEntryNames;
 	}
+
 	private void createMaster() throws ValidationEngineException
 	{
 		try
@@ -167,13 +164,16 @@ public class SubmissionValidationPlan
 				return;
 			}
 
-			if(!masterCheck.check())
-				throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
-			else if(!options.isRemote)
-			     flagValidation(FileType.MASTER);
-		}catch(Exception e)
+			ValidationPlanResult planResult = masterCheck.check();
+			if(planResult.isValid()) {
+				if (!options.isRemote)
+					flagValidation(FileType.MASTER);
+			}
+		}catch(ValidationEngineException e)
 		{
 			throwValidationEngineException(FileType.MASTER,e,"master.dat");
+		} catch (IOException e) {
+
 		}
 	}
 
@@ -360,11 +360,15 @@ public class SubmissionValidationPlan
 		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 
-    private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
-        ValidationEngineException validationEngineException = new ValidationEngineException(
-                String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
-        validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
-        throw validationEngineException;
+    private void throwValidationEngineException(FileType fileTpe, ValidationEngineException e, String fileName) throws ValidationEngineException {
+		if(options.isRemote) {
+			ValidationEngineException validationEngineException = new ValidationEngineException(
+					String.format("%s file validation failed for %s :", fileTpe.name().toLowerCase(), fileName) + e.getMessage(), e);
+			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
+			throw validationEngineException;
+		} else {
+			throw e;
+		}
     }
 
 	@SuppressWarnings("deprecation")

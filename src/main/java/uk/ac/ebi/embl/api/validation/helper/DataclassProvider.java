@@ -34,7 +34,7 @@ public class DataclassProvider {
      */
 	public static ArrayList<String> getKeywordDataclass(Entry entry, DataSet d)
 	{
-		Set<String> keywordDataclassSet = new HashSet<String>();
+		Set<String> keywordDataclassSet = new HashSet<>();
 		ArrayList<String> keywordDataclasses=new ArrayList<String>();
 		HashMap<String, String> compressedKeywordToDataclassMap = new HashMap<String, String>();
 		HashMap<String, String> compressedKeywordToKeywordMap = new HashMap<String, String>();
@@ -91,11 +91,8 @@ public class DataclassProvider {
 		}
 		else
 		{
-		for (String keywordDataclass:keywordDataclassSet)
-		{
-			keywordDataclasses.add(keywordDataclass);
-		}
-		return keywordDataclasses;
+			keywordDataclasses.addAll(keywordDataclassSet);
+			return keywordDataclasses;
 		}
 		return null;
 

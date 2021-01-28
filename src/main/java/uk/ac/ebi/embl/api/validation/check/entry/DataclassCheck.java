@@ -72,7 +72,8 @@ public class DataclassCheck extends EntryValidationCheck {
 
 			ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS));
 
-			if(keywordDataclasses.size()==1&&!keywordDataclasses.get(0).equals("XXX")&&!keywordDataclasses.get(0).equals(entryDataclass))
+			if(keywordDataclasses != null && keywordDataclasses.size() == 1
+					&& !keywordDataclasses.get(0).equals("XXX") && !keywordDataclasses.get(0).equals(entryDataclass))
 			{
 				reportError(entry.getOrigin(), KEYWORD_DATACLASS_MESSAGE_ID,keywordDataclasses.get(0),entryDataclass );
 

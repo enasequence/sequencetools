@@ -32,7 +32,7 @@ public class AssemblyLevelEntryNameFix extends EntryValidationCheck
 {
 	private final String ENTRYNAME_FIX_ID = "AssemblyLevelEntryNameFix";
 	
-	public ValidationResult check(Entry entry) throws ValidationEngineException
+	public ValidationResult check(Entry entry)
 	{
 		result = new ValidationResult();
 

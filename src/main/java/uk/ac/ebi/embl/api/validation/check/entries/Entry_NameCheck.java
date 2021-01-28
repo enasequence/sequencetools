@@ -16,7 +16,7 @@ import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
 public class Entry_NameCheck extends EntriesValidationCheck
 {
-	protected final static String ENTRY_NAME_ID = "Entry_NameCheck1";
+	private final static String ENTRY_NAME_ID = "Entry_NameCheck1";
 
 	@Override
 	public ValidationResult check(ArrayList<Entry> entryList)
@@ -26,7 +26,7 @@ public class Entry_NameCheck extends EntriesValidationCheck
 		{
 			return result;
 		}
-		Set<String> entry_nameSet = new HashSet<String>();
+		Set<String> entry_nameSet = new HashSet<>();
 		for (Entry entry : entryList)
 		{
 			String entry_name = entry.getSubmitterAccession();

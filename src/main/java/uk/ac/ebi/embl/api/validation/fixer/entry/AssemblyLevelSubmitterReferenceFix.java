@@ -16,9 +16,7 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
@@ -30,6 +28,9 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 
 @Description("Submitter Reference has been added to assembly entries")
 @GroupIncludeScope(group = { ValidationScope.Group.ASSEMBLY })
@@ -59,7 +60,7 @@ public class AssemblyLevelSubmitterReferenceFix extends EntryValidationCheck
 		Reference reference=getEraproDAOUtils().getSubmitterReference(analysisId);
 		if(reference!=null)
 		{
-			Order<LocalRange> rp = new Order<LocalRange>();
+			Order<LocalRange> rp = new Order<>();
 			rp.addLocation((new LocationFactory()).createLocalRange(1l,entry.getSequence().getLength()));
 			if(entry.getSequence()!=null)
 				reference.setLocations(rp);
@@ -67,7 +68,7 @@ public class AssemblyLevelSubmitterReferenceFix extends EntryValidationCheck
 		}
 		reportMessage(Severity.FIX, entry.getOrigin(), SUBMITTER_REFERENCEFIX_ID);
 		}
-		catch(Exception e)
+		catch(SQLException | UnsupportedEncodingException e)
 		{
 			throw new ValidationEngineException(e);
 		}

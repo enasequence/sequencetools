@@ -23,6 +23,8 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
+import java.sql.SQLException;
+
 @Description("invalid accession \"{0}\" for dataclass \"{1}\""
 		+ "invalid accession prefix : \"{0}\". Accession prefix is not registered in cv/prefix tables")
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
@@ -55,7 +57,7 @@ public class PrimaryAccessionCheck extends EntryValidationCheck {
 				if (getEntryDAOUtils().getDbcode(accessionPrefix) == null) {
 					reportError(entry.getOrigin(), INVALID_ACCESSION_PREFIX_ID, accessionPrefix);
 				}
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				throw new ValidationEngineException(e.getMessage(), e);
 			}
 		}

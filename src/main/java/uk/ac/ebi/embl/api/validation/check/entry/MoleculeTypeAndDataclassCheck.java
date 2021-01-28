@@ -31,16 +31,11 @@ public class MoleculeTypeAndDataclassCheck extends EntryValidationCheck {
 	 * have a system for checking this
 	 * 
 	 */
-	private boolean isNewEntry = true;
 
 	private final static String MESSAGE_ID = "MoleculeTypeAndDataclassCheck-1";
 	private final static String GSS_MESSAGE_ID = "MoleculeTypeAndDataclassCheck-2";
 
 	public MoleculeTypeAndDataclassCheck() {
-	}
-
-	public void setNewEntry(boolean newEntry) {
-		isNewEntry = newEntry;
 	}
 
 	public ValidationResult check(Entry entry) {

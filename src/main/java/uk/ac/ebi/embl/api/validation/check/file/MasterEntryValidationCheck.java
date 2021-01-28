@@ -42,9 +42,13 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+
+import static uk.ac.ebi.embl.api.validation.helper.Utils.getExceptionCause;
 
 @Description("")
 public class MasterEntryValidationCheck extends FileValidationCheck
@@ -55,11 +59,10 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		super(options);
 	}	
 	@Override
-	public boolean check() throws ValidationEngineException
+	public ValidationPlanResult check() throws ValidationEngineException
 	{
-		boolean valid =true;
-		try
-		{
+		ValidationPlanResult planResult;
+		try {
 			if(getOptions().getEntryValidationPlanProperty() != null && getOptions().getEntryValidationPlanProperty().validationScope.get() != ValidationScope.NCBI_MASTER) {
 				getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 			}
@@ -92,12 +95,12 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(Context.transcriptome == options.context.get() && masterEntry != null) {
 				addTranscriptomeInfo(masterEntry);
 			}
-			
+
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-			ValidationPlanResult planResult=validationPlan.execute(masterEntry);
+			planResult=validationPlan.execute(masterEntry);
+
 			if(!planResult.isValid())
 			{
-				valid = false;
 				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), planResult);
 				for(ValidationResult result: planResult.getResults())
 				{
@@ -109,16 +112,23 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				if(!getOptions().isRemote)
 				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
+		} catch (SQLException e) {
+			StringBuilder msg = new StringBuilder();
 
-		} catch (ValidationEngineException e) {
-			throw e;
+			msg.append(e.getSQLState()); msg.append("\t");
+			msg.append(e.getErrorCode()); msg.append("\t");
+			msg.append(e.getMessage()); msg.append("\n");
+
+			throw new ValidationEngineException(getExceptionCause(e.getCause(), msg).toString(), ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+		} catch (IOException e) {
+			StringBuilder msg = new StringBuilder();
+			msg.append(e.getMessage()); msg.append("\n");
+			throw new ValidationEngineException(getExceptionCause(e.getCause(), msg).toString(), ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+
 		}
-		catch(Exception e)
-		{
-			throw new ValidationEngineException(e.getMessage(), e);
-		}
-		return valid;
+		return planResult;
 	}
+
 	@Override
 	public boolean check(SubmissionFile file) throws ValidationEngineException {
 		// TODO Auto-generated method stub

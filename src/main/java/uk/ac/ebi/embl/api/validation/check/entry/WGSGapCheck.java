@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -31,9 +30,6 @@ public class WGSGapCheck extends EntryValidationCheck {
     private final static String GAPS_PRESENT_ID = "WGSGapCheck";
 
     public WGSGapCheck() {
-    }
-
-    public WGSGapCheck(DataSet valuesSet) {
     }
 
     public void setPopulated() {

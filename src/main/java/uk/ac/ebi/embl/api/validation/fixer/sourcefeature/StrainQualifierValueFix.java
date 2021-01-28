@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("strain qualifier value \"{0}\" has been changed to \"{1}\" " + "entry description \"{0}\" has been changed to \"{1}\"")
@@ -81,32 +80,7 @@ public class StrainQualifierValueFix extends EntryValidationCheck
 			reportMessage(Severity.FIX, entry.getOrigin(), STRAIN_MESSAGE_ID, strainQualifier.getValue(), strainQualifierValue);
 			entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME).setValue(strainQualifierValue);
      	}
-		/*if (entry.getDescription() != null&&entry.getDescription().getText()!=null)
-		{
-			String descriptionValue = entry.getDescription().getText();
-			Matcher descriptionMatcher = pattern.matcher(descriptionValue);
-			String descriptionStrain = null;
 
-			if (descriptionMatcher.matches())
-			{
-				descriptionStrain = descriptionMatcher.group(2);
-			}
-			if (descriptionStrain != null)
-			{
-				if (strainQualifierValue.contains("type strain"))
-				{
-					descriptionValue = descriptionValue.replace(descriptionStrain, "," + strainQualifierValue.replace(":", "") + ",");
-				} else
-				{
-					descriptionValue = descriptionValue.replace(descriptionStrain, ", strain " + strainQualifierValue + " ,");
-				}
-			}
-			if (!entry.getDescription().getText().equals(descriptionValue))
-			{
-				reportMessage(Severity.FIX, entry.getOrigin(), DESCRIPTION_MESSAGE_ID, entry.getDescription().getText(), descriptionValue);
-				entry.setDescription(new Text(descriptionValue));
-			}
-		}*/
 		return result;
 	}
 }

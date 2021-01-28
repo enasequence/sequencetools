@@ -23,8 +23,6 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 /**
  * Checks that gap feature locations correspond to n's in the sequence
@@ -35,7 +33,6 @@ public class GapFeatureBasesCheck extends EntryValidationCheck {
 
     protected final static String MESSAGE_ID = "GapFeatureBasesCheck-1";
     protected final static String FAULTY_SEQUENCE_MESSAGE = "GapFeatureBasesCheck-2";
-    Pattern nPattern = Pattern.compile("^n*$");
 
     /**
      * Checks the coverage of sequence by source features' locations.

@@ -15,7 +15,10 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.sequence;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.location.Gap;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -93,7 +96,7 @@ public class ContigstosequenceFix extends
 		 reportMessage(Severity.FIX, entry.getOrigin(),CONTIGSTOSEQUENCEFIX_ID);
 		 
 		 return result;
-		}catch(Exception e)
+		}catch(SQLException | IOException e)
 		{
 			throw new ValidationEngineException(e);
 		}

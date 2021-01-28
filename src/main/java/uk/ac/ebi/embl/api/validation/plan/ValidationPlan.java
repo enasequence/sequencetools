@@ -29,6 +29,8 @@ import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * This class is intended for implementation of validation execution plan. 
  * It provides basic execution method but the order of execution should be 

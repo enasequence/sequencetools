@@ -26,7 +26,6 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -34,17 +33,15 @@ import java.util.List;
 
 public class EmblEntryValidationPlan extends ValidationPlan
 {
-	int assemblySeqnumber=1;
     
 	public EmblEntryValidationPlan(EmblEntryValidationPlanProperty planProperty)
 	{
 		super(planProperty);
 	}
 
-	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException
-	{
-		List<Class<? extends EmblEntryValidationCheck<?>>> checks = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
-		List<Class<? extends EmblEntryValidationCheck<?>>> fixes = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
+	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException {
+		List<Class<? extends EmblEntryValidationCheck<?>>> checks = new ArrayList<>();
+		List<Class<? extends EmblEntryValidationCheck<?>>> fixes = new ArrayList<>();
 		validatePlanProperty();
 		
 		checks.addAll(ValidationUnit.SEQUENCE_ENTRY_CHECKS.getValidationUnit());
@@ -53,15 +50,8 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			fixes.addAll(ValidationUnit.SEQUENCE_ENTRY_FIXES.getValidationUnit());
 		}
 
-		try
-		{
-			executeChecksandFixes(fixes,entry);
-			executeChecksandFixes(checks,entry);
-		}
-		catch (Exception e)
-		{
-			throw new ValidationEngineException(e);
-		}
+		executeChecksandFixes(fixes,entry);
+		executeChecksandFixes(checks,entry);
 
 		return validationPlanResult;
 
@@ -88,38 +78,36 @@ public class EmblEntryValidationPlan extends ValidationPlan
 		return validationPlanResult;
 	}
 	
-	private void executeChecksandFixes(List<Class<? extends EmblEntryValidationCheck<?>>> checks,Entry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+	private void executeChecksandFixes(List<Class<? extends EmblEntryValidationCheck<?>>> checks,Entry entry) throws ValidationEngineException
 	{
-		for (Class<? extends EmblEntryValidationCheck<?>> validationCheck : checks)
-		{
-			EmblEntryValidationCheck<?> check = (EmblEntryValidationCheck<?>) validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
-			if (check instanceof SequenceValidationCheck)
-			{
-				execute(check,entry.getSequence());
+
+		for (Class<? extends EmblEntryValidationCheck<?>> validationCheck : checks) {
+			EmblEntryValidationCheck<?> check;
+			try {
+				check = (EmblEntryValidationCheck<?>) validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
+			} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+				ValidationEngineException ex = new ValidationEngineException(e);
+				ex.setErrorType(ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+				throw ex;
 			}
-			if (check instanceof EntryValidationCheck)
-			{
-				execute((EntryValidationCheck) check,entry);
+			if (check instanceof SequenceValidationCheck) {
+				execute(check, entry.getSequence());
 			}
-			if (check instanceof FeatureValidationCheck)
-			{
-				for (Feature feature : entry.getFeatures())
-				{ 
-				 if(check instanceof CdsFeatureTranslationCheck)
-				 {
-					 ((CdsFeatureTranslationCheck) check).setEntry(entry);
-				 }
-				 if(check instanceof FeatureLocationCheck)
-				 {
-					 ((FeatureLocationCheck) check).setEntry(entry);
-				 }
-				 if(check instanceof ChromosomeSourceQualifierCheck)
-				 {
-					 ((ChromosomeSourceQualifierCheck) check).setEntry(entry);
-				 }
-					execute((FeatureValidationCheck) check,feature);
+			if (check instanceof EntryValidationCheck) {
+				execute((EntryValidationCheck) check, entry);
+			}
+			if (check instanceof FeatureValidationCheck) {
+				for (Feature feature : entry.getFeatures()) {
+					if (check instanceof CdsFeatureTranslationCheck) {
+						((CdsFeatureTranslationCheck) check).setEntry(entry);
+					}
+					if (check instanceof ChromosomeSourceQualifierCheck) {
+						((ChromosomeSourceQualifierCheck) check).setEntry(entry);
+					}
+					execute((FeatureValidationCheck) check, feature);
 				}
 			}
 		}
+
 	}
 }

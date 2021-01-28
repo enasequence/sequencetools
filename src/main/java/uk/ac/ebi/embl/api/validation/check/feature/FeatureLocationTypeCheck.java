@@ -15,14 +15,12 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.util.List;
-
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+
+import java.util.List;
 
 // TODO Add support for CV_FLOCATION.
 @Description("If source feature, must have single location (not a span)")

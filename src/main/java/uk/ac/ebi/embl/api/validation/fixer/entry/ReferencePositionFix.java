@@ -16,22 +16,15 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Description("RP line location range \"{0}\" - \"{1}\" has been fixed")
@@ -62,18 +55,18 @@ public class ReferencePositionFix extends EntryValidationCheck {
 				long beginPosition = location.getBeginPosition();
 				long endPosition = location.getEndPosition();
 				if (beginPosition < 1) {
-					location.setBeginPosition(new Long(1));
+					location.setBeginPosition(1L);
 					fixed = true;
 
 				} else if (beginPosition > sequenceLength) {
-					location.setBeginPosition(new Long(sequenceLength));
+					location.setBeginPosition(sequenceLength);
 					fixed = true;
 				}
 				if (endPosition < 1) {
-					location.setEndPosition((new Long(1)));
+					location.setEndPosition(1L);
 					fixed = true;
 				} else if (endPosition > sequenceLength) {
-					location.setEndPosition(new Long(sequenceLength));
+					location.setEndPosition(sequenceLength);
 					fixed = true;
 				}
 				if (fixed)

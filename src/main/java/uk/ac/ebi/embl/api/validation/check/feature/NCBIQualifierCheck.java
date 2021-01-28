@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 
 @Description("Feature qualifier \\\"{0}\\\" is not recognized\\Feature qualifier \\\"{0}\\\" does not have a value (mandatory for this type)\\" +
         "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" is invalid. Refer to the feature documentation or ask a curator for guidance." +
@@ -48,40 +47,34 @@ public class NCBIQualifierCheck extends FeatureValidationCheck {
             return result;
         }
 
-        try {
-            Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
-            Set<String> artemisQualifiersSet = QualifierHelper.getArtemisQualifierSet();
-            Set<String> ignorable = new HashSet<>(Arrays.asList(Qualifier.OLD_LOCUS_TAG, Qualifier.PROTEIN_ID_QUALIFIER_NAME, Qualifier.ALTITUDE_QUALIFIER_NAME));
-            QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
-            qInfo.addRegexGroupInfos(QualifierHelper.setNullGroupTolerance(qInfo));
+        Map<String, QualifierHelper.QualifierInfo> qualifierMap = QualifierHelper.getQualifierMap();
+        Set<String> artemisQualifiersSet = QualifierHelper.getArtemisQualifierSet();
+        Set<String> ignorable = new HashSet<>(Arrays.asList(Qualifier.OLD_LOCUS_TAG, Qualifier.PROTEIN_ID_QUALIFIER_NAME, Qualifier.ALTITUDE_QUALIFIER_NAME));
+        QualifierHelper.QualifierInfo qInfo = qualifierMap.get(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+        qInfo.addRegexGroupInfos(QualifierHelper.setNullGroupTolerance(qInfo));
 
-            for (Qualifier qualifier : feature.getQualifiers()) {
+        for (Qualifier qualifier : feature.getQualifiers()) {
 
-                String qualifierName = qualifier.getName();
-                if (!ignorable.contains(qualifierName) ) {
+            String qualifierName = qualifier.getName();
+            if (!ignorable.contains(qualifierName) ) {
 
-                    if (qualifierMap.containsKey(qualifierName)) {
-                        QualifierHelper.QualifierInfo qualifierInfo = qualifierMap.get(qualifierName);
+                if (qualifierMap.containsKey(qualifierName)) {
+                    QualifierHelper.QualifierInfo qualifierInfo = qualifierMap.get(qualifierName);
 
-                        if(qualifierName.equalsIgnoreCase(Qualifier.LAT_LON_QUALIFIER_NAME)) {
-                            result.append(QualifierHelper.checkLatLonRange(qualifierInfo, qualifier));
-                        }
+                    if(qualifierName.equalsIgnoreCase(Qualifier.LAT_LON_QUALIFIER_NAME)) {
+                        result.append(QualifierHelper.checkLatLonRange(qualifierInfo, qualifier));
+                    }
 
-                        result.append(QualifierHelper.checkRegEx(qualifierInfo, qualifier));
+                    result.append(QualifierHelper.checkRegEx(qualifierInfo, qualifier));
 
-                    } else {
-                        ValidationMessage<Origin> message =
-                                reportError(qualifier.getOrigin(), NO_QUALIFIER_FOUND_ID, qualifierName);
-                        if (artemisQualifiersSet.contains(qualifierName)) {
-                            message.setCuratorMessage("If you are using Artemis to create this file, select the 'EMBL submission' format");
-                        }
+                } else {
+                    ValidationMessage<Origin> message =
+                            reportError(qualifier.getOrigin(), NO_QUALIFIER_FOUND_ID, qualifierName);
+                    if (artemisQualifiersSet.contains(qualifierName)) {
+                        message.setCuratorMessage("If you are using Artemis to create this file, select the 'EMBL submission' format");
                     }
                 }
             }
-        } catch (PatternSyntaxException e) {
-            throw new IllegalArgumentException("Invalid pattern while instantiating NCBIQualifierCheck! " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
         }
 
         return result;

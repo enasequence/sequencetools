@@ -19,8 +19,6 @@ import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.AminoAcidFactory;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description("Invalid amino acid {0} in translation.")

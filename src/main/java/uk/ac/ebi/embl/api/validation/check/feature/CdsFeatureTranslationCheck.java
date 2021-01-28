@@ -25,7 +25,6 @@ import uk.ac.ebi.embl.api.translation.TranslationTable;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 @Description("Runs the translator and returns results")
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
@@ -37,7 +36,7 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
     public void setEntry(Entry entry) {
         this.entry = entry;
     }
-    @SuppressWarnings("deprecation")
+
 	public ValidationResult check(Feature feature) {
     	translator=new CdsTranslator(getEmblEntryValidationPlanProperty());
         result = new ExtendedResult<TranslationReportInfo>();
@@ -116,19 +115,4 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
         }
     }
 
-/*    public class TranslationReportSet {
-        List<ExtendedResult<TranslationReportInfo>> translationReports;
-
-        public TranslationReportSet() {
-            this.translationReports = new ArrayList<ExtendedResult<TranslationReportInfo>>();
-        }
-
-        public void addReport(ExtendedResult<TranslationReportInfo> report){
-            translationReports.add(report);
-        }
-
-        public List<ExtendedResult<TranslationReportInfo>> getTranslationReports() {
-            return translationReports;
-        }
-    }*/
 }

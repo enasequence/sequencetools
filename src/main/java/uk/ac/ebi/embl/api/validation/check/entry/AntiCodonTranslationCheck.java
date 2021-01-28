@@ -34,7 +34,6 @@ import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.AntiCodonQualifierCheck;
 
 import java.util.Arrays;
@@ -177,24 +176,12 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 							}
 
 							Vector<Codon> codons = translatorResult.getCodons();
-							/*if(codons==null)
-							{
-								return result;
-							}*/
+
 							char resultaa = 0;
 							for (Codon codon : codons)
 							{
 								resultaa = codon.getAminoAcid();
 							}
-							char letter = antiCodon.getAminoAcid().getLetter();
-
-							// System.out.println("seq string: " +
-							// sequenceString.toUpperCase() +
-							// " anticodon value:"
-							// +
-							// antiCodon.getAminoAcid().getAbbreviation().toUpperCase()
-							// + " result letter: " + resultaa
-							// + "  original seq letter: " + letter);
 
 							if (antiCodon.getAminoAcid().getLetter() != resultaa)
 							{

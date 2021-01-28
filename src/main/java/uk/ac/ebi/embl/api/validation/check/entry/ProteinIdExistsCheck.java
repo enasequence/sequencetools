@@ -37,14 +37,14 @@ public class ProteinIdExistsCheck extends EntryValidationCheck {
 	public ProteinIdExistsCheck() {
 	}
 
-	public ValidationResult check(Entry entry) throws ValidationEngineException {
+	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
 
 		if (entry == null || entry.getFeatures() == null
 				|| entry.getFeatures().size() == 0) {
 			return result;
 		}
-		Integer assemblyLevel = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 0 : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 1 : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 2 :-1;
+		int assemblyLevel = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 0 : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 1 : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? 2 :-1;
 
 		if(getEmblEntryValidationPlanProperty().analysis_id.get()==null||assemblyLevel==-1)
 		{

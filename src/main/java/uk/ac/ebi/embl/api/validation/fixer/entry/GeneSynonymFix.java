@@ -19,16 +19,15 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 import java.util.*;
 
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.GENE_QUALIFIER_NAME;
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.GENE_SYNONYM_NAME;
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.LOCUS_TAG_QUALIFIER_NAME;
+import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.*;
 
 /**
  * Checks that features sharing the same locus tag are associated with the same gene and a stable list of gene_synonyms

@@ -24,7 +24,6 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Checks that features sharing the same locus tag are associated with the same
@@ -87,48 +86,11 @@ public class GapFeatureLocationsCheck extends EntryValidationCheck {
 			{
 				return result;
 			}
-				
-			
+
 			if('n'==(char)sequenceByte[start-2]||'n'==(char)sequenceByte[end])
 			{
 				reportError(gapFeature.getOrigin(), MESSAGE_ID);
 			}
-
-			
-		/*	String sequenceString = entry.getSequence().getSequence();
-			if ((sequenceString.length() > end)) {
-                /**
-                 * to get the base after, we actually just use the feature end, as feature locations start from
-                 * 1 and char arrays start from 0, so getting the end of feature is equivalent to getting the next
-                 * character in the sequence
-                 */
-			/*	char next_base = sequenceString.charAt(end.intValue());
-				
-				
-				if (next_base == 'n') {
-					ValidationMessage<Origin> message = reportError(gapFeature.getOrigin(), MESSAGE_ID);
-				}
-			}
-
-			if (!(start <=0)) {*/
-
-                /**
-                 * to get the base before, we take 2 from the feature start, as feature locations start from
-                 * 1 and char arrays start from 0, so getting the start of feature is equivalent to getting the next
-                 * character from the start in the char array, so take 2 to get the previous base 
-                 */
-				
-				/*if (start.intValue() >= 2)
-				{
-					char previous_base = sequenceString.charAt(start.intValue() - 2);
-
-					if (previous_base == 'n')
-					{
-						ValidationMessage<Origin> message = reportError(gapFeature.getOrigin(), MESSAGE_ID);
-
-					}
-				}
-			}*/
 
 		}
 

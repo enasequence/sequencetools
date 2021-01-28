@@ -32,8 +32,6 @@ public class FeatureQualifierDuplicateValueFix extends FeatureValidationCheck {
 
 	private static final String DIFF_QUALIFIER_VALUES_DUPLICATED = "FeatureQualifierDuplicateValueFix_1";
 	private static final String QUALIFIER_VALUES_DUPLICATED = "FeatureQualifierDuplicateValueFix_2";
-	String locusTag_Value;
-	ArrayList<String> oldLocusTag_Values = new ArrayList<String>();
 
 	public ValidationResult check(Feature feature) {
 		result = new ValidationResult();
@@ -41,6 +39,9 @@ public class FeatureQualifierDuplicateValueFix extends FeatureValidationCheck {
 		if (feature == null) {
 			return result;
 		}
+
+		String locusTag_Value = null;
+		ArrayList<String> oldLocusTag_Values = new ArrayList<>();
 
 		for (Qualifier qualifier : feature.getQualifiers()) {
 			if (qualifier.getName().equals(Qualifier.LOCUS_TAG_QUALIFIER_NAME)) {

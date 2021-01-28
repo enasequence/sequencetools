@@ -72,7 +72,7 @@ public class FeaturewithRemoteLocationCheck extends EntryValidationCheck
 							}
 						} catch (SQLException e)
 						{
-							throw new ValidationEngineException(e.getMessage(), e);
+							throw new ValidationEngineException(e);
 						}
 					}
 				}

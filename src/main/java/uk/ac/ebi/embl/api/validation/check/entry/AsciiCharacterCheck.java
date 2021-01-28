@@ -42,12 +42,12 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 		if(hasNonAscii(entry.getComment().getText())) {
 			entry.getComment().setText(entry.getComment().getText().replaceAll("\\u00a0", " " ));
 			if(hasNonAscii(entry.getComment().getText()))
-				reportError(entry.getComment().getOrigin(), ASCII_CHARACTER_CHECK, entry.getComment().getText());
+				reportError(entry.getComment().getOrigin(), ASCII_CHARACTER_CHECK, entry.getComment().getText(), "Comment");
 		}
 		if(hasNonAscii(entry.getDescription().getText())) {
 			entry.getDescription().setText(entry.getDescription().getText().replaceAll("\\u00a0", " " ));
 			if(hasNonAscii(entry.getDescription().getText()))
-				reportError(entry.getDescription().getOrigin(), ASCII_CHARACTER_CHECK, entry.getDescription().getText());
+				reportError(entry.getDescription().getOrigin(), ASCII_CHARACTER_CHECK, entry.getDescription().getText(),"Description");
 		}
 		
 		for(Reference reference: entry.getReferences())
@@ -55,7 +55,7 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 			if (hasNonAscii(reference.getPublication().getTitle())) {
 				reference.getPublication().setTitle(reference.getPublication().getTitle().replaceAll("\\u00a0", " "));
 				if (hasNonAscii(reference.getPublication().getTitle()))
-					reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, reference.getPublication().getTitle());
+					reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, reference.getPublication().getTitle(),"References");
 			}
 
 			for(Person author:reference.getPublication().getAuthors())
@@ -63,12 +63,12 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 				if (hasNonAscii(author.getFirstName())) {
 					author.setFirstName(author.getFirstName().replaceAll("\\u00a0", " "));
 					if (hasNonAscii(author.getFirstName()))
-						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getFirstName());
+						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getFirstName(),"First name");
 				}
 				if(hasNonAscii(author.getSurname())) {
 					author.setSurname(author.getSurname().replaceAll("\\u00a0", " "));
 					if (hasNonAscii(author.getSurname()))
-						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getSurname());
+						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getSurname(),"Last name");
 				}
 			}
 			
@@ -80,7 +80,7 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 				if(hasNonAscii(qualifier.getValue())) {
 					qualifier.setValue(qualifier.getValue().replaceAll("\\u00a0", " "));
 					if (hasNonAscii(qualifier.getValue()))
-						reportError(qualifier.getOrigin(), ASCII_CHARACTER_CHECK, qualifier.getValue());
+						reportError(qualifier.getOrigin(), ASCII_CHARACTER_CHECK, qualifier.getValue(),"Qualifier value");
 				}
 	    	}
 	    }

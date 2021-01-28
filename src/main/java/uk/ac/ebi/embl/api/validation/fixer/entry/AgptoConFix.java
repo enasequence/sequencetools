@@ -31,8 +31,8 @@ import java.util.HashMap;
 @Description("")
 public class AgptoConFix extends EntryValidationCheck
 {
-	static final HashMap<String, String> gapType= new HashMap<String, String>();
-	static final HashMap<String, String> linkageEvidence= new HashMap<String, String>();
+	static final HashMap<String, String> gapType= new HashMap<>();
+	static final HashMap<String, String> linkageEvidence= new HashMap<>();
 
 	static
 	{
@@ -69,19 +69,14 @@ public class AgptoConFix extends EntryValidationCheck
 		}
 		
         AGPValidationCheck check=new AGPValidationCheck();
-        try{
+
         check.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
         check.setEntryDAOUtils(getEntryDAOUtils());
         if(!check.check(entry).isValid())
         	return result;
         EntryUtils.convertAGPtofeatureNContigs(entry);
         entry.setDataClass(Entry.CON_DATACLASS);
-        }
-        catch (SQLException e)
-		{
-			e.printStackTrace();
-			throw new ValidationEngineException(e);
-		}
+
 		return result;
 	}
 

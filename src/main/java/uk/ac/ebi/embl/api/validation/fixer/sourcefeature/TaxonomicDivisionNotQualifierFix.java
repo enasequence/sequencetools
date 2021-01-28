@@ -15,17 +15,16 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 
-import java.util.List;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+
+import java.util.List;
 
 @Description("Qualifier \"{0}\" has been removed from Feature \"{1}\" as qualifier \"{0}\" must not exist if taxonomic divison has value {2}.")
 public class TaxonomicDivisionNotQualifierFix extends EntryValidationCheck

@@ -16,24 +16,19 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 @Description("Sequence has been added to the anticodon value : \"{0}\""
@@ -97,7 +92,7 @@ public class AnticodonQualifierFix extends EntryValidationCheck
 			{
               reportException(result, e,qualifier);
 			}
-			catch(Exception e)
+			catch(SQLException | IOException e)
 			{
 				throw new ValidationEngineException(e);
 			}

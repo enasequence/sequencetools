@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
@@ -25,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Description("The feature has no location.\\Feature location missing.\\The begin and end position of a sequence span are in the wrong order."
@@ -36,12 +36,6 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
     private static final String LOCATION_ORDER_ID = "FeatureLocationCheck-3";
     private static final String INVALID_REMOTELOCATION_ID = "FeatureLocationCheck-5";
 
-
-    private Entry entry;
-    
-    public void setEntry(Entry entry) {
-        this.entry = entry;
-    }
     public ValidationResult check(Feature feature) throws ValidationEngineException {
         result = new ValidationResult();
 
@@ -88,7 +82,7 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
         if(feature instanceof CdsFeature && ((CdsFeature)feature).isPseudo())
         	return result;
 
-      }catch(Exception e)
+      }catch(SQLException e)
       {
     	  throw new ValidationEngineException(e.getMessage(), e);
       }

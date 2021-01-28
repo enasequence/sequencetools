@@ -15,15 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.sql.SQLException;
-
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
+import java.sql.SQLException;
 
 public abstract class FeatureValidationCheck implements EmblEntryValidationCheck<Feature> {
 

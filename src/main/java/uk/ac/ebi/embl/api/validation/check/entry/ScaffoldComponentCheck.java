@@ -2,7 +2,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -18,7 +17,7 @@ public class ScaffoldComponentCheck extends EntryValidationCheck {
 
         private final static String SCAFFOLD_WITH_ONE_COMPONENT = "ScaffoldWithOneComponentCheck";
 
-        public ValidationResult check(Entry entry) throws ValidationEngineException {
+        public ValidationResult check(Entry entry) {
 
             result = new ValidationResult();
 

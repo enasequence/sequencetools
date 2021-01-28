@@ -29,7 +29,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Qualifier {0} is only permitted when organism belongs to {1}.")
@@ -43,9 +42,6 @@ public class OrganismAndPermittedQualifierCheck extends EntryValidationCheck {
 	private final static String MESSAGE_ID_2 = "OrganismAndPermittedQualifierCheck3";
 	private final static String PROKARYOTIC_MESSAGE = "OrganismAndPermittedQualifierCheck2";
 
-	/*OrganismAndPermittedQualifierCheck( DataSet dataSet) {
-		this.dataSet = dataSet;
-	}*/
 
 	public OrganismAndPermittedQualifierCheck()
 	{

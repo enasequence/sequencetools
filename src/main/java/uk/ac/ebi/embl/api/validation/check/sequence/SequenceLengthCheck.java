@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.sequence;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -45,16 +44,13 @@ public class SequenceLengthCheck extends EntryValidationCheck
 	private final static String SEQUENCE_LENGTH_INCRNA_MESSAGE_ID = "SequenceLengthCheck5";
 	private final static String SEQUENCE_LENGTH_MISMATCH_MESSAGE_ID = "SequenceLengthCheck6";
 
-	public ValidationResult check(Entry entry) throws ValidationEngineException
+	public ValidationResult check(Entry entry)
 	{
 		result = new ValidationResult();
 		SequenceExistsCheck sequenceExistsCheck = new SequenceExistsCheck();
-		try{
+
 		sequenceExistsCheck.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
-		}catch(SQLException e)
-		{
-			throw new ValidationEngineException(e);
-		}
+
 		if (entry == null)
 		{
 			return result;

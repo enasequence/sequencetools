@@ -29,7 +29,6 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 
 @Description("/locus_tag  must exist for annotated contigs/scaffolds/chromosomes")
@@ -39,10 +38,9 @@ public class LocustagExistsCheck extends EntryValidationCheck {
 
     private final static String LOCUSTAG_MESSAGE_ID = "LocustagExistsCheck_1";
     
-    List<String> excludeFeatureCheckList=  new ArrayList<String>();
-    
     public ValidationResult check(Entry entry) 
     {
+		List<String> excludeFeatureCheckList=  new ArrayList<>();
     	excludeFeatureCheckList.add(Feature.REPEAT_REGION);
     	excludeFeatureCheckList.add(Feature.MISC_FEATURE_NAME);
     	

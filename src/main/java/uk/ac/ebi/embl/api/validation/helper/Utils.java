@@ -1283,4 +1283,12 @@ public class Utils {
 			  return null;
 	  }
   }
+
+	public static StringBuilder getExceptionCause(Throwable t , StringBuilder msg) {
+		while(t != null) {
+			msg.append(t); msg.append("\n");
+			t = t.getCause();
+		}
+		return msg;
+	}
 }

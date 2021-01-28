@@ -100,8 +100,8 @@ public abstract class FileValidationCheck {
          if(!EntryReader.getSkipTagCounter().isEmpty())
              EntryReader.getSkipTagCounter().clear();
 	}
-	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
-	public abstract boolean check() throws ValidationEngineException ;
+	public abstract ValidationPlanResult check(SubmissionFile file) throws ValidationEngineException;
+	public abstract ValidationPlanResult check() throws ValidationEngineException ;
 
 	protected SubmissionOptions getOptions() {
 		return options;

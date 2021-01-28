@@ -15,8 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import java.sql.SQLException;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
@@ -91,8 +89,7 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
     }
     
     @Override
-	public void setEmblEntryValidationPlanProperty(
-			EmblEntryValidationPlanProperty property) throws SQLException
+	public void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property)
 	{
 		this.property=property;
 	}
