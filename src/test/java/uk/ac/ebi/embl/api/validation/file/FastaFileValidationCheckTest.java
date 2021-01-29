@@ -60,7 +60,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		assertTrue(!check.check(file));
+		assertTrue(check.check(file).hasError());
 		assertTrue(check.getMessageStats().get("SQ.1")!=null);
 	}
 	
@@ -77,7 +77,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.context = Optional.of(Context.transcriptome);
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
         assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 	
@@ -95,7 +95,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence1").closeOnJvmShutdown().fileDeleteAfterClose().transactionEnable().make());
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
 		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));
 		String actualString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".fixed")));
         System.out.println(expectedString);

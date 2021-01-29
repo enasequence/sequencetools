@@ -1,12 +1,11 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -24,6 +23,7 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
@@ -39,7 +39,9 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     }
 
     public void validate() throws ValidationEngineException {
-        new SubmissionValidationPlan(options).execute();
+       ValidationPlanResult planResult = new SubmissionValidationPlan(options).execute();
+       if(planResult.hasError())
+        throwValidationErrors(planResult.getMessages(Severity.ERROR));
     }
 
     /**
@@ -68,6 +70,16 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         return response;
     }
 
+    private void throwValidationErrors(List<ValidationMessage<Origin>> errorsList) throws ValidationEngineException {
+        if(!options.isRemote) {
+            StringBuilder sb = new StringBuilder();
+            for (ValidationMessage<Origin> error : errorsList) {
+                sb.append(error.getMessage());
+                sb.append("\n");
+            }
+            throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+        }
+    }
 
     SubmissionOptions mapManifestToSubmissionOptions(Manifest manifest) throws ValidationEngineException {
         if(manifest == null)

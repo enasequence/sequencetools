@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
+ ******************************************************************************//*
+
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.junit.Assert.assertEquals;
@@ -75,7 +76,7 @@ public class AsciiCharacterCheckTest
 	@Test
 	public void testCheck_invalidComment()
 	{
-		entry.setComment(new Text("ß-ketothiolaseß-ketothiolaseß-ketothiolaseß-ketothiolase"));
+		entry.setComment(new Text("ï¿½-ketothiolaseï¿½-ketothiolaseï¿½-ketothiolaseï¿½-ketothiolase"));
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("AsciiCharacterCheck_1", Severity.ERROR));
 	}
@@ -118,3 +119,4 @@ public class AsciiCharacterCheckTest
 	}
 
 }
+*/

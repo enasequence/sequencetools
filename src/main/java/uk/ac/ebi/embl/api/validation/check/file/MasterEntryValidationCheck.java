@@ -102,10 +102,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(!planResult.isValid())
 			{
 				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), planResult);
-				for(ValidationResult result: planResult.getResults())
-				{
-					addMessagekey(result);
-				}
+				addMessageKeys(planResult.getMessages());
 			}
 			else
 			{
@@ -121,18 +118,15 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 
 			throw new ValidationEngineException(getExceptionCause(e.getCause(), msg).toString(), ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
 		} catch (IOException e) {
-			StringBuilder msg = new StringBuilder();
-			msg.append(e.getMessage()); msg.append("\n");
-			throw new ValidationEngineException(getExceptionCause(e.getCause(), msg).toString(), ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
-
+			throw new ValidationEngineException(e);
 		}
 		return planResult;
 	}
 
 	@Override
-	public boolean check(SubmissionFile file) throws ValidationEngineException {
+	public ValidationPlanResult check(SubmissionFile file) throws ValidationEngineException {
 		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	public Entry getMasterEntry(AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws ValidationEngineException

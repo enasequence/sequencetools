@@ -47,6 +47,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -305,14 +306,18 @@ public abstract class FileValidationCheck {
 	{
 		return messageStats;
 	}
-	protected void addMessagekey(ValidationResult result)
-	{
-		for(ValidationMessage message: result.getMessages())
+
+	void addMessageKey(ValidationMessage<Origin> message) {
+		if (messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1)) != null)
+			messageStats.get(message.getMessageKey()).incrementAndGet();
+	}
+
+	void addMessageKeys(Collection<ValidationMessage<Origin>> result) {
+		for(ValidationMessage message: result)
 		{
 			if(messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1))!=null)
-			messageStats.get(message.getMessageKey()).incrementAndGet();
+				messageStats.get(message.getMessageKey()).incrementAndGet();
 		}
-
 	}
 
 	protected void appendHeader(Entry entry) throws ValidationEngineException
@@ -392,7 +397,7 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
-	protected void collectContigInfo(Entry entry) throws Exception {
+	protected void collectContigInfo(Entry entry) throws ValidationEngineException {
 		try {
 			if (entry.getSubmitterAccession() == null)
 				entry.setSubmitterAccession(entry.getPrimaryAccession());
@@ -413,7 +418,7 @@ public abstract class FileValidationCheck {
 				}
 			}
 
-		} catch (Exception e) {
+		} catch (ValidationEngineException e) {
 			if (getContigDB() != null)
 				getContigDB().close();
 			throw e;
@@ -603,7 +608,18 @@ public abstract class FileValidationCheck {
 	public void setContigDB(DB contigDB) {
 		this.contigDB = contigDB;
 	}
-	
+
+	ValidationResult reportError(Path reportFile, String fileType) {
+		ValidationResult result = new ValidationResult();
+		ValidationMessage<Origin> message = FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat", fileType);
+		addMessageKey(message);
+		result.append(message);
+		if (getOptions().reportDir.isPresent())
+			getReporter().writeToFile(reportFile, result);
+		return result;
+	}
+
+
 	protected boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
 	{  
 		String flat_file_token= "ID";

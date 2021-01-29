@@ -25,7 +25,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -49,15 +48,14 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	}
 
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
-		boolean valid = true;
-		EraproDAOUtils eraDaoUtils = null;
+	public ValidationPlanResult check(SubmissionFile submissionFile) throws ValidationEngineException {
+		ValidationPlanResult validationPlanResult = new ValidationPlanResult();
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
 			if(StringUtils.isBlank(templateId ) ) {
-				 eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
-				 templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
+				EraproDAOUtils eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
+				templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
 			}
 			if(templateId == null)
 				throw new ValidationEngineException("Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
@@ -95,24 +93,25 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					validationResult.append(validationMessage);
 					if(getOptions().reportDir.isPresent())
 						getReporter().writeToFile(getReportFile(submissionFile), validationResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
-					valid = false;
+					validationPlanResult.append(validationResult);
 					break;
 				}
-				ValidationPlanResult validationPlanResult = templateProcessorResultSet.getValidationPlanResult();
-				if (!validationPlanResult.isValid()) {
+				ValidationPlanResult planResult = templateProcessorResultSet.getValidationPlanResult();
+				validationPlanResult.append(planResult);
+				if (!planResult.isValid()) {
 					if (getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(submissionFile), validationPlanResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
-					valid = false;
+						getReporter().writeToFile(getReportFile(submissionFile), planResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 				}
 				if(fixedFileWriter!=null)
-				new EmblEntryWriter(entry).write(fixedFileWriter);
+					new EmblEntryWriter(entry).write(fixedFileWriter);
 				sequenceCount++;
 			}
-			return valid;
+
 		} catch (TemplateUserError e) {
 			ValidationResult validationResult = new ValidationResult();
 			ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, e.getMessage());
 			validationResult.append(validationMessage);
+			validationPlanResult.append(validationResult);
 			try
 			{
 			if (getOptions().reportDir.isPresent())
@@ -120,18 +119,19 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			
 			}catch(Exception ex)
 			{
-				throw new ValidationEngineException(ex.getMessage(), ex);
+				throw new ValidationEngineException(ex);
 			}
-			return false;
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ValidationEngineException(e.toString(), e);
+			throw new ValidationEngineException( e);
 		}
+		return validationPlanResult;
 	}
 
 	@Override
-	public boolean check() throws ValidationEngineException {
-		return false;
+	public ValidationPlanResult check() throws ValidationEngineException {
+		throw new UnsupportedOperationException();
 	}
 
 	private File getTemplateFromResourceAndWriteToProcessDir(String templateId, String templateDir) throws ValidationEngineException {

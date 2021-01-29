@@ -45,7 +45,7 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
 		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
 	}
 	
 	@Test
@@ -54,7 +54,7 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
 		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
-		assertTrue(!check.check(file));
+		assertTrue(check.check(file).hasError());
 		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
 	}
 	

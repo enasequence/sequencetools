@@ -1,6 +1,7 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentMap;
@@ -31,36 +32,30 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 	}
 
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException 
+	public ValidationPlanResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid =true;
+		ValidationPlanResult validationResult = new ValidationPlanResult();
 		EmblEntryValidationPlan validationPlan=null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 
-			if(!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE))
-			{
-				ValidationResult result = new ValidationResult();
-				valid = false;
-				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","flatfile"));
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				addMessagekey(result);
-				return valid;
+			if (!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE)) {
+				reportError(getReportFile(submissionFile), "AnnotationOnlyFlatfile");
+				return validationResult;
 			}
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 			EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
 					new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
 			ValidationResult parseResult = entryReader.read();
+			validationResult.append(parseResult);
 			while(entryReader.isEntry())
 			{
 				if(!parseResult.isValid())
 				{
-					valid = false;
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-					addMessagekey(parseResult);
+					addMessageKeys(parseResult.getMessages());
 				}
 
 				Entry entry = entryReader.getEntry();
@@ -98,15 +93,12 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
 				validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				appendHeader(entry);
-				ValidationPlanResult planResult=validationPlan.execute(entry);
+				ValidationPlanResult planResult = validationPlan.execute(entry);
+				validationResult.append(planResult);
 				if(!planResult.isValid())
 				{
-					valid = false;
 					getReporter().writeToFile(getReportFile(submissionFile), planResult);
-					for(ValidationResult result: planResult.getResults())
-					{
-						addMessagekey(result);
-					}
+					addMessageKeys(planResult.getMessages());
 				}
 				else
 				{
@@ -114,6 +106,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 						new EmblEntryWriter(entry).write(fixedFileWriter);
 				}
 				parseResult = entryReader.read();
+				validationResult.append(parseResult);
 			}
 
 		} catch(ValidationEngineException vee) {
@@ -121,18 +114,18 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				getSequenceDB().close();
 			throw vee;
 		}
-		catch(Exception e)
+		catch(IOException e)
 		{
 			closeDB(getSequenceDB());
-			throw new ValidationEngineException(e.getMessage(), e);
+			throw new ValidationEngineException(e);
 		}
-		return valid;
+		return validationResult;
 	}
 
 	@Override
-	public boolean check() throws ValidationEngineException 
+	public ValidationPlanResult check() throws ValidationEngineException
 	{
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 }

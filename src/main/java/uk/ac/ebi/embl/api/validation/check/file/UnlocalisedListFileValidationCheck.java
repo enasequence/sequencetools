@@ -15,10 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -26,6 +22,9 @@ import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.UnlocalisedListFileReader;
+
+import java.io.IOException;
+import java.util.List;
 
 @Description("")
 public class UnlocalisedListFileValidationCheck extends FileValidationCheck
@@ -36,50 +35,47 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		super(options);
 	}	
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	public ValidationPlanResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid =true;
+		ValidationPlanResult validationPlanResult = new ValidationPlanResult();
 		try
 		{
 			clearReportFile(getReportFile(submissionFile));
 			UnlocalisedListFileReader reader = new UnlocalisedListFileReader(submissionFile.getFile());
 			ValidationResult parseResult = reader.read();
+			validationPlanResult.append(parseResult);
 			if(!parseResult.isValid())
 			{
-				valid = false;
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-				addMessagekey(parseResult);
+				addMessageKeys(parseResult.getMessages());
 			}
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.UNLOCALISEDLIST);
 			GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
-			List<UnlocalisedEntry> unlocalisedEntries=reader.getentries();
+			List<UnlocalisedEntry> unlocalisedEntries = reader.getentries();
 			for(UnlocalisedEntry entry : unlocalisedEntries)
 			{
-				ValidationPlanResult result=plan.execute(entry);
+				ValidationPlanResult result = plan.execute(entry);
 				result.append(validateValidChromosomeEntry(entry));
 				result.append(validateValidUnlocalisedEntry(entry));
+				validationPlanResult.append(result);
 				if(!result.isValid())
 				{
-				valid=false;
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				for(ValidationResult planResult: result.getResults())
-				{
-					addMessagekey(planResult);
-				}
+					getReporter().writeToFile(getReportFile(submissionFile), result);
+					addMessageKeys(result.getMessages());
 				}
 				unlocalisedEntryNames.add(entry.getObjectName().toUpperCase());
 			}
 		} catch (ValidationEngineException e) {
 			throw e;
 		}
-		catch(Exception e)
+		catch(IOException e)
 		{
-			throw new ValidationEngineException(e.getMessage(), e);
+			throw new ValidationEngineException(e);
 		}
-		return valid;
+		return validationPlanResult;
 	}
 	@Override
-	public boolean check() throws ValidationEngineException {
+	public ValidationPlanResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 

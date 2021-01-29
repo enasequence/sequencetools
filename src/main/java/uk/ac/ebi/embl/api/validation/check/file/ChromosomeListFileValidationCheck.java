@@ -22,7 +22,6 @@ import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,30 +39,25 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 	public ValidationPlanResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		Origin origin =null;
-		ValidationPlanResult planResult = new ValidationPlanResult();
+		ValidationPlanResult validationResult = new ValidationPlanResult();
 		try
 		{
 			clearReportFile(getReportFile(submissionFile));
 
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.CHROMOSOME_LIST))
 			{
-				ValidationResult result = new ValidationResult();
-				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","chromosome_list"));
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				addMessagekey(result);
-				planResult.append(result);
-				return planResult;
+				reportError(getReportFile(submissionFile), "chromosome_list");
+				return validationResult;
 			}
 			ChromosomeListFileReader reader = new ChromosomeListFileReader(submissionFile.getFile());
 
 			ValidationResult parseResult = reader.read();
-			planResult.append(parseResult);
-			if(!planResult.isValid())
+			validationResult.append(parseResult);
+			if(!parseResult.isValid())
 			{
 				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-				addMessagekey(parseResult);
+				addMessageKeys(parseResult.getMessages());
 			}
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
 			GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -72,14 +66,12 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			for(ChromosomeEntry entry : chromosomeEntries)
 			{
 				origin = entry.getOrigin();
-				planResult.append(plan.execute(entry));
+				ValidationPlanResult planResult = plan.execute(entry);
+				validationResult.append(planResult);
 				if(!planResult.isValid())
 				{
     				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-					for(ValidationResult result: planResult.getResults())
-					{
-						addMessagekey(result);
-					}
+    				addMessageKeys(parseResult.getMessages());
 				}
 				if (entry.getObjectName() != null)
 				  chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(), entry);
@@ -90,14 +82,10 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 
 		} catch (IOException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			throw new ValidationEngineException(e.getMessage(), e);
+			throw new ValidationEngineException(e);
 		}
-	/*	catch(Exception e)
-		{
-			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			throw new ValidationEngineException(e.getMessage(), e);
-		}*/
-		return planResult;
+
+		return validationResult;
 	}
 
  	public HashMap<String,ChromosomeEntry> getChromosomeQualifeirs()
@@ -106,7 +94,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
  	}
 
 	@Override
-	public boolean check() throws ValidationEngineException {
+	public ValidationPlanResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 

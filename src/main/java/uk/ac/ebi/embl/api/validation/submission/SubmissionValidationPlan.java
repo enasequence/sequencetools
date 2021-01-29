@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -65,18 +65,29 @@ public class SubmissionValidationPlan
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
 		}
-	public void execute() throws ValidationEngineException {
+	public ValidationPlanResult execute() throws ValidationEngineException {
+		ValidationPlanResult validationResult = new ValidationPlanResult();
 		try
 		{
 			options.init();
 			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
 			//Validation Order shouldn't be changed
-			if(options.context.get().getFileTypes().contains(FileType.MASTER))
-				createMaster();
-			if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST))
-				validateChromosomeList();
-			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
-				validateUnlocalisedList();
+			if(options.context.get().getFileTypes().contains(FileType.MASTER)) {
+				validationResult = createMaster();
+				if(validationResult.hasError())
+					return validationResult;
+			}
+			if(options.context.get().getFileTypes().contains(FileType.CHROMOSOME_LIST)) {
+				validationResult = validateChromosomeList();
+				if(validationResult.hasError())
+					return validationResult;
+			}
+			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST)) {
+				validationResult = validateUnlocalisedList();
+				if(validationResult.hasError())
+					return validationResult;
+			}
+
 			if (options.context.get().getFileTypes().contains(FileType.AGP)) {
 				agpCheck = new AGPFileValidationCheck(options);
 				if (FileValidationCheck.isHasAgp()) {
@@ -94,20 +105,34 @@ public class SubmissionValidationPlan
 				}
 			}
 
-			if(options.context.get().getFileTypes().contains(FileType.FASTA))
-			  validateFasta();
-			  
-			if(options.context.get().getFileTypes().contains(FileType.FLATFILE))
-				validateFlatfile();
+			if(options.context.get().getFileTypes().contains(FileType.FASTA)) {
+				validationResult = validateFasta();
+				if(validationResult.hasError())
+					return validationResult;
+			}
+
+			if(options.context.get().getFileTypes().contains(FileType.FLATFILE)) {
+				validationResult = validateFlatfile();
+				if(validationResult.hasError())
+					return validationResult;
+			}
 
 			if(options.context.get().getFileTypes().contains(FileType.AGP))
 			{
-				validateAGP();
+				validationResult = validateAGP();
+				if(validationResult.hasError())
+					return validationResult;
 			}
-			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
-				validateAnnotationOnlyFlatfile();
-			if(options.context.get().getFileTypes().contains(FileType.TSV))
-				validateTsvfile();
+			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE)) {
+				validationResult = validateAnnotationOnlyFlatfile();
+				if(validationResult.hasError())
+					return validationResult;
+			}
+			if(options.context.get().getFileTypes().contains(FileType.TSV)) {
+				validationResult = validateTsvfile();
+				if(validationResult.hasError())
+					return validationResult;
+			}
 
 			check.validateDuplicateEntryNames();
 			if(Context.genome == options.context.get()) {
@@ -128,7 +153,6 @@ public class SubmissionValidationPlan
 				writeSequenceInfo();
 			}
 		} catch (ValidationEngineException e) {
-			String msg = (e.getCause() != null && e.getCause().getMessage() != null) ? e.getMessage()+":"+e.getCause().getMessage():e.getMessage();
 			try {
 				if (options.reportFile.isPresent()) {
 					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
@@ -147,153 +171,153 @@ public class SubmissionValidationPlan
 			if (contigDB != null)
 				contigDB.close();
 		}
+		return validationResult;
 	}
+
+
 
 	static Set<String> getUnplacedEntryNames() {
 		return FileValidationCheck.unplacedEntryNames;
 	}
 
-	private void createMaster() throws ValidationEngineException
+	private ValidationPlanResult createMaster() throws ValidationEngineException
 	{
+		ValidationPlanResult planResult = new ValidationPlanResult();
 		try
 		{
 			masterCheck = new MasterEntryValidationCheck(options);
 			if(options.processDir.isPresent()
 					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
 					&& masterCheck.getMasterEntry() != null ) {
-				return;
+				return planResult;
 			}
 
-			ValidationPlanResult planResult = masterCheck.check();
-			if(planResult.isValid()) {
-				if (!options.isRemote)
+			planResult = masterCheck.check();
+			if(planResult.hasError()) {
+				if (options.isRemote) {
+					throw new ValidationEngineException("Master entry validation failed.",ReportErrorType.VALIDATION_ERROR );
+				}
+			}
+			if(!options.isRemote) {
 					flagValidation(FileType.MASTER);
 			}
-		}catch(ValidationEngineException e)
-		{
-			throwValidationEngineException(FileType.MASTER,e,"master.dat");
 		} catch (IOException e) {
-
+			throw new ValidationEngineException("Exception while writing master.validated flagfile."+e.getMessage());
 		}
+		return planResult;
 	}
 
-	private void validateChromosomeList() throws ValidationEngineException
-	{
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,chromosomelistFlagFileName))))
-         return;
-		String fileName=null;
+	private ValidationPlanResult validateChromosomeList() throws ValidationEngineException {
+		ValidationPlanResult planResult = new ValidationPlanResult();
+		if (options.processDir.isPresent() && Files.exists(Paths.get(String.format("%s%s%s", options.processDir.get(), File.separator, chromosomelistFlagFileName))))
+			return planResult;
 
-		try
-		{
-			check = new ChromosomeListFileValidationCheck(options);
-			for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
-			{
-				fileName= chromosomeListFile.getFile().getName();
-
-				if(!check.check(chromosomeListFile))
-					throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
+		check = new ChromosomeListFileValidationCheck(options);
+		for (SubmissionFile chromosomeListFile : options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST)) {
+			planResult = check.check(chromosomeListFile);
+			if (planResult.hasError()) {
+				throwValidationCheckException(FileType.CHROMOSOME_LIST, chromosomeListFile);
 			}
-		}catch(Exception e)
-		{
-			throwValidationEngineException(FileType.CHROMOSOME_LIST,e,fileName);
 		}
+
+		return planResult;
 	}
 
-	private void validateFasta() throws ValidationEngineException
+	private ValidationPlanResult validateFasta() throws ValidationEngineException
 	{
+		ValidationPlanResult planResult = new ValidationPlanResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
-			return;
-
-		String fileName=null;
+			return planResult;
 
 		try
 		{
 			check = new FastaFileValidationCheck(options);
 			for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
 			{
-				fileName= fastaFile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
 					check.setContigDB(contigDB);
-				if(!check.check(fastaFile))
+				planResult = check.check(fastaFile);
+
+				if(planResult.hasError() ){
 					throwValidationCheckException(FileType.FASTA,fastaFile);
-				else if(!options.isRemote)
-				     flagValidation(FileType.FASTA);
+				} else if(!options.isRemote) {
+					flagValidation(FileType.FASTA);
+				}
 
 			}
-		}catch(Exception e)
-		{
-			throwValidationEngineException(FileType.FASTA,e,fileName);
+		} catch (IOException e) {
+			throw new ValidationEngineException("Exception while writing fasta.validated flagfile."+e.getMessage());
 		}
+		return planResult;
 	}
 
-	private void validateFlatfile() throws ValidationEngineException
+	private ValidationPlanResult validateFlatfile() throws ValidationEngineException
 	{
+		ValidationPlanResult planResult = new ValidationPlanResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
-			return;
-		String fileName=null;
+			return planResult;
 
 		try
 		{
 			check = new FlatfileFileValidationCheck(options);
 			for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 			{
-				fileName= flatfile.getFile().getName();
 				if(sequenceDB!=null)
 					check.setSequenceDB(sequenceDB);
 				if(contigDB!=null)
 					check.setContigDB(contigDB);
-				if(!check.check(flatfile))
+				planResult = check.check(flatfile);
+				if(planResult.hasError())
 					throwValidationCheckException(FileType.FLATFILE,flatfile);
 				else if(!options.isRemote)
 				     flagValidation(FileType.FLATFILE);
 			}
-		}catch(Exception e)
+		} catch(IOException e)
 		{
-			throwValidationEngineException(FileType.FLATFILE,e,fileName);
+			throw new ValidationEngineException("Exception while writing flatfile.validated flagfile."+e.getMessage());
 		}
+		return planResult;
 	}
 
-	private void validateAGP() throws ValidationEngineException
+	private ValidationPlanResult validateAGP() throws ValidationEngineException
 	{
+		ValidationPlanResult planResult = new ValidationPlanResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
-			return;
-		String fileName=null;
+			return planResult;
+
 		try
 		{
 			for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 			{
-				fileName= agpFile.getFile().getName();
 				if(sequenceDB!=null)
 					agpCheck.setSequenceDB(sequenceDB);
-				if(!agpCheck.check(agpFile))
+				planResult = agpCheck.check(agpFile);
+				if(planResult.hasError())
 					throwValidationCheckException(FileType.AGP,agpFile);
 				else if(!options.isRemote)
 				     flagValidation(FileType.AGP);
 			}
-		}catch(Exception e)
-		{
-			throwValidationEngineException(FileType.AGP,e,fileName);
 		}
+		catch(IOException e)
+		{
+			throw new ValidationEngineException("Exception while writing agp.validated flagfile."+e.getMessage());
+		}
+		return planResult;
 	}
 
-	private void validateUnlocalisedList() throws ValidationEngineException
-	{
-		String fileName=null;
-		try
-		{
-			check = new UnlocalisedListFileValidationCheck(options);
+	private ValidationPlanResult validateUnlocalisedList() throws ValidationEngineException {
+		ValidationPlanResult planResult = new ValidationPlanResult();
 
-			for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
-			{	fileName= unlocalisedListFile.getFile().getName();
-			if(!check.check(unlocalisedListFile))
-				throwValidationCheckException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
-			}
-		}catch(ValidationEngineException e)
-		{
-			throwValidationEngineException(FileType.UNLOCALISED_LIST,e,fileName);
+		check = new UnlocalisedListFileValidationCheck(options);
+
+		for (SubmissionFile unlocalisedListFile : options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST)) {
+			planResult = check.check(unlocalisedListFile);
+			if (planResult.hasError())
+				throwValidationCheckException(FileType.UNLOCALISED_LIST, unlocalisedListFile);
 		}
+		return planResult;
 	}
 
 	private void registerSequences() throws ValidationEngineException
@@ -303,47 +327,34 @@ public class SubmissionValidationPlan
 		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
 		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
-	
-	private void validateAnnotationOnlyFlatfile() throws ValidationEngineException
-	{
-		String fileName=null;
 
-		try
-		{
-			check = new AnnotationOnlyFlatfileValidationCheck(options);
-			for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
-			{
-				fileName = annotationOnlyFlatfile.getFile().getName();
+	private ValidationPlanResult validateAnnotationOnlyFlatfile() throws ValidationEngineException {
+		ValidationPlanResult planResult = new ValidationPlanResult();
 
-				if(sequenceDB!=null)
-					check.setSequenceDB(sequenceDB);
-				if(!check.check(annotationOnlyFlatfile))
-					throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
-			}
-		}catch(ValidationEngineException e)
-		{
-			throwValidationEngineException(FileType.ANNOTATION_ONLY_FLATFILE,e,fileName);
+		check = new AnnotationOnlyFlatfileValidationCheck(options);
+		for (SubmissionFile annotationOnlyFlatfile : options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE)) {
+
+			if (sequenceDB != null)
+				check.setSequenceDB(sequenceDB);
+			planResult = check.check(annotationOnlyFlatfile);
+			if (planResult.hasError())
+				throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
 		}
+		return planResult;
 	}
 
-	private void validateTsvfile() throws ValidationEngineException
-	{
-		String fileName=null;
+	private ValidationPlanResult validateTsvfile() throws ValidationEngineException {
+		ValidationPlanResult planResult = new ValidationPlanResult();
 
-		try
-		{
-			check = new TSVFileValidationCheck(options);
-			for(SubmissionFile tsvFile:options.submissionFiles.get().getFiles(FileType.TSV))
-			{
-				fileName = tsvFile.getFile().getName();
-				if(!check.check(tsvFile))
-					throwValidationCheckException(FileType.TSV,tsvFile);
-			}
-		}catch(ValidationEngineException e)
-		{
-			throwValidationEngineException(FileType.TSV,e,fileName);
+		check = new TSVFileValidationCheck(options);
+		for (SubmissionFile tsvFile : options.submissionFiles.get().getFiles(FileType.TSV)) {
+			planResult = check.check(tsvFile);
+			if (planResult.hasError())
+				throwValidationCheckException(FileType.TSV, tsvFile);
 		}
+		return planResult;
 	}
+
 	private String getSequenceDbname()
 	{
 		return ".sequence";
@@ -355,21 +366,14 @@ public class SubmissionValidationPlan
 
 	}
 
-	private void throwValidationCheckException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException
-	{
-		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
-	}
-
-    private void throwValidationEngineException(FileType fileTpe, ValidationEngineException e, String fileName) throws ValidationEngineException {
-		if(options.isRemote) {
-			ValidationEngineException validationEngineException = new ValidationEngineException(
-					String.format("%s file validation failed for %s :", fileTpe.name().toLowerCase(), fileName) + e.getMessage(), e);
-			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
-			throw validationEngineException;
-		} else {
-			throw e;
+	private void throwValidationCheckException(FileType fileTpe, SubmissionFile submissionFile) throws ValidationEngineException {
+		if (options.isRemote) {
+			ValidationEngineException ex = new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s",
+					fileTpe.name().toLowerCase(), submissionFile.getFile().getName() , check.getReportFile(submissionFile).toFile()), ReportErrorType.VALIDATION_ERROR);
+			ex.setErrorType(ReportErrorType.VALIDATION_ERROR);
+			throw ex;
 		}
-    }
+	}
 
 	@SuppressWarnings("deprecation")
 	private void throwValidationResult(ValidationResult result) throws ValidationEngineException

@@ -58,7 +58,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.context = Optional.of(Context.genome);
 	        options.init();
 			FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-			assertTrue(!check.check(file));
+			assertTrue(!check.check(file).hasError());
 		}
 		
 		@Test
@@ -75,7 +75,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-			assertTrue(check.check(file));
+			assertTrue(!check.check(file).hasError());
 	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 		
@@ -94,7 +94,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-			assertTrue(check.check(file));
+			assertTrue(!check.check(file).hasError());
 	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 
@@ -112,7 +112,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 
@@ -130,7 +130,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 

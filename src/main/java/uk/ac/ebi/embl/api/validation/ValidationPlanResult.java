@@ -31,6 +31,7 @@ import java.util.List;
 public class ValidationPlanResult implements Serializable {
 
 	private List<ValidationResult> results;
+	private boolean hasError;
     /**
      * the name of the thing on which this plan was run - either an entry name or a file - anything really
      */
@@ -192,15 +193,11 @@ public class ValidationPlanResult implements Serializable {
     }
 
     public List<ValidationMessage<Origin>> getMessages() {
-
-        List<ValidationMessage<Origin>> result = new ArrayList<ValidationMessage<Origin>>();
-
+        List<ValidationMessage<Origin>> messages = new ArrayList<>();
         for (ValidationResult validationResult : results) {
-            for (ValidationMessage<Origin> message : validationResult.getMessages()) {
-                result.add(message);
-            }
+			messages.addAll(validationResult.getMessages());
         }
-        return result;
+        return messages;
     }
 
     /**
@@ -268,4 +265,12 @@ public class ValidationPlanResult implements Serializable {
     public void setTargetOrigin(String targetOrigin) {
         this.targetOrigin = targetOrigin;
     }
+
+	public boolean hasError() {
+		return hasError;
+	}
+
+	public void setHasError(boolean hasError) {
+		this.hasError = hasError;
+	}
 }

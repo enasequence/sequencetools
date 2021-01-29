@@ -22,7 +22,6 @@ import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -33,10 +32,10 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -48,31 +47,25 @@ import java.util.concurrent.ConcurrentMap;
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
-	private int i=0;
 	public AGPFileValidationCheck(SubmissionOptions options) 
 	{
 		super(options);
 	}	
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	public ValidationPlanResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid=true;
-		ValidationPlan validationPlan =null;
+		ValidationPlan validationPlan;
 		fixedFileWriter=null;
 		Origin origin =null;
+		ValidationPlanResult validationResult = new ValidationPlanResult();
+
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
-			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
-			{
-				ValidationResult result = new ValidationResult();
-				valid = false;
-				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","AGP"));
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				addMessagekey(result);
-				return valid;
+			if (!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP)) {
+				validationResult.append(reportError(getReportFile(submissionFile), "AGP"));
+				return validationResult;
 			}
-			i=0;
+
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			HashMap<String,AssemblySequenceInfo> contigInfo = new HashMap<>();
 			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
@@ -80,12 +73,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			if(contigInfo.isEmpty())
 				throw new ValidationEngineException("AGP validation can't be done : Contig Info is missing");
 			ValidationResult parseResult = reader.read();
+			validationResult.append(parseResult);
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry()) {
 				if (!parseResult.isValid()) {
-					valid = false;
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-					addMessagekey(parseResult);
+					addMessageKeys(parseResult.getMessages());
 				}
 
 				Entry entry = reader.getEntry();
@@ -115,6 +108,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				appendHeader(entry);
 				ValidationPlanResult planResult = validationPlan.execute(entry);
+				validationResult.append(planResult);
 
 				if(null != entry.getSubmitterAccession()) {
 					addEntryName(entry.getSubmitterAccession());
@@ -124,23 +118,17 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					contigInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 				}
 
-    			if(!planResult.isValid())
-    			{
-    			    valid = false;
-    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-    				for(ValidationResult result: planResult.getResults())
-    				{
-    					addMessagekey(result);
-    				}
-    			}
-    			else
-				{
-					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(isHasAnnotationOnlyFlatfile())
+				if (planResult.isValid()) {
+					if (fixedFileWriter != null)
+						new EmblEntryWriter(entry).write(fixedFileWriter);
+					if (isHasAnnotationOnlyFlatfile())
 						constructAGPSequence(entry);
+				} else {
+					addMessageKeys(planResult.getMessages());
+					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 				}
 				parseResult = reader.read();
+				validationResult.append(parseResult);
         	}
 
 		} catch (ValidationEngineException vee) {
@@ -148,14 +136,14 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			closeDB(getContigDB(), getSequenceDB());
 			throw vee;
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			closeDB(getContigDB(), getSequenceDB());
-			throw new ValidationEngineException(e.getMessage(), e);
+			throw new ValidationEngineException(e);
 		}
-		if(valid)
+		if(validationResult.isValid())
 	        registerAGPfileInfo();
-		return valid;
+		return validationResult;
 	}
 
 	private void constructAGPSequence(Entry entry) throws ValidationEngineException
@@ -173,7 +161,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 
 			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
-				i++;
 				if (!agpRow.isGap()) {
 
 					Object sequence;
@@ -187,7 +174,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									if (sequence != null)
 										sequenceBuffer.put((byte[]) sequence);
 									else {
-									//	agpInfo.containsKey()
 										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
 									}
 								}
@@ -219,7 +205,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		getSequenceDB().commit();  
 		}
 	@Override
-	public boolean check() throws ValidationEngineException {
+	public ValidationPlanResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 	

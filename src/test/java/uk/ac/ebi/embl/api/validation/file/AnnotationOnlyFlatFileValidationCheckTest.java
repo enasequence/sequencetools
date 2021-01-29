@@ -71,7 +71,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options);
 		check.setSequenceDB(db);
-		assertTrue(check.check(file));
+		assertTrue(!check.check(file).hasError());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 		db.close();
 	}
@@ -93,7 +93,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options);
 		check.setSequenceDB(db);
-		assertTrue(!check.check(file));
+		assertTrue(check.check(file).hasError());
 		assertEquals(1l,check.getMessageStats().get("SequenceExistsCheck").get());
 		db.close();
 	}
