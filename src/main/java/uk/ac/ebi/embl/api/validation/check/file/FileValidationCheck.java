@@ -140,21 +140,16 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  Path getReportFile(SubmissionFile submissionFile) throws ValidationEngineException
-	{
-		Path reportfilePath=null;
-		try
-		{
-			if(submissionFile.getReportFile()!=null)
-				reportfilePath= submissionFile.getReportFile().toPath();
-			else
-				if(getOptions().reportDir.isPresent())
-					reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
-		}catch (Exception e) {
-			throw new ValidationEngineException("Failed to get report file : "+e.getMessage(), e);
+	public Path getReportFile(SubmissionFile submissionFile)  {
+		Path reportFilePath = null;
+
+		if (submissionFile.getReportFile() != null)
+			reportFilePath = submissionFile.getReportFile().toPath();
+		else if (getOptions().reportDir.isPresent()) {
+			reportFilePath = Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX);
 		}
 
-		return reportfilePath;
+		return reportFilePath;
 	}
 
 	protected void clearReportFile(Path reportfilePath) throws IOException
@@ -521,7 +516,7 @@ public abstract class FileValidationCheck {
 			entry.addReference(reference);
 		} else {
 
-			if (!getOptions().isRemote) {
+			if (!getOptions().isWebinCLI) {
 				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get());
 				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {

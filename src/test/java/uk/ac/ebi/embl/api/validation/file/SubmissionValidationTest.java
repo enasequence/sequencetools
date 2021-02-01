@@ -117,7 +117,7 @@ public abstract class SubmissionValidationTest {
 		
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
-		options.isRemote =true;
+		options.isWebinCLI =true;
 		options.context =Optional.of(context);
 		options.getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);

@@ -21,10 +21,7 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
@@ -39,9 +36,30 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     }
 
     public void validate() throws ValidationEngineException {
-       ValidationPlanResult planResult = new SubmissionValidationPlan(options).execute();
-       if(planResult.hasError())
-        throwValidationErrors(planResult.getMessages(Severity.ERROR));
+
+        ValidationPlanResult planResult;
+        try {
+            planResult = new SubmissionValidationPlan(options).execute();
+        } catch (ValidationEngineException e) {
+            if (options.reportFile.isPresent()) {
+                new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
+                        .writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage());
+            }
+            throw e;
+        }
+
+       if(planResult.hasError()) {
+           if(options.isWebinCLI) {
+              throw new ValidationEngineException(planResult.getOrigin().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+           } else {
+               StringBuilder sb = new StringBuilder();
+               for (ValidationMessage<Origin> error : planResult.getMessages(Severity.ERROR)) {
+                   sb.append(error.getMessage());
+                   sb.append("\n");
+               }
+               throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+           }
+       }
     }
 
     /**
@@ -68,17 +86,6 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             }
         }
         return response;
-    }
-
-    private void throwValidationErrors(List<ValidationMessage<Origin>> errorsList) throws ValidationEngineException {
-        if(!options.isRemote) {
-            StringBuilder sb = new StringBuilder();
-            for (ValidationMessage<Origin> error : errorsList) {
-                sb.append(error.getMessage());
-                sb.append("\n");
-            }
-            throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
-        }
     }
 
     SubmissionOptions mapManifestToSubmissionOptions(Manifest manifest) throws ValidationEngineException {
@@ -119,7 +126,8 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             sourceUtils.addExtraSourceQualifiers(sourceFeature, new TaxonHelperImpl(), manifest.getName());
             options.source = Optional.of(sourceFeature);
         }
-        options.isRemote = true;
+
+        options.isWebinCLI = true;
         options.ignoreErrors = manifest.isIgnoreErrors();
         options.reportDir = Optional.of(new File(manifest.getReportFile().getAbsolutePath()).getParent());
         options.reportFile = Optional.of(manifest.getReportFile());

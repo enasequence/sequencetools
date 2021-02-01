@@ -16,13 +16,11 @@
 package uk.ac.ebi.embl.api.validation.file;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,7 +82,7 @@ public class TSVFileValidationCheckTest {
             return;
         }
         options = new SubmissionOptions();
-        options.isRemote = true;
+        options.isWebinCLI = true;
         options.setProjectId(PROJECT_ID);
         options.reportDir = Optional.of(reportsPath);
         options.context = Optional.of(Context.sequence);

@@ -67,7 +67,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
 			TemplateProcessor templateProcessor;
-			if (options.isRemote)
+			if (options.isWebinCLI)
 				templateProcessor = new TemplateProcessor(templateInfo, null);
 			else {
 				templateProcessor = new TemplateProcessor(templateInfo, options.eraproConnection.get());

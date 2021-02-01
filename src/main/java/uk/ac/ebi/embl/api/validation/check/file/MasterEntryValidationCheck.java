@@ -67,7 +67,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 			}
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
-			if(!getOptions().isRemote)
+			if(!getOptions().isWebinCLI)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
 				masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
@@ -106,7 +106,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				if(!getOptions().isRemote)
+				if(!getOptions().isWebinCLI)
 				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
 		} catch (SQLException e) {

@@ -35,7 +35,7 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 	   public void init() throws SQLException
 	   {   
 		   options = new SubmissionOptions();
-	       options.isRemote = true;
+	       options.isWebinCLI = true;
 	   }
 	
 	@Test

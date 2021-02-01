@@ -32,6 +32,7 @@ public class ValidationPlanResult implements Serializable {
 
 	private List<ValidationResult> results;
 	private boolean hasError;
+	private Origin origin;
     /**
      * the name of the thing on which this plan was run - either an entry name or a file - anything really
      */
@@ -272,5 +273,13 @@ public class ValidationPlanResult implements Serializable {
 
 	public void setHasError(boolean hasError) {
 		this.hasError = hasError;
+	}
+
+	public Origin getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Origin origin) {
+		this.origin = origin;
 	}
 }
