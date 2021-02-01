@@ -77,7 +77,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 	}
 	
 	@Test
-	public void testAnnotationOnlyFlatFilemissingSequence() throws ValidationEngineException, FlatFileComparatorException
+	public void testAnnotationOnlyFlatFilemissingSequence() throws ValidationEngineException
 	{
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("invalid_AnnotationOnlyFlatfile.txt",SubmissionFile.FileType.FLATFILE);

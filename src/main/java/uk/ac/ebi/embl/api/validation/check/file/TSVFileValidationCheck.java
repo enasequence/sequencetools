@@ -94,11 +94,13 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					if(getOptions().reportDir.isPresent())
 						getReporter().writeToFile(getReportFile(submissionFile), validationResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 					validationPlanResult.append(validationResult);
+					validationPlanResult.setHasError(true);
 					break;
 				}
 				ValidationPlanResult planResult = templateProcessorResultSet.getValidationPlanResult();
 				validationPlanResult.append(planResult);
 				if (!planResult.isValid()) {
+					validationPlanResult.setHasError(true);
 					if (getOptions().reportDir.isPresent())
 						getReporter().writeToFile(getReportFile(submissionFile), planResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 				}
@@ -112,6 +114,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, e.getMessage());
 			validationResult.append(validationMessage);
 			validationPlanResult.append(validationResult);
+			validationPlanResult.setHasError(true);
 			try
 			{
 			if (getOptions().reportDir.isPresent())

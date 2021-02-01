@@ -63,6 +63,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			clearReportFile(getReportFile(submissionFile));
 			if (!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP)) {
 				validationResult.append(reportError(getReportFile(submissionFile), "AGP"));
+				validationResult.setHasError(true);
 				return validationResult;
 			}
 
@@ -77,6 +78,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry()) {
 				if (!parseResult.isValid()) {
+					validationResult.setHasError(true);
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 					addMessageKeys(parseResult.getMessages());
 				}
@@ -124,6 +126,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					if (isHasAnnotationOnlyFlatfile())
 						constructAGPSequence(entry);
 				} else {
+					validationResult.setHasError(true);
 					addMessageKeys(planResult.getMessages());
 					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 				}
@@ -141,8 +144,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			closeDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e);
 		}
-		if(validationResult.isValid())
-	        registerAGPfileInfo();
+		if(validationResult.isValid()) {
+			registerAGPfileInfo();
+		} else {
+			validationResult.setHasError(true);
+		}
 		return validationResult;
 	}
 

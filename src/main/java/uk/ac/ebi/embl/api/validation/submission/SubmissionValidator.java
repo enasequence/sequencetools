@@ -41,15 +41,13 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         try {
             planResult = new SubmissionValidationPlan(options).execute();
         } catch (ValidationEngineException e) {
-            if (options.reportFile.isPresent()) {
-                new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
-                        .writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage());
-            }
+            writeErrorText(e.getMessage());
             throw e;
         }
 
        if(planResult.hasError()) {
            if(options.isWebinCLI) {
+               writeErrorText(planResult.getOrigin().getOriginText());
               throw new ValidationEngineException(planResult.getOrigin().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
            } else {
                StringBuilder sb = new StringBuilder();
@@ -62,6 +60,12 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
        }
     }
 
+    private void writeErrorText(String errorText) {
+        if (options.reportFile.isPresent()) {
+            new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
+                    .writeToFile(options.reportFile.get(), Severity.ERROR, errorText);
+        }
+    }
     /**
      * Manifest to SubmissionOptions mapping.This is only for webin-cli.
      * @param manifest

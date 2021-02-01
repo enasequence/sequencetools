@@ -101,6 +101,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 
 			if(!planResult.isValid())
 			{
+				planResult.setHasError(true);
 				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), planResult);
 				addMessageKeys(planResult.getMessages());
 			}

@@ -46,6 +46,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 			validationPlanResult.append(parseResult);
 			if(!parseResult.isValid())
 			{
+				validationPlanResult.setHasError(true);
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 				addMessageKeys(parseResult.getMessages());
 			}
@@ -60,6 +61,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 				validationPlanResult.append(result);
 				if(!result.isValid())
 				{
+					validationPlanResult.setHasError(true);
 					getReporter().writeToFile(getReportFile(submissionFile), result);
 					addMessageKeys(result.getMessages());
 				}

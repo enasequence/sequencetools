@@ -43,6 +43,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 
 			if (!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.ANNOTATION_ONLY_FLATFILE)) {
 				reportError(getReportFile(submissionFile), "AnnotationOnlyFlatfile");
+				validationResult.setHasError(true);
 				return validationResult;
 			}
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
@@ -54,6 +55,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 			{
 				if(!parseResult.isValid())
 				{
+					validationResult.setHasError(true);
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 					addMessageKeys(parseResult.getMessages());
 				}
@@ -97,6 +99,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 				validationResult.append(planResult);
 				if(!planResult.isValid())
 				{
+					validationResult.setHasError(true);
 					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					addMessageKeys(planResult.getMessages());
 				}

@@ -155,7 +155,7 @@ public class TSVFileValidationCheckTest {
 
     private void checkTSV(String fileName, boolean isValid, String expectedMesage) throws Exception {
         submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + fileName), path.toFile());
-        boolean valid = fileValidationCheck.check(submissionFile).hasError();
+        boolean valid = !fileValidationCheck.check(submissionFile).hasError();
         if (isValid) {
             assertTrue(valid);
         } else {
@@ -175,6 +175,7 @@ public class TSVFileValidationCheckTest {
         checkTSV("DELineIssue.tsv.gz", true, "");
     }*/
 
+   //FAILED
     @Test
     public void ppGenePassedAsMarker() throws Exception {
         checkTSV("Sequence-PP_GENE-as-MARKER.tsv.gz", true, "");
