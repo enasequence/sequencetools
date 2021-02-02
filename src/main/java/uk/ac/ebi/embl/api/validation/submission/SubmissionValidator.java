@@ -47,8 +47,8 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
        if(planResult.hasError()) {
            if(options.isWebinCLI) {
-               writeErrorText(planResult.getOrigin().getOriginText());
-              throw new ValidationEngineException(planResult.getOrigin().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+               writeErrorText(planResult.getValidationMessage().getOriginText());
+              throw new ValidationEngineException(planResult.getValidationMessage().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
            } else {
                StringBuilder sb = new StringBuilder();
                for (ValidationMessage<Origin> error : planResult.getMessages(Severity.ERROR)) {

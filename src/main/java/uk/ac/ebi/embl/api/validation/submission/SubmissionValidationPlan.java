@@ -195,7 +195,7 @@ public class SubmissionValidationPlan
 		for (SubmissionFile chromosomeListFile : options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST)) {
 			planResult = check.check(chromosomeListFile);
 			if(planResult.hasError() ){
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.CHROMOSOME_LIST, chromosomeListFile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.CHROMOSOME_LIST, chromosomeListFile)));
 				return planResult;
 			}
 		}
@@ -219,7 +219,7 @@ public class SubmissionValidationPlan
 				planResult = check.check(fastaFile);
 
 				if(planResult.hasError() ){
-					planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FASTA,fastaFile)));
+					planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.FASTA,fastaFile)));
 					return planResult;
 				}
 			}
@@ -241,7 +241,7 @@ public class SubmissionValidationPlan
 				check.setContigDB(contigDB);
 			planResult = check.check(flatfile);
 			if (planResult.hasError()) {
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FLATFILE, flatfile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.FLATFILE, flatfile)));
 				return planResult;
 			}
 
@@ -260,7 +260,7 @@ public class SubmissionValidationPlan
 				agpCheck.setSequenceDB(sequenceDB);
 			planResult = agpCheck.check(agpFile);
 			if (planResult.hasError()) {
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.AGP, agpFile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.AGP, agpFile)));
 				return planResult;
 			}
 
@@ -277,7 +277,7 @@ public class SubmissionValidationPlan
 		for (SubmissionFile unlocalisedListFile : options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST)) {
 			planResult = check.check(unlocalisedListFile);
 			if (planResult.hasError()) {
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.UNLOCALISED_LIST, unlocalisedListFile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.UNLOCALISED_LIST, unlocalisedListFile)));
 				return planResult;
 			}
 		}
@@ -302,7 +302,7 @@ public class SubmissionValidationPlan
 				check.setSequenceDB(sequenceDB);
 			planResult = check.check(annotationOnlyFlatfile);
 			if (planResult.hasError()) {
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile)));
 				return planResult;
 			}
 		}
@@ -316,7 +316,7 @@ public class SubmissionValidationPlan
 		for (SubmissionFile tsvFile : options.submissionFiles.get().getFiles(FileType.TSV)) {
 			planResult = check.check(tsvFile);
 			if (planResult.hasError()) {
-				planResult.setOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.TSV, tsvFile)));
+				planResult.setValidationMessage(new DefaultOrigin(getValidationErrorMessage(FileType.TSV, tsvFile)));
 				return planResult;
 			}
 		}
