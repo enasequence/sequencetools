@@ -180,7 +180,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									if (sequence != null)
 										sequenceBuffer.put((byte[]) sequence);
 									else {
-										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
+										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 									}
 								}
 							}

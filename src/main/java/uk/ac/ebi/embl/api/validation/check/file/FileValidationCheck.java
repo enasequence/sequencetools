@@ -164,7 +164,7 @@ public abstract class FileValidationCheck {
 				final String entryNameUpper = entryName1.toUpperCase();
 				if (chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
 					if(unlocalisedEntryNames.contains(entryNameUpper) ) {
-						throw new ValidationEngineException("Sequence can not exist in both chromosome and unlocalised list");
+						throw new ValidationEngineException("Sequence can not exist in both chromosome and unlocalised list", ReportErrorType.VALIDATION_ERROR);
 					}
 					return ValidationScope.ASSEMBLY_CHROMOSOME;
 				}
@@ -331,7 +331,7 @@ public abstract class FileValidationCheck {
 		}
 		if(masterEntry == null)
 		{
-			throw new ValidationEngineException("Master entry must to validate sequences");
+			throw new ValidationEngineException("Master entry must to validate sequences", ReportErrorType.VALIDATION_ERROR);
 		}
 		if(entry==null)
 			return ;
@@ -397,7 +397,7 @@ public abstract class FileValidationCheck {
 			if (entry.getSubmitterAccession() == null)
 				entry.setSubmitterAccession(entry.getPrimaryAccession());
 			if (entry.getSubmitterAccession() == null)
-				throw new ValidationEngineException("Submitter accession missing for an entry");
+				throw new ValidationEngineException("Submitter accession missing for an entry", ReportErrorType.VALIDATION_ERROR);
 			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
 				return;
 			if (entry.getSequence() == null)
@@ -422,7 +422,7 @@ public abstract class FileValidationCheck {
 
 	protected void addAgpEntryName(String entryName) throws ValidationEngineException {
 			 if(!agpEntryNames.add(entryName)) {
-			 	throw new ValidationEngineException( " Object name should be unique in AGP files."+ entryName);
+			 	throw new ValidationEngineException( " Object name should be unique in AGP files."+ entryName,ReportErrorType.VALIDATION_ERROR);
 			 }
 	}
 	private void addSourceQualifiers(Entry entry)

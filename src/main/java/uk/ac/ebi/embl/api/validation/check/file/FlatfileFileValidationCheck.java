@@ -105,7 +105,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 
 			if(StringUtils.isBlank(entry.getSubmitterAccession()) && getOptions().context.get() == Context.genome) {
-				throw new ValidationEngineException("Entry name can not be null for genome context, please check the AC * line.");
+				throw new ValidationEngineException("Entry name can not be null for genome context, please check the AC * line.", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			} else {
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 			}
@@ -117,7 +117,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				throw new ValidationEngineException(
 					String.format(
 						"The topology in the ID line \'%s\' conflicts with the topology specified in the chromsome list file \'%s\'.",
-						entry.getSequence().getTopology(), chrListToplogy));
+						entry.getSequence().getTopology(), chrListToplogy), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			  }
 			  entry.getSequence().setTopology(chrListToplogy);
 			}

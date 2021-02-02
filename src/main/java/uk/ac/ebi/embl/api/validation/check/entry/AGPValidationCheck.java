@@ -222,7 +222,7 @@ public class AGPValidationCheck extends EntryValidationCheck
 						{
 							if(getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() == 0) 
 							{
-								throw new ValidationEngineException("AssemblySequenceInfo must be given to validate AGP file");
+								throw new ValidationEngineException("AssemblySequenceInfo must be given to validate AGP file", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 							}
 						}
 						if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() > 0) 

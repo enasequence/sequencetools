@@ -53,7 +53,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			if(StringUtils.isBlank(templateId ) ) {
+			if(StringUtils.isBlank(templateId ) && !options.isWebinCLI) {
 				EraproDAOUtils eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
 				templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
 			}

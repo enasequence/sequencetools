@@ -16,7 +16,7 @@ public class ReferenceReader {
         Publication publication = getPublication(address, date);
         List<Person> authorList = getAuthors(authors);
         if (authors.isEmpty()) {
-            throw new ValidationEngineException("Authors value is invalid:" + authors);
+            throw new ValidationEngineException("Authors value is invalid:" + authors, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
         }
         Reference ref = new ReferenceFactory().createReference();
         publication.addAuthors(authorList);

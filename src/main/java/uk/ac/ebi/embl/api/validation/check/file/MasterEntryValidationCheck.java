@@ -86,9 +86,9 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			{
 				//webin-cli
 				if(!getOptions().assemblyInfoEntry.isPresent())
-					throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry");
+					throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 				if(!getOptions().source.isPresent())
-					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry");
+					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 				masterEntry = getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
 
