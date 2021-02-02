@@ -138,7 +138,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 			{
 				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
 			
-				if(taxon!=null)
+				if(taxon != null && taxon.getLineage() != null)
 				{
 					String lineage=taxon.getLineage();
 					if(lineage.contains("environmental samples"))
