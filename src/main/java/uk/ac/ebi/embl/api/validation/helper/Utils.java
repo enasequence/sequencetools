@@ -216,7 +216,7 @@ public class Utils {
         return new FlattenedMessageResult(flattenedMessages, unFlattenedMessages);
     }
 
-    public static List<FlattenedValidationPlanResult> flattenValidationPlans(List<ValidationPlanResult> planResults) {
+/*    public static List<FlattenedValidationPlanResult> flattenValidationPlans(List<ValidationPlanResult> planResults) {
         Map<String,FlattenedValidationPlanResult> resultsMap = new HashMap<String, FlattenedValidationPlanResult>();
         for(ValidationPlanResult planResult : planResults){
             if(resultsMap.containsKey(planResult.getTargetOrigin())){
@@ -228,7 +228,7 @@ public class Utils {
         }
 
         return new ArrayList<FlattenedValidationPlanResult>(resultsMap.values());
-    }
+    }*/
 
     public static String parseTSVString(String input){
         if(input.equals("(null)")){

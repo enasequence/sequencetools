@@ -46,6 +46,7 @@ public class ValidationResult implements Serializable {
 	private boolean writeResultReport = false;
 	private ValidationMessage.MessageFormatter messageFormatter = getDefaultMessageFormatter();
     private Origin  defaultOrigin;
+    private boolean valid = true;
 
     public ValidationResult() {
     	this( null );
@@ -53,7 +54,7 @@ public class ValidationResult implements Serializable {
 
     public ValidationResult( Origin defaultOrigin ) {
 		this.defaultOrigin = defaultOrigin;
-		this.messages = new ArrayList<ValidationMessage<Origin>>();
+		this.messages = new ArrayList<>();
 	}
     
     public static void
@@ -129,10 +130,12 @@ public class ValidationResult implements Serializable {
 	 * @param message a validation message to be added
 	 */
 	private void addMessage(ValidationMessage<Origin> message) {
+
 		if (message == null) {
 			return;
 		}
-		
+		valid = valid && Severity.ERROR != message.getSeverity();
+
 		if( null != defaultOrigin ) {
 			message.addOrigin( defaultOrigin );
 		}
@@ -183,18 +186,17 @@ public class ValidationResult implements Serializable {
 		return append(result.getMessages());
 	}
 
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+
 	/**
 	 * Returns true if no errors have been reported.
 	 * 
 	 * @return true if no errors have been reported
 	 */
 	public boolean isValid() {
-		for (ValidationMessage<Origin> message : messages) {
-			if (Severity.ERROR.equals(message.getSeverity())) {
-				return false;
-			}
-		}
-		return true;
+		return valid;
 	}
 
     public boolean isExtendedResult(){

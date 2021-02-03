@@ -11,22 +11,15 @@
 
 package uk.ac.ebi.embl.api.validation.report;
 
+import uk.ac.ebi.embl.api.validation.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-
 public interface SubmissionReporter {
-    void writeToFile(Path reportFile, ValidationPlanResult validationPlanResult, String targetOrigin);
-    void writeToFile(Path reportFile, ValidationPlanResult validationPlanResult);
     void writeToFile(Path reportFile, ValidationResult validationResult, String targetOrigin );
     void writeToFile(Path reportFile, ValidationResult validationResult );
     void writeToFile(Path reportFile, ValidationMessage validationMessage );
@@ -34,9 +27,6 @@ public interface SubmissionReporter {
     void writeToFile(Path reportFile, Severity severity, String message );
     void writeToFile(Path reportFile,ConcurrentMap<String,AtomicLong> messageStats) throws IOException;
 
-
-    void writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin);
-    void writeToFile(File reportFile, ValidationPlanResult validationPlanResult);
     void writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin );
     void writeToFile(File reportFile, ValidationResult validationResult );
     void writeToFile(File reportFile, ValidationMessage validationMessage );

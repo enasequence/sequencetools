@@ -39,7 +39,7 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
  */
 public abstract class ValidationPlan {
 
-	protected ValidationPlanResult validationPlanResult;
+	protected ValidationResult validationResult;
 	protected ValidationScope validationScope;
 	private DataManager dataManager;
 	private CheckFileManager fileManager;
@@ -83,12 +83,12 @@ public abstract class ValidationPlan {
 	 * @return
 	 * @throws ValidationEngineException
 	 */
-	public abstract ValidationPlanResult execute(Object target)
+	public abstract ValidationResult execute(Object target)
 			throws ValidationEngineException;
 
-	protected ValidationPlanResult execute(EmblEntryValidationCheck<?>[] checks, Object target)
+	protected ValidationResult execute(EmblEntryValidationCheck<?>[] checks, Object target)
 			throws ValidationEngineException {
-		ValidationPlanResult result = new ValidationPlanResult();
+		ValidationResult result = new ValidationResult();
 		for (EmblEntryValidationCheck<?> check : checks) {
 			result.append(execute(check, target));
 		}
@@ -104,12 +104,12 @@ public abstract class ValidationPlan {
 	 * @throws ValidationEngineException
 	 */
 	@SuppressWarnings("unchecked")
-	public ValidationPlanResult execute(ValidationCheck check, Object target) throws ValidationEngineException {
+	public ValidationResult execute(ValidationCheck check, Object target) throws ValidationEngineException {
 		
 		
 		if (check == null)
 		{
-			return validationPlanResult;
+			return validationResult;
 		}
 		try
 		{
@@ -138,15 +138,15 @@ public abstract class ValidationPlan {
 
 		if(remoteExclude!=null&&remote)
 		{
-			return validationPlanResult;
+			return validationResult;
 		}
         if (excludeScopeAnnotation != null && isInValidationScope(excludeScopeAnnotation.validationScope())) {
-			return validationPlanResult;
+			return validationResult;
 		}
         
         if(groupIncludeAnnotation!=null && !isInValidationScopeGroup(groupIncludeAnnotation.group()))
         {
-        	return validationPlanResult;
+        	return validationResult;
         }
 
 
@@ -155,19 +155,19 @@ public abstract class ValidationPlan {
 			Stream.of(checkDataSetAnnotation.dataSetNames()).forEach( dsName -> GlobalDataSets.loadIfNotExist(dsName, dataManager, fileManager, devMode));
         }
 */
-        validationPlanResult.append(check.check(target));
+		validationResult.append(check.check(target));
 
         if (excludeScopeAnnotation != null) {
-            demoteSeverity(validationPlanResult, excludeScopeAnnotation.maxSeverity());
+            demoteSeverity(validationResult, excludeScopeAnnotation.maxSeverity());
         }
         if(groupIncludeAnnotation!=null)
         {
-        	demoteSeverity(validationPlanResult, groupIncludeAnnotation.maxSeverity());
+        	demoteSeverity(validationResult, groupIncludeAnnotation.maxSeverity());
         }
 
 //        System.out.println(this.result.count());
         
-        return validationPlanResult;
+        return validationResult;
 	}
 	
 	/**
@@ -176,7 +176,7 @@ public abstract class ValidationPlan {
 	 * @param planResult a validation result
 	 * @param maxSeverity a maximum severity
 	 */
-	protected void demoteSeverity(ValidationPlanResult planResult,
+	protected void demoteSeverity(ValidationResult planResult,
 			Severity maxSeverity) {
 		if (Severity.ERROR.equals(maxSeverity)) {
 			return;

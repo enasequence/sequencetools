@@ -47,6 +47,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -100,8 +101,8 @@ public abstract class FileValidationCheck {
          if(!EntryReader.getSkipTagCounter().isEmpty())
              EntryReader.getSkipTagCounter().clear();
 	}
-	public abstract boolean check(SubmissionFile file) throws ValidationEngineException;
-	public abstract boolean check() throws ValidationEngineException ;
+	public abstract ValidationResult check(SubmissionFile file) throws ValidationEngineException;
+	public abstract ValidationResult check() throws ValidationEngineException ;
 
 	protected SubmissionOptions getOptions() {
 		return options;
@@ -139,19 +140,13 @@ public abstract class FileValidationCheck {
 	}
 
 
-	public  Path getReportFile(SubmissionFile submissionFile) throws ValidationEngineException
-	{
-		Path reportfilePath=null;
-		try
-		{
-			if(submissionFile.getReportFile()!=null)
-				reportfilePath= submissionFile.getReportFile().toPath();
-			else
-				if(getOptions().reportDir.isPresent())
-					reportfilePath= Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX );
-		}catch (Exception e) {
-			throw new ValidationEngineException("Failed to get report file : "+e.getMessage(), e);
-		}
+	public Path getReportFile(SubmissionFile submissionFile) {
+		Path reportfilePath = null;
+
+		if (submissionFile.getReportFile() != null)
+			reportfilePath = submissionFile.getReportFile().toPath();
+		else if (getOptions().reportDir.isPresent())
+			reportfilePath = Paths.get(getOptions().reportDir.get(), submissionFile.getFile().getName() + REPORT_FILE_SUFFIX);
 
 		return reportfilePath;
 	}
@@ -305,14 +300,30 @@ public abstract class FileValidationCheck {
 	{
 		return messageStats;
 	}
-	protected void addMessagekey(ValidationResult result)
-	{
-		for(ValidationMessage message: result.getMessages())
-		{
-			if(messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1))!=null)
-			messageStats.get(message.getMessageKey()).incrementAndGet();
-		}
 
+	void addErrorAndReport(ValidationResult validationResult, SubmissionFile submissionFile,String messageKey,  String... params) {
+		ValidationMessage<Origin> message = FlatFileValidations.message(Severity.ERROR, messageKey, (Object) params);
+		validationResult.append(message);
+		addMessageKey(message);
+		if(getOptions().reportDir.isPresent())
+			getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+	}
+
+	void addMessageKey(ValidationMessage message) {
+		if (messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1)) != null)
+			messageStats.get(message.getMessageKey()).incrementAndGet();
+
+	}
+
+	void addMessageKeys(Collection<ValidationMessage<Origin>> result)
+	{
+		if(result == null)
+			return;
+
+		for(ValidationMessage message: result)
+		{
+			addMessageKey(message);
+		}
 	}
 
 	protected void appendHeader(Entry entry) throws ValidationEngineException
@@ -604,7 +615,7 @@ public abstract class FileValidationCheck {
 		this.contigDB = contigDB;
 	}
 	
-	protected boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
+	boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
 	{  
 		String flat_file_token= "ID";
 		String fasta_file_token=">";

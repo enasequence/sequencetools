@@ -1,12 +1,11 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -22,6 +21,7 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -29,6 +29,7 @@ import java.util.Optional;
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
     private SubmissionOptions options;
+    private static final int ERROR_MAX_LENGTH = 30;
 
     public SubmissionValidator() {
 
@@ -39,7 +40,31 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     }
 
     public void validate() throws ValidationEngineException {
-        new SubmissionValidationPlan(options).execute();
+
+        ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
+        if(!validationResult.isValid()) {
+
+            if(options.isRemote) {
+                writeErrorText(validationResult.getDefaultOrigin().getOriginText());
+                throw new ValidationEngineException(validationResult.getDefaultOrigin().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
+                    if((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH)
+                        break;
+                    sb.append(error.getMessage());
+                    sb.append("\n");
+                }
+                throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            }
+        }
+    }
+
+    private void writeErrorText(String errorText) {
+        if (options.reportFile.isPresent()) {
+            new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
+                    .writeToFile(options.reportFile.get(), Severity.ERROR, errorText);
+        }
     }
 
     /**

@@ -26,20 +26,20 @@ import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 public class ValidationPlanTest {
 
 	private ValidationPlan plan;
-	private ValidationPlanResult result;
+	private ValidationResult result;
 
 	@Before
 	public void init() {
         ValidationPlan validationPlan = new ValidationPlan(ValidationScope.EMBL, false) {
             @Override
-            public ValidationPlanResult execute(Object target) {
+            public ValidationResult execute(Object target) {
                 return null;
             }
         };
         plan = validationPlan;
         plan.addMessageBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
         plan.addMessageBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
-		result = new ValidationPlanResult();
+		result = new ValidationResult();
 		result.append(new ValidationResult().append(new ValidationMessage<Origin>(Severity.ERROR, "KEY1")));
 		result.append(new ValidationResult().append(new ValidationMessage<Origin>(Severity.WARNING, "KEY2")));
 		result.append(new ValidationResult().append(new ValidationMessage<Origin>(Severity.INFO, "KEY3")));

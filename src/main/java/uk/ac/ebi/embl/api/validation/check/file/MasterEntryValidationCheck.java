@@ -55,9 +55,9 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		super(options);
 	}	
 	@Override
-	public boolean check() throws ValidationEngineException
+	public ValidationResult check() throws ValidationEngineException
 	{
-		boolean valid =true;
+		ValidationResult validationResult = new ValidationResult();
 		try
 		{
 			if(getOptions().getEntryValidationPlanProperty() != null && getOptions().getEntryValidationPlanProperty().validationScope.get() != ValidationScope.NCBI_MASTER) {
@@ -94,15 +94,11 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			}
 			
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-			ValidationPlanResult planResult=validationPlan.execute(masterEntry);
-			if(!planResult.isValid())
+			validationResult.append(validationPlan.execute(masterEntry));
+			if(!validationResult.isValid())
 			{
-				valid = false;
-				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), planResult);
-				for(ValidationResult result: planResult.getResults())
-				{
-					addMessagekey(result);
-				}
+				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), validationResult);
+				addMessageKeys(validationResult.getMessages());
 			}
 			else
 			{
@@ -117,12 +113,12 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		{
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
-		return valid;
+		return validationResult;
 	}
 	@Override
-	public boolean check(SubmissionFile file) throws ValidationEngineException {
+	public ValidationResult check(SubmissionFile file) throws ValidationEngineException {
 		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	public Entry getMasterEntry(AnalysisType analysisType,AssemblyInfoEntry infoEntry,SourceFeature source) throws ValidationEngineException
