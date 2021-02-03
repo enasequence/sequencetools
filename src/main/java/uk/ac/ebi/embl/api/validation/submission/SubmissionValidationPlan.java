@@ -169,26 +169,27 @@ public class SubmissionValidationPlan
 	private ValidationResult createMaster() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		masterCheck = new MasterEntryValidationCheck(options);
-		if(options.processDir.isPresent()
-				&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
-				&& masterCheck.getMasterEntry() != null ) {
-			return result;
-		}
-
-		result = masterCheck.check();
-		if(!result.isValid()) {
-			result.setDefaultOrigin(new DefaultOrigin("Master entry validation failed"));
-			return result;
-		}
-
 		try
 		{
+			masterCheck = new MasterEntryValidationCheck(options);
+			if(options.processDir.isPresent()
+					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
+					&& masterCheck.getMasterEntry() != null ) {
+				return result;
+			}
+
+			result = masterCheck.check();
+			if(!result.isValid()) {
+				result.setDefaultOrigin(new DefaultOrigin("Master entry validation failed"));
+				return result;
+			}
 			if(!options.isRemote)
 			     flagValidation(FileType.MASTER);
-		}catch(Exception e)
+		}catch(ValidationEngineException e)
 		{
 			throwValidationEngineException(FileType.MASTER,e,"master.dat");
+		} catch (IOException e) {
+			throw new ValidationEngineException(e);
 		}
 
 		return result;
@@ -199,15 +200,19 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,chromosomelistFlagFileName))))
          return result;
-
-		check = new ChromosomeListFileValidationCheck(options);
-		for(SubmissionFile chromosomeListFile:options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST))
-		{
-			result= check.check(chromosomeListFile);
-			if(!result.isValid()) {
-				result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.CHROMOSOME_LIST,chromosomeListFile, check)));
-				return result;
+		String fileName = null;
+		try {
+			check = new ChromosomeListFileValidationCheck(options);
+			for (SubmissionFile chromosomeListFile : options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST)) {
+				fileName= chromosomeListFile.getFile().getName();
+				result = check.check(chromosomeListFile);
+				if (!result.isValid()) {
+					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.CHROMOSOME_LIST, chromosomeListFile, check)));
+					return result;
+				}
 			}
+		} catch (ValidationEngineException e) {
+			throwValidationEngineException(FileType.CHROMOSOME_LIST, e, fileName);
 		}
 		return result;
 	}
@@ -222,29 +227,28 @@ public class SubmissionValidationPlan
 
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
 			return result;
-
-		check = new FastaFileValidationCheck(options);
-		for(SubmissionFile fastaFile:options.submissionFiles.get().getFiles(FileType.FASTA))
-		{
-			if(sequenceDB!=null)
-				check.setSequenceDB(sequenceDB);
-			if(contigDB!=null)
-				check.setContigDB(contigDB);
-			result = check.check(fastaFile);
-			if(!result.isValid()) {
-				result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FASTA,fastaFile, check)));
-				return result;
+		String fileName=null;
+		try {
+			check = new FastaFileValidationCheck(options);
+			for (SubmissionFile fastaFile : options.submissionFiles.get().getFiles(FileType.FASTA)) {
+				fileName= fastaFile.getFile().getName();
+				if (sequenceDB != null)
+					check.setSequenceDB(sequenceDB);
+				if (contigDB != null)
+					check.setContigDB(contigDB);
+				result = check.check(fastaFile);
+				if (!result.isValid()) {
+					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FASTA, fastaFile, check)));
+					return result;
+				}
 			}
-		}
-
-		try
+			if (!options.isRemote)
+				flagValidation(FileType.FASTA);
+		} catch(ValidationEngineException e) {
+			throwValidationEngineException(FileType.FASTA,e,fileName);
+		}catch(IOException e)
 		{
-			if(!options.isRemote)
-				 flagValidation(FileType.FASTA);
-
-		}catch(Exception e)
-		{
-			throw new ValidationEngineException("Fasta file has been validated successfully but an exception occurred while creating fasta.validated flagfile"+e.getMessage());
+			throw new ValidationEngineException(e);
 		}
 		return result;
 	}
@@ -254,10 +258,13 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
 			return result;
-
+		String fileName=null;
+		try
+		{
 		check = new FlatfileFileValidationCheck(options);
 		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
 		{
+			fileName= flatfile.getFile().getName();
 			if(sequenceDB!=null)
 				check.setSequenceDB(sequenceDB);
 			if(contigDB!=null)
@@ -268,15 +275,13 @@ public class SubmissionValidationPlan
 				return result;
 			}
 		}
-
-		try
-		{
 			if (!options.isRemote)
 				flagValidation(FileType.FLATFILE);
-
+		}catch(ValidationEngineException e){
+			throwValidationEngineException(FileType.FLATFILE,e,fileName);
 		}catch(Exception e)
 		{
-			throw new ValidationEngineException("Flatfile has been validated successfully but an exception occurred while creating flatfile.validated flagfile"+e.getMessage());
+			throw new ValidationEngineException();
 		}
 		return result;
 	}
@@ -286,9 +291,12 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
 			return result;
-
+		String fileName=null;
+		try
+		{
 		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
 		{
+			fileName= agpFile.getFile().getName();
 			if(sequenceDB!=null)
 				agpCheck.setSequenceDB(sequenceDB);
 			result = agpCheck.check(agpFile);
@@ -297,14 +305,15 @@ public class SubmissionValidationPlan
 				return result;
 			}
 		}
-		try
-		{
 			if (!options.isRemote)
 				flagValidation(FileType.AGP);
 
-		}catch(Exception e)
+		} catch (ValidationEngineException e) {
+			throwValidationEngineException(FileType.AGP,e,fileName);
+		}
+		catch(IOException e)
 		{
-			throw new ValidationEngineException("AGP file has been validated successfully but an exception occurred while creating agp.validated flagfile"+e.getMessage());
+			throw new ValidationEngineException(e);
 		}
 		return result;
 	}
@@ -399,16 +408,13 @@ public class SubmissionValidationPlan
 
 	}
 
-	private void throwValidationCheckException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException
-	{
-		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),submissionFile.getFile().getName(),check.getReportFile(submissionFile).toFile()),ReportErrorType.VALIDATION_ERROR);
-	}
-
-    private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
-        ValidationEngineException validationEngineException = new ValidationEngineException(
-                String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
-        validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
-        throw validationEngineException;
+    private void throwValidationEngineException(FileType fileTpe, ValidationEngineException e, String fileName) throws ValidationEngineException {
+		if(options.isRemote) {
+			ValidationEngineException validationEngineException = new ValidationEngineException(
+					String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
+			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
+			throw validationEngineException;
+		} else throw e;
     }
 
 	@SuppressWarnings("deprecation")
