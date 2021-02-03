@@ -125,7 +125,8 @@ public class SubmissionValidationPlan
 				if(!options.isRemote)
 				{
 					if(!(AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
-					   AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)	))
+							AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)	||
+							AssemblyType.CLINICALISOLATEASSEMBLY.getValue().equalsIgnoreCase(assemblyType)))
 					writeUnplacedList();
 				}
 			}	else {
