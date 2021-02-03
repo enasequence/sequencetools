@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -80,9 +81,10 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 				addMessagekey(parseResult);
 			}
-			parseResult=new ValidationResult();
+
 			Entry entry = entryReader.getEntry();
 			origin =entry.getOrigin();
+			entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 			if(getOptions().context.get()==Context.genome)
             {
 
@@ -151,7 +153,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				if(fixedFileWriter!=null)
 				new EmblEntryWriter(entry).write(fixedFileWriter);
 			}
-			entryReader.read();
+			parseResult = entryReader.read();
 			sequenceCount++;
 		}
 		}catch(ValidationEngineException e)

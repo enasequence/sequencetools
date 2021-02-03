@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,26 +40,13 @@ public class AccessionFix extends EntryValidationCheck {
 		result = new ValidationResult();
 		if(entry == null)
 			return result;
-
-		if (entry.getSubmitterAccession() != null) {
-			String entryName = entry.getSubmitterAccession().trim();
-			int i = 0;
-			while ( entryName.length()>i && entryName.charAt(i) == '_') {
-				++i;
-			}
-			if (i > 0) {
-				entryName = entryName.substring(i);
-			}
-
-			if (entryName.endsWith(";")) {
-				entryName = StringUtils.removeEnd(entryName, ";");
-			}
-			if(!entryName.equals(entry.getSubmitterAccession())) {
+		if(entry.getSubmitterAccession() != null) {
+			String entryName = EntryNameFix.getFixedEntryName(entry.getSubmitterAccession());
+			if (!entryName.equals(entry.getSubmitterAccession())) {
 				entry.setSubmitterAccession(entryName);
 				reportMessage(Severity.FIX, entry.getOrigin(), FIX_ID, entryName, entry.getSubmitterAccession());
 			}
 		}
-
 		if (entry.getSecondaryAccessions() != null) {
 			List<Text> masterAccnsToRemove = new ArrayList<>();
 			for (Text accn : entry.getSecondaryAccessions()) {

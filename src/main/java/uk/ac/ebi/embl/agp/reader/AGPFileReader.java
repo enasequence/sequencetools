@@ -12,6 +12,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -255,7 +256,7 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 			else
 			{
-				agpRow.setComponent_id(StringUtils.removeEnd(fields[COMPONENT_ID].replaceAll("\\s", ""),";"));
+				agpRow.setComponent_id(EntryNameFix.getFixedEntryName(StringUtils.removeEnd(fields[COMPONENT_ID].replaceAll("\\s", ""),";")));
 			}
 			
 			// COMPONENT_BEG

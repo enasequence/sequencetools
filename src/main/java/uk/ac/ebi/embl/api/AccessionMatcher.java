@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api;
 
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 import java.util.regex.Matcher;
@@ -19,6 +20,9 @@ public class AccessionMatcher {
     private static final Pattern WGS_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})([0-9]{2})(S?)([0-9]{7,9})$");
     private static final Pattern WGS_MASTER_SEQ_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{4})[0-9]{2}[0]{6,8}$");
     private static final Pattern WGS_MASTER_SEQ_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})[0-9]{2}[0]{7,9}$");
+
+    private static final Pattern S_SCAFFOLD_ACCESSION_PATTERN_OLD = Pattern.compile("^([A-Z]{4})([0-9]{2})(S)([0-9]{6,8})$");
+    private static final Pattern S_SCAFFOLD_ACCESSION_PATTERN_NEW = Pattern.compile("^([A-Z]{6})([0-9]{2})(S)([0-9]{7,9})$");
 
     private static final Pattern PROTEIN_ID_PATTERN = Pattern.compile("^\\s*([A-Z]{3}\\d{5}(\\d{2})?)(\\.)(\\d+)\\s*$");
     private static final Pattern ASSEMBLY_MASTER_SEQ_ACCESSION_PATTERN = Pattern.compile("^(ERZ|GCA_)[0-9]+$");
@@ -53,6 +57,14 @@ public class AccessionMatcher {
         return isAnyMatch(getOldSeqPrimaryAccMatcher(input), getNewSeqPrimaryAccMatcher(input));
     }
 
+    public static Matcher getOld_S_ScaffoldAccMatcher(String input) {
+        return input == null ? null : S_SCAFFOLD_ACCESSION_PATTERN_OLD.matcher(input);
+    }
+
+    public static Matcher getNew_S_ScaffoldAccMatcher(String input) {
+        return input == null ? null : S_SCAFFOLD_ACCESSION_PATTERN_NEW.matcher(input);
+    }
+
     public static Matcher getOldWgsAccMatcher(String input) {
         return input == null ? null : WGS_SEQ_ACCESSION_PATTERN_OLD.matcher(input);
     }
@@ -73,6 +85,9 @@ public class AccessionMatcher {
         return isAnyMatch(getOldWgsAccMatcher(accText),  getNewWgsAccMatcher(accText));
     }
 
+    public static boolean is_S_ScaffoldAccession(String accText) {
+        return isAnyMatch(getOld_S_ScaffoldAccMatcher(accText),  getNew_S_ScaffoldAccMatcher(accText));
+    }
     public static boolean isMasterAccession(String accText) {
         boolean rtn =  isAnyMatch( getOldWgsMasterAccMatcher(accText), getNewWgsMasterAccMatcher(accText));
         return rtn;
@@ -138,6 +153,13 @@ public class AccessionMatcher {
             if(accnPrefix == null) {
                 accnPrefix = getPrefix(getNewSeqPrimaryAccMatcher(primaryAccession), 1);
             }
+            if(accnPrefix == null && dataClass.toUpperCase().equals(Entry.CON_DATACLASS)) {
+                Accession accn = getSplittedAccession(primaryAccession);
+                if(accn != null &&  StringUtils.isNotBlank(accn.s)) {
+                    return  accn.prefix;
+                }
+            }
+
         }
 
         return accnPrefix;

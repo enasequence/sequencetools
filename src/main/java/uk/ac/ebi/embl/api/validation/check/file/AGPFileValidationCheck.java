@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -86,9 +87,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 					addMessagekey(parseResult);
 				}
-				parseResult = new ValidationResult();
+
 				Entry entry = reader.getEntry();
 				origin = entry.getOrigin();
+				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(!isHasAnnotationOnlyFlatfile()) {
 					addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
 				}
@@ -138,7 +140,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					if(isHasAnnotationOnlyFlatfile())
 						constructAGPSequence(entry);
 				}
-				reader.read();
+				parseResult = reader.read();
         	}
 
 		} catch (ValidationEngineException vee) {
@@ -236,9 +238,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(result.isValid())
 					{
-						addAgpEntryName((reader.getEntry()).getSubmitterAccession().toUpperCase());
+						Entry entry = reader.getEntry();
+						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
+						addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
 
-						for (AgpRow agpRow : (reader.getEntry()).getSequence().getSortedAGPRows()) {
+						for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 							if (!agpRow.isGap()) {
 								if (agpRow.getComponent_id() != null && getContigDB() != null) {
 									ConcurrentMap<String, Object> map = getContigDB().hashMap("map", Serializer.STRING, getContigDB().getDefaultSerializer()).createOrOpen();

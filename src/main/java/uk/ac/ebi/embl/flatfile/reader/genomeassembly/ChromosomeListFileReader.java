@@ -100,7 +100,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 						chromosomeEntry.setChromosomeLocation(fields[CHROMOSOME_LOCATION_COLUMN].toLowerCase());
 					}
 					chromosomeEntry.setOrigin(new FlatFileOrigin(lineNumber));
-					if(!chromosomeNames.add(chromosomeEntry.getChromosomeName()))
+					if(!chromosomeNames.add(chromosomeEntry.getChromosomeName().toLowerCase()))
 						error(lineNumber, MESSAGE_KEY_DUPLICATE_CHROMOSOME_NAME_ERROR,chromosomeEntry.getChromosomeName());
 					if(chromosomeEntry.getObjectName()!=null)
 					{

@@ -11,6 +11,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -61,8 +62,9 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
 					addMessagekey(parseResult);
 				}
-				parseResult=new ValidationResult();
+
 				Entry entry = entryReader.getEntry();
+				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 				if(entry.getSubmitterAccession()!=null&&getSequenceDB()!=null)
 				{
@@ -111,7 +113,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					if(fixedFileWriter!=null)
 						new EmblEntryWriter(entry).write(fixedFileWriter);
 				}
-				entryReader.read();
+				parseResult = entryReader.read();
 			}
 
 		} catch(ValidationEngineException vee) {
