@@ -157,7 +157,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(origin, MORE_THAN_ONE_METAGENOME_SOURCE);
 			}
 			String metegenomeSource = metagenomeSourceQual.get(0).getValue();
-			if(metegenomeSource == null || (!metegenomeSource.contains("metagenome") && metegenomeSource.contains("Metagenome"))) {
+			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome") ) {
 				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
 			}
 
