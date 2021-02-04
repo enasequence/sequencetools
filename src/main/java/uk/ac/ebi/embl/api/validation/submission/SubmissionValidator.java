@@ -21,7 +21,6 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -29,7 +28,7 @@ import java.util.Optional;
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
     private SubmissionOptions options;
-    private static final int ERROR_MAX_LENGTH = 30;
+    private static final int ERROR_MAX_LENGTH = 2000;
 
     public SubmissionValidator() {
 
@@ -42,30 +41,19 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     public void validate() throws ValidationEngineException {
 
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
-        if(!validationResult.isValid()) {
 
-            if(options.isRemote) {
-                writeErrorText(validationResult.getDefaultOrigin().getOriginText());
-                throw new ValidationEngineException(validationResult.getDefaultOrigin().getOriginText(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
-                    if((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH)
-                        break;
-                    sb.append(error.getMessage());
-                    sb.append("\n");
-                }
-                throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+        if (!options.isRemote && !validationResult.isValid()) {
+            StringBuilder sb = new StringBuilder();
+            for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
+                if ((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH)
+                    break;
+                sb.append(error.getMessage());
+                sb.append("\n");
             }
+            throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
         }
     }
 
-    private void writeErrorText(String errorText) {
-        if (options.reportFile.isPresent()) {
-            new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
-                    .writeToFile(options.reportFile.get(), Severity.ERROR, errorText);
-        }
-    }
 
     /**
      * Manifest to SubmissionOptions mapping.This is only for webin-cli.

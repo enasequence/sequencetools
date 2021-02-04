@@ -180,7 +180,8 @@ public class SubmissionValidationPlan
 
 			result = masterCheck.check();
 			if(!result.isValid()) {
-				result.setDefaultOrigin(new DefaultOrigin("Master entry validation failed"));
+				if(options.isRemote)
+					throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
 				return result;
 			}
 			if(!options.isRemote)
@@ -205,7 +206,8 @@ public class SubmissionValidationPlan
 				fileName= chromosomeListFile.getFile().getName();
 				result = check.check(chromosomeListFile);
 				if (!result.isValid()) {
-					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.CHROMOSOME_LIST, chromosomeListFile, check)));
+					if(options.isRemote)
+						throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
 					return result;
 				}
 			}
@@ -213,10 +215,6 @@ public class SubmissionValidationPlan
 			throwValidationEngineException(FileType.CHROMOSOME_LIST, e, fileName);
 		}
 		return result;
-	}
-	private String getValidationErrorMessage(FileType fileTpe, SubmissionFile submissionFile, FileValidationCheck fileCheck)  {
-		return String.format("%s file validation failed : %s, Please see the error report: %s",
-				fileTpe.name().toLowerCase(), submissionFile.getFile().getName() , fileCheck.getReportFile(submissionFile).toFile());
 	}
 
 	private ValidationResult validateFasta() throws ValidationEngineException
@@ -236,7 +234,8 @@ public class SubmissionValidationPlan
 					check.setContigDB(contigDB);
 				result = check.check(fastaFile);
 				if (!result.isValid()) {
-					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FASTA, fastaFile, check)));
+					if(options.isRemote)
+						throwValidationCheckException(FileType.FASTA,fastaFile);
 					return result;
 				}
 			}
@@ -266,7 +265,8 @@ public class SubmissionValidationPlan
 				check.setContigDB(contigDB);
 			result = check.check(flatfile);
 			if(!result.isValid()) {
-				result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.FLATFILE,flatfile, check)));
+				if(options.isRemote)
+					throwValidationCheckException(FileType.FLATFILE,flatfile);
 				return result;
 			}
 		}
@@ -293,7 +293,8 @@ public class SubmissionValidationPlan
 				agpCheck.setSequenceDB(sequenceDB);
 			result = agpCheck.check(agpFile);
 			if(!result.isValid()) {
-				result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.AGP,agpFile, agpCheck)));
+				if(options.isRemote)
+					throwValidationCheckException(FileType.AGP,agpFile);
 				return result;
 			}
 		}
@@ -318,7 +319,8 @@ public class SubmissionValidationPlan
 			{	fileName= unlocalisedListFile.getFile().getName();
 				result = check.check(unlocalisedListFile);
 				if(!result.isValid()) {
-					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.UNLOCALISED_LIST,unlocalisedListFile, check)));
+					if(options.isRemote)
+						throwValidationCheckException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
 					return result;
 				}
 			}
@@ -352,7 +354,8 @@ public class SubmissionValidationPlan
 					check.setSequenceDB(sequenceDB);
 				result = check.check(annotationOnlyFlatfile);
 				if(!result.isValid()) {
-					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.ANNOTATION_ONLY_FLATFILE,annotationOnlyFlatfile, check)));
+					if(options.isRemote)
+						throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE,annotationOnlyFlatfile);
 					return result;
 				}
 			}
@@ -375,7 +378,8 @@ public class SubmissionValidationPlan
 				fileName = tsvFile.getFile().getName();
 				result = check.check(tsvFile);
 				if(!result.isValid()) {
-					result.setDefaultOrigin(new DefaultOrigin(getValidationErrorMessage(FileType.TSV,tsvFile, check)));
+					if(options.isRemote)
+						throwValidationCheckException(FileType.TSV,tsvFile);
 					return result;
 				}
 			}
@@ -394,6 +398,13 @@ public class SubmissionValidationPlan
 	{
 		return ".contig";
 
+	}
+
+	private void throwValidationCheckException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException
+	{
+		Path reportFile = fileTpe == FileType.AGP ? agpCheck.getReportFile(submissionFile) : check.getReportFile(submissionFile);
+		throw new ValidationEngineException(String.format("%s file validation failed : %s, Please see the error report: %s", fileTpe.name().toLowerCase(),
+				submissionFile.getFile().getName(),reportFile.toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 
     private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
