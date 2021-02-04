@@ -185,11 +185,9 @@ public class SubmissionValidationPlan
 			}
 			if(!options.isRemote)
 			     flagValidation(FileType.MASTER);
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.MASTER,e,"master.dat");
-		} catch (IOException e) {
-			throw new ValidationEngineException(e);
 		}
 
 		return result;
@@ -211,7 +209,7 @@ public class SubmissionValidationPlan
 					return result;
 				}
 			}
-		} catch (ValidationEngineException e) {
+		} catch (Exception e) {
 			throwValidationEngineException(FileType.CHROMOSOME_LIST, e, fileName);
 		}
 		return result;
@@ -244,11 +242,8 @@ public class SubmissionValidationPlan
 			}
 			if (!options.isRemote)
 				flagValidation(FileType.FASTA);
-		} catch(ValidationEngineException e) {
+		} catch(Exception e) {
 			throwValidationEngineException(FileType.FASTA,e,fileName);
-		}catch(IOException e)
-		{
-			throw new ValidationEngineException(e);
 		}
 		return result;
 	}
@@ -277,11 +272,8 @@ public class SubmissionValidationPlan
 		}
 			if (!options.isRemote)
 				flagValidation(FileType.FLATFILE);
-		}catch(ValidationEngineException e){
+		}catch(Exception e){
 			throwValidationEngineException(FileType.FLATFILE,e,fileName);
-		}catch(Exception e)
-		{
-			throw new ValidationEngineException();
 		}
 		return result;
 	}
@@ -308,12 +300,8 @@ public class SubmissionValidationPlan
 			if (!options.isRemote)
 				flagValidation(FileType.AGP);
 
-		} catch (ValidationEngineException e) {
+		} catch (Exception e) {
 			throwValidationEngineException(FileType.AGP,e,fileName);
-		}
-		catch(IOException e)
-		{
-			throw new ValidationEngineException(e);
 		}
 		return result;
 	}
@@ -334,7 +322,7 @@ public class SubmissionValidationPlan
 					return result;
 				}
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.UNLOCALISED_LIST,e,fileName);
 		}
@@ -368,7 +356,7 @@ public class SubmissionValidationPlan
 					return result;
 				}
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.ANNOTATION_ONLY_FLATFILE,e,fileName);
 		}
@@ -391,7 +379,7 @@ public class SubmissionValidationPlan
 					return result;
 				}
 			}
-		}catch(ValidationEngineException e)
+		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.TSV,e,fileName);
 		}
@@ -408,13 +396,13 @@ public class SubmissionValidationPlan
 
 	}
 
-    private void throwValidationEngineException(FileType fileTpe, ValidationEngineException e, String fileName) throws ValidationEngineException {
+    private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
 		if(options.isRemote) {
 			ValidationEngineException validationEngineException = new ValidationEngineException(
 					String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
 			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
 			throw validationEngineException;
-		} else throw e;
+		} else throw new ValidationEngineException(e);
     }
 
 	@SuppressWarnings("deprecation")
