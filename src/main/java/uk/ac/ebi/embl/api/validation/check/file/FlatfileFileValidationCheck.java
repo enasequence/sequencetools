@@ -74,7 +74,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			if(!parseResult.isValid())
 			{
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-				addMessageKeys(parseResult.getMessages());
+				addMessageStats(parseResult.getMessages());
 			}
 
 			Entry entry = entryReader.getEntry();
@@ -137,7 +137,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			if(!planResult.isValid())
 			{
 				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-				addMessageKeys(planResult.getMessages(Severity.ERROR));
+				addMessageStats(planResult.getMessages(Severity.ERROR));
 			}
 			else
 			{

@@ -56,7 +56,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 			{
 				if(getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
-				addMessageKeys(validationResult.getMessages());
+				addMessageStats(validationResult.getMessages());
 			}
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.CHROMOSOMELIST);
 			GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -70,7 +70,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
     				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-					addMessageKeys(planResult.getMessages());
+					addMessageStats(planResult.getMessages());
 				}
 				if (entry.getObjectName() != null)
 				  chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(), entry);

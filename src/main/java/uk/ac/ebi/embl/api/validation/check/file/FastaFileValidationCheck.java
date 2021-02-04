@@ -76,7 +76,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(!parseResult.isValid())
 				{
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-					addMessageKeys(parseResult.getMessages());
+					addMessageStats(parseResult.getMessages());
 				}
 
 				Entry entry=reader.getEntry();
@@ -116,7 +116,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
     				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-					addMessageKeys(planResult.getMessages());
+					addMessageStats(planResult.getMessages());
 				}
 				else
 				{

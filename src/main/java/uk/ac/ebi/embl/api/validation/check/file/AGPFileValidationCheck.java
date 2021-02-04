@@ -81,7 +81,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
         	while(reader.isEntry()) {
 				if (!parseResult.isValid()) {
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-					addMessageKeys(parseResult.getMessages());
+					addMessageStats(parseResult.getMessages());
 				}
 
 				Entry entry = reader.getEntry();
@@ -124,7 +124,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			if(!planResult.isValid())
     			{
     				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-    				addMessageKeys(planResult.getMessages());
+    				addMessageStats(planResult.getMessages());
     			}
     			else
 				{

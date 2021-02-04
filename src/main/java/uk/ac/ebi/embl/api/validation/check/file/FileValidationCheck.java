@@ -304,25 +304,25 @@ public abstract class FileValidationCheck {
 	void addErrorAndReport(ValidationResult validationResult, SubmissionFile submissionFile,String messageKey,  String... params) {
 		ValidationMessage<Origin> message = FlatFileValidations.message(Severity.ERROR, messageKey, (Object) params);
 		validationResult.append(message);
-		addMessageKey(message);
+		addMessageStat(message);
 		if(getOptions().reportDir.isPresent())
 			getReporter().writeToFile(getReportFile(submissionFile), validationResult);
 	}
 
-	void addMessageKey(ValidationMessage message) {
+	void addMessageStat(ValidationMessage message) {
 		if (messageStats.putIfAbsent(message.getMessageKey(), new AtomicLong(1)) != null)
 			messageStats.get(message.getMessageKey()).incrementAndGet();
 
 	}
 
-	void addMessageKeys(Collection<ValidationMessage<Origin>> result)
+	void addMessageStats(Collection<ValidationMessage<Origin>> result)
 	{
 		if(result == null)
 			return;
 
 		for(ValidationMessage message: result)
 		{
-			addMessageKey(message);
+			addMessageStat(message);
 		}
 	}
 

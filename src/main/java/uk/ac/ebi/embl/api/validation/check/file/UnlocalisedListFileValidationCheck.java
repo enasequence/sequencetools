@@ -45,7 +45,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 			if(!validationResult.isValid())
 			{
 				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
-				addMessageKeys(validationResult.getMessages());
+				addMessageStats(validationResult.getMessages());
 			}
 			getOptions().getEntryValidationPlanProperty().fileType.set(FileType.UNLOCALISEDLIST);
 			GenomeAssemblyValidationPlan plan = new GenomeAssemblyValidationPlan(getOptions().getEntryValidationPlanProperty());
@@ -59,7 +59,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 				if(!planResult.isValid())
 				{
 				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-				addMessageKeys(planResult.getMessages());
+				addMessageStats(planResult.getMessages());
 				}
 				unlocalisedEntryNames.add(entry.getObjectName().toUpperCase());
 			}

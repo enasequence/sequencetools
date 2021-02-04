@@ -98,7 +98,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(!validationResult.isValid())
 			{
 				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), validationResult);
-				addMessageKeys(validationResult.getMessages());
+				addMessageStats(validationResult.getMessages());
 			}
 			else
 			{
