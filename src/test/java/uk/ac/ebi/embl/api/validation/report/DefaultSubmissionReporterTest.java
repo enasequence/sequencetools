@@ -143,7 +143,7 @@ public class DefaultSubmissionReporterTest {
 
         Path reportFile = createTempFile();
 
-        ValidationPlanResult planResult = new ValidationPlanResult();
+        ValidationResult planResult = new ValidationResult();
         ValidationResult result1 = new ValidationResult();
         ValidationResult result2 = new ValidationResult();
         result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
@@ -164,7 +164,7 @@ public class DefaultSubmissionReporterTest {
 
         reportFile = createTempFile();
 
-        planResult = new ValidationPlanResult();
+        planResult = new ValidationResult();
         result1 = new ValidationResult();
         result2 = new ValidationResult();
         result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
@@ -297,7 +297,7 @@ public class DefaultSubmissionReporterTest {
 
         Path reportFile = createTempFile();
 
-        ValidationPlanResult planResult = new ValidationPlanResult();
+        ValidationResult planResult = new ValidationResult();
         ValidationResult result1 = new ValidationResult();
         ValidationResult result2 = new ValidationResult();
         result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
@@ -318,7 +318,7 @@ public class DefaultSubmissionReporterTest {
 
         reportFile = createTempFile();
 
-        planResult = new ValidationPlanResult();
+        planResult = new ValidationResult();
         result1 = new ValidationResult();
         result2 = new ValidationResult();
         result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));

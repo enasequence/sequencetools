@@ -1,12 +1,11 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -29,6 +28,7 @@ import java.util.Optional;
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
     private SubmissionOptions options;
+    private static final int ERROR_MAX_LENGTH = 2000;
 
     public SubmissionValidator() {
 
@@ -39,8 +39,21 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     }
 
     public void validate() throws ValidationEngineException {
-        new SubmissionValidationPlan(options).execute();
+
+        ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
+
+        if (!options.isRemote && !validationResult.isValid()) {
+            StringBuilder sb = new StringBuilder();
+            for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
+                if ((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH)
+                    break;
+                sb.append(error.getMessage());
+                sb.append("\n");
+            }
+            throw new ValidationEngineException(StringUtils.chomp(sb.toString()), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+        }
     }
+
 
     /**
      * Manifest to SubmissionOptions mapping.This is only for webin-cli.

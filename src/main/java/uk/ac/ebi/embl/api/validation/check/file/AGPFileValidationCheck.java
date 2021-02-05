@@ -22,9 +22,11 @@ import uk.ac.ebi.embl.agp.reader.AGPLineReader;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -33,7 +35,6 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
@@ -48,15 +49,14 @@ import java.util.concurrent.ConcurrentMap;
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
-	private int i=0;
-	public AGPFileValidationCheck(SubmissionOptions options) 
+	public AGPFileValidationCheck(SubmissionOptions options)
 	{
 		super(options);
 	}	
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid=true;
-		ValidationPlan validationPlan =null;
+		ValidationPlan validationPlan;
+		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter=null;
 		Origin origin =null;
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
@@ -64,28 +64,24 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
 			{
-				ValidationResult result = new ValidationResult();
-				valid = false;
-				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","AGP"));
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				addMessagekey(result);
-				return valid;
+				addErrorAndReport(validationResult,submissionFile, "InvalidFileFormat","AGP");
+				return validationResult;
 			}
-			i=0;
 			AGPFileReader reader = new AGPFileReader(new AGPLineReader(fileReader));
 			HashMap<String,AssemblySequenceInfo> contigInfo = new HashMap<>();
 			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
 			contigInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
-			if(contigInfo.isEmpty())
-				throw new ValidationEngineException("AGP validation can't be done : Contig Info is missing");
+			if(contigInfo.isEmpty()) {
+				addErrorAndReport(validationResult, submissionFile, "ContigInfoMissing");
+				return validationResult;
+			}
 			ValidationResult parseResult = reader.read();
+			validationResult.append(parseResult);
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.AGP);
         	while(reader.isEntry()) {
 				if (!parseResult.isValid()) {
-					valid = false;
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-					addMessagekey(parseResult);
+					addMessageStats(parseResult.getMessages());
 				}
 
 				Entry entry = reader.getEntry();
@@ -114,7 +110,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get() + 1);
 				validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				appendHeader(entry);
-				ValidationPlanResult planResult = validationPlan.execute(entry);
+				ValidationResult planResult = validationPlan.execute(entry);
+				validationResult.append(planResult);
 
 				if(null != entry.getSubmitterAccession()) {
 					addEntryName(entry.getSubmitterAccession());
@@ -126,12 +123,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
     			if(!planResult.isValid())
     			{
-    			    valid = false;
     				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-    				for(ValidationResult result: planResult.getResults())
-    				{
-    					addMessagekey(result);
-    				}
+    				addMessageStats(planResult.getMessages());
     			}
     			else
 				{
@@ -141,6 +134,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						constructAGPSequence(entry);
 				}
 				parseResult = reader.read();
+				validationResult.append(parseResult);
         	}
 
 		} catch (ValidationEngineException vee) {
@@ -153,9 +147,9 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			closeDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
-		if(valid)
+		if(validationResult.isValid())
 	        registerAGPfileInfo();
-		return valid;
+		return validationResult;
 	}
 
 	private void constructAGPSequence(Entry entry) throws ValidationEngineException
@@ -173,7 +167,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 
 			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
-				i++;
 				if (!agpRow.isGap()) {
 
 					Object sequence;
@@ -219,7 +212,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		getSequenceDB().commit();  
 		}
 	@Override
-	public boolean check() throws ValidationEngineException {
+	public ValidationResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 	

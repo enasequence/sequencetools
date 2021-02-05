@@ -54,28 +54,6 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     @Override
     public void
-    writeToFile(Path reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
-    	if(reportFile==null)
-    		return;
-        writeMessages(reportFile, (s) -> {
-            for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
-                writeMessage(s, validationMessage, targetOrigin);
-            }});
-    }
-
-    @Override
-    public void
-    writeToFile(Path reportFile, ValidationPlanResult validationPlanResult) {
-    	if(reportFile==null)
-    		return;
-        writeMessages(reportFile, (s) -> {
-            for( ValidationMessage validationMessage: validationPlanResult.getMessages() ) {
-                writeMessage(s, validationMessage, null /* targetOrigin */);
-            }});
-    }
-
-    @Override
-    public void
     writeToFile(Path reportFile, ValidationResult validationResult, String targetOrigin )
     {
     	if(reportFile==null)
@@ -128,23 +106,6 @@ public class DefaultSubmissionReporter implements SubmissionReporter {
 
     // Write to file.
     //
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult, String targetOrigin) {
-    	if(reportFile==null)
-    		return;
-        writeToFile(reportFile.toPath(), validationPlanResult, targetOrigin);
-    }
-
-    @Override
-    public void
-    writeToFile(File reportFile, ValidationPlanResult validationPlanResult) {
-    	if(reportFile==null)
-    		return;
-        writeToFile(reportFile.toPath(), validationPlanResult);
-    }
-
     @Override
     public void
     writeToFile(File reportFile, ValidationResult validationResult, String targetOrigin ) {

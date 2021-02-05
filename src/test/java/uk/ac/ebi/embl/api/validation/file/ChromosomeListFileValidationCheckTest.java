@@ -49,7 +49,7 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
 		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
-		assertTrue(check.check(file));
+		assertTrue(check.check(file).isValid());
 		assertEquals(check.getChromosomeQualifeirs().size(),2);
 		List<Qualifier> qualifiers =new ArrayList<>();
 		for(String key:check.getChromosomeQualifeirs().keySet())
@@ -70,7 +70,7 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
 		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
-		assertTrue(!check.check(file));
+		assertTrue(!check.check(file).isValid());
 		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
 	}
 

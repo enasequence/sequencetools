@@ -49,9 +49,9 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
-		if(!assemblyInfoEntry.isPresent()&&isRemote)
+		if(!assemblyInfoEntry.isPresent()&& isRemote)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
-		if(!source.isPresent()&&isRemote)
+		if(!source.isPresent()&& isRemote)
 		{   if(Context.sequence!=context.get())
 			throw new ValidationEngineException("SubmissionOptions:source must be provided");
 		}
@@ -67,9 +67,9 @@ public class SubmissionOptions
 				}
 			}
         }
-		if(!analysisId.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
+		if(!analysisId.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
-		if(!processDir.isPresent()&&!isRemote&&(context.get()==Context.genome||context.get()==Context.transcriptome))
+		if(!processDir.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())

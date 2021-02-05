@@ -105,7 +105,7 @@ public class TSVFileValidationCheckTest {
                     return;
                 }
                 submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/" + tsvFile), path.toFile());
-                if (!fileValidationCheck.check(submissionFile)) {
+                if (!fileValidationCheck.check(submissionFile).isValid()) {
                     valid = false;
                     System.out.println("Failed: " + tsvFile);
                 }
@@ -157,7 +157,7 @@ public class TSVFileValidationCheckTest {
 
     private void checkTSV(String fileName, boolean isValid, String expectedMesage) throws Exception {
         submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + fileName), path.toFile());
-        boolean valid = fileValidationCheck.check(submissionFile);
+        boolean valid = fileValidationCheck.check(submissionFile).isValid();
         if (isValid) {
             assertTrue(valid);
         } else {

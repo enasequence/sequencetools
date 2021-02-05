@@ -21,7 +21,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.genomeassembly.GCSEntry;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidationCheck;
 
 public class GenomeAssemblyValidationPlan extends ValidationPlan
@@ -31,7 +31,7 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 		super(planProperty);
 	}
 
-	private ValidationPlanResult execute(GCSEntry entry) throws ValidationEngineException
+	private ValidationResult execute(GCSEntry entry) throws ValidationEngineException
 	{
 		List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
 		List<Class<? extends GenomeAssemblyValidationCheck<?>>> fixes = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
@@ -79,7 +79,7 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
            throw new ValidationEngineException(e);
 		}
 
-		return validationPlanResult;
+		return validationResult;
 
 	}
 
@@ -93,15 +93,15 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 	}
 
 	@Override
-	public ValidationPlanResult execute(Object target) throws ValidationEngineException
+	public ValidationResult execute(Object target) throws ValidationEngineException
 	{
-		validationPlanResult = new ValidationPlanResult();
+		validationResult = new ValidationResult();
 		// TODO Auto-generated method stub
 		if(target instanceof GCSEntry)
 		{
 			execute((GCSEntry)target);
 		}
-		return validationPlanResult;
+		return validationResult;
 	}
 	
 	private void executeChecksandFixes(List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks,GCSEntry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException

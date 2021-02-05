@@ -25,10 +25,8 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -49,15 +47,13 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	}
 
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException {
-		boolean valid = true;
-		EraproDAOUtils eraDaoUtils = null;
+	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException {
+		ValidationResult validationResult = new ValidationResult();
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			if(StringUtils.isBlank(templateId ) ) {
-				 eraDaoUtils = new EraproDAOUtilsImpl(options.eraproConnection.get());
-				 templateId = eraDaoUtils.getTemplateId(options.analysisId.get());
+			if(!options.isRemote && StringUtils.isBlank(templateId ) ) {
+				 templateId = new EraproDAOUtilsImpl(options.eraproConnection.get()).getTemplateId(options.analysisId.get());
 			}
 			if(templateId == null)
 				throw new ValidationEngineException("Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
@@ -90,27 +86,25 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					appendHeader(entry);
 				}
 				if (sequenceCount == MAX_SEQUENCE_COUNT) {
-					ValidationResult validationResult = new ValidationResult();
-					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, "Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
+					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR,
+							"Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
 					validationResult.append(validationMessage);
 					if(getOptions().reportDir.isPresent())
 						getReporter().writeToFile(getReportFile(submissionFile), validationResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
-					valid = false;
 					break;
 				}
-				ValidationPlanResult validationPlanResult = templateProcessorResultSet.getValidationPlanResult();
-				if (!validationPlanResult.isValid()) {
+				ValidationResult planResult = templateProcessorResultSet.getValidationResult();
+				validationResult.append(planResult);
+				if (!planResult.isValid()) {
 					if (getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(submissionFile), validationPlanResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
-					valid = false;
+						getReporter().writeToFile(getReportFile(submissionFile), planResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
 				}
 				if(fixedFileWriter!=null)
 				new EmblEntryWriter(entry).write(fixedFileWriter);
 				sequenceCount++;
 			}
-			return valid;
+
 		} catch (TemplateUserError e) {
-			ValidationResult validationResult = new ValidationResult();
 			ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, e.getMessage());
 			validationResult.append(validationMessage);
 			try
@@ -122,16 +116,17 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			{
 				throw new ValidationEngineException(ex.getMessage(), ex);
 			}
-			return false;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ValidationEngineException(e.toString(), e);
 		}
+		return validationResult;
 	}
 
 	@Override
-	public boolean check() throws ValidationEngineException {
-		return false;
+	public ValidationResult check() throws ValidationEngineException {
+		throw new UnsupportedOperationException();
 	}
 
 	private File getTemplateFromResourceAndWriteToProcessDir(String templateId, String templateDir) throws ValidationEngineException {

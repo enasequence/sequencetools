@@ -19,14 +19,13 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.entry.AssemblyLevelEntryNameFix;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 		super(planProperty);
 	}
 
-	private ValidationPlanResult execute(Entry entry) throws ValidationEngineException
+	private ValidationResult execute(Entry entry) throws ValidationEngineException
 	{
 		List<Class<? extends EmblEntryValidationCheck<?>>> checks = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
 		List<Class<? extends EmblEntryValidationCheck<?>>> fixes = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
@@ -63,7 +62,7 @@ public class EmblEntryValidationPlan extends ValidationPlan
 			throw new ValidationEngineException(e);
 		}
 
-		return validationPlanResult;
+		return validationResult;
 
 	}
 
@@ -77,15 +76,15 @@ public class EmblEntryValidationPlan extends ValidationPlan
 	}
 
 	@Override
-	public ValidationPlanResult execute(Object target) throws ValidationEngineException
+	public ValidationResult execute(Object target) throws ValidationEngineException
 	{
-		validationPlanResult = new ValidationPlanResult();
+		validationResult = new ValidationResult();
 		// TODO Auto-generated method stub
 		if(target instanceof Entry)
 		{
 			execute((Entry)target);
 		}
-		return validationPlanResult;
+		return validationResult;
 	}
 	
 	private void executeChecksandFixes(List<Class<? extends EmblEntryValidationCheck<?>>> checks,Entry entry) throws ValidationEngineException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException

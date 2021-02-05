@@ -50,7 +50,7 @@ public class TemplateEntryProcessor {
         validationPlan.addMessageBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     }
 
-    public ValidationPlanResult validateSequenceUploadEntry(Entry entry) throws Exception {
+    public ValidationResult validateSequenceUploadEntry(Entry entry) throws Exception {
         return validationPlan.execute(entry);
     }
 
@@ -72,14 +72,14 @@ public class TemplateEntryProcessor {
         StringBuilderUtils.removeUnmatchedTokenLines(template);
         validateSediment(templateProcessorResultSet, templateVariables);
         validateMarker(templateProcessorResultSet, templateVariables);
-        if(!templateProcessorResultSet.getValidationPlanResult().isValid()) {
+        if(!templateProcessorResultSet.getValidationResult().isValid()) {
             return templateProcessorResultSet;
         }
         BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim().concat("\n//")));
         EntryReader entryReader = new EmblEntryReader(stringReader);
         ValidationResult validationResult = entryReader.read();
         if(!validationResult.isValid()) {
-            templateProcessorResultSet.getValidationPlanResult().append(validationResult);
+            templateProcessorResultSet.getValidationResult().append(validationResult);
             return templateProcessorResultSet;
         }
         Entry entry = entryReader.getEntry();
@@ -141,7 +141,7 @@ public class TemplateEntryProcessor {
             if (reference != null)
                 entry.getReferences().add(reference);
         }*/
-        templateProcessorResultSet.getValidationPlanResult().append((validationPlan.execute(entry)));
+        templateProcessorResultSet.getValidationResult().append((validationPlan.execute(entry)));
 
         if(entry.getPrimarySourceFeature().getTaxon() != null && entry.getDescription() != null ){
             Long taxId = entry.getPrimarySourceFeature().getTaxon().getTaxId();
@@ -166,7 +166,7 @@ public class TemplateEntryProcessor {
         }
         if (!missingfields.isEmpty()) {
             ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "MandatoryFieldsCheck", missingfields.substring(0, missingfields.length() - 1));
-            templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
+            templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
             return false;
         }
         return true;
@@ -186,12 +186,12 @@ public class TemplateEntryProcessor {
         }
         if (!unsupportedHeaders.isEmpty()) {
             ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "HeadersSupportedCheck", unsupportedHeaders.substring(0, unsupportedHeaders.length() - 1));
-            templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
+            templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
             return false;
         }
         if (!missingValue.isEmpty()) {
             ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "HeadersValuesCheck", missingValue.substring(0, missingValue.length() - 1));
-            templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
+            templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
             return false;
         }
         return true;
@@ -368,7 +368,7 @@ public class TemplateEntryProcessor {
             for (TemplateProcessorConstants.SedimentE sedimentE: TemplateProcessorConstants.SedimentE.values())
                 values += sedimentE.getSediment() + ",";
             ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "SedimentCheck", sediment, StringUtils.chompLast(values, ","));
-            templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
+            templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
         }
     }
 
@@ -383,7 +383,7 @@ public class TemplateEntryProcessor {
             for (TemplateProcessorConstants.MarkerE markerE : TemplateProcessorConstants.MarkerE.values())
                 values += markerE.getMarker() + ",";
             ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "MarkerCheck", marker, values);
-            templateProcessorResultSet.getValidationPlanResult().append(new ValidationResult().append(message));
+            templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
         }
     }
 }
