@@ -157,16 +157,13 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(origin, MORE_THAN_ONE_METAGENOME_SOURCE);
 			}
 			String metegenomeSource = metagenomeSourceQual.get(0).getValue();
-			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome") ) {
-				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
-			}
-
 			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(metegenomeSource);
 
-			if(taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L || !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
+			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome")
+					|| taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L
+					|| !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
 				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
 			}
-
 		}
 	}
 

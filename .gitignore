@@ -2,6 +2,7 @@
 /.gradle/
 .settings
 .project
+.idea
 build
 gradlew
 gradle.properties
