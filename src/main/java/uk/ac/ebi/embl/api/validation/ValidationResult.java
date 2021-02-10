@@ -53,7 +53,7 @@ public class ValidationResult implements Serializable {
 
     public ValidationResult( Origin defaultOrigin ) {
 		this.defaultOrigin = defaultOrigin;
-		this.messages = new ArrayList<ValidationMessage<Origin>>();
+		this.messages = new ArrayList<>();
 	}
     
     public static void
@@ -129,10 +129,10 @@ public class ValidationResult implements Serializable {
 	 * @param message a validation message to be added
 	 */
 	private void addMessage(ValidationMessage<Origin> message) {
+
 		if (message == null) {
 			return;
 		}
-		
 		if( null != defaultOrigin ) {
 			message.addOrigin( defaultOrigin );
 		}

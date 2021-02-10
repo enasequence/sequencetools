@@ -1,33 +1,33 @@
 package uk.ac.ebi.embl.template;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.ValidationPlanResult;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 public class TemplateProcessorResultSet {
-    private ValidationPlanResult validationPlanResult;
+    private ValidationResult validationResult;
     private String entryString;
     private Entry entry;
 
-    public TemplateProcessorResultSet(ValidationPlanResult validationResult, String entryString) {
-        this.validationPlanResult = validationResult;
+    public TemplateProcessorResultSet(ValidationResult validationResult, String entryString) {
+        this.validationResult = validationResult;
         this.entryString = entryString;
     }
 
     public TemplateProcessorResultSet(String entryString) {
         this.entryString = entryString;
-        this.validationPlanResult = new ValidationPlanResult();
+        this.validationResult = new ValidationResult();
     }
 
     public TemplateProcessorResultSet() {
-        this.validationPlanResult = new ValidationPlanResult();
+        this.validationResult = new ValidationResult();
     }
 
-    public ValidationPlanResult getValidationPlanResult() {
-        return validationPlanResult;
+    public ValidationResult getValidationResult() {
+        return validationResult;
     }
 
-    public void setValidationPlanResult(ValidationPlanResult validationPlanResult) {
-        this.validationPlanResult = validationPlanResult;
+    public void setValidationResult(ValidationResult validationResult) {
+        this.validationResult = validationResult;
     }
 
     public void setEntryString(String entryString) {
@@ -49,7 +49,7 @@ public class TemplateProcessorResultSet {
     @Override
     public String toString() {
         return "TemplateProcessorResultSet{" +
-                "validationPlanResult=" + validationPlanResult +
+                "validationPlanResult=" + validationResult +
                 ", entryString='" + entryString + '\'' +
                 '}';
     }

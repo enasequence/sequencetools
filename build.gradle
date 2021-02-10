@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.1.0-snapshot'
+ext.version_base = '2.1.0'
 
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
@@ -71,19 +71,20 @@ repositories {
 dependencies
         {
             compile 'log4j:log4j:1.2.17'
-            testCompile "junit:junit:4.11"
-            compile 'commons-collections:commons-collections:3.2.1'
-            compile 'org.apache.commons:commons-lang3:3.0'
+            compile 'commons-collections:commons-collections:3.2.2'
             compile 'commons-dbutils:commons-dbutils:1.5'
             compile 'commons-lang:commons-lang:2.6'
+            compile 'org.apache.commons:commons-lang3:3.0'
+            compile 'org.apache.commons:commons-compress:1.20'
             compile 'org.json:json:20131018'
             compile 'com.beust:jcommander:1.72'
             compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
-            compile 'org.apache.commons:commons-compress:1.10'
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
             compile group: 'uk.ac.ebi.ena.webin-cli', name: 'webin-cli-validator', version: '1.0.9'
-            testCompile 'org.easymock:easymock:3.1'
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
+            testCompile "junit:junit:4.13.1"
+            testCompile 'org.easymock:easymock:3.1'
+
         }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

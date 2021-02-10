@@ -32,7 +32,6 @@ import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.*;
@@ -48,38 +47,34 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		super(options);
 	}	
 	@Override
-	public boolean check(SubmissionFile submissionFile) throws ValidationEngineException
+	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
-		boolean valid =true;
-		EmblEntryValidationPlan validationPlan=null;
+		EmblEntryValidationPlan validationPlan;
 		fixedFileWriter =null;
+		ValidationResult validationResult = new ValidationResult();
 		Origin origin =null;
+
 		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			clearReportFile(getReportFile(submissionFile));
 			if(!isGenbankFile && !validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.FLATFILE))
 			{
-				ValidationResult result = new ValidationResult();
-				valid = false;
-				result.append(FlatFileValidations.message(Severity.ERROR, "InvalidFileFormat","flatfile"));
-				if(getOptions().reportDir.isPresent())
-				getReporter().writeToFile(getReportFile(submissionFile), result);
-				addMessagekey(result);
-				return valid;
+				addErrorAndReport(validationResult,submissionFile, "InvalidFileFormat","flatfile");
+				return validationResult;
 			}
 		Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 		EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
 				new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
 		ValidationResult parseResult = entryReader.read();
+		validationResult.append(parseResult);
 		
 		while(entryReader.isEntry())
 		{
 			if(!parseResult.isValid())
 			{
-				valid = false;
 				getReporter().writeToFile(getReportFile(submissionFile), parseResult);
-				addMessagekey(parseResult);
+				addMessageStats(parseResult.getMessages());
 			}
 
 			Entry entry = entryReader.getEntry();
@@ -87,7 +82,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 			if(getOptions().context.get()==Context.genome)
             {
-
+            	//TODO: NPE check for source
 				if (entry.getSubmitterAccession() == null) {
 					String subAcc = entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME);
 					entry.setSubmitterAccession(subAcc == null ? entry.getPrimaryAccession() : subAcc);
@@ -109,7 +104,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 
 			if(StringUtils.isBlank(entry.getSubmitterAccession()) && getOptions().context.get() == Context.genome) {
-				throw new ValidationEngineException("Entry name can not be null for genome context, please check the AC * line.");
+				addErrorAndReport(validationResult, submissionFile, "EntryNameRequired");
+				return validationResult;
 			} else {
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 			}
@@ -118,10 +114,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			if (chrListToplogy != null) {
 			  if (entry.getSequence().getTopology() != null
 				  && entry.getSequence().getTopology() != chrListToplogy) {
-				throw new ValidationEngineException(
-					String.format(
-						"The topology in the ID line \'%s\' conflicts with the topology specified in the chromsome list file \'%s\'.",
-						entry.getSequence().getTopology(), chrListToplogy));
+			  	addErrorAndReport(validationResult, submissionFile, "TopologyMismatch",
+						entry.getSequence().getTopology().name(), chrListToplogy.name());
+				return validationResult;
 			  }
 			  entry.getSequence().setTopology(chrListToplogy);
 			}
@@ -129,7 +124,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
-        	ValidationPlanResult planResult=validationPlan.execute(entry);
+        	ValidationResult planResult = validationPlan.execute(entry);
+        	validationResult.append(planResult);
 
         	if(null != entry.getSubmitterAccession()) {
 				addEntryName(entry.getSubmitterAccession());
@@ -140,13 +136,8 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 
 			if(!planResult.isValid())
 			{
-				valid = false;
 				getReporter().writeToFile(getReportFile(submissionFile), planResult);
-				for(ValidationResult result: planResult.getResults())
-				{
-					if(!result.isValid())
-					addMessagekey(result);
-				}
+				addMessageStats(planResult.getMessages(Severity.ERROR));
 			}
 			else
 			{
@@ -154,6 +145,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				new EmblEntryWriter(entry).write(fixedFileWriter);
 			}
 			parseResult = entryReader.read();
+			validationResult.append(parseResult);
 			sequenceCount++;
 		}
 		}catch(ValidationEngineException e)
@@ -167,12 +159,13 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
 
-		if(valid)
+		if(validationResult.isValid())
           registerFlatfileInfo();
-		return valid;
+		return validationResult;
 	}
+
 	@Override
-	public boolean check() throws ValidationEngineException {
+	public ValidationResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 	
