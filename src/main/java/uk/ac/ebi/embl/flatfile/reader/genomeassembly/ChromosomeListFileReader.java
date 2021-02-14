@@ -1,21 +1,22 @@
 package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
+import org.apache.commons.lang.StringUtils;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
-
-import org.apache.commons.lang.StringUtils;
-
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
-import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 public class ChromosomeListFileReader extends GCSEntryReader
 {
@@ -78,8 +79,8 @@ public class ChromosomeListFileReader extends GCSEntryReader
 				else
 				{
 					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
-					chromosomeEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
-					String chrName = fields[CHROMOSOME_NAME_COLUMN];
+					chromosomeEntry.setObjectName(EntryNameFix.getFixedEntryName(fields[OBJECT_NAME_COLUMN]));
+					String chrName = EntryNameFix.getFixedEntryName(fields[CHROMOSOME_NAME_COLUMN]);
 					try {
 						chromosomeEntry.setChromosomeName(fixChromosomeName(chrName));
 					} catch (DataFormatException e) {
