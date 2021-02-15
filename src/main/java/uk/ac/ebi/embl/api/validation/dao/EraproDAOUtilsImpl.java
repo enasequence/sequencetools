@@ -44,7 +44,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
-	
+
 	public enum MASTERSOURCEQUALIFIERS
 	{
 		ecotype, 
@@ -667,10 +667,37 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
 			select_sourcequalifiers_pstmt.setString(1, sampleInfo.getSampleId());
 			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
+			String latitude = null;
+			String longitude = null;
+			String country = null;
 			while (select_sourcequalifers_rs.next()) {
 				String tag = select_sourcequalifers_rs.getString(1);
 				String value = select_sourcequalifers_rs.getString(2);
+				if (sourceUtils.isCovidTaxId(sourceFeature.getTaxId()) && tag != null) {
+					if (tag.toLowerCase().contains("latitude")) {
+						latitude = value;
+						continue;
+					}
+					if (tag.toLowerCase().contains("longitude")) {
+						longitude = value;
+						continue;
+					}
+					if (tag.trim().equalsIgnoreCase("geographic location (country and/or sea)")) {
+						country = country == null ? value : value +":"+country;
+						continue;
+					}
+					if (tag.trim().equalsIgnoreCase("geographic location (region and locality)")) {
+						country = country == null ? value : country +":"+value;
+						continue;
+					}
+				}
 				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
+			}
+			if(latitude != null && longitude != null) {
+				sourceUtils.addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latitude + " "+longitude, sourceFeature);
+			}
+			if(country != null) {
+				sourceUtils.addSourceQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country, sourceFeature);
 			}
 
 			Taxon taxon = taxonHelper.getTaxonById(sampleInfo.getTaxId());

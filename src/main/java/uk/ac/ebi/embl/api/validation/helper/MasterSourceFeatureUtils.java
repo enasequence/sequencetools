@@ -1,7 +1,9 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -17,13 +19,26 @@ public class MasterSourceFeatureUtils {
 	private final  Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
 	private boolean addUniqueName=true;
 	private final Map<String,String> qualifierSynonyms = new HashMap<>();
+	private final Set<String> covid19RequiredQuals = new HashSet<>();
 
 	public MasterSourceFeatureUtils() {
 		qualifierSynonyms.put("metagenomic source","metagenome_source");
+		qualifierSynonyms.put("host scientific name","host");
+		qualifierSynonyms.put("gisaid accession is","note");
+		qualifierSynonyms.put("geographic location (country and/or sea)","country");
+		qualifierSynonyms.put("geographic location (region and locality)","country");
+		covid19RequiredQuals.add(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+		covid19RequiredQuals.add(Qualifier.COUNTRY_QUALIFIER_NAME);
+		covid19RequiredQuals.add(Qualifier.LAT_LON_QUALIFIER_NAME);
+		covid19RequiredQuals.add(Qualifier.HOST_QUALIFIER_NAME);
+		covid19RequiredQuals.add(Qualifier.NOTE_QUALIFIER_NAME);
+
 		isolationSourceQualifier=null;
-		addUniqueName =true;
 	}
 
+	public boolean isCovidTaxId(Long taxID) {
+		return taxID != null  && taxID == 2697049L;
+	}
 	public void addSourceQualifier(String tag, String value,SourceFeature source)
 	{
 
@@ -61,6 +76,8 @@ public class MasterSourceFeatureUtils {
 			}
 			else
 				source.addQualifier(new QualifierFactory().createQualifier(tag, value));
+		} else if(isCovidTaxId(source.getTaxId()) && covid19RequiredQuals.contains(tag)) {
+			source.addQualifier(new QualifierFactory().createQualifier(tag, value));
 		}
 	}
 
