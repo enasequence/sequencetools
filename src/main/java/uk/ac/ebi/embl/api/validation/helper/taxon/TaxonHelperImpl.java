@@ -32,6 +32,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 	private static Map<String, List <Taxon>> commonNameTaxonCache = new HashMap<>();
 	private static Map<Long, Taxon> taxIdTaxonCache = new HashMap<>();
 	private static Map<String, SubmittableTaxon> submittableTaxonCache = new HashMap<>();
+	private static Map<String, List <Taxon>> taxonAnyNameCache = new HashMap<>();
 	
     public TaxonHelperImpl() 
     {
@@ -176,6 +177,20 @@ public class TaxonHelperImpl implements TaxonHelper {
 		return taxon.getSubmittableTaxonStatus() == SubmittableTaxonStatus.SUBMITTABLE_TAXON;
 	}
 
+	@Override
+	public List<Taxon> getTaxonsByAnyName(String anyName) {
+		String key = normalizeString(anyName);
+		List<Taxon> taxonList = taxonAnyNameCache.get(key);
+		if( taxonList == null) {
+			taxonList = taxonomyClient.getTaxonByAnyName(anyName);
+			if(taxonList == null) {
+				return null;
+			} else {
+				taxonAnyNameCache.put(key, taxonList);
+			}
+		}
+		return taxonList;
+	}
 
 	private List<Taxon> getByScientificName(String scientificName) {
     	String key = normalizeString(scientificName);

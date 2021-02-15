@@ -77,4 +77,6 @@ public interface TaxonHelper {
     boolean isTaxidSubmittable(Long taxId);
     
     boolean isAnyNameSubmittable(String anyName);
+
+	List<Taxon> getTaxonsByAnyName(String commonName);
 }
