@@ -73,6 +73,15 @@ public class CountryQualifierFixTest {
     }
 
     @Test
+    public void testCheckCountryQualifierWithRegionCounty()
+    {
+        Feature feature = featureFactory.createFeature("source");
+        feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "USA:Washington,Spokane County");
+        assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+        assertEquals(0, check.check(feature).getMessages().size());
+    }
+
+    @Test
     public void testCheckCountryQualifierWithRegion()
     {
         Feature feature = featureFactory.createFeature("source");

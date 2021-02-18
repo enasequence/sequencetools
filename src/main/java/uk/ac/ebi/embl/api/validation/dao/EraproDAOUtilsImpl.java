@@ -1,5 +1,28 @@
 package uk.ac.ebi.embl.api.validation.dao;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import uk.ac.ebi.embl.api.contant.AnalysisType;
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.XRef;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.SampleInfo;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.dao.entity.SampleEntity;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
+import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,34 +31,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import uk.ac.ebi.embl.api.contant.AnalysisType;
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.XRef;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.reference.Person;
-import uk.ac.ebi.embl.api.entry.reference.Publication;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.api.entry.reference.Submission;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
-import uk.ac.ebi.embl.api.validation.SampleInfo;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
-import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
-import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
@@ -44,7 +39,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
-	
+
 	public enum MASTERSOURCEQUALIFIERS
 	{
 		ecotype, 
@@ -463,7 +458,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
-		return addSourceQualifiers( new TaxonHelperImpl(),  getSampleInfo(sampleId));
+		SampleInfo sampleInfo = getSampleInfo(sampleId);
+		return new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonHelperImpl(), sampleInfo);
 	}
 
 	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException
@@ -607,7 +603,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				masterEntry.addReference(getSubmitterReference(analysisId));
 			}
 
-			sourceFeature = addSourceQualifiers(taxonHelper, sampleInfo);
+			sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature( getSampleAttributes(sampleId),taxonHelper, sampleInfo);
 		}
 		catch (SQLException | ValidationEngineException | UnsupportedEncodingException ex)
 		{
@@ -648,41 +644,36 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return sampleInfo;
 	}
 
-	private SourceFeature addSourceQualifiers( TaxonHelper taxonHelper, SampleInfo sampleInfo) throws SQLException {
-		FeatureFactory featureFactory = new FeatureFactory();
-		SourceFeature sourceFeature = featureFactory.createSourceFeature();
-		sourceFeature.setTaxId(sampleInfo.getTaxId());
-		sourceFeature.setScientificName(sampleInfo.getScientificName());
+	/**
+	 * @param sampleId
+	 * @return SampleEntity constructed using sample.xml, SourceFeature qualifiers will be constructed later
+	 * from SAMPLE_ATTRIBUTE in sample.xml
+	 * @throws SQLException
+	 */
+	private SampleEntity getSampleAttributes( String sampleId) throws SQLException {
 
-		// SOURCE QUALIFIERS
-
+		SampleEntity sample =new SampleEntity();
 		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()'," +
 				"value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
 		PreparedStatement select_sourcequalifiers_pstmt = null;
 		ResultSet select_sourcequalifers_rs = null;
-		MasterSourceFeatureUtils sourceUtils = new MasterSourceFeatureUtils();
 
-		sourceFeature.setMasterLocation();
 		try {
 			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
-			select_sourcequalifiers_pstmt.setString(1, sampleInfo.getSampleId());
+			select_sourcequalifiers_pstmt.setString(1, sampleId);
 			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
+			Map<String,String> attributes = new HashMap<>();
 			while (select_sourcequalifers_rs.next()) {
 				String tag = select_sourcequalifers_rs.getString(1);
-				String value = select_sourcequalifers_rs.getString(2);
-				sourceUtils.addSourceQualifier(tag, value, sourceFeature);
+				if(StringUtils.isNotBlank(tag) )
+					attributes.put(tag,select_sourcequalifers_rs.getString(2));
 			}
-
-			Taxon taxon = taxonHelper.getTaxonById(sampleInfo.getTaxId());
-			if(taxon != null)
-				sourceFeature.setTaxon(taxon);
-			sourceUtils.addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
-
+			sample.setAttributes(attributes);
 		} finally {
 			DbUtils.closeQuietly(select_sourcequalifers_rs);
 			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
 		}
-		return sourceFeature;
+		return sample;
 	}
 
 	private void setXrefs(String refs, Entry masterEntry) {
