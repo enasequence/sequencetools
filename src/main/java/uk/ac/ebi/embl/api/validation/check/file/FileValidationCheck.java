@@ -368,7 +368,7 @@ public abstract class FileValidationCheck {
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{
 
-			Utils.setssemblyLevelDescription(masterEntry.getDescription().getText(), 
+			Utils.setAssemblyLevelDescription(masterEntry.getDescription().getText(),
 					ValidationScope.ASSEMBLY_CONTIG==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 0 
 							: ValidationScope.ASSEMBLY_SCAFFOLD==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 1 
 									: ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,

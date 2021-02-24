@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -227,21 +228,24 @@ public class SubmissionValidationPlan
 		String fileName=null;
 		try {
 			check = new FastaFileValidationCheck(options);
-			for (SubmissionFile fastaFile : options.submissionFiles.get().getFiles(FileType.FASTA)) {
-				fileName= fastaFile.getFile().getName();
-				if (sequenceDB != null)
-					check.setSequenceDB(sequenceDB);
-				if (contigDB != null)
-					check.setContigDB(contigDB);
-				result = check.check(fastaFile);
-				if (!result.isValid()) {
-					if(options.isRemote)
-						throwValidationCheckException(FileType.FASTA,fastaFile);
-					return result;
+			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.FASTA);
+			if(!submissionFiles.isEmpty()) {
+				for (SubmissionFile fastaFile : submissionFiles) {
+					fileName = fastaFile.getFile().getName();
+					if (sequenceDB != null)
+						check.setSequenceDB(sequenceDB);
+					if (contigDB != null)
+						check.setContigDB(contigDB);
+					result = check.check(fastaFile);
+					if (!result.isValid()) {
+						if (options.isRemote)
+							throwValidationCheckException(FileType.FASTA, fastaFile);
+						return result;
+					}
 				}
+				if (!options.isRemote)
+					flagValidation(FileType.FASTA);
 			}
-			if (!options.isRemote)
-				flagValidation(FileType.FASTA);
 		} catch(Exception e) {
 			throwValidationEngineException(FileType.FASTA,e,fileName);
 		}
@@ -257,22 +261,24 @@ public class SubmissionValidationPlan
 		try
 		{
 		check = new FlatfileFileValidationCheck(options);
-		for(SubmissionFile flatfile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
-		{
-			fileName= flatfile.getFile().getName();
-			if(sequenceDB!=null)
-				check.setSequenceDB(sequenceDB);
-			if(contigDB!=null)
-				check.setContigDB(contigDB);
-			result = check.check(flatfile);
-			if(!result.isValid()) {
-				if(options.isRemote)
-					throwValidationCheckException(FileType.FLATFILE,flatfile);
-				return result;
+			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.FLATFILE);
+			if(!submissionFiles.isEmpty()) {
+				for (SubmissionFile flatfile : submissionFiles) {
+					fileName = flatfile.getFile().getName();
+					if (sequenceDB != null)
+						check.setSequenceDB(sequenceDB);
+					if (contigDB != null)
+						check.setContigDB(contigDB);
+					result = check.check(flatfile);
+					if (!result.isValid()) {
+						if (options.isRemote)
+							throwValidationCheckException(FileType.FLATFILE, flatfile);
+						return result;
+					}
+				}
+				if (!options.isRemote)
+					flagValidation(FileType.FLATFILE);
 			}
-		}
-			if (!options.isRemote)
-				flagValidation(FileType.FLATFILE);
 		}catch(Exception e){
 			throwValidationEngineException(FileType.FLATFILE,e,fileName);
 		}
@@ -287,20 +293,22 @@ public class SubmissionValidationPlan
 		String fileName=null;
 		try
 		{
-		for(SubmissionFile agpFile:options.submissionFiles.get().getFiles(FileType.AGP))
-		{
-			fileName= agpFile.getFile().getName();
-			if(sequenceDB!=null)
-				agpCheck.setSequenceDB(sequenceDB);
-			result = agpCheck.check(agpFile);
-			if(!result.isValid()) {
-				if(options.isRemote)
-					throwValidationCheckException(FileType.AGP,agpFile);
-				return result;
+			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.AGP);
+			if(!submissionFiles.isEmpty()) {
+				for (SubmissionFile agpFile : submissionFiles) {
+					fileName = agpFile.getFile().getName();
+					if (sequenceDB != null)
+						agpCheck.setSequenceDB(sequenceDB);
+					result = agpCheck.check(agpFile);
+					if (!result.isValid()) {
+						if (options.isRemote)
+							throwValidationCheckException(FileType.AGP, agpFile);
+						return result;
+					}
+				}
+				if (!options.isRemote)
+					flagValidation(FileType.AGP);
 			}
-		}
-			if (!options.isRemote)
-				flagValidation(FileType.AGP);
 
 		} catch (Exception e) {
 			throwValidationEngineException(FileType.AGP,e,fileName);
