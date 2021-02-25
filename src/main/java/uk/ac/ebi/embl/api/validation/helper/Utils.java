@@ -1145,7 +1145,7 @@ public class Utils {
 		}		
 	}
 
-	public static List<Qualifier> getChromosomeQualifiers(SourceFeature feature) {
+	public static List<Qualifier> getChromosomeNonSampleSourceQualifiers(SourceFeature feature) {
 		List<Qualifier> chrQualifiers = new ArrayList<>();
 
 		Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
