@@ -31,7 +31,45 @@ import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.*;
 
 @SuppressWarnings("unchecked")
 public enum ValidationUnit
-{
+	{
+		SOURCE_FEATURE_CHECKS
+				(
+						OrganismAndRequiredQualifierCheck.class,
+						SourceFeatureOnlyCheck.class,
+						SourceFeatureQualifierCheck.class,
+						Type_materialQualifierCheck.class,
+						CollectionDateQualifierCheck.class,
+						MoleculeTypeAndOrganismCheck.class,
+						MoleculeTypeAndSourceQualifierCheck.class,
+						SequenceCoverageCheck.class,
+						QualifierCheck.class,
+						ExclusiveQualifiersCheck.class,
+						QualifierAndRequiredQualifierinFeatureCheck.class,
+						QualifierPatternAndQualifierCheck.class,
+						QualifierValueNotQualifierCheck.class,
+						QualifierValueNotQualifierPatternCheck.class,
+						QualifierValueRequiredQualifierStartsWithValueCheck.class,
+						UnbalancedParenthesesCheck.class,
+						ChromosomeSourceQualifierCheck.class
+				),
+		SOURCE_FEATURE_FIXES
+				(
+						CollectionDateQualifierFix.class,
+						Isolation_sourceQualifierFix.class,
+						HostQualifierFix.class,
+						SourceQualifierMissingFix.class,
+						SourceQualifierFix.class,
+						StrainQualifierValueFix.class,
+						Lat_lonValueFix.class,
+						CountryQualifierFix.class,
+						MoleculeTypeAndQualifierFix.class,
+						ExclusiveQualifierTransformToNoteQualifierFix.class,
+						FeatureQualifierRenameFix.class,
+						TaxonomicDivisionNotQualifierFix.class,
+						QualifierWithinQualifierFix.class,
+						Mol_typeFix.class,
+						DescriptionCheck.class
+				),
 	        SEQUENCE_ENTRY_CHECKS
 	        (
 	        		Entry_NameCheck.class,//exclude for master and include for assemblies

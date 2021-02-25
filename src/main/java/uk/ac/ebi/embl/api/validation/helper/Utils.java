@@ -1083,7 +1083,7 @@ public class Utils {
 		return result;
 	}
 	
-	public static void setssemblyLevelDescription(String masterDescription, Integer assemblyLevel,Entry entry)
+	public static void setAssemblyLevelDescription(String masterDescription, Integer assemblyLevel,Entry entry)
 	{
 		if (null == entry.getSubmitterAccession() )
 		{
@@ -1143,6 +1143,32 @@ public class Utils {
 				entry.setDescription( new Text( String.format("%s, %s", masterDescription, entry.getSubmitterAccession() ) ) );
 			}
 		}		
+	}
+
+	public static List<Qualifier> getChromosomeNonSampleSourceQualifiers(SourceFeature feature) {
+		List<Qualifier> chrQualifiers = new ArrayList<>();
+
+		Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
+		Qualifier chromosome = feature.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME);
+		Qualifier organelle = feature.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME);
+		Qualifier segment = feature.getSingleQualifier(Qualifier.SEGMENT_QUALIFIER_NAME);
+		List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME);
+
+		if (null != plasmid ) {
+			chrQualifiers.add(plasmid);
+		} else if (null != chromosome ) {
+			chrQualifiers.add(chromosome);
+		} else if (null != organelle ) {
+			chrQualifiers.add(organelle);
+		} else if (null != segment ) {
+			chrQualifiers.add(segment);
+		} else if (note != null && note.size() != 0) {
+			List<Qualifier> monopartiteQualifier = note.stream().filter(qual -> "monopartite".equals(qual.getValue())).collect(Collectors.toList());
+			if (monopartiteQualifier.size() > 0) {
+				chrQualifiers.addAll(monopartiteQualifier);
+			}
+		}
+		return chrQualifiers;
 	}
 
 	private static boolean areContinuous(String prev, String curr) throws IllegalArgumentException {

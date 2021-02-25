@@ -45,11 +45,14 @@ public class EmblEntryValidationPlan extends ValidationPlan
 		List<Class<? extends EmblEntryValidationCheck<?>>> checks = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
 		List<Class<? extends EmblEntryValidationCheck<?>>> fixes = new ArrayList<Class<? extends EmblEntryValidationCheck<?>>>();
 		validatePlanProperty();
-		
-		checks.addAll(ValidationUnit.SEQUENCE_ENTRY_CHECKS.getValidationUnit());
-		if (planProperty.isFixMode.get())
-		{
-			fixes.addAll(ValidationUnit.SEQUENCE_ENTRY_FIXES.getValidationUnit());
+		if(planProperty.isSourceUpdate.get()) {
+			checks.addAll(ValidationUnit.SOURCE_FEATURE_CHECKS.getValidationUnit());
+			checks.addAll(ValidationUnit.SOURCE_FEATURE_FIXES.getValidationUnit());
+		} else {
+			checks.addAll(ValidationUnit.SEQUENCE_ENTRY_CHECKS.getValidationUnit());
+			if (planProperty.isFixMode.get()) {
+				fixes.addAll(ValidationUnit.SEQUENCE_ENTRY_FIXES.getValidationUnit());
+			}
 		}
 
 		try
