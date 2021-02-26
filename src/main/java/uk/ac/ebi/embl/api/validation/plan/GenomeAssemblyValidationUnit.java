@@ -18,6 +18,7 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromoso
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeTypeCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListObjectNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.GenomeAssemblyValidationCheck;
+import uk.ac.ebi.embl.api.validation.fixer.genomeassembly.AssemblyTypeFix;
 
 public enum GenomeAssemblyValidationUnit
 {
@@ -35,6 +36,10 @@ public enum GenomeAssemblyValidationUnit
 			AssemblyInfoSamplewithDifferentProjectCheck.class,
 			AssemblyInfoSubmissionIdCheck.class,
 			AssemblyInfoTypeCheck.class
+			),
+			ASSEMBLYINFO_FIXES
+			(
+					AssemblyTypeFix.class
 			),
 			@SuppressWarnings("unchecked")
 			CHROMOSOME_LIST_CHECKS
