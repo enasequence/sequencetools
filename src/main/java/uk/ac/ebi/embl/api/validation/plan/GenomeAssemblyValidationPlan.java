@@ -33,8 +33,8 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 
 	private ValidationResult execute(GCSEntry entry) throws ValidationEngineException
 	{
-		List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
-		List<Class<? extends GenomeAssemblyValidationCheck<?>>> fixes = new ArrayList<Class<? extends GenomeAssemblyValidationCheck<?>>>();
+		List<Class<? extends GenomeAssemblyValidationCheck<?>>> checks = new ArrayList<>();
+		List<Class<? extends GenomeAssemblyValidationCheck<?>>> fixes = new ArrayList<>();
 		validatePlanProperty();
 		switch (planProperty.fileType.get())
 		{
@@ -42,7 +42,7 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan
 			checks.addAll(GenomeAssemblyValidationUnit.ASSEMBLYINFO_CHECKS.getValidationUnit());
 			if (planProperty.isFixMode.get())
  				{
-				
+					fixes.addAll(GenomeAssemblyValidationUnit.ASSEMBLYINFO_FIXES.getValidationUnit());
  				}
 
 			break;
