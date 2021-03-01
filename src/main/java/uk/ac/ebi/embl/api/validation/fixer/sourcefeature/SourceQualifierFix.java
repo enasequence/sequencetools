@@ -22,12 +22,16 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+
+import java.util.List;
 
 public class SourceQualifierFix extends EntryValidationCheck
 {
 
 	private static final String QUALIFIER_NAME_CHANGE = "QualifierNameChange";
 	private static final String QUALIFIER_VALUE_CHANGE = "QualifierValueChange";
+	private static final String QUALIFIER_DELETED = "QualifierDeleted";
 
 
 	public ValidationResult check(Entry entry)
@@ -61,6 +65,19 @@ public class SourceQualifierFix extends EntryValidationCheck
 				}
 			}
 			
+		}
+
+		List<Qualifier> metagenomeSourceQual = source.getQualifiers(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
+
+		if(metagenomeSourceQual != null && !metagenomeSourceQual.isEmpty()) {
+			String metegenomeSource = metagenomeSourceQual.get(0).getValue();
+			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(metegenomeSource);
+
+			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome")
+					|| taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L
+					|| !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
+				reportMessage(Severity.FIX, source.getOrigin(), QUALIFIER_DELETED, Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, metegenomeSource);
+			}
 		}
 
 		return result;

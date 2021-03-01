@@ -82,10 +82,12 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 			if(getOptions().context.get()==Context.genome)
             {
-            	//TODO: NPE check for source
-				if (entry.getSubmitterAccession() == null) {
-					String subAcc = entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME);
-					entry.setSubmitterAccession(subAcc == null ? entry.getPrimaryAccession() : subAcc);
+				if(entry.getSubmitterAccession() == null) {
+					if (entry.getPrimarySourceFeature() == null || entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME) == null) {
+						entry.setSubmitterAccession(entry.getPrimaryAccession());
+					} else {
+						entry.setSubmitterAccession(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME));
+					}
 				}
 
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);

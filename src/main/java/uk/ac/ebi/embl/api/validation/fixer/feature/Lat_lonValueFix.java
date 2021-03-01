@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class Lat_lonValueFix extends FeatureValidationCheck {
 
 	private static final String Lat_lonValueFix_ID = "Lat_lonValueFix";
+	private static final String LatLonQualRemovedFix = "LatLonQualRemoved";
 
 	public Lat_lonValueFix() {
 	}
@@ -41,7 +42,7 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 		if (feature == null) {
 			return result;
 		}
-		List<Qualifier> latlonQualifiers=feature.getQualifiers(Qualifier.LAT_LON_QUALIFIER_NAME);
+		List<Qualifier> latlonQualifiers = feature.getQualifiers(Qualifier.LAT_LON_QUALIFIER_NAME);
 		
 		if(latlonQualifiers.isEmpty())
 		{
@@ -84,9 +85,14 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 						Lat_lonValueFix_ID,qualifier.getValue(), newValue);
 					qualifier.setValue(newValue);
 				}
+			} else {
+				feature.removeQualifier(qualifier);
+				reportMessage(Severity.FIX, qualifier.getOrigin(), LatLonQualRemovedFix,qualifier.getValue());
 			}
 				
 			}
+
+
 		
 		return result;
 	}
