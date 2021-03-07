@@ -30,16 +30,25 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the feature table.
  */
 public class FTWriter extends FlatFileWriter {
-	
-	public FTWriter(Entry entry, boolean sortFeatures, 
-			boolean sortQualifiers, WrapType wrapType) {
+
+	public FTWriter(Entry entry, boolean sortFeatures,
+					boolean sortQualifiers, WrapType wrapType) {
 		super(entry, wrapType);
 		this.sortFeatures = sortFeatures;
 		this.sortQualifiers = sortQualifiers;
 	}
 
+	public FTWriter(Entry entry, boolean sortFeatures,
+					boolean sortQualifiers, boolean excludeSource, WrapType wrapType) {
+		super(entry, wrapType);
+		this.sortFeatures = sortFeatures;
+		this.sortQualifiers = sortQualifiers;
+		this.excludeSource = excludeSource;
+	}
+
 	private boolean sortFeatures;
 	private boolean sortQualifiers;
+	private boolean excludeSource;
 
 	public boolean write(Writer writer) throws IOException {
 		Vector<Feature> features = new Vector<Feature>(entry.getFeatures());
@@ -52,6 +61,8 @@ public class FTWriter extends FlatFileWriter {
 		}
 		new FHWriter(entry).write(writer);
 		for (Feature feature : features) {
+			if (excludeSource && feature.getName().equals(Feature.SOURCE_FEATURE_NAME))
+				continue;
             writeFeature(writer, feature);
         }
 		return true;		

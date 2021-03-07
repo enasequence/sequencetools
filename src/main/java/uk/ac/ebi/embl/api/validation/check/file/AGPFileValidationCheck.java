@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
@@ -59,7 +60,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter=null;
 		Origin origin =null;
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
@@ -220,7 +221,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	{
 		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP)) 
 		{
-			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile()))
+			try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
 

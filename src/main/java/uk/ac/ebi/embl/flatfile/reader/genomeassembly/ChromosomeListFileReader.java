@@ -6,6 +6,7 @@ import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+import uk.ac.ebi.embl.common.CommonUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,7 +60,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
 			return validationResult;
 		int lineNumber = 1;
 
-		try(BufferedReader reader = getBufferedReader(file))
+		try(BufferedReader reader = CommonUtil.bufferedReaderFromFile(file))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -181,7 +182,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
         int emptylines =0;
 		String line=null;
 
-		try(BufferedReader  fileReader=getBufferedReader(file))
+		try(BufferedReader  fileReader=CommonUtil.bufferedReaderFromFile(file))
 		{
 			while(line==null||line.isEmpty())
 			{

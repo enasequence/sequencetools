@@ -12,6 +12,7 @@ import java.util.zip.DataFormatException;
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.common.CommonUtil;
 
 public class UnlocalisedListFileReader extends GCSEntryReader
 {
@@ -32,7 +33,7 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 	{
 		int lineNumber = 1;
 		
-		try(BufferedReader reader= getBufferedReader(file))
+		try(BufferedReader reader= CommonUtil.bufferedReaderFromFile(file))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)

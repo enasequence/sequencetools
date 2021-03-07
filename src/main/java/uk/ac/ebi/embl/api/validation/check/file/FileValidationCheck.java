@@ -45,6 +45,7 @@ import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -59,7 +60,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.GZIPInputStream;
 
  
 public abstract class FileValidationCheck {
@@ -553,28 +553,8 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	protected BufferedReader 
-	getBufferedReader( File file ) throws FileNotFoundException, IOException 
-	{
-		if( file.getName().matches( "^.+\\.gz$" ) || file.getName().matches( "^.+\\.gzip$" ) ) 
-		{
-			GZIPInputStream gzip = new GZIPInputStream( new FileInputStream( file ) );
-			return new BufferedReader( new InputStreamReader( gzip ) );
-
-		} else if( file.getName().matches( "^.+\\.bz2$" ) || file.getName().matches( "^.+\\.bzip2$" ) ) 
-		{
-			BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream( new FileInputStream( file ) );
-			return new BufferedReader( new InputStreamReader( bzIn ) );
-
-		} else 
-		{
-			return new BufferedReader( new FileReader(file ) );
-		}
-	}
-
-
 	public  boolean isGenbank(File f) throws ValidationEngineException {
-		try(BufferedReader br = getBufferedReader(f)) {
+		try(BufferedReader br = CommonUtil.bufferedReaderFromFile(f)) {
 			String line;
 			if((line = br.readLine()) != null){
 				return line.trim().startsWith("LOCUS");
@@ -626,7 +606,7 @@ public abstract class FileValidationCheck {
 		int chromosome_max_number_of_columns = 4;
 		String line=null;
 		
-		try(BufferedReader  fileReader=getBufferedReader(file))
+		try(BufferedReader  fileReader=CommonUtil.bufferedReaderFromFile(file))
 		{
 			int count=1;
 		while(line==null||line.isEmpty())

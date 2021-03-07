@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
@@ -54,7 +55,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		Origin origin =null;
 
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			clearReportFile(getReportFile(submissionFile));
@@ -178,7 +179,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
 
-			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter annotationOnyFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getAbsolutePath()+".annotationOnly"))))
+			try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());PrintWriter annotationOnyFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getAbsolutePath()+".annotationOnly"))))
 			{
 				EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
 						new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());

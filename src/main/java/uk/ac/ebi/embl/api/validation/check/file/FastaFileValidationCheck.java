@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -57,7 +58,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		if(getSequenceDB()!=null)
 			sequenceMap= getSequenceDB().hashMap("map").createOrOpen();
 
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 

@@ -10,6 +10,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
@@ -33,7 +34,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 	{
 		ValidationResult validationResult = new ValidationResult();
 		EmblEntryValidationPlan validationPlan;
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
