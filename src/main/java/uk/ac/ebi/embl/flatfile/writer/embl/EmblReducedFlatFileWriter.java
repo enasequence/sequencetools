@@ -22,7 +22,7 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
         wrapType = WrapType.EMBL_WRAP;
     }
 
-    private boolean excludeSource = false;
+    private boolean excludeSource = true;
 
     public boolean isExcludeSource() {
         return excludeSource;
