@@ -14,22 +14,29 @@ public class ReferenceReader {
 
     public Reference getReference(String authors, String address, Date date) throws ValidationEngineException {
         Publication publication = getPublication(address, date);
-        List<Person> authorList = getAuthors(authors);
-        if (authors.isEmpty()) {
-            throw new ValidationEngineException("Authors value is invalid:" + authors);
+        if (doAddAuthorToConsortium()) {
+            publication.setConsortium(authors);
+        } else {
+            List<Person> authorList = getAuthors(authors);
+            if (authors.isEmpty()) {
+                throw new ValidationEngineException("Authors value is invalid:" + authors);
+            }
+            publication.addAuthors(authorList);
         }
         Reference ref = new ReferenceFactory().createReference();
-        publication.addAuthors(authorList);
         ref.setPublication(publication);
         ref.setAuthorExists(true);
         ref.setLocationExists(true);
         ref.setReferenceNumber(1);
         return ref;
     }
-    private  Publication getPublication(String block, Date date) {
+    private  Publication getPublication(String address, Date date) {
         Submission submission = (new ReferenceFactory()).createSubmission();
         submission.setDay(date == null ? Calendar.getInstance().getTime(): date);
-        submission.setSubmitterAddress(block);
+        if(address != null) {
+            submission.setSubmitterAddress(address);
+        }
+        submission.setSubmitterAddress(address);
         return submission;
     }
 
@@ -48,4 +55,8 @@ public class ReferenceReader {
         return authors;
     }
 
+    private boolean doAddAuthorToConsortium() {
+        //TODO: add check submissionAccounts
+        return false;
+    }
 }

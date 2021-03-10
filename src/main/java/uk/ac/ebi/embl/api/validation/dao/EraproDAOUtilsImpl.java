@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
 	private Connection connection;
-	HashMap<String,Reference> submitterReferenceCache=new HashMap<String, Reference>();
+
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
@@ -114,14 +114,36 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	{
 		this.connection=connection;
 	}
-	
+
+
+	private String getAddress(String analysisId) throws SQLException, UnsupportedEncodingException {
+
+		String addressQuery = "select a.center_name, sa.laboratory_name, sa.address, sa.country "
+				+ "from analysis a "
+				+ "join submission_account sa using(submission_account_id) "
+				+ "where a.analysis_id =?";
+
+		PreparedStatement addressStmt = null;
+		ResultSet addressRs = null;
+
+		try {
+			addressStmt = connection.prepareStatement(addressQuery);
+			addressStmt.setString(1, analysisId);
+			addressRs = addressStmt.executeQuery();
+			if (addressRs.next()) {
+				return getAddress(addressRs);
+			}
+		} finally {
+			DbUtils.closeQuietly(addressRs);
+			DbUtils.closeQuietly(addressStmt);
+		}
+
+		return null;
+	}
+
 	@Override
 	public Reference getSubmitterReference(String analysisId) throws SQLException, UnsupportedEncodingException
     {
-		if(submitterReferenceCache.get(analysisId)!=null)
-    	{
-    		return submitterReferenceCache.get(analysisId);
-    	}
     	Publication publication = new Publication();
 		ReferenceFactory referenceFactory = new ReferenceFactory();
 		Reference reference = referenceFactory.createReference();
@@ -160,8 +182,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				}
 
 				Submission submission = referenceFactory.createSubmission(publication);				
-				submission.setSubmitterAddress(EntryUtils.concat(", ", EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("center_name")),
-				EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("laboratory_name")), EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("address")), EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("country"))));
+				submission.setSubmitterAddress(getAddress(submitterReferenceRs));
 				Date date = EntryUtils.getDay(submitterReferenceRs.getString("first_created"));
 				submission.setDay(date);
 				publication = submission;
@@ -192,7 +213,16 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		
 		return reference;
 	}
-	
+
+	private String getAddress(ResultSet rs) throws SQLException, UnsupportedEncodingException {
+		return EntryUtils.concat(", ",
+				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("center_name")),
+				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("laboratory_name")),
+				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("address")),
+				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("country")));
+
+	}
+
 	private String getFirstName(String firstName)
 	{
 		if(firstName==null)
@@ -597,8 +627,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 		try
 		{
-			if(StringUtils.isNotBlank(author) && StringUtils.isNotBlank(address)) {
-				masterEntry.addReference(new ReferenceReader().getReference(author, address, firstCreated));
+			if(StringUtils.isNotBlank(author) ) {
+				masterEntry.addReference(new ReferenceReader().getReference(author, StringUtils.isBlank(address) ? getAddress(analysisId): address , firstCreated));
 			} else {
 				masterEntry.addReference(getSubmitterReference(analysisId));
 			}
