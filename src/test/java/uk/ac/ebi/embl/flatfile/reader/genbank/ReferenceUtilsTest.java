@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.genbank.ReferenceReader;
 
-public class ReferenceReaderTest extends GenbankReaderTest {
+public class ReferenceUtilsTest extends GenbankReaderTest {
 	
 	public void testRead_ReferenceNumber() throws IOException {
 		initLineReader(

@@ -16,12 +16,13 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.dao.entity.ReferenceEntity;
 import uk.ac.ebi.embl.api.validation.dao.entity.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -116,9 +117,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 
-	private String getAddress(String analysisId) throws SQLException, UnsupportedEncodingException {
+	private String getAddress(String analysisId) throws ValidationEngineException {
 
-		String addressQuery = "select a.center_name, sa.laboratory_name, sa.address, sa.country "
+		String addressQuery = "select broker_name, a.center_name, sa.laboratory_name, sa.address, sa.country "
 				+ "from analysis a "
 				+ "join submission_account sa using(submission_account_id) "
 				+ "where a.analysis_id =?";
@@ -131,8 +132,16 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			addressStmt.setString(1, analysisId);
 			addressRs = addressStmt.executeQuery();
 			if (addressRs.next()) {
-				return getAddress(addressRs);
+				ReferenceEntity refEntity = new ReferenceEntity();
+				refEntity.setBrokerName(addressRs.getString("broker_name"));
+				refEntity.setCenterName(addressRs.getString("center_name"));
+				refEntity.setLaboratoryName(addressRs.getString("laboratory_name"));
+				refEntity.setAddress(addressRs.getString("address"));
+				refEntity.setCountry(addressRs.getString("country"));
+				return new ReferenceUtils().getAddress(refEntity);
 			}
+		} catch(SQLException | UnsupportedEncodingException e ) {
+			throw new ValidationEngineException(e);
 		} finally {
 			DbUtils.closeQuietly(addressRs);
 			DbUtils.closeQuietly(addressStmt);
@@ -142,23 +151,25 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	@Override
-	public Reference getSubmitterReference(String analysisId) throws SQLException, UnsupportedEncodingException
-    {
-    	Publication publication = new Publication();
-		ReferenceFactory referenceFactory = new ReferenceFactory();
-		Reference reference = referenceFactory.createReference();
-		HashSet<String> consortium=new HashSet<String>();
-		String pubConsortium="";
-		String submitterReferenceQuery = "select sc.consortium, sc.surname, sc.middle_initials, sc.first_name, s.center_name, to_char(s.first_created, 'DD-MON-YYYY') first_created, sa.laboratory_name, sa.address, sa.country "
-				              + "from analysis a "
-				              + "join submission s on(s.submission_id=a.submission_id) "
-				              + "join submission_account sa on(s.submission_account_id=sa.submission_account_id) "
-				              + "join submission_contact sc on(sc.submission_account_id=s.submission_account_id) "
-				              + "where a.analysis_id =?";
-		
+	public Reference getSubmitterReference(String analysisId) throws SQLException, UnsupportedEncodingException {
+		return new ReferenceUtils().constructReference(fetchSubmitterReference(analysisId));
+	}
+
+
+	private List<ReferenceEntity> fetchSubmitterReference(String analysisId) throws SQLException, UnsupportedEncodingException
+	{
+		List<ReferenceEntity> referenceEntityList = new ArrayList<>();
+
+		String submitterReferenceQuery = " select broker_name,a.submission_account_id, sc.consortium, sc.surname, sc.middle_initials, " +
+				"sc.first_name, sa.center_name, to_char(a.first_created, 'DD-MON-YYYY') first_created, sa.laboratory_name, sa.address, " +
+				"sa.country  from analysis a " +
+				" join submission_account sa on(a.submission_account_id=sa.submission_account_id) " +
+				" join submission_contact sc on(sc.submission_account_id=a.submission_account_id) "
+				+ "where a.analysis_id =?";
+
 		PreparedStatement submitterReferenceStmt = null;
 		ResultSet submitterReferenceRs = null;
-				
+
 		try
 		{
 			submitterReferenceStmt = connection.prepareStatement(submitterReferenceQuery);
@@ -166,91 +177,29 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			submitterReferenceRs = submitterReferenceStmt.executeQuery();
 			while (submitterReferenceRs.next())
 			{
-				String pConsrtium=submitterReferenceRs.getString("consortium"); 
-				consortium.add(pConsrtium);
-					
-				if(pConsrtium==null)//ignore first_name,middle_name and last_name ,if consortium is given : WAP-126
-				{
-				Person person =null;
-				
-				person = referenceFactory.createPerson(
-						EntryUtils.concat(" ",WordUtils.capitalizeFully(EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("surname")),'-',' '),  EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("middle_initials"))),
-						getFirstName(EntryUtils.convertNonAsciiStringtoAsciiString(submitterReferenceRs.getString("first_name"))));
-				
-				publication.addAuthor(person);
-				reference.setAuthorExists(true);
-				}
-
-				Submission submission = referenceFactory.createSubmission(publication);				
-				submission.setSubmitterAddress(getAddress(submitterReferenceRs));
-				Date date = EntryUtils.getDay(submitterReferenceRs.getString("first_created"));
-				submission.setDay(date);
-				publication = submission;
-				reference.setPublication(publication);
-				reference.setLocationExists(true);
-				reference.setReferenceNumber(1);
-				
-				}
+				ReferenceEntity refEntity = new ReferenceEntity();
+				refEntity.setBrokerName(submitterReferenceRs.getString("broker_name"));
+				refEntity.setSubmissionAccountId(submitterReferenceRs.getString("submission_account_id"));
+				refEntity.setConsortium(submitterReferenceRs.getString("consortium"));
+				refEntity.setSurname(submitterReferenceRs.getString("surname"));
+				refEntity.setMiddleInitials(submitterReferenceRs.getString("middle_initials"));
+				refEntity.setFirstName(submitterReferenceRs.getString("first_name"));
+				refEntity.setCenterName(submitterReferenceRs.getString("center_name"));
+				refEntity.setFirstCreated(submitterReferenceRs.getString("first_created"));
+				refEntity.setLaboratoryName(submitterReferenceRs.getString("laboratory_name"));
+				refEntity.setAddress(submitterReferenceRs.getString("address"));
+				refEntity.setCountry(submitterReferenceRs.getString("country"));
+				referenceEntityList.add(refEntity);
+			}
 		}
 		finally
 		{
 			DbUtils.closeQuietly(submitterReferenceRs);
 			DbUtils.closeQuietly(submitterReferenceStmt);
 		}
-		
-		for(String refCons:consortium)
-		{
-			if(refCons!=null)
-			pubConsortium+=refCons+", ";
-		}
-		if(pubConsortium!=null&&pubConsortium.endsWith(", "))
-		{
-			pubConsortium = pubConsortium.substring(0, pubConsortium.length()-2);
-		}
-		if(reference.getPublication()==null)
-			return null;
-		reference.getPublication().setConsortium(pubConsortium);
-		
-		return reference;
+		return referenceEntityList;
 	}
 
-	private String getAddress(ResultSet rs) throws SQLException, UnsupportedEncodingException {
-		return EntryUtils.concat(", ",
-				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("center_name")),
-				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("laboratory_name")),
-				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("address")),
-				EntryUtils.convertNonAsciiStringtoAsciiString(rs.getString("country")));
-
-	}
-
-	private String getFirstName(String firstName)
-	{
-		if(firstName==null)
-			return null;
-		StringBuilder nameBuilder= new StringBuilder();
-		if(StringUtils.containsNone(firstName,"@")&&StringUtils.contains(firstName, "-"))
-		{
-			String[] names=StringUtils.split(firstName,"-");
-			List<String> fnames=Arrays.asList(names);
-			int i=0;
-			for(String n: fnames)
-			{
-				i++;
-				nameBuilder.append(WordUtils.initials(n).toUpperCase());
-				if(i==fnames.size())
-					nameBuilder.append(".");
-				else
-					nameBuilder.append(".-");
-			}
-	   }
-		else
-		{
-			nameBuilder.append(firstName.toUpperCase().charAt(0));
-			nameBuilder.append(".");
-		}
-		return nameBuilder.toString();
-	}
-	
 	@Override
 	public List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException
 	{
@@ -431,7 +380,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 	public Reference getReference(Entry entry, String analysisId, AnalysisType analysisType) throws SQLException , ValidationEngineException {
 
-		String analysisQuery = "select first_created, " +
+		String analysisQuery = "select submission_account_id, first_created, " +
 				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/AUTHORS/text()' PASSING analysis_xml RETURNING CONTENT)) authors, " +
 				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/" + analysisType.name() + "/ADDRESS/text()' PASSING analysis_xml RETURNING CONTENT)) address, " +
 				"XMLSERIALIZE(CONTENT xmlquery('let $d :=for $i in /ANALYSIS_SET/ANALYSIS/RUN_REF   return $i/IDENTIFIERS/PRIMARY_ID return string-join($d, \",\")'PASSING analysis_xml  RETURNING CONTENT) ) AS run_ref, " +
@@ -448,8 +397,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				String author = analysisRs.getString("authors");
 				String address = analysisRs.getString("address");
 				Date firstCreated = analysisRs.getDate("first_created");
-				if (StringUtils.isNotBlank(author) && StringUtils.isNotBlank(address)) {
-					return new ReferenceReader().getReference(author, address, firstCreated);
+				if (StringUtils.isNotBlank(author) ) {
+					return new ReferenceUtils().getReference(author, StringUtils.isBlank(address) ? getAddress(analysisId) : address, firstCreated, analysisRs.getString("submission_account_id"));
 				}
 				String runRef = analysisRs.getString("run_ref");
 				setXrefs(runRef, entry);
@@ -517,9 +466,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String author = null;
 		String address = null;
 		Date firstCreated = null;
+		String submissionAccountId = null;
 		boolean isTpa = false;
 
-		String masterQuery = "select a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, " +
+		String masterQuery = "select s.submission_account_id, a.first_created, a.bioproject_id, p.status_id, sam.sample_id, sam.biosample_id, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) assembly_name, " +
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/MOL_TYPE/text()' PASSING analysis_xml RETURNING CONTENT)) mol_type, "+
 			"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/"+analysisType.name()+"/TPA/text()' PASSING analysis_xml RETURNING CONTENT)) tpa, " +
@@ -564,7 +514,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				masterExists = true;
 				//masterEntry.setHoldDate(masterInfoRs.getDate("hold_date"));//hold_date always should be null , as entry status depends on study_id
 				masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
-
+				submissionAccountId = masterInfoRs.getString("submission_account_id");
 				sampleId = masterInfoRs.getString("sample_id");
 
 				projectId = masterInfoRs.getString("bioproject_id");
@@ -628,7 +578,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		try
 		{
 			if(StringUtils.isNotBlank(author) ) {
-				masterEntry.addReference(new ReferenceReader().getReference(author, StringUtils.isBlank(address) ? getAddress(analysisId): address , firstCreated));
+				masterEntry.addReference(new ReferenceUtils().getReference(author, StringUtils.isBlank(address) ? getAddress(analysisId): address , firstCreated,submissionAccountId));
 			} else {
 				masterEntry.addReference(getSubmitterReference(analysisId));
 			}

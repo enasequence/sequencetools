@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -155,8 +155,8 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		if (StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			masterEntry.removeReferences();
-			masterEntry.addReference(new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
-					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate()));
+			masterEntry.addReference(new ReferenceUtils().getReference(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId()));
 		}
 		return masterEntry;
 	}

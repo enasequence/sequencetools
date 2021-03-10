@@ -46,7 +46,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.*;
@@ -522,8 +522,8 @@ public abstract class FileValidationCheck {
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			entry.removeReferences();
-			Reference reference = new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
-					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate());
+			Reference reference = new ReferenceUtils().getReference(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId());
 			entry.addReference(reference);
 		} else {
 
