@@ -93,8 +93,7 @@ public class ReferenceUtils {
         }
         Submission submission = referenceFactory.createSubmission(publication);
         submission.setSubmitterAddress(getAddressFromSubmissionAccount(submitterReference.getSubmissionAccount()));
-        Date date = EntryUtils.getDay(submitterReference.getFirstCreated());
-        submission.setDay(date);
+        submission.setDay(submitterReference.getFirstCreated());
         publication = submission;
         reference.setPublication(publication);
         reference.setLocationExists(true);

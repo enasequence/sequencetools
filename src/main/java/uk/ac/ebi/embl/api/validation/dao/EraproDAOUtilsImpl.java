@@ -124,7 +124,13 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	@Override
 	public Reference getSubmitterReference(String analysisId) throws SQLException, ValidationEngineException {
 		try {
-			return new ReferenceUtils().constructSubmitterReference(new SubmitterReference(fetchSubmissionContacts(analysisId), fetchSubmissionAccount(analysisId)));
+			SubmitterReference submitterReference = fetchSubmissionAccountAndAnalysisCreated(analysisId);
+			if(submitterReference != null) {
+				submitterReference.setSubmissionContacts(fetchSubmissionContacts(submitterReference.getSubmissionAccountId()));
+				return new ReferenceUtils().constructSubmitterReference(submitterReference);
+			} else {
+				throw new ValidationEngineException("Could not retrieve submission account information");
+			}
 		} catch (UnsupportedEncodingException e) {
 			throw new ValidationEngineException(e);
 		}
@@ -157,7 +163,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				Date firstCreated = analysisRs.getDate("first_created");
 				if (StringUtils.isNotBlank(author) ) {
 					if(StringUtils.isBlank(address)) {
-						address = referenceUtils.getAddressFromSubmissionAccount(fetchSubmissionAccount(analysisId));
+						address = referenceUtils.getAddressFromSubmissionAccount(fetchSubmissionAccountAndAnalysisCreated(analysisId).getSubmissionAccount());
 					}
 					return new ReferenceUtils().getSubmitterReferenceFromManifest(author, address, firstCreated, analysisRs.getString("submission_account_id"));
 				}
@@ -173,12 +179,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
-	private SubmissionAccount fetchSubmissionAccount(String analysisId) throws SQLException {
+	private SubmitterReference fetchSubmissionAccountAndAnalysisCreated(String analysisId) throws SQLException {
 
-		String addressQuery = "select broker_name, a.center_name, sa.laboratory_name, sa.address, sa.country "
+		String addressQuery = "select a.first_created,submission_account_id,broker_name, sa.center_name, sa.laboratory_name, sa.address, sa.country "
 				+ "from analysis a "
 				+ "join submission_account sa using(submission_account_id) "
-				+ "where a.analysis_id =?";
+				+ "where analysis_id =?";
 
 		PreparedStatement addressStmt = null;
 		ResultSet addressRs = null;
@@ -188,13 +194,17 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			addressStmt.setString(1, analysisId);
 			addressRs = addressStmt.executeQuery();
 			if (addressRs.next()) {
+				SubmitterReference submitterReference = new SubmitterReference();
+				submitterReference.setSubmissionAccountId(addressRs.getString("submission_account_id"));
+				submitterReference.setFirstCreated(addressRs.getDate("first_created"));
 				SubmissionAccount subAccount = new SubmissionAccount();
 				subAccount.setBrokerName(addressRs.getString("broker_name"));
 				subAccount.setCenterName(addressRs.getString("center_name"));
 				subAccount.setLaboratoryName(addressRs.getString("laboratory_name"));
 				subAccount.setAddress(addressRs.getString("address"));
 				subAccount.setCountry(addressRs.getString("country"));
-				return subAccount;
+				submitterReference.setSubmissionAccount(subAccount);
+				return submitterReference;
 			}
 		} finally {
 			DbUtils.closeQuietly(addressRs);
@@ -204,7 +214,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
-	private List<SubmissionContact> fetchSubmissionContacts(String analysisId) throws SQLException {
+	private List<SubmissionContact> fetchSubmissionContacts(String submissionAccountId) throws SQLException {
 		List<SubmissionContact> SubmissionContactList = new ArrayList<>();
 
 		String submissionContactQuery = "select consortium, surname, middle_initials, first_name from submission_contact where submission_account_id =?";
@@ -213,7 +223,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		try {
 			submitterReferenceStmt = connection.prepareStatement(submissionContactQuery);
-			submitterReferenceStmt.setString(1, analysisId);
+			submitterReferenceStmt.setString(1, submissionAccountId);
 			submitterReferenceRs = submitterReferenceStmt.executeQuery();
 			while (submitterReferenceRs.next()) {
 				SubmissionContact submissionContact = new SubmissionContact();
@@ -574,7 +584,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		if (StringUtils.isNotBlank(author)) {
 			if (StringUtils.isBlank(address)) {
-				address = referenceUtils.getAddressFromSubmissionAccount(fetchSubmissionAccount(analysisId));
+				address = referenceUtils.getAddressFromSubmissionAccount(fetchSubmissionAccountAndAnalysisCreated(analysisId).getSubmissionAccount());
 			}
 			masterEntry.addReference(new ReferenceUtils().getSubmitterReferenceFromManifest(author, address, firstCreated, submissionAccountId));
 		} else {

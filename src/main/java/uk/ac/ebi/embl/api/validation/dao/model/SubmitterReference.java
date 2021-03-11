@@ -1,18 +1,23 @@
 package uk.ac.ebi.embl.api.validation.dao.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SubmitterReference {
 
     private String submissionAccountId;
-    private String firstCreated;
+    private Date firstCreated;
     private SubmissionAccount submissionAccount;
     private List<SubmissionContact> submissionContacts = new ArrayList<>();
 
     public SubmitterReference(List<SubmissionContact> submissionContacts, SubmissionAccount submissionAccount) {
         this.submissionContacts = submissionContacts;
         this.submissionAccount = submissionAccount;
+    }
+
+    public SubmitterReference() {
+
     }
 
     public String getSubmissionAccountId() {
@@ -23,11 +28,11 @@ public class SubmitterReference {
         this.submissionAccountId = submissionAccountId;
     }
 
-    public String getFirstCreated() {
+    public Date getFirstCreated() {
         return firstCreated;
     }
 
-    public void setFirstCreated(String firstCreated) {
+    public void setFirstCreated(Date firstCreated) {
         this.firstCreated = firstCreated;
     }
 
