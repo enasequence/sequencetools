@@ -155,7 +155,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		if (StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			masterEntry.removeReferences();
-			masterEntry.addReference(new ReferenceUtils().getReference(options.assemblyInfoEntry.get().getAuthors(),
+			masterEntry.addReference(new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
 					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId()));
 		}
 		return masterEntry;

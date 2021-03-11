@@ -7,7 +7,9 @@ import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.dao.entity.ReferenceEntity;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 
 import java.io.UnsupportedEncodingException;
@@ -24,26 +26,31 @@ public class ReferenceUtilsTest  {
     ReferenceUtils refutils = new ReferenceUtils();
 
     @Test
-    public void testConstructReferenceWithoutConsortiumAndBroker() throws UnsupportedEncodingException {
+    public void testConstructReferenceWithoutConsortiumAndBroker() throws ValidationEngineException, UnsupportedEncodingException {
 
-        List<ReferenceEntity> refEntityList = new ArrayList<>();
-        ReferenceEntity refEntity = new ReferenceEntity();
-        refEntity.setBrokerName(null);
-        refEntity.setSubmissionAccountId("Webin-256");
-        refEntity.setConsortium(null);
-        refEntity.setSurname("Vijay");
-        refEntity.setMiddleInitials(null);
-        refEntity.setFirstName("Senthil");
-        refEntity.setCenterName("EBI.(EBL-EBI)");
-        refEntity.setFirstCreated("22-SEP-2020");
-        refEntity.setLaboratoryName("EBI -EMBL");
-        refEntity.setAddress("Hinxton, Cambridgeshire");
-        refEntity.setCountry("United Kingdom");
-        refEntityList.add(refEntity);
+        List<SubmissionContact> submissionContactList = new ArrayList<>();
+        SubmissionContact submissionContact = new SubmissionContact();
+        submissionContact.setConsortium(null);
+        submissionContact.setSurname("Vijay");
+        submissionContact.setMiddleInitials(null);
+        submissionContact.setFirstName("Senthil");
+        submissionContactList.add(submissionContact);
 
-        Reference reference = refutils.constructReference(refEntityList);
+        SubmissionAccount submissionAccount = new SubmissionAccount();
+        submissionAccount.setBrokerName(null);
+        submissionAccount.setCenterName("EBI.(EBL-EBI)");
+        submissionAccount.setLaboratoryName("EBI Lab");
+        submissionAccount.setAddress("Hinxton, Cambridgeshire");
+        submissionAccount.setCountry("United Kingdom");
+
+        SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
+        submitterReference.setSubmissionAccountId("Webin-256");
+        submitterReference.setFirstCreated("22-SEP-2020");
+
+        Reference reference = refutils.constructSubmitterReference(submitterReference);
         assertNotNull(reference);
-        assertEquals("EBI -EMBL", ((Submission) reference.getPublication()).getSubmitterAddress());//just labarotary name for non-brokers
+        //centerName, LaboratoryName, Address,Country
+        assertEquals("EBI.(EBL-EBI), EBI Lab, Hinxton, Cambridgeshire, United Kingdom", ((Submission) reference.getPublication()).getSubmitterAddress());
         assertTrue(FlatFileWriter.isBlankString(reference.getPublication().getConsortium()));
         assertEquals(1, reference.getPublication().getAuthors().size());
         Person person = reference.getPublication().getAuthors().get(0);
@@ -52,38 +59,86 @@ public class ReferenceUtilsTest  {
     }
 
     @Test
-    public void testConstructReferenceWithConsortiumAndBroker() throws UnsupportedEncodingException {
+    public void testConstructReferenceMultipleSubmissionContactNonBroker() throws ValidationEngineException, UnsupportedEncodingException {
 
-        List<ReferenceEntity> refEntityList = new ArrayList<>();
-        ReferenceEntity refEntity = new ReferenceEntity();
-        refEntity.setBrokerName("AB bioinformatics");
-        refEntity.setSubmissionAccountId("Webin-256");
-        refEntity.setConsortium("AB bioinformatics inc");
-        refEntity.setSurname("Vijay");
-        refEntity.setMiddleInitials(null);
-        refEntity.setFirstName("Senthil");
-        refEntity.setCenterName("R&D unit EBI.(EBL-EBI)");
-        refEntity.setFirstCreated("22-SEP-2020");
-        refEntity.setLaboratoryName("EBI Lab");
-        refEntity.setAddress("Hinxton, Cambridgeshire");
-        refEntity.setCountry("United Kingdom");
-        refEntityList.add(refEntity);
+        List<SubmissionContact> submissionContactList = new ArrayList<>();
+        SubmissionContact submissionContact = new SubmissionContact();
+        submissionContact.setConsortium(null);
+        submissionContact.setSurname("Vijay");
+        submissionContact.setMiddleInitials(null);
+        submissionContact.setFirstName("Nathan");
+        submissionContactList.add(submissionContact);
 
-        Reference reference = refutils.constructReference(refEntityList);
+        SubmissionContact submissionContact1 = new SubmissionContact();
+        submissionContact1.setConsortium(null);
+        submissionContact1.setSurname("Nathan");
+        submissionContact1.setMiddleInitials("Vijay");
+        submissionContact1.setFirstName("Senthil");
+        submissionContactList.add(submissionContact1);
+
+
+        SubmissionAccount submissionAccount = new SubmissionAccount();
+        submissionAccount.setBrokerName(null);
+        submissionAccount.setCenterName("EBI.(EBL-EBI)");
+        submissionAccount.setLaboratoryName("EBI Lab");
+        submissionAccount.setAddress("Hinxton, Cambridgeshire");
+        submissionAccount.setCountry("United Kingdom");
+
+        SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
+        submitterReference.setSubmissionAccountId("Webin-256");
+        submitterReference.setFirstCreated("22-SEP-2020");
+
+        Reference reference = refutils.constructSubmitterReference(submitterReference);
         assertNotNull(reference);
-        //brokername,labaratory,address,country
-        assertEquals("AB bioinformatics, EBI Lab, Hinxton, Cambridgeshire, United Kingdom", ((Submission) reference.getPublication()).getSubmitterAddress());
-        assertEquals(0, reference.getPublication().getAuthors().size());
+        //centerName, LaboratoryName, Address,Country
+        assertEquals("EBI.(EBL-EBI), EBI Lab, Hinxton, Cambridgeshire, United Kingdom", ((Submission) reference.getPublication()).getSubmitterAddress());
+        assertTrue(FlatFileWriter.isBlankString(reference.getPublication().getConsortium()));
+        assertEquals(2, reference.getPublication().getAuthors().size());
+        Person person = reference.getPublication().getAuthors().get(0);
+        assertEquals("Vijay", person.getSurname().trim());
+        assertEquals("N.", person.getFirstName());
+        Person person1 = reference.getPublication().getAuthors().get(1);
+        assertEquals("Nathan Vijay", person1.getSurname().trim());
+        assertEquals("S.", person1.getFirstName());
+    }
+
+    @Test
+    public void testConstructReferenceWithConsortiumAndBroker() throws UnsupportedEncodingException, ValidationEngineException {
+
+        List<SubmissionContact> submissionContactList = new ArrayList<>();
+        SubmissionContact submissionContact = new SubmissionContact();
+        submissionContact.setConsortium("AB bioinformatics inc");
+        submissionContact.setSurname("Vijay");
+        submissionContact.setMiddleInitials(null);
+        submissionContact.setFirstName("Senthil");
+        submissionContactList.add(submissionContact);
+
+        SubmissionAccount submissionAccount = new SubmissionAccount();
+        submissionAccount.setBrokerName("AB bioinformatics");
+        submissionAccount.setCenterName("R&D unit EBI.(EBL-EBI)");
+        submissionAccount.setLaboratoryName("EBI Lab");
+        submissionAccount.setAddress("Hinxton, Cambridgeshire");
+        submissionAccount.setCountry("United Kingdom");
+
+        SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
+        submitterReference.setSubmissionAccountId("Webin-256");
+        submitterReference.setFirstCreated("22-SEP-2020");
+
+        Reference reference = refutils.constructSubmitterReference(submitterReference);
+        assertNotNull(reference);
+        //brokername,address,country
+        assertEquals("AB bioinformatics, Hinxton, Cambridgeshire, United Kingdom", ((Submission) reference.getPublication()).getSubmitterAddress());
+        assertEquals(0, reference.getPublication().getAuthors().size());//No authors
         assertEquals("AB bioinformatics inc",reference.getPublication().getConsortium());
     }
 
     @Test
-    public void getReference() throws ValidationEngineException {
+    public void testGetSubmitterReferenceFromManifest() throws ValidationEngineException {
         String authors = "Vijay Senthil,Nathan S Vijay";
         String address ="Hinxton,Cambridge,UK";
         Date date = new Date();
         String submissionAccountId = "Webin-256";
-        Reference reference = refutils.getReference(authors, address, date, submissionAccountId);
+        Reference reference = refutils.getSubmitterReferenceFromManifest(authors, address, date, submissionAccountId);
         assertNotNull(reference);
         assertEquals(address, ((Submission) reference.getPublication()).getSubmitterAddress());
         assertTrue(FlatFileWriter.isBlankString(reference.getPublication().getConsortium()));
@@ -98,7 +153,7 @@ public class ReferenceUtilsTest  {
     }
 
     @Test
-    public void getReferenceAddAuthorToConsortium() throws ValidationEngineException, NoSuchMethodException {
+    public void testGetSubmitterReferenceFromManifestAddAuthorstoCosortium() throws ValidationEngineException, NoSuchMethodException {
         String authors = "Vijay Senthil,Nathan S Vijay";
         String address ="Hinxton,Cambridge,UK";
         Date date = new Date();
@@ -110,7 +165,7 @@ public class ReferenceUtilsTest  {
         expect(referenceUtilsMock.doAddAuthorsToConsortium(submissionAccountId)).andReturn(true);
         replay(referenceUtilsMock);
 
-        Reference reference = referenceUtilsMock.getReference(authors, address, date, submissionAccountId);
+        Reference reference = referenceUtilsMock.getSubmitterReferenceFromManifest(authors, address, date, submissionAccountId);
         assertNotNull(reference);
         assertEquals(address, ((Submission) reference.getPublication()).getSubmitterAddress());
         //authors added to consortium

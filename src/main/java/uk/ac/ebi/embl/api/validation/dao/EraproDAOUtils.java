@@ -13,11 +13,11 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public interface EraproDAOUtils
 {
-	Reference getSubmitterReference(String analysisId) throws SQLException,UnsupportedEncodingException;
+	Reference getSubmitterReference(String analysisId) throws SQLException,ValidationEngineException;
 	List<String> isAssemblyDuplicate(String analysisId) throws SQLException;
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
 	List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
-	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
+	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	Reference getReference(Entry entry , String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	String getTemplateId(String analysisId) throws SQLException;
 	Set<String> getLocusTags(String projectId) throws SQLException;

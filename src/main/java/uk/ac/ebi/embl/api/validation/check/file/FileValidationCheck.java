@@ -522,7 +522,7 @@ public abstract class FileValidationCheck {
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			entry.removeReferences();
-			Reference reference = new ReferenceUtils().getReference(options.assemblyInfoEntry.get().getAuthors(),
+			Reference reference = new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
 					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId());
 			entry.addReference(reference);
 		} else {

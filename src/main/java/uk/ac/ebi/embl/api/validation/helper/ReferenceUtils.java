@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.dao.entity.ReferenceEntity;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblPersonMatcher;
 
@@ -12,8 +14,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class ReferenceUtils {
-
-    public Reference getReference(String authors, String address, Date date, String submissionAccountId) throws ValidationEngineException {
+    /**
+     * build <Reference> object from
+     * - Webin-CLI: the authors and address information directly passed from manifest file
+     * - Processing pipelines: the authors and address information fetched from analysis.xml(we add manifest information into analysis.xml when the submitter makes a submission)
+     * Note: first_name won't be abbreviated for this case , in other hand, when we fetch contact information from db we do abbreviate it
+     */
+    public Reference getSubmitterReferenceFromManifest(String authors, String address, Date date, String submissionAccountId) throws ValidationEngineException {
         Publication publication = getPublication(address, date);
         if (doAddAuthorsToConsortium(submissionAccountId)) {
             publication.setConsortium(authors);
@@ -59,15 +66,15 @@ public class ReferenceUtils {
         return submissionAccountId != null && submissionAccountId.equalsIgnoreCase("Webin-55551");
     }
 
-    public Reference constructReference(List<ReferenceEntity> referenceEntityList) throws UnsupportedEncodingException {
+    public Reference constructSubmitterReference(SubmitterReference submitterReference) throws ValidationEngineException, UnsupportedEncodingException {
         Publication publication = new Publication();
         ReferenceFactory referenceFactory = new ReferenceFactory();
         Reference reference = referenceFactory.createReference();
         HashSet<String> consortium = new HashSet<>();
         String pubConsortium = "";
 
-        for (ReferenceEntity refEntity : referenceEntityList) {
-            String pConsrtium = refEntity.getConsortium();
+        for (SubmissionContact submissionContact : submitterReference.getSubmissionContacts()) {
+            String pConsrtium = submissionContact.getConsortium();
             consortium.add(pConsrtium);
 
             if (pConsrtium == null)//ignore first_name,middle_name and last_name ,if consortium is given : WAP-126
@@ -76,24 +83,22 @@ public class ReferenceUtils {
 
                 person = referenceFactory.createPerson(
                         EntryUtils.concat(" ", WordUtils.capitalizeFully(
-                                EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getSurname()), '-', ' '),
-                                EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getMiddleInitials())),
-                        getFirstName(EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getFirstName())));
+                                EntryUtils.convertNonAsciiStringtoAsciiString(submissionContact.getSurname()), '-', ' '),
+                                EntryUtils.convertNonAsciiStringtoAsciiString(submissionContact.getMiddleInitials())),
+                        getFirstName(EntryUtils.convertNonAsciiStringtoAsciiString(submissionContact.getFirstName())));
 
                 publication.addAuthor(person);
                 reference.setAuthorExists(true);
             }
-
-            Submission submission = referenceFactory.createSubmission(publication);
-            submission.setSubmitterAddress(getAddress(refEntity));
-            Date date = EntryUtils.getDay(refEntity.getFirstCreated());
-            submission.setDay(date);
-            publication = submission;
-            reference.setPublication(publication);
-            reference.setLocationExists(true);
-            reference.setReferenceNumber(1);
         }
-
+        Submission submission = referenceFactory.createSubmission(publication);
+        submission.setSubmitterAddress(getAddressFromSubmissionAccount(submitterReference.getSubmissionAccount()));
+        Date date = EntryUtils.getDay(submitterReference.getFirstCreated());
+        submission.setDay(date);
+        publication = submission;
+        reference.setPublication(publication);
+        reference.setLocationExists(true);
+        reference.setReferenceNumber(1);
         for (String refCons : consortium) {
             if (refCons != null)
                 pubConsortium += refCons + ", ";
@@ -108,17 +113,25 @@ public class ReferenceUtils {
         return reference;
     }
 
-    public String getAddress(ReferenceEntity refEntity) throws UnsupportedEncodingException {
-        //-For brokers, we need to use broker_name instead of center_name
-        //-laboratory_name should only be part of address for non-brokers
-        if (refEntity.isBroker()) {
-            return EntryUtils.concat(", ",
-                    EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getBrokerName()),
-                    EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getLaboratoryName()),
-                    EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getAddress()),
-                    EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getCountry()));
-        } else {
-            return EntryUtils.convertNonAsciiStringtoAsciiString(refEntity.getLaboratoryName());
+    public String getAddressFromSubmissionAccount(SubmissionAccount subAccount) throws ValidationEngineException {
+        if(subAccount == null) {
+            return null;
+        }
+        try {
+            if (subAccount.isBroker()) {
+                return EntryUtils.concat(", ",
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getBrokerName()),
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
+            } else {
+                return EntryUtils.concat(", ",
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCenterName()),
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getLaboratoryName()),
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
+                        EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new ValidationEngineException(e);
         }
     }
 

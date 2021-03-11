@@ -5,7 +5,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
-import uk.ac.ebi.embl.api.validation.dao.entity.SampleEntity;
+import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 

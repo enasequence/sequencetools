@@ -1,4 +1,4 @@
-package uk.ac.ebi.embl.api.validation.dao.entity;
+package uk.ac.ebi.embl.api.validation.dao.model;
 
 import java.util.HashMap;
 import java.util.Map;
