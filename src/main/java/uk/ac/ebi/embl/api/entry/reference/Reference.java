@@ -28,6 +28,9 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.validation.HasOrigin;
 import uk.ac.ebi.embl.api.validation.Origin;
 
+/**
+ * Submitter reference
+ */
 public class Reference implements HasOrigin, Serializable, Comparable<Reference> {
 	
 	private static final long serialVersionUID = -4700988799848365167L;
