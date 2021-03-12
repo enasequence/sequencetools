@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.4.0-SNAPSHOT'
+ext.version_base = '2.3.2-SNAPSHOT'
 
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
