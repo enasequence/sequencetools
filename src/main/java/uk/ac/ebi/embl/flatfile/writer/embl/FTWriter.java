@@ -56,9 +56,7 @@ public class FTWriter extends FlatFileWriter {
 			features.size() == 0) {
 			return false;
 		}
-		if (excludeSource &&
-				features.size() == 1 &&
-				isSourceFeature(features.get(0))) {
+		if (excludeSource && allSourceFeatures(features)) {
 			return false;
 		}
 		if (sortFeatures) {
@@ -75,6 +73,14 @@ public class FTWriter extends FlatFileWriter {
 
 	private boolean isSourceFeature(Feature feature) {
 		return feature.getName().equals(Feature.SOURCE_FEATURE_NAME);
+	}
+
+	private boolean allSourceFeatures(Vector<Feature> features) {
+		for (Feature feature : features) {
+			if (!isSourceFeature(feature))
+				return false;
+		}
+		return true;
 	}
 
     protected void writeFeature(Writer writer, Feature feature) throws IOException {
