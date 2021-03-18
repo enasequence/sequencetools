@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.HasOrigin;
@@ -764,5 +765,12 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 
 	public void setEntryType(int entryType) {
 		this.entryType = entryType;
+	}
+
+	public boolean isContigs() {
+		if (sequence == null)
+			return false;
+		List<Location> contigs = sequence.getContigs();
+		return contigs != null && !contigs.isEmpty();
 	}
 }

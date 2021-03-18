@@ -37,15 +37,13 @@ public class COWriter extends FlatFileWriter {
     }
 
 	public boolean write(Writer writer) throws IOException {
-		List<Location> contigs = ((Entry)entry).getSequence().getContigs();
-		if (contigs == null ||
-			contigs.size() == 0) {
+		if (!entry.isContigs()) {
 			return false;
 		}
 		StringBuilder block = new StringBuilder();
 		block.append("join(");
 		boolean firstContig = true;
-		for (Location contig : contigs) {
+		for (Location contig : entry.getSequence().getContigs()) {
 			if (!firstContig) {
 				block.append(",");
 			}
@@ -57,5 +55,5 @@ public class COWriter extends FlatFileWriter {
 		block.append(")");
 		writeBlock(writer, EmblPadding.CO_PADDING, block.toString());
 		return true;
-	}	
+	}
 }
