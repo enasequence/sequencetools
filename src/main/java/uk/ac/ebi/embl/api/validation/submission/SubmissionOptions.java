@@ -2,6 +2,7 @@ package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -9,6 +10,9 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -49,7 +53,7 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
-		if(!assemblyInfoEntry.isPresent()&& isRemote)
+		if(!assemblyInfoEntry.isPresent() && isRemote)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
 		if(!source.isPresent()&& isRemote)
 		{   if(Context.sequence!=context.get())
@@ -67,8 +71,8 @@ public class SubmissionOptions
 				}
 			}
         }
-		if(!analysisId.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
-			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
+		if(!analysisId.isPresent() && !isRemote)
+			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided.");
 		if(!processDir.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
 
@@ -79,8 +83,19 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
-		if(!isRemote)
-			ignoreErrors =true;
+		if (!isRemote) {
+			try {
+				EraproDAOUtils eraproDAOUtils = new EraproDAOUtilsImpl(eraproConnection.get());
+				Analysis analysis = eraproDAOUtils.getAnalysis(analysisId.get());
+				if (analysis != null && analysis.getUniqueAlias() != null) {
+					//Webin-000:webin-genome-name
+					String uniqueAliasPrefix = analysis.getSubmissionAccountId()+":webin-"+context.get().name()+"-";
+					ignoreErrors = eraproDAOUtils.isIgnoreErrors(analysis.getSubmissionAccountId(), context.get().name(), analysis.getUniqueAlias().substring(uniqueAliasPrefix.length()).replaceAll("\\s+", "_"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		FileValidationCheck.setSequenceCount(0);
 		FileValidationCheck.sequenceInfo.clear();
 		FileValidationCheck.fastaInfo.clear();
@@ -115,7 +130,7 @@ public class SubmissionOptions
 			if(mgl!=null)
 		     property.minGapLength.set(mgl);
 		}
-		if(Context.genome.equals(context))
+		if(Context.genome.equals(context.get()))
 		{
 			property.sequenceNumber.set(1);
 		}

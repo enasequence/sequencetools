@@ -80,6 +80,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			Entry entry = entryReader.getEntry();
 			origin =entry.getOrigin();
 			entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
+			if(options.context.get() == Context.sequence && !validateSequenceCountForTemplate(validationResult, submissionFile)) {
+				return validationResult;
+			}
 			if(getOptions().context.get()==Context.genome)
             {
 				if(entry.getSubmitterAccession() == null) {
