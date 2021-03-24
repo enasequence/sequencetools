@@ -528,7 +528,7 @@ public abstract class FileValidationCheck {
 			entry.addReference(reference);
 		} else {
 
-			if (!getOptions().isRemote) {
+			if (!getOptions().isWebinCLI) {
 				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get());
 				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {

@@ -133,7 +133,7 @@ public class SubmissionValidationPlan
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
 							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2), assemblyType));
 
-				if(!options.isRemote)
+				if(!options.isWebinCLI)
 				{
 					if(!(AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
 							AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)	||
@@ -149,7 +149,7 @@ public class SubmissionValidationPlan
 					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
 							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage());
 				}
-				if (!options.isRemote && options.context.isPresent() && options.context.get() == Context.genome && check != null && check.getMessageStats() != null)
+				if (!options.isWebinCLI && options.context.isPresent() && options.context.get() == Context.genome && check != null && check.getMessageStats() != null)
 					check.getReporter().writeToFile(Paths.get(options.reportDir.get()), check.getMessageStats());
 			} catch (Exception ex) {
 				e = new ValidationEngineException(e.getMessage() + "\n Failed to write error message stats: " + ex.getMessage(), e);
@@ -182,11 +182,11 @@ public class SubmissionValidationPlan
 
 			result = masterCheck.check();
 			if(!result.isValid()) {
-				if(options.isRemote)
+				if(options.isWebinCLI)
 					throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
 				return result;
 			}
-			if(!options.isRemote)
+			if(!options.isWebinCLI)
 			     flagValidation(FileType.MASTER);
 		}catch(Exception e)
 		{
@@ -208,7 +208,7 @@ public class SubmissionValidationPlan
 				fileName= chromosomeListFile.getFile().getName();
 				result = check.check(chromosomeListFile);
 				if (!result.isValid()) {
-					if(options.isRemote)
+					if(options.isWebinCLI)
 						throwValidationCheckException(FileType.CHROMOSOME_LIST,chromosomeListFile);
 					return result;
 				}
@@ -237,12 +237,12 @@ public class SubmissionValidationPlan
 						check.setContigDB(contigDB);
 					result = check.check(fastaFile);
 					if (!result.isValid()) {
-						if (options.isRemote)
+						if (options.isWebinCLI)
 							throwValidationCheckException(FileType.FASTA, fastaFile);
 						return result;
 					}
 				}
-				if (!options.isRemote)
+				if (!options.isWebinCLI)
 					flagValidation(FileType.FASTA);
 			}
 		} catch(Exception e) {
@@ -270,12 +270,12 @@ public class SubmissionValidationPlan
 						check.setContigDB(contigDB);
 					result = check.check(flatfile);
 					if (!result.isValid()) {
-						if (options.isRemote)
+						if (options.isWebinCLI)
 							throwValidationCheckException(FileType.FLATFILE, flatfile);
 						return result;
 					}
 				}
-				if (!options.isRemote)
+				if (!options.isWebinCLI)
 					flagValidation(FileType.FLATFILE);
 			}
 		}catch(Exception e){
@@ -300,12 +300,12 @@ public class SubmissionValidationPlan
 						agpCheck.setSequenceDB(sequenceDB);
 					result = agpCheck.check(agpFile);
 					if (!result.isValid()) {
-						if (options.isRemote)
+						if (options.isWebinCLI)
 							throwValidationCheckException(FileType.AGP, agpFile);
 						return result;
 					}
 				}
-				if (!options.isRemote)
+				if (!options.isWebinCLI)
 					flagValidation(FileType.AGP);
 			}
 
@@ -326,7 +326,7 @@ public class SubmissionValidationPlan
 			{	fileName= unlocalisedListFile.getFile().getName();
 				result = check.check(unlocalisedListFile);
 				if(!result.isValid()) {
-					if(options.isRemote)
+					if(options.isWebinCLI)
 						throwValidationCheckException(FileType.UNLOCALISED_LIST,unlocalisedListFile);
 					return result;
 				}
@@ -361,7 +361,7 @@ public class SubmissionValidationPlan
 					check.setSequenceDB(sequenceDB);
 				result = check.check(annotationOnlyFlatfile);
 				if(!result.isValid()) {
-					if(options.isRemote)
+					if(options.isWebinCLI)
 						throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE,annotationOnlyFlatfile);
 					return result;
 				}
@@ -385,7 +385,7 @@ public class SubmissionValidationPlan
 				fileName = tsvFile.getFile().getName();
 				result = check.check(tsvFile);
 				if(!result.isValid()) {
-					if(options.isRemote)
+					if(options.isWebinCLI)
 						throwValidationCheckException(FileType.TSV,tsvFile);
 					return result;
 				}
@@ -415,7 +415,7 @@ public class SubmissionValidationPlan
 	}
 
     private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
-		if(options.isRemote) {
+		if(options.isWebinCLI) {
 			ValidationEngineException validationEngineException = new ValidationEngineException(
 					String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
 			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);

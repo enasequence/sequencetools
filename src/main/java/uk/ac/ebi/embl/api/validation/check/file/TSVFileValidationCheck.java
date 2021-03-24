@@ -52,7 +52,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			if(!options.isRemote && StringUtils.isBlank(templateId ) ) {
+			if(!options.isWebinCLI && StringUtils.isBlank(templateId ) ) {
 				 templateId = new EraproDAOUtilsImpl(options.eraproConnection.get()).getTemplateId(options.analysisId.get());
 			}
 			if(templateId == null)
@@ -65,7 +65,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
 			TemplateProcessor templateProcessor;
-			if (options.isRemote)
+			if (options.isWebinCLI)
 				templateProcessor = new TemplateProcessor(templateInfo, null);
 			else {
 				templateProcessor = new TemplateProcessor(templateInfo, options.eraproConnection.get());

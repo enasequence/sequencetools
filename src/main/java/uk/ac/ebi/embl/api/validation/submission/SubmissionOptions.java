@@ -36,7 +36,7 @@ public class SubmissionOptions
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
 	public  boolean ignoreErrors = false;
-	public  boolean isRemote = false;
+	public  boolean isWebinCLI = false;
 	private String projectId;
 
 	public String getProjectId() {
@@ -53,15 +53,15 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
-		if(!assemblyInfoEntry.isPresent() && isRemote)
+		if(!assemblyInfoEntry.isPresent() && isWebinCLI)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
-		if(!source.isPresent()&& isRemote)
+		if(!source.isPresent()&& isWebinCLI)
 		{   if(Context.sequence!=context.get())
 			throw new ValidationEngineException("SubmissionOptions:source must be provided");
 		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
-		if(!isRemote || isDevMode) {
+		if(!isWebinCLI || isDevMode) {
 			if (!(new File(reportDir.get())).isDirectory())
 				throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
         } else {
@@ -71,19 +71,19 @@ public class SubmissionOptions
 				}
 			}
         }
-		if(!analysisId.isPresent() && !isRemote)
+		if(!analysisId.isPresent() && !isWebinCLI)
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided.");
-		if(!processDir.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
+		if(!processDir.isPresent()&&!isWebinCLI &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
-			if(!isRemote)
+			if(!isWebinCLI)
 			{
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
-		if (!isRemote) {
+		if (!isWebinCLI) {
 			try {
 				EraproDAOUtils eraproDAOUtils = new EraproDAOUtilsImpl(eraproConnection.get());
 				Analysis analysis = eraproDAOUtils.getAnalysis(analysisId.get());
@@ -136,7 +136,7 @@ public class SubmissionOptions
 		}
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
-		property.isRemote.set(isRemote);
+		property.isRemote.set(isWebinCLI);
 		return property;
 	}
 }
