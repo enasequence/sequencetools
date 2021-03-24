@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -40,7 +41,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	public final static String TEMPLATE_FILE_NAME = "TEMPLATE_";
 	private final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
 	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
-	private final static int MAX_SEQUENCE_COUNT = 100000;
 
 	public TSVFileValidationCheck(SubmissionOptions options) {
 		super(options);
@@ -85,13 +85,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 					appendHeader(entry);
 				}
-				if (sequenceCount == MAX_SEQUENCE_COUNT) {
-					ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR,
-							"Data file has exceeded the maximum permitted number of sequencies (" + MAX_SEQUENCE_COUNT + ")" + " that are allowed in one data file.");
-					validationResult.append(validationMessage);
-					if(getOptions().reportDir.isPresent())
-						getReporter().writeToFile(getReportFile(submissionFile), validationResult, "Sequence: " + csvLine.getLineNumber().toString() + " ");
-					break;
+				if( options.context.get() == Context.sequence && !validateSequenceCountForTemplate(validationResult, submissionFile)) {
+					return validationResult;
 				}
 				ValidationResult planResult = templateProcessorResultSet.getValidationResult();
 				validationResult.append(planResult);

@@ -88,6 +88,7 @@ public abstract class FileValidationCheck {
 	private  DB sequenceDB = null;
 	private DB contigDB =null;
 	protected static int sequenceCount = 0;
+	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -686,5 +687,15 @@ public abstract class FileValidationCheck {
 
 	public static void setHasAgp(boolean hasAgpFiles) {
 		hasAgp = hasAgpFiles;
+	}
+
+	boolean validateSequenceCountForTemplate(ValidationResult validationResult, SubmissionFile submissionFile) {
+		if (!options.ignoreErrors && sequenceCount > MAX_SEQUENCE_COUNT_FOR_TEMPLATE) {
+			validationResult.append(new ValidationMessage<>(Severity.ERROR, "MaxSequenceCountExceededError", MAX_SEQUENCE_COUNT_FOR_TEMPLATE ));
+			if (getOptions().reportDir.isPresent())
+				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+			return false;
+		}
+		return true;
 	}
 }

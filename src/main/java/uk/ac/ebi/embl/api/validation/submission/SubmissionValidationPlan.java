@@ -222,12 +222,11 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFasta() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-
+		check = new FastaFileValidationCheck(options);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
 			return result;
 		String fileName=null;
 		try {
-			check = new FastaFileValidationCheck(options);
 			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.FASTA);
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile fastaFile : submissionFiles) {
@@ -255,12 +254,12 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFlatfile() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
+		check = new FlatfileFileValidationCheck(options);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
 			return result;
 		String fileName=null;
 		try
 		{
-		check = new FlatfileFileValidationCheck(options);
 			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.FLATFILE);
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile flatfile : submissionFiles) {
@@ -323,7 +322,6 @@ public class SubmissionValidationPlan
 		try
 		{
 			check = new UnlocalisedListFileValidationCheck(options);
-
 			for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
 			{	fileName= unlocalisedListFile.getFile().getName();
 				result = check.check(unlocalisedListFile);

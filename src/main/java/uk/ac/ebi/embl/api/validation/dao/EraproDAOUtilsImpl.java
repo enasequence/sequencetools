@@ -15,10 +15,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
-import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
-import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
+import uk.ac.ebi.embl.api.validation.dao.model.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -447,7 +444,36 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonHelperImpl(), sampleInfo);
 	}
 
-	public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException
+	@Override
+	public boolean isIgnoreErrors(String submissionAccountId, String context, String name) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement("select 1 from webin_cli_ignore_errors where submission_account_id =? and context =? and name =?")) {
+			ps.setString(1, submissionAccountId);
+			ps.setString(2, context);
+			ps.setString(3, name);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
+		}
+	}
+
+	@Override
+	public Analysis getAnalysis(String analysisId) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement("select submission_account_id,unique_alias from analysis where analysis_id =?")) {
+			ps.setString(1, analysisId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if(rs.next()) {
+					Analysis analysis = new Analysis();
+					analysis.setSubmissionAccountId(rs.getString("submission_account_id"));
+					analysis.setUniqueAlias(rs.getString("unique_alias"));
+					return analysis;
+				}
+			}
+		}
+		return null;
+	}
+
+    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException
 	{
 	   if(masterCache.containsKey(analysisId))
 	   {
