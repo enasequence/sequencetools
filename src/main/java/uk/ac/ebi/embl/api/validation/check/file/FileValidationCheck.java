@@ -691,8 +691,7 @@ public abstract class FileValidationCheck {
 
 	boolean validateSequenceCountForTemplate(ValidationResult validationResult, SubmissionFile submissionFile) {
 		if (!options.ignoreErrors && sequenceCount > MAX_SEQUENCE_COUNT_FOR_TEMPLATE) {
-			validationResult.append(new ValidationMessage<>(Severity.ERROR,
-					"Submission has exceeded the maximum number of sequences allowed. Permitted number of sequences: "+ MAX_SEQUENCE_COUNT_FOR_TEMPLATE ));
+			validationResult.append(new ValidationMessage<>(Severity.ERROR, "MaxSequenceCountExceededError", MAX_SEQUENCE_COUNT_FOR_TEMPLATE ));
 			if (getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
 			return false;

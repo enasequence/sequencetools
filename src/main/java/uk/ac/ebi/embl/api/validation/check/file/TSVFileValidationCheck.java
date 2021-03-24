@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -84,7 +85,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 					appendHeader(entry);
 				}
-				if( !validateSequenceCountForTemplate(validationResult, submissionFile)) {
+				if( options.context.get() == Context.sequence && !validateSequenceCountForTemplate(validationResult, submissionFile)) {
 					return validationResult;
 				}
 				ValidationResult planResult = templateProcessorResultSet.getValidationResult();
