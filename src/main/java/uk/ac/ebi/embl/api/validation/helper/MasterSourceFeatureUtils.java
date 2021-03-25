@@ -11,6 +11,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
+import uk.ac.ebi.embl.api.validation.check.feature.CollectionDateQualifierCheck;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl.MASTERSOURCEQUALIFIERS;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -51,6 +52,11 @@ public class MasterSourceFeatureUtils {
 
 		if(qualifierSynonyms.containsKey(tag)) {
 			tag = qualifierSynonyms.get(tag);
+		}
+
+		if(tag.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME) && !new CollectionDateQualifierCheck().isValid(value)) {
+			//we have to do similar check for other qualifier as well.
+			return;
 		}
 
 		if(isolation_sourcePattern.matcher(tag).matches())

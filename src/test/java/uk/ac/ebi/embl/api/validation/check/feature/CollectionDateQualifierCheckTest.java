@@ -15,9 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +24,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+
+import static org.junit.Assert.*;
 
 public class CollectionDateQualifierCheckTest {
 
@@ -63,7 +62,8 @@ public class CollectionDateQualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count(
 				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertTrue(!validationResult.isValid());
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
 	}
 
 	@Test
@@ -72,7 +72,8 @@ public class CollectionDateQualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count(
 				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertTrue(!validationResult.isValid());
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
 	}	
 	
 	@Test
@@ -81,7 +82,8 @@ public class CollectionDateQualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(!validationResult.isValid());
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
 	}
 
 	@Test
@@ -90,7 +92,8 @@ public class CollectionDateQualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(!validationResult.isValid());
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
 	}
 	
 	@Test
@@ -99,7 +102,8 @@ public class CollectionDateQualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(!validationResult.isValid());
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
 	}
 			
 	@Test
@@ -111,6 +115,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}
 
 	@Test
@@ -122,6 +127,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}
 
 	@Test
@@ -133,6 +139,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}
 
 	@Test
@@ -144,6 +151,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}
 	
 	@Test
@@ -155,6 +163,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -166,6 +175,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -177,6 +187,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -188,6 +199,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -199,6 +211,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 	
 	@Test
@@ -210,6 +223,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -221,6 +235,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 
 	@Test
@@ -232,6 +247,7 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}	
 	
 	@Test
@@ -243,5 +259,6 @@ public class CollectionDateQualifierCheckTest {
 		assertEquals(0, validationResult.count(
 				"CollectionDateQualifierCheck_2", Severity.ERROR));
 		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
 	}		
 }
