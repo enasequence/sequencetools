@@ -88,21 +88,24 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 			if (isValueEmpty(value)) {
 				reportError(collectionQualifier.getOrigin(),
 						DATE_FORMAT_ERROR, collectionQualifier.getName(), "");
+				continue;
 			}
 
 			value = StringUtils.deleteWhitespace(value);
-			collectionQualifier.setValue(value);
 			try {
 				if (!isValidDate(value)) {
 					reportError(collectionQualifier.getOrigin(), DATE_FORMAT_ERROR, collectionQualifier.getName(), value);
-				}
-			} catch (IllegalArgumentException e) {
+				} else {
+                    collectionQualifier.setValue(value);
+                }
+			} catch (FutureDateException e) {
 				reportError(collectionQualifier.getOrigin(), FUTURE_DATE_ERROR, collectionQualifier.getName(), collectionQualifier.getValue());
 			}
 		}
 		return result;
 	}
 
+	@Override
 	public boolean isValid(final String value) {
 		try {
 			return !isValueEmpty(value) && isValidDate(StringUtils.deleteWhitespace(value));
@@ -115,7 +118,7 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 		return value == null || value.isEmpty() || StringUtils.deleteWhitespace(value).isEmpty();
 	}
 
-	private boolean isValidDate(String value) {
+	private boolean isValidDate(String value) throws FutureDateException {
 
 		Matcher m = DATE_RANGE_PATTERN.matcher(value);
 
@@ -127,7 +130,7 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 				return false; // invalid date format
 			} else {
 				if (isFutureDate(fromResult.date) || isFutureDate(toResult.date)) { //from_date or to_date after current date
-					throw new IllegalArgumentException();
+					throw new FutureDateException();
 				}
 				if (fromResult.pattern != toResult.pattern) { // Different range date formats.
 					return false;
@@ -140,13 +143,16 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 			if (dateResult == null ) {
 				return false;// invalid date format
 			} else if(isFutureDate(dateResult.date)) {
-				throw new IllegalArgumentException();
+				throw new FutureDateException();
 			}
 		}
 		return true;
 	}
 
-	private class CheckDateResult
+	private static class FutureDateException extends Exception {
+    }
+
+	private static class CheckDateResult
 	{
 		public CheckDateResult( Pattern pattern, Date date) {
 			this.pattern = pattern;
