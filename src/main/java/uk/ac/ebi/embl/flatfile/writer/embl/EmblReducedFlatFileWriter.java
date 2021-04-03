@@ -2,17 +2,11 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.writer.EntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
-import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 /** Reduced flat file writer.
  */
@@ -53,29 +47,17 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
             writer.write(SEPARATOR_LINE);
         }
 
-        if (entry.getDataClass() == Entry.CON_DATACLASS) {
+        // Always write sequence features.
+        writeFeatures(writer);
 
-            boolean expandedCON = isExpandedCON();
-            boolean notExpandedCON = isNotExpandedCON(); // in theory should be equal to !expandedCON
-
-            //Expanded entry: CO line, Feature, SQ line
-            if (expandedCON) {
-                new COWriter(entry, wrapType).write(writer);
-                writer.write(SEPARATOR_LINE);
-                writeFeatures(writer);
-                new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
-            }
-
-            //Not expanded entry: Feature, CO line
-            if (notExpandedCON) {
-                writeFeatures(writer);
-                new COWriter(entry, wrapType).write(writer);
-            }
+        // Write CO lines for CONs.
+        if (entry.isContigs()) {
+            new COWriter(entry, wrapType).write(writer);
+            writer.write(SEPARATOR_LINE);
         }
-        else {
-            writeFeatures(writer);
-            new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
-        }
+
+        // Always write sequence.
+        new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
 
         writer.write(TERMINATOR_LINE);
 
@@ -91,16 +73,8 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
     }
 
     @Override
-    protected void writeReferences(Writer writer) throws IOException {
+    protected void writeReferences(Writer writer) {
         // do nothing
-    }
-
-    private boolean isExpandedCON() {
-        return entry.getSequence() != null && entry.getSequence().getSequenceByte() != null && !entry.isNonExpandedCON();
-    }
-
-    private boolean isNotExpandedCON() {
-        return entry.getSequence() == null || entry.getSequence().getSequenceByte() == null || entry.isNonExpandedCON();
     }
 
 }

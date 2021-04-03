@@ -72,8 +72,6 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 		assertEquals(
 				"ID   DP000153; SV 1; linear; genomic RNA; CON; MAM; 2 BP.\n" +
 						"XX\n" +
-						"CO   join(1..2)\n" +
-						"XX\n" +
 						"FH   Key             Location/Qualifiers\n" +
 						"FH\n" +
 						"FT   CDS             3514..4041\n" +
@@ -86,6 +84,8 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 						"FT                   FLPEEQVRARHLFSQKTISREVPAEQSRSGRVYQTARHSLMECSRPTMSIKSQWSFWSS\n" +
 						"FT                   SPKPLPKIPVPSLTSWTHTVNSTPFPQLSTSSGSQSPGKGRLQRLTSTERNGTTLPRTN\n" +
 						"FT                   SGSSTKAMVLHR\"\n" +
+						"XX\n" +
+						"CO   join(1..2)\n" +
 						"XX\n" +
 						"SQ   Sequence 2 BP; 2 A; 0 C; 0 G; 0 T; 0 other;\n" +
 						"     aa                                                                        2\n" +

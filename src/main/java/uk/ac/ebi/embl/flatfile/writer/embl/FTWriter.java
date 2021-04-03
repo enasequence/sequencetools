@@ -17,8 +17,9 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -51,7 +52,7 @@ public class FTWriter extends FlatFileWriter {
 	private boolean excludeSource;
 
 	public boolean write(Writer writer) throws IOException {
-		Vector<Feature> features = new Vector<Feature>(entry.getFeatures());
+		List<Feature> features = new ArrayList<Feature>(entry.getFeatures());
 		if (features == null ||
 			features.size() == 0) {
 			return false;
@@ -75,7 +76,7 @@ public class FTWriter extends FlatFileWriter {
 		return feature.getName().equals(Feature.SOURCE_FEATURE_NAME);
 	}
 
-	private boolean allSourceFeatures(Vector<Feature> features) {
+	private boolean allSourceFeatures(List<Feature> features) {
 		for (Feature feature : features) {
 			if (!isSourceFeature(feature))
 				return false;
