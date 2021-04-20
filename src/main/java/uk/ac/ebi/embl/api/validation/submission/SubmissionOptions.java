@@ -30,6 +30,7 @@ public class SubmissionOptions
 	public  Optional<Integer> minGapLength = Optional.empty();
 	public  Optional<String> processDir = Optional.empty();
 	public  Optional<File> reportFile = Optional.empty();
+	public  Optional<Boolean> ignoreError = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 		
 	public  boolean isDevMode = false;
@@ -83,18 +84,8 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
-		if (!isWebinCLI) {
-			try {
-				EraproDAOUtils eraproDAOUtils = new EraproDAOUtilsImpl(eraproConnection.get());
-				Analysis analysis = eraproDAOUtils.getAnalysis(analysisId.get());
-				if (analysis != null && analysis.getUniqueAlias() != null) {
-					//Webin-000:webin-genome-name
-					String uniqueAliasPrefix = analysis.getSubmissionAccountId()+":webin-"+context.get().name()+"-";
-					ignoreErrors = eraproDAOUtils.isIgnoreErrors(analysis.getSubmissionAccountId(), context.get().name(), analysis.getUniqueAlias().substring(uniqueAliasPrefix.length()).replaceAll("\\s+", "_"));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if (!isWebinCLI && ignoreError.isPresent()) {
+					ignoreErrors = ignoreError.get();
 		}
 		FileValidationCheck.setSequenceCount(0);
 		FileValidationCheck.sequenceInfo.clear();
