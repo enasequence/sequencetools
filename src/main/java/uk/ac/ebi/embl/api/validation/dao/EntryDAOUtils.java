@@ -31,8 +31,6 @@ public interface EntryDAOUtils
 	
 	public HashSet<String> getProjectLocutagPrefix(String project)throws SQLException;
 	
-	Entry getMasterEntry(String analysisId) throws SQLException;
-
 	public String isEcnumberValid(String ecNumber) throws SQLException;
 
 	Entry getEntryInfo(String primaryAcc) throws SQLException;

@@ -36,12 +36,16 @@ public class COWriter extends FlatFileWriter {
         setWrapChar(WrapChar.WRAP_CHAR_COMMA);
     }
 
+    public boolean isContigs() {
+		List<Location> contigs = entry.getSequence().getContigs();
+		return contigs != null && !contigs.isEmpty();
+	}
+
 	public boolean write(Writer writer) throws IOException {
-		List<Location> contigs = ((Entry)entry).getSequence().getContigs();
-		if (contigs == null ||
-			contigs.size() == 0) {
+		if (!isContigs()) {
 			return false;
 		}
+		List<Location> contigs = entry.getSequence().getContigs();
 		StringBuilder block = new StringBuilder();
 		block.append("join(");
 		boolean firstContig = true;
