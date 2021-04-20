@@ -332,51 +332,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 		return locusTags;
 	}
-
-	@Override
-	public List<String> isAssemblyDuplicate(String analysisId) throws SQLException
-	{
-		
-		List<String> duplicateAnalysisIdList= new ArrayList<String>();
-		
-        //checks assembly is duplicate
-		String  duplicateAssemblySQL= " select analysis_id "
-				                     + "from analysis"
-				                     + " join analysis_sample"
-				                     + " using (analysis_id) "
-				                     + "where study_id = ?  "
-				                     + "and sample_id = ? "
-				                     + "and analysis.submission_account_id = ? "
-				                     + "and analysis_id <> ? "
-				                     + "and analysis_type = 'SEQUENCE_ASSEMBLY' "
-				                     + "and first_created between ? and ? "
-				                     + "and status_id in (2, 4, 7, 8)";
-
-		
-		ResultSet duplicateAssemblySQLrs = null;
-
-		try(PreparedStatement duplicateAssemblySQLstmt = connection.prepareStatement(duplicateAssemblySQL);)
-		{
-			AssemblySubmissionInfo assemblySubmissionInfo=getAssemblySubmissionInfo(analysisId);
-
-			if(assemblySubmissionInfo.getStudyId()==null)
-				return duplicateAnalysisIdList;
-			
-			duplicateAssemblySQLstmt.setString(1,assemblySubmissionInfo.getStudyId());
-			duplicateAssemblySQLstmt.setString(2,assemblySubmissionInfo.getSampleId());
-			duplicateAssemblySQLstmt.setString(3,assemblySubmissionInfo.getSubmissionAccountId());
-			duplicateAssemblySQLstmt.setString(4,analysisId);
-			duplicateAssemblySQLstmt.setDate(5,assemblySubmissionInfo.getBegindate());
-			duplicateAssemblySQLstmt.setDate(6,assemblySubmissionInfo.getEnddate());
-
-			duplicateAssemblySQLrs=duplicateAssemblySQLstmt.executeQuery();
-			while(duplicateAssemblySQLrs.next())
-			{
-				duplicateAnalysisIdList.add(duplicateAssemblySQLrs.getString(1));
-			}
-			return duplicateAnalysisIdList;
-		}
-	}
 	
 	@Override
 	public AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException

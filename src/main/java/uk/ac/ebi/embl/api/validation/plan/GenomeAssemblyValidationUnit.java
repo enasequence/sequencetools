@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoAnalysisIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoCoverageCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoDuplicationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoMinGapLengthCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoPlatformCheck;
@@ -27,7 +26,6 @@ public enum GenomeAssemblyValidationUnit
 			(
 			AssemblyInfoAnalysisIdCheck.class,
 			AssemblyInfoCoverageCheck.class,
-			AssemblyInfoDuplicationCheck.class,
 			AssemblyInfoMinGapLengthCheck.class,
 			AssemblyInfoNameCheck.class,
 			AssemblyInfoPlatformCheck.class,

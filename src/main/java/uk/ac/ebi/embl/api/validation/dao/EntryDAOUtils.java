@@ -31,16 +31,12 @@ public interface EntryDAOUtils
 	
 	public HashSet<String> getProjectLocutagPrefix(String project)throws SQLException;
 	
-	Entry getMasterEntry(String analysisId) throws SQLException;
-
 	public String isEcnumberValid(String ecNumber) throws SQLException;
 
 	Entry getEntryInfo(String primaryAcc) throws SQLException;
 	
 	public String getDbcode(String prefix) throws SQLException;
-	
-	
-	public boolean isAssemblyUpdateSupported(String analysisId) throws SQLException;
+
 	public boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
 
 

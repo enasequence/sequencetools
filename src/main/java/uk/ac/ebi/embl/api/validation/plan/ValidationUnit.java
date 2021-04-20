@@ -1,33 +1,27 @@
 package uk.ac.ebi.embl.api.validation.plan;
 
-import java.util.Arrays;
-import java.util.List;
-
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.entries.Entry_NameCheck;
 import uk.ac.ebi.embl.api.validation.check.entry.*;
-import uk.ac.ebi.embl.api.validation.check.entry.SequenceBasesCheck;
-import uk.ac.ebi.embl.api.validation.check.sequence.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.*;
 import uk.ac.ebi.embl.api.validation.check.feature.*;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoAnalysisIdCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoCoverageCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoDuplicationCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoMinGapLengthCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoPlatformCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProgramCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSamplewithDifferentProjectCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSubmissionIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeTypeCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListObjectNameCheck;
+import uk.ac.ebi.embl.api.validation.check.sequence.SequenceExistsCheck;
+import uk.ac.ebi.embl.api.validation.check.sequence.SequenceLengthCheck;
+import uk.ac.ebi.embl.api.validation.check.sequence.SequenceToGapFeatureBasesCheck;
+import uk.ac.ebi.embl.api.validation.check.sourcefeature.*;
 import uk.ac.ebi.embl.api.validation.fixer.entry.*;
 import uk.ac.ebi.embl.api.validation.fixer.feature.*;
-import uk.ac.ebi.embl.api.validation.fixer.sequence.*;
+import uk.ac.ebi.embl.api.validation.fixer.sequence.ContigstosequenceFix;
+import uk.ac.ebi.embl.api.validation.fixer.sequence.Mol_typeFix;
+import uk.ac.ebi.embl.api.validation.fixer.sequence.SequenceBasesFix;
+import uk.ac.ebi.embl.api.validation.fixer.sequence.SequenceToGapFeatureBasesFix;
 import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public enum ValidationUnit
@@ -208,7 +202,6 @@ public enum ValidationUnit
 					Mol_typeFix.class,//exclude for master
 					SequenceToGapFeatureBasesFix.class,//exclude for master
 	    		    AssemblyTopologyFix.class,//exclude for master
-					//AssemblySourceQualiferFix.class,//exclude for master
 					//AssemblyLevelSubmitterReferenceFix.class,//exclude for master
 	    		    JournalFix.class,//include for all
 	    		    AssemblyLevelEntryNameFix.class,
@@ -216,21 +209,6 @@ public enum ValidationUnit
 					Linkage_evidenceFix.class,//exclude for master
 					DescriptionCheck.class//only for template submissions
 	        ),
-	
-	// GCS entry validation checks
-			ASSEMBLYINFO_CHECKS
-			(
-			AssemblyInfoAnalysisIdCheck.class,
-			AssemblyInfoCoverageCheck.class,
-			AssemblyInfoDuplicationCheck.class,
-			AssemblyInfoMinGapLengthCheck.class,
-			AssemblyInfoNameCheck.class,
-			AssemblyInfoPlatformCheck.class,
-			AssemblyInfoProgramCheck.class,
-			AssemblyInfoProjectIdheck.class,
-			AssemblyInfoSamplewithDifferentProjectCheck.class,
-			AssemblyInfoSubmissionIdCheck.class
-			),
 			CHROMOSOME_LIST_CHECKS
 			(
 				ChromosomeListChromosomeLocationCheck.class,
