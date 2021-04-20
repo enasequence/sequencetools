@@ -56,8 +56,7 @@ public class MasterSourceFeatureUtils {
 			tag = qualifierSynonyms.get(tag);
 		}
 
-		if(tag.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME) &&
-				masterSourceQualifierValidator.isValid(Qualifier.COLLECTION_DATE_QUALIFIER_NAME, value)) {
+		if(tag.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME) && !masterSourceQualifierValidator.isValid(Qualifier.COLLECTION_DATE_QUALIFIER_NAME, value)) {
 			//we have to do similar check for other qualifier as well.
 			return;
 		}

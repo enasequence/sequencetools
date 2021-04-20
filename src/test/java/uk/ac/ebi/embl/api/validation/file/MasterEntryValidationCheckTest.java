@@ -52,6 +52,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void  testMasterEntrywithoutAssemblyInfo() throws ValidationEngineException
 	{
+		options.context=Optional.of(Context.genome);
 		options.source= Optional.of(getSource());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		thrown.expect(ValidationEngineException.class);
@@ -63,6 +64,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void  testMasterEntrywithoutSource() throws ValidationEngineException
 	{
+		options.context=Optional.of(Context.genome);
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		thrown.expect(ValidationEngineException.class);

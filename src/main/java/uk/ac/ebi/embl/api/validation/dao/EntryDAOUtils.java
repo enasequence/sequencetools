@@ -36,9 +36,7 @@ public interface EntryDAOUtils
 	Entry getEntryInfo(String primaryAcc) throws SQLException;
 	
 	public String getDbcode(String prefix) throws SQLException;
-	
-	
-	public boolean isAssemblyUpdateSupported(String analysisId) throws SQLException;
+
 	public boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
 
 

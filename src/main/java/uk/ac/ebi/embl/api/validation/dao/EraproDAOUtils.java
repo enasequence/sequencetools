@@ -15,7 +15,6 @@ import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
 public interface EraproDAOUtils
 {
 	Reference getSubmitterReference(String analysisId) throws SQLException,ValidationEngineException;
-	List<String> isAssemblyDuplicate(String analysisId) throws SQLException;
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
 	List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
 	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;

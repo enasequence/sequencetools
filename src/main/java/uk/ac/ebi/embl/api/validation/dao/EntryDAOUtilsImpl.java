@@ -29,9 +29,6 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
 	private Connection connection=null;
-	private Entry masterEntry= null;
-	private ConcurrentHashMap<String, Entry> masterEntryCache = new ConcurrentHashMap<String, Entry>();
-	private ConcurrentHashMap<String, Integer> objectNameCache = new ConcurrentHashMap<String, Integer>();
 	
 	public EntryDAOUtilsImpl(Connection connection) throws SQLException
 	{
@@ -190,26 +187,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			DbUtils.closeQuietly(stmt);
 		}		
 		return qualifiers;
-	}
-
-	public  String getAssemblyMaster(String analysisId) throws SQLException
-	{
-        String sql = "{call ? := gcs_pkg.get_assembly_master(?)}";
-		CallableStatement cstmt = null;
-		try
-		{
-			cstmt = connection.prepareCall(sql);
-			cstmt.registerOutParameter (1, Types.VARCHAR);
-			cstmt.setString(2, analysisId);
-			cstmt.execute();
-			String assemblyMaster=cstmt.getString(1);
-			
-			return assemblyMaster;
-		}
-		finally
-		{
-			DbUtils.closeQuietly(cstmt);
-		}
 	}
 
 	@Override
@@ -412,26 +389,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 			
 			
 		  return null;
-	}
-
-	@Override
-	public boolean isAssemblyUpdateSupported (String analysisId) throws SQLException
-	{
-		String query = "select gcs_pkg.is_update_supported(?) from dual";
-
-		try(PreparedStatement pstsmt = connection.prepareStatement(query))
-		{
-			pstsmt.setString(1, analysisId);
-			try(ResultSet rs = pstsmt.executeQuery();)
-			{
-			if (rs.next())
-			{
-				String status = rs.getString(1);
-				return status.equals("Y");
-			}
-			return false;
-			}
-		}
 	}
 
 	@Override
