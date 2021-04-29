@@ -10,22 +10,23 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
 
 public interface EraproDAOUtils
 {
-	Reference getSubmitterReference(String analysisId) throws SQLException,UnsupportedEncodingException;
-	List<String> isAssemblyDuplicate(String analysisId) throws SQLException;
+	Reference getSubmitterReference(String analysisId) throws SQLException,ValidationEngineException;
 	AssemblySubmissionInfo getAssemblySubmissionInfo(String analysisId) throws SQLException;
 	List<String> isSampleHasDifferentProjects(String analysisId) throws SQLException;
-	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException;
+	Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	Reference getReference(Entry entry , String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException;
 	String getTemplateId(String analysisId) throws SQLException;
 	Set<String> getLocusTags(String projectId) throws SQLException;
 	SourceFeature getSourceFeature(String sampleId) throws Exception;
-
     boolean isProjectValid(String text) throws SQLException;
+	boolean isIgnoreErrors(String submissionAccountId, String context, String name) throws SQLException;
+	Analysis getAnalysis(String analysisId) throws SQLException;
 
-    class AssemblySubmissionInfo
+	class AssemblySubmissionInfo
 	{
 		String studyId;
 		String projectId;

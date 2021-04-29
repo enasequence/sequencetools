@@ -2,6 +2,7 @@ package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -9,6 +10,9 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -26,13 +30,14 @@ public class SubmissionOptions
 	public  Optional<Integer> minGapLength = Optional.empty();
 	public  Optional<String> processDir = Optional.empty();
 	public  Optional<File> reportFile = Optional.empty();
+	public  Optional<Boolean> ignoreError = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 		
 	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
 	public  boolean ignoreErrors = false;
-	public  boolean isRemote = false;
+	public  boolean isWebinCLI = false;
 	private String projectId;
 
 	public String getProjectId() {
@@ -49,15 +54,15 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:submissionFiles must be provided");
 		if(!context.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:context must be provided");
-		if(!assemblyInfoEntry.isPresent()&& isRemote)
+		if(!assemblyInfoEntry.isPresent() && isWebinCLI)
 			throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
-		if(!source.isPresent()&& isRemote)
+		if(!source.isPresent()&& isWebinCLI)
 		{   if(Context.sequence!=context.get())
 			throw new ValidationEngineException("SubmissionOptions:source must be provided");
 		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
-		if(!isRemote || isDevMode) {
+		if(!isWebinCLI || isDevMode) {
 			if (!(new File(reportDir.get())).isDirectory())
 				throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
         } else {
@@ -67,20 +72,21 @@ public class SubmissionOptions
 				}
 			}
         }
-		if(!analysisId.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
-			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided for genome context");
-		if(!processDir.isPresent()&&!isRemote &&(context.get()==Context.genome||context.get()==Context.transcriptome))
+		if(!analysisId.isPresent() && !isWebinCLI)
+			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided.");
+		if(!processDir.isPresent()&&!isWebinCLI &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
 
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
-			if(!isRemote)
+			if(!isWebinCLI)
 			{
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
-		if(!isRemote)
-			ignoreErrors =true;
+		if (!isWebinCLI && ignoreError.isPresent()) {
+					ignoreErrors = ignoreError.get();
+		}
 		FileValidationCheck.setSequenceCount(0);
 		FileValidationCheck.sequenceInfo.clear();
 		FileValidationCheck.fastaInfo.clear();
@@ -115,13 +121,13 @@ public class SubmissionOptions
 			if(mgl!=null)
 		     property.minGapLength.set(mgl);
 		}
-		if(Context.genome.equals(context))
+		if(Context.genome.equals(context.get()))
 		{
 			property.sequenceNumber.set(1);
 		}
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonHelper.set(new TaxonHelperImpl());
-		property.isRemote.set(isRemote);
+		property.isRemote.set(isWebinCLI);
 		return property;
 	}
 }

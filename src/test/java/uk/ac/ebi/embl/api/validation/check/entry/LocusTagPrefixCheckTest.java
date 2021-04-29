@@ -175,7 +175,6 @@ public class LocusTagPrefixCheckTest {
         HashSet<String> projectLocusTagPrefixes=new HashSet<String>();
         projectLocusTagPrefixes.add("BC03BB108");
 		expect(eraProDAOUtils.getLocusTags("PRJNA19959")).andReturn(projectLocusTagPrefixes);
-		expect(entryDAOUtils.getMasterEntry("ERZ00001")).andReturn(masterEntry);
         replay(eraProDAOUtils);
         check.setEraproDAOUtils(eraProDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
@@ -199,7 +198,6 @@ public class LocusTagPrefixCheckTest {
         HashSet<String> projectLocusTagPrefixes=new HashSet<String>();
         projectLocusTagPrefixes.add("BC03");
 		expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(projectLocusTagPrefixes);
-		expect(entryDAOUtils.getMasterEntry("ERZ00001")).andReturn(masterEntry);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -219,7 +217,6 @@ public class LocusTagPrefixCheckTest {
         entry.addFeature(feature);
         entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
 		expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
-		expect(entryDAOUtils.getMasterEntry("ERZ00001")).andReturn(masterEntry);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -240,7 +237,6 @@ public class LocusTagPrefixCheckTest {
         entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
         entry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
 		expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
-		expect(entryDAOUtils.getMasterEntry("ERZ00001")).andReturn(masterEntry);
 		replay(entryDAOUtils);
 		check.setEntryDAOUtils(entryDAOUtils);
 		check.setEmblEntryValidationPlanProperty(property);

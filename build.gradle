@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.3.2-SNAPSHOT'
+ext.version_base = '2.5.3'
 
 version = version_base
 tasks.withType(Javadoc).all { enabled = false }
@@ -83,7 +83,7 @@ dependencies
             compile group: 'uk.ac.ebi.ena.webin-cli', name: 'webin-cli-validator', version: '1.0.9'
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
             testCompile "junit:junit:4.13.1"
-            testCompile 'org.easymock:easymock:3.1'
+            testCompile 'org.easymock:easymock:4.2'
 
         }
 

@@ -34,7 +34,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Before
 	public void init() {
 		options = new SubmissionOptions();
-		options.isRemote = true;
+		options.isWebinCLI = true;
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
 		options.ignoreErrors = true;

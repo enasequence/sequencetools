@@ -46,12 +46,13 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	public void init() throws SQLException
 	{   
 		options = new SubmissionOptions();
-		options.isRemote = true;
+		options.isWebinCLI = true;
 	}
 
 	@Test
 	public void  testMasterEntrywithoutAssemblyInfo() throws ValidationEngineException
 	{
+		options.context=Optional.of(Context.genome);
 		options.source= Optional.of(getSource());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		thrown.expect(ValidationEngineException.class);
@@ -63,6 +64,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void  testMasterEntrywithoutSource() throws ValidationEngineException
 	{
+		options.context=Optional.of(Context.genome);
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
 		thrown.expect(ValidationEngineException.class);

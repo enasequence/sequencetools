@@ -320,14 +320,6 @@ public class TemplateEntryProcessor {
 
     }
 
-    private Reference getReferences() throws Exception {
-        try {
-            return new EraproDAOUtilsImpl(connEra).getSubmitterReference(templateInfo.getAnalysisId());
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
     private void addSequenceLengthToken(TemplateVariables variables) {
         if (variables.containsToken(TemplateProcessorConstants.SEQUENCE_TOKEN)) {
             int sequenceLength = variables.getTokenValue(TemplateProcessorConstants.SEQUENCE_TOKEN).length();

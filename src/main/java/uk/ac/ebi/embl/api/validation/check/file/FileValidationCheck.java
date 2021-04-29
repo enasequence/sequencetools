@@ -47,7 +47,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.*;
@@ -88,6 +88,7 @@ public abstract class FileValidationCheck {
 	private  DB sequenceDB = null;
 	private DB contigDB =null;
 	protected static int sequenceCount = 0;
+	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -522,12 +523,12 @@ public abstract class FileValidationCheck {
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			entry.removeReferences();
-			Reference reference = new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
-					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate());
+			Reference reference = new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId());
 			entry.addReference(reference);
 		} else {
 
-			if (!getOptions().isRemote) {
+			if (!getOptions().isWebinCLI) {
 				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get());
 				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {
@@ -666,5 +667,15 @@ public abstract class FileValidationCheck {
 
 	public static void setHasAgp(boolean hasAgpFiles) {
 		hasAgp = hasAgpFiles;
+	}
+
+	boolean validateSequenceCountForTemplate(ValidationResult validationResult, SubmissionFile submissionFile) {
+		if (!options.ignoreErrors && sequenceCount > MAX_SEQUENCE_COUNT_FOR_TEMPLATE) {
+			validationResult.append(new ValidationMessage<>(Severity.ERROR, "MaxSequenceCountExceededError", MAX_SEQUENCE_COUNT_FOR_TEMPLATE ));
+			if (getOptions().reportDir.isPresent())
+				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+			return false;
+		}
+		return true;
 	}
 }

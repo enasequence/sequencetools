@@ -33,7 +33,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 		   options = new SubmissionOptions();
 	       options.source= Optional.of(getSource());
 	       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
-	       options.isRemote = true;
+	       options.isWebinCLI = true;
 		   options.isDevMode = true;
 	   }
 

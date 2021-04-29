@@ -40,7 +40,7 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 	public void init()
 	{   
 		options = new SubmissionOptions();
-		options.isRemote = true;
+		options.isWebinCLI = true;
 	}
 
 	@Test

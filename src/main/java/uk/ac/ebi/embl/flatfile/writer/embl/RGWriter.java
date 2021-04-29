@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Publication;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
+import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 /** Flat file writer for the RG lines.
@@ -33,15 +34,14 @@ public class RGWriter extends FlatFileWriter {
     public RGWriter(Entry entry, Publication publication, WrapType wrapType) {
         super(entry, wrapType);
         this.publication = publication;
+        setWrapChar(WrapChar.WRAP_CHAR_COMMA);
     }
 
     public boolean write(Writer writer) throws IOException {
     	if (isBlankString(publication.getConsortium())) {
     		return false;
     	}
-    	writer.write(EmblPadding.RG_PADDING);
-		writer.write(publication.getConsortium());
-    	writer.write("\n");
+        writeBlock(writer, EmblPadding.RG_PADDING, publication.getConsortium());
     	return true;
     }
 }

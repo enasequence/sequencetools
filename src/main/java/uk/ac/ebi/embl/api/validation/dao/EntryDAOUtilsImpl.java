@@ -29,9 +29,6 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
 	private Connection connection=null;
-	private Entry masterEntry= null;
-	private ConcurrentHashMap<String, Entry> masterEntryCache = new ConcurrentHashMap<String, Entry>();
-	private ConcurrentHashMap<String, Integer> objectNameCache = new ConcurrentHashMap<String, Integer>();
 	
 	public EntryDAOUtilsImpl(Connection connection) throws SQLException
 	{
@@ -191,132 +188,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		}		
 		return qualifiers;
 	}
-	
-	public boolean isAssemblyUpdate(String analysisId) throws SQLException
-	{
-        
-		String query = "select gcs_pkg.is_update(?) from dual";
-
-		PreparedStatement pstsmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstsmt = connection.prepareStatement(query);
-			pstsmt.setString(1, analysisId);
-			rs = pstsmt.executeQuery();
-			
-			if (rs.next())
-		     { String status=rs.getString(1);
-				return status.equals("Y");
-			}
-			
-			return false;
-			
-		}finally
-		{
-
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(pstsmt);
-		}
-	}
-	
-	
-	public  String getAssemblyMaster(String analysisId) throws SQLException
-	{
-        String sql = "{call ? := gcs_pkg.get_assembly_master(?)}";
-		CallableStatement cstmt = null;
-		try
-		{
-			cstmt = connection.prepareCall(sql);
-			cstmt.registerOutParameter (1, Types.VARCHAR);
-			cstmt.setString(2, analysisId);
-			cstmt.execute();
-			String assemblyMaster=cstmt.getString(1);
-			
-			return assemblyMaster;
-		}
-		finally
-		{
-			DbUtils.closeQuietly(cstmt);
-		}
-	}
-	
-	@Override
-	public Entry getMasterEntry(String analysisId) throws SQLException
-	{
-		if(isAssemblyUpdate(analysisId))
-		{
-			analysisId=getAssemblyMaster(analysisId);
-		}
-		if(!isEntryExists(analysisId))
-		{
-            return null;
-		}
-		if(masterEntryCache.get(analysisId)!=null)
-		{
-			return masterEntryCache.get(analysisId);
-		}
-		masterEntry= (new EntryFactory()).createEntry();
-		String masterEntryQuery = "select d.study_id,d.sample_id,d.statusid,cf.fqual,"
-	                              +"nvl(fq.text,(select text_value from cv_fqual_value c where c.FQUAL_VALUEID=fq.FQUAL_VALUEID and c.fqualid=fq.fqualid)) text,"
-				                  +"n.leaf,n.tax_id from dbentry d "
-                                  + "join seqfeature seq using (bioseqid) "
-                                  + "join sourcefeature source on (source.featid = seq.featid) "
-                                  + "join feature_qualifiers fq on (source.featid = fq.featid "
-                                  + "and fq.fqualid in(83,47,40,80,81)) "
-                                  + "join cv_fqual cf on (cf.fqualid = fq.fqualid) "
-                                  + "join ntx_lineage n on (source.organism = n.tax_id) "
-                                  + "where primaryacc# = ?" ;
-		
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		SourceFeature sourceFeature= (new FeatureFactory()).createSourceFeature();
-		QualifierFactory qualifierFactory = new QualifierFactory();	
-		String projectAccession=null;
-		String sampleId=null;
-		int statusId=0;
-		String organism=null;
-		Long taxId=null;
-		try
-		{
-			ps = connection.prepareStatement(masterEntryQuery);
-			ps.setString(1, analysisId);
-			rs = ps.executeQuery();
-			while (rs.next())
-			{
-				projectAccession=rs.getString("study_id");
-				sampleId=rs.getString("sample_id");
-				statusId=rs.getInt("statusid");
-				String qual=rs.getString("fqual");
-				String value=rs.getString("text");
-				/*
-				 * isolate,strain,environmental_sample,mol_type,organism
-				 */
-				sourceFeature.addQualifier(qualifierFactory.createQualifier(qual,value));
-				organism=rs.getString("leaf");
-				taxId=rs.getLong("tax_id");
-			}
-			if(organism!=null)
-			sourceFeature.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, organism);
-			if(taxId!=null)
-			 sourceFeature.setTaxId(taxId);
-			masterEntry.addFeature(sourceFeature);
-			if(projectAccession!=null)
-			masterEntry.getProjectAccessions().add(new Text(projectAccession));
-			if(sampleId!=null)
-			masterEntry.addXRef(new XRef("BioSample", sampleId));
-			if(statusId!=0)
-			masterEntry.setStatus(Entry.Status.getStatus(statusId));
-		}
-		finally
-		{
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(ps);
-		}
-		
-		masterEntryCache.put(analysisId, masterEntry);
-		return masterEntry;
-	}	
 
 	@Override
 	public boolean isValueExists(String tableName, String constraintKey, String constraintValue) throws SQLException
@@ -520,26 +391,6 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		  return null;
 	}
 
-	@Override
-	public boolean isAssemblyUpdateSupported (String analysisId) throws SQLException
-	{
-		String query = "select gcs_pkg.is_update_supported(?) from dual";
-
-		try(PreparedStatement pstsmt = connection.prepareStatement(query))
-		{
-			pstsmt.setString(1, analysisId);
-			try(ResultSet rs = pstsmt.executeQuery();)
-			{
-			if (rs.next())
-			{
-				String status = rs.getString(1);
-				return status.equals("Y");
-			}
-			return false;
-			}
-		}
-	}
-	
 	@Override
 	public boolean isChromosomeValid(String analysisId,String chromosomeName) throws SQLException
 	{

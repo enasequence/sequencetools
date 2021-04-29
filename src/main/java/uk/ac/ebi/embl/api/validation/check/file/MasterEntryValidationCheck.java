@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
-import uk.ac.ebi.embl.flatfile.reader.ReferenceReader;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -64,7 +64,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 				getOptions().getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
 			}
         	getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
-			if(!getOptions().isRemote)
+			if(!getOptions().isWebinCLI)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
 				masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
@@ -102,7 +102,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				if(!getOptions().isRemote)
+				if(!getOptions().isWebinCLI)
 				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
 
@@ -155,8 +155,8 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 		if (StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAddress())
 				&& StringUtils.isNotBlank(options.assemblyInfoEntry.get().getAuthors())) {
 			masterEntry.removeReferences();
-			masterEntry.addReference(new ReferenceReader().getReference(options.assemblyInfoEntry.get().getAuthors(),
-					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate()));
+			masterEntry.addReference(new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
+					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId()));
 		}
 		return masterEntry;
 	}

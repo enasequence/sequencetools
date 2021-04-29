@@ -35,6 +35,9 @@ public abstract class FeatureValidationCheck implements EmblEntryValidationCheck
 	private EntryDAOUtils entryDAOUtils;
 	private EraproDAOUtils eraproDAOUtils;
 
+	public boolean isValid(String value) {
+		return false;
+	}
 
     public FeatureValidationCheck() {
 	}

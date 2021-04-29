@@ -11,8 +11,9 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
+import uk.ac.ebi.embl.api.validation.check.feature.MasterSourceQualifierValidator;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl.MASTERSOURCEQUALIFIERS;
-import uk.ac.ebi.embl.api.validation.dao.entity.SampleEntity;
+import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
@@ -24,6 +25,7 @@ public class MasterSourceFeatureUtils {
 	private boolean addUniqueName=true;
 	private final Map<String,String> qualifierSynonyms = new HashMap<>();
 	private final Set<String> covid19RequiredQuals = new HashSet<>();
+	private final MasterSourceQualifierValidator masterSourceQualifierValidator;
 
 	public MasterSourceFeatureUtils() {
 		qualifierSynonyms.put("metagenomic source",Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
@@ -37,6 +39,7 @@ public class MasterSourceFeatureUtils {
 		covid19RequiredQuals.add(Qualifier.NOTE_QUALIFIER_NAME);
 
 		isolationSourceQualifier=null;
+		masterSourceQualifierValidator = new MasterSourceQualifierValidator();
 	}
 
 	public boolean isCovidTaxId(Long taxID) {
@@ -51,6 +54,11 @@ public class MasterSourceFeatureUtils {
 
 		if(qualifierSynonyms.containsKey(tag)) {
 			tag = qualifierSynonyms.get(tag);
+		}
+
+		if(tag.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME) && !masterSourceQualifierValidator.isValid(Qualifier.COLLECTION_DATE_QUALIFIER_NAME, value)) {
+			//we have to do similar check for other qualifier as well.
+			return;
 		}
 
 		if(isolation_sourcePattern.matcher(tag).matches())

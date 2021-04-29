@@ -85,58 +85,74 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 		for (Qualifier collectionQualifier : collectionDateQualifiers) 
 		{
 			String value = collectionQualifier.getValue();
-			if (value == null || value.isEmpty())
-			{
+			if (isValueEmpty(value)) {
 				reportError(collectionQualifier.getOrigin(),
-					DATE_FORMAT_ERROR, collectionQualifier.getName(), "");
-			}
-						
-			String valueNoWhitespace = StringUtils.deleteWhitespace(value);
-
-			if (valueNoWhitespace == null || valueNoWhitespace.isEmpty())
-			{
-				reportError(collectionQualifier.getOrigin(),
-					DATE_FORMAT_ERROR, collectionQualifier.getName(), "");
-			}	
-		
-			if (!valueNoWhitespace.equals(value))
-			{
-				 collectionQualifier.setValue(valueNoWhitespace);
-				 value = valueNoWhitespace;
+						DATE_FORMAT_ERROR, collectionQualifier.getName(), "");
+				continue;
 			}
 
-			Matcher m = DATE_RANGE_PATTERN.matcher(value);
-			
-			if (m.matches())
-			{
-				CheckDateResult fromResult = checkDate(collectionQualifier, m.group(1));
-				CheckDateResult toResult = checkDate(collectionQualifier, m.group(2));				
-				
-				if (fromResult.date != null && toResult.date != null)
-				{
-					if (fromResult.pattern != toResult.pattern)
-					{
-						// Different range date formats.
-						reportError(collectionQualifier.getOrigin(),
-							DATE_FORMAT_ERROR, collectionQualifier.getName(), value);
-					}
-					if (fromResult.date.compareTo(toResult.date) > 0)
-					{
-						// From date in a range is larger than to date.						
-						reportError(collectionQualifier.getOrigin(),
-								DATE_FORMAT_ERROR, collectionQualifier.getName(), value);						
-					}
-				}
-			}
-			else
-			{
-				checkDate(collectionQualifier, value);
+			value = StringUtils.deleteWhitespace(value);
+			try {
+				if (!isValidDate(value)) {
+					reportError(collectionQualifier.getOrigin(), DATE_FORMAT_ERROR, collectionQualifier.getName(), value);
+				} else {
+                    collectionQualifier.setValue(value);
+                }
+			} catch (FutureDateException e) {
+				reportError(collectionQualifier.getOrigin(), FUTURE_DATE_ERROR, collectionQualifier.getName(), collectionQualifier.getValue());
 			}
 		}
 		return result;
 	}
-	
-	private class CheckDateResult
+
+	@Override
+	public boolean isValid(final String value) {
+		try {
+			return !isValueEmpty(value) && isValidDate(StringUtils.deleteWhitespace(value));
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean isValueEmpty(final String value) {
+		return value == null || value.isEmpty() || StringUtils.deleteWhitespace(value).isEmpty();
+	}
+
+	private boolean isValidDate(String value) throws FutureDateException {
+
+		Matcher m = DATE_RANGE_PATTERN.matcher(value);
+
+		if (m.matches()) {
+			CheckDateResult fromResult = checkDate(m.group(1));
+			CheckDateResult toResult = checkDate(m.group(2));
+
+			if (fromResult == null || toResult == null) {
+				return false; // invalid date format
+			} else {
+				if (isFutureDate(fromResult.date) || isFutureDate(toResult.date)) { //from_date or to_date after current date
+					throw new FutureDateException();
+				}
+				if (fromResult.pattern != toResult.pattern) { // Different range date formats.
+					return false;
+				}
+				// From date in a range is larger than to date.
+				return fromResult.date.compareTo(toResult.date) <= 0;
+			}
+		} else {
+			CheckDateResult dateResult = checkDate(value);
+			if (dateResult == null ) {
+				return false;// invalid date format
+			} else if(isFutureDate(dateResult.date)) {
+				throw new FutureDateException();
+			}
+		}
+		return true;
+	}
+
+	private static class FutureDateException extends Exception {
+    }
+
+	private static class CheckDateResult
 	{
 		public CheckDateResult( Pattern pattern, Date date) {
 			this.pattern = pattern;
@@ -147,74 +163,50 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 		public Date date;
 	}
 
-	private CheckDateResult checkDate(Qualifier collectionQualifier, String value)
-	{	
-		Date collectionDate;
-		
+	private CheckDateResult checkDate( String value)
+	{
 		try {
+			Date collectionDate;
 			if (INSDC_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_1.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);
 				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_1, collectionDate);
 			}
 			else if (INSDC_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_2.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);	
 				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_2, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_1.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);				
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_1, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_2.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);				
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_2, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_3.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_3.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);				
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_3, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_4.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_4.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);				
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_4, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_5.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_5.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_5, collectionDate);
 			}
 			else if (ISO_DATE_FORMAT_PATTERN_6.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_6.parse(value)) != null)
 			{
-				checkFutureDate(collectionQualifier, collectionDate);
 				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_6, collectionDate);
 			}
-			else
-			{
-				reportError(collectionQualifier.getOrigin(),
-					DATE_FORMAT_ERROR, collectionQualifier.getName(),
-					value);
-			}			
 		} 
-		catch (ParseException e) 
+		catch (ParseException ignored)
 		{
-			reportError(collectionQualifier.getOrigin(),
-					DATE_FORMAT_ERROR, collectionQualifier.getName(),
-					value);
 		}
-		return null;		
+		return null;
 	}
-	
-	private void checkFutureDate(Qualifier collectionQualifier, Date collectionDate)
-	{		
-		if (collectionDate.compareTo(currentDate) > 0)
-		{
-			reportError(collectionQualifier.getOrigin(),
-				FUTURE_DATE_ERROR, collectionQualifier.getName(),
-				collectionQualifier.getValue());		
-		}
+
+	private boolean isFutureDate(Date collectionDate) {
+		return collectionDate.compareTo(currentDate) > 0;
 	}
 }

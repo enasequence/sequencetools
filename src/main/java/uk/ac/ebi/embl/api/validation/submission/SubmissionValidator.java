@@ -42,7 +42,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
 
-        if (!options.isRemote && !validationResult.isValid()) {
+        if (!options.isWebinCLI && !validationResult.isValid()) {
             StringBuilder sb = new StringBuilder();
             for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
                 if ((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH)
@@ -120,7 +120,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             sourceUtils.addExtraSourceQualifiers(sourceFeature, new TaxonHelperImpl(), manifest.getName());
             options.source = Optional.of(sourceFeature);
         }
-        options.isRemote = true;
+        options.isWebinCLI = true;
         options.ignoreErrors = manifest.isIgnoreErrors();
         options.reportDir = Optional.of(new File(manifest.getReportFile().getAbsolutePath()).getParent());
         options.reportFile = Optional.of(manifest.getReportFile());
