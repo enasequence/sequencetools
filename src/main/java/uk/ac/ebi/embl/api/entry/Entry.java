@@ -767,7 +767,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.entryType = entryType;
 	}
 
-	public boolean isContigs() {
+	public boolean hasContigs() {
 		if (sequence == null)
 			return false;
 		List<Location> contigs = sequence.getContigs();

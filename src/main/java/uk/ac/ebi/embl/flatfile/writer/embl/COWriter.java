@@ -25,7 +25,6 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 /** Flat file writer for the CO lines.
  */
@@ -37,7 +36,7 @@ public class COWriter extends FlatFileWriter {
     }
 
 	public boolean write(Writer writer) throws IOException {
-		if (!entry.isContigs()) {
+		if (!entry.hasContigs()) {
 			return false;
 		}
 		StringBuilder block = new StringBuilder();

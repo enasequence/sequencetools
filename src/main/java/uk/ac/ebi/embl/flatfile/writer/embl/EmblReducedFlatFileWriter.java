@@ -35,11 +35,11 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
             throw new IOException(REDUCED_FF_WRITE_FAILED_MISSING_SEQUENCE + ": " + entry.getPrimaryAccession());
         }
 
-        if (entry.getDataClass() == Entry.CON_DATACLASS && !entry.isContigs()) {
-            throw new IOException(REDUCED_FF_WRITE_FAILED_MISSING_CONTIGS + ": " + entry.getPrimaryAccession());
-        }
-
-        if (entry.getDataClass() != Entry.CON_DATACLASS && entry.isContigs()) {
+        if (entry.getDataClass().equals(Entry.CON_DATACLASS) ) {
+            if(!entry.hasContigs()) {
+                throw new IOException(REDUCED_FF_WRITE_FAILED_MISSING_CONTIGS + ": " + entry.getPrimaryAccession());
+            }
+        } else if (entry.hasContigs()) {
             throw new IOException(REDUCED_FF_WRITE_FAILED_UNEXPECTED_CONTIGS + ": " + entry.getPrimaryAccession());
         }
 
@@ -51,7 +51,7 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
         writeFeatures(writer);
 
         // Write CO lines for CONs.
-        if (entry.isContigs()) {
+        if (entry.hasContigs()) {
             new COWriter(entry, wrapType).write(writer);
             writer.write(SEPARATOR_LINE);
         }
