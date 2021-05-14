@@ -91,6 +91,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					} else {
 						entry.setSubmitterAccession(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME));
 					}
+					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				}
 
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
