@@ -34,6 +34,7 @@ import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -95,12 +96,14 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				}
 
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-             	if(entry.getSequence()==null||entry.getSequence().getSequenceBuffer()==null)
-            	{  entryReader.read();
+             	if(entry.getSequence() == null || entry.getSequence().getSequenceByte() == null)
+            	{
+            		entryReader.read();
             		continue;
             	}
-            	else if(isHasAnnotationOnlyFlatfile())
-            		collectContigInfo(entry);
+            	else  {
+					collectContigInfo(entry);
+				}
             }
             if(Context.sequence == options.context.get()) {
 				if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
@@ -147,8 +150,14 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				if(fixedFileWriter!=null)
-				new EmblEntryWriter(entry).write(fixedFileWriter);
+				if(fixedFileWriter!=null) {
+					new EmblEntryWriter(entry).write(fixedFileWriter);
+					if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+						new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
+					} else if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
+						new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+					}
+				}
 			}
 			parseResult = entryReader.read();
 			validationResult.append(parseResult);
@@ -191,12 +200,15 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				while(entryReader.isEntry())
 				{
 					Entry entry=entryReader.getEntry();
-					if(entry.getSequence() == null || entry.getSequence().getSequenceBuffer() == null)
+					if(entry.getSequence() == null || entry.getSequence().getSequenceByte() == null)
 					{
 						EmblEntryWriter writer = new EmblEntryWriter(entry);
 						writer.write(annotationOnyFileWriter);
 						setHasAnnotationOnlyFlatfile(true);
-					}
+					} else if(isHasAnnotationOnlyFlatfile()) {
+						throw new ValidationEngineException("File has some entries with only annotations and some entries with sequences, If you intend to provide annotations" +
+								" separately for some sequences, please submit annotations and sequences in different files", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				}
 					entryReader.read();
 				}
 			}
@@ -206,10 +218,13 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			if(isHasAnnotationOnlyFlatfile())
 			{
 				SubmissionFile annotationonlysf=null;
-				if(submissionFile.getFixedFile()!=null)
-					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"+SequenceEntryUtils.FIXED_FILE_SUFFIX),submissionFile.getReportFile());
-				else
-					annotationonlysf=new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE,new File(submissionFile.getFile().getAbsolutePath()+".annotationOnly"),null,submissionFile.getReportFile());
+				if(submissionFile.getFixedFile()!=null) {
+					annotationonlysf = new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE, new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly"),
+							new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly" + SequenceEntryUtils.FIXED_FILE_SUFFIX), submissionFile.getReportFile());
+				} else {
+					annotationonlysf = new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE, new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly"),
+							null, submissionFile.getReportFile());
+				}
                 options.submissionFiles.get().addFile(annotationonlysf);
 			}
 			

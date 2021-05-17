@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -37,6 +36,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -47,7 +47,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
 import java.io.*;
@@ -61,7 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
- 
+
 public abstract class FileValidationCheck {
 
 	protected SubmissionOptions options =null;
@@ -82,6 +81,8 @@ public abstract class FileValidationCheck {
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
+	private PrintWriter contigsReducedFileWriter =null;
+	private PrintWriter scaffoldsReducedFileWriter =null;
 	private static boolean hasAnnotationOnlyFlatfile = false;
 	private static boolean hasAgp = false;
 	public static final String masterFileName = "master.dat";
@@ -404,16 +405,47 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
+	protected PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (submissionFile.createFixedFile() && contigsReducedFileWriter == null)
+			contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath() + ".contigs.reduced"), StandardCharsets.UTF_8));
+		return contigsReducedFileWriter;
+	}
+
+	protected PrintWriter getScaffoldsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (submissionFile.createFixedFile() && scaffoldsReducedFileWriter == null)
+			scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath() + ".scaffolds.reduced"), StandardCharsets.UTF_8));
+		return scaffoldsReducedFileWriter;
+	}
+
+	public void flushAndCloseReducedFileWriters() {
+		try {
+			if (contigsReducedFileWriter != null) {
+				contigsReducedFileWriter.flush();
+				contigsReducedFileWriter.close();
+			}
+			if (scaffoldsReducedFileWriter != null) {
+				scaffoldsReducedFileWriter.flush();
+				scaffoldsReducedFileWriter.close();
+			}
+		} catch (Exception e) {
+		}
+	}
 	protected void collectContigInfo(Entry entry) throws Exception {
 		try {
-			if (entry.getSubmitterAccession() == null)
-				entry.setSubmitterAccession(entry.getPrimaryAccession());
-			if (entry.getSubmitterAccession() == null)
-				throw new ValidationEngineException("Submitter accession missing for an entry");
-			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+			if (entry.getSubmitterAccession() == null) {
+				if(entry.getPrimaryAccession() == null) {
+					throw new ValidationEngineException("Both submitter accession and primary accession missing for an entry");
+				} else {
+					entry.setSubmitterAccession(entry.getPrimaryAccession());
+				}
+			}
+
+			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) { //TODO: check why, we are skipping scaffolds and chromosomes
 				return;
-			if (entry.getSequence() == null)
+			}
+			if (entry.getSequence() == null) {
 				return;
+			}
 			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
 				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());

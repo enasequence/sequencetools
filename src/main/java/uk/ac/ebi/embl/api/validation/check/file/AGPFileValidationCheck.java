@@ -23,10 +23,7 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -37,6 +34,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -60,7 +58,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter=null;
 		Origin origin =null;
-		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());
+			PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
@@ -88,9 +87,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				Entry entry = reader.getEntry();
 				origin = entry.getOrigin();
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
-				if(!isHasAnnotationOnlyFlatfile()) {
-					addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
-				}
+
 				//set validation scope and collect unplacedEntries
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
@@ -131,8 +128,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(fixedFileWriter!=null)
 					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(isHasAnnotationOnlyFlatfile())
-						constructAGPSequence(entry);
+					constructAGPSequence(entry);
+					if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+						new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
+					} else if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
+						new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+					}
 				}
 				parseResult = reader.read();
 				validationResult.append(parseResult);
@@ -161,11 +162,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
  
 		ConcurrentMap contigMap =null;
 		ConcurrentMap sequenceMap = null;
-		if(getContigDB()!=null)
-			contigMap=getContigDB().hashMap("map").createOrOpen();
-		if(getSequenceDB()!=null)
-		sequenceMap=getSequenceDB().hashMap("map").createOrOpen();
-
+		if(getContigDB()!=null) {
+			contigMap = getContigDB().hashMap("map").createOrOpen();
+		}
+		if(isHasAnnotationOnlyFlatfile() && getSequenceDB() != null) {
+			sequenceMap = getSequenceDB().hashMap("map").createOrOpen();
+		}
 
 			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 				if (!agpRow.isGap()) {
@@ -193,13 +195,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());
 			}
          entry.getSequence().setSequence(sequenceBuffer);
-         if(getOptions().context.get()==Context.genome && getSequenceDB()!=null)
-			{
-        	 if(entry.getSubmitterAccession()!=null)
-        	 {
+
+         if(isHasAnnotationOnlyFlatfile() && getOptions().context.get() == Context.genome && getSequenceDB() != null && entry.getSubmitterAccession() != null) {
 				sequenceMap.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
-			}
-			}
+         }
 
 		}catch(Exception e)
 		{

@@ -84,6 +84,7 @@ public class SubmissionValidationPlan
 				if (FileValidationCheck.isHasAgp()) {
 					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.setContigDB(contigDB);
+					agpCheck.getAGPEntries();
 				}
 			}
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
@@ -92,7 +93,6 @@ public class SubmissionValidationPlan
 				check.getAnnotationFlatfile();
 				if(FileValidationCheck.isHasAnnotationOnlyFlatfile()) {
 					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-					agpCheck.getAGPEntries();
 				}
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA)) {
@@ -142,6 +142,9 @@ public class SubmissionValidationPlan
 				}
 			}	else {
 				writeSequenceInfo();
+			}
+			if(check != null) {
+				check.flushAndCloseReducedFileWriters();
 			}
 		} catch (ValidationEngineException e) {
 			try {

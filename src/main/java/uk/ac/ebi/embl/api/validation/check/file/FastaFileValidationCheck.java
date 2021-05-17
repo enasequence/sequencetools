@@ -18,10 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
@@ -33,6 +30,7 @@ import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -85,14 +83,13 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(getOptions().context.get()==Context.genome)
 				{
-					if (entry.getSubmitterAccession() == null)
+					if (entry.getSubmitterAccession() == null) {
 						entry.setSubmitterAccession(entry.getPrimaryAccession());
+					}
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-					if(isHasAnnotationOnlyFlatfile()) {
-						collectContigInfo(entry);
-						if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
-							sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
-						}
+					collectContigInfo(entry);
+					if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
+						sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
 					}
 				}
             	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
@@ -121,8 +118,14 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				}
 				else
 				{
-					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+					if(fixedFileWriter != null) {
+						new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+						if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+							new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
+						} else if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
+							new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+						}
+					}
 				}
 				parseResult= reader.read();
 				validationResult.append(planResult);
