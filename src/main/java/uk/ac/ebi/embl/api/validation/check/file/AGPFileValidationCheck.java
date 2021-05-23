@@ -23,7 +23,10 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -34,7 +37,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -126,13 +128,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			}
     			else
 				{
-					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(fixedFileWriter);
-					constructAGPSequence(entry);
-					if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
-						new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
-					} else if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
-						new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+					if(fixedFileWriter != null) {
+						new EmblEntryWriter(entry).write(fixedFileWriter);
+						constructAGPSequence(entry);
+						writeEntryToFile(entry, submissionFile);
 					}
 				}
 				parseResult = reader.read();
@@ -141,12 +140,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 		} catch (ValidationEngineException vee) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, vee.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getSequenceDB());
 			throw vee;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		if(validationResult.isValid())

@@ -143,9 +143,7 @@ public class SubmissionValidationPlan
 			}	else {
 				writeSequenceInfo();
 			}
-			if(check != null) {
-				check.flushAndCloseReducedFileWriters();
-			}
+
 		} catch (ValidationEngineException e) {
 			try {
 				if (options.reportFile.isPresent()) {
@@ -160,10 +158,8 @@ public class SubmissionValidationPlan
 			}
 			throw e;
 		} finally {
-			if (sequenceDB != null)
-				sequenceDB.close();
-			if (contigDB != null)
-				contigDB.close();
+			FileValidationCheck.closeMapDB(contigDB, sequenceDB);
+			FileValidationCheck.flushAndCloseFileWriters();
 		}
 		return validationResult;
 	}

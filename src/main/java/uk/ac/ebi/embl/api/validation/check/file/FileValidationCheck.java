@@ -48,6 +48,8 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -81,8 +83,9 @@ public abstract class FileValidationCheck {
 	protected static Entry masterEntry =null;
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
-	private PrintWriter contigsReducedFileWriter =null;
-	private PrintWriter scaffoldsReducedFileWriter =null;
+	private static PrintWriter contigsReducedFileWriter =null;
+	private static PrintWriter scaffoldsReducedFileWriter =null;
+	private static PrintWriter chromosomesFileWriter =null;
 	private static boolean hasAnnotationOnlyFlatfile = false;
 	private static boolean hasAgp = false;
 	public static final String masterFileName = "master.dat";
@@ -90,6 +93,9 @@ public abstract class FileValidationCheck {
 	private DB contigDB =null;
 	protected static int sequenceCount = 0;
 	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
+	public static final String contigFileName = "contigs.reduced.tmp";
+	public static final String scaffoldFileName = "scaffolds.reduced.tmp";
+	public static final String chromosomeFileName = "chromosome.flatfile.tmp";
 
 	public FileValidationCheck(SubmissionOptions options) {
 		this.options =options;
@@ -405,19 +411,28 @@ public abstract class FileValidationCheck {
 		return fixedFileWriter;
 	}
 
-	protected PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
-		if (submissionFile.createFixedFile() && contigsReducedFileWriter == null)
-			contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath() + ".contigs.reduced"), StandardCharsets.UTF_8));
+	protected static PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (submissionFile.createFixedFile() && contigsReducedFileWriter == null) {
+			contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + contigFileName), StandardCharsets.UTF_8));
+		}
 		return contigsReducedFileWriter;
 	}
 
-	protected PrintWriter getScaffoldsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
-		if (submissionFile.createFixedFile() && scaffoldsReducedFileWriter == null)
-			scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath() + ".scaffolds.reduced"), StandardCharsets.UTF_8));
+	protected static PrintWriter getScaffoldsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (submissionFile.createFixedFile() && scaffoldsReducedFileWriter == null) {
+			scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + scaffoldFileName), StandardCharsets.UTF_8));
+		}
 		return scaffoldsReducedFileWriter;
 	}
 
-	public void flushAndCloseReducedFileWriters() {
+	protected static PrintWriter getChromosomeFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (submissionFile.createFixedFile() && chromosomesFileWriter == null) {
+			chromosomesFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + chromosomeFileName), StandardCharsets.UTF_8));
+		}
+		return chromosomesFileWriter;
+	}
+
+	public static void flushAndCloseFileWriters() {
 		try {
 			if (contigsReducedFileWriter != null) {
 				contigsReducedFileWriter.flush();
@@ -427,9 +442,14 @@ public abstract class FileValidationCheck {
 				scaffoldsReducedFileWriter.flush();
 				scaffoldsReducedFileWriter.close();
 			}
-		} catch (Exception e) {
+			if(chromosomesFileWriter != null) {
+				chromosomesFileWriter.flush();
+				chromosomesFileWriter.close();
+			}
+		} catch (Exception ignored) {
 		}
 	}
+
 	protected void collectContigInfo(Entry entry) throws Exception {
 		try {
 			if (entry.getSubmitterAccession() == null) {
@@ -440,7 +460,7 @@ public abstract class FileValidationCheck {
 				}
 			}
 
-			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) { //TODO: check why, we are skipping scaffolds and chromosomes
+			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) {
 				return;
 			}
 			if (entry.getSequence() == null) {
@@ -614,7 +634,7 @@ public abstract class FileValidationCheck {
 	{
 		return this.sequenceDB;
 	}
-	public void closeDB(DB ... dbs) {
+	public static void closeMapDB(DB ... dbs) {
 		for(DB db: dbs)
 		{
 			if(db != null)
@@ -709,5 +729,18 @@ public abstract class FileValidationCheck {
 			return false;
 		}
 		return true;
+	}
+
+	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+			new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
+		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
+			new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME) {
+			if (entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME) == null) {
+				entry.getPrimarySourceFeature().addQualifier(new QualifierFactory().createQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, entry.getSubmitterAccession()));
+			}
+			new EmblEntryWriter(entry).write(getChromosomeFileWriter(submissionFile));
+		}
 	}
 }

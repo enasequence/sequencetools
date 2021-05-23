@@ -34,9 +34,11 @@ import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -150,13 +152,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				if(fixedFileWriter!=null) {
+				if(fixedFileWriter != null) {
 					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
-						new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
-					} else if(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
-						new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
-					}
+					writeEntryToFile(entry, submissionFile);
 				}
 			}
 			parseResult = entryReader.read();
@@ -166,11 +164,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}catch(ValidationEngineException e)
 		{
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getSequenceDB());
 			throw e;
 		} catch (Exception ex) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, ex.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
 

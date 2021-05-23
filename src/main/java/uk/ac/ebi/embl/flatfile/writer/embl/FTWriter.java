@@ -32,6 +32,10 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
  */
 public class FTWriter extends FlatFileWriter {
 
+	private boolean sortFeatures;
+	private boolean sortQualifiers;
+	private boolean isReducedFlatfile;
+
 	public FTWriter(Entry entry, boolean sortFeatures,
 					boolean sortQualifiers, WrapType wrapType) {
 		super(entry, wrapType);
@@ -40,33 +44,25 @@ public class FTWriter extends FlatFileWriter {
 	}
 
 	public FTWriter(Entry entry, boolean sortFeatures,
-					boolean sortQualifiers, boolean excludeSource, WrapType wrapType) {
+					boolean sortQualifiers, boolean isReducedFlatfile, WrapType wrapType) {
 		super(entry, wrapType);
 		this.sortFeatures = sortFeatures;
 		this.sortQualifiers = sortQualifiers;
-		this.excludeSource = excludeSource;
+		this.isReducedFlatfile = isReducedFlatfile;
 	}
 
-	private boolean sortFeatures;
-	private boolean sortQualifiers;
-	private boolean excludeSource;
-
 	public boolean write(Writer writer) throws IOException {
-		List<Feature> features = new ArrayList<Feature>(entry.getFeatures());
+		List<Feature> features = new ArrayList<>(entry.getFeatures());
 		if (features == null ||
 			features.size() == 0) {
 			return false;
 		}
-		if (excludeSource && allSourceFeatures(features)) {
-			return false;
-		}
+
 		if (sortFeatures) {
 			Collections.sort(features);
 		}
 		new FHWriter(entry).write(writer);
 		for (Feature feature : features) {
-			if (excludeSource && isSourceFeature(feature))
-				continue;
             writeFeature(writer, feature);
         }
 		return true;		
@@ -87,6 +83,6 @@ public class FTWriter extends FlatFileWriter {
     protected void writeFeature(Writer writer, Feature feature) throws IOException {
         new FeatureWriter(entry, feature, sortQualifiers, wrapType,
         		EmblPadding.FEATURE_PADDING,
-        		EmblPadding.QUALIFIER_PADDING).write(writer);
+        		EmblPadding.QUALIFIER_PADDING, isReducedFlatfile).write(writer);
     }
 }

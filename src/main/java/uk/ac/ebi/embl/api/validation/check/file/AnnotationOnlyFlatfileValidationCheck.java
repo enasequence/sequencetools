@@ -114,7 +114,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		}
 		catch(Exception e)
 		{
-			closeDB(getSequenceDB());
+			closeMapDB(getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 		return validationResult;

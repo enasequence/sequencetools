@@ -33,6 +33,10 @@ import java.util.Vector;
 public class FeatureWriter extends FlatFileWriter {
 
     protected Feature feature;
+    private static boolean isReducedFlatfile = false;
+	private boolean sortQualifiers;
+	private String featureHeader;
+	private String qualifierHeader;
 
     public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers, 
     		WrapType wrapType, String featureHeader, String qualifierHeader) {
@@ -43,9 +47,16 @@ public class FeatureWriter extends FlatFileWriter {
 		this.qualifierHeader = qualifierHeader;
     }
 
-    private boolean sortQualifiers;
-	private String featureHeader;
-	private String qualifierHeader;
+	public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers,
+						 WrapType wrapType, String featureHeader, String qualifierHeader, boolean isReducedFf) {
+		super(entry, wrapType);
+		this.feature = feature;
+		this.sortQualifiers = sortQualifiers;
+		this.featureHeader = featureHeader;
+		this.qualifierHeader = qualifierHeader;
+		isReducedFlatfile = isReducedFf;
+	}
+
         
 	//TODO: return value?    
     public boolean 
@@ -71,7 +82,7 @@ public class FeatureWriter extends FlatFileWriter {
      */
     public static Vector<Qualifier> getFeatureQualifiers(Entry entry, Feature feature) {
     	Vector<Qualifier> qualifiers = new Vector<Qualifier>();
-        if (feature instanceof SourceFeature) {
+        if (!isReducedFlatfile && feature instanceof SourceFeature) {
         	String scientificName = ((SourceFeature)feature).getScientificName();
         	if (!FlatFileUtils.isBlankString(scientificName)) {
         		Qualifier qualifier = (new QualifierFactory()).
@@ -91,6 +102,7 @@ public class FeatureWriter extends FlatFileWriter {
         		qualifiers.add(qualifier);        		
         	}
         }
+
     	for (Qualifier qualifier : feature.getQualifiers()) {	    	
     		String name = qualifier.getName();
     		String value = qualifier.getValue();
