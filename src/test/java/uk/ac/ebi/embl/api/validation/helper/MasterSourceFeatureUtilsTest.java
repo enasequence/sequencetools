@@ -24,7 +24,7 @@ public class MasterSourceFeatureUtilsTest {
         assertEquals(7, source.getQualifiers().size());//6 from sample + organism qualifier
         assertEquals("2020-03-09", source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
         assertEquals("Spain:Valencia", source.getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME).getValue());
-        assertEquals("39.47 0.38", source.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME).getValue());
+        assertEquals("39.47 N 0.38 E", source.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME).getValue());
         assertEquals("Homo sapiens", source.getSingleQualifier(Qualifier.HOST_QUALIFIER_NAME).getValue());
         assertEquals("hCoV-19/Spain/Valencia27/2020", source.getSingleQualifier(Qualifier.ISOLATE_QUALIFIER_NAME).getValue());
         assertEquals("Severe acute respiratory syndrome coronavirus 2", source.getSingleQualifier(Qualifier.ORGANISM_QUALIFIER_NAME).getValue());
