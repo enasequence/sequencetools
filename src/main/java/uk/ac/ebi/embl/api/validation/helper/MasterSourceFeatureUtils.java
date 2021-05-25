@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -112,8 +113,8 @@ public class MasterSourceFeatureUtils {
 		sourceFeature.setScientificName(sampleInfo.getScientificName());
 		sourceFeature.setMasterLocation();
 
-		String latitude = null;
-		String longitude = null;
+		Double latitude = null;
+		Double longitude = null;
 		String country = null;
 		String region = null;
 		for (Map.Entry<String, String> entry : sample.getAttributes().entrySet()) {
@@ -122,9 +123,17 @@ public class MasterSourceFeatureUtils {
 			if (isCovidTaxId(sourceFeature.getTaxId()) && tag != null) {
 				// Master source qualifiers values created from multiple sample fields are constructed here.
 				if (tag.toLowerCase().contains("latitude")) {
-					latitude = value;
+					try {
+						latitude = new Double(value);
+					} catch (NumberFormatException ex) {
+						//ignore
+					}
 				} else if (tag.toLowerCase().contains("longitude")) {
-					longitude = value;
+					try {
+						longitude = new Double(value);
+					} catch (NumberFormatException ex) {
+						//ignore
+					}
 				} else if (tag.trim().equalsIgnoreCase("geographic location (country and/or sea)")) {
 					country = value;
 				} else if (tag.trim().equalsIgnoreCase("geographic location (region and locality)")) {
@@ -138,7 +147,11 @@ public class MasterSourceFeatureUtils {
 		}
 
 		if (latitude != null && longitude != null) {
-			addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latitude + " " + longitude, sourceFeature);
+			String latDirect = latitude < 0 ? "S" : "N";
+			String lonDirect = longitude < 0 ? "W" : "E";
+
+			String latLonValue = latitude + " " + latDirect + " " + longitude + " " + lonDirect;
+			addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latLonValue, sourceFeature);
 		}
 		if (country != null || region != null) {
 			addSourceQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country == null ? region : region == null ? country : country + ":" + region, sourceFeature);
@@ -151,4 +164,6 @@ public class MasterSourceFeatureUtils {
 
 		return sourceFeature;
 	}
+
+
 }
