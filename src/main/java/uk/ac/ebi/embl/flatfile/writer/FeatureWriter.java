@@ -107,6 +107,9 @@ public class FeatureWriter extends FlatFileWriter {
 				value != null && value.startsWith("taxon:")) {
     			continue; // Ignore /db_xref="taxon:" qualifiers.
     		}
+    		if (name.equals(Qualifier.SUB_SPECIES)) {
+    			continue; // Ignore /sub_species qualifiers.
+			}
     		qualifiers.add(qualifier);
     	}
     	return qualifiers;    	

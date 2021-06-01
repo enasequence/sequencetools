@@ -103,9 +103,8 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
 	public static final String SEROVAR_QUALIFIER_NAME = "serovar";
 	public static final String SEROTYPE_QUALIFIER_NAME = "serotype";
 	public static final String CIRCULAR_RNA_QUALIFIER_NAME = "circular_RNA";
+	public static final String SUB_SPECIES = "sub_species";
 
-
-	
 	private static final HashSet<String> QUOTED_QUALS = new HashSet<String>();
 
 	private static final HashMap<String, Integer> ORDER_QUALS = new HashMap<String, Integer>();
