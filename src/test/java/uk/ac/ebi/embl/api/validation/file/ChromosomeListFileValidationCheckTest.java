@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -46,9 +47,11 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 	@Test
 	public void testvalidChromosomeList() throws ValidationEngineException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
-		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
+		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
 		assertEquals(check.getChromosomeQualifeirs().size(),2);
 		List<Qualifier> qualifiers =new ArrayList<>();
@@ -67,9 +70,11 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 	@Test
 	public void testInvalidChromosomeList() throws ValidationEngineException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
-		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options);
+		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options, sharedInfo);
 		assertTrue(!check.check(file).isValid());
 		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
 	}

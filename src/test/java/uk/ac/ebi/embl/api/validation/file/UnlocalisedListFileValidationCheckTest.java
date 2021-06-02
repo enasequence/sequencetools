@@ -41,19 +41,22 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 	@Test
 	public void testvalidUnlocalisedList() throws ValidationEngineException
 	{
-		FileValidationCheck.entryNames.clear();
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
-		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
+		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
 	}
 	
 	@Test
 	public void testInvalidUnlocalisedList() throws ValidationEngineException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_unlocalised_list.txt",SubmissionFile.FileType.UNLOCALISED_LIST);
-		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options);
+		UnlocalisedListFileValidationCheck check = new UnlocalisedListFileValidationCheck(options, sharedInfo);
 		assertTrue(!check.check(file).isValid());
 		assertTrue(check.getMessageStats().get("InvalidNoOfFields")!=null);
 	}

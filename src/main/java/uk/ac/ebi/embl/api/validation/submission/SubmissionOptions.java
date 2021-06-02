@@ -87,19 +87,19 @@ public class SubmissionOptions
 		if (!isWebinCLI && ignoreError.isPresent()) {
 					ignoreErrors = ignoreError.get();
 		}
-		FileValidationCheck.setSequenceCount(0);
-		FileValidationCheck.sequenceInfo.clear();
-		FileValidationCheck.fastaInfo.clear();
-		FileValidationCheck.flatfileInfo.clear();
-		FileValidationCheck.agpInfo.clear();
-		FileValidationCheck.agpEntryNames.clear();
-		FileValidationCheck.chromosomeNameQualifiers.clear();
-		FileValidationCheck.entryNames.clear();
-		FileValidationCheck.duplicateEntryNames.clear();
-		FileValidationCheck.chromosomeNames.clear();
-		FileValidationCheck.unplacedEntryNames.clear();
-		FileValidationCheck.unlocalisedEntryNames.clear();
-		FileValidationCheck.setHasAnnotationOnlyFlatfile(false);
+//		FileValidationCheck.setSequenceCount(0);
+//		FileValidationCheck.sequenceInfo.clear();
+//		FileValidationCheck.fastaInfo.clear();
+//		FileValidationCheck.flatfileInfo.clear();
+//		FileValidationCheck.agpInfo.clear();
+//		FileValidationCheck.agpEntryNames.clear();
+//		FileValidationCheck.chromosomeNameQualifiers.clear();
+//		FileValidationCheck.entryNames.clear();
+//		FileValidationCheck.duplicateEntryNames.clear();
+//		FileValidationCheck.chromosomeNames.clear();
+//		FileValidationCheck.unplacedEntryNames.clear();
+//		FileValidationCheck.unlocalisedEntryNames.clear();
+//		FileValidationCheck.setHasAnnotationOnlyFlatfile(false);
 		GlobalDataSets.clear();
 	}
 	

@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
@@ -42,10 +43,11 @@ import java.nio.file.Paths;
 public class FlatfileFileValidationCheck extends FileValidationCheck
 {
 
-	public FlatfileFileValidationCheck(SubmissionOptions options) 
+	public FlatfileFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
-	}	
+		super(options, sharedInfo);
+	}
+
 	@Override
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
@@ -99,7 +101,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             	{  entryReader.read();
             		continue;
             	}
-            	else if(isHasAnnotationOnlyFlatfile())
+            	else if(sharedInfo.hasAnnotationOnlyFlatfile)
             		collectContigInfo(entry);
             }
             if(Context.sequence == options.context.get()) {
@@ -137,7 +139,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				addEntryName(entry.getSubmitterAccession());
 				int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 				AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
-				FileValidationCheck.flatfileInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+				sharedInfo.flatfileInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 			}
 
 			if(!planResult.isValid())
@@ -152,7 +154,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			parseResult = entryReader.read();
 			validationResult.append(parseResult);
-			sequenceCount++;
+			sharedInfo.sequenceCount++;
 		}
 		}catch(ValidationEngineException e)
 		{
@@ -195,7 +197,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					{
 						EmblEntryWriter writer = new EmblEntryWriter(entry);
 						writer.write(annotationOnyFileWriter);
-						setHasAnnotationOnlyFlatfile(true);
+						sharedInfo.hasAnnotationOnlyFlatfile = true;
 					}
 					entryReader.read();
 				}
@@ -203,7 +205,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			 catch (IOException e) {
 				throw new ValidationEngineException(e.getMessage(), e);
 			 }
-			if(isHasAnnotationOnlyFlatfile())
+			if(sharedInfo.hasAnnotationOnlyFlatfile)
 			{
 				SubmissionFile annotationonlysf=null;
 				if(submissionFile.getFixedFile()!=null)
@@ -217,6 +219,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	}
 	private void registerFlatfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.flatfileInfo,options.processDir.get(),AssemblySequenceInfo.flatfilefileName);
+		AssemblySequenceInfo.writeMapObject(sharedInfo.flatfileInfo,options.processDir.get(),AssemblySequenceInfo.flatfilefileName);
 	}
 }

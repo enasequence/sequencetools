@@ -26,6 +26,7 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -49,6 +50,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testInvalidFlatFile() throws ValidationEngineException
 		{
+			sharedInfo = new FileValidationCheck.SharedInfo();
+
 			validateMaster(Context.genome);
 			SubmissionFile file=initSubmissionTestFile("invalid_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -57,13 +60,15 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.reportDir = Optional.of(file.getFile().getParent());
 	        options.context = Optional.of(Context.genome);
 	        options.init();
-			FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+			FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 			assertTrue(!check.check(file).isValid());
 		}
 		
 		@Test
 		public void testTranscriptomFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
+			sharedInfo = new FileValidationCheck.SharedInfo();
+
 			validateMaster(Context.transcriptome);
 			SubmissionFile file=initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 			SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -74,7 +79,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.context = Optional.of(Context.transcriptome);
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
-			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 			assertTrue(check.check(file).isValid());
 	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
@@ -82,6 +87,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testgenomeFixedvalidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 		{
+			sharedInfo = new FileValidationCheck.SharedInfo();
+
 			validateMaster(Context.genome);
 			//FT                   /circular_RNA
 			SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile.txt",SubmissionFile.FileType.FLATFILE);
@@ -93,7 +100,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.context = Optional.of(Context.genome);
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 	        options.init();
-			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 			assertTrue(check.check(file).isValid());
 	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
@@ -101,6 +108,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void testGenBankFixedValidFlatFile() throws ValidationEngineException, FlatFileComparatorException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_genbank_flatfile.txt",SubmissionFile.FileType.FLATFILE);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -111,7 +120,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.context = Optional.of(Context.genome);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
-		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
@@ -119,6 +128,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeFlatFilePseudogeneQualWithSingleQuote() throws ValidationEngineException, FlatFileComparatorException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_genome_flatfile_pseudogene.txt",SubmissionFile.FileType.FLATFILE);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -129,7 +140,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.context = Optional.of(Context.genome);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
-		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
+		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}

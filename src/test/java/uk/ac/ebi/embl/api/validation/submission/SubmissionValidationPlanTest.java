@@ -192,8 +192,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertEquals(1, SubmissionValidationPlan.getUnplacedEntryNames().size());
-		assertTrue( SubmissionValidationPlan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
+		assertEquals(1, plan.getUnplacedEntryNames().size());
+		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
@@ -220,7 +220,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
@@ -245,7 +245,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}

@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -41,9 +42,9 @@ import java.util.concurrent.ConcurrentMap;
 public class FastaFileValidationCheck extends FileValidationCheck
 {
 
-	public FastaFileValidationCheck(SubmissionOptions options) 
+	public FastaFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
+		super(options, sharedInfo);
 	}	
 	
 	@SuppressWarnings("deprecation")
@@ -87,7 +88,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					if (entry.getSubmitterAccession() == null)
 						entry.setSubmitterAccession(entry.getPrimaryAccession());
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-					if(isHasAnnotationOnlyFlatfile()) {
+					if(sharedInfo.hasAnnotationOnlyFlatfile) {
 						collectContigInfo(entry);
 						if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
 							sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
@@ -110,7 +111,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					addEntryName(entry.getSubmitterAccession());
 					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
-					FileValidationCheck.fastaInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+					sharedInfo.fastaInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 				}
 
 				if(!planResult.isValid())
@@ -125,7 +126,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				}
 				parseResult= reader.read();
 				validationResult.append(planResult);
-				sequenceCount++;
+				sharedInfo.sequenceCount++;
 			}
 			if(getSequenceDB()!=null)
 			{
@@ -152,7 +153,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	}
 	private void registerFastaInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.fastaInfo,options.processDir.get(),AssemblySequenceInfo.fastafileName);
+		AssemblySequenceInfo.writeMapObject(sharedInfo.fastaInfo,options.processDir.get(),AssemblySequenceInfo.fastafileName);
 	}
 
 	@Override
