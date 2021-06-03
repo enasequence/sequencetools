@@ -1,11 +1,13 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
@@ -21,13 +23,23 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SubmissionValidationPlanTest extends SubmissionValidationTest 
 {
     SubmissionOptions options =null;
+
     @Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -326,4 +338,56 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 	}
 
+	@Test
+	public void testGenomeSubmissionwitFastawithValidChromosomeListMultipleTimesInParallel() {
+		List<CompletableFuture<Void>> futs = new ArrayList<>();
+		for (int i = 0; i < 32; i++) {
+			int taskId = i + 1;
+
+			futs.add(CompletableFuture.runAsync(() -> {
+				SubmissionFiles submissionFiles = new SubmissionFiles();
+				submissionFiles.addFile(initSubmissionFixedTestFile(
+						"valid_genome_fasta_2.txt", FileType.FASTA));
+				submissionFiles.addFile(initSubmissionFixedTestFile(
+						"chromosome_list_2.txt", FileType.CHROMOSOME_LIST));
+
+				File reportProcessDir = submissionFiles.getFiles().get(0).getFile().getParentFile().toPath().resolve("" + taskId).toFile();
+				reportProcessDir.mkdir();
+
+				SubmissionOptions opts = new SubmissionOptions();
+				opts.isWebinCLI = true;
+				opts.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
+				opts.source = Optional.of(getSource());
+				opts.ignoreErrors = true;
+				opts.isDevMode = true;
+				opts.context = Optional.of(Context.genome);
+				opts.submissionFiles = Optional.of(submissionFiles);
+				opts.reportDir = Optional.of(reportProcessDir.getAbsolutePath());
+				opts.processDir = Optional.of(reportProcessDir.getAbsolutePath());
+
+				try {
+					SubmissionValidationPlan plan = new SubmissionValidationPlan(opts);
+
+					ValidationResult res = plan.execute();
+
+					assertTrue(res.isValid());
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}));
+		}
+
+		RuntimeException runEx = null;
+
+		try {
+			CompletableFuture.allOf(futs.toArray(new CompletableFuture[futs.size()])).join();
+		} catch (CompletionException ex) {
+			 runEx = (RuntimeException) ex.getCause();
+		}
+
+		Assert.assertTrue(runEx.getMessage(),
+				runEx.getMessage().contains("Entry names are duplicated in assembly")
+						|| runEx.getMessage().contains("fasta file validation failed for")
+						|| runEx.getMessage().contains("master file validation failed for master.dat"));
+	}
 }
