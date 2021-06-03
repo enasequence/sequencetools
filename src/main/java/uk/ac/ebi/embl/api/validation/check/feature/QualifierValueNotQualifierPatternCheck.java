@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -41,7 +41,7 @@ public class QualifierValueNotQualifierPatternCheck extends FeatureValidationChe
     }
 
     public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_NOT_QUALIFIER_PATTERN);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_NOT_QUALIFIER_PATTERN);
         result = new ValidationResult();
 
         if (feature == null) {

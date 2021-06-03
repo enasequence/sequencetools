@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -64,7 +64,7 @@ public class PCRPrimersQualifierCheck extends FeatureValidationCheck {
 			return result;
 		}
 
-		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.NUCLEOTIDE_CODE).getRows()) {
+		for(DataRow dataRow : GlobalDataSets.getDataSet(GlobalDataSetFile.NUCLEOTIDE_CODE).getRows()) {
 
 			/*
 			 * fwd_seq and rev_seq are both mandatory; fwd_name and rev_name are

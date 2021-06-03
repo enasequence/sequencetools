@@ -20,14 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class QualifierPatternAndQualifierCheckTest {
@@ -43,14 +42,13 @@ public class QualifierPatternAndQualifierCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("proviral", "note", ".*endogenous retrovirus$");
-        DataSetHelper.createAndAdd(FileName.QUALIFIER_PATTERN_QUALIFIER, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_PATTERN_QUALIFIER, dataRow);
 		check = new QualifierPatternAndQualifierCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(feature);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

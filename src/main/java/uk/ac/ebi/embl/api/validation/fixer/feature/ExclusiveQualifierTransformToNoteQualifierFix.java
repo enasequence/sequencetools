@@ -22,7 +22,7 @@ public class ExclusiveQualifierTransformToNoteQualifierFix extends
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet exclusiveQualifierSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS_TO_REMOVE);
+		DataSet exclusiveQualifierSet = GlobalDataSets.getDataSet(GlobalDataSetFile.EXCLUSIVE_QUALIFIERS_TO_REMOVE);
 		result = new ValidationResult();
 
 		if (feature == null || feature.getQualifiers().isEmpty())

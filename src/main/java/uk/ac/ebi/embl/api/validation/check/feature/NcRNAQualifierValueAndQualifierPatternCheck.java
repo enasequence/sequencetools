@@ -36,7 +36,7 @@ public class NcRNAQualifierValueAndQualifierPatternCheck extends FeatureValidati
     }
 
     public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.NCRNA_QUALIFIER_VAL_QUALIFIER_PATTERN);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.NCRNA_QUALIFIER_VAL_QUALIFIER_PATTERN);
         result = new ValidationResult();
 
         if (feature == null) {

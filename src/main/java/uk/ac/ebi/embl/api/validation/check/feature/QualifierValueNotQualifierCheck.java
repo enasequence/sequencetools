@@ -36,7 +36,7 @@ public class QualifierValueNotQualifierCheck extends FeatureValidationCheck {
 
 
     public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_NOT_QUALIFIER);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_NOT_QUALIFIER);
         result = new ValidationResult();
 
         if (feature == null) {

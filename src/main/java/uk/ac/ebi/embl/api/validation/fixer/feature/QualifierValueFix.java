@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -42,7 +42,7 @@ public class QualifierValueFix extends FeatureValidationCheck
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet qualifierValuetoFixValue = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_TO_FIX_VALUE);
+		DataSet qualifierValuetoFixValue = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE);
 		try
 		{ 
 			result = new ValidationResult();

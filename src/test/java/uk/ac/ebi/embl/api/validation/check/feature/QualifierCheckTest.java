@@ -15,12 +15,11 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import org.junit.After;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,10 +63,15 @@ public class QualifierCheckTest {
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
 
-        DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6);
-        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
-        DataSetHelper.createAndAdd(FileName.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
         check = new QualifierCheck();
+    }
+
+    @After
+    public void tearDown() {
+        GlobalDataSets.resetTestDataSets();
     }
 
     @Test

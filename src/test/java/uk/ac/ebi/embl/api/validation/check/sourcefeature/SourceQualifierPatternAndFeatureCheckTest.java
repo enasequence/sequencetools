@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,10 +29,8 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.SourceQualifierPatternAndFeatureCheck;
 
 public class SourceQualifierPatternAndFeatureCheckTest {
 
@@ -53,18 +52,13 @@ public class SourceQualifierPatternAndFeatureCheckTest {
 		source = featureFactory.createSourceFeature();
 		entry.addFeature(source);
 
-		DataSetHelper.createAndAdd(FileName.SOURCE_QUALIFIER_PATTERN_FEATURE, new DataRow("LTR","note",".*endogenous retrovirus$"));
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.SOURCE_QUALIFIER_PATTERN_FEATURE, new DataRow("LTR","note",".*endogenous retrovirus$"));
 		check = new SourceQualifierPatternAndFeatureCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		source.addQualifier(qualifierFactory.createQualifier("note",
-				"X endogenous retrovirus"));
-		entry.addFeature(featureFactory.createFeature("LTR"));
-
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

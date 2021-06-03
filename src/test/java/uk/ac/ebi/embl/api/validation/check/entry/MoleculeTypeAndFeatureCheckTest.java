@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,9 +32,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class MoleculeTypeAndFeatureCheckTest {
@@ -53,16 +52,13 @@ public class MoleculeTypeAndFeatureCheckTest {
 		Sequence sequence = sequenceFactory.createSequence();
 		entry.setSequence(sequence);
 
-		DataSetHelper.createAndAdd(FileName.MOLTYPE_FEATURE, new DataRow("rRNA", "rRNA"),new DataRow("tmRNA", "tmRNA") );
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.MOLTYPE_FEATURE, new DataRow("rRNA", "rRNA"),new DataRow("tmRNA", "tmRNA") );
 		check = new MoleculeTypeAndFeatureCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		entry.getSequence().setMoleculeType("rRNA");
-		entry.addFeature(featureFactory.createFeature("rRNA"));
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

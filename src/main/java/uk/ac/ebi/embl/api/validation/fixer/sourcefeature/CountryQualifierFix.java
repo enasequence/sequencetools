@@ -40,7 +40,7 @@ public class CountryQualifierFix extends FeatureValidationCheck
 
 	private Set<String> getCountries() {
 		Set<String> countries = new HashSet<>();
-		DataSet valuesSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+		DataSet valuesSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS);
 
 		if (valuesSet != null) {
 			for (DataRow regexpRow : valuesSet.getRows()) {

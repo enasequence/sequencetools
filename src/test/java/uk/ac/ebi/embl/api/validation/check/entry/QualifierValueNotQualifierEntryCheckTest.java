@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,9 +28,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class QualifierValueNotQualifierEntryCheckTest {
@@ -52,14 +51,13 @@ public class QualifierValueNotQualifierEntryCheckTest {
 		entry.addFeature(feature2);
 
 		DataRow dataRow = new DataRow("organelle", "gene", "5.8S rRNA");
-		DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_NOT_QUALIFIER_ENTRY, dataRow);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_NOT_QUALIFIER_ENTRY, dataRow);
 		check = new QualifierValueNotQualifierEntryCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

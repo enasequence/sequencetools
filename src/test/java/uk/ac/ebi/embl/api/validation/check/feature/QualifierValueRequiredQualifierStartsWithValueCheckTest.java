@@ -20,14 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class QualifierValueRequiredQualifierStartsWithValueCheckTest
@@ -43,9 +42,14 @@ public class QualifierValueRequiredQualifierStartsWithValueCheckTest
 		FeatureFactory featureFactory = new FeatureFactory();
 		feature = featureFactory.createFeature("feature");
 
-		DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE, new DataRow(	"product","MHC class I antigen","gene","HLA-A"),
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE, new DataRow(	"product","MHC class I antigen","gene","HLA-A"),
 				new DataRow("product","MHC class I antigen","gene","HLA-B"));
 		check = new QualifierValueRequiredQualifierStartsWithValueCheck();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

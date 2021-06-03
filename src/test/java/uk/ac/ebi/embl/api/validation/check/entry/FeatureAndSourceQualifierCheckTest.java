@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,6 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 
@@ -49,16 +49,13 @@ public class FeatureAndSourceQualifierCheckTest {
 		entry.addFeature(source);
 
 		DataRow dataRow = new DataRow("map", "STS");
-		DataSetHelper.createAndAdd(FileName.FEATURE_SOURCE_QUALIFIER, dataRow);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_SOURCE_QUALIFIER, dataRow);
 		check = new FeatureAndSourceQualifierCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		source.setSingleQualifier("map");
-		entry.addFeature(featureFactory.createFeature("STS"));
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

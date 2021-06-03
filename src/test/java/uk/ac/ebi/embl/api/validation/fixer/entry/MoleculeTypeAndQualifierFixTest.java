@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -25,13 +26,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -58,8 +55,13 @@ public class MoleculeTypeAndQualifierFixTest
 		DataRow dataRow1 = new DataRow(
 				"genomic DNA",
 				Qualifier.GERMLINE_QUALIFIER_NAME);
-		DataSetHelper.createAndAdd(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES, dataRow1);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.SOURCE_QUALIFIERS_MOLTYPE_VALUES, dataRow1);
 		check = new MoleculeTypeAndQualifierFix();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	public void testCheck_Empty()

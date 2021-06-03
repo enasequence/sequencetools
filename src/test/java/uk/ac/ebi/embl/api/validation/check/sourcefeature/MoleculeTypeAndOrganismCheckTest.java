@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,14 +29,10 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.MoleculeTypeAndOrganismCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -63,17 +60,14 @@ public class MoleculeTypeAndOrganismCheckTest {
 		taxonHelper = createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
 		DataRow dataRow = new DataRow("Deltavirus,Retro-transcribing viruses,ssRNA viruses,dsRNA viruses", "genomic RNA");
-		DataSetHelper.createAndAdd(FileName.MOLTYPE_ORGANISM, dataRow);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.MOLTYPE_ORGANISM, dataRow);
 		check = new MoleculeTypeAndOrganismCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		entry.getSequence().setMoleculeType("genomic RNA");
-		source.addQualifier("organism", "Deltavirus");
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

@@ -34,7 +34,7 @@ public class QualifierAndRequiredQualifierinFeatureCheck extends FeatureValidati
     }
 
     public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_FEATURE);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_REQUIRED_QUALIFIER_IN_FEATURE);
         result = new ValidationResult();
 
         if (feature == null) {

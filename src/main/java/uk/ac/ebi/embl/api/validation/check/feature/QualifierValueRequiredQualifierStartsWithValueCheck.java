@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -41,7 +41,7 @@ public class QualifierValueRequiredQualifierStartsWithValueCheck extends
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_REQ_QUALIFIER_STARTSWITH_VALUE);
 		result = new ValidationResult();
 
 		if (feature == null||feature.getQualifiers()==null||feature.getQualifiers().size()==0)

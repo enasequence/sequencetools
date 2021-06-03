@@ -46,7 +46,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
     @BeforeClass
 	public static void beforeClass() {
     	//to clear out changes made by other tests that might interfere with tests in this class.
-		GlobalDataSets.clear();
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Before

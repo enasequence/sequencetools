@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,13 +23,9 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -53,8 +50,13 @@ public class ObsoleteFeaturetoNewFeatureFixTest
 		DataRow dataRow6 = new DataRow("LTR","repeat_region","rtp_type","long_terminal_repeat");
 
 		qualifierFactory = new QualifierFactory();
-		DataSetHelper.createAndAdd(FileName.OBSOLETE_FEATURE_TO_FEATURE, dataRow1,dataRow2,dataRow3,dataRow4,dataRow5,dataRow6);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.OBSOLETE_FEATURE_TO_FEATURE, dataRow1,dataRow2,dataRow3,dataRow4,dataRow5,dataRow6);
 		check = new ObsoleteFeaturetoNewFeatureFix();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

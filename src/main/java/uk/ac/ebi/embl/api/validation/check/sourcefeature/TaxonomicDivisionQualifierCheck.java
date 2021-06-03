@@ -24,7 +24,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
@@ -41,7 +40,7 @@ public class TaxonomicDivisionQualifierCheck extends EntryValidationCheck
 
 	public ValidationResult check(Entry entry)
 	{
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.TAXONOMIC_DIVISION_QUALIFIER);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.TAXONOMIC_DIVISION_QUALIFIER);
 		result = new ValidationResult();
 
 		if (entry == null)

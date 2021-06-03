@@ -20,14 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class NcRNAQualifierValueAndQualifierPatternCheckTest {
@@ -43,14 +42,13 @@ public class NcRNAQualifierValueAndQualifierPatternCheckTest {
 		feature = featureFactory.createFeature("ncRNA");
 
 		DataRow dataRow = new DataRow("product", "^(microRNA miR-).+$", "ncRNA_class", "miRNA");
-        DataSetHelper.createAndAdd(FileName.NCRNA_QUALIFIER_VAL_QUALIFIER_PATTERN, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.NCRNA_QUALIFIER_VAL_QUALIFIER_PATTERN, dataRow);
 		check = new NcRNAQualifierValueAndQualifierPatternCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(feature);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

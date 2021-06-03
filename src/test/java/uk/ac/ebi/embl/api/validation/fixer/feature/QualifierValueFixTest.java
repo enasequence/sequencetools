@@ -15,18 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.feature.QualifierValueFix;
+import uk.ac.ebi.embl.api.validation.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,9 +41,14 @@ public class QualifierValueFixTest
 		featureFactory = new FeatureFactory();
 		DataRow dataRow1 = new DataRow("country","East Timor","Timor-Leste");
 		DataRow dataRow2 = new DataRow("country","UK","United Kingdom");
-		DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1,dataRow2);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1,dataRow2);
 		feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
 		check = new QualifierValueFix();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test
