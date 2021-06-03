@@ -17,6 +17,8 @@ package uk.ac.ebi.embl.api.validation.file;
 
 import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -35,6 +37,7 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
 	   public void init() throws SQLException
 	   {   
 		   options = new SubmissionOptions();
+		   options.context = Optional.of(Context.genome);
 	       options.isWebinCLI = true;
 	   }
 	

@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -41,6 +42,7 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 	public void init()
 	{   
 		options = new SubmissionOptions();
+		options.context = Optional.of(Context.genome);
 		options.isWebinCLI = true;
 	}
 
