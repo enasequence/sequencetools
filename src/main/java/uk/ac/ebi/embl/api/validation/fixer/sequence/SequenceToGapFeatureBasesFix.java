@@ -53,12 +53,12 @@ public class SequenceToGapFeatureBasesFix extends
 	FeatureFactory features = new FeatureFactory();
 	LocationFactory locationFactory = new LocationFactory();
 	// private Entry entry;
-	private static int newGapFeatureCount = 0;
+	private int newGapFeatureCount = 0;
 	/**
 	 * a count of the number of gap features that are of length 100 (the default
 	 * value for unknown)
 	 */
-	private static int unknownEstimatedLength = 0;
+	private int unknownEstimatedLength = 0;
 		
 	protected void processMissingGapFeature(Entry entry, NRegion nRegion)
 	{
@@ -184,6 +184,5 @@ public class SequenceToGapFeatureBasesFix extends
 					COUNT_MESSAGE_ID,
 					newGapFeatureCount);
 		}
-		newGapFeatureCount = 0;
 	}
 }
