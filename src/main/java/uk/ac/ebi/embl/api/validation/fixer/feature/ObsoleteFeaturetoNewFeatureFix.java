@@ -18,7 +18,7 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -36,7 +36,7 @@ public class ObsoleteFeaturetoNewFeatureFix extends FeatureValidationCheck
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet obsoleteFeatureDataSet = GlobalDataSets.getDataSet(FileName.OBSOLETE_FEATURE_TO_FEATURE);
+		DataSet obsoleteFeatureDataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.OBSOLETE_FEATURE_TO_FEATURE);
 		result = new ValidationResult();
 
 		if (feature == null)

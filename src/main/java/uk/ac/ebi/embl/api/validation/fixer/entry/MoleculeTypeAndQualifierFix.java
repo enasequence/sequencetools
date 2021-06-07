@@ -40,7 +40,7 @@ public class MoleculeTypeAndQualifierFix extends EntryValidationCheck
 
 	public ValidationResult check(Entry entry)
 	{
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.SOURCE_QUALIFIERS_MOLTYPE_VALUES);
 		result = new ValidationResult();
 
 		if (entry == null)

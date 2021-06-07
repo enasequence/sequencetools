@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,9 +28,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class QualifierAndRequiredQualifierinEntryCheckTest {
@@ -47,14 +46,13 @@ public class QualifierAndRequiredQualifierinEntryCheckTest {
 	     entry=entryFactory.createEntry();
 		DataRow dataRow = new DataRow("map,PCR_primers","satellite");
 
-        DataSetHelper.createAndAdd(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY, dataRow);
 		check = new QualifierAndRequiredQualifierinEntryCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

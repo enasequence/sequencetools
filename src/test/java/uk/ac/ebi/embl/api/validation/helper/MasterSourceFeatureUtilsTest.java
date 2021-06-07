@@ -24,6 +24,7 @@ public class MasterSourceFeatureUtilsTest {
         assertEquals(7, source.getQualifiers().size());//6 from sample + organism qualifier
         assertEquals("2020-03-09", source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
         assertEquals("Spain:Valencia", source.getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME).getValue());
+        // expects direction (N) added to latitude, and longitude with existing direction returned as it is - both cases checked
         assertEquals("39.47 N 0.38 E", source.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME).getValue());
         assertEquals("Homo sapiens", source.getSingleQualifier(Qualifier.HOST_QUALIFIER_NAME).getValue());
         assertEquals("hCoV-19/Spain/Valencia27/2020", source.getSingleQualifier(Qualifier.ISOLATE_QUALIFIER_NAME).getValue());
@@ -41,7 +42,7 @@ public class MasterSourceFeatureUtilsTest {
         attr.put("sample_description", "hCoV-19/Spain/Valencia27/2020");
         attr.put("collection date", "2020-03-09"); //1
         attr.put("geographic location (latitude)", "39.47");//3
-        attr.put("geographic location (longitude)", "0.38");//3
+        attr.put("geographic location (longitude)", "0.38 E");//3
         attr.put("geographic location (region and locality)", "Valencia");//2
         attr.put("host common name", "Human");
         attr.put("geographic location (country and/or sea)", "Spain");//2

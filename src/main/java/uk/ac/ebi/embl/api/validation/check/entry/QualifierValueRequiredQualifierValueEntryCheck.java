@@ -23,8 +23,8 @@ import org.apache.commons.lang.ArrayUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -42,7 +42,7 @@ public class QualifierValueRequiredQualifierValueEntryCheck extends
 
 	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VAL_REQUIRED_QUALIFIER_ENTRY);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VAL_REQUIRED_QUALIFIER_ENTRY);
 
 		if (entry == null) {
 			return result;

@@ -51,7 +51,7 @@ public class MoleculeTypeAndFeatureCheck extends EntryValidationCheck {
 
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.MOLTYPE_FEATURE);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.MOLTYPE_FEATURE);
 
         String moleculeType = SequenceEntryUtils.getMoleculeType(entry);
 		if (moleculeType == null) {

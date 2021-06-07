@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
@@ -38,7 +37,7 @@ public class OrganismAndRequiredQualifierCheck extends FeatureValidationCheck {
 	}
 
 	public ValidationResult check(Feature feature) {
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.ORGANISM_REQUIRED_QUALIFIER);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.ORGANISM_REQUIRED_QUALIFIER);
         result = new ValidationResult();
 
         if (feature == null) {

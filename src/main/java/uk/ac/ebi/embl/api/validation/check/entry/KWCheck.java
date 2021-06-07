@@ -17,12 +17,12 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.helper.DataclassProvider;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,8 @@ public class KWCheck extends EntryValidationCheck {
 
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
-        DataSet dataSet1 = GlobalDataSets.getDataSet(FileName.CON_NO_KEYWORDS);
-        DataSet dataSet2 = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
+        DataSet dataSet1 = GlobalDataSets.getDataSet(GlobalDataSetFile.CON_NO_KEYWORDS);
+        DataSet dataSet2 = GlobalDataSets.getDataSet(GlobalDataSetFile.KEYWORD_DATACLASS);
 
         if (entry == null)
             return result;

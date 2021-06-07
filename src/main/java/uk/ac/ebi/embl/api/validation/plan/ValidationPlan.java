@@ -41,8 +41,6 @@ public abstract class ValidationPlan {
 
 	protected ValidationResult validationResult;
 	protected ValidationScope validationScope;
-	private DataManager dataManager;
-	private CheckFileManager fileManager;
     private boolean devMode = false;
     private FileType fileType = null;
     private boolean remote= false;
@@ -66,10 +64,7 @@ public abstract class ValidationPlan {
                           boolean devMode) {//DELETE this constructor if there are references
 
 		this.validationScope = validationScope;
-		this.dataManager = new CachedFileDataManager();
-		this.fileManager = new CheckFileManager();
         this.devMode = devMode;
-		GlobalDataSets.init(dataManager, fileManager);
     }
 
     public void addMessageBundle(String bundleName){

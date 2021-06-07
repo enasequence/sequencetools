@@ -18,23 +18,15 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class DataclassCheckTest {
@@ -49,16 +41,14 @@ public class DataclassCheckTest {
 				.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		EntryFactory entryFactory = new EntryFactory();
 		entry = entryFactory.createEntry();
-		DataSetHelper.createAndAdd(FileName.DATACLASS,new DataRow("STD"),new DataRow("XXX"),new DataRow("WGS"));
-		DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS,new DataRow("WGS","WGS","WGS"), new DataRow("CON","CON","CON"));
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.DATACLASS,new DataRow("STD"),new DataRow("XXX"),new DataRow("WGS"));
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.KEYWORD_DATACLASS,new DataRow("WGS","WGS","WGS"), new DataRow("CON","CON","CON"));
 		check = new DataclassCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() throws ValidationEngineException {
-		GlobalDataSets.clear();
-		entry.setDataClass("STD");
-		assertTrue(check.check(entry).isValid());
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

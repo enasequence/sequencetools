@@ -5,7 +5,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class DataclassProvider {
 
 		if(dataClass == null)
 			return false;
-		for (DataRow row : GlobalDataSets.getDataSet(FileName.DATACLASS).getRows()) {
+		for (DataRow row : GlobalDataSets.getDataSet(GlobalDataSetFile.DATACLASS).getRows()) {
 			String validDataclass = row.getString(0);
 			if (validDataclass != null && validDataclass.trim().equalsIgnoreCase(dataClass))
 				return true;

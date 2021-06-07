@@ -20,15 +20,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class ExclusiveQualifiersCheckTest {
@@ -46,14 +45,13 @@ public class ExclusiveQualifiersCheckTest {
         DataRow dataRow1 = new DataRow("proviral", "virion");
         DataRow dataRow2 = new DataRow("pseudo", "product");
 
-        DataSetHelper.createAndAdd(FileName.EXCLUSIVE_QUALIFIERS, dataRow1,dataRow2);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.EXCLUSIVE_QUALIFIERS, dataRow1,dataRow2);
         check = new ExclusiveQualifiersCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(feature);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

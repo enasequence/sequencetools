@@ -56,7 +56,7 @@ public class DataclassCheck extends EntryValidationCheck {
 			return result;
 		}
 
-		for (DataRow row : GlobalDataSets.getDataSet(FileName.DATACLASS).getRows()) {
+		for (DataRow row : GlobalDataSets.getDataSet(GlobalDataSetFile.DATACLASS).getRows()) {
 			String validDataclass = row.getString(0);
 			if (validDataclass.equals(entryDataclass))
 				sflag = true;
@@ -70,7 +70,7 @@ public class DataclassCheck extends EntryValidationCheck {
 		}
 		try{
 
-			ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS));
+			ArrayList<String> keywordDataclasses =DataclassProvider.getKeywordDataclass(entry, GlobalDataSets.getDataSet(GlobalDataSetFile.KEYWORD_DATACLASS));
 
 			if(keywordDataclasses.size()==1&&!keywordDataclasses.get(0).equals("XXX")&&!keywordDataclasses.get(0).equals(entryDataclass))
 			{

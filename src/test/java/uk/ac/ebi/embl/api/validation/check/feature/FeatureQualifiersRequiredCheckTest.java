@@ -15,15 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.*;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
@@ -44,10 +43,15 @@ public class FeatureQualifiersRequiredCheckTest {
 		FeatureFactory featureFactory = new FeatureFactory();
 		feature = featureFactory.createFeature("misc_feature");
 
-		DataSetHelper.createAndAdd(FileName.FEATURE_REQUIRE_QUALIFIERS,new DataRow("misc_feature") );
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REQUIRE_QUALIFIERS,new DataRow("misc_feature") );
 
 		check = new FeatureQualifiersRequiredCheck();
 		check.setPopulated();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

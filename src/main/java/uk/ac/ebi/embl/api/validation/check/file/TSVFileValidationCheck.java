@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.template.*;
 
@@ -42,8 +43,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 	private final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
 	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
 
-	public TSVFileValidationCheck(SubmissionOptions options) {
-		super(options);
+	public TSVFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
+		super(options, sharedInfo);
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				}
 				if(fixedFileWriter!=null)
 				new EmblEntryWriter(entry).write(fixedFileWriter);
-				sequenceCount++;
+				sharedInfo.sequenceCount++;
 			}
 
 		} catch (TemplateUserError e) {

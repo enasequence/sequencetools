@@ -50,8 +50,8 @@ public class MoleculeTypeAndSourceQualifierCheck extends EntryValidationCheck {
 			return result;
 		}
 
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.SOURCE_QUALIFIERS_MOLTYPE_VALUES);
-		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.MOLTYPE_SOURCE_QUALIFIERS).getRows()) {
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.SOURCE_QUALIFIERS_MOLTYPE_VALUES);
+		for(DataRow dataRow : GlobalDataSets.getDataSet(GlobalDataSetFile.MOLTYPE_SOURCE_QUALIFIERS).getRows()) {
 
 			boolean status = false;
 
