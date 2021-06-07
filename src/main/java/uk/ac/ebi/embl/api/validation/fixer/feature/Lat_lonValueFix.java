@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -62,7 +63,8 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 				lonValue = matcher.group(4);
 				direcSN = matcher.group(3);
 				direcWE = matcher.group(6);
-				DecimalFormat df = new DecimalFormat("#.####");
+				DecimalFormat df = new DecimalFormat("#.########");
+				df.setRoundingMode(RoundingMode.DOWN);
 				String newValue="";
 				if (latValue != null) {
 					lat = new Double(latValue);
