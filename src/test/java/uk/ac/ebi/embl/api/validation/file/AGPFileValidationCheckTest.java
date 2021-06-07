@@ -54,6 +54,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testGenomeSubmissionwithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException
 		{
+			sharedInfo = new FileValidationCheck.SharedInfo();
+
 			validateMaster(Context.genome);
 			String fileName = "valid_flatfileagp.txt";
 			options.context = Optional.of(Context.genome);
@@ -64,7 +66,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.processDir = Optional.of(initSubmissionTestFile(fileName, FileType.AGP).getFile().getParent());
 			options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 			options.init();
-			AGPFileValidationCheck check = new AGPFileValidationCheck(options);
+			AGPFileValidationCheck check = new AGPFileValidationCheck(options, sharedInfo);
 			try {
 
 				check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
@@ -94,6 +96,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 		@Test
 		public void testGenomeSubmissionwithFastafileAGP() throws FlatFileComparatorException, ValidationEngineException
 		{
+			sharedInfo = new FileValidationCheck.SharedInfo();
+
 			String agpFileName = "valid_fastaagp.txt";
 			validateMaster(Context.genome);
 			options.context = Optional.of(Context.genome);
@@ -103,7 +107,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.reportDir = Optional.of(initSubmissionTestFile(agpFileName, FileType.AGP).getFile().getParent());
 			options.processDir = Optional.of(initSubmissionTestFile(agpFileName, FileType.AGP).getFile().getParent());
 			options.init();
-			AGPFileValidationCheck check= new AGPFileValidationCheck(options);
+			AGPFileValidationCheck check= new AGPFileValidationCheck(options, sharedInfo);
 			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)).isValid());
@@ -124,9 +128,9 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 	        options.context = Optional.of(Context.genome);
 			FileValidationCheck check =null;
 			if(fileType==FileType.FASTA)
-			check=new FastaFileValidationCheck(options);
+			check=new FastaFileValidationCheck(options, sharedInfo);
 			if(fileType==FileType.FLATFILE)
-			check=new FlatfileFileValidationCheck(options);
+			check=new FlatfileFileValidationCheck(options, sharedInfo);
 			check.setContigDB(fileDB);
             check.check(file);
             options.submissionFiles.get().clear();

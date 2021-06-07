@@ -43,7 +43,7 @@ public class SourceQualifierPatternAndFeatureCheck extends EntryValidationCheck 
 		if (null == entry) {
 			return result;
 		}
-		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.SOURCE_QUALIFIER_PATTERN_FEATURE).getRows()) {
+		for(DataRow dataRow : GlobalDataSets.getDataSet(GlobalDataSetFile.SOURCE_QUALIFIER_PATTERN_FEATURE).getRows()) {
 
 			Collection<Feature> sources = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
 

@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
@@ -49,10 +50,11 @@ import java.util.concurrent.ConcurrentMap;
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
-	public AGPFileValidationCheck(SubmissionOptions options)
+	public AGPFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
-	}	
+		super(options, sharedInfo);
+	}
+
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		ValidationPlan validationPlan;
@@ -87,7 +89,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				Entry entry = reader.getEntry();
 				origin = entry.getOrigin();
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
-				if(!isHasAnnotationOnlyFlatfile()) {
+				if(!sharedInfo.hasAnnotationOnlyFlatfile) {
 					addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
 				}
 				//set validation scope and collect unplacedEntries
@@ -97,11 +99,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					entry.getSequence().setTopology(chrListToplogy);
 				}
 				//level 2 placed entries should be removed from unplaced set
-				if (!unplacedEntryNames.isEmpty()) {
+				if (!sharedInfo.unplacedEntryNames.isEmpty()) {
 					for (AgpRow agpRow : entry.getSequence().getAgpRows()) {
 						if (agpRow.getComponent_type_id() != null && !agpRow.getComponent_type_id().equalsIgnoreCase("N")
 								&& agpRow.getComponent_id() != null) {
-							unplacedEntryNames.remove(agpRow.getComponent_id().toUpperCase());
+							sharedInfo.unplacedEntryNames.remove(agpRow.getComponent_id().toUpperCase());
 						}
 					}
 				}
@@ -117,7 +119,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					addEntryName(entry.getSubmitterAccession());
 					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
-					FileValidationCheck.agpInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+					sharedInfo.agpInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 					contigInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 				}
 
@@ -130,7 +132,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				{
 					if(fixedFileWriter!=null)
 					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(isHasAnnotationOnlyFlatfile())
+					if(sharedInfo.hasAnnotationOnlyFlatfile)
 						constructAGPSequence(entry);
 				}
 				parseResult = reader.read();
@@ -267,7 +269,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	}
 	private void registerAGPfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.agpInfo,options.processDir.get(),AssemblySequenceInfo.agpfileName);
+		AssemblySequenceInfo.writeMapObject(sharedInfo.agpInfo,options.processDir.get(),AssemblySequenceInfo.agpfileName);
 	}
 	
 }

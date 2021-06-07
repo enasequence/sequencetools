@@ -1,11 +1,12 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,6 +42,12 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
     @Rule
 	public ExpectedException thrown = ExpectedException.none();
+
+    @BeforeClass
+	public static void beforeClass() {
+    	//to clear out changes made by other tests that might interfere with tests in this class.
+		GlobalDataSets.resetTestDataSets();
+	}
 
 	@Before
 	public void init() {
@@ -192,8 +198,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertEquals(1, SubmissionValidationPlan.getUnplacedEntryNames().size());
-		assertTrue( SubmissionValidationPlan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
+		assertEquals(1, plan.getUnplacedEntryNames().size());
+		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
@@ -220,7 +226,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
@@ -245,7 +251,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
@@ -377,17 +383,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 			}));
 		}
 
-		RuntimeException runEx = null;
-
-		try {
-			CompletableFuture.allOf(futs.toArray(new CompletableFuture[futs.size()])).join();
-		} catch (CompletionException ex) {
-			 runEx = (RuntimeException) ex.getCause();
-		}
-
-		Assert.assertTrue(runEx.getMessage(),
-				runEx.getMessage().contains("Entry names are duplicated in assembly")
-						|| runEx.getMessage().contains("fasta file validation failed for")
-						|| runEx.getMessage().contains("master file validation failed for master.dat"));
+		CompletableFuture.allOf(futs.toArray(new CompletableFuture[futs.size()])).join();
 	}
 }

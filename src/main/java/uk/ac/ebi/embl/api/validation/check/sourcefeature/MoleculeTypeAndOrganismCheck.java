@@ -27,7 +27,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
@@ -43,7 +42,7 @@ public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
 	}
 
 	public ValidationResult check(Entry entry) {
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.MOLTYPE_ORGANISM);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.MOLTYPE_ORGANISM);
         result = new ValidationResult();
         
         if (entry == null) {

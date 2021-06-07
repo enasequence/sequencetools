@@ -21,6 +21,7 @@ import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -52,6 +53,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void testInvalidFastaFile() throws ValidationEngineException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionTestFile("invalid_fasta_sequence.txt",SubmissionFile.FileType.FASTA);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -59,7 +62,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.submissionFiles =Optional.of(submissionFiles);
         options.reportDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 		assertTrue(!check.check(file).isValid());
 		assertTrue(check.getMessageStats().get("SQ.1")!=null);
 	}
@@ -67,6 +70,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void testTranscriptomFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.transcriptome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_transcriptom_fasta.txt",SubmissionFile.FileType.FASTA);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -76,7 +81,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.processDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.transcriptome);
         options.init();
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
         assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
@@ -84,6 +89,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 	@Test
 	public void testgenomeFixedvalidFastaFile() throws ValidationEngineException, FlatFileComparatorException, IOException
 	{
+		sharedInfo = new FileValidationCheck.SharedInfo();
+
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("valid_genome_fasta.txt",SubmissionFile.FileType.FASTA);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -93,7 +100,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.processDir = Optional.of(file.getFile().getParent());
         options.context = Optional.of(Context.genome);
         options.init();
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
+		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence1").closeOnJvmShutdown().fileDeleteAfterClose().transactionEnable().make());
 		assertTrue(check.check(file).isValid());
 		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));

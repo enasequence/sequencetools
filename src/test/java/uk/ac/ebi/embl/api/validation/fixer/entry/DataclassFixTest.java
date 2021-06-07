@@ -15,20 +15,15 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 import static org.junit.Assert.assertEquals;
@@ -54,8 +49,13 @@ public class DataclassFixTest
         DataRow estDataRow=new DataRow("EST","EST","EST");
         DataRow wgsDataRow=new DataRow("WGS","WGS","WGS");
 
-        DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS, estDataRow,wgsDataRow);
+	        GlobalDataSets.addTestDataSet(GlobalDataSetFile.KEYWORD_DATACLASS, estDataRow,wgsDataRow);
 		check = new DataclassFix();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

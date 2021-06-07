@@ -15,20 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
-
-import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,11 +42,15 @@ public class FeatureRenameFixTest {
 	        DataRow dataRow2 = new DataRow("conflict","feature2");
 	        DataRow dataRow3 = new DataRow("repeat_region","feature3");
 
-	        DataSetHelper.createAndAdd(FileName.FEATURE_RENAME, dataRow1,dataRow2,dataRow3);
+	        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_RENAME, dataRow1,dataRow2,dataRow3);
 	        check = new FeatureRenameFix();
 	    }
-	
-	    
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
+	}
+
 	@Test
 	public void testCheck_NoFeature() {
 		assertTrue(check.check(null).isValid());

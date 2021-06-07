@@ -34,6 +34,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
@@ -50,9 +51,9 @@ import java.nio.file.Paths;
 public class MasterEntryValidationCheck extends FileValidationCheck
 {
 
-	public MasterEntryValidationCheck(SubmissionOptions options) 
+	public MasterEntryValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
+		super(options, sharedInfo);
 	}	
 	@Override
 	public ValidationResult check() throws ValidationEngineException
@@ -67,16 +68,16 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			if(!getOptions().isWebinCLI)
 			{
 				EraproDAOUtils utils = new EraproDAOUtilsImpl(getOptions().eraproConnection.get());
-				masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
-				if(masterEntry != null && StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+				sharedInfo.masterEntry = utils.getMasterEntry(getOptions().analysisId.get(), getAnalysisType());
+				if(sharedInfo.masterEntry != null && StringUtils.isNotBlank(sharedInfo.masterEntry.getComment().getText())) {
 					StringWriter strWriter = new StringWriter();
-					FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
+					FlatFileWriter.writeBlock(strWriter, "", "", sharedInfo.masterEntry.getComment().getText(),
 							WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
 					String comment = strWriter.toString().trim();
 					if( comment.length()-1 == comment.lastIndexOf("\n")) {
 						comment = comment.substring(0,comment.length()-1);
 					}
-					masterEntry.setComment(new Text(comment));
+					sharedInfo.masterEntry.setComment(new Text(comment));
 				}
 			}
 			else
@@ -86,15 +87,15 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 					throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry");
 				if(!getOptions().source.isPresent())
 					throw new ValidationEngineException("SubmissionOption source must be given to generate master entry");
-				masterEntry = getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
+				sharedInfo.masterEntry = getMasterEntry(getAnalysisType(), getOptions().assemblyInfoEntry.get(), getOptions().source.get());
 			}
 
-			if(Context.transcriptome == options.context.get() && masterEntry != null) {
-				addTranscriptomeInfo(masterEntry);
+			if(Context.transcriptome == options.context.get() && sharedInfo.masterEntry != null) {
+				addTranscriptomeInfo(sharedInfo.masterEntry);
 			}
 			
 			EmblEntryValidationPlan validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-			validationResult.append(validationPlan.execute(masterEntry));
+			validationResult.append(validationPlan.execute(sharedInfo.masterEntry));
 			if(!validationResult.isValid())
 			{
 				getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), validationResult);
@@ -103,7 +104,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			else
 			{
 				if(!getOptions().isWebinCLI)
-				new EmblEntryWriter(masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
+				new EmblEntryWriter(sharedInfo.masterEntry).write(new PrintWriter(getOptions().processDir.get()+File.separator+masterFileName));
 			}
 
 		} catch (ValidationEngineException e) {
@@ -158,11 +159,6 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			masterEntry.addReference(new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
 					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId()));
 		}
-		return masterEntry;
-	}
-	
-	public Entry getMasterEntry()
-	{
 		return masterEntry;
 	}
 	

@@ -8,7 +8,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -27,7 +27,7 @@ public class QualifierWithinQualifierFix extends FeatureValidationCheck
 	
 	public ValidationResult check(Feature feature)
 	{
-		DataSet qualifierSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
+		DataSet qualifierSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES);
 		result = new ValidationResult();
 		
 		if (feature == null)

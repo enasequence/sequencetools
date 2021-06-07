@@ -52,8 +52,8 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
 
 
     private void init() {
-        DataSet keySet = GlobalDataSets.getDataSet(FileName.FEATURE_KEYS);
-        DataSet keyQualifiersSet = GlobalDataSets.getDataSet(FileName.FEATURE_KEY_QUALIFIERS);
+        DataSet keySet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_KEYS);
+        DataSet keyQualifiersSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_KEY_QUALIFIERS);
 
         if (keySet != null && keyQualifiersSet != null) {
             for (DataRow dataRow : keySet.getRows()) {

@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -43,8 +43,8 @@ public class Isolation_sourceQualifierFix extends FeatureValidationCheck
 
 	public ValidationResult check(Feature feature)
 	{
-		DataSet qualifierValueSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
-		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(FileName.FEATURE_QUALIFIER_VALUES);
+		DataSet qualifierValueSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS);
+		DataSet qualifierRegexSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES);
 
 		result = new ValidationResult();
 

@@ -15,13 +15,12 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 import java.util.Collection;
@@ -42,14 +41,13 @@ public class QualifierValueNotQualifierCheckTest {
 		feature = featureFactory.createFeature("feature");
 
 		DataRow dataRow = new DataRow("macronuclear", "organelle", "mitochondrion");
-        DataSetHelper.createAndAdd(FileName.QUALIFIER_VALUE_NOT_QUALIFIER, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_NOT_QUALIFIER, dataRow);
 		check = new QualifierValueNotQualifierCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(feature);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

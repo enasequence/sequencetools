@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
@@ -37,6 +38,8 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 public abstract class SubmissionValidationTest {
 
 	protected SubmissionOptions options =null;
+
+	protected FileValidationCheck.SharedInfo sharedInfo;
 
 	public SubmissionValidationTest() {
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
@@ -120,7 +123,7 @@ public abstract class SubmissionValidationTest {
 		options.isWebinCLI =true;
 		options.context =Optional.of(context);
 		options.getEntryValidationPlanProperty().validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
+		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options, sharedInfo);
 		check.check();
     }
 	

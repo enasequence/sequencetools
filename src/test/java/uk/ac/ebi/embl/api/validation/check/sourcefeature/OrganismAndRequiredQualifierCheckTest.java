@@ -22,16 +22,14 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.OrganismAndRequiredQualifierCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -52,15 +50,14 @@ public class OrganismAndRequiredQualifierCheckTest {
 
         EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
         property.taxonHelper.set(taxonHelper);
-        DataSetHelper.createAndAdd(FileName.ORGANISM_REQUIRED_QUALIFIER, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.ORGANISM_REQUIRED_QUALIFIER, dataRow);
 		check = new OrganismAndRequiredQualifierCheck( );
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(source);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

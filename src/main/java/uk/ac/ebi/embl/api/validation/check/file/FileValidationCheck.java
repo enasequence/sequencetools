@@ -31,12 +31,23 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.reference.Person;
+import uk.ac.ebi.embl.api.entry.reference.Publication;
+import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
+import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
@@ -46,16 +57,32 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
-import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -63,35 +90,30 @@ import java.util.zip.GZIPInputStream;
 
  
 public abstract class FileValidationCheck {
+	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
+
+	public static final String REPORT_FILE_SUFFIX = ".report";
+
+	public static final String masterFileName = "master.dat";
 
 	protected SubmissionOptions options =null;
 	protected SubmissionReporter reporter=null;
-	public static final String REPORT_FILE_SUFFIX = ".report";
-	public static HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>();
-	public static List<String> chromosomeNames =new ArrayList<String>();
-	public static Map<String,AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
-	public static Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
-	public static Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>();
-	public static Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>();
-	public static List<String> duplicateEntryNames = new ArrayList<String>();
-	public static HashSet<String> entryNames = new HashSet<String>();
-	public static Set<String> agpEntryNames =new HashSet<>();
-	public static Set<String> unplacedEntryNames =new HashSet<>();
-	public static Set<String> unlocalisedEntryNames = new HashSet<>();
+
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
-	protected static Entry masterEntry =null;
+
 	protected TaxonHelper taxonHelper= null;
 	protected PrintWriter fixedFileWriter =null;
-	private static boolean hasAnnotationOnlyFlatfile = false;
-	private static boolean hasAgp = false;
-	public static final String masterFileName = "master.dat";
-	private  DB sequenceDB = null;
-	private DB contigDB =null;
-	protected static int sequenceCount = 0;
-	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
 
-	public FileValidationCheck(SubmissionOptions options) {
+	protected SharedInfo sharedInfo;
+
+	private DB sequenceDB = null;
+	private DB contigDB =null;
+
+	public FileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
 		this.options =options;
+
+		this.sharedInfo = sharedInfo;
+
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
 		taxonHelper =new TaxonHelperImpl();
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
@@ -102,19 +124,12 @@ public abstract class FileValidationCheck {
          if(!EntryReader.getSkipTagCounter().isEmpty())
              EntryReader.getSkipTagCounter().clear();
 	}
+
 	public abstract ValidationResult check(SubmissionFile file) throws ValidationEngineException;
 	public abstract ValidationResult check() throws ValidationEngineException ;
 
 	protected SubmissionOptions getOptions() {
 		return options;
-	}
-
-	public static void setSequenceCount(int seqCount) {
-		sequenceCount = seqCount;
-	}
-
-	public static int getSequenceCount() {
-		return sequenceCount;
 	}
 
 
@@ -162,17 +177,17 @@ public abstract class FileValidationCheck {
 		switch (options.context.get()) {
 			case genome:
 				final String entryNameUpper = entryName1.toUpperCase();
-				if (chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
-					if(unlocalisedEntryNames.contains(entryNameUpper) ) {
+				if (sharedInfo.chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
+					if(sharedInfo.unlocalisedEntryNames.contains(entryNameUpper) ) {
 						throw new ValidationEngineException("Sequence can not exist in both chromosome and unlocalised list");
 					}
 					return ValidationScope.ASSEMBLY_CHROMOSOME;
 				}
 
-				if (agpEntryNames.contains(entryNameUpper)) {
-					if (!unlocalisedEntryNames.contains(entryNameUpper)) {
+				if (sharedInfo.agpEntryNames.contains(entryNameUpper)) {
+					if (!sharedInfo.unlocalisedEntryNames.contains(entryNameUpper)) {
 
-						unplacedEntryNames.add(entryNameUpper);
+						sharedInfo.unplacedEntryNames.add(entryNameUpper);
 					}
 					return ValidationScope.ASSEMBLY_SCAFFOLD;
 				} else {
@@ -189,9 +204,9 @@ public abstract class FileValidationCheck {
 	
 	protected void addEntryName(String entryName)
 	{
-		if(!entryNames.add(entryName.toUpperCase()))
+		if(!sharedInfo.entryNames.add(entryName.toUpperCase()))
 		{
-			duplicateEntryNames.add(entryName);
+			sharedInfo.duplicateEntryNames.add(entryName);
 		}
 	}
 
@@ -218,16 +233,16 @@ public abstract class FileValidationCheck {
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
 	{
-		if(duplicateEntryNames.size()>0)
+		if(sharedInfo.duplicateEntryNames.size()>0)
 		{
-			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",",duplicateEntryNames),ReportErrorType.VALIDATION_ERROR);
+			throw new ValidationEngineException("Entry names are duplicated in assembly : "+ String.join(",", sharedInfo.duplicateEntryNames),ReportErrorType.VALIDATION_ERROR);
 		}
 	}
 
 	public void validateSequencelessChromosomes() throws ValidationEngineException
 	{
 		List<String> sequencelessChromosomes =new ArrayList<String>();
-		for(String chromosomeName: chromosomeNameQualifiers.keySet())
+		for(String chromosomeName: sharedInfo.chromosomeNameQualifiers.keySet())
 			{
 				if(!hasSequenceInfo(chromosomeName))
 				{
@@ -265,7 +280,7 @@ public abstract class FileValidationCheck {
 				dataclass= Entry.CON_DATACLASS;
 				break;
 			case EMBL:
-				if(entryName!=null&&agpEntryNames.contains(entryName.toUpperCase()))
+				if(entryName!=null&& sharedInfo.agpEntryNames.contains(entryName.toUpperCase()))
 					dataclass= Entry.CON_DATACLASS;
 				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 				{
@@ -341,7 +356,7 @@ public abstract class FileValidationCheck {
 				throw new ValidationEngineException(e.getMessage(), e);
 			}
 		}
-		if(masterEntry == null)
+		if(sharedInfo.masterEntry == null)
 		{
 			throw new ValidationEngineException("Master entry must to validate sequences");
 		}
@@ -349,10 +364,10 @@ public abstract class FileValidationCheck {
 			return ;
 		entry.removeReferences();
 		entry.removeProjectAccessions();
-		entry.addReferences(masterEntry.getReferences());
-		entry.addProjectAccessions(masterEntry.getProjectAccessions());
-		entry.addXRefs(masterEntry.getXRefs());
-		entry.setComment(masterEntry.getComment());
+		entry.addReferences(sharedInfo.masterEntry.getReferences());
+		entry.addProjectAccessions(sharedInfo.masterEntry.getProjectAccessions());
+		entry.addXRefs(sharedInfo.masterEntry.getXRefs());
+		entry.setComment(sharedInfo.masterEntry.getComment());
 		//add chromosome qualifiers to entry
 
         if(Context.sequence == options.context.get()) {
@@ -362,14 +377,14 @@ public abstract class FileValidationCheck {
             entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
         }
 		addSourceQualifiers(entry);
-		entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
+		entry.getSequence().setMoleculeType(sharedInfo.masterEntry.getSequence().getMoleculeType());
    		if (entry.getSequence().getTopology() == null) {
-      		entry.getSequence().setTopology(masterEntry.getSequence().getTopology());
+      		entry.getSequence().setTopology(sharedInfo.masterEntry.getSequence().getTopology());
 		}
 		if(entry.getSubmitterAccession()!=null&&options.context.get()==Context.genome)
 		{
 
-			Utils.setAssemblyLevelDescription(masterEntry.getDescription().getText(),
+			Utils.setAssemblyLevelDescription(sharedInfo.masterEntry.getDescription().getText(),
 					ValidationScope.ASSEMBLY_CONTIG==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 0 
 							: ValidationScope.ASSEMBLY_SCAFFOLD==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 1 
 									: ValidationScope.ASSEMBLY_CHROMOSOME==getOptions().getEntryValidationPlanProperty().validationScope.get() ? 2 :null,
@@ -391,8 +406,8 @@ public abstract class FileValidationCheck {
   	protected Sequence.Topology getTopology(String submitterAccn)  {
 		if (submitterAccn != null && getOptions().getEntryValidationPlanProperty().validationScope.get()
 				== ValidationScope.ASSEMBLY_CHROMOSOME
-			&& chromosomeNameQualifiers != null) {
-			return chromosomeNameQualifiers.get(submitterAccn.toUpperCase()).getTopology();
+			&& sharedInfo.chromosomeNameQualifiers != null) {
+			return sharedInfo.chromosomeNameQualifiers.get(submitterAccn.toUpperCase()).getTopology();
 		}
 		return null;
   	}
@@ -410,7 +425,7 @@ public abstract class FileValidationCheck {
 				entry.setSubmitterAccession(entry.getPrimaryAccession());
 			if (entry.getSubmitterAccession() == null)
 				throw new ValidationEngineException("Submitter accession missing for an entry");
-			if (!agpEntryNames.isEmpty() && agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
 				return;
 			if (entry.getSequence() == null)
 				return;
@@ -433,7 +448,7 @@ public abstract class FileValidationCheck {
 	}
 
 	protected void addAgpEntryName(String entryName) throws ValidationEngineException {
-			 if(!agpEntryNames.add(entryName)) {
+			 if(!sharedInfo.agpEntryNames.add(entryName)) {
 			 	throw new ValidationEngineException( " Object name should be unique in AGP files."+ entryName);
 			 }
 	}
@@ -448,7 +463,7 @@ public abstract class FileValidationCheck {
 			if(entry.getSequence()!=null)
 			{
 				featureLocation.addLocation(locationFactory.createLocalRange(1l, entry.getSequence().getLength()));
-				entry.getSequence().setMoleculeType(masterEntry.getSequence().getMoleculeType());
+				entry.getSequence().setMoleculeType(sharedInfo.masterEntry.getSequence().getMoleculeType());
 			}
 			SourceFeature sourceFeature=featureFactory.createSourceFeature();
 			sourceFeature.setLocations(featureLocation);
@@ -458,9 +473,9 @@ public abstract class FileValidationCheck {
 		}
 
 		SourceFeature source=null;
-		if(masterEntry!=null&&masterEntry.getPrimarySourceFeature()!=null)
+		if(sharedInfo.masterEntry!=null&&sharedInfo.masterEntry.getPrimarySourceFeature()!=null)
 		{
-			source=masterEntry.getPrimarySourceFeature();
+			source=sharedInfo.masterEntry.getPrimarySourceFeature();
 		}
 
 		entry.getPrimarySourceFeature().removeAllQualifiers();
@@ -470,13 +485,13 @@ public abstract class FileValidationCheck {
 			if(entry.getSubmitterAccession()!=null)
 			{
 				Optional<java.util.Map.Entry<String, ChromosomeEntry>> chromosomeQualifierMap =
-					chromosomeNameQualifiers.entrySet().stream()
+						sharedInfo.chromosomeNameQualifiers.entrySet().stream()
 						.filter(x -> x.getKey().equalsIgnoreCase(entry.getSubmitterAccession()))
 						.findFirst();
 				if(chromosomeQualifierMap.isPresent())
 				{	
 					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue().setAndGetQualifiers(taxonHelper.isChildOf(
-							masterEntry
+							sharedInfo.masterEntry
 									.getPrimarySourceFeature()
 									.getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME),
 							"Viruses"));
@@ -586,13 +601,6 @@ public abstract class FileValidationCheck {
 		return false;
 	}
 
-	public static boolean isHasAnnotationOnlyFlatfile() {
-		return hasAnnotationOnlyFlatfile;
-	}
-	public static void setHasAnnotationOnlyFlatfile(boolean annotationOnlyFile) {
-		hasAnnotationOnlyFlatfile = annotationOnlyFile;
-	}
-
 	public void setSequenceDB(DB sequenceDB)
 	{
 		this.sequenceDB=sequenceDB;
@@ -677,25 +685,42 @@ public abstract class FileValidationCheck {
 
 	public boolean hasSequenceInfo(String entryName)
 	{
-		return sequenceInfo.entrySet().stream().anyMatch(x->x.getKey().equalsIgnoreCase(entryName));
+		return sharedInfo.sequenceInfo.entrySet().stream().anyMatch(x->x.getKey().equalsIgnoreCase(entryName));
 
-	}
-
-	public static boolean isHasAgp() {
-		return hasAgp;
-	}
-
-	public static void setHasAgp(boolean hasAgpFiles) {
-		hasAgp = hasAgpFiles;
 	}
 
 	boolean validateSequenceCountForTemplate(ValidationResult validationResult, SubmissionFile submissionFile) {
-		if (!options.ignoreErrors && sequenceCount > MAX_SEQUENCE_COUNT_FOR_TEMPLATE) {
+		if (!options.ignoreErrors && sharedInfo.sequenceCount > MAX_SEQUENCE_COUNT_FOR_TEMPLATE) {
 			validationResult.append(new ValidationMessage<>(Severity.ERROR, "MaxSequenceCountExceededError", MAX_SEQUENCE_COUNT_FOR_TEMPLATE ));
 			if (getOptions().reportDir.isPresent())
 				getReporter().writeToFile(getReportFile(submissionFile), validationResult);
 			return false;
 		}
 		return true;
+	}
+
+	public SharedInfo getSharedInfo() {
+		return sharedInfo;
+	}
+
+	public static class SharedInfo {
+		public Entry masterEntry =null;
+
+		public int sequenceCount = 0;
+
+		public boolean hasAnnotationOnlyFlatfile = false;
+		public boolean hasAgp = false;
+
+		public HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>();
+		public List<String> chromosomeNames =new ArrayList<String>();
+		public Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
+		public Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
+		public Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>();
+		public Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>();
+		public List<String> duplicateEntryNames = new ArrayList<String>();
+		public HashSet<String> entryNames = new HashSet<String>();
+		public Set<String> agpEntryNames =new HashSet<>();
+		public Set<String> unplacedEntryNames =new HashSet<>();
+		public Set<String> unlocalisedEntryNames = new HashSet<>();
 	}
 }

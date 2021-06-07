@@ -15,6 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -23,12 +24,8 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -65,9 +62,14 @@ public class TaxonomicDivisionNotQualifierFixTest
 		DataRow dataRow1 = new DataRow(Qualifier.LAT_LON_QUALIFIER_NAME, "HUM");
 		DataRow dataRow2 = new DataRow("dev_stage", "PRO");
 
-		DataSetHelper.createAndAdd(FileName.TAXONOMIC_DIVISION_NO_QUALIFIER, dataRow1,dataRow2);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.TAXONOMIC_DIVISION_NO_QUALIFIER, dataRow1,dataRow2);
 		check = new TaxonomicDivisionNotQualifierFix();
 		check.setEmblEntryValidationPlanProperty(property);
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

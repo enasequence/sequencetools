@@ -84,23 +84,10 @@ public class SubmissionOptions
 				throw new ValidationEngineException("SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
 			}
 		}
+
 		if (!isWebinCLI && ignoreError.isPresent()) {
 					ignoreErrors = ignoreError.get();
 		}
-		FileValidationCheck.setSequenceCount(0);
-		FileValidationCheck.sequenceInfo.clear();
-		FileValidationCheck.fastaInfo.clear();
-		FileValidationCheck.flatfileInfo.clear();
-		FileValidationCheck.agpInfo.clear();
-		FileValidationCheck.agpEntryNames.clear();
-		FileValidationCheck.chromosomeNameQualifiers.clear();
-		FileValidationCheck.entryNames.clear();
-		FileValidationCheck.duplicateEntryNames.clear();
-		FileValidationCheck.chromosomeNames.clear();
-		FileValidationCheck.unplacedEntryNames.clear();
-		FileValidationCheck.unlocalisedEntryNames.clear();
-		FileValidationCheck.setHasAnnotationOnlyFlatfile(false);
-		GlobalDataSets.clear();
 	}
 	
 	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()

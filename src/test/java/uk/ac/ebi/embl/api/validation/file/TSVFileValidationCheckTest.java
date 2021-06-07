@@ -86,7 +86,7 @@ public class TSVFileValidationCheckTest {
         options.setProjectId(PROJECT_ID);
         options.reportDir = Optional.of(reportsPath);
         options.context = Optional.of(Context.sequence);
-        fileValidationCheck = new TSVFileValidationCheck(options);
+        fileValidationCheck = new TSVFileValidationCheck(options, new FileValidationCheck.SharedInfo());
     }
 
     @Test
