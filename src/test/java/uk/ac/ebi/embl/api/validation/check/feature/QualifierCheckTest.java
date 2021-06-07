@@ -61,7 +61,7 @@ public class QualifierCheckTest {
         DataRow regexRow3 = new DataRow("lat_lon", "3", "FALSE", "N,S");
         DataRow regexRow4 = new DataRow("lat_lon", "6", "FALSE", "E,W");
         DataRow regexRow5 = new DataRow("inference","3","TRUE","ab initio prediction,alignment,non-experimental evidence no additional details recorded,nucleotide motif,profile,protein motif,similar to AA sequence,similar to DNA sequence,similar to RNA sequence,similar to RNA sequence{COM} EST,similar to RNA sequence{COM} mRNA,similar to RNA sequence{COM} other RNA,similar to sequence");
-        DataRow regexRow6 = new DataRow("ncRNA_class", "1", "TRUE", "other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA");
+        DataRow regexRow6 = new DataRow("ncRNA_class", "1", "TRUE", "other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA,pre_miRNA,sgRNA,scaRNA,Y_RNA,circRNA");
 
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
