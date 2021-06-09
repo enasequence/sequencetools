@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,25 +15,43 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
-import uk.ac.ebi.embl.flatfile.reader.SingleLineBlockReader;
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
+import uk.ac.ebi.embl.flatfile.reader.SingleLineBlockReader;
 
-/** Reader for the SQ line.
+import java.util.Arrays;
+
+/**
+ * Reader for the SQ line. Capture coverage values
  */
 public class SQReader extends SingleLineBlockReader {
 
-	public SQReader(LineReader lineReader) {
-		super(lineReader); //, ConcatenateType.CONCATENATE_NOSPACE);
-	}
+    public SQReader(LineReader lineReader) {
+        super(lineReader); //, ConcatenateType.CONCATENATE_NOSPACE);
+    }
 
-	@Override
-	public String getTag() {
-		return EmblTag.SQ_TAG;
-	}
-		
-	@Override
-	protected void read(String block) {
-		return;
-	}
+    @Override
+    public String getTag() {
+        return EmblTag.SQ_TAG;
+    }
+
+    @Override
+    protected void read(String block) {
+        // SQ   Sequence 315242 BP; 87432 A; 72431 C; 71123 G; 84256 T; 0 other;
+        if (StringUtils.isNotBlank(block)) {
+            try {
+                Arrays.stream(StringUtils.stripAll(
+                        StringUtils.split(
+                                StringUtils.stripStart(block, "SQ   Sequence"), ";")))
+                        .forEach(s -> {
+                            final String[] split = StringUtils.split(s, " ");
+                            entry.getSequenceCoverage().put(split[1], Long.valueOf(split[0]));
+                        });
+            } catch (Exception e) {
+                // fail silently
+            }
+        }
+        return;
+    }
 }
