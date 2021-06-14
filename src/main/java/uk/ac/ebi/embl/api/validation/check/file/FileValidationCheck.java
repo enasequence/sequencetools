@@ -36,6 +36,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -47,6 +48,8 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
@@ -89,7 +92,7 @@ public abstract class FileValidationCheck {
 	private static boolean hasAnnotationOnlyFlatfile = false;
 	private static boolean hasAgp = false;
 	public static final String masterFileName = "master.dat";
-	private  DB sequenceDB = null;
+	private  DB annotationDB = null;
 	private DB contigDB =null;
 	protected static int sequenceCount = 0;
 	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
@@ -272,7 +275,7 @@ public abstract class FileValidationCheck {
 				dataclass= Entry.CON_DATACLASS;
 				break;
 			case EMBL:
-				if(entryName!=null&&agpEntryNames.contains(entryName.toUpperCase()))
+				if(entryName != null && agpEntryNames.contains(entryName.toUpperCase()))
 					dataclass= Entry.CON_DATACLASS;
 				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 				{
@@ -618,21 +621,21 @@ public abstract class FileValidationCheck {
 		return false;
 	}
 
-	public static boolean isHasAnnotationOnlyFlatfile() {
+	public static boolean hasAnnotationOnlyFlatfile() {
 		return hasAnnotationOnlyFlatfile;
 	}
 	public static void setHasAnnotationOnlyFlatfile(boolean annotationOnlyFile) {
 		hasAnnotationOnlyFlatfile = annotationOnlyFile;
 	}
 
-	public void setSequenceDB(DB sequenceDB)
+	public void setAnnotationDB(DB annotationDB)
 	{
-		this.sequenceDB=sequenceDB;
+		this.annotationDB=annotationDB;
 	}
 
-	public DB getSequenceDB()
+	public DB getAnnotationDB()
 	{
-		return this.sequenceDB;
+		return this.annotationDB;
 	}
 	public static void closeMapDB(DB ... dbs) {
 		for(DB db: dbs)
@@ -737,10 +740,50 @@ public abstract class FileValidationCheck {
 		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
 			new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
 		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME) {
+			new EmblEntryWriter(entry).write(getChromosomeFileWriter(submissionFile));
+		}
+	}
+
+	void addSubmitterSeqIdQual(Entry entry) {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME) {
 			if (entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME) == null) {
 				entry.getPrimarySourceFeature().addQualifier(new QualifierFactory().createQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, entry.getSubmitterAccession()));
 			}
-			new EmblEntryWriter(entry).write(getChromosomeFileWriter(submissionFile));
 		}
+	}
+
+	void checkChromosomeTopology(Entry entry) throws ValidationEngineException {
+		Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+		if (chrListToplogy != null) {
+			if (entry.getSequence().getTopology() != null
+					&& entry.getSequence().getTopology() != chrListToplogy) {
+				throw new ValidationEngineException("The topology in the ID line " + entry.getSequence().getTopology() + " conflicts with the topology specified in the chromsome list file " + chrListToplogy, ReportErrorType.VALIDATION_ERROR);
+			}
+			entry.getSequence().setTopology(chrListToplogy);
+		}
+	}
+
+	public boolean hasAnnotationFlatfile() throws ValidationEngineException {
+		for (SubmissionFile submissionFile : options.submissionFiles.get().getFiles(SubmissionFile.FileType.FLATFILE)) {
+			boolean isGenbankFile = isGenbank(submissionFile.getFile());
+			EmblEntryReader.Format format = options.context.get() == Context.genome ? EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT : EmblEntryReader.Format.EMBL_FORMAT;
+
+			try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(submissionFile.getFile())) {
+				EntryReader entryReader = isGenbankFile ? new GenbankEntryReader(fileReader) : new EmblEntryReader(fileReader, format, submissionFile.getFile().getName());
+
+				entryReader.read();
+				if (entryReader.isEntry()) {
+					Entry entry = entryReader.getEntry();
+					return entry.getSequence() == null || entry.getSequence().getSequenceByte() == null;
+				} else {
+					throw new ValidationEngineException("Could not read flatfile, please check the flatfile formatted correctly.", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				}
+			} catch (IOException e) {
+				throw new ValidationEngineException(e.getMessage(), e);
+			}
+		}
+		return false;
 	}
 }

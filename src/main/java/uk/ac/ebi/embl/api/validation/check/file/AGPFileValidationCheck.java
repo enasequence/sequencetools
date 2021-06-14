@@ -31,7 +31,6 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -60,6 +59,14 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter=null;
 		Origin origin =null;
+		ConcurrentMap annotationMap = null;
+		if(hasAnnotationOnlyFlatfile() ) {
+			if (getAnnotationDB() == null) {
+				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+			} else {
+				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+			}
+		}
 		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());
 			PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
@@ -106,10 +113,20 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					}
 				}
 
+				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
+					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession());
+					if (annoationEntry != null) {
+						annoationEntry.setSequence(entry.getSequence());
+						entry = annoationEntry;
+					}
+				} else {
+					appendHeader(entry);
+					addSubmitterSeqIdQual(entry);
+				}
+
 				getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
 				getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get() + 1);
 				validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-				appendHeader(entry);
 				ValidationResult planResult = validationPlan.execute(entry);
 				validationResult.append(planResult);
 
@@ -129,7 +146,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			else
 				{
 					if(fixedFileWriter != null) {
-						new EmblEntryWriter(entry).write(fixedFileWriter);
+						new EmblEntryWriter(entry).write(fixedFileWriter);//TODO: old , just for ENAPRO loading
 						constructAGPSequence(entry);
 						writeEntryToFile(entry, submissionFile);
 					}
@@ -140,13 +157,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 		} catch (ValidationEngineException vee) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, vee.getMessage(),origin);
-			closeMapDB(getContigDB(), getSequenceDB());
 			throw vee;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
+		} finally {
+			closeMapDB(getContigDB(), getAnnotationDB());
 		}
 		if(validationResult.isValid())
 	        registerAGPfileInfo();
@@ -160,14 +177,9 @@ public class AGPFileValidationCheck extends FileValidationCheck
  		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
  
 		ConcurrentMap contigMap =null;
-		ConcurrentMap sequenceMap = null;
 		if(getContigDB()!=null) {
 			contigMap = getContigDB().hashMap("map").createOrOpen();
 		}
-		if(isHasAnnotationOnlyFlatfile() && getSequenceDB() != null) {
-			sequenceMap = getSequenceDB().hashMap("map").createOrOpen();
-		}
-
 			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 				if (!agpRow.isGap()) {
 
@@ -182,7 +194,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									if (sequence != null)
 										sequenceBuffer.put((byte[]) sequence);
 									else {
-									//	agpInfo.containsKey()
 										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
 									}
 								}
@@ -195,21 +206,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			}
          entry.getSequence().setSequence(sequenceBuffer);
 
-         if(isHasAnnotationOnlyFlatfile() && getOptions().context.get() == Context.genome && getSequenceDB() != null && entry.getSubmitterAccession() != null) {
-				sequenceMap.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
-         }
-
 		}catch(Exception e)
 		{
-			if(getSequenceDB()!=null)
-				getSequenceDB().close();
-			if(getContigDB()!=null)
-				getContigDB().close();
+			closeMapDB(getContigDB());
 			throw new ValidationEngineException(e);
 		}
-		if(getSequenceDB()!=null)
-		getSequenceDB().commit();  
 		}
+
 	@Override
 	public ValidationResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();

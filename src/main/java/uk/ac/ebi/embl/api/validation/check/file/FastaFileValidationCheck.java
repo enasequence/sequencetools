@@ -53,10 +53,16 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	{
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter =null;
-		ConcurrentMap sequenceMap =null;
+		//TODO: make proper type assignement
+		ConcurrentMap annotationMap = null;
 		Origin origin =null;
-		if(getSequenceDB()!=null)
-			sequenceMap= getSequenceDB().hashMap("map").createOrOpen();
+		if(hasAnnotationOnlyFlatfile() ) {
+			if (getAnnotationDB() == null) {
+				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+			} else {
+				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+			}
+		}
 
 		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
@@ -80,29 +86,39 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					addMessageStats(parseResult.getMessages());
 				}
 
-				Entry entry=reader.getEntry();
+				Entry entry = reader.getEntry();
+
 				origin=entry.getOrigin();
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(getOptions().context.get()==Context.genome)
 				{
 					if (entry.getSubmitterAccession() == null) {
-						entry.setSubmitterAccession(entry.getPrimaryAccession());
+						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getPrimaryAccession()));
 					}
 	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
 					collectContigInfo(entry);
-					if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
-						sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
-					}
 				}
-            	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-
+				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);//TODO: check this in other checks as well
+				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
+					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
+					if (annoationEntry == null) {
+						appendHeader(entry);
+						addSubmitterSeqIdQual(entry);
+					} else {
+						annoationEntry.setSequence(entry.getSequence());
+						entry = annoationEntry;
+					}
+				} else {
+					appendHeader(entry);
+					addSubmitterSeqIdQual(entry);
+				}
 				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
 				if (chrListToplogy != null) {
 					entry.getSequence().setTopology(chrListToplogy);
 				}
-            	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
+
             	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-            	appendHeader(entry);
 				ValidationResult planResult=validationPlan.execute(entry);
 				validationResult.append(planResult);
 
@@ -110,6 +126,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					addEntryName(entry.getSubmitterAccession());
 					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
+					//TODO: check why do we need this fastaInfo
 					FileValidationCheck.fastaInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 				}
 
@@ -129,22 +146,18 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				validationResult.append(planResult);
 				sequenceCount++;
 			}
-			if(getSequenceDB()!=null)
-			{
-				getSequenceDB().commit();
-			}
 			if(getContigDB()!=null)
 			{
 				getContigDB().commit();
 			}
 		} catch (ValidationEngineException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getSequenceDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getContigDB());
 			throw e;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getSequenceDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getContigDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 

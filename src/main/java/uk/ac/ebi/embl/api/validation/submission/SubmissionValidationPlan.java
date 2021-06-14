@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
@@ -50,7 +51,7 @@ public class SubmissionValidationPlan
 {
 	SubmissionOptions options;
 	FileValidationCheck check = null;
-	DB sequenceDB =null;
+	DB annotationDB =null;
 	DB contigDB =null;
     String fastaFlagFileName ="fasta.validated";
     String agpFlagFileName ="agp.validated";
@@ -89,10 +90,9 @@ public class SubmissionValidationPlan
 			}
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
 			{
-				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
-				check.getAnnotationFlatfile();
-				if(FileValidationCheck.isHasAnnotationOnlyFlatfile()) {
-					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
+				validationResult = validateAnnotationOnlyFlatfile();
+				if(!validationResult.isValid()) {
+					return validationResult;
 				}
 			}
 			if(options.context.get().getFileTypes().contains(FileType.FASTA)) {
@@ -100,8 +100,8 @@ public class SubmissionValidationPlan
 				if(!validationResult.isValid())
 					return validationResult;
 			}
-			  
-			if(options.context.get().getFileTypes().contains(FileType.FLATFILE)) {
+			  //TODO: may be think about thread safety here
+			if(options.context.get().getFileTypes().contains(FileType.FLATFILE) && !FileValidationCheck.hasAnnotationOnlyFlatfile()) {
 				validationResult = validateFlatfile();
 				if(!validationResult.isValid())
 					return validationResult;
@@ -110,11 +110,6 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.AGP))
 			{
 				validationResult = validateAGP();
-				if(!validationResult.isValid())
-					return validationResult;
-			}
-			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE)) {
-				validationResult = validateAnnotationOnlyFlatfile();
 				if(!validationResult.isValid())
 					return validationResult;
 			}
@@ -129,7 +124,7 @@ public class SubmissionValidationPlan
 				registerSequences();
 				check.validateSequencelessChromosomes();
 
-				String assemblyType = options.assemblyInfoEntry.isPresent()? options.assemblyInfoEntry.get().getAssemblyType(): null;
+				String assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
 							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2), assemblyType));
 
@@ -158,7 +153,7 @@ public class SubmissionValidationPlan
 			}
 			throw e;
 		} finally {
-			FileValidationCheck.closeMapDB(contigDB, sequenceDB);
+			FileValidationCheck.closeMapDB(contigDB, annotationDB);
 			FileValidationCheck.flushAndCloseFileWriters();
 		}
 		return validationResult;
@@ -230,8 +225,9 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile fastaFile : submissionFiles) {
 					fileName = fastaFile.getFile().getName();
-					if (sequenceDB != null)
-						check.setSequenceDB(sequenceDB);
+					if(FileValidationCheck.hasAnnotationOnlyFlatfile()) {
+					check.setAnnotationDB(annotationDB);
+					}
 					if (contigDB != null)
 						check.setContigDB(contigDB);
 					result = check.check(fastaFile);
@@ -245,6 +241,7 @@ public class SubmissionValidationPlan
 					flagValidation(FileType.FASTA);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			throwValidationEngineException(FileType.FASTA,e,fileName);
 		}
 		return result;
@@ -263,8 +260,6 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile flatfile : submissionFiles) {
 					fileName = flatfile.getFile().getName();
-					if (sequenceDB != null)
-						check.setSequenceDB(sequenceDB);
 					if (contigDB != null)
 						check.setContigDB(contigDB);
 					result = check.check(flatfile);
@@ -295,8 +290,6 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile agpFile : submissionFiles) {
 					fileName = agpFile.getFile().getName();
-					if (sequenceDB != null)
-						agpCheck.setSequenceDB(sequenceDB);
 					result = agpCheck.check(agpFile);
 					if (!result.isValid()) {
 						if (options.isWebinCLI)
@@ -344,30 +337,30 @@ public class SubmissionValidationPlan
 		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
 		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
-	
-	private ValidationResult validateAnnotationOnlyFlatfile() throws ValidationEngineException
-	{
-		String fileName=null;
-		ValidationResult result = new ValidationResult();
-		try
-		{
-			check = new AnnotationOnlyFlatfileValidationCheck(options);
-			for(SubmissionFile annotationOnlyFlatfile:options.submissionFiles.get().getFiles(FileType.ANNOTATION_ONLY_FLATFILE))
-			{
-				fileName = annotationOnlyFlatfile.getFile().getName();
 
-				if(sequenceDB!=null)
-					check.setSequenceDB(sequenceDB);
+	private ValidationResult validateAnnotationOnlyFlatfile() throws ValidationEngineException {
+		String fileName = null;
+		ValidationResult result = new ValidationResult();
+		try {
+			check = new AnnotationOnlyFlatfileValidationCheck(options);
+			FileValidationCheck.setHasAnnotationOnlyFlatfile(check.hasAnnotationFlatfile());
+			if (FileValidationCheck.hasAnnotationOnlyFlatfile()) {
+				annotationDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getAnnoationDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
+				check.setAnnotationDB(annotationDB);
+			}
+
+			for (SubmissionFile annotationOnlyFlatfile : options.submissionFiles.get().getFiles(FileType.FLATFILE)) {
+				fileName = annotationOnlyFlatfile.getFile().getName();
 				result = check.check(annotationOnlyFlatfile);
-				if(!result.isValid()) {
-					if(options.isWebinCLI)
-						throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE,annotationOnlyFlatfile);
+				annotationDB = check.getAnnotationDB();
+				if (!result.isValid()) {
+					if (options.isWebinCLI)
+						throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
 					return result;
 				}
 			}
-		}catch(Exception e)
-		{
-			throwValidationEngineException(FileType.ANNOTATION_ONLY_FLATFILE,e,fileName);
+		} catch (Exception e) {
+			throwValidationEngineException(FileType.ANNOTATION_ONLY_FLATFILE, e, fileName);
 		}
 		return result;
 	}
@@ -395,10 +388,9 @@ public class SubmissionValidationPlan
 		}
 		return result;
 	}
-	private String getSequenceDbname()
+	private String getAnnoationDbname()
 	{
-		return ".sequence";
-
+		return ".annotation";
 	}
 	private String getcontigDbname()
 	{

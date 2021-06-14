@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -107,34 +108,28 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					collectContigInfo(entry);
 				}
             }
-            if(Context.sequence == options.context.get()) {
-				if(entry.getDataClass() == null || entry.getDataClass().isEmpty())
-					entry.setDataClass(Entry.STD_DATACLASS);
-			} else {
-				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
-			}
 
 			if(StringUtils.isBlank(entry.getSubmitterAccession()) && getOptions().context.get() == Context.genome) {
 				addErrorAndReport(validationResult, submissionFile, "EntryNameRequired");
 				return validationResult;
-			} else {
-				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 			}
 
-			Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
-			if (chrListToplogy != null) {
-			  if (entry.getSequence().getTopology() != null
-				  && entry.getSequence().getTopology() != chrListToplogy) {
-			  	addErrorAndReport(validationResult, submissionFile, "TopologyMismatch",
-						entry.getSequence().getTopology().name(), chrListToplogy.name());
-				return validationResult;
-			  }
-			  entry.getSequence().setTopology(chrListToplogy);
-			}
-
+			getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 			getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);
+
+            if(Context.sequence == options.context.get()) {
+				if(entry.getDataClass() == null || entry.getDataClass().isEmpty()) {
+					entry.setDataClass(Entry.STD_DATACLASS);
+				}
+			} else {
+				entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
+			}
+
+			checkChromosomeTopology(entry);
+
         	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
         	appendHeader(entry);
+			addSubmitterSeqIdQual(entry);
         	ValidationResult planResult = validationPlan.execute(entry);
         	validationResult.append(planResult);
 
@@ -164,11 +159,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}catch(ValidationEngineException e)
 		{
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getAnnotationDB());
 			throw e;
 		} catch (Exception ex) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, ex.getMessage(),origin);
-			closeMapDB(getContigDB(), getSequenceDB());
+			closeMapDB(getContigDB(), getAnnotationDB());
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
 
@@ -180,53 +175,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	@Override
 	public ValidationResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
-	}
-	
-	public void getAnnotationFlatfile() throws ValidationEngineException
-	{
-		for(SubmissionFile submissionFile:options.submissionFiles.get().getFiles(FileType.FLATFILE))
-		{
-			boolean isGenbankFile = isGenbank(submissionFile.getFile());
-			Format format = options.context.get()==Context.genome?Format.ASSEMBLY_FILE_FORMAT:Format.EMBL_FORMAT;
-
-			try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());PrintWriter annotationOnyFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getAbsolutePath()+".annotationOnly"))))
-			{
-				EntryReader entryReader = isGenbankFile?new GenbankEntryReader(fileReader):
-						new EmblEntryReader(fileReader,format,submissionFile.getFile().getName());
-
-				entryReader.read();
-				while(entryReader.isEntry())
-				{
-					Entry entry=entryReader.getEntry();
-					if(entry.getSequence() == null || entry.getSequence().getSequenceByte() == null)
-					{
-						EmblEntryWriter writer = new EmblEntryWriter(entry);
-						writer.write(annotationOnyFileWriter);
-						setHasAnnotationOnlyFlatfile(true);
-					} else if(isHasAnnotationOnlyFlatfile()) {
-						throw new ValidationEngineException("File has some entries with only annotations and some entries with sequences, If you intend to provide annotations" +
-								" separately for some sequences, please submit annotations and sequences in different files", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
-				}
-					entryReader.read();
-				}
-			}
-			 catch (IOException e) {
-				throw new ValidationEngineException(e.getMessage(), e);
-			 }
-			if(isHasAnnotationOnlyFlatfile())
-			{
-				SubmissionFile annotationonlysf=null;
-				if(submissionFile.getFixedFile()!=null) {
-					annotationonlysf = new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE, new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly"),
-							new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly" + SequenceEntryUtils.FIXED_FILE_SUFFIX), submissionFile.getReportFile());
-				} else {
-					annotationonlysf = new SubmissionFile(FileType.ANNOTATION_ONLY_FLATFILE, new File(submissionFile.getFile().getAbsolutePath() + ".annotationOnly"),
-							null, submissionFile.getReportFile());
-				}
-                options.submissionFiles.get().addFile(annotationonlysf);
-			}
-			
-		}
 	}
 	private void registerFlatfileInfo() throws ValidationEngineException
 	{

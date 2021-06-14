@@ -55,9 +55,6 @@ public class EmblReducedFlatFileWriter extends EntryWriter {
             writer.write(SEPARATOR_LINE);
         }
 
-        if (new FTWriter(entry, isSortFeatures(), isSortQualifiers(), true, wrapType).write(writer)) {
-            writer.write(SEPARATOR_LINE);
-        }
         // Always write sequence features.
         writeFeatures(writer);
 
