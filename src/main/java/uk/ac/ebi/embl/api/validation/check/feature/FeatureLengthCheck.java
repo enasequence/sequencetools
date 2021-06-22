@@ -1,6 +1,7 @@
 package uk.ac.ebi.embl.api.validation.check.feature;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
+import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -27,7 +28,7 @@ public class FeatureLengthCheck extends FeatureValidationCheck
 			return result;
 		if ((Feature.INTRON_FEATURE_NAME.equals(featureName) && length.longValue() < INTRON_FETURE_LENGTH))
 		{
-			reportWarning(feature.getOrigin(), FEATURE_LENGTH_CHECK_ID, featureName, INTRON_FETURE_LENGTH);
+			reportMessage(Severity.ERROR, feature.getOrigin(), FEATURE_LENGTH_CHECK_ID, featureName, INTRON_FETURE_LENGTH);
 		}
 		else if (Feature.EXON_FEATURE_NAME.equals(featureName) && length.longValue() < EXON_FETURE_LENGTH)
 		{
