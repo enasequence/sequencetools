@@ -94,7 +94,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.context = Optional.of(Context.genome);
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
-		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence1").closeOnJvmShutdown().fileDeleteAfterClose().transactionEnable().make());
+//		check.setSequenceDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence1").closeOnJvmShutdown().fileDeleteAfterClose().transactionEnable().make());
 		assertTrue(check.check(file).isValid());
 		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));
 		String actualString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".fixed")));

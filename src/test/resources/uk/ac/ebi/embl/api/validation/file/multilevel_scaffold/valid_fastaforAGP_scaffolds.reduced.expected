@@ -1,0 +1,40 @@
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 430 BP.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..430
+FT                   /submitter_seqid="IWGSC_CSS_6DL_scaff_3330717"
+XX
+CO   join(complement(IWGSC_CSS_6DL_contig_209593.0:1..330),
+CO   complement(IWGSC_CSS_6DL_contig_209595.0:1..100))
+XX
+SQ   Sequence 430 BP; 11 A; 0 C; 322 G; 97 T; 0 other;
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga        60
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       120
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       180
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       240
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       300
+     aggggggggg gggggggggg gggggggggg gttttttttt tttttttttt tttttttttt       360
+     tttttttttt tttttttttt tttttttttg gttttttttt tttttttttt tttttttttt       420
+     tttttttttt                                                              430
+//
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 430 BP.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..430
+FT                   /submitter_seqid="IWGSC_CSS_6DL_scaff_3330718"
+XX
+CO   join(complement(IWGSC_CSS_6DL_scaff_3330717.0:1..330),
+CO   complement(IWGSC_CSS_6DL_contig_209596.0:1..100))
+XX
+SQ   Sequence 430 BP; 25 A; 0 C; 332 G; 73 T; 0 other;
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga        60
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       120
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       180
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       240
+     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       300
+     aggggggggg gggggggggg gggggggggg attgtttttt ttttttttta aagggttttt       360
+     ttttttttta tgatgatgat gatttttttg attgtttttt ttttttttta aagggttttt       420
+     ttttttttta                                                              430
+//

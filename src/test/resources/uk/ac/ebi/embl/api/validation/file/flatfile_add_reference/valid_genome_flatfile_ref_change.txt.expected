@@ -18,6 +18,13 @@ XX
 OS   Micrococcus sp. 5
 OC   unclassified sequences.
 XX
+RN   [1]
+RA   Kirstein I., Wichels A.;
+RT   ;
+RL   Submitted (17-JUL-2019) to the INSDC.
+RL   Biologische Anstalt Helgoland, Alfred-Wegener-Institut, Helmholtz Zentrum
+RL   fur Polar- und Meeresforschung, Kurpromenade 27498 Helgoland, Germany
+XX
 DR   ENA; AAAA020000000; SET.
 DR   ENA; AAAA000000000; SET.
 DR   ENA-CON; CH398081.
@@ -30,6 +37,7 @@ FT                   /organism="Micrococcus sp. 5"
 FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: ENTRY_NAME1"
+FT                   /submitter_seqid="ENTRY_NAME1"
 FT   gene            212..1543
 FT                   /locus_tag="SPLC1_0001"
 FT   assembly_gap    1461..1490

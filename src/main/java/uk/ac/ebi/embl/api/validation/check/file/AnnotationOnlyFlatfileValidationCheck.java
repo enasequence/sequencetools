@@ -30,7 +30,6 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 
 		try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(submissionFile.getFile())) {
-			//TODO: I think it should not happen here, we may call it in loop
 			clearReportFile(getReportFile(submissionFile));
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 

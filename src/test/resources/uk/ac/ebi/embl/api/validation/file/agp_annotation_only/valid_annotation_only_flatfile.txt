@@ -83,7 +83,7 @@ ST * private 31-DEC-3011
 XX
 AC   XXX;
 XX
-AC * _IWGSC_CSS_6DL_contig_209592
+AC * _IWGSC_CSS_6DL_scaff_3330716
 XX
 PR   Project:PRJEB0;
 XX
@@ -148,7 +148,7 @@ CC   contaminant.
 XX
 FH   Key             Location/Qualifiers
 FH
-FT   source          1..335
+FT   source          1..654
 FT                   /organism="Oryza sativa Indica Group"
 FT                   /mol_type="genomic DNA"
 FT                   /db_xref="taxon:39946"
@@ -156,13 +156,13 @@ FT   gene            212..335
 FT                   /locus_tag="SPLC1_0001"
 XX
 //
-ID   XXX; SV 1; circular; genomic DNA; XXX; PLN; 1710 BP.
+ID   XXX; SV 1; circular; genomic DNA; XXX; PLN; 430 BP.
 XX
 ST * private 31-DEC-3011
 XX
 AC   XXX;
 XX
-AC * _ENTRY_NAME1
+AC * _IWGSC_CSS_6DL_scaff_3330717
 XX
 PR   Project:PRJEB0;
 XX
@@ -227,11 +227,11 @@ CC   contaminant.
 XX
 FH   Key             Location/Qualifiers
 FH
-FT   source          1..1710
+FT   source          1..430
 FT                   /organism="Oryza sativa Indica Group"
 FT                   /mol_type="genomic DNA"
 FT                   /db_xref="taxon:39946"
-FT   gene            212..1543
+FT   gene            212..430
 FT                   /locus_tag="SPLC1_0001"
 XX
 //

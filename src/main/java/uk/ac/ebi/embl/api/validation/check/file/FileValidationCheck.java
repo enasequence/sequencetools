@@ -469,6 +469,8 @@ public abstract class FileValidationCheck {
 			if (entry.getSequence() == null) {
 				return;
 			}
+			// scaff1 contig1 -ok first we set seq for this , no issues
+			//scaff2 scaff1 - currently we are not setting seq to it bcoz it is not part of ff or fasta
 			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
 				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());

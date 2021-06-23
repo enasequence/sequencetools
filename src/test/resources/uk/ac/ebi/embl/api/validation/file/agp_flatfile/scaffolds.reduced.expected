@@ -1,0 +1,26 @@
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 654 BP.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..654
+FT                   /submitter_seqid="IWGSC_CSS_6DL_scaff_3330716"
+FT   assembly_gap    331..354
+FT                   /estimated_length=24
+FT                   /gap_type="within scaffold"
+FT                   /linkage_evidence="paired-ends"
+XX
+CO   join(ENTRY_NAME1.0:1..330,gap(24),ENTRY_NAME2.0:1..300)
+XX
+SQ   Sequence 654 BP; 110 A; 213 C; 220 G; 87 T; 24 other;
+     gggactctcc aacggctccc cgaggagctc gagaggacga ttaagtcatc ctcgagggac        60
+     ctcgcccgag gagcggtgga gctcgtactg gcgagttacc aggccaggac cccgacttct       120
+     ccccatggac ggcgctggac gagttccctc ccgggaccga ggacggcgcg cgcgcgcagg       180
+     tccgggacgc cgccgaccac atcgtccaca gcttcgaggg ttcggcccct cagctcgcgt       240
+     tctccctcaa ctccgacgag gaggacgatg acggcggagt gggcgacagt ggcgacgagg       300
+     ctggcgatcc gggtgcatcg gagtgagccc nnnnnnnnnn nnnnnnnnnn nnnngggact       360
+     ctccaacggc tccccgagga gctcgagagg acgattaagt catcctcgag ggacctcgcc       420
+     cgaggagcgg tggagctcgt actggcgagt taccaggcca ggaccccgac ttctccccat       480
+     ggacggcgct ggacgagttc cctcccggga ccgaggacgg cgcgcgcgcg caggtccggg       540
+     acgccgccga ccacatcgtc cacagcttcg agggttcggc ccctcagctc gcgttctccc       600
+     tcaactccga cgaggaggac gatgacggcg gagtgggcga cagtggcgac gagg             654
+//

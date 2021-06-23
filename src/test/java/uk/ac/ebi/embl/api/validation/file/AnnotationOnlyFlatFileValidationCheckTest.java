@@ -70,7 +70,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options);
-		check.setSequenceDB(db);
+//		check.setSequenceDB(db);
 		assertTrue(check.check(file).isValid());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 		db.close();
@@ -92,7 +92,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options);
-		check.setSequenceDB(db);
+	//	check.setSequenceDB(db);
 		assertTrue(!check.check(file).isValid());
 		assertEquals(1l,check.getMessageStats().get("SequenceExistsCheck").get());
 		db.close();
@@ -113,7 +113,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 			check=new FastaFileValidationCheck(options);
 		if(fileType==FileType.FLATFILE)
 			check=new FlatfileFileValidationCheck(options);
-		check.setSequenceDB(db);
+	//	check.setSequenceDB(db);
 		check.check(file);
 		options.submissionFiles.get().clear();
 	}

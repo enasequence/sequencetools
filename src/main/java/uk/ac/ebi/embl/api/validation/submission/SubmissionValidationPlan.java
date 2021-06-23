@@ -100,7 +100,7 @@ public class SubmissionValidationPlan
 				if(!validationResult.isValid())
 					return validationResult;
 			}
-			  //TODO: may be think about thread safety here
+
 			if(options.context.get().getFileTypes().contains(FileType.FLATFILE) && !FileValidationCheck.hasAnnotationOnlyFlatfile()) {
 				validationResult = validateFlatfile();
 				if(!validationResult.isValid())
@@ -347,6 +347,9 @@ public class SubmissionValidationPlan
 			if (FileValidationCheck.hasAnnotationOnlyFlatfile()) {
 				annotationDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getAnnoationDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 				check.setAnnotationDB(annotationDB);
+				agpCheck.setAnnotationDB(annotationDB);
+			} else {
+				return result;
 			}
 
 			for (SubmissionFile annotationOnlyFlatfile : options.submissionFiles.get().getFiles(FileType.FLATFILE)) {

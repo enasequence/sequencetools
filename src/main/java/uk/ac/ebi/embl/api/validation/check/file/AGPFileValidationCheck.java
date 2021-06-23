@@ -114,10 +114,17 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				}
 
 				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
-					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession());
+					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
 					if (annoationEntry != null) {
+						String molType = null;
+						if(annoationEntry.getSequence() != null && annoationEntry.getSequence().getMoleculeType() != null){
+							molType = annoationEntry.getSequence().getMoleculeType();
+						}
 						annoationEntry.setSequence(entry.getSequence());
 						entry = annoationEntry;
+						if(molType != null) {
+							entry.getSequence().setMoleculeType(molType);
+						}
 					}
 				} else {
 					appendHeader(entry);
@@ -146,7 +153,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			else
 				{
 					if(fixedFileWriter != null) {
-						new EmblEntryWriter(entry).write(fixedFileWriter);//TODO: old , just for ENAPRO loading
+						new EmblEntryWriter(entry).write(fixedFileWriter);
 						constructAGPSequence(entry);
 						writeEntryToFile(entry, submissionFile);
 					}
@@ -180,31 +187,45 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		if(getContigDB()!=null) {
 			contigMap = getContigDB().hashMap("map").createOrOpen();
 		}
-			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
-				if (!agpRow.isGap()) {
+
+			for (AgpRow currObjectAGPRow : entry.getSequence().getSortedAGPRows()) {
+				if (!currObjectAGPRow.isGap()) {
 
 					Object sequence;
-					if (agpRow.getComponent_id() != null && getContigDB() != null) {
-
-						Object rows = contigMap.get(agpRow.getComponent_id().toLowerCase());
-						if (rows != null) {
-							for (AgpRow row : (List<AgpRow>) rows) {
-								if (row.getObject().toLowerCase().equals(agpRow.getObject().toLowerCase())) {
-									sequence = row.getSequence();
-									if (sequence != null)
+					if (currObjectAGPRow.getComponent_id() != null && getContigDB() != null) {
+						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
+						Object seqsOfCurrRowComponent = contigMap.get(currObjectAGPRow.getComponent_id().toLowerCase());
+						if (seqsOfCurrRowComponent != null) {
+							for (AgpRow component : (List<AgpRow>) seqsOfCurrRowComponent) {
+								//proceed only if the component belongs to the current object(AGP row)
+								if (component.getObject().equalsIgnoreCase(currObjectAGPRow.getObject())) {
+									sequence = component.getSequence();
+									if(sequence != null) {
 										sequenceBuffer.put((byte[]) sequence);
-									else {
-										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
+									} else {
+											throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + currObjectAGPRow.getComponent_id());
 									}
 								}
 							}
 						}
 					}
 
-				} else if (agpRow.getGap_length() != null)
-					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());
+				} else if (currObjectAGPRow.getGap_length() != null)
+					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), currObjectAGPRow.getGap_length().intValue()).getBytes());
 			}
-         entry.getSequence().setSequence(sequenceBuffer);
+			entry.getSequence().setSequence(sequenceBuffer);
+
+			//check if the current object(scaffold) is placed(will be a component) on another object(could be another scaffold/chromosome)
+			//if yes, construct sequence for all the objects where the current object has been placed
+			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(entry.getSubmitterAccession().toLowerCase());
+			if (agpRows != null) {
+				for (AgpRow agpRow : agpRows) {
+					agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+				}
+				contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
+			}
+
+			getContigDB().commit();
 
 		}catch(Exception e)
 		{

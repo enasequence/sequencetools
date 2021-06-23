@@ -78,7 +78,16 @@ public abstract class SubmissionValidationTest {
 		SubmissionFile file = new SubmissionFile(fileType, new File(fileName),new File(fileName+".fixed"));
 		return file;
 	}
-	
+
+	protected String getFileFullPath(String fileName) {
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource("uk/ac/ebi/embl/api/validation/file/" + fileName);
+		if (url != null) {
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		return fileName;
+	}
+
+
 	protected  SubmissionFile 
 	initSubmissionFixedSequenceTestFile(String fileName,FileType fileType)
 	{
@@ -129,6 +138,13 @@ public abstract class SubmissionValidationTest {
 		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
 		FlatFileComparator comparator=new FlatFileComparator(options);
 		return comparator.compare(file.getAbsolutePath()+".expected", file.getAbsolutePath()+".fixed");
+	}
+
+	protected boolean compareOutputFixedFiles(String expected, String actual) throws FlatFileComparatorException
+	{
+		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
+		FlatFileComparator comparator=new FlatFileComparator(options);
+		return comparator.compare(expected, actual);
 	}
 	protected boolean compareOutputSequenceFiles(File file) throws FlatFileComparatorException
 	{

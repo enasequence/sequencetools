@@ -1,0 +1,27 @@
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 654 BP.
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..654
+FT                   /submitter_seqid="IWGSC_CSS_6DL_scaff_3330716"
+FT   assembly_gap    331..354
+FT                   /estimated_length=24
+FT                   /gap_type="within scaffold"
+FT                   /linkage_evidence="paired-ends"
+XX
+CO   join(IWGSC_CSS_6DL_contig_209591.0:1..330,gap(24),
+CO   IWGSC_CSS_6DL_contig_209592.0:1..300)
+XX
+SQ   Sequence 654 BP; 319 A; 11 C; 10 G; 290 T; 24 other;
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac        60
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       120
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       180
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       240
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       300
+     caaaaaaaaa aaaaaaaaaa aaaaaaaaaa nnnnnnnnnn nnnnnnnnnn nnnngttttt       360
+     tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttggttttt       420
+     tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttggttttt       480
+     tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttggttttt       540
+     tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttggttttt       600
+     tttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttg             654
+//

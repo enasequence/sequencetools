@@ -67,7 +67,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			AGPFileValidationCheck check = new AGPFileValidationCheck(options);
 			try {
 
-				check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
+				//check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
 				check.setContigDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".contig").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
 
 				validateContig("valid_flatfileforAgp.txt", FileType.FLATFILE, check.getContigDB());
@@ -85,7 +85,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 				assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagccc",
 						seq2);*/
 			} finally {
-				check.getSequenceDB().close();
+			//	check.getSequenceDB().close();
 				check.getContigDB().close();
 			}
 

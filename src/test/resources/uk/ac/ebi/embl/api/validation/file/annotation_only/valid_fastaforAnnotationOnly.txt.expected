@@ -1,4 +1,4 @@
-ID   XXX; SV XXX; linear; genomic DNA; WGS; XXX; 335 BP.
+ID   XXX; SV XXX; linear; genomic DNA; WGS; PLN; 335 BP.
 XX
 AC   ;
 XX
@@ -23,6 +23,10 @@ FT                   /organism="Micrococcus sp. 5"
 FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209591"
+FT                   /submitter_seqid="IWGSC_CSS_6DL_contig_209591"
+XX
+FT   gene            212..335
+FT                   /locus_tag="SPLC1_0001"
 XX
 SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac        60
@@ -32,7 +36,7 @@ SQ   Sequence 335 BP; 323 A; 12 C; 0 G; 0 T; 0 other;
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaac       300
      caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaac                                  335
 //
-ID   XXX; SV XXX; linear; genomic DNA; WGS; XXX; 335 BP.
+ID   XXX; SV XXX; linear; genomic DNA; WGS; PLN; 335 BP.
 XX
 AC   ;
 XX
@@ -57,6 +61,10 @@ FT                   /organism="Micrococcus sp. 5"
 FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209592"
+FT                   /submitter_seqid="IWGSC_CSS_6DL_contig_209592"
+XX
+FT   gene            212..335
+FT                   /locus_tag="SPLC1_0001"
 XX
 SQ   Sequence 335 BP; 0 A; 0 C; 12 G; 323 T; 0 other;
      gttttttttt tttttttttt tttttttttt tttttttttt tttttttttt tttttttttg        60
@@ -91,6 +99,7 @@ FT                   /organism="Micrococcus sp. 5"
 FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: IWGSC_CSS_6DL_contig_209593"
+FT                   /submitter_seqid="IWGSC_CSS_6DL_contig_209593"
 XX
 SQ   Sequence 335 BP; 12 A; 0 C; 323 G; 0 T; 0 other;
      aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga        60

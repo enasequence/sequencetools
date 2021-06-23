@@ -99,14 +99,21 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					collectContigInfo(entry);
 				}
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);//TODO: check this in other checks as well
+				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
 				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
 					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
 					if (annoationEntry == null) {
 						appendHeader(entry);
 						addSubmitterSeqIdQual(entry);
 					} else {
+						String molType = null;
+						if(annoationEntry.getSequence() != null && annoationEntry.getSequence().getMoleculeType() != null){
+							molType = annoationEntry.getSequence().getMoleculeType();
+						}
 						annoationEntry.setSequence(entry.getSequence());
+						if(molType != null) {
+							annoationEntry.getSequence().setMoleculeType(molType);
+						}
 						entry = annoationEntry;
 					}
 				} else {
