@@ -44,6 +44,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.isDevMode = true;
 	}
 
+	// Make sure we store the references given in Webin-CLI manifest.
 	@Test
 	public void testGenomeSubmissionWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
 		String fileName = "flatfile_add_reference/valid_genome_flatfile.txt";
@@ -70,7 +71,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeSubmissionWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -92,7 +93,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
-	public void testGenomeSubmissionwithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeSubmissionWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException, IOException
 	{
 		String fastaFileName = "multilevel_scaffold/valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "multilevel_scaffold/agp_scafoold_levels.txt";
@@ -127,7 +128,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionwithFastaChromosomeListsequenceless() throws ValidationEngineException, FlatFileComparatorException, IOException
+	public void testGenomeSubmissionWithFastaChromosomeListErrorSequenceless() throws ValidationEngineException, IOException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -148,7 +149,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	
 	@Test
 	@Ignore
-	public void testGenomeSubmissionwitFastawithValidChromosomeList() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeSubmissionWithFastawithValidChromosomeList() throws ValidationEngineException, FlatFileComparatorException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -166,7 +167,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
+	public void testGenomeSubmissionWithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -191,7 +192,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeFastaAGPSubmission() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeSubmissionFastaWithFastaAGP() throws FlatFileComparatorException, ValidationEngineException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -215,7 +216,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionwithFastaAGPWithUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeSubmissionWithFastaAGPUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
 	{
 		String fastaFileName = "agp_unlocalised/valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "agp_unlocalised/agp_scaffold_levels.txt";
@@ -252,7 +253,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionwithFastaAGPWithChrList() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeSubmissionWithFastaAGPChromosomeList() throws FlatFileComparatorException, ValidationEngineException
 	{
 		String fastaFileName = "agp_fasta_chr_list/valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "agp_fasta_chr_list/agp_scafoold_levels_1.txt";
@@ -284,7 +285,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeFastaSubmission() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeSubmissionFasta() throws ValidationEngineException, FlatFileComparatorException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -303,7 +304,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeAnnotationOnlyFile() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeSubmissionFastaAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
 	{
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -323,7 +324,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeFastaAGP_AnnotationOnlySubmission() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeSubmissionFastaAGPAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
 	{
 		//anootation file has annotations for 1 contig, 1 scaffold and 1 chromosome ,
 		// after execution this will be verified by comparing contigs and scaffolds reduced file and chromosome flatfile.
@@ -368,7 +369,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testValidTranscriptomFastaSubmission() throws ValidationEngineException, FlatFileComparatorException
+	public void testValidTranscriptomeFastaSubmission() throws ValidationEngineException, FlatFileComparatorException
 	{
 		options.context = Optional.of(Context.transcriptome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -384,7 +385,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 	
 	@Test
-	public void testValidTranscriptomFlatFileSubmission() throws ValidationEngineException, FlatFileComparatorException
+	public void testValidTranscriptomeFlatFileSubmission() throws ValidationEngineException, FlatFileComparatorException
 	{
 		options.context = Optional.of(Context.transcriptome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
