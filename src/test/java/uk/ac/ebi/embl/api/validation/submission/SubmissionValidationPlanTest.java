@@ -46,8 +46,9 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 	// Make sure we store the references given in Webin-CLI manifest.
 	@Test
-	public void testGenomeSubmissionWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
-		String fileName = "flatfile_add_reference/valid_genome_flatfile.txt";
+	public void testGenomeWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
+		String rootPath = "genome"+ File.separator+ "flatfile_add_reference" + File.separator;
+		String fileName = "valid_genome_flatfile.txt";
 		options.context = Optional.of(Context.genome);
 		options.assemblyInfoEntry.get().setAuthors("Kirstein I., Wichels A.;");
 		options.assemblyInfoEntry.get().setAddress("Biologische Anstalt Helgoland, Alfred-Wegener-Institut, Helmholtz Zentrum " +
@@ -56,87 +57,90 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		DateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 		options.assemblyInfoEntry.get().setDate(format.parse("17-JUL-2019"));
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(fileName , FileType.FLATFILE));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fileName , FileType.FLATFILE));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		String expectedFile = "flatfile_add_reference/valid_genome_flatfile_ref_change.txt.expected";
+		String expectedFile =  "valid_genome_flatfile_ref_change.txt.expected";
 		FlatFileComparator comparator=new FlatFileComparator(new FlatFileComparatorOptions());
-		assertTrue( comparator.compare(initSubmissionFixedTestFile(expectedFile, FileType.FLATFILE).getFile().getAbsolutePath(),
-				initSubmissionTestFile(fileName, FileType.FLATFILE).getFile().getAbsolutePath()+".fixed"));
+		assertTrue( comparator.compare(initSubmissionFixedTestFile(rootPath, expectedFile, FileType.FLATFILE).getFile().getAbsolutePath(),
+				initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getAbsolutePath()+".fixed"));
 	}
 
 	@Test
-	public void testGenomeSubmissionWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
 	{
+		String rootPath = "genome"+ File.separator+ "fasta_flatfile" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("fasta_flatfile/valid_genome_fasta.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile("fasta_flatfile/valid_genome_flatfile.txt", FileType.FLATFILE));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath , "valid_genome_flatfile.txt", FileType.FLATFILE));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile("fasta_flatfile/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("fasta_flatfile/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("fasta_flatfile/valid_genome_fasta.txt", FileType.FASTA).getFile()));
-        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("fasta_flatfile/valid_genome_flatfile.txt", FileType.FASTA).getFile()));
+        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile()));
+        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_flatfile.txt", FileType.FASTA).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("fasta_flatfile/contigs.reduced.expected"),
-				getFileFullPath("fasta_flatfile" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath, "contigs.reduced.expected"),
+				getFileFullPath(rootPath ,FileValidationCheck.contigFileName)));
 	}
 	
 	@Test
-	public void testGenomeSubmissionWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String fastaFileName = "multilevel_scaffold/valid_fastaforAgp_scaffold_levels.txt";
-		String agpFileName = "multilevel_scaffold/agp_scafoold_levels.txt";
-		String chrListFileName = "multilevel_scaffold/chromosome_list_scaffold_levels.txt";
+		String rootPath = "genome"+ File.separator+ "multilevel_scaffold" + File.separator;
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scafoold_levels.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels.txt";
 		options.context = Optional.of(Context.genome);
 
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
-		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, chrListFileName, FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 
-		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath, fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath, fastaFileName, FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertEquals(1, SubmissionValidationPlan.getUnplacedEntryNames().size());
 		assertTrue( SubmissionValidationPlan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("multilevel_scaffold/valid_fastaforAGP_contigs.reduced.expected"),
-				getFileFullPath("multilevel_scaffold" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath, "valid_fastaforAGP_contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("multilevel_scaffold/valid_fastaforAGP_scaffolds.reduced.expected"),
-				getFileFullPath("multilevel_scaffold" + File.separator + FileValidationCheck.scaffoldFileName)));
+				getFileFullPath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("multilevel_scaffold/valid_fastaforAGP_chromosome.flatfile.expected"),
-				getFileFullPath("multilevel_scaffold" + File.separator + FileValidationCheck.chromosomeFileName)));
+				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionWithFastaChromosomeListErrorSequenceless() throws ValidationEngineException, IOException
+	public void testGenomeWithFastaChromosomeListErrorSequenceless() throws ValidationEngineException, IOException
 	{
+		String rootPath = "genome"+ File.separator+ "sequenceless_chr" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("sequenceless_chr/valid_genome_fasta.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile("sequenceless_chr/chromosome_list_sequenceless.txt", FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"chromosome_list_sequenceless.txt", FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
-		options.reportDir = Optional.of(initSubmissionTestFile("sequenceless_chr/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("sequenceless_chr/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 
 		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"fasta.info"));
 		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"agp.info"));
@@ -151,6 +155,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Ignore
 	public void testGenomeSubmissionWithFastawithValidChromosomeList() throws ValidationEngineException, FlatFileComparatorException
 	{
+		//String rootPath = "genome"+ File.separator+ "sequenceless_chr" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA));
@@ -167,186 +172,194 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testGenomeSubmissionWithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
+	public void testGenomeWithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
 	{
+		String rootPath = "genome"+ File.separator+ "agp_flatfile" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("agp_flatfile/valid_flatfileforAgp.txt", FileType.FLATFILE));
-		submissionFiles.addFile(initSubmissionFixedTestFile("agp_flatfile/valid_agp.txt", FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_agp.txt", FileType.AGP));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile("agp_flatfile/valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("agp_flatfile/valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("agp_flatfile/valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("agp_flatfile/valid_agp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_agp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_flatfile/contigs.reduced.expected"),
-				getFileFullPath("agp_flatfile" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_flatfile/scaffolds.reduced.expected"),
-				getFileFullPath("agp_flatfile" + File.separator + FileValidationCheck.scaffoldFileName)));
+				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionFastaWithFastaAGP() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeWithFastaAGP() throws FlatFileComparatorException, ValidationEngineException
 	{
+		String rootPath = "genome"+ File.separator+ "agp_fasta" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("agp_fasta/valid_fastaforAgp.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile("agp_fasta/valid_fastaagp.txt", FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_fastaforAgp.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_fastaagp.txt", FileType.AGP));
 		options.submissionFiles = Optional.of(submissionFiles);
-		options.reportDir = Optional.of(initSubmissionTestFile("agp_fasta/valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("agp_fasta/valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("agp_fasta/valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("agp_fasta/valid_fastaagp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaagp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_fasta/contigs.reduced.expected"),
-				getFileFullPath("agp_fasta" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_fasta/scaffolds.reduced.expected"),
-				getFileFullPath("agp_fasta" + File.separator + FileValidationCheck.scaffoldFileName)));
+				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
+				getFileFullPath(rootPath,FileValidationCheck.scaffoldFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionWithFastaAGPUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
+	public void testGenomeWithFastaAGPUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
 	{
-		String fastaFileName = "agp_unlocalised/valid_fastaforAgp_scaffold_levels.txt";
-		String agpFileName = "agp_unlocalised/agp_scaffold_levels.txt";
-		String chrListFileName = "agp_unlocalised/chromosome_list_scaffold_levels.txt";
-		String unlocalisedListFile = "agp_unlocalised/unlocalised_list_agp.txt";
+		String rootPath = "genome"+ File.separator+ "agp_unlocalised" + File.separator;
+
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scaffold_levels.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels.txt";
+		String unlocalisedListFile = "unlocalised_list_agp.txt";
 
 		options.context = Optional.of(Context.genome);
 
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
-		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
-		submissionFiles.addFile(initSubmissionFixedTestFile(unlocalisedListFile, FileType.UNLOCALISED_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,chrListFileName, FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,unlocalisedListFile, FileType.UNLOCALISED_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 
-		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFileName, FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_unlocalised/valid_fastaforAGP_contigs.reduced.expected"),
-				getFileFullPath("agp_unlocalised" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"valid_fastaforAGP_contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_unlocalised/valid_fastaforAGP_scaffolds.reduced.expected"),
-				getFileFullPath("agp_unlocalised" + File.separator + FileValidationCheck.scaffoldFileName)));
+				getFileFullPath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_unlocalised/valid_fastaforAGP_chromosome.flatfile.expected"),
-				getFileFullPath("agp_unlocalised" + File.separator + FileValidationCheck.chromosomeFileName)));
+				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
+				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionWithFastaAGPChromosomeList() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeWithFastaAGPChromosomeList() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String fastaFileName = "agp_fasta_chr_list/valid_fastaforAgp_scaffold_levels.txt";
-		String agpFileName = "agp_fasta_chr_list/agp_scafoold_levels_1.txt";
-		String chrListFileName = "agp_fasta_chr_list/chromosome_list_scaffold_levels_1.txt";
+		String rootPath = "genome"+ File.separator+ "agp_fasta_chr_list" + File.separator;
+
+		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
+		String agpFileName = "agp_scafoold_levels_1.txt";
+		String chrListFileName = "chromosome_list_scaffold_levels_1.txt";
 
 		options.context = Optional.of(Context.genome);
 
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
-		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, chrListFileName, FileType.CHROMOSOME_LIST));
 		options.submissionFiles = Optional.of(submissionFiles);
 
-		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath, fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath, fastaFileName, FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_fasta_chr_list/contigs.reduced.expected"),
-				getFileFullPath("agp_fasta_chr_list" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_fasta_chr_list/chromosome.flatfile.expected"),
-				getFileFullPath("agp_fasta_chr_list" + File.separator + FileValidationCheck.chromosomeFileName)));
+				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionFasta() throws ValidationEngineException, FlatFileComparatorException
+	public void testGenomeWithFasta() throws ValidationEngineException, FlatFileComparatorException
 	{
+		String rootPath = "genome"+ File.separator+ "fasta" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("fasta/valid_genome_fasta.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile("fasta/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("fasta/valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("fasta/valid_genome_fasta.txt", FileType.FASTA).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA).getFile()));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("fasta/contigs.reduced.expected"),
-				getFileFullPath("fasta" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath,  FileValidationCheck.contigFileName)));
 	}
 
 	@Test
 	public void testGenomeSubmissionFastaAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
 	{
+		String rootPath = "genome"+ File.separator+ "annotation_only" + File.separator;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile("annotation_only/valid_fastaforAnnotationOnly.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile("annotation_only/valid_AnnotationOnly_flatfile.txt", FileType.FLATFILE));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_fastaforAnnotationOnly.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_AnnotationOnly_flatfile.txt", FileType.FLATFILE));
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile("annotation_only/valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile("annotation_only/valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("annotation_only/valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("annotation_only/contigs.reduced.expected"),
-				getFileFullPath("annotation_only" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 	}
 
 	@Test
-	public void testGenomeSubmissionFastaAGPAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
+	public void testGenomeWithFastaAGPAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
 	{
 		//anootation file has annotations for 1 contig, 1 scaffold and 1 chromosome ,
 		// after execution this will be verified by comparing contigs and scaffolds reduced file and chromosome flatfile.
 		// also verified by comparing existing enapro loading flatfiles.
-
-		String fastaFileName = "agp_annotation_only/valid_fasta.txt";
-		String agpFileName = "agp_annotation_only/valid_agp.txt";
-		String chrListFileName = "agp_annotation_only/valid_chromosome_list.txt";
-		String annotationFileName = "agp_annotation_only/valid_annotation_only_flatfile.txt";
+		String rootPath = "genome"+ File.separator+ "agp_annotation_only" + File.separator;
+		String fastaFileName = "valid_fasta.txt";
+		String agpFileName = "valid_agp.txt";
+		String chrListFileName = "valid_chromosome_list.txt";
+		String annotationFileName = "valid_annotation_only_flatfile.txt";
 
 		options.context = Optional.of(Context.genome);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(fastaFileName, FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(agpFileName, FileType.AGP));
-		submissionFiles.addFile(initSubmissionFixedTestFile(chrListFileName, FileType.CHROMOSOME_LIST));
-		submissionFiles.addFile(initSubmissionFixedTestFile(annotationFileName, FileType.FLATFILE));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,chrListFileName, FileType.CHROMOSOME_LIST));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,annotationFileName, FileType.FLATFILE));
 		options.submissionFiles = Optional.of(submissionFiles);
 
-		options.reportDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(fastaFileName, FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFileName, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFileName, FileType.FASTA).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
@@ -354,18 +367,18 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertEquals(SubmissionValidationPlan.getUnplacedEntryNames().size(), 1);
 		assertEquals(SubmissionValidationPlan.getUnplacedEntryNames().toArray()[0].toString(), "IWGSC_CSS_6DL_SCAFF_3330717");
 
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_annotation_only/contigs.reduced.expected"),
-				getFileFullPath("agp_annotation_only" + File.separator + FileValidationCheck.contigFileName)));
+				getFileFullPath(rootPath,"contigs.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_annotation_only/scaffolds.reduced.expected"),
-				getFileFullPath("agp_annotation_only" + File.separator + FileValidationCheck.scaffoldFileName)));
+				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
+				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath("agp_annotation_only/chromosome.flatfile.expected"),
-				getFileFullPath("agp_annotation_only" + File.separator + FileValidationCheck.chromosomeFileName)));
+				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
+				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test

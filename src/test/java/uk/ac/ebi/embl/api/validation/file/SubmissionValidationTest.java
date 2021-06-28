@@ -79,27 +79,50 @@ public abstract class SubmissionValidationTest {
 		return file;
 	}
 
-	protected String getFileFullPath(String fileName) {
-		URL url = SubmissionValidationTest.class.getClassLoader().getResource("uk/ac/ebi/embl/api/validation/file/" + fileName);
+	protected  SubmissionFile
+	initSubmissionTestFile(String rootPath , String fileName,FileType fileType)
+	{
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( rootPath + fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		SubmissionFile file = new SubmissionFile(fileType, new File(fileName));
+		return file;
+	}
+
+	protected  File
+	initFile(String rootPath, String fileName)
+	{
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( rootPath + fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+
+		return new File(fileName);
+	}
+
+	protected  SubmissionFile
+	initSubmissionFixedTestFile(String rootPath, String fileName,FileType fileType)
+	{
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource( rootPath + fileName);
+		if (url != null)
+		{
+			fileName = url.getPath().replaceAll("%20", " ");
+		}
+		SubmissionFile file = new SubmissionFile(fileType, new File(fileName),new File(fileName+".fixed"));
+		return file;
+	}
+
+	protected String getFileFullPath(String rootPath, String fileName) {
+		URL url = SubmissionValidationTest.class.getClassLoader().getResource(rootPath + fileName);
 		if (url != null) {
 			fileName = url.getPath().replaceAll("%20", " ");
 		}
 		return fileName;
 	}
 
-
-	protected  SubmissionFile 
-	initSubmissionFixedSequenceTestFile(String fileName,FileType fileType)
-	{
-		URL url = SubmissionValidationTest.class.getClassLoader().getResource( "uk/ac/ebi/embl/api/validation/file/"+ fileName);
-		if (url != null)
-		{
-			fileName = url.getPath().replaceAll("%20", " ");
-		}
-		SubmissionFile file = new SubmissionFile(fileType, new File(fileName),new File(fileName+".sequence"));
-		return file;
-	}
-	
 	protected SourceFeature getSource()
 	{
 		SourceFeature source = new FeatureFactory().createSourceFeature();
