@@ -18,15 +18,14 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.*;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -52,14 +51,19 @@ public class FeatureKeyCheckTest {
         feature = featureFactory.createFeature("misc_feature");
         property=new EmblEntryValidationPlanProperty();
 
-        DataSetHelper.createAndAdd(FileName.FEATURE_KEYS, new DataRow("misc_feature"),new DataRow("operon"), new DataRow("CDS"),new DataRow("intron"));
-        DataSetHelper.createAndAdd(FileName.FEATURE_KEY_QUALIFIERS,new DataRow("misc_feature", "gene", "N", "Y", "Y"),
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_KEYS, new DataRow("misc_feature"),new DataRow("operon"), new DataRow("CDS"),new DataRow("intron"));
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_KEY_QUALIFIERS,new DataRow("misc_feature", "gene", "N", "Y", "Y"),
                 new DataRow("operon", "operon", "Y", "N", "N"),
                 new DataRow("intron", "number", "N", "Y", "Y"),
                 new DataRow("intron", "gene", "N", "Y", "Y"));
         check = new FeatureKeyCheck();
 
         check.setEmblEntryValidationPlanProperty(property);
+    }
+
+    @After
+    public void tearDown() {
+        GlobalDataSets.resetTestDataSets();
     }
 
     @Test

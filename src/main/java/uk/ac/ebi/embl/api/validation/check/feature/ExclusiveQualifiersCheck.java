@@ -35,7 +35,7 @@ public class ExclusiveQualifiersCheck extends FeatureValidationCheck {
 
     public ValidationResult check(Feature feature) {
         result = new ValidationResult();
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.EXCLUSIVE_QUALIFIERS);
 
         if (feature == null) {
             return result;

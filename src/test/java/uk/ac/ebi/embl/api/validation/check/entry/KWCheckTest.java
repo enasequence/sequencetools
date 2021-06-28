@@ -15,18 +15,14 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,11 +40,11 @@ public class KWCheckTest {
 		entry = entryFactory.createEntry();
 
 				//FileName.KEYWORD_DATACLASS, FileName.CON_NO_KEYWORDS
-		DataSetHelper.createAndAdd(FileName.CON_NO_KEYWORDS, new DataRow("HTG"),new DataRow("FLI_CDNA") );
-		DataSetHelper.createAndAdd(FileName.KEYWORD_DATACLASS, new DataRow("TSA","TSA","TSA"),
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.CON_NO_KEYWORDS, new DataRow("HTG"),new DataRow("FLI_CDNA") );
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.KEYWORD_DATACLASS, new DataRow("TSA","TSA","TSA"),
 				new DataRow("TSA","TRANSCRIPTOMESHOTGUNASSEMBLY","Transcriptome Shotgun Assembly"),
 				new DataRow("WGS","WGS","WGS"));
-		DataSetHelper.createAndAdd(FileName.DATACLASS, new DataRow("TSA"),
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.DATACLASS, new DataRow("TSA"),
 				new DataRow("TLS"),
 				new DataRow("STD"),
 				new DataRow("CON"),
@@ -57,6 +53,11 @@ public class KWCheckTest {
 				new DataRow("HTG"),
 				new DataRow("WGS"));
 		check = new KWCheck();
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

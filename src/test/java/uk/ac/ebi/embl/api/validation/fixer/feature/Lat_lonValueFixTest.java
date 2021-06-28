@@ -85,10 +85,11 @@ public class Lat_lonValueFixTest
 	@Test
 	public void testCheck_lat_lonValidValueExceedLimit()
 	{
-		qualifier.setValue("32.0103345 N 35.29756677 E");
+		qualifier.setValue("32.010334545 N 35.297566774 E");
 		feature.addQualifier(qualifier);
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(1, validationResult.count("Lat_lonValueFix", Severity.FIX));
+		assertEquals(qualifier.getValue(), "32.01033454 N 35.29756677 E");
 	}
 
 

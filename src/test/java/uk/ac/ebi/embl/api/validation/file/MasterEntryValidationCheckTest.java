@@ -28,6 +28,7 @@ import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
@@ -54,7 +55,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	{
 		options.context=Optional.of(Context.genome);
 		options.source= Optional.of(getSource());
-		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
+		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options, new FileValidationCheck.SharedInfo());
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage("SubmissionOption assemblyInfoEntry must be given to generate master entry");
 		check.check();
@@ -66,7 +67,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 	{
 		options.context=Optional.of(Context.genome);
 		options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
-		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
+		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options, new FileValidationCheck.SharedInfo());
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage("SubmissionOption source must be given to generate master entry");
 		check.check();
@@ -81,9 +82,9 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 		options.context = Optional.of(Context.genome);
 		File file=initFile("genome_master.txt.expected");
 		options.processDir = Optional.of(file.getParent());
-		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
+		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options, new FileValidationCheck.SharedInfo());
 		check.check();
-		Entry entry =check.getMasterEntry();
+		Entry entry =check.getSharedInfo().masterEntry;
 		PrintWriter writer = new PrintWriter(options.processDir.get()+File.separator+"master.dat");
 		EmblEntryWriter entryWriter= new EmblEntryWriter(entry);
 		entryWriter.write(writer);
@@ -100,9 +101,9 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest
 		options.context = Optional.of(Context.transcriptome);
 		File file=initFile("transcriptom_master.txt.expected");
 		options.processDir = Optional.of(file.getParent());
-		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options);
+		MasterEntryValidationCheck check = new MasterEntryValidationCheck(options, new FileValidationCheck.SharedInfo());
 		check.check();
-		Entry entry =check.getMasterEntry();
+		Entry entry =check.getSharedInfo().masterEntry;
 		PrintWriter writer = new PrintWriter(options.processDir.get()+File.separator+"master.dat");
 		EmblEntryWriter entryWriter= new EmblEntryWriter(entry);
 		entryWriter.write(writer);

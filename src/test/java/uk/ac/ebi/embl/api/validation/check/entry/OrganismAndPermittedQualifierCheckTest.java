@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,11 +34,8 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.entry.OrganismAndPermittedQualifierCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -62,15 +60,14 @@ public class OrganismAndPermittedQualifierCheckTest {
 		taxonHelper = createMock(TaxonHelper.class);
 		property.taxonHelper.set(taxonHelper);
 		DataRow dataRow = new DataRow("virion", "Viruses,Viroids");
-        DataSetHelper.createAndAdd(FileName.ORG_PERMITTED_QUALIFIER, dataRow);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.ORG_PERMITTED_QUALIFIER, dataRow);
 		check = new OrganismAndPermittedQualifierCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(entry);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

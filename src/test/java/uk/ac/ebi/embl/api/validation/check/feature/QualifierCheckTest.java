@@ -15,12 +15,11 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import org.junit.After;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,20 +53,27 @@ public class QualifierCheckTest {
         DataRow dataRow4 = new DataRow("lat_lon",	"N",	"Y",	"Y",	"^\\s*(-{0,1}\\s*\\d{1,6}(\\.\\d{1,6}){0,1})\\s+(S|N)\\s*,{0,1}\\s+(-{0,1}\\s*\\d{1,6}(\\.\\d{1,6}){0,1})\\s+(W|E)\\s*$",	"22",	"(null)");
         DataRow dataRow5 = new DataRow("protein_id",	"N",	"Y",	"Y",	"^\\s*([A-Z]{3}\\d{5})(\\.)(\\d+)\\s*$",	"93",	"(null)");
         DataRow dataRow6 = new DataRow("inference",	"N",	"Y",	"Y",	"^((COORDINATES|DESCRIPTION|EXISTENCE):)?([^\\:\\(]+)(\\(same\\sspecies\\))?(:.+)?$",	"89",	"(null)");
+        DataRow dataRow7 = new DataRow("ncRNA_class", "N", "Y", "Y", "^(.*)$", "95", "(null)");
 
         DataRow regexRow = new DataRow("collection_date", "3", "FALSE", "Oct");
         DataRow regexRow2 = new DataRow("rpt_type","1","TRUE","tandem,inverted,flanking,terminal,direct,dispersed,other");
         DataRow regexRow3 = new DataRow("lat_lon", "3", "FALSE", "N,S");
         DataRow regexRow4 = new DataRow("lat_lon", "6", "FALSE", "E,W");
         DataRow regexRow5 = new DataRow("inference","3","TRUE","ab initio prediction,alignment,non-experimental evidence no additional details recorded,nucleotide motif,profile,protein motif,similar to AA sequence,similar to DNA sequence,similar to RNA sequence,similar to RNA sequence{COM} EST,similar to RNA sequence{COM} mRNA,similar to RNA sequence{COM} other RNA,similar to sequence");
+        DataRow regexRow6 = new DataRow("ncRNA_class", "1", "TRUE", "other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA,pre_miRNA,sgRNA,scaRNA,Y_RNA,circRNA");
 
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
 
-        DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6);
-        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
-        DataSetHelper.createAndAdd(FileName.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6, dataRow7);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5, regexRow6);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
         check = new QualifierCheck();
+    }
+
+    @After
+    public void tearDown() {
+        GlobalDataSets.resetTestDataSets();
     }
 
     @Test
@@ -251,4 +257,19 @@ public class QualifierCheckTest {
 		ValidationResult validationResult = check.check(feature);
 		assertTrue(validationResult.isValid());
 	}
+    @Test
+    public void testCheck_ncRNA_PermittedValue() {
+        feature.addQualifier("ncRNA_class", "pre_miRNA");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    public void testCheck_ncRNA_NotPermittedValue() {
+        feature.addQualifier("ncRNA_class", "abc");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(!validationResult.isValid());
+        Collection<ValidationMessage<Origin>> messages = validationResult.getMessages("QualifierCheck-4");
+        assertTrue(messages.size() == 1);
+    }
 }

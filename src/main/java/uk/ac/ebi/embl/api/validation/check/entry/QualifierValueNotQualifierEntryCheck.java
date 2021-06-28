@@ -38,7 +38,7 @@ public class QualifierValueNotQualifierEntryCheck extends EntryValidationCheck {
 
 	public ValidationResult check(Entry entry) {
 		result = new ValidationResult();
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_VALUE_NOT_QUALIFIER_ENTRY);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_NOT_QUALIFIER_ENTRY);
 
 		if (entry == null) {
 			return result;

@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -49,10 +50,11 @@ import java.util.concurrent.ConcurrentMap;
 public class AGPFileValidationCheck extends FileValidationCheck
 {
 
-	public AGPFileValidationCheck(SubmissionOptions options)
+	public AGPFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
-	}	
+		super(options, sharedInfo);
+	}
+
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		ValidationPlan validationPlan;
@@ -104,11 +106,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					entry.getSequence().setTopology(chrListToplogy);
 				}
 				//level 2 placed entries should be removed from unplaced set
-				if (!unplacedEntryNames.isEmpty()) {
+				if (!sharedInfo.unplacedEntryNames.isEmpty()) {
 					for (AgpRow agpRow : entry.getSequence().getAgpRows()) {
 						if (agpRow.getComponent_type_id() != null && !agpRow.getComponent_type_id().equalsIgnoreCase("N")
 								&& agpRow.getComponent_id() != null) {
-							unplacedEntryNames.remove(agpRow.getComponent_id().toUpperCase());
+							sharedInfo.unplacedEntryNames.remove(agpRow.getComponent_id().toUpperCase());
 						}
 					}
 				}
@@ -141,7 +143,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					addEntryName(entry.getSubmitterAccession());
 					int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 					AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
-					FileValidationCheck.agpInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+					sharedInfo.agpInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 					contigInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 				}
 
@@ -290,7 +292,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	}
 	private void registerAGPfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.agpInfo,options.processDir.get(),AssemblySequenceInfo.agpfileName);
+		AssemblySequenceInfo.writeMapObject(sharedInfo.agpInfo,options.processDir.get(),AssemblySequenceInfo.agpfileName);
 	}
 	
 }

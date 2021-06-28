@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.UnlocalisedListFileReader;
 
 import java.util.List;
@@ -29,9 +30,9 @@ import java.util.List;
 public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 {
 
-	public UnlocalisedListFileValidationCheck(SubmissionOptions options) 
+	public UnlocalisedListFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
+		super(options, sharedInfo);
 	}	
 	@Override
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
@@ -61,7 +62,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 				getReporter().writeToFile(getReportFile(submissionFile), planResult);
 				addMessageStats(planResult.getMessages());
 				}
-				unlocalisedEntryNames.add(entry.getObjectName().toUpperCase());
+				sharedInfo.unlocalisedEntryNames.add(entry.getObjectName().toUpperCase());
 			}
 		} catch (ValidationEngineException e) {
 			throw e;
@@ -83,7 +84,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		ValidationResult result = new ValidationResult();
 		if(unlocalisedEntry.getChromosomeName()!=null)
 		{
-			if(chromosomeNames.size()!=0&&!chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
+			if(sharedInfo.chromosomeNames.size()!=0&&!sharedInfo.chromosomeNames.contains(unlocalisedEntry.getChromosomeName().toUpperCase()))
 			{
 				ValidationMessage message = new ValidationMessage<>(Severity.ERROR, "UnlocalisedListChromosomeValidCheck",unlocalisedEntry.getChromosomeName());
 				result.append(message);
@@ -97,7 +98,7 @@ public class UnlocalisedListFileValidationCheck extends FileValidationCheck
 		ValidationResult result = new ValidationResult();
 		if(unlocalisedEntry.getObjectName()!=null)
 		{
-			if(entryNames.size()!=0&&!entryNames.contains(unlocalisedEntry.getObjectName().toUpperCase()))
+			if(sharedInfo.entryNames.size()!=0&&!sharedInfo.entryNames.contains(unlocalisedEntry.getObjectName().toUpperCase()))
 			{
 				ValidationMessage message = new ValidationMessage<>(Severity.ERROR, "UnlocalisedListUnlocalisedValidCheck",unlocalisedEntry.getObjectName());
 				result.append(message);

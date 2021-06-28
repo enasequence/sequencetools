@@ -72,8 +72,8 @@ public class FeatureLengthCheckTest
 		intronFeature.setLocations(intronFeatureLocation);
 		exonFeature.setLocations(exonFeatureLocation);
 		ValidationResult intronResult = check.check(intronFeature);
-		assertEquals(1, intronResult.count("FeatureLengthCheck-1", Severity.WARNING));
-		Collection<ValidationMessage<Origin>> intronmessages = intronResult.getMessages("FeatureLengthCheck-1", Severity.WARNING);
+		assertEquals(1, intronResult.count("FeatureLengthCheck-1", Severity.ERROR));
+		Collection<ValidationMessage<Origin>> intronmessages = intronResult.getMessages("FeatureLengthCheck-1", Severity.ERROR);
 		assertEquals("\"intron\" usually expected to be at least \"10\" nt long. Please check the accuracy.", intronmessages.iterator().next()
 				.getMessage());
 		ValidationResult exonResult = check.check(exonFeature);

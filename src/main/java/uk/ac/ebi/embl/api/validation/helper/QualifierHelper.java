@@ -276,7 +276,7 @@ public class QualifierHelper {
     public static Set<String> getArtemisQualifierSet() {
 
         Set<String> artemisQualifiersSet = new TreeSet<>();
-        List<DataRow> dataRows = GlobalDataSets.getRows(FileName.ARTEMIS_QUALIFIERS);
+        List<DataRow> dataRows = GlobalDataSets.getRows(GlobalDataSetFile.ARTEMIS_QUALIFIERS);
         if(null == dataRows) {
             throw new IllegalArgumentException("");
         } else {
@@ -290,7 +290,7 @@ public class QualifierHelper {
 
     public static Map<String, QualifierInfo> getQualifierMap() {
         HashMap<String, QualifierInfo> qualifierMap = new HashMap<>();
-        List<DataRow> dataRows = GlobalDataSets.getRows(FileName.FEATURE_QUALIFIER_VALUES);
+        List<DataRow> dataRows = GlobalDataSets.getRows(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES);
         if(null == dataRows) {
             throw new IllegalArgumentException("");
         } else {
@@ -303,7 +303,7 @@ public class QualifierHelper {
 
                 QualifierInfo qualifierInfo = new QualifierInfo(qualifierName, regex, noValue.equals("Y"), newField.equals("Y"), comments);
                 if (!qualifierName.equals("EC_number")) { //EMD-2496
-                    List<DataRow> regexpRows = GlobalDataSets.getRows(FileName.FEATURE_REGEX_GROUPS);
+                    List<DataRow> regexpRows = GlobalDataSets.getRows(GlobalDataSetFile.FEATURE_REGEX_GROUPS);
                     if(null == regexpRows) {
                         throw new IllegalArgumentException("");
                     } else {

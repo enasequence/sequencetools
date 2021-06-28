@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -41,7 +41,7 @@ public class ExclusiveQualifiersWithSameValueCheck extends FeatureValidationChec
 
 	public ValidationResult check(Feature feature) {
         result = new ValidationResult();
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.EXCLUSIVE_QUALIFIERS_SAME_VALUE);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.EXCLUSIVE_QUALIFIERS_SAME_VALUE);
 
         if (feature == null) {
 			return result;

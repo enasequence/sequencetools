@@ -8,6 +8,7 @@ import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -19,9 +20,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck 
 {
-	public AnnotationOnlyFlatfileValidationCheck(SubmissionOptions options) 
+	public AnnotationOnlyFlatfileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
+		super(options, sharedInfo);
 	}
 
 

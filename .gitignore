@@ -3,10 +3,8 @@
 .settings
 .project
 .idea
-.classpath
-.project
 build
 gradlew
 gradle.properties
 src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt
-/.idea/
+pom.xml

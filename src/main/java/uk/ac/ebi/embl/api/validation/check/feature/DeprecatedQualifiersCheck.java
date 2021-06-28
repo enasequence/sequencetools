@@ -35,7 +35,7 @@ public class DeprecatedQualifiersCheck extends FeatureValidationCheck {
 
     public ValidationResult check(Feature feature) {
         result = new ValidationResult();
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.DEPRECATED_QUALIFIERS);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.DEPRECATED_QUALIFIERS);
 
         if (feature == null) {
             return result;

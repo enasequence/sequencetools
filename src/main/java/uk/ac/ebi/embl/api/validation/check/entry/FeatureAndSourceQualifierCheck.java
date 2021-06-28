@@ -37,7 +37,7 @@ public class FeatureAndSourceQualifierCheck extends EntryValidationCheck {
 		if (entry == null) {
 			return result;
 		}
-		for(DataRow dataRow : GlobalDataSets.getDataSet(FileName.FEATURE_SOURCE_QUALIFIER).getRows()) {
+		for(DataRow dataRow : GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_SOURCE_QUALIFIER).getRows()) {
 			String expectedQualifierName = dataRow.getString(0);
 			String featureName = dataRow.getString(1);
 			if (featureName == null || expectedQualifierName == null || !SequenceEntryUtils.isFeatureAvailable(featureName, entry)) {

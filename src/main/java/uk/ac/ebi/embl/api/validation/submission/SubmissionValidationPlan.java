@@ -22,9 +22,13 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +37,7 @@ import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
+import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
@@ -49,7 +54,10 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
 {
-	SubmissionOptions options;
+	private final SubmissionOptions options;
+
+	private final FileValidationCheck.SharedInfo fileValidationCheckSharedInfo = new FileValidationCheck.SharedInfo();
+
 	FileValidationCheck check = null;
 	DB annotationDB =null;
 	DB contigDB =null;
@@ -65,14 +73,15 @@ public class SubmissionValidationPlan
 
 	public SubmissionValidationPlan(SubmissionOptions options) {
 		this.options =options;
-		}
+	}
+
 	public ValidationResult execute() throws ValidationEngineException {
 		ValidationResult validationResult = new ValidationResult();
 		try
 		{
 			//TODO: check for a way to log INFO messages
 			options.init();
-			FileValidationCheck.setHasAgp(options.submissionFiles.get().getFiles(FileType.AGP).size() > 0);
+			fileValidationCheckSharedInfo.hasAgp = options.submissionFiles.get().getFiles(FileType.AGP).size() > 0;
 			//Validation Order shouldn't be changed
 			if(options.context.get().getFileTypes().contains(FileType.MASTER))
 				createMaster();
@@ -81,10 +90,18 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
 				validateUnlocalisedList();
 			if (options.context.get().getFileTypes().contains(FileType.AGP)) {
-				agpCheck = new AGPFileValidationCheck(options);
-				if (FileValidationCheck.isHasAgp()) {
+				agpCheck = new AGPFileValidationCheck(options, fileValidationCheckSharedInfo);
+				if (fileValidationCheckSharedInfo.hasAgp) {
 					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.setContigDB(contigDB);
+				}
+			}
+			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
+			{
+				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, fileValidationCheckSharedInfo);
+				check.getAnnotationFlatfile();
+				if(fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
+					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.getAGPEntries();
 				}
 			}
@@ -159,18 +176,19 @@ public class SubmissionValidationPlan
 		return validationResult;
 	}
 
-	public static Set<String> getUnplacedEntryNames() {
-		return FileValidationCheck.unplacedEntryNames;
+	public Set<String> getUnplacedEntryNames() {
+		return fileValidationCheckSharedInfo.unplacedEntryNames;
 	}
+
 	private ValidationResult createMaster() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
 		try
 		{
-			masterCheck = new MasterEntryValidationCheck(options);
+			masterCheck = new MasterEntryValidationCheck(options, fileValidationCheckSharedInfo);
 			if(options.processDir.isPresent()
 					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
-					&& masterCheck.getMasterEntry() != null ) {
+					&& fileValidationCheckSharedInfo.masterEntry != null ) {
 				return result;
 			}
 
@@ -197,7 +215,7 @@ public class SubmissionValidationPlan
          return result;
 		String fileName = null;
 		try {
-			check = new ChromosomeListFileValidationCheck(options);
+			check = new ChromosomeListFileValidationCheck(options, fileValidationCheckSharedInfo);
 			for (SubmissionFile chromosomeListFile : options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST)) {
 				fileName= chromosomeListFile.getFile().getName();
 				result = check.check(chromosomeListFile);
@@ -216,7 +234,7 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFasta() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		check = new FastaFileValidationCheck(options);
+		check = new FastaFileValidationCheck(options, fileValidationCheckSharedInfo);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
 			return result;
 		String fileName=null;
@@ -250,7 +268,7 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFlatfile() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		check = new FlatfileFileValidationCheck(options);
+		check = new FlatfileFileValidationCheck(options, fileValidationCheckSharedInfo);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
 			return result;
 		String fileName=null;
@@ -313,7 +331,7 @@ public class SubmissionValidationPlan
 		String fileName=null;
 		try
 		{
-			check = new UnlocalisedListFileValidationCheck(options);
+			check = new UnlocalisedListFileValidationCheck(options, fileValidationCheckSharedInfo);
 			for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
 			{	fileName= unlocalisedListFile.getFile().getName();
 				result = check.check(unlocalisedListFile);
@@ -332,10 +350,10 @@ public class SubmissionValidationPlan
 
 	private void registerSequences() throws ValidationEngineException
 	{
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
-		FileValidationCheck.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
+		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
+		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
+		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
+		AssemblySequenceInfo.writeMapObject(fileValidationCheckSharedInfo.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
 	private ValidationResult validateAnnotationOnlyFlatfile() throws ValidationEngineException {
@@ -374,7 +392,7 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		try
 		{
-			check = new TSVFileValidationCheck(options);
+			check = new TSVFileValidationCheck(options, fileValidationCheckSharedInfo);
 			for(SubmissionFile tsvFile:options.submissionFiles.get().getFiles(FileType.TSV))
 			{
 				fileName = tsvFile.getFile().getName();
@@ -433,7 +451,7 @@ public class SubmissionValidationPlan
 
 	private long getSequencecount(int assemblyLevel)
 	{
-		return FileValidationCheck.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
+		return fileValidationCheckSharedInfo.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
 	}
 
 	private void writeUnplacedList() throws ValidationEngineException
@@ -447,7 +465,7 @@ public class SubmissionValidationPlan
 		}
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.processDir.get()+File.separator+"unplaced.txt")))
 		{
-			oos.writeObject(FileValidationCheck.unplacedEntryNames);
+			oos.writeObject(fileValidationCheckSharedInfo.unplacedEntryNames);
 
 		}catch(Exception e)
 		{
@@ -460,7 +478,7 @@ public class SubmissionValidationPlan
 		if(options.processDir.isPresent() && Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,AssemblySequenceInfo.sequencefileName))))
 			return;
 
-		AssemblySequenceInfo.writeObject(FileValidationCheck.getSequenceCount(),options.processDir.get(),AssemblySequenceInfo.sequencefileName);
+		AssemblySequenceInfo.writeObject(fileValidationCheckSharedInfo.sequenceCount,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
 	private void flagValidation(FileType fileType) throws IOException

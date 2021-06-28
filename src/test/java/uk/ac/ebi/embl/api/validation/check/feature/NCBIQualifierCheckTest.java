@@ -1,11 +1,11 @@
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 
@@ -31,6 +31,7 @@ public class NCBIQualifierCheckTest {
         DataRow dataRow4 = new DataRow("lat_lon",	"N",	"Y",	"Y",	"^\\s*(-{0,1}\\s*\\d{1,6}(\\.\\d{1,6}){0,1})\\s+(S|N)\\s*,{0,1}\\s+(-{0,1}\\s*\\d{1,6}(\\.\\d{1,6}){0,1})\\s+(W|E)\\s*$",	"22",	"(null)");
         DataRow dataRow5 = new DataRow("protein_id",	"N",	"Y",	"Y",	"^\\s*([A-Z]{3}\\d{5})(\\.)(\\d+)\\s*$",	"93",	"(null)");
         DataRow dataRow6 = new DataRow("inference",	"N",	"Y",	"Y",	"^((COORDINATES|DESCRIPTION|EXISTENCE):)?([^\\:\\(]+)(\\(same\\sspecies\\))?(:.+)?$",	"89",	"(null)");
+        DataRow dataRow7 = new DataRow("number", "N", "Y", "N", "^[a-zA-Z0-9]+$", "72", "(null)");
 
         DataRow regexRow = new DataRow("collection_date", "3", "FALSE", "Oct");
         DataRow regexRow2 = new DataRow("rpt_type","1","TRUE","tandem,inverted,flanking,terminal,direct,dispersed,other");
@@ -41,10 +42,15 @@ public class NCBIQualifierCheckTest {
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
 
-        DataSetHelper.createAndAdd(FileName.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6);
-        DataSetHelper.createAndAdd(FileName.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
-        DataSetHelper.createAndAdd(FileName.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6, dataRow7);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
         check = new QualifierCheck();
+    }
+
+    @After
+    public void tearDown() {
+        GlobalDataSets.resetTestDataSets();
     }
 
     @Test
@@ -227,5 +233,25 @@ public class NCBIQualifierCheckTest {
         feature.addQualifier("inference","non-experimental evidence, no additional details recorded");
         ValidationResult validationResult = check.check(feature);
         assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    public void testCheck_IntronNumberQualifier_valid1() {
+        feature.addQualifier("number","4");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(validationResult.isValid());
+    }
+    @Test
+    public void testCheck_IntronNumberQualifier_valid2() {
+        feature.addQualifier("number","6B");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(validationResult.isValid());
+    }
+    @Test
+    public void testCheck_IntronNumberQualifier_invalid() {
+        feature.addQualifier("number","-");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(!validationResult.isValid());
+        assertTrue(validationResult.getMessages("QualifierCheck-3").size() == 1);
     }
 }

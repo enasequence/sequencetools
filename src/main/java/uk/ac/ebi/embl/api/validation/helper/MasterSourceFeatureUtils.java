@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -138,7 +139,22 @@ public class MasterSourceFeatureUtils {
 		}
 
 		if (latitude != null && longitude != null) {
-			addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latitude + " " + longitude, sourceFeature);
+			String latValue = latitude;
+			String lonValue = longitude;
+			try {
+				double lat = Double.parseDouble(latitude);
+				latValue += " " + (lat < 0 ? "S" : "N");
+			} catch (NumberFormatException ex) {
+				//ignore
+			}
+			try {
+				double lon = Double.parseDouble(longitude);
+				lonValue += " " + (lon < 0 ? "W" : "E");
+			} catch (NumberFormatException ex) {
+				//ignore
+			}
+			String latLonValue = latValue + " " + lonValue;
+			addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latLonValue, sourceFeature);
 		}
 		if (country != null || region != null) {
 			addSourceQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country == null ? region : region == null ? country : country + ":" + region, sourceFeature);
@@ -151,4 +167,6 @@ public class MasterSourceFeatureUtils {
 
 		return sourceFeature;
 	}
+
+
 }

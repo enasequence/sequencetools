@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,11 +32,8 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.TaxonomicDivisionQualifierCheck;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -67,9 +65,14 @@ public class TaxonomicDivisionQualifierCheckTest
 		DataRow dataRow2 = new DataRow("serovar", "PRO");
 		DataRow dataRow3 = new DataRow("variety", "PLN,FUN");
 
-		DataSetHelper.createAndAdd(FileName.TAXONOMIC_DIVISION_QUALIFIER, dataRow1,dataRow2,dataRow3);
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.TAXONOMIC_DIVISION_QUALIFIER, dataRow1,dataRow2,dataRow3);
 		check = new TaxonomicDivisionQualifierCheck();
 		check.setEmblEntryValidationPlanProperty(property);
+	}
+
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

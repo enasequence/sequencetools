@@ -37,7 +37,7 @@ public class EntryMolTypeCheck extends EntryValidationCheck {
     }
 
     public void init() {
-        DataSet valuesSet = GlobalDataSets.getDataSet(FileName.FEATURE_REGEX_GROUPS);
+        DataSet valuesSet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS);
 
         if (valuesSet != null) {
                 for (DataRow regexpRow : valuesSet.getRows()) {

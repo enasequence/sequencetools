@@ -20,14 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.helper.DataSetHelper;
 import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class DeprecatedQualifiersCheckTest {
@@ -42,14 +41,13 @@ public class DeprecatedQualifiersCheckTest {
 
 		feature = featureFactory.createFeature("feature");
 
-        DataSetHelper.createAndAdd(FileName.DEPRECATED_QUALIFIERS, new DataRow("partial","(null)","N"), new DataRow("specific_host","host","Y"), new DataRow("david","bod","N"));
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.DEPRECATED_QUALIFIERS, new DataRow("partial","(null)","N"), new DataRow("specific_host","host","Y"), new DataRow("david","bod","N"));
         check = new DeprecatedQualifiersCheck();
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testCheck_NoDataSet() {
-		GlobalDataSets.clear();
-		check.check(feature);
+	@After
+	public void tearDown() {
+		GlobalDataSets.resetTestDataSets();
 	}
 
 	@Test

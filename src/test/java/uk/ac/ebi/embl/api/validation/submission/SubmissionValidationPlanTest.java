@@ -1,11 +1,14 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
@@ -24,15 +27,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SubmissionValidationPlanTest extends SubmissionValidationTest 
 {
+    SubmissionOptions options =null;
 
     @Rule
 	public ExpectedException thrown = ExpectedException.none();
+
+    @BeforeClass
+	public static void beforeClass() {
+    	//to clear out changes made by other tests that might interfere with tests in this class.
+		GlobalDataSets.resetTestDataSets();
+	}
 
 	@Before
 	public void init() {
@@ -259,6 +279,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
 				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
+		assertEquals(1, plan.getUnplacedEntryNames().size());
+		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
 
 	@Test
@@ -293,6 +317,9 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
 				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
 
 	@Test
@@ -431,4 +458,45 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 	}
 
+	@Test
+	public void testGenomeSubmissionwitFastawithValidChromosomeListMultipleTimesInParallel() {
+		List<CompletableFuture<Void>> futs = new ArrayList<>();
+		for (int i = 0; i < 32; i++) {
+			int taskId = i + 1;
+
+			futs.add(CompletableFuture.runAsync(() -> {
+				SubmissionFiles submissionFiles = new SubmissionFiles();
+				submissionFiles.addFile(initSubmissionFixedTestFile(
+						"valid_genome_fasta_2.txt", FileType.FASTA));
+				submissionFiles.addFile(initSubmissionFixedTestFile(
+						"chromosome_list_2.txt", FileType.CHROMOSOME_LIST));
+
+				File reportProcessDir = submissionFiles.getFiles().get(0).getFile().getParentFile().toPath().resolve("" + taskId).toFile();
+				reportProcessDir.mkdir();
+
+				SubmissionOptions opts = new SubmissionOptions();
+				opts.isWebinCLI = true;
+				opts.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
+				opts.source = Optional.of(getSource());
+				opts.ignoreErrors = true;
+				opts.isDevMode = true;
+				opts.context = Optional.of(Context.genome);
+				opts.submissionFiles = Optional.of(submissionFiles);
+				opts.reportDir = Optional.of(reportProcessDir.getAbsolutePath());
+				opts.processDir = Optional.of(reportProcessDir.getAbsolutePath());
+
+				try {
+					SubmissionValidationPlan plan = new SubmissionValidationPlan(opts);
+
+					ValidationResult res = plan.execute();
+
+					assertTrue(res.isValid());
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}));
+		}
+
+		CompletableFuture.allOf(futs.toArray(new CompletableFuture[futs.size()])).join();
+	}
 }

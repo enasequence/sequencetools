@@ -18,7 +18,7 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.FileName;
+import uk.ac.ebi.embl.api.validation.GlobalDataSetFile;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -40,7 +40,7 @@ public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 	}
 
 	private void init() {
-		DataSet keySet = GlobalDataSets.getDataSet(FileName.FEATURE_REQUIRE_QUALIFIERS);
+		DataSet keySet = GlobalDataSets.getDataSet(GlobalDataSetFile.FEATURE_REQUIRE_QUALIFIERS);
 		if (keySet != null) {
 			for (DataRow dataRow : keySet.getRows()) {
 				String key = dataRow.getString(0);

@@ -16,10 +16,9 @@
 package uk.ac.ebi.embl.api.entry;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -136,6 +135,10 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private boolean isNonExpandedCON=false;
 	private int sequenceCount;
 	private int entryType;
+	/**
+	 * get sequence coverage numbers with keys BP, A, C, G, T or other
+	 */
+	private Map<String, Long> sequenceCoverage;
 
 	public Entry() {
 		this.secondaryAccessions = new ArrayList<>();
@@ -155,6 +158,14 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		masterScaffoldAccessions = new ArrayList<>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
+		this.sequenceCoverage = Stream.of(
+				new AbstractMap.SimpleEntry<>("BP", 0l),
+				new AbstractMap.SimpleEntry<>("A", 0l),
+				new AbstractMap.SimpleEntry<>("C", 0l),
+				new AbstractMap.SimpleEntry<>("G", 0l),
+				new AbstractMap.SimpleEntry<>("T", 0l),
+				new AbstractMap.SimpleEntry<>("other", 0l))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     }
 		
@@ -772,5 +783,13 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 			return false;
 		List<Location> contigs = sequence.getContigs();
 		return contigs != null && !contigs.isEmpty();
+	}
+
+	public Map<String, Long> getSequenceCoverage() {
+		return sequenceCoverage;
+	}
+
+	public void setSequenceCoverage(Map<String, Long> sequenceCoverage) {
+		this.sequenceCoverage = sequenceCoverage;
 	}
 }

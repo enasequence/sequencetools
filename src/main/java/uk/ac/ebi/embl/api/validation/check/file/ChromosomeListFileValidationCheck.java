@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
 
 import java.util.HashMap;
@@ -30,8 +31,8 @@ import java.util.List;
 public class ChromosomeListFileValidationCheck extends FileValidationCheck
 {
 
-	public ChromosomeListFileValidationCheck(SubmissionOptions options) {
-		super(options);
+	public ChromosomeListFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
+		super(options, sharedInfo);
 	}
 
 	@Override
@@ -73,9 +74,9 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 					addMessageStats(planResult.getMessages());
 				}
 				if (entry.getObjectName() != null)
-				  chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(), entry);
+					sharedInfo.chromosomeNameQualifiers.put(entry.getObjectName().toUpperCase(), entry);
 				if(entry.getChromosomeName()!=null)
-					chromosomeNames.add(entry.getChromosomeName().toUpperCase());
+					sharedInfo.chromosomeNames.add(entry.getChromosomeName().toUpperCase());
 
 			}
 
@@ -93,7 +94,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 
  	public HashMap<String,ChromosomeEntry> getChromosomeQualifeirs()
  	{
- 		return chromosomeNameQualifiers;
+ 		return sharedInfo.chromosomeNameQualifiers;
  	}
 
 	@Override

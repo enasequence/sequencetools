@@ -35,7 +35,7 @@ public class QualifierAndRequiredQualifierinEntryCheck extends EntryValidationCh
 
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
-        DataSet dataSet = GlobalDataSets.getDataSet(FileName.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY);
+        DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_REQUIRED_QUALIFIER_IN_ENTRY);
 
         if (entry == null) {
             return result;

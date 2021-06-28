@@ -17,7 +17,7 @@ anticodon	5	FALSE	3Hyp,4Abu,4Hyp,Aad,Abu,Acp,Ahe,Aib,Ala,Apm,Arg,Asn,Asp,Asx,Cys
 mobile_element_type	1	TRUE	LINE,MITE,SINE,insertion sequence,integron,non-LTR retrotransposon,other,retrotransposon,transposon
 rpt_type	1	TRUE	tandem,inverted,flanking,terminal,direct,dispersed,other,nested,long_terminal_repeat,non_ltr_retrotransposon_polymeric_tract,centromeric_repeat,telomeric_repeat,x_element_combinatorial_repeat,y_prime_element
 organelle	1	TRUE	mitochondrion,plastid:chloroplast,mitochondrion:kinetoplast,plastid:chromoplast,plastid:cyanelle,plastid:leucoplast,plastid:proplastid,plastid:apicoplast,plastid,nucleomorph,hydrogenosome,chromatophore
-ncRNA_class	1	TRUE	other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA
+ncRNA_class	1	TRUE	other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA,pre_miRNA,sgRNA,scaRNA,Y_RNA,circRNA
 mol_type	1	TRUE	unassigned DNA,unassigned RNA,genomic DNA,genomic RNA,mRNA,tRNA,rRNA,transcribed RNA,other RNA,other DNA,protein,viral cRNA
 exception	1	TRUE	rearrangement required for product,reasons given in citation,RNA editing,annotated by transcript or proteomic data
 direction	1	TRUE	left,both,right

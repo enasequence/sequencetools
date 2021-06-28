@@ -40,7 +40,7 @@ public class QualifierPatternAndFeatureCheck extends EntryValidationCheck
 	public ValidationResult check(Entry entry)
 	{
 		result = new ValidationResult();
-		DataSet dataSet= GlobalDataSets.getDataSet(FileName.QUALIFIER_PATTERN_FEATURE);
+		DataSet dataSet= GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_PATTERN_FEATURE);
 		if (entry == null)
 			return result;
 

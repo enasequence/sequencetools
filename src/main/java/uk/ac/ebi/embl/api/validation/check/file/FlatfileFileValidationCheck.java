@@ -47,10 +47,11 @@ import java.nio.file.Paths;
 public class FlatfileFileValidationCheck extends FileValidationCheck
 {
 
-	public FlatfileFileValidationCheck(SubmissionOptions options) 
+	public FlatfileFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
-		super(options);
-	}	
+		super(options, sharedInfo);
+	}
+
 	@Override
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
@@ -96,6 +97,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 					} else {
 						entry.setSubmitterAccession(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME));
 					}
+					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				}
 
     			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
@@ -137,7 +139,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 				addEntryName(entry.getSubmitterAccession());
 				int assemblyLevel = getAssemblyLevel(getOptions().getEntryValidationPlanProperty().validationScope.get());
 				AssemblySequenceInfo sequenceInfo = new AssemblySequenceInfo(entry.getSequence().getLength(), assemblyLevel, null);
-				FileValidationCheck.flatfileInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
+				sharedInfo.flatfileInfo.put(entry.getSubmitterAccession().toUpperCase(), sequenceInfo);
 			}
 
 			if(!planResult.isValid())
@@ -154,7 +156,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			parseResult = entryReader.read();
 			validationResult.append(parseResult);
-			sequenceCount++;
+			sharedInfo.sequenceCount++;
 		}
 		}catch(ValidationEngineException e)
 		{
@@ -178,6 +180,6 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 	}
 	private void registerFlatfileInfo() throws ValidationEngineException
 	{
-		AssemblySequenceInfo.writeMapObject(FileValidationCheck.flatfileInfo,options.processDir.get(),AssemblySequenceInfo.flatfilefileName);
+		AssemblySequenceInfo.writeMapObject(sharedInfo.flatfileInfo,options.processDir.get(),AssemblySequenceInfo.flatfilefileName);
 	}
 }

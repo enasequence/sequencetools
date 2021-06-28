@@ -83,7 +83,7 @@ public class DataclassFix extends EntryValidationCheck
 			return result;
 		}
 
-		DataSet dataSet = GlobalDataSets.getDataSet(FileName.KEYWORD_DATACLASS);
+		DataSet dataSet = GlobalDataSets.getDataSet(GlobalDataSetFile.KEYWORD_DATACLASS);
 		result = new ValidationResult();
 
 		String dataclass = entry.getDataClass();
