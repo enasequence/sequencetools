@@ -164,6 +164,7 @@ public enum ValidationUnit
 					DataclassFix.class,//include for all
 					TPA_dataclass_Fix.class,//exclude for master
 					AccessionFix.class,//exclude for master
+					NonAsciiCharacterFix.class,//include for all
 					CollectionDateQualifierFix.class,//include for all
 					Isolation_sourceQualifierFix.class,//include for all
 					HostQualifierFix.class,//include for all
