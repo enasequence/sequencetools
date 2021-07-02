@@ -54,14 +54,15 @@ public class NonAsciiCharacterFixTest {
         entry.setComment(new Text("non-ascii cömment"));
         ValidationResult result = fixer.check(entry);
         assertEquals(1, result.count("AsciiCharacterFix_1", Severity.FIX));
-        assertEquals(entry.getComment(), "non-ascii comment"); // ö -> o
+        assertEquals(entry.getComment().getText(), "non-ascii comment"); // ö -> o
     }
 
     @Test
     public void testCheck_knownNotFixedChar()
     {
-        entry.setComment(new Text("non-ascii c�mment")); // expected: not caught and not possible to fix
+        entry.setComment(new Text("unknown character with ���"));
         ValidationResult result = fixer.check(entry);
+        assertEquals(0, result.count(Severity.FIX)); // expected: not caught and not possible to fix
         assertTrue(result.isValid());
     }
 
@@ -75,7 +76,7 @@ public class NonAsciiCharacterFixTest {
 
         entry.addReference(reference1);
         ValidationResult result = fixer.check(entry);
-        assertEquals(3, result.count("AsciiCharacterCheck_1", Severity.FIX));
+        assertEquals(2, result.count("AsciiCharacterFix_1", Severity.FIX));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class NonAsciiCharacterFixTest {
         feature.addQualifier((new QualifierFactory()).createQualifier(Qualifier.COUNTRY_QUALIFIER_NAME,"Estonia:Põlva maakond"));
         entry.addFeature(feature);
         ValidationResult result = fixer.check(entry);
-        assertEquals(1, result.count("AsciiCharacterCheck_1", Severity.FIX));
+        assertEquals(1, result.count("AsciiCharacterFix_1", Severity.FIX));
     }
 
 }
