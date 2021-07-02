@@ -34,40 +34,50 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
         attemptFix(entry.getDescription());
 
         for (Reference reference : entry.getReferences()) {
-            String pubTitle = reference.getPublication().getTitle();
-            String fixedPubTitle = fixedStr(pubTitle);
-            if (!fixedPubTitle.equals(pubTitle)) {
-                reference.getPublication().setTitle(fixedPubTitle);
-                reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, pubTitle, fixedPubTitle);
-            }
-
-            for (Person author : reference.getPublication().getAuthors()) {
-                String firstName = author.getFirstName();
-                String fixedFirstName = fixedStr(firstName);
-                if (!fixedFirstName.equals(firstName)) {
-                    author.setFirstName(fixedFirstName);
-                    reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, firstName, fixedFirstName);
+            if (reference.getPublication() != null) {
+                String pubTitle = reference.getPublication().getTitle();
+                if (pubTitle != null) {
+                    String fixedPubTitle = fixedStr(pubTitle);
+                    if (!fixedPubTitle.equals(pubTitle)) {
+                        reference.getPublication().setTitle(fixedPubTitle);
+                        reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, pubTitle, fixedPubTitle);
+                    }
                 }
 
-                String surname = author.getSurname();
-                String fixedSurname = fixedStr(surname);
-                if (!fixedSurname.equals(surname)) {
-                    author.setSurname(fixedSurname);
-                    reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, surname, fixedSurname);
+                if (reference.getPublication().getAuthors() != null) {
+                    for (Person author : reference.getPublication().getAuthors()) {
+                        String firstName = author.getFirstName();
+                        if (firstName != null) {
+                            String fixedFirstName = fixedStr(firstName);
+                            if (!fixedFirstName.equals(firstName)) {
+                                author.setFirstName(fixedFirstName);
+                                reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, firstName, fixedFirstName);
+                            }
+                        }
+
+                        String surname = author.getSurname();
+                        if (surname != null) {
+                            String fixedSurname = fixedStr(surname);
+                            if (!fixedSurname.equals(surname)) {
+                                author.setSurname(fixedSurname);
+                                reportMessage(Severity.FIX, reference.getOrigin(), ASCII_CHARACTER_FIX, surname, fixedSurname);
+                            }
+                        }
+                    }
                 }
             }
-
         }
         for (Feature feature : entry.getFeatures()) {
             for (Qualifier qualifier : feature.getQualifiers()) {
                 if (qualifier.getName().equals(Qualifier.COUNTRY_QUALIFIER_NAME)) {
 
                     String countryQualifierValue = qualifier.getValue();
-                    String fixedVal = fixedStr(countryQualifierValue);
-
-                    if (!fixedVal.equals(countryQualifierValue)) {
-                        qualifier.setValue(fixedVal);
-                        reportMessage(Severity.FIX, qualifier.getOrigin(), ASCII_CHARACTER_FIX, countryQualifierValue, fixedVal);
+                    if (countryQualifierValue != null) {
+                        String fixedVal = fixedStr(countryQualifierValue);
+                        if (!fixedVal.equals(countryQualifierValue)) {
+                            qualifier.setValue(fixedVal);
+                            reportMessage(Severity.FIX, qualifier.getOrigin(), ASCII_CHARACTER_FIX, countryQualifierValue, fixedVal);
+                        }
                     }
                 }
             }
