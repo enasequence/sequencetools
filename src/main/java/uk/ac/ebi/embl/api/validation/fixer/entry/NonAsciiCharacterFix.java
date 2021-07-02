@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
  * If it is not possible to transliterate certain chars, it will be caught in and rejected
  * by AsciiCharacterCheck.
  */
-@Description("Non-ascii characters fix: \"{0}\" -> \"{1}\"")
+@Description("Non-ascii characters fixed from \"{0}\" to \"{1}\".")
 @ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class NonAsciiCharacterFix extends EntryValidationCheck {
     private static final String ASCII_CHARACTER_FIX = "AsciiCharacterFix_1";
