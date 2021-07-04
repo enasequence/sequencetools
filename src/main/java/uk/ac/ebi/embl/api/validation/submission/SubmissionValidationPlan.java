@@ -15,6 +15,21 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.apache.commons.lang.StringUtils;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.check.file.*;
+import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,35 +37,10 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
-import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
-import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
-import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
-import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.ChromosomeListFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.UnlocalisedListFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlan
 {
@@ -94,15 +84,7 @@ public class SubmissionValidationPlan
 				if (fileValidationCheckSharedInfo.hasAgp) {
 					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.setContigDB(contigDB);
-				}
-			}
-			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
-			{
-				FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, fileValidationCheckSharedInfo);
-				check.getAnnotationFlatfile();
-				if(fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
-					sequenceDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getSequenceDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-					agpCheck.getAGPEntries();
+					agpCheck.createContigDB();
 				}
 			}
 			if(options.context.get().getFileTypes().contains(FileType.ANNOTATION_ONLY_FLATFILE))
@@ -118,7 +100,7 @@ public class SubmissionValidationPlan
 					return validationResult;
 			}
 
-			if(options.context.get().getFileTypes().contains(FileType.FLATFILE) && !FileValidationCheck.hasAnnotationOnlyFlatfile()) {
+			if(options.context.get().getFileTypes().contains(FileType.FLATFILE) ) {
 				validationResult = validateFlatfile();
 				if(!validationResult.isValid())
 					return validationResult;
@@ -171,7 +153,9 @@ public class SubmissionValidationPlan
 			throw e;
 		} finally {
 			FileValidationCheck.closeMapDB(contigDB, annotationDB);
-			FileValidationCheck.flushAndCloseFileWriters();
+			if(check != null) {
+				check.flushAndCloseFileWriters();
+			}
 		}
 		return validationResult;
 	}
@@ -243,7 +227,7 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile fastaFile : submissionFiles) {
 					fileName = fastaFile.getFile().getName();
-					if(FileValidationCheck.hasAnnotationOnlyFlatfile()) {
+					if(fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
 					check.setAnnotationDB(annotationDB);
 					}
 					if (contigDB != null)
@@ -360,9 +344,9 @@ public class SubmissionValidationPlan
 		String fileName = null;
 		ValidationResult result = new ValidationResult();
 		try {
-			check = new AnnotationOnlyFlatfileValidationCheck(options);
-			FileValidationCheck.setHasAnnotationOnlyFlatfile(check.hasAnnotationFlatfile());
-			if (FileValidationCheck.hasAnnotationOnlyFlatfile()) {
+			check = new AnnotationOnlyFlatfileValidationCheck(options, fileValidationCheckSharedInfo);
+			fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile = check.hasAnnotationFlatfile();
+			if (fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
 				annotationDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getAnnoationDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 				check.setAnnotationDB(annotationDB);
 				agpCheck.setAnnotationDB(annotationDB);
@@ -416,7 +400,6 @@ public class SubmissionValidationPlan
 	private String getcontigDbname()
 	{
 		return ".contig";
-
 	}
 
 	private void throwValidationCheckException(FileType fileTpe,SubmissionFile submissionFile) throws ValidationEngineException

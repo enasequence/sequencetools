@@ -101,8 +101,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.context = Optional.of(Context.genome);
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
-
-		FastaFileValidationCheck check = new FastaFileValidationCheck(options);
 //
 		assertTrue(check.check(file).isValid());
 		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));

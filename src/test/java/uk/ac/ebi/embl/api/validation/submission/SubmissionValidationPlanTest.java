@@ -1,10 +1,6 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -23,21 +19,9 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -91,28 +75,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 				initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getAbsolutePath()+".fixed"));
 	}
 
-	@Test
-	public void testGenomeWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
-	{
-		String rootPath = "genome"+ File.separator+ "fasta_flatfile" + File.separator;
-		options.context = Optional.of(Context.genome);
-		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath , "valid_genome_flatfile.txt", FileType.FLATFILE));
-		options.submissionFiles = Optional.of(submissionFiles);
-		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
-
-		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
-		plan.execute();
-        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile()));
-        assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_flatfile.txt", FileType.FASTA).getFile()));
-
-		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath, "contigs.reduced.expected"),
-				getFileFullPath(rootPath ,FileValidationCheck.contigFileName)));
-	}
 	
 	@Test
 	public void testGenomeWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException
@@ -134,20 +96,44 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertEquals(1, SubmissionValidationPlan.getUnplacedEntryNames().size());
-		assertTrue( SubmissionValidationPlan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
+		assertEquals(1, plan.getUnplacedEntryNames().size());
+		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath, "valid_fastaforAGP_contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getFileFullPath1(rootPath, FileValidationCheck.contigFileName).getAbsolutePath()));
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
 				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
 				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
+	}
+
+
+	@Test
+	public void testGenomeWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
+	{
+		String rootPath = "genome"+ File.separator+ "fasta_flatfile" + File.separator;
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath , "valid_genome_flatfile.txt", FileType.FLATFILE));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute();
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile()));
+		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_flatfile.txt", FileType.FASTA).getFile()));
+
+		assertTrue(compareOutputFixedFiles(
+				getFileFullPath(rootPath, "contigs.reduced.expected"),
+				getFileFullPath(rootPath ,FileValidationCheck.contigFileName)));
 	}
 
 	@Test
@@ -266,7 +252,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
@@ -279,10 +265,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(
 				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
 				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
-		assertEquals(1, plan.getUnplacedEntryNames().size());
-		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
 
 	@Test
@@ -307,7 +289,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(SubmissionValidationPlan.getUnplacedEntryNames().isEmpty());
+		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
@@ -318,8 +300,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
 				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
 		assertTrue(plan.getUnplacedEntryNames().isEmpty());
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 	}
 
 	@Test
@@ -391,8 +371,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 
-		assertEquals(SubmissionValidationPlan.getUnplacedEntryNames().size(), 1);
-		assertEquals(SubmissionValidationPlan.getUnplacedEntryNames().toArray()[0].toString(), "IWGSC_CSS_6DL_SCAFF_3330717");
+		assertEquals(plan.getUnplacedEntryNames().size(), 1);
+		assertEquals(plan.getUnplacedEntryNames().toArray()[0].toString(), "IWGSC_CSS_6DL_SCAFF_3330717");
 
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));

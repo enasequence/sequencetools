@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api.validation.check.file;
 
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -60,6 +61,9 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 						}
 					}
 					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
+					if(StringUtils.isBlank(entry.getSubmitterAccession())) {
+						throw new ValidationEngineException("Entry name can not be null for annotation entry.");
+					}
 					entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 					getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 					getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.EMBL);

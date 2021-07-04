@@ -72,7 +72,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
-		check.setSequenceDB(db);
+		check.setAnnotationDB(db);
 		assertTrue(check.check(file).isValid());
 		assertTrue(compareOutputFixedFiles(file.getFile()));
 		db.close();
@@ -87,14 +87,14 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		submissionFiles.addFile(file);
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
-		FileValidationCheck.setHasAnnotationOnlyFlatfile(true);
+		sharedInfo.hasAnnotationOnlyFlatfile=true;
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence2").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);
 		options.context = Optional.of(Context.genome);
 		options.init();
-		check = new AnnotationOnlyFlatfileValidationCheck(options);
-		check.setSequenceDB(db);
+		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
+		check.setAnnotationDB(db);
 		assertTrue(!check.check(file).isValid());
 		assertEquals(1l,check.getMessageStats().get("SequenceExistsCheck").get());
 		db.close();
@@ -114,7 +114,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		if(fileType==FileType.FASTA)
 			check=new FastaFileValidationCheck(options, sharedInfo);
 		if(fileType==FileType.FLATFILE)
-			check=new FlatfileFileValidationCheck(options);
+			check=new FlatfileFileValidationCheck(options, sharedInfo);
 	//	check.setSequenceDB(db);
 		check.check(file);
 		options.submissionFiles.get().clear();

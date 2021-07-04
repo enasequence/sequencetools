@@ -33,10 +33,10 @@ import java.util.Vector;
 public class FeatureWriter extends FlatFileWriter {
 
     protected Feature feature;
-    private static boolean isReducedFlatfile = false;
-	private boolean sortQualifiers;
-	private String featureHeader;
-	private String qualifierHeader;
+    private final boolean isReducedFlatfile;
+	private final boolean sortQualifiers;
+	private final String featureHeader;
+	private final String qualifierHeader;
 
     public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers, 
     		WrapType wrapType, String featureHeader, String qualifierHeader) {
@@ -45,16 +45,17 @@ public class FeatureWriter extends FlatFileWriter {
         this.sortQualifiers = sortQualifiers; 
 		this.featureHeader = featureHeader;
 		this.qualifierHeader = qualifierHeader;
+		this.isReducedFlatfile = false;
     }
 
 	public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers,
-						 WrapType wrapType, String featureHeader, String qualifierHeader, boolean isReducedFf) {
+						 WrapType wrapType, String featureHeader, String qualifierHeader, boolean isReducedFlatfile) {
 		super(entry, wrapType);
 		this.feature = feature;
 		this.sortQualifiers = sortQualifiers;
 		this.featureHeader = featureHeader;
 		this.qualifierHeader = qualifierHeader;
-		isReducedFlatfile = isReducedFf;
+		this.isReducedFlatfile = isReducedFlatfile;
 	}
 
         
@@ -80,7 +81,7 @@ public class FeatureWriter extends FlatFileWriter {
     /** Adds organism, /mol_type and /db_ref="taxon:" feature qualifiers into
      * the source feature. If these qualifiers already exist they are removed.
      */
-    public static Vector<Qualifier> getFeatureQualifiers(Entry entry, Feature feature) {
+    public Vector<Qualifier> getFeatureQualifiers(Entry entry, Feature feature) {
     	Vector<Qualifier> qualifiers = new Vector<Qualifier>();
         if (!isReducedFlatfile && feature instanceof SourceFeature) {
         	String scientificName = ((SourceFeature)feature).getScientificName();

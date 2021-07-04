@@ -62,7 +62,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		fixedFileWriter=null;
 		Origin origin =null;
 		ConcurrentMap annotationMap = null;
-		if(hasAnnotationOnlyFlatfile() ) {
+		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
 			if (getAnnotationDB() == null) {
 				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
 			} else {
@@ -115,7 +115,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					}
 				}
 
-				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
+				if (sharedInfo.hasAnnotationOnlyFlatfile) {
 					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
 					if (annoationEntry != null) {
 						String molType = null;
@@ -209,7 +209,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									}
 								}
 							}
+						} else {
+							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+currObjectAGPRow.getComponent_id());
 						}
+					} else {
+						throw new ValidationEngineException("Either Component missing for current entry or sequence db(contigDB) not available."+entry.getSubmitterAccession());
 					}
 
 				} else if (currObjectAGPRow.getGap_length() != null)
@@ -241,7 +245,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		throw new UnsupportedOperationException();
 	}
 	
-	public void getAGPEntries() throws ValidationEngineException
+	public void createContigDB() throws ValidationEngineException
 	{
 		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP)) 
 		{

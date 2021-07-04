@@ -30,7 +30,6 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -46,8 +45,8 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public FastaFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
 		super(options, sharedInfo);
-	}	
-	
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
@@ -57,7 +56,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		//TODO: make proper type assignement
 		ConcurrentMap annotationMap = null;
 		Origin origin =null;
-		if(hasAnnotationOnlyFlatfile() ) {
+		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
 			if (getAnnotationDB() == null) {
 				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
 			} else {
@@ -78,7 +77,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			ValidationResult parseResult = reader.read();
 			validationResult.append(parseResult);
 			EmblEntryValidationPlan validationPlan;
-		
+
 			while(reader.isEntry())
 			{
 				if(!parseResult.isValid())
@@ -96,18 +95,12 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					if (entry.getSubmitterAccession() == null) {
 						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getPrimaryAccession()));
 					}
-	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
+					getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
 					collectContigInfo(entry);
-					if(sharedInfo.hasAnnotationOnlyFlatfile) {
-						collectContigInfo(entry);
-						if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
-							sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
-						}
-					}
 				}
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
-				if (hasAnnotationOnlyFlatfile() && entry.getSubmitterAccession() != null) {
+				if (sharedInfo.hasAnnotationOnlyFlatfile) {
 					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
 					if (annoationEntry == null) {
 						appendHeader(entry);
@@ -132,7 +125,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					entry.getSequence().setTopology(chrListToplogy);
 				}
 
-            	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+				validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				ValidationResult planResult=validationPlan.execute(entry);
 				validationResult.append(planResult);
 
@@ -145,7 +138,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 
 				if(!planResult.isValid())
 				{
-    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
+					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					addMessageStats(planResult.getMessages());
 				}
 				else
@@ -178,6 +171,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			registerFastaInfo();
 		return validationResult;
 	}
+
 	private void registerFastaInfo() throws ValidationEngineException
 	{
 		AssemblySequenceInfo.writeMapObject(sharedInfo.fastaInfo,options.processDir.get(),AssemblySequenceInfo.fastafileName);
