@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
@@ -74,11 +75,11 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 						"XX\n" +
 						"FH   Key             Location/Qualifiers\n" +
 						"FH\n" +
+						"FT   source          1..4041\n" +
+						"FT                   /submitter_seqid=\"\"\n" +
 						"FT   CDS             3514..4041\n" +
 						"FT                   /product=\"hypothetical protein\"\n" +
 						"FT                   /note=\"ORF 5\"\n" +
-						"FT                   /db_xref=\"InterPro:IPR001964\"\n" +
-						"FT                   /db_xref=\"UniProtKB/Swiss-Prot:P09511\"\n" +
 						"FT                   /protein_id=\"CAA31466.1\"\n" +
 						"FT                   /translation=\"MEEDDHAGKHDALSALSQWLWSKPLGQHNADLDDDEEVTTGQEEL\n" +
 						"FT                   FLPEEQVRARHLFSQKTISREVPAEQSRSGRVYQTARHSLMECSRPTMSIKSQWSFWSS\n" +
@@ -114,11 +115,11 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 						"XX\n" +
 						"FH   Key             Location/Qualifiers\n" +
 						"FH\n" +
+						"FT   source          1..4041\n" +
+						"FT                   /submitter_seqid=\"\"\n" +
 						"FT   CDS             3514..4041\n" +
 						"FT                   /product=\"hypothetical protein\"\n" +
 						"FT                   /note=\"ORF 5\"\n" +
-						"FT                   /db_xref=\"InterPro:IPR001964\"\n" +
-						"FT                   /db_xref=\"UniProtKB/Swiss-Prot:P09511\"\n" +
 						"FT                   /protein_id=\"CAA31466.1\"\n" +
 						"FT                   /translation=\"MEEDDHAGKHDALSALSQWLWSKPLGQHNADLDDDEEVTTGQEEL\n" +
 						"FT                   FLPEEQVRARHLFSQKTISREVPAEQSRSGRVYQTARHSLMECSRPTMSIKSQWSFWSS\n" +
@@ -198,7 +199,7 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 	/**
 	 * test without features
 	 */
-	public void testNoFeatures() throws IOException {
+	public void testSourceFeatureOnly() throws IOException {
 		entry.setDataClass("SET");
 		SequenceFactory sequenceFactory = new SequenceFactory();
 		entry.setSequence(sequenceFactory.createSequenceByte("aa".getBytes()));
@@ -207,10 +208,25 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 		entry.getSequence().setMoleculeType("genomic RNA");
 		entry.setIdLineSequenceLength(2);
 
+		FeatureFactory featureFactory = new FeatureFactory();
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		LocationFactory locationFactory = new LocationFactory();
+		SourceFeature source = featureFactory.createSourceFeature();
+		source.addQualifier(qualifierFactory.createQualifier("organism",
+				"Homo sapiens"));
+		source.getLocations().addLocation(
+				locationFactory.createLocalRange(1L, 4041L, false));
+		entry.addFeature(source);
+
 		StringWriter writer = new StringWriter();
 		assertTrue(new EmblReducedFlatFileWriter(entry).write(writer));
 		assertEquals(
 				"ID   DP000153; SV 1; linear; genomic RNA; SET; MAM; 2 BP.\n" +
+						"XX\n" +
+						"FH   Key             Location/Qualifiers\n" +
+						"FH\n" +
+						"FT   source          1..4041\n" +
+						"FT                   /submitter_seqid=\"\"\n" +
 						"XX\n" +
 						"SQ   Sequence 2 BP; 2 A; 0 C; 0 G; 0 T; 0 other;\n" +
 						"     aa                                                                        2\n" +
@@ -242,11 +258,19 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 
 	public void addFeature() {
 		FeatureFactory featureFactory = new FeatureFactory();
-		Feature feature = featureFactory.createCdsFeature();
-		LocationFactory locationFactory = new LocationFactory();
-		feature.getLocations().addLocation(
-				locationFactory.createLocalRange(3514l, 4041l, false));
 		QualifierFactory qualifierFactory = new QualifierFactory();
+		LocationFactory locationFactory = new LocationFactory();
+		SourceFeature source = featureFactory.createSourceFeature();
+		source.addQualifier(qualifierFactory.createQualifier("organism",
+				"Homo sapiens"));
+		source.getLocations().addLocation(
+				locationFactory.createLocalRange(1L, 4041L, false));
+		entry.addFeature(source);
+		Feature feature = featureFactory.createCdsFeature();
+
+		feature.getLocations().addLocation(
+				locationFactory.createLocalRange(3514L, 4041L, false));
+
 		feature.addQualifier(qualifierFactory.createQualifier("product",
 				"hypothetical protein"));
 		feature.addQualifier(qualifierFactory.createQualifier("note", "ORF 5"));

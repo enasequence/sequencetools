@@ -25,6 +25,7 @@ FT                   /organism="Micrococcus sp. 5"
 FT                   /strain="PR1"
 FT                   /mol_type="genomic DNA"
 FT                   /note="contig: KP893538"
+FT                   /submitter_seqid="KP893538"
 FT   gene            <1..>1213
 FT                   /gene="KIR3DP1"
 FT                   /locus_tag="SPLC1_0001"

@@ -252,9 +252,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
-
 				ValidationResult result=reader.read();
-				int i=1;
 
 				while(reader.isEntry())
 				{
@@ -276,7 +274,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
 								}
 							}
-							i++;
 						}
 					}
 				result=reader.read();
