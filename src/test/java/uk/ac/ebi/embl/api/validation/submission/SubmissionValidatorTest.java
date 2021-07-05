@@ -120,18 +120,4 @@ public class SubmissionValidatorTest {
             throw e;
         }
     }
-
-    public void testValidateFlatFileOnly() {
-
-    }
-    public void testValidateFasta_ChromosomeList() {
-
-    }
-    public void testValidateFasta_ChromosomeList_AGP() {
-
-    }
-
-    public void testValidateFasta_ChromosomeList_AGP_AnnotationOnlyFlatFile() {
-
-    }
 }
