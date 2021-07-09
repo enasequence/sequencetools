@@ -347,6 +347,7 @@ public abstract class FileValidationCheck {
 		entry.addProjectAccessions(sharedInfo.masterEntry.getProjectAccessions());
 		entry.addXRefs(sharedInfo.masterEntry.getXRefs());
 		entry.setComment(sharedInfo.masterEntry.getComment());
+		entry.setDivision(sharedInfo.masterEntry.getDivision());
 		//add chromosome qualifiers to entry
 
         if(Context.sequence == options.context.get()) {
@@ -400,21 +401,21 @@ public abstract class FileValidationCheck {
 
 	protected  PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
 		if (sharedInfo.contigsReducedFileWriter == null) {
-			sharedInfo.contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + contigFileName), StandardCharsets.UTF_8));
+			sharedInfo.contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + "reduced" + File.separator +  contigFileName), StandardCharsets.UTF_8));
 		}
 		return sharedInfo.contigsReducedFileWriter;
 	}
 
 	protected  PrintWriter getScaffoldsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
 		if ( sharedInfo.scaffoldsReducedFileWriter == null) {
-			sharedInfo.scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + scaffoldFileName), StandardCharsets.UTF_8));
+			sharedInfo.scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + "reduced" + File.separator +  scaffoldFileName), StandardCharsets.UTF_8));
 		}
 		return sharedInfo.scaffoldsReducedFileWriter;
 	}
 
 	protected  PrintWriter getChromosomeFileWriter(SubmissionFile submissionFile) throws IOException {
 		if (sharedInfo.chromosomesFileWriter == null) {
-			sharedInfo.chromosomesFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + chromosomeFileName), StandardCharsets.UTF_8));
+			sharedInfo.chromosomesFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() +  File.separator + chromosomeFileName), StandardCharsets.UTF_8));
 		}
 		return sharedInfo.chromosomesFileWriter;
 	}

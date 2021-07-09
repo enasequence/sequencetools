@@ -118,21 +118,17 @@ public abstract class SubmissionValidationTest {
 		return file;
 	}
 
-	protected String getFileFullPath(String rootPath, String fileName) {
+	protected String getReducedFilePath(String rootPath, String fileName) {
+		if(!fileName.endsWith("expected")) {
+			rootPath = rootPath + File.separator + "reduced" + File.separator;
+		}
 		URL url = SubmissionValidationTest.class.getClassLoader().getResource(rootPath + fileName);
 		if (url != null) {
 			fileName = url.getPath().replaceAll("%20", " ");
 		}
 		return fileName;
 	}
-	protected File getFileFullPath1(String rootPath, String fileName) {
-		File resourcesDirectory = new File("build/resources/test/"+rootPath+fileName);
-	/*	URL url = SubmissionValidationTest.class.getClassLoader().getResource(rootPath + fileName);
-		if (url != null) {
-			fileName = url.getPath().replaceAll("%20", " ");
-		}*/
-		return resourcesDirectory;
-	}
+
 	protected SourceFeature getSource()
 	{
 		SourceFeature source = new FeatureFactory().createSourceFeature();

@@ -573,7 +573,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 
 		sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
-
+		if(sourceFeature.getTaxon() != null ) {
+			masterEntry.setDivision(sourceFeature.getTaxon().getDivision());
+		}
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
 		masterEntry.setDescription(new Text(description));

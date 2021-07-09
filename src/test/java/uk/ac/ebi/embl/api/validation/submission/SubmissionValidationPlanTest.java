@@ -102,14 +102,14 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath, "valid_fastaforAGP_contigs.reduced.expected"),
-				getFileFullPath1(rootPath, FileValidationCheck.contigFileName).getAbsolutePath()));
+				getReducedFilePath(rootPath, "valid_fastaforAGP_contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
+				getReducedFilePath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
+				getReducedFilePath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.chromosomeFileName)));
 	}
 
 
@@ -132,8 +132,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_flatfile.txt", FileType.FASTA).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath, "contigs.reduced.expected"),
-				getFileFullPath(rootPath ,FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath, "contigs.reduced.expected"),
+				getReducedFilePath(rootPath ,FileValidationCheck.contigFileName)));
 	}
 
 	@Test
@@ -196,11 +196,11 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_agp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
+				getReducedFilePath(rootPath,"scaffolds.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.scaffoldFileName)));
 	}
 
 	@Test
@@ -221,11 +221,11 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaagp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
-				getFileFullPath(rootPath,FileValidationCheck.scaffoldFileName)));
+				getReducedFilePath(rootPath,"scaffolds.reduced.expected"),
+				getReducedFilePath(rootPath,FileValidationCheck.scaffoldFileName)));
 	}
 
 	@Test
@@ -257,14 +257,14 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"valid_fastaforAGP_contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"valid_fastaforAGP_contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
+				getReducedFilePath(rootPath,"valid_fastaforAGP_scaffolds.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
-				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
+				getReducedFilePath(rootPath,"valid_fastaforAGP_chromosome.flatfile.expected"),
+				getReducedFilePath(rootPath,FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test
@@ -294,11 +294,11 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.chromosomeFileName)));
+				getReducedFilePath(rootPath,"chromosome.flatfile.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.chromosomeFileName)));
 		assertTrue(plan.getUnplacedEntryNames().isEmpty());
 	}
 
@@ -318,8 +318,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA).getFile()));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath,  FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath,  FileValidationCheck.contigFileName)));
 	}
 
 	@Test
@@ -339,8 +339,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 	}
 
 	@Test
@@ -378,14 +378,14 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"contigs.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.contigFileName)));
+				getReducedFilePath(rootPath,"contigs.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.contigFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"scaffolds.reduced.expected"),
-				getFileFullPath(rootPath, FileValidationCheck.scaffoldFileName)));
+				getReducedFilePath(rootPath,"scaffolds.reduced.expected"),
+				getReducedFilePath(rootPath, FileValidationCheck.scaffoldFileName)));
 		assertTrue(compareOutputFixedFiles(
-				getFileFullPath(rootPath,"chromosome.flatfile.expected"),
-				getFileFullPath(rootPath,FileValidationCheck.chromosomeFileName)));
+				getReducedFilePath(rootPath,"chromosome.flatfile.expected"),
+				getReducedFilePath(rootPath,FileValidationCheck.chromosomeFileName)));
 	}
 
 	@Test

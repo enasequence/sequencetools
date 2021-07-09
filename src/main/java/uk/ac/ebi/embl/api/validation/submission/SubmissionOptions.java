@@ -1,6 +1,9 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -76,7 +79,15 @@ public class SubmissionOptions
 			throw new ValidationEngineException("SubmissionOptions:analysisId must be provided.");
 		if(!processDir.isPresent()&&!isWebinCLI &&(context.get()==Context.genome||context.get()==Context.transcriptome))
 			throw new ValidationEngineException("SubmissionOptions:processDir must be provided to write master file");
-
+		if (processDir.isPresent()) {
+			try {
+				if (Files.notExists(Paths.get(processDir.get(), "reduced"))) {
+					Files.createDirectory(Paths.get(processDir.get(), "reduced"));
+				}
+			} catch (IOException e) {
+				throw new ValidationEngineException("Could not create a reduced file directory", e);
+			}
+		}
 		if(!enproConnection.isPresent()||!eraproConnection.isPresent())
 		{
 			if(!isWebinCLI)
