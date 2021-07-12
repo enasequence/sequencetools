@@ -16,6 +16,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.CharUtils;
 import uk.ac.ebi.embl.api.AccessionMatcher;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -32,6 +33,8 @@ import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
+
+import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1309,4 +1312,32 @@ public class Utils {
 			  return null;
 	  }
   }
+
+	/**
+	 * Checks specified string for non-ascii chars.
+	 * @param text
+	 * @return
+	 */
+	public static boolean hasNonAscii(String text) {
+		if (text == null)
+			return false;
+
+		for (int i = 0; i < text.length(); i++) {
+			if (!CharUtils.isAscii(text.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Removes Unicode accents and diacritics.
+	 * @param text
+	 * @return
+	 */
+	public static String removeAccents(String text) {
+		return text == null ? null :
+				Normalizer.normalize(text, Normalizer.Form.NFD)
+						.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+	}
 }

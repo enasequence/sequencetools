@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import org.apache.commons.lang3.CharUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -25,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 @Description("Flatfile contains non-ascii characters: \"{0}\"")
 @ExcludeScope(validationScope = {ValidationScope.NCBI , ValidationScope.NCBI_MASTER})
@@ -39,35 +39,35 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 		if(entry==null)
 			return result;
 		
-		if(hasNonAscii(entry.getComment().getText())) {
+		if(Utils.hasNonAscii(entry.getComment().getText())) {
 			entry.getComment().setText(entry.getComment().getText().replaceAll("\\u00a0", " " ));
-			if(hasNonAscii(entry.getComment().getText()))
+			if(Utils.hasNonAscii(entry.getComment().getText()))
 				reportError(entry.getComment().getOrigin(), ASCII_CHARACTER_CHECK, entry.getComment().getText());
 		}
-		if(hasNonAscii(entry.getDescription().getText())) {
+		if(Utils.hasNonAscii(entry.getDescription().getText())) {
 			entry.getDescription().setText(entry.getDescription().getText().replaceAll("\\u00a0", " " ));
-			if(hasNonAscii(entry.getDescription().getText()))
+			if(Utils.hasNonAscii(entry.getDescription().getText()))
 				reportError(entry.getDescription().getOrigin(), ASCII_CHARACTER_CHECK, entry.getDescription().getText());
 		}
 		
 		for(Reference reference: entry.getReferences())
 		{
-			if (hasNonAscii(reference.getPublication().getTitle())) {
+			if (Utils.hasNonAscii(reference.getPublication().getTitle())) {
 				reference.getPublication().setTitle(reference.getPublication().getTitle().replaceAll("\\u00a0", " "));
-				if (hasNonAscii(reference.getPublication().getTitle()))
+				if (Utils.hasNonAscii(reference.getPublication().getTitle()))
 					reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, reference.getPublication().getTitle());
 			}
 
 			for(Person author:reference.getPublication().getAuthors())
 			{
-				if (hasNonAscii(author.getFirstName())) {
+				if (Utils.hasNonAscii(author.getFirstName())) {
 					author.setFirstName(author.getFirstName().replaceAll("\\u00a0", " "));
-					if (hasNonAscii(author.getFirstName()))
+					if (Utils.hasNonAscii(author.getFirstName()))
 						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getFirstName());
 				}
-				if(hasNonAscii(author.getSurname())) {
+				if(Utils.hasNonAscii(author.getSurname())) {
 					author.setSurname(author.getSurname().replaceAll("\\u00a0", " "));
-					if (hasNonAscii(author.getSurname()))
+					if (Utils.hasNonAscii(author.getSurname()))
 						reportError(reference.getOrigin(), ASCII_CHARACTER_CHECK, author.getSurname());
 				}
 			}
@@ -77,28 +77,13 @@ public class AsciiCharacterCheck extends EntryValidationCheck
 	    {
 	    	for(Qualifier qualifier: feature.getQualifiers())
 	    	{
-				if(hasNonAscii(qualifier.getValue())) {
+				if(Utils.hasNonAscii(qualifier.getValue())) {
 					qualifier.setValue(qualifier.getValue().replaceAll("\\u00a0", " "));
-					if (hasNonAscii(qualifier.getValue()))
+					if (Utils.hasNonAscii(qualifier.getValue()))
 						reportError(qualifier.getOrigin(), ASCII_CHARACTER_CHECK, qualifier.getValue());
 				}
 	    	}
 	    }
 		return result;
-	}
-	
-	
-	private boolean hasNonAscii(String text)
-	{
-		if(text==null)
-			return false;
-
-		for(int i=0; i<text.length();i++)
-		{
-			if(!CharUtils.isAscii(text.charAt(i))) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
