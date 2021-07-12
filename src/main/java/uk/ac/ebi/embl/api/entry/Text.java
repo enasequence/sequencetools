@@ -18,6 +18,8 @@ package uk.ac.ebi.embl.api.entry;
 import uk.ac.ebi.embl.api.validation.HasOrigin;
 import uk.ac.ebi.embl.api.validation.Origin;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Lawrence
@@ -25,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.Origin;
  * Time: 13:16:58
  * To change this template use File | Settings | File Templates.
  */
-public class Text implements HasOrigin {
+public class Text implements HasOrigin, Serializable {
 
     private String text;
     private Origin origin;

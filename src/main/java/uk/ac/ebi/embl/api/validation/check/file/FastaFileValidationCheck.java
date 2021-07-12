@@ -29,7 +29,7 @@ import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
@@ -45,20 +45,26 @@ public class FastaFileValidationCheck extends FileValidationCheck
 	public FastaFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo)
 	{
 		super(options, sharedInfo);
-	}	
-	
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException
 	{
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter =null;
-		ConcurrentMap sequenceMap =null;
+		//TODO: make proper type assignement
+		ConcurrentMap annotationMap = null;
 		Origin origin =null;
-		if(getSequenceDB()!=null)
-			sequenceMap= getSequenceDB().hashMap("map").createOrOpen();
+		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
+			if (getAnnotationDB() == null) {
+				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+			} else {
+				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+			}
+		}
 
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 
@@ -71,7 +77,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			ValidationResult parseResult = reader.read();
 			validationResult.append(parseResult);
 			EmblEntryValidationPlan validationPlan;
-		
+
 			while(reader.isEntry())
 			{
 				if(!parseResult.isValid())
@@ -80,30 +86,46 @@ public class FastaFileValidationCheck extends FileValidationCheck
 					addMessageStats(parseResult.getMessages());
 				}
 
-				Entry entry=reader.getEntry();
+				Entry entry = reader.getEntry();
+
 				origin=entry.getOrigin();
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(getOptions().context.get()==Context.genome)
 				{
-					if (entry.getSubmitterAccession() == null)
-						entry.setSubmitterAccession(entry.getPrimaryAccession());
-	    			getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-					if(sharedInfo.hasAnnotationOnlyFlatfile) {
-						collectContigInfo(entry);
-						if (entry.getSubmitterAccession() != null && getSequenceDB() != null) {
-							sequenceMap.put(entry.getSubmitterAccession().toUpperCase(), ByteBufferUtils.string(entry.getSequence().getSequenceBuffer()));
-						}
+					if (entry.getSubmitterAccession() == null) {
+						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getPrimaryAccession()));
 					}
+					getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
+					collectContigInfo(entry);
 				}
-            	getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
-
+				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
+				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
+				if (sharedInfo.hasAnnotationOnlyFlatfile) {
+					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
+					if (annoationEntry == null) {
+						appendHeader(entry);
+						addSubmitterSeqIdQual(entry);
+					} else {
+						String molType = null;
+						if(annoationEntry.getSequence() != null && annoationEntry.getSequence().getMoleculeType() != null){
+							molType = annoationEntry.getSequence().getMoleculeType();
+						}
+						annoationEntry.setSequence(entry.getSequence());
+						if(molType != null) {
+							annoationEntry.getSequence().setMoleculeType(molType);
+						}
+						entry = annoationEntry;
+					}
+				} else {
+					appendHeader(entry);
+					addSubmitterSeqIdQual(entry);
+				}
 				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
 				if (chrListToplogy != null) {
 					entry.getSequence().setTopology(chrListToplogy);
 				}
-            	getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);
-            	validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-            	appendHeader(entry);
+
+				validationPlan=new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
 				ValidationResult planResult=validationPlan.execute(entry);
 				validationResult.append(planResult);
 
@@ -116,21 +138,19 @@ public class FastaFileValidationCheck extends FileValidationCheck
 
 				if(!planResult.isValid())
 				{
-    				getReporter().writeToFile(getReportFile(submissionFile), planResult);
+					getReporter().writeToFile(getReportFile(submissionFile), planResult);
 					addMessageStats(planResult.getMessages());
 				}
 				else
 				{
-					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(getFixedFileWriter(submissionFile));
+					if(fixedFileWriter != null) {
+						new EmblEntryWriter(entry).write(fixedFileWriter);
+						writeEntryToFile(entry, submissionFile);
+					}
 				}
 				parseResult= reader.read();
 				validationResult.append(planResult);
 				sharedInfo.sequenceCount++;
-			}
-			if(getSequenceDB()!=null)
-			{
-				getSequenceDB().commit();
 			}
 			if(getContigDB()!=null)
 			{
@@ -138,12 +158,12 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			}
 		} catch (ValidationEngineException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeDB(getSequenceDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getContigDB());
 			throw e;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeDB(getSequenceDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getContigDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 
@@ -151,6 +171,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			registerFastaInfo();
 		return validationResult;
 	}
+
 	private void registerFastaInfo() throws ValidationEngineException
 	{
 		AssemblySequenceInfo.writeMapObject(sharedInfo.fastaInfo,options.processDir.get(),AssemblySequenceInfo.fastafileName);

@@ -161,8 +161,9 @@ public class MasterSourceFeatureUtils {
 		}
 
 		Taxon taxon = taxonHelper.getTaxonById(sampleInfo.getTaxId());
-		if (taxon != null)
+		if (taxon != null) {
 			sourceFeature.setTaxon(taxon);
+		}
 		addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
 
 		return sourceFeature;

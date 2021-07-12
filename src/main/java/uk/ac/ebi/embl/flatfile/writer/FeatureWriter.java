@@ -33,6 +33,10 @@ import java.util.Vector;
 public class FeatureWriter extends FlatFileWriter {
 
     protected Feature feature;
+    private final boolean isReducedFlatfile;
+	private final boolean sortQualifiers;
+	private final String featureHeader;
+	private final String qualifierHeader;
 
     public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers, 
     		WrapType wrapType, String featureHeader, String qualifierHeader) {
@@ -41,11 +45,19 @@ public class FeatureWriter extends FlatFileWriter {
         this.sortQualifiers = sortQualifiers; 
 		this.featureHeader = featureHeader;
 		this.qualifierHeader = qualifierHeader;
+		this.isReducedFlatfile = false;
     }
 
-    private boolean sortQualifiers;
-	private String featureHeader;
-	private String qualifierHeader;
+	public FeatureWriter(Entry entry, Feature feature, boolean sortQualifiers,
+						 WrapType wrapType, String featureHeader, String qualifierHeader, boolean isReducedFlatfile) {
+		super(entry, wrapType);
+		this.feature = feature;
+		this.sortQualifiers = sortQualifiers;
+		this.featureHeader = featureHeader;
+		this.qualifierHeader = qualifierHeader;
+		this.isReducedFlatfile = isReducedFlatfile;
+	}
+
         
 	//TODO: return value?    
     public boolean 
@@ -69,9 +81,9 @@ public class FeatureWriter extends FlatFileWriter {
     /** Adds organism, /mol_type and /db_ref="taxon:" feature qualifiers into
      * the source feature. If these qualifiers already exist they are removed.
      */
-    public static Vector<Qualifier> getFeatureQualifiers(Entry entry, Feature feature) {
+    public Vector<Qualifier> getFeatureQualifiers(Entry entry, Feature feature) {
     	Vector<Qualifier> qualifiers = new Vector<Qualifier>();
-        if (feature instanceof SourceFeature) {
+        if (!isReducedFlatfile && feature instanceof SourceFeature) {
         	String scientificName = ((SourceFeature)feature).getScientificName();
         	if (!FlatFileUtils.isBlankString(scientificName)) {
         		Qualifier qualifier = (new QualifierFactory()).
@@ -91,6 +103,7 @@ public class FeatureWriter extends FlatFileWriter {
         		qualifiers.add(qualifier);        		
         	}
         }
+
     	for (Qualifier qualifier : feature.getQualifiers()) {	    	
     		String name = qualifier.getName();
     		String value = qualifier.getValue();
@@ -103,8 +116,8 @@ public class FeatureWriter extends FlatFileWriter {
     		if (name.equals(Qualifier.MOL_TYPE_QUALIFIER_NAME)) {
     			continue; // Ignore /mol_type qualifiers.
     		}
-    		if (name.equals(Qualifier.DB_XREF_QUALIFIER_NAME) &&
-				value != null && value.startsWith("taxon:")) {
+    		if (name.equals(Qualifier.DB_XREF_QUALIFIER_NAME) && (isReducedFlatfile
+					|| (value != null && value.startsWith("taxon:"))) )  {
     			continue; // Ignore /db_xref="taxon:" qualifiers.
     		}
     		if (name.equals(Qualifier.SUB_SPECIES)) {

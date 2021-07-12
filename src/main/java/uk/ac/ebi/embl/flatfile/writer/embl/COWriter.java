@@ -25,7 +25,6 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 /** Flat file writer for the CO lines.
  */
@@ -36,20 +35,14 @@ public class COWriter extends FlatFileWriter {
         setWrapChar(WrapChar.WRAP_CHAR_COMMA);
     }
 
-    public boolean isContigs() {
-		List<Location> contigs = entry.getSequence().getContigs();
-		return contigs != null && !contigs.isEmpty();
-	}
-
 	public boolean write(Writer writer) throws IOException {
-		if (!isContigs()) {
+		if (!entry.hasContigs()) {
 			return false;
 		}
-		List<Location> contigs = entry.getSequence().getContigs();
 		StringBuilder block = new StringBuilder();
 		block.append("join(");
 		boolean firstContig = true;
-		for (Location contig : contigs) {
+		for (Location contig : entry.getSequence().getContigs()) {
 			if (!firstContig) {
 				block.append(",");
 			}
@@ -61,5 +54,5 @@ public class COWriter extends FlatFileWriter {
 		block.append(")");
 		writeBlock(writer, EmblPadding.CO_PADDING, block.toString());
 		return true;
-	}	
+	}
 }

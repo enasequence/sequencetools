@@ -15,8 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,17 +25,19 @@ import org.junit.Test;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.AnnotationOnlyFlatfileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
+
+import static org.junit.Assert.*;
 
 @Description("")
 public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidationTest
@@ -54,7 +54,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 	}
 
 	@Test
-	public void testAnnotationOnlyFlatFile() throws ValidationEngineException, FlatFileComparatorException
+	public void testAnnotationOnlyFlatFile() throws ValidationEngineException
 	{
 		sharedInfo = new FileValidationCheck.SharedInfo();
 
@@ -67,42 +67,58 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		sharedInfo.hasAnnotationOnlyFlatfile = true;
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence3").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
-		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
-		check.setSequenceDB(db);
+		check.setAnnotationDB(db);
 		assertTrue(check.check(file).isValid());
-		assertTrue(compareOutputFixedFiles(file.getFile()));
+		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		db.close();
 	}
 	
 	@Test
-	public void testAnnotationOnlyFlatFilemissingSequence() throws ValidationEngineException, FlatFileComparatorException
+	public void testAnnotationOnlyFlatFilemissingSequence() throws ValidationEngineException
 	{
 		sharedInfo = new FileValidationCheck.SharedInfo();
-
 		validateMaster(Context.genome);
 		SubmissionFile file=initSubmissionFixedTestFile("invalid_AnnotationOnlyFlatfile.txt",SubmissionFile.FileType.FLATFILE);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(file);
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
-		sharedInfo.hasAnnotationOnlyFlatfile = true;
+		sharedInfo.hasAnnotationOnlyFlatfile=true;
 		DB db=DBMaker.fileDB(options.reportDir.get()+File.separator+".sequence2").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
-		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		options.submissionFiles =Optional.of(submissionFiles);
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
-		check.setSequenceDB(db);
-		assertTrue(!check.check(file).isValid());
-		assertEquals(1l,check.getMessageStats().get("SequenceExistsCheck").get());
+		check.setAnnotationDB(db);
+		assertTrue(check.check(file).isValid());
+
+		validateInvalidContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		db.close();
 	}
 
 
+
+	private void validateInvalidContig(String contigFileName,FileType fileType,DB db) throws ValidationEngineException
+	{
+		SubmissionFile file=initSubmissionFixedTestFile(contigFileName,fileType);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(file);
+		options.submissionFiles =Optional.of(submissionFiles);
+		options.reportDir = Optional.of(file.getFile().getParent());
+		options.processDir = Optional.of(file.getFile().getParent());
+		options.context = Optional.of(Context.genome);
+		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
+		check = new FastaFileValidationCheck(options, sharedInfo);
+		check.setAnnotationDB(db);
+
+		ValidationResult result = check.check(file);
+		assertFalse(result.isValid());
+		options.submissionFiles.get().clear();
+	}
 
 	private void validateContig(String contigFileName,FileType fileType,DB db) throws ValidationEngineException
 	{
@@ -113,11 +129,14 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
 		options.context = Optional.of(Context.genome);
-		if(fileType==FileType.FASTA)
-			check=new FastaFileValidationCheck(options, sharedInfo);
-		if(fileType==FileType.FLATFILE)
-			check=new FlatfileFileValidationCheck(options, sharedInfo);
-		check.setSequenceDB(db);
+		if(fileType==FileType.FASTA) {
+			check = new FastaFileValidationCheck(options, sharedInfo);
+			check.setAnnotationDB(db);
+		}
+		if(fileType==FileType.FLATFILE) {
+			check = new FlatfileFileValidationCheck(options, sharedInfo);
+		}
+	//	check.setSequenceDB(db);
 		check.check(file);
 		options.submissionFiles.get().clear();
 	}

@@ -120,5 +120,4 @@ public class SubmissionValidatorTest {
             throw e;
         }
     }
-
 }

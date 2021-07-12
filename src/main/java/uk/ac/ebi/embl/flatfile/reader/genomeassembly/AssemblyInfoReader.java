@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.common.CommonUtil;
 
 public class AssemblyInfoReader extends GCSEntryReader
 {
@@ -31,7 +32,7 @@ public class AssemblyInfoReader extends GCSEntryReader
 			error(1, EMPTY_FILE_ERROR);
 			return validationResult;
 		}
-		try(BufferedReader reader = getBufferedReader(file))
+		try(BufferedReader reader = CommonUtil.bufferedReaderFromFile(file))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)

@@ -35,7 +35,7 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
@@ -61,7 +61,16 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		fixedFileWriter=null;
 		Origin origin =null;
-		try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile());PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		ConcurrentMap annotationMap = null;
+		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
+			if (getAnnotationDB() == null) {
+				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
+			} else {
+				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+			}
+		}
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());
+			PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
@@ -89,9 +98,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				Entry entry = reader.getEntry();
 				origin = entry.getOrigin();
 				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
-				if(!sharedInfo.hasAnnotationOnlyFlatfile) {
-					addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
-				}
+
 				//set validation scope and collect unplacedEntries
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 				Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
@@ -108,10 +115,27 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					}
 				}
 
+				if (sharedInfo.hasAnnotationOnlyFlatfile) {
+					Entry annoationEntry = (Entry) annotationMap.get(entry.getSubmitterAccession().toUpperCase());
+					if (annoationEntry != null) {
+						String molType = null;
+						if(annoationEntry.getSequence() != null && annoationEntry.getSequence().getMoleculeType() != null){
+							molType = annoationEntry.getSequence().getMoleculeType();
+						}
+						annoationEntry.setSequence(entry.getSequence());
+						entry = annoationEntry;
+						if(molType != null) {
+							entry.getSequence().setMoleculeType(molType);
+						}
+					}
+				} else {
+					appendHeader(entry);
+					addSubmitterSeqIdQual(entry);
+				}
+
 				getOptions().getEntryValidationPlanProperty().assemblySequenceInfo.set(contigInfo);
 				getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get() + 1);
 				validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
-				appendHeader(entry);
 				ValidationResult planResult = validationPlan.execute(entry);
 				validationResult.append(planResult);
 
@@ -130,10 +154,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			}
     			else
 				{
-					if(fixedFileWriter!=null)
-					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(sharedInfo.hasAnnotationOnlyFlatfile)
+					if(fixedFileWriter != null) {
+						new EmblEntryWriter(entry).write(fixedFileWriter);
 						constructAGPSequence(entry);
+						writeEntryToFile(entry, submissionFile);
+					}
 				}
 				parseResult = reader.read();
 				validationResult.append(parseResult);
@@ -141,13 +166,13 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 		} catch (ValidationEngineException vee) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, vee.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
 			throw vee;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeDB(getContigDB(), getSequenceDB());
 			throw new ValidationEngineException(e.getMessage(), e);
+		} finally {
+			closeMapDB(getContigDB(), getAnnotationDB());
 		}
 		if(validationResult.isValid())
 	        registerAGPfileInfo();
@@ -161,73 +186,73 @@ public class AGPFileValidationCheck extends FileValidationCheck
  		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
  
 		ConcurrentMap contigMap =null;
-		ConcurrentMap sequenceMap = null;
-		if(getContigDB()!=null)
-			contigMap=getContigDB().hashMap("map").createOrOpen();
-		if(getSequenceDB()!=null)
-		sequenceMap=getSequenceDB().hashMap("map").createOrOpen();
+		if(getContigDB()!=null) {
+			contigMap = getContigDB().hashMap("map").createOrOpen();
+		}
 
-
-			for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
-				if (!agpRow.isGap()) {
+			for (AgpRow currObjectAGPRow : entry.getSequence().getSortedAGPRows()) {
+				if (!currObjectAGPRow.isGap()) {
 
 					Object sequence;
-					if (agpRow.getComponent_id() != null && getContigDB() != null) {
-
-						Object rows = contigMap.get(agpRow.getComponent_id().toLowerCase());
-						if (rows != null) {
-							for (AgpRow row : (List<AgpRow>) rows) {
-								if (row.getObject().toLowerCase().equals(agpRow.getObject().toLowerCase())) {
-									sequence = row.getSequence();
-									if (sequence != null)
+					if (currObjectAGPRow.getComponent_id() != null && getContigDB() != null) {
+						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
+						Object seqsOfCurrRowComponent = contigMap.get(currObjectAGPRow.getComponent_id().toLowerCase());
+						if (seqsOfCurrRowComponent != null) {
+							for (AgpRow component : (List<AgpRow>) seqsOfCurrRowComponent) {
+								//proceed only if the component belongs to the current object(AGP row)
+								if (component.getObject().equalsIgnoreCase(currObjectAGPRow.getObject())) {
+									sequence = component.getSequence();
+									if(sequence != null) {
 										sequenceBuffer.put((byte[]) sequence);
-									else {
-									//	agpInfo.containsKey()
-										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + agpRow.getComponent_id());
+									} else {
+											throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + currObjectAGPRow.getComponent_id());
 									}
 								}
 							}
+						} else {
+							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+currObjectAGPRow.getComponent_id());
 						}
+					} else {
+						throw new ValidationEngineException("Either Component missing for current entry or sequence db(contigDB) not available."+entry.getSubmitterAccession());
 					}
 
-				} else if (agpRow.getGap_length() != null)
-					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), agpRow.getGap_length().intValue()).getBytes());
+				} else if (currObjectAGPRow.getGap_length() != null)
+					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), currObjectAGPRow.getGap_length().intValue()).getBytes());
 			}
-         entry.getSequence().setSequence(sequenceBuffer);
-         if(getOptions().context.get()==Context.genome && getSequenceDB()!=null)
-			{
-        	 if(entry.getSubmitterAccession()!=null)
-        	 {
-				sequenceMap.put(entry.getSubmitterAccession().toUpperCase(),new String(entry.getSequence().getSequenceByte()));
+			entry.getSequence().setSequence(sequenceBuffer);
+
+			//check if the current object(scaffold) is placed(will be a component) on another object(could be another scaffold/chromosome)
+			//if yes, construct sequence for all the objects where the current object has been placed
+			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(entry.getSubmitterAccession().toLowerCase());
+			if (agpRows != null) {
+				for (AgpRow agpRow : agpRows) {
+					agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+				}
+				contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
 			}
-			}
+
+			getContigDB().commit();
 
 		}catch(Exception e)
 		{
-			if(getSequenceDB()!=null)
-				getSequenceDB().close();
-			if(getContigDB()!=null)
-				getContigDB().close();
+			closeMapDB(getContigDB());
 			throw new ValidationEngineException(e);
 		}
-		if(getSequenceDB()!=null)
-		getSequenceDB().commit();  
 		}
+
 	@Override
 	public ValidationResult check() throws ValidationEngineException {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void getAGPEntries() throws ValidationEngineException
+	public void createContigDB() throws ValidationEngineException
 	{
 		for( SubmissionFile submissionFile : options.submissionFiles.get().getFiles(FileType.AGP)) 
 		{
-			try(BufferedReader fileReader= getBufferedReader(submissionFile.getFile()))
+			try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
 			{
 				AGPFileReader reader = new AGPFileReader( new AGPLineReader(fileReader));
-
 				ValidationResult result=reader.read();
-				int i=1;
 
 				while(reader.isEntry())
 				{
@@ -249,7 +274,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
 								}
 							}
-							i++;
 						}
 					}
 				result=reader.read();

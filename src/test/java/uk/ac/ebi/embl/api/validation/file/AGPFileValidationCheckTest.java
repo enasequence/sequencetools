@@ -69,9 +69,9 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			AGPFileValidationCheck check = new AGPFileValidationCheck(options, sharedInfo);
 			try {
 
-				check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
+				//check.setSequenceDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".sequence").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
 				check.setContigDB(DBMaker.fileDB(options.reportDir.get() + File.separator + ".contig").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make());
-
+				check.createContigDB();
 				validateContig("valid_flatfileforAgp.txt", FileType.FLATFILE, check.getContigDB());
 				assertTrue(check.check(submissionFiles.getFiles().get(0)).isValid());
 
@@ -87,7 +87,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 				assertEquals("gggactctccaacggctccccgaggagctcgagaggacgattaagtcatcctcgagggacctcgcccgaggagcggtggagctcgtactggcgagttaccaggccaggaccccgacttctccccatggacggcgctggacgagttccctcccgggaccgaggacggcgcgcgcgcgcaggtccgggacgccgccgaccacatcgtccacagcttcgagggttcggcccctcagctcgcgttctccctcaactccgacgaggaggacgatgacggcggagtgggcgacagtggcgacgaggctggcgatccgggtgcatcggagtgagccc",
 						seq2);*/
 			} finally {
-				check.getSequenceDB().close();
+			//	check.getSequenceDB().close();
 				check.getContigDB().close();
 			}
 
@@ -109,6 +109,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options, sharedInfo);
 			check.setContigDB(DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make());
+			check.createContigDB();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)).isValid());
 			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));

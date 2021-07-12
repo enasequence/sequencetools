@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -31,20 +30,10 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.reference.Person;
-import uk.ac.ebi.embl.api.entry.reference.Publication;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.api.entry.reference.Submission;
+import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
@@ -56,39 +45,26 @@ import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
+import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.GZIPInputStream;
 
- 
+
 public abstract class FileValidationCheck {
 	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
 
@@ -106,8 +82,11 @@ public abstract class FileValidationCheck {
 
 	protected SharedInfo sharedInfo;
 
-	private DB sequenceDB = null;
+	private  DB annotationDB = null;
 	private DB contigDB =null;
+	public static final String contigFileName = "contigs.reduced.tmp";
+	public static final String scaffoldFileName = "scaffolds.reduced.tmp";
+	public static final String chromosomeFileName = "chromosome.flatfile.tmp";
 
 	public FileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
 		this.options =options;
@@ -368,6 +347,7 @@ public abstract class FileValidationCheck {
 		entry.addProjectAccessions(sharedInfo.masterEntry.getProjectAccessions());
 		entry.addXRefs(sharedInfo.masterEntry.getXRefs());
 		entry.setComment(sharedInfo.masterEntry.getComment());
+		entry.setDivision(sharedInfo.masterEntry.getDivision());
 		//add chromosome qualifiers to entry
 
         if(Context.sequence == options.context.get()) {
@@ -414,9 +394,48 @@ public abstract class FileValidationCheck {
 
 	protected PrintWriter getFixedFileWriter(SubmissionFile submissionFile) throws IOException
 	{
-		if(submissionFile.createFixedFile()&&fixedFileWriter==null)
+		if(submissionFile.createFixedFile() && fixedFileWriter==null)
 			fixedFileWriter= new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFixedFile().getAbsolutePath()), StandardCharsets.UTF_8));
 		return fixedFileWriter;
+	}
+
+	protected  PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (sharedInfo.contigsReducedFileWriter == null) {
+			sharedInfo.contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + "reduced" + File.separator +  contigFileName), StandardCharsets.UTF_8));
+		}
+		return sharedInfo.contigsReducedFileWriter;
+	}
+
+	protected  PrintWriter getScaffoldsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
+		if ( sharedInfo.scaffoldsReducedFileWriter == null) {
+			sharedInfo.scaffoldsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + "reduced" + File.separator +  scaffoldFileName), StandardCharsets.UTF_8));
+		}
+		return sharedInfo.scaffoldsReducedFileWriter;
+	}
+
+	protected  PrintWriter getChromosomeFileWriter(SubmissionFile submissionFile) throws IOException {
+		if (sharedInfo.chromosomesFileWriter == null) {
+			sharedInfo.chromosomesFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() +  File.separator + chromosomeFileName), StandardCharsets.UTF_8));
+		}
+		return sharedInfo.chromosomesFileWriter;
+	}
+
+	public  void flushAndCloseFileWriters() {
+		try {
+			if (sharedInfo.contigsReducedFileWriter != null) {
+				sharedInfo.contigsReducedFileWriter.flush();
+				sharedInfo.contigsReducedFileWriter.close();
+			}
+			if (sharedInfo.scaffoldsReducedFileWriter != null) {
+				sharedInfo.scaffoldsReducedFileWriter.flush();
+				sharedInfo.scaffoldsReducedFileWriter.close();
+			}
+			if(sharedInfo.chromosomesFileWriter != null) {
+				sharedInfo.chromosomesFileWriter.flush();
+				sharedInfo.chromosomesFileWriter.close();
+			}
+		} catch (Exception ignored) {
+		}
 	}
 
 	protected void collectContigInfo(Entry entry) throws Exception {
@@ -426,9 +445,22 @@ public abstract class FileValidationCheck {
 			if (entry.getSubmitterAccession() == null)
 				throw new ValidationEngineException("Submitter accession missing for an entry");
 			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
+			if (entry.getSubmitterAccession() == null) {
+				if(entry.getPrimaryAccession() == null) {
+					throw new ValidationEngineException("Both submitter accession and primary accession missing for an entry");
+				} else {
+					entry.setSubmitterAccession(entry.getPrimaryAccession());
+				}
+			}
+
+			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) {
 				return;
-			if (entry.getSequence() == null)
+			}
+			if (entry.getSequence() == null) {
 				return;
+			}
+			// scaff1 contig1 -ok first we set seq for this , no issues
+			//scaff2 scaff1 - currently we are not setting seq to it bcoz it is not part of ff or fasta
 			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
 				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());
@@ -569,28 +601,8 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	protected BufferedReader 
-	getBufferedReader( File file ) throws FileNotFoundException, IOException 
-	{
-		if( file.getName().matches( "^.+\\.gz$" ) || file.getName().matches( "^.+\\.gzip$" ) ) 
-		{
-			GZIPInputStream gzip = new GZIPInputStream( new FileInputStream( file ) );
-			return new BufferedReader( new InputStreamReader( gzip ) );
-
-		} else if( file.getName().matches( "^.+\\.bz2$" ) || file.getName().matches( "^.+\\.bzip2$" ) ) 
-		{
-			BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream( new FileInputStream( file ) );
-			return new BufferedReader( new InputStreamReader( bzIn ) );
-
-		} else 
-		{
-			return new BufferedReader( new FileReader(file ) );
-		}
-	}
-
-
 	public  boolean isGenbank(File f) throws ValidationEngineException {
-		try(BufferedReader br = getBufferedReader(f)) {
+		try(BufferedReader br = CommonUtil.bufferedReaderFromFile(f)) {
 			String line;
 			if((line = br.readLine()) != null){
 				return line.trim().startsWith("LOCUS");
@@ -601,16 +613,16 @@ public abstract class FileValidationCheck {
 		return false;
 	}
 
-	public void setSequenceDB(DB sequenceDB)
+	public void setAnnotationDB(DB annotationDB)
 	{
-		this.sequenceDB=sequenceDB;
+		this.annotationDB=annotationDB;
 	}
 
-	public DB getSequenceDB()
+	public DB getAnnotationDB()
 	{
-		return this.sequenceDB;
+		return this.annotationDB;
 	}
-	public void closeDB(DB ... dbs) {
+	public static void closeMapDB(DB ... dbs) {
 		for(DB db: dbs)
 		{
 			if(db != null)
@@ -635,7 +647,7 @@ public abstract class FileValidationCheck {
 		int chromosome_max_number_of_columns = 4;
 		String line=null;
 		
-		try(BufferedReader  fileReader=getBufferedReader(file))
+		try(BufferedReader  fileReader=CommonUtil.bufferedReaderFromFile(file))
 		{
 			int count=1;
 		while(line==null||line.isEmpty())
@@ -699,6 +711,59 @@ public abstract class FileValidationCheck {
 		return true;
 	}
 
+	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+			new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
+		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
+			new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
+		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME) {
+			new EmblEntryWriter(entry).write(getChromosomeFileWriter(submissionFile));
+		}
+	}
+
+	void addSubmitterSeqIdQual(Entry entry) {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME) {
+			if (entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME) == null) {
+				entry.getPrimarySourceFeature().addQualifier(new QualifierFactory().createQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, entry.getSubmitterAccession()));
+			}
+		}
+	}
+
+	void checkChromosomeTopology(Entry entry) throws ValidationEngineException {
+		Sequence.Topology chrListToplogy = getTopology(entry.getSubmitterAccession());
+		if (chrListToplogy != null) {
+			if (entry.getSequence().getTopology() != null
+					&& entry.getSequence().getTopology() != chrListToplogy) {
+				throw new ValidationEngineException("The topology in the ID line " + entry.getSequence().getTopology() + " conflicts with the topology specified in the chromosome list file " + chrListToplogy, ReportErrorType.VALIDATION_ERROR);
+			}
+			entry.getSequence().setTopology(chrListToplogy);
+		}
+	}
+
+	public boolean hasAnnotationFlatfile() throws ValidationEngineException {
+		for (SubmissionFile submissionFile : options.submissionFiles.get().getFiles(SubmissionFile.FileType.FLATFILE)) {
+			boolean isGenbankFile = isGenbank(submissionFile.getFile());
+			EmblEntryReader.Format format = options.context.get() == Context.genome ? EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT : EmblEntryReader.Format.EMBL_FORMAT;
+
+			try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(submissionFile.getFile())) {
+				EntryReader entryReader = isGenbankFile ? new GenbankEntryReader(fileReader) : new EmblEntryReader(fileReader, format, submissionFile.getFile().getName());
+
+				entryReader.read();
+				if (entryReader.isEntry()) {
+					Entry entry = entryReader.getEntry();
+					return entry.getSequence() == null || entry.getSequence().getSequenceByte() == null;
+				} else {
+					throw new ValidationEngineException("Could not read flatfile, please check the flatfile formatted correctly.", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				}
+			} catch (IOException e) {
+				throw new ValidationEngineException(e.getMessage(), e);
+			}
+		}
+		return false;
+	}
+
 	public SharedInfo getSharedInfo() {
 		return sharedInfo;
 	}
@@ -722,5 +787,9 @@ public abstract class FileValidationCheck {
 		public Set<String> agpEntryNames =new HashSet<>();
 		public Set<String> unplacedEntryNames =new HashSet<>();
 		public Set<String> unlocalisedEntryNames = new HashSet<>();
+		public PrintWriter contigsReducedFileWriter =null;
+		public PrintWriter scaffoldsReducedFileWriter =null;
+		public PrintWriter chromosomesFileWriter =null;
+
 	}
 }

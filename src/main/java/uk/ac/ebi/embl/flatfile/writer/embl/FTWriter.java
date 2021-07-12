@@ -17,8 +17,9 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -30,23 +31,33 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the feature table.
  */
 public class FTWriter extends FlatFileWriter {
-	
-	public FTWriter(Entry entry, boolean sortFeatures, 
-			boolean sortQualifiers, WrapType wrapType) {
+
+	private boolean sortFeatures;
+	private boolean sortQualifiers;
+	private boolean isReducedFlatfile;
+
+	public FTWriter(Entry entry, boolean sortFeatures,
+					boolean sortQualifiers, WrapType wrapType) {
 		super(entry, wrapType);
 		this.sortFeatures = sortFeatures;
 		this.sortQualifiers = sortQualifiers;
 	}
 
-	private boolean sortFeatures;
-	private boolean sortQualifiers;
+	public FTWriter(Entry entry, boolean sortFeatures,
+					boolean sortQualifiers, boolean isReducedFlatfile, WrapType wrapType) {
+		super(entry, wrapType);
+		this.sortFeatures = sortFeatures;
+		this.sortQualifiers = sortQualifiers;
+		this.isReducedFlatfile = isReducedFlatfile;
+	}
 
 	public boolean write(Writer writer) throws IOException {
-		Vector<Feature> features = new Vector<Feature>(entry.getFeatures());
+		List<Feature> features = new ArrayList<>(entry.getFeatures());
 		if (features == null ||
 			features.size() == 0) {
 			return false;
 		}
+
 		if (sortFeatures) {
 			Collections.sort(features);
 		}
@@ -57,9 +68,21 @@ public class FTWriter extends FlatFileWriter {
 		return true;		
 	}
 
+	private boolean isSourceFeature(Feature feature) {
+		return feature.getName().equals(Feature.SOURCE_FEATURE_NAME);
+	}
+
+	private boolean allSourceFeatures(List<Feature> features) {
+		for (Feature feature : features) {
+			if (!isSourceFeature(feature))
+				return false;
+		}
+		return true;
+	}
+
     protected void writeFeature(Writer writer, Feature feature) throws IOException {
         new FeatureWriter(entry, feature, sortQualifiers, wrapType,
         		EmblPadding.FEATURE_PADDING,
-        		EmblPadding.QUALIFIER_PADDING).write(writer);
+        		EmblPadding.QUALIFIER_PADDING, isReducedFlatfile).write(writer);
     }
 }
