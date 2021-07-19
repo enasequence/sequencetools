@@ -95,7 +95,6 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         SubmissionOptions options = new SubmissionOptions();
         //Set all common options
         AssemblyInfoEntry assemblyInfo = new AssemblyInfoEntry();
-        MasterSourceFeatureUtils sourceUtils = new MasterSourceFeatureUtils();
 
         assemblyInfo.setName(manifest.getName());
         assemblyInfo.setAuthors(manifest.getAuthors());
