@@ -7,6 +7,7 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
+import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
@@ -21,9 +22,7 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 public class SubmissionValidator implements Validator<Manifest,ValidationResponse> {
 
@@ -110,14 +109,21 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         }
         if (manifest.getSample() != null) {
             assemblyInfo.setBiosampleId(manifest.getSample().getBioSampleId());
+            assemblyInfo.setOrganism(manifest.getSample().getOrganism());
 
-            SourceFeature sourceFeature = new FeatureFactory().createSourceFeature();
-            sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
-            sourceFeature.setScientificName(manifest.getSample().getOrganism());
-            for (Attribute attribute : manifest.getSample().getAttributes()) {
-                sourceUtils.addSourceQualifier(attribute.getName(), attribute.getValue(), sourceFeature);
+            SampleEntity sampleEntity = new SampleEntity();
+            sampleEntity.setAttributes(attributesListToMap(manifest.getSample().getAttributes()));
+
+            SampleInfo sampleInfo = new SampleInfo();
+            sampleInfo.setScientificName(manifest.getSample().getOrganism());
+            if (manifest.getSample().getTaxId() != null) {
+                sampleInfo.setTaxId(manifest.getSample().getTaxId().longValue());
             }
-            sourceUtils.addExtraSourceQualifiers(sourceFeature, new TaxonHelperImpl(), manifest.getName());
+            sampleInfo.setUniqueName(manifest.getName());
+
+            SourceFeature sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
+            sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
+
             options.source = Optional.of(sourceFeature);
         }
         options.isWebinCLI = true;
@@ -143,6 +149,14 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         }
         options.assemblyInfoEntry = Optional.of(assemblyInfo);
         return options;
+    }
+
+    private Map<String, String> attributesListToMap(List<Attribute> attributesList) {
+        Map<String, String> attributesMap = new HashMap<>();
+        for (Attribute attribute : attributesList) {
+            attributesMap.put(attribute.getName(), attribute.getValue());
+        }
+        return attributesMap;
     }
 
     private SubmissionFiles setGenomeOptions(GenomeManifest manifest, AssemblyInfoEntry assemblyInfo) {
