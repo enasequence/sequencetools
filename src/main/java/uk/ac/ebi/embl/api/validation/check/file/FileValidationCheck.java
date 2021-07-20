@@ -712,7 +712,8 @@ public abstract class FileValidationCheck {
 	}
 
 	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
-		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG) {
+		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
+		|| getOptions().context.orElse(null) == Context.transcriptome) {
 			new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
 		} else if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD) {
 			new EmblReducedFlatFileWriter(entry).write(getScaffoldsReducedFileWriter(submissionFile));
