@@ -159,6 +159,9 @@ public class MasterEntryValidationCheck extends FileValidationCheck
 			masterEntry.addReference(new ReferenceUtils().getSubmitterReferenceFromManifest(options.assemblyInfoEntry.get().getAuthors(),
 					options.assemblyInfoEntry.get().getAddress(), options.assemblyInfoEntry.get().getDate(), options.assemblyInfoEntry.get().getSubmissionAccountId()));
 		}
+		if(masterEntry.getDivision() == null && source.getTaxon() != null ) {
+			masterEntry.setDivision(source.getTaxon().getDivision());
+		}
 		return masterEntry;
 	}
 	

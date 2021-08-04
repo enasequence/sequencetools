@@ -72,6 +72,7 @@ public class SubmissionValidationPlan
 			//TODO: check for a way to log INFO messages
 			options.init();
 			fileValidationCheckSharedInfo.hasAgp = options.submissionFiles.get().getFiles(FileType.AGP).size() > 0;
+			fileValidationCheckSharedInfo.assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
 			//Validation Order shouldn't be changed
 			if(options.context.get().getFileTypes().contains(FileType.MASTER))
 				createMaster();
@@ -127,11 +128,8 @@ public class SubmissionValidationPlan
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
 							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2), assemblyType));
 
-				if(!options.isWebinCLI)
+				if(!options.isWebinCLI && !FileValidationCheck.excludeDistribution(fileValidationCheckSharedInfo.assemblyType))
 				{
-					if(!(AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
-							AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)	||
-							AssemblyType.CLINICALISOLATEASSEMBLY.getValue().equalsIgnoreCase(assemblyType)))
 					writeUnplacedList();
 				}
 			}	else {

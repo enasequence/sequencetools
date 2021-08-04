@@ -1,4 +1,4 @@
-ID   XXX; SV 1; linear; genomic DNA; WGS; PLN; 1710 BP.
+ID   XXX; SV 1; linear; genomic DNA; WGS; XXX; 1710 BP.
 XX
 ST * private 31-DEC-3011
 XX
@@ -68,7 +68,7 @@ SQ   Sequence 1710 BP; 372 A; 480 C; 473 G; 355 T; 30 other;
      ctttccaccc ccttcccttc ttgggccggc tcggcccagt cccctccctc tctctcctct      1680
      cccccgcggc ccatcggccc ttccccgcgc                                       1710
 //
-ID   XXX; SV 1; linear; genomic DNA; WGS; PLN; 1710 BP.
+ID   XXX; SV 1; linear; genomic DNA; WGS; XXX; 1710 BP.
 XX
 ST * private 31-DEC-3011
 XX

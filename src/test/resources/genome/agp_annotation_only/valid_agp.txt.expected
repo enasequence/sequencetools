@@ -1,4 +1,4 @@
-ID   XXX; SV XXX; linear; genomic DNA; CON; PLN; 654 BP.
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 654 BP.
 XX
 AC   ;
 XX
@@ -36,7 +36,7 @@ XX
 CO   join(IWGSC_CSS_6DL_contig_209591.0:1..330,gap(24),
 CO   IWGSC_CSS_6DL_contig_209592.0:1..300)
 //
-ID   XXX; SV XXX; linear; genomic DNA; CON; PLN; 430 BP.
+ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 430 BP.
 XX
 AC   ;
 XX

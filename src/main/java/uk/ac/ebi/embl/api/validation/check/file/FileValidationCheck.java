@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
@@ -421,6 +422,9 @@ public abstract class FileValidationCheck {
 	}
 
 	public  void flushAndCloseFileWriters() {
+		if(getOptions().isWebinCLI) {
+			return;
+		}
 		try {
 			if (sharedInfo.contigsReducedFileWriter != null) {
 				sharedInfo.contigsReducedFileWriter.flush();
@@ -711,7 +715,16 @@ public abstract class FileValidationCheck {
 		return true;
 	}
 
+	public static boolean excludeDistribution(String assemblyType) {
+		return AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
+				AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType) ||
+				AssemblyType.CLINICALISOLATEASSEMBLY.getValue().equalsIgnoreCase(assemblyType);
+	}
+
 	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
+		if(getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType)) {
+			return;
+		}
 		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
 		|| getOptions().context.orElse(null) == Context.transcriptome) {
 			new EmblReducedFlatFileWriter(entry).write(getContigsReducedFileWriter(submissionFile));
@@ -778,19 +791,19 @@ public abstract class FileValidationCheck {
 		public boolean hasAgp = false;
 
 		public HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>();
-		public List<String> chromosomeNames =new ArrayList<String>();
+		public List<String> chromosomeNames =new ArrayList<>();
 		public Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
 		public Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
 		public Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>();
 		public Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>();
-		public List<String> duplicateEntryNames = new ArrayList<String>();
-		public HashSet<String> entryNames = new HashSet<String>();
+		public List<String> duplicateEntryNames = new ArrayList<>();
+		public HashSet<String> entryNames = new HashSet<>();
 		public Set<String> agpEntryNames =new HashSet<>();
 		public Set<String> unplacedEntryNames =new HashSet<>();
 		public Set<String> unlocalisedEntryNames = new HashSet<>();
 		public PrintWriter contigsReducedFileWriter =null;
 		public PrintWriter scaffoldsReducedFileWriter =null;
 		public PrintWriter chromosomesFileWriter =null;
-
+		public String assemblyType =null;
 	}
 }
