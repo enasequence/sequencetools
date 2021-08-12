@@ -1,32 +1,43 @@
 package uk.ac.ebi.embl.template;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.entry.XRef;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
+import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
+import uk.ac.ebi.embl.api.validation.helper.Utils;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
+import uk.ac.ebi.ena.webin.cli.service.CompleteSampleService;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TemplateEntryProcessor {
+    private static final Logger LOGGER = Logger.getLogger(TemplateEntryProcessor.class);
     private StringBuilder template;
     private TemplateInfo templateInfo;
     private ValidationPlan validationPlan;
@@ -54,7 +65,7 @@ public class TemplateEntryProcessor {
         return validationPlan.execute(entry);
     }
 
-    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables, String projectId) throws Exception {
+    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables, SubmissionOptions options) throws Exception {
         this.templateInfo = templateInfo;
         this.molType = molType;
         TemplateProcessorResultSet templateProcessorResultSet = new TemplateProcessorResultSet();
@@ -75,6 +86,8 @@ public class TemplateEntryProcessor {
         if(!templateProcessorResultSet.getValidationResult().isValid()) {
             return templateProcessorResultSet;
         }
+        // Validate and get samples
+        Sample sample = checkAndGetSample(templateVariables, templateProcessorResultSet,options);
         BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim().concat("\n//")));
         EntryReader entryReader = new EmblEntryReader(stringReader);
         ValidationResult validationResult = entryReader.read();
@@ -83,12 +96,16 @@ public class TemplateEntryProcessor {
             return templateProcessorResultSet;
         }
         Entry entry = entryReader.getEntry();
-        if(projectId != null) {
-            entry.addProjectAccession(new Text(projectId));
+        if(options.getProjectId() != null) {
+            entry.addProjectAccession(new Text(options.getProjectId()));
         }
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceName()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
+        
+        // Update sample values in SourceFeature.
+        updateSourceFeatureWithSampleValues(entry,sample);
+        
         List<Text> kewordsL = entry.getKeywords();
         if (kewordsL != null && !kewordsL.isEmpty()) {
             switch (kewordsL.get(0).getText()) {
@@ -196,7 +213,7 @@ public class TemplateEntryProcessor {
         }
         return true;
     }
-
+    
     private void replacePPOrganelleToken(TemplateVariables templateVariables) throws Exception {
         if (!template.toString().contains(TemplateProcessorConstants.PP_ORGANELLE_TOKEN))
             return;
@@ -378,4 +395,84 @@ public class TemplateEntryProcessor {
             templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
         }
     }
+
+    private Sample checkAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
+
+        Map<String, String> tsvFieldMap = templateVariables.getVariables();
+        Sample sample = null;
+        boolean isTest = options.isTestMode;
+
+        // Iterate TSV header fields.
+        for (String tsvHeader : tsvFieldMap.keySet()) {
+            if (tsvHeader.equalsIgnoreCase(TemplateProcessorConstants.ORGANISM_TOKEN)) {
+                // When TSV header cell value is ORGANISM_NAME
+
+                if (matchesTaxId(tsvFieldMap.get(tsvHeader))) {
+                    // Do nothing
+                    break;
+                }
+
+                /** When tsv value do NOT match taxId pattern then retrieve sample assuming that the passed 
+                 *  value is sampleId / sampleAlias / bioSampleValue.
+                 *  If no sample is returned then the value is organism name.
+                 */
+                String sampleValue = tsvFieldMap.get(tsvHeader);
+                try {
+                    CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isTest);
+                    sample = completeSampleService.getCompleteSample(sampleValue);
+                    break;
+                } catch (Exception e) {
+                    ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.INFO, "SampleSupportedCheck", sampleValue);
+                    templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
+                }
+            }
+        }
+        return sample;
+    }
+
+    private boolean matchesTaxId(String taxId){
+        return Utils.isValidTaxId(taxId);
+    }
+
+    private SampleEntity getSampleEntity(Sample sample){
+        SampleEntity sampleEntity = new SampleEntity();
+        Map<String,String> attributeMap=new HashMap();
+        for(Attribute attribute: sample.getAttributes()){
+            attributeMap.put(attribute.getName(),attribute.getValue());
+        }
+        sampleEntity.setAttributes(attributeMap);
+        return sampleEntity;
+    }
+
+    private SourceFeature updateSourceFeature(SourceFeature sourceFeature,SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
+        return new MasterSourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonHelperImpl(), sampleInfo);
+    }
+
+    private SampleInfo getSampleInfo(Sample sample){
+        SampleInfo sampleInfo=new SampleInfo();
+        sampleInfo.setScientificName(sample.getOrganism());
+        sampleInfo.setUniqueName(sample.getName());
+        if(sample.getTaxId()!=null) {
+            sampleInfo.setTaxId(Long.valueOf(sample.getTaxId()));
+        }
+        return sampleInfo;
+    }
+
+    private void updateSourceFeatureWithSampleValues(Entry entry, Sample sample) throws Exception{
+        if(sample != null){
+            SourceFeature sourceFeature=entry.getPrimarySourceFeature();
+            SampleInfo sampleInfo=getSampleInfo(sample);
+            SampleEntity sampleEntity = getSampleEntity(sample);
+            updateSourceFeature(sourceFeature,sampleEntity,sampleInfo);
+            entry.addXRef(new XRef("BioSample", sample.getBioSampleId()));
+        }
+    }
+
+    private CompleteSampleService getCompleteSampleService(String authToken, boolean isTest){
+        return new CompleteSampleService.Builder()
+                .setAuthToken(authToken)
+                .setTest(isTest)
+                .build();
+    }
+
 }

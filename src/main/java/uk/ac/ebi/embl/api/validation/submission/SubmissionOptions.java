@@ -5,17 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
-import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
@@ -34,9 +28,10 @@ public class SubmissionOptions
 	public  Optional<String> processDir = Optional.empty();
 	public  Optional<File> reportFile = Optional.empty();
 	public  Optional<Boolean> ignoreError = Optional.empty();
+	public  Optional<String> authToken = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 		
-	public  boolean isDevMode = false;
+	public  boolean isTestMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
 	public  boolean ignoreErrors = false;
@@ -65,7 +60,7 @@ public class SubmissionOptions
 		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
-		if(!isWebinCLI || isDevMode) {
+		if(!isWebinCLI || isTestMode) {
 			if (!(new File(reportDir.get())).isDirectory())
 				throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
         } else {

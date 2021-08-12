@@ -2,6 +2,7 @@ package uk.ac.ebi.embl.template;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -40,13 +41,13 @@ public class TemplateProcessor {
         return molType;
     }
 
-    public TemplateProcessorResultSet process(TemplateVariables templateVariables, String projectId) throws Exception {
+    public TemplateProcessorResultSet process(TemplateVariables templateVariables, SubmissionOptions options) throws Exception {
         ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
         ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
         incrementAndDecrementTokans(templateVariables, templateInfo);
         String molType = getMolTypeFromTemplate();
         reportEntryCount(templateVariables.getSequenceNumber());
-        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables, projectId);
+        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables,options);
         /**
          * check no identical records
          */

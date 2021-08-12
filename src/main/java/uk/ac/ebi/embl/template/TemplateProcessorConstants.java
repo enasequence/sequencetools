@@ -19,6 +19,7 @@ public class TemplateProcessorConstants {
     public static final String TOPOLOGY_TOKEN = "TOPOLOGY";//used in feature table upload template
     public static final String PROJECT_ID_TOKEN = "PROJECT_ID";//used in feature table upload template
     public static final String DESCRIPTION_TOKEN = "DESCRIPTION";//used in feature table upload template
+    public static final String ORGANISM_TOKEN="ORGANISM_NAME";
 
     /**
      * used for writing and reading the DETAILS.txt properties file when processing templates with the forms and command

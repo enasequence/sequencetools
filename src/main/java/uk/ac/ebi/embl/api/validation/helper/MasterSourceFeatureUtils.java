@@ -112,7 +112,18 @@ public class MasterSourceFeatureUtils {
 		sourceFeature.setTaxId(sampleInfo.getTaxId());
 		sourceFeature.setScientificName(sampleInfo.getScientificName());
 		sourceFeature.setMasterLocation();
+		addQualifiers(sourceFeature,sample,taxonHelper,sampleInfo);
+		return sourceFeature;
+	}
 
+	public SourceFeature updateSourceFeature(SourceFeature sourceFeature, SampleEntity sample, TaxonHelper taxonHelper, SampleInfo sampleInfo) {
+		sourceFeature.setTaxId(sampleInfo.getTaxId());
+		sourceFeature.setScientificName(sampleInfo.getScientificName());
+		addQualifiers(sourceFeature,sample,taxonHelper,sampleInfo);
+		return sourceFeature;
+	}
+	
+	public void addQualifiers(SourceFeature sourceFeature,SampleEntity sample,TaxonHelper taxonHelper, SampleInfo sampleInfo){
 		String latitude = null;
 		String longitude = null;
 		String country = null;
@@ -165,9 +176,6 @@ public class MasterSourceFeatureUtils {
 			sourceFeature.setTaxon(taxon);
 		}
 		addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
-
-		return sourceFeature;
 	}
-
 
 }

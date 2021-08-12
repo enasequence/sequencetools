@@ -45,7 +45,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
 		options.ignoreErrors = true;
-		options.isDevMode = true;
+		options.isTestMode = true;
 	}
 
 	// Make sure we store the references given in Webin-CLI manifest.
@@ -459,7 +459,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 				opts.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 				opts.source = Optional.of(getSource());
 				opts.ignoreErrors = true;
-				opts.isDevMode = true;
+				opts.isTestMode = true;
 				opts.context = Optional.of(Context.genome);
 				opts.submissionFiles = Optional.of(submissionFiles);
 				opts.reportDir = Optional.of(reportProcessDir.getAbsolutePath());

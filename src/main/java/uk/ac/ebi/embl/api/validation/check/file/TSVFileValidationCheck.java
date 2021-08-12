@@ -79,7 +79,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			Entry entry;
 			TemplateProcessorResultSet templateProcessorResultSet;
 			while ((csvLine = csvReader.readTemplateSpreadsheetLine()) != null) {
-				templateProcessorResultSet = templateProcessor.process(csvLine.getEntryTokenMap(), options.getProjectId());
+				TemplateVariables templateVariables=csvLine.getEntryTokenMap();
+				templateProcessorResultSet = templateProcessor.process(templateVariables, options);
 				entry = templateProcessorResultSet.getEntry();
 				if(entry != null)
 				{

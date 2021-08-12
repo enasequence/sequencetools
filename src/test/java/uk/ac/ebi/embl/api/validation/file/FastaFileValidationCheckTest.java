@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.api.validation.file;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
@@ -28,7 +27,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -47,7 +45,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
        options.source= Optional.of(getSource());
        options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
        options.isWebinCLI = true;
-	   options.isDevMode = true;
+	   options.isTestMode = true;
    }
 	
 	@Test
