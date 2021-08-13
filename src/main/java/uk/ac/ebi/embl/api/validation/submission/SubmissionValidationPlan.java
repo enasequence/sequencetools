@@ -140,7 +140,7 @@ public class SubmissionValidationPlan
 			try {
 				if (options.reportFile.isPresent()) {
 					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
-							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage());
+							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage()+" Causeed by:"+e.getCause());
 				}
 				if (!options.isWebinCLI && options.context.isPresent() && options.context.get() == Context.genome && check != null && check.getMessageStats() != null)
 					check.getReporter().writeToFile(Paths.get(options.reportDir.get()), check.getMessageStats());
@@ -184,7 +184,7 @@ public class SubmissionValidationPlan
 			     flagValidation(FileType.MASTER);
 		}catch(Exception e)
 		{
-			throwValidationEngineException(FileType.MASTER,e,"master.dat");
+			throwValidationEngineException(FileType.MASTER.name(),e,"master.dat");
 		}
 
 		return result;
@@ -208,7 +208,7 @@ public class SubmissionValidationPlan
 				}
 			}
 		} catch (Exception e) {
-			throwValidationEngineException(FileType.CHROMOSOME_LIST, e, fileName);
+			throwValidationEngineException(FileType.CHROMOSOME_LIST.name(), e, fileName);
 		}
 		return result;
 	}
@@ -242,7 +242,7 @@ public class SubmissionValidationPlan
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-			throwValidationEngineException(FileType.FASTA,e,fileName);
+			throwValidationEngineException(FileType.FASTA.name(),e,fileName);
 		}
 		return result;
 	}
@@ -273,7 +273,7 @@ public class SubmissionValidationPlan
 					flagValidation(FileType.FLATFILE);
 			}
 		}catch(Exception e){
-			throwValidationEngineException(FileType.FLATFILE,e,fileName);
+			throwValidationEngineException(FileType.FLATFILE.name(),e,fileName);
 		}
 		return result;
 	}
@@ -302,7 +302,7 @@ public class SubmissionValidationPlan
 			}
 
 		} catch (Exception e) {
-			throwValidationEngineException(FileType.AGP,e,fileName);
+			throwValidationEngineException(FileType.AGP.name(),e,fileName);
 		}
 		return result;
 	}
@@ -325,7 +325,7 @@ public class SubmissionValidationPlan
 			}
 		}catch(Exception e)
 		{
-			throwValidationEngineException(FileType.UNLOCALISED_LIST,e,fileName);
+			throwValidationEngineException(FileType.UNLOCALISED_LIST.name(),e,fileName);
 		}
 		return result;
 	}
@@ -363,7 +363,7 @@ public class SubmissionValidationPlan
 				}
 			}
 		} catch (Exception e) {
-			throwValidationEngineException(FileType.ANNOTATION_ONLY_FLATFILE, e, fileName);
+			throwValidationEngineException(FileType.FLATFILE.name()+"/"+FileType.ANNOTATION_ONLY_FLATFILE.name(), e, fileName);
 		}
 		return result;
 	}
@@ -387,7 +387,7 @@ public class SubmissionValidationPlan
 			}
 		}catch(Exception e)
 		{
-			throwValidationEngineException(FileType.TSV,e,fileName);
+			throwValidationEngineException(FileType.TSV.name(),e,fileName);
 		}
 		return result;
 	}
@@ -407,10 +407,10 @@ public class SubmissionValidationPlan
 				submissionFile.getFile().getName(),reportFile.toFile()),ReportErrorType.VALIDATION_ERROR);
 	}
 
-    private void throwValidationEngineException(FileType fileTpe, Exception e, String fileName) throws ValidationEngineException {
+    private void throwValidationEngineException(String fileTpe, Exception e, String fileName) throws ValidationEngineException {
 		if(options.isWebinCLI) {
 			ValidationEngineException validationEngineException = new ValidationEngineException(
-					String.format("%s file validation failed for %s", fileTpe.name().toLowerCase(), fileName), e);
+					String.format("%s file validation failed for %s", fileTpe.toLowerCase(), fileName), e);
 			validationEngineException.setErrorType(ReportErrorType.VALIDATION_ERROR);
 			throw validationEngineException;
 		} else throw new ValidationEngineException(e);

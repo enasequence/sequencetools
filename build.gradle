@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.6.7'
+ext.version_base = '2.6.8'
 
 
 version = version_base
