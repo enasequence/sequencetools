@@ -73,7 +73,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
                     break;
                 default:
                     new DefaultSubmissionReporter(new HashSet<>(Collections.singletonList(Severity.ERROR))).
-                            writeToFile(manifest.getReportFile(), Severity.ERROR, vee.getMessage()+", Caused by: "+vee.getCause());
+                            writeToFile(manifest.getReportFile(), Severity.ERROR, vee.getMessage());
                     throw new RuntimeException(vee);
             }
         }
