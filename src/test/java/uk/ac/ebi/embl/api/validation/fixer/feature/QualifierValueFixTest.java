@@ -41,7 +41,8 @@ public class QualifierValueFixTest
 		featureFactory = new FeatureFactory();
 		DataRow dataRow1 = new DataRow("country","East Timor","Timor-Leste");
 		DataRow dataRow2 = new DataRow("country","UK","United Kingdom");
-		GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1,dataRow2);
+		DataRow dataRow3 = new DataRow("country","Micronesia","Micronesia, Federated States of");
+		GlobalDataSets.addTestDataSet(GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1,dataRow2,dataRow3);
 		feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
 		check = new QualifierValueFix();
 	}
@@ -98,7 +99,15 @@ public class QualifierValueFixTest
 		ValidationResult result = check.check(feature);
 		assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
 		assertEquals("United Kingdom", feature.getSingleQualifierValue(Qualifier.COUNTRY_QUALIFIER_NAME));
+	}
 
+	@Test
+	public void testCheck_qualifierValueFixValueWithComma()
+	{
+		feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME,"Micronesia");
+		ValidationResult result = check.check(feature);
+		assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
+		assertEquals("Micronesia, Federated States of", feature.getSingleQualifierValue(Qualifier.COUNTRY_QUALIFIER_NAME));
 	}
 
 }
