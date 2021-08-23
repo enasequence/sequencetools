@@ -65,7 +65,9 @@ public class CountryQualifierFix extends FeatureValidationCheck
 			List<Qualifier> countryQualifiers = source.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME);
 			for (Qualifier countryQualifier : countryQualifiers) {
 				String countryQualifierValue = countryQualifier.getValue();
-
+				if(countries.contains(countryQualifierValue.toLowerCase())) {
+					continue;
+				}
 				if (!countries.contains(getCountry(countryQualifierValue))) {
 					source.removeQualifier(countryQualifier);
 					if (SequenceEntryUtils.isQualifierAvailable(Qualifier.NOTE_QUALIFIER_NAME, source)) {
@@ -85,7 +87,7 @@ public class CountryQualifierFix extends FeatureValidationCheck
 	private String getCountry(String country) {
 		if(country == null) return null;
 		String[] split = country.split("[:,]");
-		return split.length>0? split[0].trim().toLowerCase(): country;
+		return split.length>0? split[0].trim().toLowerCase(): country.toLowerCase();
 	}
 
 }
