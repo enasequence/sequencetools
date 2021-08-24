@@ -86,6 +86,7 @@ dependencies
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
             testCompile "junit:junit:4.13.1"
             testCompile 'org.easymock:easymock:4.2'
+            testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.0.RELEASE')
 
         }
 

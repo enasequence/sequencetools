@@ -43,6 +43,7 @@ public class TemplateEntryProcessor {
     private ValidationPlan validationPlan;
     private Connection connEra;
     private String molType;
+    HashMap<String, Sample> sampleCache = new HashMap<String,Sample>();
 
     public TemplateEntryProcessor(Connection connEra) {
         this(ValidationScope.EMBL_TEMPLATE);
@@ -87,7 +88,7 @@ public class TemplateEntryProcessor {
             return templateProcessorResultSet;
         }
         // Validate and get samples
-        Sample sample = checkAndGetSample(templateVariables, templateProcessorResultSet,options);
+        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet,options);
         BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim().concat("\n//")));
         EntryReader entryReader = new EmblEntryReader(stringReader);
         ValidationResult validationResult = entryReader.read();
@@ -396,7 +397,7 @@ public class TemplateEntryProcessor {
         }
     }
 
-    private Sample checkAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
+    public Sample validateAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
 
         Map<String, String> tsvFieldMap = templateVariables.getVariables();
         Sample sample = null;
@@ -418,8 +419,14 @@ public class TemplateEntryProcessor {
                  */
                 String sampleValue = tsvFieldMap.get(tsvHeader);
                 try {
-                    CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isTest);
-                    sample = completeSampleService.getCompleteSample(sampleValue);
+                    // Get sample from cache if exists. 
+                    sample=sampleCache.get(sampleValue);
+                    if(sample==null) {
+                        // Get sample using server API.
+                        CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isTest);
+                        sample = completeSampleService.getCompleteSample(sampleValue);
+                        sampleCache.put(sampleValue,sample);
+                    }
                     break;
                 } catch (Exception e) {
                     ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.INFO, "SampleSupportedCheck", sampleValue);
