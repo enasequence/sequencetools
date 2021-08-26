@@ -68,6 +68,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class FileValidationCheck {
 	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
+	public final static int MAX_SARS_COV2_SEQUENCE_LENGTH = 31000; //bp
 
 	public static final String REPORT_FILE_SUFFIX = ".report";
 
@@ -209,6 +210,37 @@ public abstract class FileValidationCheck {
 				break;
 		}
 		return assemblyLevel;
+	}
+
+	public void covid19SeqLengthCheck() throws ValidationEngineException {
+		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {
+			if (sharedInfo.chromosomeNames.size() > 1) {
+				throw new ValidationEngineException("COVID-19 genome submissions must have a single chromosome sequence", ReportErrorType.VALIDATION_ERROR);
+			}
+
+			long genomeSize = 0;
+			for (Map.Entry<String, AssemblySequenceInfo> entry : sharedInfo.sequenceInfo.entrySet()) {
+				AssemblySequenceInfo info = entry.getValue();
+
+				if (info.getAssemblyLevel() == 0 || info.getAssemblyLevel() == 1) {
+					if (!sharedInfo.agpEntryNames.contains(entry.getKey())) {
+						genomeSize += info.getSequenceLength();
+					}
+				} else if (info.getAssemblyLevel() == 2) {
+					genomeSize += info.getSequenceLength();
+				} else {
+					throw new ValidationEngineException("Unexpected assembly level", ReportErrorType.VALIDATION_ERROR);
+				}
+			}
+			System.out.println("Genome size: " + genomeSize);
+			validateCovid19SeqLength(genomeSize);
+		}
+	}
+
+	void validateCovid19SeqLength(long seqLength) throws ValidationEngineException {
+		if(seqLength>MAX_SARS_COV2_SEQUENCE_LENGTH) {
+			throw new ValidationEngineException(String.format("SARS-CoV-2 sequence length should be a max of %dbp.", MAX_SARS_COV2_SEQUENCE_LENGTH), ReportErrorType.VALIDATION_ERROR);
+		}
 	}
 
 	public void validateDuplicateEntryNames() throws ValidationEngineException
