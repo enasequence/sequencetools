@@ -2,6 +2,8 @@ package uk.ac.ebi.embl.api.validation.submission;
 
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -478,5 +480,26 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		}
 
 		CompletableFuture.allOf(futs.toArray(new CompletableFuture[futs.size()])).join();
+	}
+
+	@Test
+	public void testCovid19GenomeSize() throws IOException, ValidationEngineException {
+		//FASTA+AGP ERZ1308600
+		//FASTA+CHROMOSOME_LIST ERZ1308779
+		String rootPath = "genome/covid19_seq_length_check/";
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"agp.txt", FileType.AGP));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		thrown.expect(ValidationEngineException.class);
+		thrown.expectMessage(String.format("SARS-CoV-2 sequence length should be a max of %dbp.", FileValidationCheck.MAX_SARS_COV2_SEQUENCE_LENGTH));
+		plan.execute();
+
 	}
 }
