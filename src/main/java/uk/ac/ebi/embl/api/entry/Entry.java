@@ -122,13 +122,9 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private List<Feature> features;
 	private List<Reference> references;
 	private List<XRef> xRefs;
-	private List<Text> masterConAccessions;
-	private List<Text> masterWgsAccessions;
-	private List<Text> masterTpaAccessions;
-	private List<Text> masterTsaAccessions;
-	private List<Text> masterTlsAccessions;
-	private List<Text> masterScaffoldAccessions;
-	private String setDataclass;
+	private final List<Text> contigAccessions;
+	private final List<Text> masterScaffoldAccessions;
+	private String contigDataclass;
 	protected List<Assembly> assemblies;
 	private boolean isAnnotationOnlyCON=false;
 	private boolean isSingletonAgp=false;
@@ -150,12 +146,8 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.assemblies = new ArrayList<>();
         this.description = new Text();
         this.comment = new Text();
-		this.masterConAccessions = new ArrayList<>();
-		this.masterWgsAccessions = new ArrayList<>();
-		this.masterTpaAccessions = new ArrayList<>();
-		this.masterTsaAccessions = new ArrayList<>();
-		this.masterTlsAccessions = new ArrayList<>();
-		masterScaffoldAccessions = new ArrayList<>();
+		this.contigAccessions = new ArrayList<>();
+		this.masterScaffoldAccessions = new ArrayList<>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
 		this.sequenceCoverage = Stream.of(
@@ -502,95 +494,25 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	public void removeAssemblies() {
 		this.assemblies.clear();
 	}	
-		
-	public List<Text> getMasterConAccessions() {
-		return this.masterConAccessions;
+
+	public List<Text> getContigAccessions() {
+		return this.contigAccessions;
 	}
 	
-	public boolean addMasterConAccession(Text accession) {
-		return this.masterConAccessions.add(accession);
+	public boolean addContigAccession(Text accession) {
+		return this.contigAccessions.add(accession);
 	}
 	
-	public boolean addMasterConAccessions(Collection<Text> accessions) {
+	public boolean addContigAccessions(Collection<Text> accessions) {
 		if (accessions == null) {
 			return false;
 		}
-		return this.masterConAccessions.addAll(accessions);
-	}
-	
-	public boolean removeMasterConAccession(Text accession) {
-		return this.masterConAccessions.remove(accession);
+		return this.contigAccessions.addAll(accessions);
 	}
 
-	public List<Text> getMasterWgsAccessions() {
-		return this.masterWgsAccessions;
+	public boolean removeaddContigAccession(Text accession) {
+		return this.contigAccessions.remove(accession);
 	}
-	
-	public boolean addMasterWgsAccession(Text accession) {
-		return this.masterWgsAccessions.add(accession);
-	}
-	
-	public boolean addMasterWgsAccessions(Collection<Text> accessions) {
-		if (accessions == null) {
-			return false;
-		}
-		return this.masterWgsAccessions.addAll(accessions);
-	}
-	
-	public boolean removeMasterWgsAccession(Text accession) {
-		return this.masterWgsAccessions.remove(accession);
-	}
-
-	public List<Text> getMasterTpaAccessions() {
-		return this.masterTpaAccessions;
-	}
-	
-	public boolean addMasterTpaAccession(Text accession) {
-		return this.masterTpaAccessions.add(accession);
-	}
-	
-	public boolean addMasterTpaAccessions(Collection<Text> accessions) {
-		if (accessions == null) {
-			return false;
-		}
-		return this.masterTpaAccessions.addAll(accessions);
-	}
-	
-	public boolean removeMasterTpaAccession(Text accession) {
-		return this.masterTpaAccessions.remove(accession);
-	}
-	
-	public List<Text> getMasterTsaAccessions() {
-		return this.masterTsaAccessions;
-	}
-	
-	public boolean addMasterTsaAccession(Text accession) {
-		return this.masterTsaAccessions.add(accession);
-	}
-
-	public List<Text> getMasterTlsAccessions() {
-		return this.masterTlsAccessions;
-	}
-
-	public boolean addMasterTlsAccession(Text accession) {
-		return this.masterTlsAccessions.add(accession);
-	}
-	
-	public boolean addMasterTsaAccessions(Collection<Text> accessions) {
-		if (accessions == null) {
-			return false;
-		}
-		return this.masterTsaAccessions.addAll(accessions);
-	}
-	
-	public boolean removeMasterTsaAccession(Text accession) {
-		return this.masterTsaAccessions.remove(accession);
-	}
-
-	public boolean removeMasterTlsAccession(Text accession) {
-		return this.masterTlsAccessions.remove(accession);
-	}
-
 
 	public List<Text> getMasterScaffoldAccessions() {
 		return masterScaffoldAccessions;
@@ -600,28 +522,19 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		return this.masterScaffoldAccessions.add(masterScaffoldAccessions);
 	}
 
-	public boolean addMasterScaffoldAccessions(Collection<Text> masterScaffoldAccessions) {
-		if (masterScaffoldAccessions == null) {
-			return false;
-		}
-		return this.masterScaffoldAccessions.addAll(masterScaffoldAccessions);
+
+	public String getContigDataclass() {
+		return contigDataclass;
 	}
 
-	public String getSetDataclass() {
-		return setDataclass;
-	}
-
-	public void setSetDataclass(String setDataclass) {
-		this.setDataclass = setDataclass;
+	public void setContigDataclass(String contigDataclass) {
+		this.contigDataclass = contigDataclass;
 	}
 
 
 	public boolean isMaster() {
-		return (this.masterConAccessions.size() > 0 ||
-		        this.masterWgsAccessions.size() > 0 ||
-		        this.masterTpaAccessions.size() > 0||
-		        this.masterTsaAccessions.size() > 0 ||
-				this.masterTlsAccessions.size() > 0);
+		return (this.contigAccessions.size() > 0 ||
+				this.masterScaffoldAccessions.size() > 0);
 	}
 	
 	public SourceFeature getPrimarySourceFeature () {

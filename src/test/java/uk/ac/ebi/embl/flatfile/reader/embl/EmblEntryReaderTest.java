@@ -873,9 +873,8 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"XX\n" +
 			"WGS  AAAA02000001-AAAA02050231\n" +
 			"XX\n" +
-			"CON  CH398081-CH401163, CM000126-CM000137\n" +
+			"WGS_SCAFLD  CH398081-CH401163, CM000126-CM000137\n" +
 			"XX\n" +
-			"TPA  A398081-A401163\n" +
 			"XX\n" +
 			"//\n";
 		
@@ -891,6 +890,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 //		assertEquals(0, result.count(Severity.ERROR));//CON entry must have CO(CONDIV) lines
 		StringWriter writer = new StringWriter();
 		assertTrue(new EmblEntryWriter(entry).write(writer));
+		//TODO: discuss with Rasko
 		assertEquals(entryString, writer.toString());
 	}
 

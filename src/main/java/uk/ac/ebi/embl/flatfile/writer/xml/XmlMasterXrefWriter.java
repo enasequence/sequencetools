@@ -33,27 +33,9 @@ public class XmlMasterXrefWriter {
     	if (entry == null) {
     		return false;
     	}
-    	for (Text accession : entry.getMasterWgsAccessions()) {
+    	for (Text accession : entry.getContigAccessions()) {
 			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-WGS");
-			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
-		}
-    	for (Text accession : entry.getMasterConAccessions()) {
-			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-CON");
-			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
-		}
-    	for (Text accession : entry.getMasterTpaAccessions()) {
-			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-TPA");
-			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
-		}
-    	for (Text accession : entry.getMasterTsaAccessions()) {
-			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-TSA");
+			writer.writeAttribute("db", entry.getContigDataclass().equals(Entry.WGS_DATACLASS)?"ENA-WGS":"ENA-TSA");
 			writer.writeAttribute("id", accession.getText());
     		writer.openCloseElement("xref");
 		}

@@ -127,13 +127,7 @@ public class EmblEntryWriter extends EntryWriter {
         if(new MasterWGSWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
-		if(new MasterCONWriter(entry, wrapType).write(writer)) {
-			writer.write(SEPARATOR_LINE);
-		}
 
-		if((new MasterTPAWriter(entry, wrapType)).write(writer)) {
-			writer.write(SEPARATOR_LINE);
-		}
 		if((new MasterTLSWriter(entry, wrapType)).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}

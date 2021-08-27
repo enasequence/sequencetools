@@ -35,7 +35,7 @@ public class MasterCONReader extends MultiLineBlockReader {
 	@Override
 	protected void read(String block) {
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterConAccession(new Text(accession, getOrigin()));
+			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

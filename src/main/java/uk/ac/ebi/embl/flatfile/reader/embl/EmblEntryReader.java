@@ -154,7 +154,6 @@ EmblEntryReader extends EntryReader
 			addBlockReader(new RXReader(lineReader));
 			addBlockReader(new MasterWGSReader(lineReader));
 			addBlockReader(new MasterCONReader(lineReader));
-			addBlockReader(new MasterTPAReader(lineReader));
 			addBlockReader(new MasterTSAReader(lineReader));
 			addBlockReader(new MasterTLSReader(lineReader));
 			addBlockReader(new MasterScaffoldWGSReader(lineReader));

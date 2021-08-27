@@ -35,16 +35,13 @@ public class MasterScaffoldWriter extends FlatFileWriter {
     public boolean write(Writer writer) throws IOException {
         String emblPadding = EmblPadding.MASTER_SCAFFOLD_WGS_PADDING;
 
-        if (entry.getSetDataclass() != null) {
-            switch (entry.getSetDataclass()) {
+        if (entry.getContigDataclass() != null) {
+            switch (entry.getContigDataclass()) {
                 case Entry.WGS_DATACLASS:
                     emblPadding = EmblPadding.MASTER_SCAFFOLD_WGS_PADDING;
                     break;
                 case Entry.TLS_DATACLASS:
                     emblPadding = EmblPadding.MASTER_SCAFFOLD_TLS_PADDING;
-                    break;
-                case Entry.TPA_DATACLASS:
-                    emblPadding = EmblPadding.MASTER_SCAFFOLD_TPA_PADDING;
                     break;
                 case Entry.TSA_DATACLASS:
                     emblPadding = EmblPadding.MASTER_SCAFFOLD_TSA_PADDING;
