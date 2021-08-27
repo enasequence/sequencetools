@@ -21,22 +21,17 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
-import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import uk.ac.ebi.ena.taxonomy.taxon.TaxonFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DivisionFixTest
 {
-
-	private Entry entry;
-	private DivisionFix check;
+	private DivisionFix divisionFix;
 	public EntryFactory entryFactory;
 	public FeatureFactory featureFactory;
 	public SourceFeature sourceFeature;
@@ -49,7 +44,7 @@ public class DivisionFixTest
 
 		entryFactory = new EntryFactory();
 		featureFactory = new FeatureFactory();
-		entry = entryFactory.createEntry();
+		
 		sourceFeature = featureFactory.createSourceFeature();
 
 		TaxonFactory taxonFactory = new TaxonFactory();
@@ -67,7 +62,7 @@ public class DivisionFixTest
 				"}");
 		taxon = taxonFactory.createTaxon(taxonJasonObject);
 		
-		check = new DivisionFix();
+		divisionFix = new DivisionFix();
 	}
 
 	@After
@@ -77,65 +72,82 @@ public class DivisionFixTest
 
 	@Test
 	public void testCheck_NoEntry() throws ValidationEngineException {
-		assertTrue(check.check(null).isValid());
+		assertTrue(divisionFix.check(null).isValid());
 	}
 
 	@Test
 	public void testCheck_NoPrimarySourceFeature() throws ValidationEngineException {
-		assertTrue(check.check(null).isValid());
+		Entry entry = entryFactory.createEntry();
+		assertTrue(divisionFix.check(entry).isValid());
 	}
 
 	@Test
 	public void testCheck_entryWithValidDivision() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		entry.setDivision("PHG");
-		assertTrue(check.check(entry).isValid());
+		assertTrue(divisionFix.check(entry).isValid());
 	}
 
 	@Test
 	public void testCheck_entryWithTransgenicFix() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		sourceFeature.setTransgenic(true);
 		entry.addFeature(sourceFeature);
-		ValidationResult result=check.check(entry);
+		assertNull(entry.getDivision());
+		ValidationResult result= divisionFix.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
+		assertTrue(entry.getDivision().equals("TGN"));
 	}
 	
 	@Test
 	public void testCheck_entryWithEnvironmentalSampleQualifierName() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		sourceFeature.setSingleQualifier("environmental_sample");
 		entry.addFeature(sourceFeature);
-		ValidationResult result=check.check(entry);
+		assertNull(entry.getDivision());
+		ValidationResult result= divisionFix.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
+		assertTrue(entry.getDivision().equals("ENV"));
 	}
 
 	@Test
 	public void testCheck_entrySourceFeatureWithTaxId() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		sourceFeature.setTaxon(taxon);
 		entry.addFeature(sourceFeature);
-		ValidationResult result=check.check(entry);
+		assertNull(entry.getDivision());
+		ValidationResult result= divisionFix.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
+		assertTrue(entry.getDivision().equals("INV"));
 	}
 
 	@Test
 	public void testCheck_entrySourceFeatureWithScientificName() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		taxon.setTaxId(null); // Set taxId to null for getting division by ScientificName
 		sourceFeature.setTaxon(taxon);
 		entry.addFeature(sourceFeature);
-		ValidationResult result=check.check(entry);
+		assertNull(entry.getDivision());
+		ValidationResult result= divisionFix.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
+		assertTrue(entry.getDivision().equals("MAM"));
 	}
 
 	@Test
 	public void testCheck_entrySourceFeatureWithInvalidTaxIdAndScientificName() throws ValidationEngineException {
+		Entry entry = entryFactory.createEntry();
 		taxon.setTaxId(null); 
 		taxon.setScientificName("INVALID NAME");
 		sourceFeature.setTaxon(taxon);
 		entry.addFeature(sourceFeature);
-		ValidationResult result=check.check(entry);
+		assertNull(entry.getDivision());
+		ValidationResult result= divisionFix.check(entry);
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_2", Severity.FIX)); // Set division to XXX
+		assertTrue(entry.getDivision().equals("XXX"));
 	}
 }

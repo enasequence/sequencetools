@@ -29,9 +29,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.List;
 
-@Description("Division has been set to \"{0}\"" +
-		"No division found. Division has been set to \"{0}\"")
-@ExcludeScope(validationScope = {ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
+@Description("If not already provided then sets the division based on source feature qualifiers.")
 public class DivisionFix extends EntryValidationCheck
 {
 
