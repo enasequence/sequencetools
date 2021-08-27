@@ -84,7 +84,7 @@ public class IDReader extends SingleLineBlockReader {
 	protected void read(String block) {
 		entry.setOrigin(getOrigin());
 		FlatFileMatcher matcher = new FlatFileMatcher(this, PATTERN);
-		if(!matcher.match(block)) {
+		if (!matcher.match(block)) {
 			error("FF.1", getTag());
 			return;
 		}
@@ -92,12 +92,11 @@ public class IDReader extends SingleLineBlockReader {
 			if (preserveCase) {
 				entry.setPrimaryAccession(matcher.getString(GROUP_PRIMARY_ACCESSION));
 				entry.getSequence().setAccession(matcher.getString(GROUP_PRIMARY_ACCESSION));
-			}
-			else {
+			} else {
 				entry.setPrimaryAccession(matcher.getUpperString(GROUP_PRIMARY_ACCESSION));
 				entry.getSequence().setAccession(matcher.getUpperString(GROUP_PRIMARY_ACCESSION));
 			}
-					
+
 		}
 		if (matcher.isValueXXX(GROUP_SEQUENCE_VERSION) && matcher.getInteger(GROUP_SEQUENCE_VERSION) >= 1) {
 			entry.getSequence().setVersion(matcher.getInteger(GROUP_SEQUENCE_VERSION));
@@ -113,13 +112,10 @@ public class IDReader extends SingleLineBlockReader {
 		}
 		Long sequenceLength = matcher.getLong(GROUP_SEQUENCE_LENGTH);
 		if (sequenceLength != null) {
-			entry.setIdLineSequenceLength(matcher.getLong(GROUP_SEQUENCE_LENGTH));			
+			entry.setIdLineSequenceLength(matcher.getLong(GROUP_SEQUENCE_LENGTH));
 		}
 		if (matcher.isValueXXX(GROUP_DATACLASS)) {
 			entry.setDataClass(matcher.getUpperString(GROUP_DATACLASS));
-			}
-		if (matcher.isValueXXX(GROUP_DIVISION)) {
-			entry.setDivision(matcher.getUpperString(GROUP_DIVISION));
 		}
 	}
 	
