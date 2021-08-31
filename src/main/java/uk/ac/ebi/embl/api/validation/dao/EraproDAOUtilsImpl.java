@@ -429,7 +429,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
-    public Entry getMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException
+    public Entry createMasterEntry(String analysisId, AnalysisType analysisType) throws SQLException, ValidationEngineException
 	{
 	   if(masterCache.containsKey(analysisId))
 	   {
@@ -574,10 +574,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 
 		sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
-		
-		// Set division using DivisionFix 
-		DivisionFix.setDivision(masterEntry);
-		
+
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
 		masterEntry.setDescription(new Text(description));

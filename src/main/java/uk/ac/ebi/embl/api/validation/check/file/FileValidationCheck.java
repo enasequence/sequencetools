@@ -112,20 +112,6 @@ public abstract class FileValidationCheck {
 		return options;
 	}
 
-
-	protected AnalysisType getAnalysisType()
-	{
-		switch(getOptions().context.get())
-		{
-		case transcriptome:
-			return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
-		case genome:
-			return AnalysisType.SEQUENCE_ASSEMBLY;
-		default :
-			return null;
-		}
-	}
-
 	public SubmissionReporter getReporter()
 	{
 		HashSet<Severity> severity = new HashSet<>();
