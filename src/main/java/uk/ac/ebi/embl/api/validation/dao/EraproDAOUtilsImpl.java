@@ -16,6 +16,7 @@ import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.dao.model.*;
+import uk.ac.ebi.embl.api.validation.fixer.entry.DivisionFix;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -573,6 +574,10 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 
 		sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
+		
+		// Set division using DivisionFix 
+		DivisionFix.setDivision(masterEntry);
+		
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
 		masterEntry.setDescription(new Text(description));

@@ -87,6 +87,10 @@ public class DivisionFix extends EntryValidationCheck
 		return result;
 	}
 
+	public static ValidationResult setDivision(Entry entry) throws ValidationEngineException {
+		return new DivisionFix().check(entry);
+	}
+	
 	public static boolean empty(String input){
 		return StringUtils.isEmpty(input);
 	}
