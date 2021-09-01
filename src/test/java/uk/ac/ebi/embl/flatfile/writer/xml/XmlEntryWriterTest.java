@@ -90,7 +90,7 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 		assertTrue(new XmlEntryWriter(entry).write(writer));
 		//System.out.println(writer.toString());
 		assertEquals(
-				"<entry accession=\"AAK83626\" version=\"1\" entryVersion=\"2\" dataClass=\"STD\" taxonomicDivision=\"PLN\" moleculeType=\"mRNA\" sequenceLength=\"801\" topology=\"linear\" firstPublic=\"2001-08-10\" firstPublicRelease=\"68\" lastUpdated=\"2005-04-16\" lastUpdatedRelease=\"83\">\n"
+				"<entry accession=\"AAK83626\" version=\"1\" entryVersion=\"2\" dataClass=\"STD\" moleculeType=\"mRNA\" sequenceLength=\"801\" topology=\"linear\" firstPublic=\"2001-08-10\" firstPublicRelease=\"68\" lastUpdated=\"2005-04-16\" lastUpdatedRelease=\"83\">\n"
 						+ "	<description>Arabidopsis thaliana (thale cress) At1g31070/F17F8_1</description>\n"
 						+ "	<keyword>FLI_CDNA</keyword>\n"
 						+ "	<xref db=\"EMBL\" id=\"AY049284.1\"/>\n"
@@ -576,7 +576,7 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 	}
 
     public String masterOutputString =
-            "<entry accession=\"AAAA00000000\" version=\"2\" dataClass=\"SET\" taxonomicDivision=\"PLN\" moleculeType=\"genomic DNA\" sequenceLength=\"53326\" topology=\"linear\">\n" +
+            "<entry accession=\"AAAA00000000\" version=\"2\" dataClass=\"SET\" moleculeType=\"genomic DNA\" sequenceLength=\"53326\" topology=\"linear\">\n" +
             "	<secondaryAccession>AAAA02000000</secondaryAccession>\n" +
             "	<projectAccession>234455</projectAccession>\n" +
             "	<projectAccession>344332</projectAccession>\n" +

@@ -36,7 +36,6 @@ public class IDReaderTest extends EmblReaderTest {
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
 		assertEquals("unassigned DNA", entry.getSequence().getMoleculeType());
 		assertEquals("PAT", entry.getDataClass());
-		assertEquals("VRL", entry.getDivision());
 		assertEquals(335, entry.getIdLineSequenceLength());
 	}
 	

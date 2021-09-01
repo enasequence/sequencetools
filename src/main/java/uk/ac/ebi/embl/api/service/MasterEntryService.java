@@ -37,7 +37,7 @@ public class MasterEntryService {
     public Entry createMasterEntry(SubmissionOptions options, ValidationResult validationResult) throws ValidationEngineException {
         Entry masterEntry;
 
-        if (!options.isWebinCLI) {
+        if (options.isWebinCLI) {
             masterEntry = getMasterEntryFromWebinCli(options);
         } else {
             masterEntry = getMasterEntryFromSubmittedXml(options);
