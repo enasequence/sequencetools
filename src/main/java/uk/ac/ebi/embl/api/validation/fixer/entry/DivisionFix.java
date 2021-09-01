@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -48,7 +49,10 @@ public class DivisionFix extends EntryValidationCheck {
             return result;
         }
 
-        if (empty(entry.getDivision())) {
+        
+        
+
+        if (shouldSetDivision(entry)) {
 
             try {
                 SourceFeature primarySF = entry.getPrimarySourceFeature();
@@ -84,6 +88,26 @@ public class DivisionFix extends EntryValidationCheck {
             }
         }
         return result;
+    }
+    
+    private boolean shouldSetDivision(Entry entry){
+        if(empty(entry.getDivision())) {
+            return true;
+        }else {
+            // If division is NOT empty 
+            
+            if (getValidationScope().equals(ValidationScope.NCBI) || getValidationScope().equals(ValidationScope.NCBI_MASTER)){
+                // Do NOT set division for NCBI or NCBI_MASTER ValidationScope.
+                return false;
+            }else{
+                // Set division for non NCBI ValidationScope(s).
+                return true;
+            }
+        }
+    }
+    
+    public ValidationScope getValidationScope(){
+        return getEmblEntryValidationPlanProperty().validationScope.get();
     }
 
     public static boolean empty(String input) {

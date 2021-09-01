@@ -117,6 +117,9 @@ public class IDReader extends SingleLineBlockReader {
 		if (matcher.isValueXXX(GROUP_DATACLASS)) {
 			entry.setDataClass(matcher.getUpperString(GROUP_DATACLASS));
 		}
+		if (matcher.isValueXXX(GROUP_DIVISION)) {
+			entry.setDivision(matcher.getUpperString(GROUP_DIVISION));
+		}
 	}
 	
 	private Topology getTopology(String topology) {
