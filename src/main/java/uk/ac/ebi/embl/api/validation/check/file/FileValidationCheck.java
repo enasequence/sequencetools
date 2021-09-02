@@ -408,7 +408,7 @@ public abstract class FileValidationCheck {
 	}
 
 	public  void flushAndCloseFileWriters() {
-		if(getOptions().isWebinCLI) {
+		if(!getOptions().forceReducedFlatfileCreation && getOptions().isWebinCLI) {
 			return;
 		}
 		try {
@@ -708,7 +708,7 @@ public abstract class FileValidationCheck {
 	}
 
 	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
-		if(getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType)) {
+		if(!getOptions().forceReducedFlatfileCreation && (getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType))) {
 			return;
 		}
 		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
