@@ -112,20 +112,6 @@ public abstract class FileValidationCheck {
 		return options;
 	}
 
-
-	protected AnalysisType getAnalysisType()
-	{
-		switch(getOptions().context.get())
-		{
-		case transcriptome:
-			return AnalysisType.TRANSCRIPTOME_ASSEMBLY;
-		case genome:
-			return AnalysisType.SEQUENCE_ASSEMBLY;
-		default :
-			return null;
-		}
-	}
-
 	public SubmissionReporter getReporter()
 	{
 		HashSet<Severity> severity = new HashSet<>();
@@ -422,7 +408,7 @@ public abstract class FileValidationCheck {
 	}
 
 	public  void flushAndCloseFileWriters() {
-		if(getOptions().isWebinCLI) {
+		if(!getOptions().forceReducedFlatfileCreation && getOptions().isWebinCLI) {
 			return;
 		}
 		try {
@@ -722,7 +708,7 @@ public abstract class FileValidationCheck {
 	}
 
 	void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
-		if(getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType)) {
+		if(!getOptions().forceReducedFlatfileCreation && (getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType))) {
 			return;
 		}
 		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG

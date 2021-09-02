@@ -54,7 +54,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
    
 	public void testRead_Entry() throws IOException {
 		String entryString =
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -129,7 +129,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 
 	public void testRead_EntryFeatureSort() throws IOException {
 		String entryString =
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -209,7 +209,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n";	
 		String expectedEntryString =
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -308,7 +308,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"\n" +
 			"\n" +
 			"\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -370,7 +370,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"\n" +
 			"\n" +
 			"\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -424,7 +424,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -479,7 +479,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n";			
 		String expectedEntryString =
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -533,7 +533,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -587,7 +587,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
@@ -791,7 +791,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 	@Ignore
 	public void testRead_MasterEntry() throws IOException {
 		String entryString =
-			"ID   AAAA02000000; SV 02; linear; genomic DNA; CON; PLN; 0 SQ.\n" +
+			"ID   AAAA02000000; SV 02; linear; genomic DNA; CON; XXX; 0 SQ.\n" +
 			"XX\n" +
 			"AC   AAAA02000000;\n" +
 			"XX\n" +
@@ -950,9 +950,9 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 
 	public void testRead_MultipleIDLine() throws IOException {
 		String entryString =
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n" +
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"AH   TPA-SPAN       PRIMARY_IDENTIFIER     PRIMARY_SPAN     COMP\n" +
-			"ID   A00001; SV 1; linear; unassigned DNA; PAT; VRL; 339 BP.\n//";
+			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n//";
 		setBufferedReader(entryString);
 		ValidationResult result = (new EmblEntryReader(bufferedReader)).read();
         Collection<ValidationMessage<Origin>> messages = result.getMessages("FF.5", Severity.ERROR);

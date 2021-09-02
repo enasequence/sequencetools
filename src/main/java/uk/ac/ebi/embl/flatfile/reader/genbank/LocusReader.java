@@ -96,11 +96,7 @@ public class LocusReader extends SingleLineBlockReader {
   				division.equals("SYN")||
   				division.equals("TGN")||
   				division.equals("UNC")||
-				division.equals("BCT")||
-				division.equals("PRI")||
-				division.equals("RNA")||
-				division.equals("UNA")||
-  				division.equals("VRL")) {
+				division.equals("VRL")) {
 					entry.setDivision(division);
 					entry.setDataClass("STD");
 				}
