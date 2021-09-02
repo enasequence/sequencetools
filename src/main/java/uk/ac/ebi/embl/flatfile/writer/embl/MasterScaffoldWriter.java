@@ -33,21 +33,6 @@ public class MasterScaffoldWriter extends FlatFileWriter {
     }
 
     public boolean write(Writer writer) throws IOException {
-        String emblPadding = EmblPadding.MASTER_SCAFFOLD_WGS_PADDING;
-
-        if (entry.getContigDataclass() != null) {
-            switch (entry.getContigDataclass()) {
-                case Entry.WGS_DATACLASS:
-                    emblPadding = EmblPadding.MASTER_SCAFFOLD_WGS_PADDING;
-                    break;
-                case Entry.TLS_DATACLASS:
-                    emblPadding = EmblPadding.MASTER_SCAFFOLD_TLS_PADDING;
-                    break;
-                case Entry.TSA_DATACLASS:
-                    emblPadding = EmblPadding.MASTER_SCAFFOLD_TSA_PADDING;
-                    break;
-            }
-        }
 
     	StringBuilder block = new StringBuilder();
     	int i = 0;
@@ -59,7 +44,7 @@ public class MasterScaffoldWriter extends FlatFileWriter {
                 }
                 block.append(accession.getText());
             }
-            writeBlock(writer, emblPadding, block.toString());
+            writeBlock(writer, EmblPadding.MASTER_CON_PADDING, block.toString());
         }
         return (i > 0);
     }
