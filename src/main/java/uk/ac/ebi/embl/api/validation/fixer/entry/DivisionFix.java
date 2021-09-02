@@ -50,8 +50,6 @@ public class DivisionFix extends EntryValidationCheck {
         }
 
         
-        
-
         if (shouldSetDivision(entry)) {
 
             try {
@@ -94,8 +92,8 @@ public class DivisionFix extends EntryValidationCheck {
         if(empty(entry.getDivision())) {
             return true;
         }else {
-            // If division is NOT empty 
             
+            // If division is NOT empty
             if (getValidationScope().equals(ValidationScope.NCBI) || getValidationScope().equals(ValidationScope.NCBI_MASTER)){
                 // Do NOT set division for NCBI or NCBI_MASTER ValidationScope.
                 return false;

@@ -24,8 +24,11 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import uk.ac.ebi.ena.taxonomy.taxon.TaxonFactory;
+
+import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 
@@ -149,5 +152,31 @@ public class DivisionFixTest
 		assertTrue(!result.getMessages(Severity.FIX).isEmpty());
 		assertEquals(1, result.count("DivisionFix_2", Severity.FIX)); // Set division to XXX
 		assertTrue(entry.getDivision().equals("XXX"));
+	}
+
+	@Test
+	public void testCheck_entryWithNCBIValidationScope() throws ValidationEngineException, SQLException {
+		Entry entry = entryFactory.createEntry();
+		divisionFix.setEmblEntryValidationPlanProperty(getProperty(ValidationScope.NCBI));
+		entry.setDivision("PHG");
+		assertTrue(divisionFix.check(entry).isValid());
+		assertTrue(entry.getDivision().equals("PHG"));
+	}
+
+	@Test
+	public void testCheck_entryWithNonNCBIValidationScope() throws ValidationEngineException, SQLException {
+		Entry entry = entryFactory.createEntry();
+		sourceFeature.setTaxon(taxon);
+		entry.addFeature(sourceFeature);
+		divisionFix.setEmblEntryValidationPlanProperty(getProperty(ValidationScope.ASSEMBLY_CHROMOSOME));
+		entry.setDivision("PHG");
+		assertTrue(divisionFix.check(entry).isValid());
+		assertTrue(entry.getDivision().equals("INV"));
+	}
+	
+	private EmblEntryValidationPlanProperty getProperty(ValidationScope validationScope){
+		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
+		property.validationScope.set(validationScope);
+		return property;
 	}
 }
