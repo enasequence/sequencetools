@@ -49,9 +49,7 @@ public class DivisionFix extends EntryValidationCheck {
             return result;
         }
 
-        
         if (shouldSetDivision(entry)) {
-
             try {
                 SourceFeature primarySF = entry.getPrimarySourceFeature();
                 TaxonomyClient taxonomyClient = new TaxonomyClientImpl();
