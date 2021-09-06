@@ -36,9 +36,9 @@ public class MasterScaffoldTPAReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.TPA_DATACLASS);
+		entry.setContigDataclass(Entry.TPA_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
+			entry.addScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

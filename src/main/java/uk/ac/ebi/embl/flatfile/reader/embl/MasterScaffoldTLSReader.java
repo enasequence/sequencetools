@@ -36,9 +36,9 @@ public class MasterScaffoldTLSReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.TLS_DATACLASS);
+		entry.setContigDataclass(Entry.TLS_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
+			entry.addScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

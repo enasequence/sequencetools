@@ -78,7 +78,7 @@ public class DataclassCheckTest {
 
 	@Test
 	public void testCheck_validMasterDatclass() throws ValidationEngineException {
-		entry.addMasterWgsAccession(new Text("AAAF01000000-AAAF01000015"));
+		entry.addContigAccession(new Text("AAAF01000000-AAAF01000015"));
 		entry.setDataClass("SET");
 		ValidationResult result = check.check(entry);
 		assertEquals(0, result.count("DataclassCheck2", Severity.ERROR));

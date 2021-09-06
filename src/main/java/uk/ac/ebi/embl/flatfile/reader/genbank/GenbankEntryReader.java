@@ -86,7 +86,6 @@ public class GenbankEntryReader extends EntryReader {
 		addBlockReader(new MasterCONReader(lineReader));
 		addBlockReader(new MasterTLSReader(lineReader));
 		addBlockReader(new MasterTSAReader(lineReader));
-		addBlockReader(new MasterTPAReader(lineReader));
 		addBlockReader(new MasterScaffoldWGSReader(lineReader));
 		addBlockReader(new MasterScaffoldTLSReader(lineReader));
 		addBlockReader(new MasterScaffoldTSAReader(lineReader));

@@ -33,16 +33,19 @@ public class MasterCONWriter extends FlatFileWriter {
     }
 
     public boolean write(Writer writer) throws IOException {
+
     	StringBuilder block = new StringBuilder();
     	int i = 0;
-        for (Text accession : entry.getMasterConAccessions()) {
-        	++i;
-        	if (i > 1) {
-                block.append(", ");
-        	}
-            block.append(accession.getText());
+    	if(entry.getScaffoldAccessions() != null && !entry.getScaffoldAccessions().isEmpty()) {
+            for (Text accession : entry.getScaffoldAccessions()) {
+                ++i;
+                if (i > 1) {
+                    block.append(", ");
+                }
+                block.append(accession.getText());
+            }
+            writeBlock(writer, EmblPadding.MASTER_CON_PADDING, block.toString());
         }
-        writeBlock(writer, EmblPadding.MASTER_CON_PADDING, block.toString());
         return (i > 0);
     }
 }
