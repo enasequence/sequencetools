@@ -123,7 +123,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private List<Reference> references;
 	private List<XRef> xRefs;
 	private final List<Text> contigAccessions;
-	private final List<Text> masterScaffoldAccessions;
+	private final List<Text> scaffoldAccessions;
 	private String contigDataclass;
 	protected List<Assembly> assemblies;
 	private boolean isAnnotationOnlyCON=false;
@@ -147,7 +147,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
         this.description = new Text();
         this.comment = new Text();
 		this.contigAccessions = new ArrayList<>();
-		this.masterScaffoldAccessions = new ArrayList<>();
+		this.scaffoldAccessions = new ArrayList<>();
 		this.deleteEntry=false;
 		this.isNonExpandedCON=false;
 		this.sequenceCoverage = Stream.of(
@@ -510,16 +510,16 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		return this.contigAccessions.addAll(accessions);
 	}
 
-	public boolean removeaddContigAccession(Text accession) {
+	public boolean removeContigAccession(Text accession) {
 		return this.contigAccessions.remove(accession);
 	}
 
-	public List<Text> getMasterScaffoldAccessions() {
-		return masterScaffoldAccessions;
+	public List<Text> getScaffoldAccessions() {
+		return scaffoldAccessions;
 	}
 
-	public boolean addMasterScaffoldAccession(Text masterScaffoldAccessions) {
-		return this.masterScaffoldAccessions.add(masterScaffoldAccessions);
+	public boolean addScaffoldAccession(Text masterScaffoldAccessions) {
+		return this.scaffoldAccessions.add(masterScaffoldAccessions);
 	}
 
 
@@ -534,7 +534,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 
 	public boolean isMaster() {
 		return (this.contigAccessions.size() > 0 ||
-				this.masterScaffoldAccessions.size() > 0);
+				this.scaffoldAccessions.size() > 0);
 	}
 	
 	public SourceFeature getPrimarySourceFeature () {

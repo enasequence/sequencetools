@@ -38,7 +38,7 @@ public class MasterScaffoldWGSReader extends MultiLineBlockReader {
 	protected void read(String block) {
 		entry.setContigDataclass(Entry.WGS_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterScaffoldAccession(new Text(accession, getOrigin()));
+			entry.addScaffoldAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

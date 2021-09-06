@@ -33,9 +33,17 @@ public class XmlMasterXrefWriter {
     	if (entry == null) {
     		return false;
     	}
+
+		for (Text accession : entry.getScaffoldAccessions()) {
+			writer.beginElement("xref");
+			writer.writeAttribute("db", "ENA-CON");
+			writer.writeAttribute("id", accession.getText());
+			writer.openCloseElement("xref");
+		}
+
     	for (Text accession : entry.getContigAccessions()) {
 			writer.beginElement("xref");	
-			writer.writeAttribute("db", entry.getContigDataclass().equals(Entry.WGS_DATACLASS)?"ENA-WGS":"ENA-TSA");
+			writer.writeAttribute("db", "ENA-"+entry.getContigDataclass());
 			writer.writeAttribute("id", accession.getText());
     		writer.openCloseElement("xref");
 		}

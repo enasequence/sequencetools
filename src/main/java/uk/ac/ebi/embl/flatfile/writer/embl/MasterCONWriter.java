@@ -25,9 +25,9 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import java.io.IOException;
 import java.io.Writer;
 
-public class MasterScaffoldWriter extends FlatFileWriter {
+public class MasterCONWriter extends FlatFileWriter {
 
-    public MasterScaffoldWriter(Entry entry, WrapType wrapType) {
+    public MasterCONWriter(Entry entry, WrapType wrapType) {
         super(entry, wrapType);
         setWrapChar(WrapChar.WRAP_CHAR_COMMA);
     }
@@ -36,8 +36,8 @@ public class MasterScaffoldWriter extends FlatFileWriter {
 
     	StringBuilder block = new StringBuilder();
     	int i = 0;
-    	if(entry.getMasterScaffoldAccessions() != null && !entry.getMasterScaffoldAccessions().isEmpty()) {
-            for (Text accession : entry.getMasterScaffoldAccessions()) {
+    	if(entry.getScaffoldAccessions() != null && !entry.getScaffoldAccessions().isEmpty()) {
+            for (Text accession : entry.getScaffoldAccessions()) {
                 ++i;
                 if (i > 1) {
                     block.append(", ");
