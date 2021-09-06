@@ -9,7 +9,8 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.7.0-snapshot2'
+
+ext.version_base = '2.6.9'
 
 
 version = version_base

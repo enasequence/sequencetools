@@ -162,6 +162,7 @@ public enum ValidationUnit
 	        		HoldDateFix.class,//include for all
 					ReferencePositionFix.class,//include for all
 					DataclassFix.class,//include for all
+					DivisionFix.class,
 					TPA_dataclass_Fix.class,//exclude for master
 					AccessionFix.class,//exclude for master
 					NonAsciiCharacterFix.class,//include for all
