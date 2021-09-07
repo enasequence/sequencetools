@@ -122,7 +122,7 @@ public class SubmissionValidationPlan
 			check.validateDuplicateEntryNames();
 			if(Context.genome == options.context.get()) {
 				registerSequences();
-				check.covid19SeqLengthCheck();
+				check.validateCovid19GenomeSize();
 				check.validateSequencelessChromosomes();
 
 				String assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
