@@ -211,34 +211,21 @@ public abstract class FileValidationCheck {
 		return assemblyLevel;
 	}
 
-	public void covid19SeqLengthCheck() throws ValidationEngineException {
+	// TODO: Genome length check should be generic given the tax id for all species with known expected genome length.
+	public void validateCovid19GenomeSize() throws ValidationEngineException {
 		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {
-			if (sharedInfo.chromosomeNames.size() > 1) {
-				throw new ValidationEngineException("COVID-19 genome submissions must have a single chromosome sequence", ReportErrorType.VALIDATION_ERROR);
-			}
 
-			long genomeSize = 0;
-			for (Map.Entry<String, AssemblySequenceInfo> entry : sharedInfo.sequenceInfo.entrySet()) {
-				AssemblySequenceInfo info = entry.getValue();
+			// get all components placed in AGP
+			if (getContigDB() != null) {
+				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
+				Set<String> agpPlacedComponents = contigMap.keySet();
 
-				if (info.getAssemblyLevel() == 0 || info.getAssemblyLevel() == 1) {
-					if (!sharedInfo.agpEntryNames.contains(entry.getKey())) {
-						genomeSize += info.getSequenceLength();
-					}
-				} else if (info.getAssemblyLevel() == 2) {
-					genomeSize += info.getSequenceLength();
-				} else {
-					throw new ValidationEngineException("Unexpected assembly level", ReportErrorType.VALIDATION_ERROR);
+				long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, agpPlacedComponents);
+
+				if(genomeSize>GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE) {
+					throw new ValidationEngineException(String.format("%f maximum genome size is %dbp.", AssemblyType.COVID_19_OUTBREAK, GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE), ReportErrorType.VALIDATION_ERROR);
 				}
 			}
-			System.out.println("Genome size: " + genomeSize);
-			validateCovid19SeqLength(genomeSize);
-		}
-	}
-
-	void validateCovid19SeqLength(long seqLength) throws ValidationEngineException {
-		if(seqLength>MAX_SARS_COV2_SEQUENCE_LENGTH) {
-			throw new ValidationEngineException(String.format("SARS-CoV-2 sequence length should be a max of %dbp.", MAX_SARS_COV2_SEQUENCE_LENGTH), ReportErrorType.VALIDATION_ERROR);
 		}
 	}
 
