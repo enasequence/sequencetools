@@ -215,16 +215,10 @@ public abstract class FileValidationCheck {
 	public void validateCovid19GenomeSize() throws ValidationEngineException {
 		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {
 
-			// get all components placed in AGP
-			if (getContigDB() != null) {
-				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
-				Set<String> agpPlacedComponents = contigMap.keySet();
+			long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, sharedInfo.agpPlacedComponents);
 
-				long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, agpPlacedComponents);
-
-				if(genomeSize>GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE) {
-					throw new ValidationEngineException(String.format("%f maximum genome size is %dbp.", AssemblyType.COVID_19_OUTBREAK, GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE), ReportErrorType.VALIDATION_ERROR);
-				}
+			if (genomeSize > GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE) {
+				throw new ValidationEngineException(String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE), ReportErrorType.VALIDATION_ERROR);
 			}
 		}
 	}
