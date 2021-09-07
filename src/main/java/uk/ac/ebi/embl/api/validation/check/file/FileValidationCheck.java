@@ -68,7 +68,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class FileValidationCheck {
 	final static int MAX_SEQUENCE_COUNT_FOR_TEMPLATE = 30000;
-	public final static int MAX_SARS_COV2_SEQUENCE_LENGTH = 31000; //bp
 
 	public static final String REPORT_FILE_SUFFIX = ".report";
 
