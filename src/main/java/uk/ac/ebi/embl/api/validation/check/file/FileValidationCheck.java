@@ -817,6 +817,7 @@ public abstract class FileValidationCheck {
 		public List<String> duplicateEntryNames = new ArrayList<>();
 		public HashSet<String> entryNames = new HashSet<>();
 		public Set<String> agpEntryNames =new HashSet<>();
+		public Set<String> agpPlacedComponents =new HashSet<>();
 		public Set<String> unplacedEntryNames =new HashSet<>();
 		public Set<String> unlocalisedEntryNames = new HashSet<>();
 		public PrintWriter contigsReducedFileWriter =null;
