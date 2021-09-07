@@ -4,6 +4,7 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
+import uk.ac.ebi.embl.api.validation.GenomeUtils;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -496,9 +497,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA).getFile().getParent());
 		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
 
+		String expectedMsg = String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE);
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
-		thrown.expectMessage(String.format("SARS-CoV-2 sequence length should be a max of %dbp.", FileValidationCheck.MAX_SARS_COV2_SEQUENCE_LENGTH));
+		thrown.expectMessage(expectedMsg);
 		plan.execute();
 
 	}
