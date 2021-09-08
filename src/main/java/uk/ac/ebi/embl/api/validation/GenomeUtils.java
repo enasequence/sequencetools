@@ -6,7 +6,7 @@ import java.util.*;
 
 public class GenomeUtils {
 
-    public final static Long COVID_19_OUTBREAK_MAX_GENOME_SIZE = 31000L; //bp
+    public final static Long COVID_19_OUTBREAK_GENOME_MAX_SIZE = 31000L; //bp
 
     public static Long calculateGenomeSize(Map<String, AssemblySequenceInfo> sequenceInfo, Set<String> agpPlacedComponents) throws ValidationEngineException {
         long genomeSize = 0;
