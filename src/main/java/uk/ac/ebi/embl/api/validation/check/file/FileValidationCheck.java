@@ -217,8 +217,8 @@ public abstract class FileValidationCheck {
 
 			long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, sharedInfo.agpPlacedComponents);
 
-			if (genomeSize > GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE) {
-				throw new ValidationEngineException(String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE), ReportErrorType.VALIDATION_ERROR);
+			if (genomeSize > GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE) {
+				throw new ValidationEngineException(String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE), ReportErrorType.VALIDATION_ERROR);
 			}
 		}
 	}

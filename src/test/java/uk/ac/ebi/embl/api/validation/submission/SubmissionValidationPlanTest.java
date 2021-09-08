@@ -2,7 +2,7 @@ package uk.ac.ebi.embl.api.validation.submission;
 
 import org.junit.*;
 import org.junit.rules.ExpectedException;
-import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.GenomeUtils;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
@@ -484,24 +484,65 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testCovid19GenomeSize() throws IOException, ValidationEngineException {
-		//FASTA+AGP ERZ1308600
-		//FASTA+CHROMOSOME_LIST ERZ1308779
+	public void testCovid19GenomeSize_AGP() throws ValidationEngineException, IOException {
 		String rootPath = "genome/covid19_seq_length_check/";
+		String fastaFile = "multi_entries_fasta.txt"; //29,518bp
+		String agpFile = "agp.txt";
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA));
-		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"agp.txt", FileType.AGP));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,agpFile, FileType.AGP));
 		options.submissionFiles = Optional.of(submissionFiles);
-		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"multi_entries_fasta.txt", FileType.FASTA).getFile().getParent());
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
 		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
 
-		String expectedMsg = String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_MAX_GENOME_SIZE);
+		clearInfoFiles(options.processDir.get());
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute(); // should throw no exception
+	}
+
+	@Test
+	public void testCovid19GenomeSize_AGP_MaxSizeException() throws ValidationEngineException, IOException {
+		String rootPath = "genome/covid19_seq_length_check/";
+		String fastaFile = "multi_entries_fasta_over31bp.txt"; //31,711bp
+		String agpFile = "agp_over31bp.txt";
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,agpFile, FileType.AGP));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
+
+		clearInfoFiles(options.processDir.get());
+		String expectedMsg = String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE);
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage(expectedMsg);
 		plan.execute();
+	}
 
+	@Test
+	public void testCovid19GenomeSize_ChromoList() throws ValidationEngineException, IOException {
+		String rootPath = "genome/covid19_seq_length_check/";
+		String fastaFile = "single_entry_fasta.txt"; //31,216bp
+		String chromoListFile = "chromolist.txt";
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,chromoListFile, FileType.CHROMOSOME_LIST));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
+
+		clearInfoFiles(options.processDir.get());
+		String expectedMsg = String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE);
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		thrown.expect(ValidationEngineException.class);
+		thrown.expectMessage(expectedMsg);
+		plan.execute();
 	}
 }
