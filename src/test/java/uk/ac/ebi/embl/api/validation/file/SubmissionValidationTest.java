@@ -16,8 +16,14 @@
 package uk.ac.ebi.embl.api.validation.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
+
+import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -185,5 +191,13 @@ public abstract class SubmissionValidationTest {
 		FlatFileComparator comparator=new FlatFileComparator(options);
 		return comparator.compare(file.getAbsolutePath()+".sequence.expected", file.getAbsolutePath()+".sequence");
 	}
-	
+
+	protected void clearInfoFiles(String processDir) throws IOException {
+		if (processDir != null) {
+			Path p = Paths.get(processDir, AssemblySequenceInfo.fastafileName);
+			Files.deleteIfExists(Paths.get(processDir, AssemblySequenceInfo.fastafileName));
+			Files.deleteIfExists(Paths.get(processDir, AssemblySequenceInfo.agpfileName));
+			Files.deleteIfExists(Paths.get(processDir, AssemblySequenceInfo.sequencefileName));
+		}
+	}
 }
