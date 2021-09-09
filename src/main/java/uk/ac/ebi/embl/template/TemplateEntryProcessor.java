@@ -87,8 +87,7 @@ public class TemplateEntryProcessor {
         if(!templateProcessorResultSet.getValidationResult().isValid()) {
             return templateProcessorResultSet;
         }
-        // Validate and get samples
-        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet,options);
+        
         BufferedReader stringReader = new BufferedReader(new StringReader(template.toString().trim().concat("\n//")));
         EntryReader entryReader = new EmblEntryReader(stringReader);
         ValidationResult validationResult = entryReader.read();
@@ -104,8 +103,8 @@ public class TemplateEntryProcessor {
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
         
-        // Update sample values in SourceFeature.
-        updateSourceFeatureWithSampleValues(entry,sample);
+        // Update SourceFeature using sample values.
+        updateSourceFeatureUsingOrganismFieldValue(entry,templateVariables, templateProcessorResultSet,options);
         
         List<Text> kewordsL = entry.getKeywords();
         if (kewordsL != null && !kewordsL.isEmpty()) {
@@ -397,6 +396,41 @@ public class TemplateEntryProcessor {
         }
     }
 
+    /**
+     * This method check if the ORGANISM_NAME field value is related to a sample and 
+     * updates the entry's sourceFeature using the sample values.
+     * 
+     * @param entry
+     * @param templateVariables
+     * @param templateProcessorResultSet
+     * @param options
+     * @throws Exception
+     */
+    private void updateSourceFeatureUsingOrganismFieldValue(Entry entry, TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception{
+
+        // Validate and get samples
+        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet,options);
+
+        if(sample != null && entry.getPrimarySourceFeature()!=null){
+            SourceFeature sourceFeature=entry.getPrimarySourceFeature();
+            SampleInfo sampleInfo=getSampleInfo(sample);
+            SampleEntity sampleEntity = getSampleEntity(sample);
+            updateSourceFeature(sourceFeature,sampleEntity,sampleInfo);
+            entry.addXRef(new XRef("BioSample", sample.getBioSampleId()));
+        }
+    }
+
+    /**
+     * This method works on ORGANISM_NAME field of the TSV file.
+     *  1) If the field value is taxid pattern then DO NOTHING and return.
+     *  2) If a sample is retrieved using the field value then return the sample.
+     *  
+     * @param templateVariables
+     * @param templateProcessorResultSet
+     * @param options
+     * @return
+     * @throws Exception
+     */
     public Sample validateAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
 
         Map<String, String> tsvFieldMap = templateVariables.getVariables();
@@ -409,7 +443,7 @@ public class TemplateEntryProcessor {
                 // When TSV header cell value is ORGANISM_NAME
 
                 if (matchesTaxId(tsvFieldMap.get(tsvHeader))) {
-                    // Do nothing
+                    // When field value is taxId pattern DO NOTHING
                     break;
                 }
 
@@ -429,6 +463,7 @@ public class TemplateEntryProcessor {
                     }
                     break;
                 } catch (Exception e) {
+                    // On Exception return only INFO message so that execution continues as the given input is organism_name 
                     ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.INFO, "SampleSupportedCheck", sampleValue);
                     templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
                 }
@@ -455,6 +490,10 @@ public class TemplateEntryProcessor {
         return new MasterSourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonHelperImpl(), sampleInfo);
     }
 
+    public SourceFeature createSourceFeature(SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
+        return new MasterSourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
+    }
+
     private SampleInfo getSampleInfo(Sample sample){
         SampleInfo sampleInfo=new SampleInfo();
         sampleInfo.setScientificName(sample.getOrganism());
@@ -465,21 +504,13 @@ public class TemplateEntryProcessor {
         return sampleInfo;
     }
 
-    private void updateSourceFeatureWithSampleValues(Entry entry, Sample sample) throws Exception{
-        if(sample != null){
-            SourceFeature sourceFeature=entry.getPrimarySourceFeature();
-            SampleInfo sampleInfo=getSampleInfo(sample);
-            SampleEntity sampleEntity = getSampleEntity(sample);
-            updateSourceFeature(sourceFeature,sampleEntity,sampleInfo);
-            entry.addXRef(new XRef("BioSample", sample.getBioSampleId()));
-        }
-    }
-
+    
     private CompleteSampleService getCompleteSampleService(String authToken, boolean isTest){
         return new CompleteSampleService.Builder()
                 .setAuthToken(authToken)
                 .setTest(isTest)
                 .build();
     }
-
+    
+  
 }

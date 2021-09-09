@@ -2,11 +2,17 @@ package uk.ac.ebi.embl.template;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReaderTest;
@@ -17,44 +23,111 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class TemplateEntryProcessorTest {
-    
-    String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
-    String token="";
-    
-    @Test
-    public void  testValidateAndGetSampleWithBioSampleId() throws Exception {
 
-        testValidateSample("SAMEA9403245");
-        testValidateSample("ERS7118926");
-        testValidateSample("test_custom");
+    private final static String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
+    private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/test/resources/templates/ERT000002.xml").toFile();
+    private final static String MOL_TYPE = "/mol_type";
+    private String token="";
+    private TemplateInfo templateInfo ;
+    private TemplateEntryProcessor templateEntryProcessor;
+    private TemplateVariables templateVariables;
+    private String molType;
+    
+    
+    @Before
+    public void setUp() throws Exception {
+        templateInfo = new TemplateLoader().loadTemplateFromFile(templateFile);
+        templateEntryProcessor = getTemplateEntryProcessor();
+        molType = getMolTypeFromTemplateForTest(templateInfo);
     }
     
-    public void testValidateSample(String organism) throws Exception {
-        Map<String, String> variablesMap=new HashMap<>();
-        variablesMap.put("ORGANISM_NAME",organism);
-        TemplateVariables templateVariables=new TemplateVariables(1,variablesMap);
-        TemplateProcessorResultSet tpResult=new TemplateProcessorResultSet();
-        SubmissionOptions options=getOptions();
 
+    @Test
+    public void  testEntryProcess() throws Exception {
 
-        File templateFile = Paths.get(System.getProperty("user.dir") + "/src/test/resources/templates/ERT000002.xml").toFile();
-        TemplateLoader templateLoader = new TemplateLoader();
-        TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
+        // Test with biosample Id
+        executeEntryProcessTest("SAMEA9403245");
+        
+        // Test with sample Id
+        executeEntryProcessTest("ERS7118926");
+        
+        // Test with sample alias "test_custom"
+        executeEntryProcessTest("test_custom");
+
+        // Test with valid organism
+        executeEntryProcessTestWithScientificName("Homo sapiens");
+
+        // Test with tacId
+        executeEntryProcessTestWithTaxId("9606");
+
+        // Test with invalid organizm
+        executeEntryProcessInvalidOrganism("JUNK");
+
+    }
+    
+    public void executeEntryProcessTest(String organismName) throws Exception{
+        
+        TemplateVariables templateVariables = getTemplateVariables(organismName);
+        Sample sample=getSampleForTest(templateEntryProcessor,templateVariables);
+        
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+
+        SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
+        assertTrue(templateProcessorResultSet.getValidationResult().isValid());
+        assertEquals(sourceFeature.getTaxId(),Long.valueOf(sample.getTaxId()));
+        assertEquals(sourceFeature.getScientificName(),sample.getOrganism());
+    }
+
+    public void executeEntryProcessTestWithScientificName(String taxId) throws Exception{
+        
+        TemplateVariables templateVariables = getTemplateVariables(taxId);
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+        
+        SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
+        assertTrue(templateProcessorResultSet.getValidationResult().isValid());
+        assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
+    }
+
+    public void executeEntryProcessTestWithTaxId(String taxId) throws Exception{
+
+        TemplateVariables templateVariables = getTemplateVariables(taxId);
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+
+        SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
+        assertTrue(templateProcessorResultSet.getValidationResult().isValid());
+        assertEquals(sourceFeature.getTaxId(),Long.valueOf(taxId));
+        assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
+    }
+    
+    public void executeEntryProcessInvalidOrganism(String invalidOrganism) throws Exception{
+
+        TemplateVariables templateVariables = getTemplateVariables(invalidOrganism);
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+
+        Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
+        //assertTrue(messages..equals("The given Organism: \"JUNK\" is not a sample. If is added as sample please check if the sample is associated with the passed user."));
+        //Organism is not Submittable: "JUNK".
+        assertFalse(templateProcessorResultSet.getValidationResult().isValid());
+    }
+    
+    private TemplateEntryProcessor getTemplateEntryProcessor() {
         Connection con=null;
-        TemplateEntryProcessor templateEntryProcessor = new TemplateEntryProcessor(con);
-
-        Sample sample=templateEntryProcessor.validateAndGetSample(templateVariables,tpResult,options);
-        assertNotNull(sample);
-        assertNotNull(sample.getBioSampleId());
-        assertNotNull(sample.getId());
-        assertNotNull(sample.getName());
+        return new TemplateEntryProcessor(con);
+    } 
+    
+    private TemplateVariables getTemplateVariables(String organismName){
+        Map<String, String> variablesMap=new HashMap<>();
+        variablesMap.put("ORGANISM_NAME",organismName);
+        variablesMap.put("SEQUENCE","ACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACAT");
+        variablesMap.put("SEDIMENT","5S");
+        variablesMap.put("ENV_SAMPLE","no");
+        TemplateVariables templateVariables=new TemplateVariables(1,variablesMap);
+        return templateVariables;
     }
     
     private SubmissionOptions getOptions(){
@@ -79,5 +152,28 @@ public class TemplateEntryProcessorTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         token = response.getBody();
         return token;
+    }
+    
+    private String getMolTypeFromTemplateForTest(TemplateInfo templateInfo) throws Exception {
+        String template = templateInfo.getTemplateString();
+        String molType = "";
+        if (template.toString().contains(MOL_TYPE)) {
+            String start = template.toString().substring(template.toString().indexOf(MOL_TYPE) + MOL_TYPE.length());
+            if (start.contains("\"")) {
+                start = start.substring(start.indexOf("\"") + 1);
+                if (start.contains("\""))
+                    molType = start.substring(0, start.indexOf("\""));
+                else
+                    throw new Exception("Found MOL TYPE in template but there is no ending '\"' (double quotes).");
+            } else
+                throw new Exception("Found MOL TYPE in template but there is no starting '\"' (double quotes).");
+        } else
+            throw new Exception("Template is missing MOL TYPE.");
+        return molType;
+    }
+    
+    private Sample getSampleForTest(TemplateEntryProcessor templateEntryProcessor,TemplateVariables templateVariables) throws Exception {
+        
+        return templateEntryProcessor.validateAndGetSample(templateVariables,new TemplateProcessorResultSet(),getOptions());
     }
 }

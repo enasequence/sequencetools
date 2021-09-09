@@ -147,7 +147,9 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
         }
         options.assemblyInfoEntry = Optional.of(assemblyInfo);
-        options.authToken = Optional.of(manifest.getAuthToken());
+        if(manifest.getAuthToken()!=null) {
+            options.authToken = Optional.of(manifest.getAuthToken());
+        }
         options.isTestMode = manifest.getTestMode();
         return options;
     }
