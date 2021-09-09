@@ -45,7 +45,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 		options.source = Optional.of(getSource());
 		options.ignoreErrors = true;
-		options.isTestMode = true;
+		options.isDevMode = true;
+		options.forceReducedFlatfileCreation=true;
 	}
 
 	// Make sure we store the references given in Webin-CLI manifest.
@@ -214,6 +215,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.submissionFiles = Optional.of(submissionFiles);
 		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
 		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FASTA).getFile().getParent());
+		
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
@@ -459,7 +461,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 				opts.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
 				opts.source = Optional.of(getSource());
 				opts.ignoreErrors = true;
-				opts.isTestMode = true;
+				opts.isDevMode = true;
 				opts.context = Optional.of(Context.genome);
 				opts.submissionFiles = Optional.of(submissionFiles);
 				opts.reportDir = Optional.of(reportProcessDir.getAbsolutePath());

@@ -120,7 +120,11 @@ public abstract class SubmissionValidationTest {
 
 	protected String getReducedFilePath(String rootPath, String fileName) {
 		if(!fileName.endsWith("expected")) {
-			rootPath = rootPath + File.separator + "reduced" + File.separator;
+			if(fileName.startsWith("chromosome")) {
+				rootPath = rootPath + File.separator ;
+			} else {
+				rootPath = rootPath + File.separator + "reduced" + File.separator;
+			}
 		}
 		URL url = SubmissionValidationTest.class.getClassLoader().getResource(rootPath + fileName);
 		if (url != null) {

@@ -36,6 +36,7 @@ public class SubmissionOptions
 	public  boolean isFixCds = true;
 	public  boolean ignoreErrors = false;
 	public  boolean isWebinCLI = false;
+	public boolean forceReducedFlatfileCreation = false;
 	private String projectId;
 
 	public String getProjectId() {

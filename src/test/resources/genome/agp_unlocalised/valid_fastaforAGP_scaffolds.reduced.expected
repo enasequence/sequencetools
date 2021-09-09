@@ -1,4 +1,4 @@
-ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 430 BP.
+ID   XXX; SV XXX; linear; genomic DNA; CON; PRO; 430 BP.
 XX
 FH   Key             Location/Qualifiers
 FH
@@ -18,7 +18,7 @@ SQ   Sequence 430 BP; 11 A; 0 C; 322 G; 97 T; 0 other;
      tttttttttt tttttttttt tttttttttg gttttttttt tttttttttt tttttttttt       420
      tttttttttt                                                              430
 //
-ID   XXX; SV XXX; linear; genomic DNA; CON; XXX; 430 BP.
+ID   XXX; SV XXX; linear; genomic DNA; CON; PRO; 430 BP.
 XX
 FH   Key             Location/Qualifiers
 FH

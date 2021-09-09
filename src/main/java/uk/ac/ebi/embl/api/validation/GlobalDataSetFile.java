@@ -40,7 +40,7 @@ public enum GlobalDataSetFile {
   // A list of feature keys with old and new values
   FEATURE_RENAME("feature-rename.tsv"),
   OBSOLETE_FEATURE_TO_FEATURE("obsoletefeature-to-feature.tsv"),
-  QUALIFIER_VALUE_TO_FIX_VALUE("obsoletefeature-to-feature.tsv");
+  QUALIFIER_VALUE_TO_FIX_VALUE("qualifier-value-to-fix-value.tsv");
 
   private final String fileName;
 
