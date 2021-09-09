@@ -435,7 +435,7 @@ public class TemplateEntryProcessor {
 
         Map<String, String> tsvFieldMap = templateVariables.getVariables();
         Sample sample = null;
-        boolean isTest = options.isTestMode;
+        boolean isDevmode = options.isDevMode;
 
         // Iterate TSV header fields.
         for (String tsvHeader : tsvFieldMap.keySet()) {
@@ -457,7 +457,7 @@ public class TemplateEntryProcessor {
                     sample=sampleCache.get(sampleValue);
                     if(sample==null) {
                         // Get sample using server API.
-                        CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isTest);
+                        CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isDevmode);
                         sample = completeSampleService.getCompleteSample(sampleValue);
                         sampleCache.put(sampleValue,sample);
                     }

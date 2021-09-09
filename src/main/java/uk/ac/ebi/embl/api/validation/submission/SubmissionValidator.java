@@ -150,7 +150,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         if(manifest.getAuthToken()!=null) {
             options.authToken = Optional.of(manifest.getAuthToken());
         }
-        options.isTestMode = manifest.getTestMode();
+        options.isDevMode = manifest.getTestMode();
         return options;
     }
 

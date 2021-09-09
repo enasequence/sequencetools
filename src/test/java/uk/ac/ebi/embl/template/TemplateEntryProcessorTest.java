@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 public class TemplateEntryProcessorTest {
 
     private final static String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
+    private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
     private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/test/resources/templates/ERT000002.xml").toFile();
     private final static String MOL_TYPE = "/mol_type";
     private String token="";
@@ -132,7 +133,7 @@ public class TemplateEntryProcessorTest {
     
     private SubmissionOptions getOptions(){
         SubmissionOptions options=new SubmissionOptions();
-        options.isTestMode=true;
+        options.isDevMode=true;
         options.authToken= Optional.of(getAuthToken());
         return options;
     }
@@ -148,7 +149,7 @@ public class TemplateEntryProcessorTest {
         HttpEntity<String> request =
                 new HttpEntity<String>(AUTH_JSON, headers);
         ResponseEntity<String> response =
-                restTemplate.postForEntity("https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token",request, String.class);
+                restTemplate.postForEntity(TEST_AUTH_URL,request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         token = response.getBody();
         return token;

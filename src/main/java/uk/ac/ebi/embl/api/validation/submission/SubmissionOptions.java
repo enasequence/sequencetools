@@ -31,7 +31,7 @@ public class SubmissionOptions
 	public  Optional<String> authToken = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 		
-	public  boolean isTestMode = false;
+	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
 	public  boolean ignoreErrors = false;
@@ -61,7 +61,7 @@ public class SubmissionOptions
 		}
 		if(!reportDir.isPresent())
 			throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");
-		if(!isWebinCLI || isTestMode) {
+		if(!isWebinCLI || isDevMode) {
 			if (!(new File(reportDir.get())).isDirectory())
 				throw new ValidationEngineException("SubmissionOptions:invalid ReportDir");
         } else {

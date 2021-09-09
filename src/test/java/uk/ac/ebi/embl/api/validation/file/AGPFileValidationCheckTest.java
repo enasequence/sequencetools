@@ -48,7 +48,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 	       options.source= Optional.of(getSource());
 	       options.assemblyInfoEntry= Optional.of(getAssemblyinfoEntry());
 	       options.isWebinCLI = true;
-		   options.isTestMode = true;
+		   options.isDevMode = true;
 	   }
 
 		@Test
