@@ -484,10 +484,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testCovid19GenomeSize_AGP() throws ValidationEngineException, IOException {
-		String rootPath = "genome/covid19_seq_length_check/";
-		String fastaFile = "multi_entries_fasta.txt"; //29,518bp
-		String agpFile = "agp.txt";
+	public void testCovid19GenomeSizeContigsScaffoldsSuccess() throws ValidationEngineException, IOException {
+		String rootPath = "genome/size_check/";
+		String fastaFile = "covid19_contig.fasta"; //29,518bp
+		String agpFile = "covid19_scaffold.agp";
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
@@ -503,10 +503,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testCovid19GenomeSize_AGP_MaxSizeException() throws ValidationEngineException, IOException {
-		String rootPath = "genome/covid19_seq_length_check/";
-		String fastaFile = "multi_entries_fasta_over31bp.txt"; //31,711bp
-		String agpFile = "agp_over31bp.txt";
+	public void testCovid19GenomeSizeContigsScaffoldsFailure() throws ValidationEngineException, IOException {
+		String rootPath = "genome/size_check/";
+		String fastaFile = "covid19_contig2.fasta"; //31,711bp
+		String agpFile = "covid19_scaffold2.agp";
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
@@ -525,10 +525,29 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	@Test
-	public void testCovid19GenomeSize_ChromoList() throws ValidationEngineException, IOException {
-		String rootPath = "genome/covid19_seq_length_check/";
-		String fastaFile = "single_entry_fasta.txt"; //31,216bp
-		String chromoListFile = "chromolist.txt";
+	public void testCovid19GenomeSizeOneChromosomeSuccess() throws ValidationEngineException, IOException {
+		String rootPath = "genome/size_check/";
+		String fastaFile = "covid19_one_chromosome.fasta";
+		String chromoListFile = "covid19_one_chromosome_list.txt";
+		options.context = Optional.of(Context.genome);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
+		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,chromoListFile, FileType.CHROMOSOME_LIST));
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.processDir = Optional.of(initSubmissionTestFile(rootPath,fastaFile, FileType.FASTA).getFile().getParent());
+		options.assemblyInfoEntry.get().setAssemblyType(AssemblyType.COVID_19_OUTBREAK.getValue());
+
+		clearInfoFiles(options.processDir.get());
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		plan.execute(); // should throw no exception
+	}
+
+	@Test
+	public void testCovid19GenomeSizeOneChromosomeFailure() throws ValidationEngineException, IOException {
+		String rootPath = "genome/size_check/";
+		String fastaFile = "covid19_one_chromosome2.fasta"; //31,216bp
+		String chromoListFile = "covid19_one_chromosome_list.txt";
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,fastaFile, FileType.FASTA));
