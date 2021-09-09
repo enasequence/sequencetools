@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
@@ -28,6 +29,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
     private SubmissionOptions options;
     private static final int ERROR_MAX_LENGTH = 2000;
+    private static final Integer COVID_19_OUTBREAK_TAX_ID = 2697049;
 
     public SubmissionValidator() {
 
@@ -136,6 +138,12 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             if(!new AssemblyInfoNameCheck().isValidName(manifest.getName())) {
                 reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, "Invalid assembly name:"+manifest.getName());
                 throw new ValidationEngineException("Invalid assembly name:"+manifest.getName(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            }
+            if (((GenomeManifest) manifest).getAssemblyType().equals(AssemblyType.COVID_19_OUTBREAK) &&
+                    !manifest.getSample().getTaxId().equals(COVID_19_OUTBREAK_TAX_ID) ) {
+                String msg = String.format("Sample organism must be 'Severe acute respiratory syndrome coronavirus 2' (taxid %d) for %s genomes.", COVID_19_OUTBREAK_TAX_ID, AssemblyType.COVID_19_OUTBREAK);
+                reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, msg);
+                throw new ValidationEngineException(msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
             }
             options.context = Optional.of(Context.genome);
             options.submissionFiles = Optional.of(setGenomeOptions((GenomeManifest)manifest, assemblyInfo));

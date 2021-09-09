@@ -1,0 +1,9 @@
+scaffold00001	1	21936	1	W	contig00001	1	21936	+
+scaffold00001	21937	21954	2	N	18	scaffold	yes	paired-ends
+scaffold00001	21955	21997	3	W	contig00002	1	43	+
+scaffold00001	21998	22061	4	N	64	scaffold	yes	paired-ends
+scaffold00001	22062	23987	5	W	contig00003	1	1926	+
+scaffold00001	23988	24017	6	N	30	scaffold	yes	paired-ends
+scaffold00001	24018	29311	7	W	contig00004	1	5294	+
+scaffold00001	29312	29346	8	N	35	scaffold	yes	paired-ends
+scaffold00001	29347	29665	9	W	contig00005	1	319	+

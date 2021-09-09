@@ -1,0 +1,1 @@
+chr01 contig00001 chromosome

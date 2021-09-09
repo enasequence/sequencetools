@@ -197,6 +197,18 @@ public abstract class FileValidationCheck {
 		return assemblyLevel;
 	}
 
+	// TODO: Genome length check should be generic given the tax id for all species with known expected genome length.
+	public void validateCovid19GenomeSize() throws ValidationEngineException {
+		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {
+
+			long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, sharedInfo.agpPlacedComponents);
+
+			if (genomeSize > GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE) {
+				throw new ValidationEngineException(String.format("%s maximum genome size is %d bp.", AssemblyType.COVID_19_OUTBREAK.getValue(), GenomeUtils.COVID_19_OUTBREAK_GENOME_MAX_SIZE), ReportErrorType.VALIDATION_ERROR);
+			}
+		}
+	}
+
 	public void validateDuplicateEntryNames() throws ValidationEngineException
 	{
 		if(sharedInfo.duplicateEntryNames.size()>0)
@@ -785,6 +797,7 @@ public abstract class FileValidationCheck {
 		public List<String> duplicateEntryNames = new ArrayList<>();
 		public HashSet<String> entryNames = new HashSet<>();
 		public Set<String> agpEntryNames =new HashSet<>();
+		public Set<String> agpPlacedComponents =new HashSet<>();
 		public Set<String> unplacedEntryNames =new HashSet<>();
 		public Set<String> unlocalisedEntryNames = new HashSet<>();
 		public PrintWriter contigsReducedFileWriter =null;

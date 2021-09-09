@@ -272,6 +272,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 									}
 									agpRows.add(agpRow);
 									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
+									sharedInfo.agpPlacedComponents.add(agpRow.getComponent_id().toUpperCase());
 								}
 							}
 						}
