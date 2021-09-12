@@ -229,10 +229,9 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 		EntryFactory entryFactory = new EntryFactory();
 		article.addXRef(entryFactory.createXRef("UniProtKB", "A00001"));
 		article.addXRef(entryFactory.createXRef("UniProtKB", "A00002"));
-		EmblLineReader lineReader = new EmblLineReader();
-		lineReader.getCache().setPublication(article);
-		lineReader.setReader(new BufferedReader(new StringReader(
+		EmblLineReader lineReader = new EmblLineReader(new BufferedReader(new StringReader(
 				"RA   Antonellis A., Ayele K., Benjamin B., Blakesley R.W., Boakye A., Bouffard G.G., Brinkley C., Brooks S., Chu G., Coleman H., Engle J., Gestole M., Greene A., Guan X., Gupta J., Haghighi P., Han J., Hansen N., Ho S.-L., Hu P., Hunter G., Hurle B., Idol J.R., Kwong P., Laric P., Larson S., Lee-Lin S.-Q., Legaspi R., Madden M., Maduro Q.L., Maduro V.B., Margulies E.H., Masiello C., Maskeri B., McDowell J., Mojidi H.A., Mullikin J.C., Oestreicher J.S., Park M., Portnoy M.E., Prasad A., Puri O., Reddix-Dugue N., Schandler K., Schueler M.G., Sison C., Stantripop S., Stephen E., Taye A., Thomas J.W., Thomas P.J., Tsipouri V., Ung L., Vogt J.L., Wetherby K.D., Young A., Green E.D.")));
+		lineReader.getCache().setPublication(article);
 		lineReader.readLine();
 		ValidationResult result = (new RAReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));

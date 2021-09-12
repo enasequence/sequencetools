@@ -2,7 +2,7 @@ package uk.ac.ebi.embl.api.service;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Services {
+public class SequenceToolsServices {
 
     private final static AtomicReference<MasterEntryService> masterEntryService = new AtomicReference<>(new MasterEntryService());
     private final static AtomicReference<SequenceRetrievalService> sequenceRetrievalService = new AtomicReference<>();
@@ -15,7 +15,7 @@ public class Services {
         return sequenceRetrievalService.get();
     }
 
-    public static void setSequenceRetrievalService(SequenceRetrievalService sequenceRetrievalService) {
-        Services.sequenceRetrievalService.compareAndSet(null, sequenceRetrievalService);
+    public static void init(SequenceRetrievalService sequenceRetrievalService) {
+        SequenceToolsServices.sequenceRetrievalService.compareAndSet(null, sequenceRetrievalService);
     }
 }
