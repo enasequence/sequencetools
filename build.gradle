@@ -10,7 +10,7 @@ group = 'uk.ac.ebi.ena.sequence'
 
 
 
-ext.version_base = '2.7.1-environment-v4'
+ext.version_base = '2.7.1-environment-v5'
 
 
 version = version_base
