@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
+import uk.ac.ebi.embl.api.service.Services;
 import uk.ac.ebi.embl.api.translation.CdsTranslator;
 import uk.ac.ebi.embl.api.translation.Codon;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
@@ -90,7 +90,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 										return result;
 								}
 							}
-							SegmentFactory factory = new SegmentFactory(SequenceRetrievalServiceHolder.service);
+							SegmentFactory factory = new SegmentFactory(Services.sequenceRetrievalService());
 							Segment segment = factory.createSegment(entry.getSequence(), location);
 							if(segment==null)
 								continue;

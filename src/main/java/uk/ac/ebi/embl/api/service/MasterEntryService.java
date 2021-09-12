@@ -31,6 +31,9 @@ import java.sql.SQLException;
 
 public class MasterEntryService {
 
+    MasterEntryService() {
+    }
+
     /**
      * Creates a master entry from Webin CLI manifest or from submitted XMLs.
      */

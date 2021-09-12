@@ -25,20 +25,18 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
-import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
+import uk.ac.ebi.embl.api.service.Services;
 import uk.ac.ebi.embl.api.translation.CdsTranslator;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
 import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.GENE_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.PSEUDO_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
 
@@ -92,7 +90,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
     }
 
     private void checkTranslations(Entry entry, CdsFeature cdsFeature, List<PeptideFeature> relevantPeptideFeatures) throws IOException, SQLException {
-        SegmentFactory segmentFactory= new SegmentFactory(SequenceRetrievalServiceHolder.service);
+        SegmentFactory segmentFactory= new SegmentFactory(Services.sequenceRetrievalService());
 
         if (!checkPseudoQualifier(cdsFeature, relevantPeptideFeatures)) {
             //if cds does not have pseudo qualifier then translate and check the peptides

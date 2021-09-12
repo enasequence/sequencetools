@@ -7,7 +7,6 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-
 /**
  * Retrieves sequences from the cram reference registry.
  */
