@@ -35,7 +35,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.TranslExceptQualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
-import uk.ac.ebi.embl.api.service.Services;
 import uk.ac.ebi.embl.api.validation.EntryValidations;
 import uk.ac.ebi.embl.api.validation.ExtendedResult;
 import uk.ac.ebi.embl.api.validation.Origin;
@@ -115,7 +114,7 @@ public class CdsTranslator {
 
 		try
 		{
-		SegmentFactory factory=new SegmentFactory(Services.sequenceRetrievalService());
+		SegmentFactory factory=new SegmentFactory();
 		Segment segment = factory.createSegment(entry.getSequence(), cds.getLocations());
 		if(segment==null)
 		{

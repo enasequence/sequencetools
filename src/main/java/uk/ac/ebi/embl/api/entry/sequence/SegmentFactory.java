@@ -27,12 +27,17 @@ import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
+import uk.ac.ebi.embl.api.service.Services;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 public class SegmentFactory {
 
 	private final SequenceRetrievalService service;
+
+	public SegmentFactory() {
+		this.service = Services.sequenceRetrievalService();
+	}
 
 	public SegmentFactory(SequenceRetrievalService service) {
 		this.service = service;

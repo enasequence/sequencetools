@@ -35,12 +35,11 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
-import uk.ac.ebi.embl.api.service.Services;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public class SegmentFactoryTest implements Sequences {
 
-	SegmentFactory segmentFactory = new SegmentFactory(Services.sequenceRetrievalService());
+	private SegmentFactory segmentFactory = new SegmentFactory();
 
 	@Before
 	public void setUp() throws Exception {
