@@ -25,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
+import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
 import uk.ac.ebi.embl.api.translation.CdsTranslator;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
 import uk.ac.ebi.embl.api.translation.Translator;
@@ -91,7 +92,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
     }
 
     private void checkTranslations(Entry entry, CdsFeature cdsFeature, List<PeptideFeature> relevantPeptideFeatures) throws IOException, SQLException {
-        SegmentFactory segmentFactory= new SegmentFactory(getEmblEntryValidationPlanProperty().enproConnection.get());
+        SegmentFactory segmentFactory= new SegmentFactory(SequenceRetrievalServiceHolder.service);
 
         if (!checkPseudoQualifier(cdsFeature, relevantPeptideFeatures)) {
             //if cds does not have pseudo qualifier then translate and check the peptides

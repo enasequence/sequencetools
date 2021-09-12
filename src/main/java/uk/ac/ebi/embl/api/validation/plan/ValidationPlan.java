@@ -111,7 +111,7 @@ public abstract class ValidationPlan {
 		 check.setEmblEntryValidationPlanProperty(planProperty);
 		 if(planProperty.enproConnection.get()!=null&&entryDAOUtils==null)
 		 {
-			 entryDAOUtils=new EntryDAOUtilsImpl(planProperty.enproConnection.get(),true);
+			 entryDAOUtils=new EntryDAOUtilsImpl(planProperty.enproConnection.get());
 		 }
 		 check.setEntryDAOUtils(entryDAOUtils);
 		 if(planProperty.eraproConnection.get()!=null&&eraproDAOUtils==null)

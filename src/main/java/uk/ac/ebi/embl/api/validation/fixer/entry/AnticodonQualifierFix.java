@@ -16,13 +16,13 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.AnticodonQualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
+import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -76,7 +76,7 @@ public class AnticodonQualifierFix extends EntryValidationCheck
 				String pos=LocationToStringCoverter.renderCompoundLocation(location);
 				String aminoAcid=qualifier.getAminoAcid()!=null?qualifier.getAminoAcid().getAbbreviation():null;//valid amino acid(e.g. aa: Sec) from the anticodon (e.g. aa :SeC) value
 				String aminoAcidString=qualifier.getAminoAcidString();//from the original anticodon value(e.g. aa :SeC)
-				SegmentFactory factory = new SegmentFactory();
+				SegmentFactory factory = new SegmentFactory(SequenceRetrievalServiceHolder.service);
 				Segment segment = (entry.getSequence()!=null && entry.getSequence().getSequenceByte()!=null)?factory.createSegment(entry.getSequence(), location):null;
 				if(segment==null)
 					continue;

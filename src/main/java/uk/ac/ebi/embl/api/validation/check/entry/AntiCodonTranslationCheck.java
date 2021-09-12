@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
 import uk.ac.ebi.embl.api.translation.CdsTranslator;
 import uk.ac.ebi.embl.api.translation.Codon;
 import uk.ac.ebi.embl.api.translation.TranslationResult;
@@ -34,7 +35,6 @@ import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.AntiCodonQualifierCheck;
 
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 										return result;
 								}
 							}
-							SegmentFactory factory = new SegmentFactory(getEmblEntryValidationPlanProperty().enproConnection.get());
+							SegmentFactory factory = new SegmentFactory(SequenceRetrievalServiceHolder.service);
 							Segment segment = factory.createSegment(entry.getSequence(), location);
 							if(segment==null)
 								continue;

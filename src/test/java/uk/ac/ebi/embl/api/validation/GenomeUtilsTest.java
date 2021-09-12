@@ -13,8 +13,8 @@ import static org.junit.Assert.assertTrue;
 
 public class GenomeUtilsTest {
 
-    Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
-    Set<String> agpPlacedComponents = new HashSet<>();
+    private Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+    private Set<String> agpPlacedComponents = new HashSet<>();
 
     @Test
     public void testInvalidAssemblyLevel() {

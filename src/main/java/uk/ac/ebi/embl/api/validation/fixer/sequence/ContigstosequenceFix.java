@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.entry.sequence.Segment;
 import uk.ac.ebi.embl.api.entry.sequence.SegmentFactory;
+import uk.ac.ebi.embl.api.service.SequenceRetrievalServiceHolder;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
@@ -54,8 +55,7 @@ public class ContigstosequenceFix extends
 		if(getEntryDAOUtils()==null||FileType.AGP.equals(getEmblEntryValidationPlanProperty().fileType.get()))
 			return result;
 		
-		SegmentFactory segmentFactory=new SegmentFactory();
-		segmentFactory.setEntryDAOUtils(getEntryDAOUtils());
+		SegmentFactory segmentFactory=new SegmentFactory(SequenceRetrievalServiceHolder.service);
 	
 		try{
 			
