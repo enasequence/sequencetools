@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblReaderTest;
-import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.genbank.GenbankEntryWriter;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.Origin;
@@ -228,7 +227,7 @@ public class GenbankEntryReaderTest extends EmblReaderTest {
             + "                     /lat_lon=\"9.56 N 84.16 W\"\n"
             + "                     /collection_date=\"11-Dec-2013\"\n"
             + "                     /collected_by=\"INISA-UCR\"\n"
-				+ "WGS             WAAN01000001-WAAN01000153\n"
+			+ "WGS             WAAN01000001-WAAN01000153\n"
             + "//\n";
 		setBufferedReader(entryString);
 		EntryReader reader = new GenbankEntryReader(bufferedReader,"test file");

@@ -934,10 +934,9 @@ public class XmlEntryWriterTest extends XmlWriterTest {
             "Industrial Zone B6, Beijing, Beijing 101300, P.R.China\n" +
             "		</referenceLocation>\n" +
             "	</reference>\n" +
-            "	<xref db=\"ENA-WGS\" id=\"AAAA02000001-AAAA02050231\"/>\n" +
             "	<xref db=\"ENA-CON\" id=\"CH398081-CH401163\"/>\n" +
-            "	<xref db=\"ENA-CON\" id=\"CM000126-CM000137\"/>\n" +
-            "	<xref db=\"ENA-TPA\" id=\"A398081-A401163\"/>\n" +
+			"	<xref db=\"ENA-CON\" id=\"CM000126-CM000137\"/>\n" +
+			"	<xref db=\"ENA-WGS\" id=\"AAAA02000001-AAAA02050231\"/>\n" +
             "	<feature name=\"source\" location=\"1..53326\">\n" +
             "		<taxon scientificName=\"Oryza sativa Indica Group\" taxId=\"39946\">\n" +
             "			<lineage>\n" +

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012-2013 EMBL-EBI, Hinxton outstation
+ * Copyright 2012 EMBL-EBI, Hinxton outstation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,24 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.flatfile.EmblTag;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
 
-public class MasterScaffoldTLSReader extends MultiLineBlockReader {
+public class MasterTPAReader extends MultiLineBlockReader {
 
-	public MasterScaffoldTLSReader(LineReader lineReader) {
+	public MasterTPAReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
 	}
 
 	@Override
 	public String getTag() {
-		return EmblTag.MASTER_SCAFFOLD_TLS_TAG;
+		return EmblTag.MASTER_TPA_TAG;
 	}
 	
 	@Override
 	protected void read(String block) {
-		entry.setContigDataclass(Entry.TLS_DATACLASS);
-		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addScaffoldAccession(new Text(accession, getOrigin()));
-		}
+		// Skip line type
 	}	
 }
