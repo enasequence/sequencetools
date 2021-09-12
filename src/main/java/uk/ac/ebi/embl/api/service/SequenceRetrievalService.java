@@ -23,6 +23,4 @@ public interface SequenceRetrievalService {
     ByteBuffer getSequence(RemoteRange remoteRange) throws ValidationEngineException;
 
     ByteBuffer getSequence(RemoteBase remoteBase) throws ValidationEngineException;
-
-    ByteBuffer getSequence(List<Location> locations, int sequenceLength) throws ValidationEngineException;
 }
