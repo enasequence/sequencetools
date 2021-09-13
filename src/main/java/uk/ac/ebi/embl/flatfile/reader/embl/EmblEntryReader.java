@@ -31,11 +31,9 @@ public class
 EmblEntryReader extends EntryReader
 {
 
-  // private static List<String> AT_LEAST_ONCE_BLOCKS = Arrays.asList( EmblTag.RN_TAG, EmblTag.RT_TAG, EmblTag.RL_TAG );
-
     private List<String> EXACTLY_ONCE_BLOCKS  = Arrays.asList( EmblTag.ID_TAG, EmblTag.AC_TAG, EmblTag.DE_TAG );
 
-    private static List<String> NONE_OR_ONCE_BLOCKS  = Arrays.asList( EmblTag.ST_STAR_TAG, EmblTag.DT_TAG, EmblTag.KW_TAG, EmblTag.PR_TAG, EmblTag.SQ_TAG, EmblTag.AH_TAG, EmblTag.CO_TAG, EmblTag.MASTER_CON_TAG, EmblTag.MASTER_WGS_TAG,
+    private static final List<String> NONE_OR_ONCE_BLOCKS  = Arrays.asList( EmblTag.ST_STAR_TAG, EmblTag.DT_TAG, EmblTag.KW_TAG, EmblTag.PR_TAG, EmblTag.SQ_TAG, EmblTag.AH_TAG, EmblTag.CO_TAG, EmblTag.MASTER_CON_TAG, EmblTag.MASTER_WGS_TAG,
 			EmblTag.MASTER_TPA_TAG);
     private boolean skipSourceFeature=false;
 
@@ -156,7 +154,6 @@ EmblEntryReader extends EntryReader
 			addBlockReader(new MasterCONReader(lineReader));
 			addBlockReader(new MasterTSAReader(lineReader));
 			addBlockReader(new MasterTLSReader(lineReader));
-			addBlockReader(new MasterTPAReader(lineReader));
         } else if( format.equals( Format.CDS_FORMAT ) )
         {
 			addBlockReader(new IDReader(lineReader));
@@ -297,8 +294,6 @@ EmblEntryReader extends EntryReader
     protected void 
     checkBlockCounts( Entry entry )
     {
-		boolean citationExists = true;
-
         if( entry.getDataClass() != null )
         {
             if(  this.format != Format.CDS_FORMAT && entry.getDataClass().equals( Entry.CON_DATACLASS ) && getBlockCounter().get( EmblTag.CO_TAG ) == null )
@@ -315,14 +310,6 @@ EmblEntryReader extends EntryReader
         {
 			Integer count = getBlockCounter().get(tag);
 
-          /*  if( AT_LEAST_ONCE_BLOCKS.contains( tag ) && count < 1 )
-            {
-                if( tag.equals( EmblTag.RL_TAG ) || tag.equals( EmblTag.RN_TAG ) || tag.equals( EmblTag.RT_TAG ) )
-					citationExists = false;
-				else
-                    validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.7", tag ) );
-			}*/
-
             if( EXACTLY_ONCE_BLOCKS.contains( tag ) && count != 1 )
             {
                 validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.5", tag ) );
@@ -333,8 +320,5 @@ EmblEntryReader extends EntryReader
                 validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.9", tag ) );
 			}
 		}
-		if (!citationExists)
-            validationResult.append( FlatFileValidations.message( lineReader, Severity.ERROR, "FF.13" ) );
-
 	}
 }

@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package uk.ac.ebi.embl.flatfile.reader.embl;
+package uk.ac.ebi.embl.flatfile.reader.genbank;
 
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.flatfile.EmblTag;
+import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
 
-public class MasterTPAReader extends MultiLineBlockReader {
+public class WGS_SCAFLDReader extends MultiLineBlockReader {
 
-	public MasterTPAReader(LineReader lineReader) {
+	public WGS_SCAFLDReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
 	}
 
 	@Override
 	public String getTag() {
-		return EmblTag.MASTER_TPA_TAG;
+		return EmblTag.MASTER_SCAFFOLD_WGS_TAG;
 	}
 	
 	@Override
 	protected void read(String block) {
-		// Skip line type
+		entry.setContigDataclass(Entry.WGS_DATACLASS);
+		for (String accession : FlatFileUtils.split(block, ",")) {
+			entry.addScaffoldAccession(new Text(accession, getOrigin()));
+		}
 	}	
 }

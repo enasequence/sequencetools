@@ -439,8 +439,6 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 			"WGS  AAAA02000001-AAAA02050231\n" +
 			"XX\n" +
 			"CON  CH398081-CH401163, CM000126-CM000137\n" +
-			"XX\n" +
-			"TPA  A398081-A401163\n" +
 			"//\n";
 		
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(entryString));
@@ -551,8 +549,6 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 			"WGS  AAAA02000001-AAAA02050231\n" +
 			"XX\n" +
 			"CON  CH398081-CH401163, CM000126-CM000137\n" +
-			"XX\n" +
-			"TPA  A398081-A401163\n" +
 			"//\n";
 
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(entryString));
