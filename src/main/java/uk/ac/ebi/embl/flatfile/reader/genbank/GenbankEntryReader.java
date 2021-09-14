@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
 
@@ -34,15 +35,14 @@ import uk.ac.ebi.embl.api.validation.Severity;
 
 public class GenbankEntryReader extends EntryReader {
 
-    private static List<String> AT_LEAST_ONCE_BLOCKS = Arrays.asList(
-            GenbankTag.REFERENCE_TAG);
+    private static final List<String> AT_LEAST_ONCE_BLOCKS = Collections.singletonList(GenbankTag.REFERENCE_TAG);
 
-    private static List<String> EXACTLY_ONCE_BLOCKS = Arrays.asList(
+    private static final List<String> EXACTLY_ONCE_BLOCKS = Arrays.asList(
             GenbankTag.LOCUS_TAG,
             GenbankTag.ACCESSION_TAG,
             GenbankTag.DEFINITION_TAG);
 
-    private static List<String> NONE_OR_ONCE_BLOCKS = Arrays.asList(
+    private static final List<String> NONE_OR_ONCE_BLOCKS = Arrays.asList(
             GenbankTag.KEYWORDS_TAG,
             GenbankTag.PROJECT_TAG,
             GenbankTag.ORIGIN_TAG,
@@ -86,10 +86,9 @@ public class GenbankEntryReader extends EntryReader {
 		addBlockReader(new MasterCONReader(lineReader));
 		addBlockReader(new MasterTLSReader(lineReader));
 		addBlockReader(new MasterTSAReader(lineReader));
-		addBlockReader(new MasterScaffoldWGSReader(lineReader));
-		addBlockReader(new MasterScaffoldTLSReader(lineReader));
-		addBlockReader(new MasterScaffoldTSAReader(lineReader));
-		addBlockReader(new MasterScaffoldTPAReader(lineReader));
+		addBlockReader(new WGS_SCAFLDReader(lineReader));
+		addBlockReader(new TLS_SCAFLDReader(lineReader));
+		addBlockReader(new TSA_SCAFLDReader(lineReader));
 
         /**
          * Have to add the line types seperatly as are not registered with the main hash of readers.

@@ -13,7 +13,7 @@ import uk.ac.ebi.embl.flatfile.reader.LineReader;
 
 public class GenbankLineReader extends LineReader {
 
-    public GenbankLineReader() {
+	public GenbankLineReader() {
     	super();
     }
 		

@@ -13,17 +13,24 @@ import static org.junit.Assert.assertTrue;
 
 public class GenomeUtilsTest {
 
-    Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
-    Set<String> agpPlacedComponents = new HashSet<>();
+    private void addComponent(Set<String> components, String component) {
+        components.add(component.toUpperCase());
+    }
 
     @Test
     public void testInvalidAssemblyLevel() {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, -1, "contig1"));
         assertThrows("Unexpected assembly level", ValidationEngineException.class, () -> GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
     }
 
     @Test
     public void testContigsOnly() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1"));
         sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2"));
         sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3"));
@@ -32,12 +39,18 @@ public class GenomeUtilsTest {
 
     @Test
     public void testChromosomesOnly() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("chr1", new AssemblySequenceInfo(100, 2, "chr1"));
         assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 100);
     }
 
     @Test
     public void testContigsScaffolds_PlacedContigs() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1"));
         sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2"));
         sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3"));
@@ -50,15 +63,18 @@ public class GenomeUtilsTest {
         sequenceInfo.put("scaffold1", new AssemblySequenceInfo(250, 1, "scaffold1"));
         sequenceInfo.put("scaffold2", new AssemblySequenceInfo(200, 1, "scaffold2"));
 
-        agpPlacedComponents.add("contig1");
-        agpPlacedComponents.add("contig2");
-        agpPlacedComponents.add("contig3");
+        addComponent(agpPlacedComponents,"contig1");
+        addComponent(agpPlacedComponents,"contig2");
+        addComponent(agpPlacedComponents,"contig3");
 
         assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 200);
     }
 
     @Test
     public void testContigsScaffolds_PlacedContigsAndScaffolds() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1"));
         sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2"));
         sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3"));
@@ -74,16 +90,19 @@ public class GenomeUtilsTest {
         sequenceInfo.put("scaffold2", new AssemblySequenceInfo(200, 1, "scaffold2"));
         sequenceInfo.put("scaffold3", new AssemblySequenceInfo(200, 1, "scaffold3"));
 
-        agpPlacedComponents.add("contig1");
-        agpPlacedComponents.add("contig2");
-        agpPlacedComponents.add("contig3");
-        agpPlacedComponents.add("scaffold2");
+        addComponent(agpPlacedComponents,"contig1");
+        addComponent(agpPlacedComponents,"contig2");
+        addComponent(agpPlacedComponents,"contig3");
+        addComponent(agpPlacedComponents,"scaffold2");
 
         assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 200 + 300);
     }
 
     @Test
     public void testContigsScaffoldsChromosomes() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1")); //placed
         sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2")); //placed
         sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3")); //placed
@@ -101,17 +120,20 @@ public class GenomeUtilsTest {
 
         sequenceInfo.put("chr1", new AssemblySequenceInfo(250, 2, "chr1"));
 
-        agpPlacedComponents.add("contig1");
-        agpPlacedComponents.add("contig2");
-        agpPlacedComponents.add("contig3");
-        agpPlacedComponents.add("contig4");
-        agpPlacedComponents.add("scaffold2");
+        addComponent(agpPlacedComponents,"contig1");
+        addComponent(agpPlacedComponents,"contig2");
+        addComponent(agpPlacedComponents,"contig3");
+        addComponent(agpPlacedComponents,"contig4");
+        addComponent(agpPlacedComponents,"scaffold2");
 
         assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 250);
     }
 
     @Test
     public void testContigsChromosomes() throws ValidationEngineException {
+        Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap();
+        Set<String> agpPlacedComponents = new HashSet<>();
+
         sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1"));
         sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2"));
         sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3"));
@@ -124,10 +146,10 @@ public class GenomeUtilsTest {
         // chr1 contig4
         sequenceInfo.put("chr1", new AssemblySequenceInfo(600, 2, "chr1"));
 
-        agpPlacedComponents.add("contig1");
-        agpPlacedComponents.add("contig2");
-        agpPlacedComponents.add("contig3");
-        agpPlacedComponents.add("contig4");
+        addComponent(agpPlacedComponents,"contig1");
+        addComponent(agpPlacedComponents,"contig2");
+        addComponent(agpPlacedComponents,"contig3");
+        addComponent(agpPlacedComponents,"contig4");
 
         assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 600);
     }

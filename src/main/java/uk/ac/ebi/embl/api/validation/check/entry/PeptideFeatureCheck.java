@@ -31,13 +31,11 @@ import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.GENE_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.PSEUDO_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
 
@@ -91,7 +89,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
     }
 
     private void checkTranslations(Entry entry, CdsFeature cdsFeature, List<PeptideFeature> relevantPeptideFeatures) throws IOException, SQLException {
-        SegmentFactory segmentFactory= new SegmentFactory(getEmblEntryValidationPlanProperty().enproConnection.get());
+        SegmentFactory segmentFactory= new SegmentFactory();
 
         if (!checkPseudoQualifier(cdsFeature, relevantPeptideFeatures)) {
             //if cds does not have pseudo qualifier then translate and check the peptides

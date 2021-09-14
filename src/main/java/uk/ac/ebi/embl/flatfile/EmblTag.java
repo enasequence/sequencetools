@@ -57,6 +57,5 @@ public abstract class EmblTag {
     public static final String MASTER_SCAFFOLD_WGS_TAG = "WGS_SCAFLD";
     public static final String MASTER_SCAFFOLD_TSA_TAG = "TSA_SCAFLD";
     public static final String MASTER_SCAFFOLD_TLS_TAG = "TLS_SCAFLD";
-    public static final String MASTER_SCAFFOLD_TPA_TAG = "TPA_SCAFLD";
 }
 

@@ -11,6 +11,7 @@ public final class GenomeUtils {
     private GenomeUtils() {
     }
 
+    /** Calculates the genome size. Placed sequences must be in uppercase. */
     public static Long calculateGenomeSize(Map<String, AssemblySequenceInfo> sequenceInfo, Set<String> agpPlacedComponents) throws ValidationEngineException {
         long genomeSize = 0;
         for (Map.Entry<String, AssemblySequenceInfo> entry : sequenceInfo.entrySet()) {

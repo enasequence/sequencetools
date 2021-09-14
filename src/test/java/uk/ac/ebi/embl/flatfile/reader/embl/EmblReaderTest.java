@@ -43,26 +43,13 @@ public abstract class EmblReaderTest extends TestCase {
 		Sequence sequence = (new SequenceFactory()).createSequence();
 		entry.setSequence(sequence);
 	}
-
-	protected void setLineReader(String string) throws IOException {
-		lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)));
-	}
-
-    protected void setLineReader(String string, String fileId) throws IOException {
-		lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)),fileId);
-	}
-
+	
 	protected void setBufferedReader(String string) throws IOException {
 		bufferedReader = new BufferedReader(new StringReader(string));
 	}
 		
 	protected void initLineReader(String string) throws IOException {
 		lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)));
-		lineReader.readLine();
-	}
-
-	protected void initLineReader(String string, String fileId) throws IOException {
-		lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)),fileId);
 		lineReader.readLine();
 	}
 }

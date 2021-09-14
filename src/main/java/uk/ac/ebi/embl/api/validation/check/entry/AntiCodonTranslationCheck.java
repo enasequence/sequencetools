@@ -34,7 +34,6 @@ import uk.ac.ebi.embl.api.translation.Translator;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.AntiCodonQualifierCheck;
 
 import java.util.Arrays;
@@ -90,7 +89,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 										return result;
 								}
 							}
-							SegmentFactory factory = new SegmentFactory(getEmblEntryValidationPlanProperty().enproConnection.get());
+							SegmentFactory factory = new SegmentFactory();
 							Segment segment = factory.createSegment(entry.getSequence(), location);
 							if(segment==null)
 								continue;
