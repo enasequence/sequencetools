@@ -28,9 +28,10 @@ public class SubmissionOptions
 	public  Optional<String> processDir = Optional.empty();
 	public  Optional<File> reportFile = Optional.empty();
 	public  Optional<Boolean> ignoreError = Optional.empty();
-	public  Optional<String> authToken = Optional.empty();
+	public  Optional<String> webinAuthToken = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
-		
+
+	public  boolean webinCliTestMode = false;
 	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;

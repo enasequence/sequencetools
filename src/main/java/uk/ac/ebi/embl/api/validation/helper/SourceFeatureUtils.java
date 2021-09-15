@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
-public class MasterSourceFeatureUtils {
+public class SourceFeatureUtils {
 
 	private Qualifier isolationSourceQualifier=null;
 	private final  String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
@@ -28,7 +28,7 @@ public class MasterSourceFeatureUtils {
 	private final Set<String> covid19RequiredQuals = new HashSet<>();
 	private final MasterSourceQualifierValidator masterSourceQualifierValidator;
 
-	public MasterSourceFeatureUtils() {
+	public SourceFeatureUtils() {
 		qualifierSynonyms.put("metagenomic source",Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);
 		qualifierSynonyms.put("host scientific name",Qualifier.HOST_QUALIFIER_NAME);
 		qualifierSynonyms.put("collection date",Qualifier.COLLECTION_DATE_QUALIFIER_NAME);

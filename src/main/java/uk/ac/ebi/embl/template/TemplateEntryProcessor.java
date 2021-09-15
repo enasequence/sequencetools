@@ -10,7 +10,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
-import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
+import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
 import uk.ac.ebi.ena.webin.cli.service.CompleteSampleService;
+import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
@@ -406,74 +407,60 @@ public class TemplateEntryProcessor {
      * @param options
      * @throws Exception
      */
-    private void updateSourceFeatureUsingOrganismFieldValue(Entry entry, TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception{
+    private void updateSourceFeatureUsingOrganismFieldValue(Entry entry, TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
 
         // Validate and get samples
-        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet,options);
-
-        if(sample != null && entry.getPrimarySourceFeature()!=null){
-            SourceFeature sourceFeature=entry.getPrimarySourceFeature();
-            SampleInfo sampleInfo=getSampleInfo(sample);
+        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet, options);
+        
+        if (sample != null && entry.getPrimarySourceFeature() != null) {
+            SourceFeature sourceFeature = entry.getPrimarySourceFeature();
+            SampleInfo sampleInfo = getSampleInfo(sample);
             SampleEntity sampleEntity = getSampleEntity(sample);
-            updateSourceFeature(sourceFeature,sampleEntity,sampleInfo);
+            updateSourceFeature(sourceFeature, sampleEntity, sampleInfo);
             entry.addXRef(new XRef("BioSample", sample.getBioSampleId()));
         }
     }
 
     /**
-     * This method works on ORGANISM_NAME field of the TSV file.
-     *  1) If the field value is taxid pattern then DO NOTHING and return.
-     *  2) If a sample is retrieved using the field value then return the sample.
-     *  
-     * @param templateVariables
-     * @param templateProcessorResultSet
-     * @param options
-     * @return
-     * @throws Exception
+     * Returns sample if one could be found using the ORGANISM_NAME field of the TSV 
+     * file or NULL if the ORGANISM_NAME was a scientific name or tax id.
      */
     public Sample validateAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
 
         Map<String, String> tsvFieldMap = templateVariables.getVariables();
         Sample sample = null;
-        boolean isDevmode = options.isDevMode;
-
+        
         // Iterate TSV header fields.
         for (String tsvHeader : tsvFieldMap.keySet()) {
             if (tsvHeader.equalsIgnoreCase(TemplateProcessorConstants.ORGANISM_TOKEN)) {
                 // When TSV header cell value is ORGANISM_NAME
 
-                if (matchesTaxId(tsvFieldMap.get(tsvHeader))) {
+                if (Utils.isValidTaxId(tsvFieldMap.get(tsvHeader))) {
                     // When field value is taxId pattern DO NOTHING
                     break;
                 }
 
                 /** When tsv value do NOT match taxId pattern then retrieve sample assuming that the passed 
-                 *  value is sampleId / sampleAlias / bioSampleValue.
+                 *  value is sampleId, bioSampleId, or sample alias.
                  *  If no sample is returned then the value is organism name.
                  */
                 String sampleValue = tsvFieldMap.get(tsvHeader);
-                try {
-                    // Get sample from cache if exists. 
-                    sample=sampleCache.get(sampleValue);
-                    if(sample==null) {
+                // Get sample from cache if exists. 
+                sample = sampleCache.get(sampleValue);
+                if (sample == null) {
+                    try {
                         // Get sample using server API.
-                        CompleteSampleService completeSampleService = getCompleteSampleService(options.authToken.get(), isDevmode);
+                        CompleteSampleService completeSampleService = getCompleteSampleService(options.webinAuthToken.get(), options.webinCliTestMode);
                         sample = completeSampleService.getCompleteSample(sampleValue);
-                        sampleCache.put(sampleValue,sample);
+                        sampleCache.put(sampleValue, sample);
+                    }catch (ServiceiException serviceiException){
+                        // DO NOTHING
                     }
-                    break;
-                } catch (Exception e) {
-                    // On Exception return only INFO message so that execution continues as the given input is organism_name 
-                    ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.INFO, "SampleSupportedCheck", sampleValue);
-                    templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
                 }
+                break;
             }
         }
         return sample;
-    }
-
-    private boolean matchesTaxId(String taxId){
-        return Utils.isValidTaxId(taxId);
     }
 
     private SampleEntity getSampleEntity(Sample sample){
@@ -487,11 +474,11 @@ public class TemplateEntryProcessor {
     }
 
     private SourceFeature updateSourceFeature(SourceFeature sourceFeature,SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new MasterSourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonHelperImpl(), sampleInfo);
+        return new SourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonHelperImpl(), sampleInfo);
     }
 
     public SourceFeature createSourceFeature(SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new MasterSourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
+        return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
     }
 
     private SampleInfo getSampleInfo(Sample sample){
@@ -505,10 +492,10 @@ public class TemplateEntryProcessor {
     }
 
     
-    private CompleteSampleService getCompleteSampleService(String authToken, boolean isTest){
+    private CompleteSampleService getCompleteSampleService(String authToken, boolean webinCliTestMode){
         return new CompleteSampleService.Builder()
                 .setAuthToken(authToken)
-                .setTest(isTest)
+                .setTest(webinCliTestMode)
                 .build();
     }
     

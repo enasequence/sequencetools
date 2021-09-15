@@ -4,23 +4,15 @@ package uk.ac.ebi.embl.template;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReaderTest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.*;
@@ -31,49 +23,46 @@ public class TemplateEntryProcessorTest {
 
     private final static String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
     private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
-    private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/test/resources/templates/ERT000002.xml").toFile();
+    private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
     private final static String MOL_TYPE = "/mol_type";
     private String token="";
-    private TemplateInfo templateInfo ;
     private TemplateEntryProcessor templateEntryProcessor;
     private TemplateVariables templateVariables;
-    private String molType;
-    
     
     @Before
     public void setUp() throws Exception {
-        templateInfo = new TemplateLoader().loadTemplateFromFile(templateFile);
         templateEntryProcessor = getTemplateEntryProcessor();
-        molType = getMolTypeFromTemplateForTest(templateInfo);
     }
     
-
     @Test
-    public void  testEntryProcess() throws Exception {
+    public void  testEntryProcess_ERT000002() throws Exception {
+
+        TemplateInfo templateInfo_ERT000002 = new TemplateLoader().loadTemplateFromFile(templateFile);
+        String MOL_TYPE_ERT000002 = getMolTypeFromTemplateForTest(templateInfo_ERT000002);
 
         // Test with biosample Id
-        executeEntryProcessTest("SAMEA9403245");
+        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
         
         // Test with sample Id
-        executeEntryProcessTest("ERS7118926");
+        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
         
         // Test with sample alias "test_custom"
-        executeEntryProcessTest("test_custom");
+        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
 
         // Test with valid organism
-        executeEntryProcessTestWithScientificName("Homo sapiens");
+        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
 
-        // Test with tacId
-        executeEntryProcessTestWithTaxId("9606");
+        // Test with taxId
+        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
 
         // Test with invalid organizm
-        executeEntryProcessInvalidOrganism("JUNK");
+        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
 
     }
     
-    public void executeEntryProcessTest(String organismName) throws Exception{
+    public void executeEntryProcessTestWithSample(String organismName, TemplateInfo templateInfo, String molType) throws Exception{
         
-        TemplateVariables templateVariables = getTemplateVariables(organismName);
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002(organismName);
         Sample sample=getSampleForTest(templateEntryProcessor,templateVariables);
         
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
@@ -84,19 +73,19 @@ public class TemplateEntryProcessorTest {
         assertEquals(sourceFeature.getScientificName(),sample.getOrganism());
     }
 
-    public void executeEntryProcessTestWithScientificName(String taxId) throws Exception{
+    public void executeEntryProcessTestWithScientificName(String sceientificName, TemplateInfo templateInfo, String molType) throws Exception{
         
-        TemplateVariables templateVariables = getTemplateVariables(taxId);
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002(sceientificName);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
         
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
-        assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
+        assertEquals(sourceFeature.getScientificName(),sceientificName);
     }
 
-    public void executeEntryProcessTestWithTaxId(String taxId) throws Exception{
+    public void executeEntryProcessTestWithTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
 
-        TemplateVariables templateVariables = getTemplateVariables(taxId);
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002(taxId);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
 
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
@@ -105,14 +94,12 @@ public class TemplateEntryProcessorTest {
         assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
     }
     
-    public void executeEntryProcessInvalidOrganism(String invalidOrganism) throws Exception{
+    public void executeEntryProcessInvalidOrganism(String scientificName, TemplateInfo templateInfo, String molType) throws Exception{
 
-        TemplateVariables templateVariables = getTemplateVariables(invalidOrganism);
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002(scientificName);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
-        //assertTrue(messages..equals("The given Organism: \"JUNK\" is not a sample. If is added as sample please check if the sample is associated with the passed user."));
-        //Organism is not Submittable: "JUNK".
         assertFalse(templateProcessorResultSet.getValidationResult().isValid());
     }
     
@@ -121,7 +108,7 @@ public class TemplateEntryProcessorTest {
         return new TemplateEntryProcessor(con);
     } 
     
-    private TemplateVariables getTemplateVariables(String organismName){
+    private TemplateVariables getTemplateVariables_ERT000002(String organismName){
         Map<String, String> variablesMap=new HashMap<>();
         variablesMap.put("ORGANISM_NAME",organismName);
         variablesMap.put("SEQUENCE","ACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACAT");
@@ -133,8 +120,8 @@ public class TemplateEntryProcessorTest {
     
     private SubmissionOptions getOptions(){
         SubmissionOptions options=new SubmissionOptions();
-        options.isDevMode=true;
-        options.authToken= Optional.of(getAuthToken());
+        options.webinCliTestMode=true;
+        options.webinAuthToken = Optional.of(getAuthToken());
         return options;
     }
     

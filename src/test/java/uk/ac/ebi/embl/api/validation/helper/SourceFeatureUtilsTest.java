@@ -14,12 +14,12 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class MasterSourceFeatureUtilsTest {
+public class SourceFeatureUtilsTest {
 
     @Test
     public void constructSourceFeature() {
         String sampleId = "ERS4477947";
-        SourceFeature source = new MasterSourceFeatureUtils().constructSourceFeature(getSampleEntity(),
+        SourceFeature source = new SourceFeatureUtils().constructSourceFeature(getSampleEntity(),
                 new TaxonHelperImpl(), getSampleInfo(sampleId));
         assertEquals(7, source.getQualifiers().size());//6 from sample + organism qualifier
         assertEquals("2020-03-09", source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());

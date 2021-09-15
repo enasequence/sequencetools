@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class TSVFileValidationCheckTest {
     private SubmissionOptions options;
     private FileValidationCheck fileValidationCheck;
     private SubmissionFile submissionFile;
-    private Path path = Paths.get(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
+    private Path sequenceFixedFilePath = Paths.get(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
     private String reportsPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
     private final static String[] allTemplatesA = {"ERT000002-rRNA.tsv.gz",
             "ERT000003-EST-1.tsv.gz",
@@ -69,14 +70,15 @@ public class TSVFileValidationCheckTest {
             "ERT000056-mobele.tsv.gz",
             "ERT000057-alphasat.tsv.gz",
             "ERT000058-MLmarker.tsv.gz",
-            "ERT000060-vUTR.tsv.gz"};
+            "ERT000060-vUTR.tsv.gz"
+    };
 
     @Before
     public void init() throws Exception {
         try {
-            if (Files.exists(path))
-                Files.delete(path);
-            Files.createFile(path);
+            if (Files.exists(sequenceFixedFilePath))
+                Files.delete(sequenceFixedFilePath);
+            Files.createFile(sequenceFixedFilePath);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -88,21 +90,34 @@ public class TSVFileValidationCheckTest {
         options.context = Optional.of(Context.sequence);
         fileValidationCheck = new TSVFileValidationCheck(options, new FileValidationCheck.SharedInfo());
     }
+    
+    @After
+    public void clearGeneratedFiles() throws IOException {
+        // Delete files created while running the test
+        for(File file: new File(reportsPath).listFiles()){
+            if(file.getAbsoluteFile().getName().startsWith("TEMPLATE_ERT")){
+                Files.delete(file.toPath());
+            }
+        }
+        Files.delete(sequenceFixedFilePath);
+    }
 
     @Test
     public void allTemplates() {
         try {
             boolean valid = true;
+            String templateDirStr=System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
             for (String tsvFile : allTemplatesA) {
                 try {
-                    if (Files.exists(path))
-                        Files.delete(path);
-                    Files.createFile(path);
+                    if (Files.exists(sequenceFixedFilePath))
+                        Files.delete(sequenceFixedFilePath);
+                    Files.createFile(sequenceFixedFilePath);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
                 }
-                submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/" + tsvFile), path.toFile());
+                
+                        submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
                 if (!fileValidationCheck.check(submissionFile).isValid()) {
                     valid = false;
                     System.out.println("Failed: " + tsvFile);
@@ -110,6 +125,9 @@ public class TSVFileValidationCheckTest {
             }
             assertTrue(valid);
             System.out.println("Finished.");
+            
+            
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,7 +172,7 @@ public class TSVFileValidationCheckTest {
     }
 
     private void checkTSV(String fileName, boolean isValid, String expectedMesage) throws Exception {
-        submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + fileName), path.toFile());
+        submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + fileName), sequenceFixedFilePath.toFile());
         boolean valid = fileValidationCheck.check(submissionFile).isValid();
         if (isValid) {
             assertTrue(valid);

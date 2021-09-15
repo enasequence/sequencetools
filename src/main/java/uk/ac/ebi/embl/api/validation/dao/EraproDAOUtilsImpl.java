@@ -16,9 +16,8 @@ import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.dao.model.*;
-import uk.ac.ebi.embl.api.validation.fixer.entry.DivisionFix;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
-import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
+import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
@@ -397,7 +396,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		SampleInfo sampleInfo = getSampleInfo(sampleId);
-		return new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonHelperImpl(), sampleInfo);
+		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonHelperImpl(), sampleInfo);
 	}
 
 	@Override
@@ -573,7 +572,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			masterEntry.addReference(getSubmitterReference(analysisId));
 		}
 
-		sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
+		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
 
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);

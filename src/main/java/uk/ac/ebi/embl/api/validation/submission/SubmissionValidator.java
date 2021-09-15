@@ -1,14 +1,13 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
 import org.apache.commons.lang.StringUtils;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
-import uk.ac.ebi.embl.api.validation.helper.MasterSourceFeatureUtils;
+import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
@@ -120,7 +119,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             }
             sampleInfo.setUniqueName(manifest.getName());
 
-            SourceFeature sourceFeature = new MasterSourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
+            SourceFeature sourceFeature = new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
             sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
 
             options.source = Optional.of(sourceFeature);
@@ -148,9 +147,9 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         }
         options.assemblyInfoEntry = Optional.of(assemblyInfo);
         if(manifest.getAuthToken()!=null) {
-            options.authToken = Optional.of(manifest.getAuthToken());
+            options.webinAuthToken = Optional.of(manifest.getAuthToken());
         }
-        options.isDevMode = manifest.getTestMode();
+        options.webinCliTestMode = manifest.getTestMode();
         return options;
     }
 
