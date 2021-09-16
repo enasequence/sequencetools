@@ -1,24 +1,15 @@
 package uk.ac.ebi.embl.api.validation.dao;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.dbutils.DbUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.XRef;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
@@ -28,93 +19,11 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
-	private Connection connection=null;
+	private final Connection connection;
 	
-	public EntryDAOUtilsImpl(Connection connection) throws SQLException
+	public EntryDAOUtilsImpl(Connection connection)
 	{
-		this(connection,false);
-	}
-	
-	public EntryDAOUtilsImpl(Connection connection,boolean cvTable) throws SQLException
-	{
-		this.connection=connection;
-	}
-	@Override
-	public byte[] getSequence(String primaryAcc)
-			throws SQLException, IOException
-	{
-		String sql = "select p.seqtext from dbentry d join bioseq b on(d.bioseqid=b.seqid) join physicalseq p on(b.physeq=p.physeqid) where d.primaryacc#=?";
-		
-		if (primaryAcc != null)
-		{
-			PreparedStatement stmt = null;
-			ResultSet rs = null;
-			try
-			{
-				stmt = connection.prepareStatement(sql);
-				stmt.setString(1, primaryAcc);
-				rs = stmt.executeQuery();
-				if (rs.next())
-				{
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					InputStream is = rs.getBinaryStream(1);
-					int len;
-					int size = 1024;
-					byte[] buf = new byte[size];
-					while ((len = is.read(buf, 0, size)) != -1)
-					{
-						bos.write(buf, 0, len);
-					}
-					buf = bos.toByteArray();
-					return buf;
-				} else
-					return null;
-			} finally
-			{
-				DbUtils.closeQuietly(rs);
-				DbUtils.closeQuietly(stmt);
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public byte[] getSubSequence(String accession,Long beginPosition,Long length) throws SQLException, IOException
-	{
-		String sql = "select substr(seqtext,?,?) from bioseq b join physicalseq p on(b.physeq=p.physeqid) where sequence_acc =? or seq_accid=? ";
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		ByteBuffer segmentBuffer=ByteBuffer.wrap(new byte[length.intValue()]);
-			try
-			{
-				stmt = connection.prepareStatement(sql);
-				stmt.setLong(1, beginPosition);
-				stmt.setLong(2, length);
-				stmt.setString(3, accession);
-				stmt.setString(4,accession);
-				rs = stmt.executeQuery();
-				if (rs.next())
-				{
-					InputStream is = rs.getBinaryStream(1);
-					
-					int size = 1024;
-					byte[] buf = new byte[size];
-					int len ;
-					while ((len=is.read(buf, 0, size)) != -1)
-					{
-						segmentBuffer.put(buf, 0, len);
-					}
-					buf = segmentBuffer.array();
-					return buf;
-				} else
-					return null;
-			}
-			finally
-			{
-				DbUtils.closeQuietly(rs);
-				DbUtils.closeQuietly(stmt);
-			}
-		
+		this.connection = connection;
 	}
 	
 	@Override

@@ -114,7 +114,7 @@ public class CdsTranslator {
 
 		try
 		{
-		SegmentFactory factory=new SegmentFactory(planProperty.enproConnection.get()); 
+		SegmentFactory factory=new SegmentFactory();
 		Segment segment = factory.createSegment(entry.getSequence(), cds.getLocations());
 		if(segment==null)
 		{

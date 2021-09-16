@@ -157,4 +157,13 @@ public class AssemblySequenceInfo implements Serializable
 
 		return infoObject;
 	}
+
+	@Override
+	public String toString() {
+		return "AssemblySequenceInfo{" +
+				"sequenceLength=" + sequenceLength +
+				", assemblyLevel=" + assemblyLevel +
+				", accession='" + accession + '\'' +
+				'}';
+	}
 }

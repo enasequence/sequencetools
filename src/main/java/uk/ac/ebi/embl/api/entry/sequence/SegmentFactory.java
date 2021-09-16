@@ -18,8 +18,6 @@ package uk.ac.ebi.embl.api.entry.sequence;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
@@ -28,24 +26,23 @@ import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
+import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;;
 import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 public class SegmentFactory {
-		
-	private Connection connection;
-	private EntryDAOUtils entryDAOUtils;
-	public SegmentFactory()
-	{
-		this(null);
+
+	private final SequenceRetrievalService service;
+
+	public SegmentFactory() {
+		this.service = SequenceToolsServices.sequenceRetrievalService();
 	}
-	
-	public SegmentFactory(Connection connection)
-	{
-		this.connection=connection;
+
+	public SegmentFactory(SequenceRetrievalService service) {
+		this.service = service;
 	}
-	
+
 	public Segment createSegment(Sequence sequence, LocalBase localBase) {
 		if (localBase.isComplement()) {
 			return new Segment(localBase, 
@@ -68,17 +65,16 @@ public class SegmentFactory {
 	}
 	
 	
-	public Segment createSegment(Sequence sequence, CompoundLocation<Location> compoundLocation) throws SQLException, IOException {
-
-		if(compoundLocation==null)
-			return null;
-		
-		if(compoundLocation.hasRemoteLocation()&&connection==null&&entryDAOUtils==null)
-		{
+	public Segment createSegment(Sequence sequence, CompoundLocation<Location> compoundLocation) throws IOException {
+		if (compoundLocation == null) {
 			return null;
 		}
-		
-		ByteBuffer segementBuffer=ByteBuffer.wrap(new byte[(int)compoundLocation.getLength()]);
+
+		if(compoundLocation.hasRemoteLocation() && service == null) {
+			return null;
+		}
+
+		ByteBuffer segmentBuffer = ByteBuffer.wrap(new byte[(int)compoundLocation.getLength()]);
 		
 		for (Location location : compoundLocation.getLocations()) {
 			Segment segment = null;			
@@ -96,11 +92,11 @@ public class SegmentFactory {
 			}
 			if (segment != null && segment.getSequenceByte() != null) {
 				byte[] segByte=segment.getSequenceByte();
-				segementBuffer.put(segByte);
+				segmentBuffer.put(segByte);
 			}
 		}
 		
-		byte[]  segmentSeq=((ByteBuffer) ByteBuffer.wrap( Arrays.copyOf( segementBuffer.array(), segementBuffer.position() ) )).array();
+		byte[]  segmentSeq= ByteBuffer.wrap( Arrays.copyOf( segmentBuffer.array(), segmentBuffer.position() )).array();
 		if(segmentSeq.length==0)
 		{
 			segmentSeq=null;
@@ -113,91 +109,49 @@ public class SegmentFactory {
 			return new Segment(compoundLocation, segmentSeq);
 		}
 	}
-	
-	// TODO createSegment for RemoteBase
-	public Segment createSegment(RemoteBase remoteBase) throws SQLException, IOException {
-		
-		if (connection == null&&entryDAOUtils==null)
+
+	public Segment createSegment(RemoteBase remoteBase) throws IOException {
+		if (remoteBase == null) {
 			return null;
-		else
-		{
-			if (remoteBase != null)
-			{
-				String accession = remoteBase.getAccession() + (remoteBase.getVersion() == null ? "" : ("." + remoteBase.getVersion().toString()));
-				if(entryDAOUtils==null)
-				{
-					setEntryDAOUtils(new EntryDAOUtilsImpl(connection));
-				}
-				byte[] subSequence=entryDAOUtils.getSubSequence(accession, remoteBase.getBeginPosition(), (remoteBase.getEndPosition()-remoteBase.getBeginPosition())+1);
-				
-				if(subSequence==null)
-				{
-					throw new SQLException("Invalid Accession "+accession+" , which does not exist in database");
-				}
-				
-				if(remoteBase.getLength()!=subSequence.length)
-				{
-					StringBuilder lcoationString=new StringBuilder();
-					LocationToStringCoverter.renderLocation(lcoationString, remoteBase, false, false);
-					throw new SQLException("invalid Remote Base:"+ lcoationString.toString() +", not within the entry \""+ remoteBase.getAccession()+"\" sequence length");
-				}
-				if(remoteBase.isComplement())
-				{
-					ReverseComplementer reversecomplementer=new ReverseComplementer();
-					return new Segment(remoteBase,reversecomplementer.reverseComplementByte(subSequence));
-				}
-				return new Segment(
-						remoteBase,subSequence);
-
-			}
 		}
-		return null;	
-	}
 
-	// TODO createSegment for RemoteRange
-	public Segment createSegment(RemoteRange remoteRange)
-			throws SQLException, IOException
-	{
-		if (connection == null&&entryDAOUtils==null)
+		if (service == null) {
 			return null;
-		else
-		{
-			if (remoteRange != null)
-			{
-				String accession = remoteRange.getAccession() + (remoteRange.getVersion() == null ? "" : ("." + remoteRange.getVersion().toString()));
-				if(entryDAOUtils==null)
-				{
-					setEntryDAOUtils(new EntryDAOUtilsImpl(connection));
-				}
-				byte[] subSequence=entryDAOUtils.getSubSequence(accession, remoteRange.getBeginPosition(), (remoteRange.getEndPosition()-remoteRange.getBeginPosition())+1);
-				
-				if(subSequence==null)
-				{
-					throw new SQLException("Invalid Accession "+accession+" , which does not exist in database");
-				}
-				
-				if(remoteRange.getLength()!=subSequence.length)
-				{
-					StringBuilder lcoationString=new StringBuilder();
-					LocationToStringCoverter.renderLocation(lcoationString, remoteRange, false, false);
-					throw new SQLException("invalid Remote Location range:"+ lcoationString.toString() +", not within the entry \""+ remoteRange.getAccession()+"\" sequence length");
-				}
-				if(remoteRange.isComplement())
-				{
-					ReverseComplementer reversecomplementer=new ReverseComplementer();
-					return new Segment(remoteRange,reversecomplementer.reverseComplementByte(subSequence));
-				}
-				return new Segment(
-						remoteRange,subSequence);
-
-			}
 		}
-		return null;
+
+		byte[] subSequence;
+		try {
+			// Includes reverse complementation.
+			subSequence = service.getSequence(remoteBase).array();
+		}
+		catch (ValidationEngineException ex) {
+			StringBuilder locationString = new StringBuilder();
+			LocationToStringCoverter.renderLocation(locationString, remoteBase, false, false);
+			throw new IOException("Invalid Remote Base: " + locationString.toString(), ex);
+		}
+		return new Segment(remoteBase, subSequence);
 	}
-	
-	public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils)//it is useful for test cases
-	{
-		this.entryDAOUtils = entryDAOUtils;
+
+	public Segment createSegment(RemoteRange remoteRange) throws IOException {
+		if (remoteRange == null) {
+			return null;
+		}
+
+		if (service == null) {
+			return null;
+		}
+
+		byte[] subSequence;
+		try {
+			// Includes reverse complementation.
+			subSequence = service.getSequence(remoteRange).array();
+		}
+		catch (ValidationEngineException ex) {
+			StringBuilder locationString = new StringBuilder();
+			LocationToStringCoverter.renderLocation(locationString, remoteRange, false, false);
+			throw new IOException("Invalid Remote Range: " + locationString.toString(), ex);
+
+		}
+		return new Segment(remoteRange, subSequence);
 	}
- 
 }

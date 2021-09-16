@@ -36,9 +36,9 @@ public class MasterTLSReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.TLS_DATACLASS);
+		entry.setContigDataclass(Entry.TLS_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterTlsAccession(new Text(accession, getOrigin()));
+			entry.addContigAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

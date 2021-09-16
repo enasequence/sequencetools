@@ -33,27 +33,17 @@ public class XmlMasterXrefWriter {
     	if (entry == null) {
     		return false;
     	}
-    	for (Text accession : entry.getMasterWgsAccessions()) {
-			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-WGS");
-			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
-		}
-    	for (Text accession : entry.getMasterConAccessions()) {
-			writer.beginElement("xref");	
+
+		for (Text accession : entry.getScaffoldAccessions()) {
+			writer.beginElement("xref");
 			writer.writeAttribute("db", "ENA-CON");
 			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
+			writer.openCloseElement("xref");
 		}
-    	for (Text accession : entry.getMasterTpaAccessions()) {
+
+    	for (Text accession : entry.getContigAccessions()) {
 			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-TPA");
-			writer.writeAttribute("id", accession.getText());
-    		writer.openCloseElement("xref");
-		}
-    	for (Text accession : entry.getMasterTsaAccessions()) {
-			writer.beginElement("xref");	
-			writer.writeAttribute("db", "ENA-TSA");
+			writer.writeAttribute("db", "ENA-"+entry.getContigDataclass());
 			writer.writeAttribute("id", accession.getText());
     		writer.openCloseElement("xref");
 		}

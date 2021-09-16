@@ -229,10 +229,9 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 		EntryFactory entryFactory = new EntryFactory();
 		article.addXRef(entryFactory.createXRef("UniProtKB", "A00001"));
 		article.addXRef(entryFactory.createXRef("UniProtKB", "A00002"));
-		EmblLineReader lineReader = new EmblLineReader();
-		lineReader.getCache().setPublication(article);
-		lineReader.setReader(new BufferedReader(new StringReader(
+		EmblLineReader lineReader = new EmblLineReader(new BufferedReader(new StringReader(
 				"RA   Antonellis A., Ayele K., Benjamin B., Blakesley R.W., Boakye A., Bouffard G.G., Brinkley C., Brooks S., Chu G., Coleman H., Engle J., Gestole M., Greene A., Guan X., Gupta J., Haghighi P., Han J., Hansen N., Ho S.-L., Hu P., Hunter G., Hurle B., Idol J.R., Kwong P., Laric P., Larson S., Lee-Lin S.-Q., Legaspi R., Madden M., Maduro Q.L., Maduro V.B., Margulies E.H., Masiello C., Maskeri B., McDowell J., Mojidi H.A., Mullikin J.C., Oestreicher J.S., Park M., Portnoy M.E., Prasad A., Puri O., Reddix-Dugue N., Schandler K., Schueler M.G., Sison C., Stantripop S., Stephen E., Taye A., Thomas J.W., Thomas P.J., Tsipouri V., Ung L., Vogt J.L., Wetherby K.D., Young A., Green E.D.")));
+		lineReader.getCache().setPublication(article);
 		lineReader.readLine();
 		ValidationResult result = (new RAReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
@@ -440,8 +439,6 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 			"WGS  AAAA02000001-AAAA02050231\n" +
 			"XX\n" +
 			"CON  CH398081-CH401163, CM000126-CM000137\n" +
-			"XX\n" +
-			"TPA  A398081-A401163\n" +
 			"//\n";
 		
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(entryString));
@@ -552,8 +549,6 @@ public class XmlEntryWriterTest extends XmlWriterTest {
 			"WGS  AAAA02000001-AAAA02050231\n" +
 			"XX\n" +
 			"CON  CH398081-CH401163, CM000126-CM000137\n" +
-			"XX\n" +
-			"TPA  A398081-A401163\n" +
 			"//\n";
 
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(entryString));
@@ -935,10 +930,9 @@ public class XmlEntryWriterTest extends XmlWriterTest {
             "Industrial Zone B6, Beijing, Beijing 101300, P.R.China\n" +
             "		</referenceLocation>\n" +
             "	</reference>\n" +
-            "	<xref db=\"ENA-WGS\" id=\"AAAA02000001-AAAA02050231\"/>\n" +
             "	<xref db=\"ENA-CON\" id=\"CH398081-CH401163\"/>\n" +
-            "	<xref db=\"ENA-CON\" id=\"CM000126-CM000137\"/>\n" +
-            "	<xref db=\"ENA-TPA\" id=\"A398081-A401163\"/>\n" +
+			"	<xref db=\"ENA-CON\" id=\"CM000126-CM000137\"/>\n" +
+			"	<xref db=\"ENA-WGS\" id=\"AAAA02000001-AAAA02050231\"/>\n" +
             "	<feature name=\"source\" location=\"1..53326\">\n" +
             "		<taxon scientificName=\"Oryza sativa Indica Group\" taxId=\"39946\">\n" +
             "			<lineage>\n" +

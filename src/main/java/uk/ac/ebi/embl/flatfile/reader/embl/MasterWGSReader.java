@@ -36,9 +36,9 @@ public class MasterWGSReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.WGS_DATACLASS);
+		entry.setContigDataclass(Entry.WGS_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterWgsAccession(new Text(accession, getOrigin()));
+			entry.addContigAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.fixer.sequence;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,24 +29,16 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ContigstosequenceFixTest
 {
 
 	private ContigstosequenceFix check;
-	private EntryDAOUtils entryDAOUtils;
 	private EntryFactory entryFactory;
 	private SequenceFactory sequenceFactory;
 	private LocationFactory locationFactory;
@@ -63,7 +54,6 @@ public class ContigstosequenceFixTest
 		locationFactory=new LocationFactory();
 		entry = entryFactory.createEntry();
 		entry.setSequence(sequenceFactory.createSequence());
-		entryDAOUtils=createMock(EntryDAOUtils.class);
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
 		property.analysis_id.set("ERZ0001");
@@ -100,37 +90,5 @@ public class ContigstosequenceFixTest
 	   entry.getSequence().setSequence(ByteBuffer.wrap("aaa".getBytes()));
        assertTrue(check.check(entry).isValid());
 	}
-	
-	@Test
-	public void testCheck_EntrywithcontigsANDnoSequence() throws SQLException, ValidationEngineException, IOException
-	{
-		entry.getSequence().addContigs(contigs);
-		entry.setIdLineSequenceLength(entry.getSequence().getLength());
-		expect(entryDAOUtils.getSubSequence("A00001.1", 10l, 11l)).andReturn("aaaaaaaaaaa".getBytes());
-		expect(entryDAOUtils.getSubSequence("A00002.1", 10l, 11l)).andReturn("bbbbbbbbbbb".getBytes());
-		expect(entryDAOUtils.getSubSequence("A00003.1", 10l, 11l)).andReturn("ccccccccccc".getBytes());
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
-      	ValidationResult result=check.check(entry);
-        assertTrue(result.isValid());
-        assertTrue(null==entry.getDataClass());
-        assertEquals(53l,entry.getSequence().getLength());
-        String seq=new String(entry.getSequence().getSequenceByte());
-        assertTrue("aaaaaaaaaaannnnnnnnnnbbbbbbbbbbbnnnnnnnnnnccccccccccc".equals(seq));
-        assertEquals(1,result.count("ContigstosequenceFix", Severity.FIX));
-	}
-	
-	@Test(expected = ValidationEngineException.class)
-	public void testCheck_EntrywithinvalidContigs() throws SQLException, ValidationEngineException, IOException
-	{
-		entry.getSequence().addContigs(contigs);
-		entry.setIdLineSequenceLength(53l);
-		expect(entryDAOUtils.getSubSequence("A00001.1", 10l, 11l)).andReturn(null);
-		expect(entryDAOUtils.getSubSequence("A00002.1", 10l, 11l)).andReturn("bbbbbbbbbbb".getBytes());
-		expect(entryDAOUtils.getSubSequence("A00003.1", 10l, 11l)).andReturn("ccccccccccc".getBytes());
-		replay(entryDAOUtils);
-		check.setEntryDAOUtils(entryDAOUtils);
-      	check.check(entry);
-	}
-	
+
 }

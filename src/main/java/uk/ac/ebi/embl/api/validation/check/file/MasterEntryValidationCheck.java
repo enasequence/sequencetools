@@ -15,7 +15,7 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import uk.ac.ebi.embl.api.service.MasterEntryService;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -46,7 +46,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck {
         }
         getOptions().getEntryValidationPlanProperty().fileType.set(FileType.MASTER);
 
-        sharedInfo.masterEntry = new MasterEntryService().createMasterEntry(getOptions(), validationResult);
+        sharedInfo.masterEntry = SequenceToolsServices.masterEntryService().createMasterEntry(getOptions(), validationResult);
 
         if (!validationResult.isValid()) {
             getReporter().writeToFile(Paths.get(getOptions().reportDir.get(), "MASTER.report"), validationResult);

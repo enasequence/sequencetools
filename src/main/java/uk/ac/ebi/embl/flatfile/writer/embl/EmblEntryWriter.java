@@ -127,21 +127,15 @@ public class EmblEntryWriter extends EntryWriter {
         if(new MasterWGSWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
-		if(new MasterCONWriter(entry, wrapType).write(writer)) {
-			writer.write(SEPARATOR_LINE);
-		}
 
-		if((new MasterTPAWriter(entry, wrapType)).write(writer)) {
-			writer.write(SEPARATOR_LINE);
-		}
 		if((new MasterTLSWriter(entry, wrapType)).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
 
 		(new MasterTSAWriter(entry, wrapType)).write(writer);
 
-		if(entry.getMasterScaffoldAccessions() != null && !entry.getMasterScaffoldAccessions().isEmpty()) {
-			new MasterScaffoldWriter(entry, wrapType).write(writer);
+		if(entry.getScaffoldAccessions() != null && !entry.getScaffoldAccessions().isEmpty()) {
+			new MasterCONWriter(entry, wrapType).write(writer);
 		}
 
 		if(!entry.isNonExpandedCON())

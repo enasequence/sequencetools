@@ -15,9 +15,20 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 public class EmblLineReaderTest extends EmblReaderTest {
+
+	private void setLineReader(String str) {
+		EmblLineReader emblLineReader = new EmblLineReader(new BufferedReader(new StringReader(str)));
+		// Allow EmblLineReader to be tested without EntryReader. EntryReader initialises valid tags for
+		// EmblReader and without this EmblLineReader can't parse the tag from the line.
+		emblLineReader.setIsValidTag(tag -> !tag.equals("XX"));
+		emblLineReader.setIsSkipTag(tag -> tag.equals("XX"));
+		lineReader = emblLineReader;
+	}
 
 	public void testGetCurrentTag_StandardTag() throws IOException {
 		setLineReader(

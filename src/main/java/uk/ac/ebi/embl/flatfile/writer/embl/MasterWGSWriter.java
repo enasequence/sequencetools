@@ -33,9 +33,12 @@ public class MasterWGSWriter extends FlatFileWriter {
     }
 
     public boolean write(Writer writer) throws IOException {
+        if(entry.getContigDataclass() == null || !entry.getContigDataclass().equals(Entry.WGS_DATACLASS)) {
+            return false;
+        }
     	StringBuilder block = new StringBuilder();
     	int i = 0;
-        for (Text accession : entry.getMasterWgsAccessions()) {
+        for (Text accession : entry.getContigAccessions()) {
         	++i;
         	if (i > 1) {
                 block.append(", ");

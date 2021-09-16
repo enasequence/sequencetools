@@ -55,7 +55,6 @@ public class ContigstosequenceFix extends
 			return result;
 		
 		SegmentFactory segmentFactory=new SegmentFactory();
-		segmentFactory.setEntryDAOUtils(getEntryDAOUtils());
 	
 		try{
 			

@@ -36,9 +36,9 @@ public class MasterTSAReader extends MultiLineBlockReader {
 	
 	@Override
 	protected void read(String block) {
-		entry.setSetDataclass(Entry.TSA_DATACLASS);
+		entry.setContigDataclass(Entry.TSA_DATACLASS);
 		for (String accession : FlatFileUtils.split(block, ",")) {
-			entry.addMasterTsaAccession(new Text(accession, getOrigin()));
+			entry.addContigAccession(new Text(accession, getOrigin()));
 		}
 	}	
 }

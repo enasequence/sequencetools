@@ -125,4 +125,17 @@ public class ChromosomeEntry extends GCSEntry
 		}
 		return chromosomeQualifeirs;
 	}
+
+	@Override
+	public String toString() {
+		return "ChromosomeEntry{" +
+				"chromosomeName='" + chromosomeName + '\'' +
+				", chromosomeType='" + chromosomeType + '\'' +
+				", chromosomeLocation='" + chromosomeLocation + '\'' +
+				", objectName='" + objectName + '\'' +
+				", accession='" + accession + '\'' +
+				", topology=" + topology +
+				", chromosomeQualifeirs=" + chromosomeQualifeirs +
+				'}';
+	}
 }
