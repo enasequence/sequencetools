@@ -42,7 +42,7 @@ public class TemplateEntryProcessor {
     private ValidationPlan validationPlan;
     private Connection connEra;
     private String molType;
-    HashMap<String, Sample> sampleCache = new HashMap<String,Sample>();
+    private HashMap<String, Sample> sampleCache = new HashMap<String,Sample>();
 
     public TemplateEntryProcessor(Connection connEra) {
         this(ValidationScope.EMBL_TEMPLATE);
