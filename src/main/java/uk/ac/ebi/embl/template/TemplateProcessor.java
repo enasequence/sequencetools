@@ -47,7 +47,7 @@ public class TemplateProcessor {
         incrementAndDecrementTokans(templateVariables, templateInfo);
         String molType = getMolTypeFromTemplate();
         reportEntryCount(templateVariables.getSequenceNumber());
-        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables,options);
+        TemplateProcessorResultSet templateProcessorResultSet = entryProcessor.processEntry(templateInfo, molType, templateVariables,options.getProjectId());
         /**
          * check no identical records
          */

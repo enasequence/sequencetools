@@ -1,13 +1,14 @@
 package uk.ac.ebi.embl.template;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.service.SampleRetrievalService;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
@@ -16,15 +17,12 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
-import uk.ac.ebi.ena.webin.cli.service.CompleteSampleService;
-import uk.ac.ebi.ena.webin.cli.service.exception.ServiceiException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
@@ -38,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TemplateEntryProcessor {
-    private static final Logger LOGGER = Logger.getLogger(TemplateEntryProcessor.class);
+    
     private StringBuilder template;
     private TemplateInfo templateInfo;
     private ValidationPlan validationPlan;
@@ -67,7 +65,7 @@ public class TemplateEntryProcessor {
         return validationPlan.execute(entry);
     }
 
-    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables, SubmissionOptions options) throws Exception {
+    protected TemplateProcessorResultSet processEntry(TemplateInfo templateInfo, String molType, TemplateVariables templateVariables, String projectId) throws Exception {
         this.templateInfo = templateInfo;
         this.molType = molType;
         TemplateProcessorResultSet templateProcessorResultSet = new TemplateProcessorResultSet();
@@ -97,15 +95,15 @@ public class TemplateEntryProcessor {
             return templateProcessorResultSet;
         }
         Entry entry = entryReader.getEntry();
-        if(options.getProjectId() != null) {
-            entry.addProjectAccession(new Text(options.getProjectId()));
+        if(StringUtils.isNotEmpty(projectId)) {
+            entry.addProjectAccession(new Text(projectId));
         }
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceName()));
         addDataToEntry(entry, templateVariables);
         entry.setStatus(Entry.Status.PRIVATE);
         
         // Update SourceFeature using sample values.
-        updateSourceFeatureUsingOrganismFieldValue(entry,templateVariables, templateProcessorResultSet,options);
+        updateSourceFeatureUsingOrganismFieldValue(entry,templateVariables);
         
         List<Text> kewordsL = entry.getKeywords();
         if (kewordsL != null && !kewordsL.isEmpty()) {
@@ -400,17 +398,12 @@ public class TemplateEntryProcessor {
     /**
      * This method check if the ORGANISM_NAME field value is related to a sample and 
      * updates the entry's sourceFeature using the sample values.
-     * 
-     * @param entry
-     * @param templateVariables
-     * @param templateProcessorResultSet
-     * @param options
-     * @throws Exception
+     *
      */
-    private void updateSourceFeatureUsingOrganismFieldValue(Entry entry, TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
+    private void updateSourceFeatureUsingOrganismFieldValue(Entry entry, TemplateVariables templateVariables) throws Exception {
 
         // Validate and get samples
-        Sample sample = validateAndGetSample(templateVariables, templateProcessorResultSet, options);
+        Sample sample = validateAndGetSample(templateVariables);
         
         if (sample != null && entry.getPrimarySourceFeature() != null) {
             SourceFeature sourceFeature = entry.getPrimarySourceFeature();
@@ -425,7 +418,7 @@ public class TemplateEntryProcessor {
      * Returns sample if one could be found using the ORGANISM_NAME field of the TSV 
      * file or NULL if the ORGANISM_NAME was a scientific name or tax id.
      */
-    public Sample validateAndGetSample(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet, SubmissionOptions options) throws Exception {
+    public Sample validateAndGetSample(TemplateVariables templateVariables) throws Exception {
 
         Map<String, String> tsvFieldMap = templateVariables.getVariables();
         Sample sample = null;
@@ -449,12 +442,12 @@ public class TemplateEntryProcessor {
                 sample = sampleCache.get(sampleValue);
                 if (sample == null) {
                     try {
-                        // Get sample using server API.
-                        CompleteSampleService completeSampleService = getCompleteSampleService(options.webinAuthToken.get(), options.webinCliTestMode);
-                        sample = completeSampleService.getCompleteSample(sampleValue);
+                        // Get sample using server sample retrieval service.
+                        SampleRetrievalService sampleRetrievalService = SequenceToolsServices.sampleRetrievalService();
+                        sample = sampleRetrievalService.getSample(sampleValue);
                         sampleCache.put(sampleValue, sample);
-                    }catch (ServiceiException serviceiException){
-                        // DO NOTHING
+                    }catch (Exception serviceiException){
+                        // DO NOTHING when there is no sample
                     }
                 }
                 break;
@@ -490,14 +483,4 @@ public class TemplateEntryProcessor {
         }
         return sampleInfo;
     }
-
-    
-    private CompleteSampleService getCompleteSampleService(String authToken, boolean webinCliTestMode){
-        return new CompleteSampleService.Builder()
-                .setAuthToken(authToken)
-                .setTest(webinCliTestMode)
-                .build();
-    }
-    
-  
 }

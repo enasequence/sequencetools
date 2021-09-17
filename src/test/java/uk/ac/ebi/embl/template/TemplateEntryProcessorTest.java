@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
+import uk.ac.ebi.embl.api.service.WebinSampleRetrievalService;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -32,6 +34,7 @@ public class TemplateEntryProcessorTest {
     @Before
     public void setUp() throws Exception {
         templateEntryProcessor = getTemplateEntryProcessor();
+        SequenceToolsServices.init(new WebinSampleRetrievalService(getAuthToken(),true));
     }
     
     @Test
@@ -65,7 +68,7 @@ public class TemplateEntryProcessorTest {
         TemplateVariables templateVariables = getTemplateVariables_ERT000002(organismName);
         Sample sample=getSampleForTest(templateEntryProcessor,templateVariables);
         
-        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
@@ -76,7 +79,7 @@ public class TemplateEntryProcessorTest {
     public void executeEntryProcessTestWithScientificName(String sceientificName, TemplateInfo templateInfo, String molType) throws Exception{
         
         TemplateVariables templateVariables = getTemplateVariables_ERT000002(sceientificName);
-        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
         
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
@@ -86,7 +89,7 @@ public class TemplateEntryProcessorTest {
     public void executeEntryProcessTestWithTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
 
         TemplateVariables templateVariables = getTemplateVariables_ERT000002(taxId);
-        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
@@ -97,7 +100,7 @@ public class TemplateEntryProcessorTest {
     public void executeEntryProcessInvalidOrganism(String scientificName, TemplateInfo templateInfo, String molType) throws Exception{
 
         TemplateVariables templateVariables = getTemplateVariables_ERT000002(scientificName);
-        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions());
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
         assertFalse(templateProcessorResultSet.getValidationResult().isValid());
@@ -162,6 +165,6 @@ public class TemplateEntryProcessorTest {
     
     private Sample getSampleForTest(TemplateEntryProcessor templateEntryProcessor,TemplateVariables templateVariables) throws Exception {
         
-        return templateEntryProcessor.validateAndGetSample(templateVariables,new TemplateProcessorResultSet(),getOptions());
+        return templateEntryProcessor.validateAndGetSample(templateVariables);
     }
 }

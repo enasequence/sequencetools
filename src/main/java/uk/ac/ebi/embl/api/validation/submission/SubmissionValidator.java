@@ -5,6 +5,8 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
+import uk.ac.ebi.embl.api.service.WebinSampleRetrievalService;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
@@ -41,7 +43,6 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
     public void validate() throws ValidationEngineException {
 
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
-
         if (!options.isWebinCLI && !validationResult.isValid()) {
             StringBuilder sb = new StringBuilder();
             for (ValidationMessage<Origin> error : validationResult.getMessages(Severity.ERROR)) {
@@ -66,6 +67,10 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         try {
             options = mapManifestToSubmissionOptions(manifest);
             FeatureReader.isWebinCli = true;
+
+            // Initialise SampleRetrievalService.
+            SequenceToolsServices.init(new WebinSampleRetrievalService(options.webinAuthToken.get(),options.webinCliTestMode));
+
             validate();
         } catch (ValidationEngineException vee) {
             switch (vee.getErrorType()) {
@@ -154,10 +159,10 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
         }
         options.assemblyInfoEntry = Optional.of(assemblyInfo);
-        if(manifest.getAuthToken()!=null) {
-            options.webinAuthToken = Optional.of(manifest.getAuthToken());
+        if(manifest.getWebinAuthToken()!=null) {
+            options.webinAuthToken = Optional.of(manifest.getWebinAuthToken());
         }
-        options.webinCliTestMode = manifest.getTestMode();
+        options.webinCliTestMode = manifest.getWebinCliTestMode();
         return options;
     }
 
