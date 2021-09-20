@@ -6,25 +6,24 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class WebinSampleRetrievalService implements SampleRetrievalService {
 
-    private String webinAuthToken;
-    private boolean webinCliTestMode;
+    private final String webinAuthToken;
+    private final boolean webinCliTestMode;
     public WebinSampleRetrievalService(String webinAuthToken, boolean webinCliTestMode){
         this.webinAuthToken=webinAuthToken;
         this.webinCliTestMode=webinCliTestMode;
     }
     
     @Override
-    public Sample getSample(String sampleValue) {
+    public Sample getSample(String sampleId) {
         
         // Retrieve sampleObj, sampleXml and return sampleObj with attributes.
-        
         SampleService sampleService=getSampleService( webinAuthToken, webinCliTestMode);
         SampleXmlService sampleXmlService=getSampleXmlService( webinAuthToken, webinCliTestMode);
         
-        Sample sampleObj=sampleService.getSample(sampleValue);
-        Sample sampleXmlObj=sampleXmlService.getSample(sampleObj.getSraSampleIdId());
-        sampleObj.setAttributes(sampleXmlObj.getAttributes());
-        return sampleObj;
+        Sample sampleOb=sampleService.getSample(sampleId);
+        Sample sampleFromXml=sampleXmlService.getSample(sampleOb.getSraSampleIdId());
+        sampleOb.setAttributes(sampleFromXml.getAttributes());
+        return sampleOb;
     }
 
     private SampleService getSampleService(String authToken, boolean webinCliTestMode){
@@ -39,21 +38,5 @@ public class WebinSampleRetrievalService implements SampleRetrievalService {
                 .setAuthToken(authToken)
                 .setTest(webinCliTestMode)
                 .build();
-    }
-
-    public String getWebinAuthToken() {
-        return webinAuthToken;
-    }
-
-    public void setWebinAuthToken(String webinAuthToken) {
-        this.webinAuthToken = webinAuthToken;
-    }
-
-    public boolean isWebinCliTestMode() {
-        return webinCliTestMode;
-    }
-
-    public void setWebinCliTestMode(boolean webinCliTestMode) {
-        this.webinCliTestMode = webinCliTestMode;
     }
 }

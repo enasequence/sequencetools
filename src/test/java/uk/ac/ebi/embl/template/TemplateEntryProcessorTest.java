@@ -41,25 +41,25 @@ public class TemplateEntryProcessorTest {
     public void  testEntryProcess_ERT000002() throws Exception {
 
         TemplateInfo templateInfo_ERT000002 = new TemplateLoader().loadTemplateFromFile(templateFile);
-        String MOL_TYPE_ERT000002 = getMolTypeFromTemplateForTest(templateInfo_ERT000002);
+        String molType_ERT000002 = getMolTypeFromTemplateForTest(templateInfo_ERT000002);
 
         // Test with biosample Id
-        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000002 ,molType_ERT000002 );
         
         // Test with sample Id
-        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000002 ,molType_ERT000002 );
         
         // Test with sample alias "test_custom"
-        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000002 ,molType_ERT000002 );
 
         // Test with valid organism
-        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000002 ,molType_ERT000002 );
 
         // Test with taxId
-        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,molType_ERT000002 );
 
         // Test with invalid organizm
-        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,MOL_TYPE_ERT000002 );
+        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,molType_ERT000002 );
 
     }
     
