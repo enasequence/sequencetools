@@ -15,11 +15,17 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
+import org.junit.Test;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AssemblyInfoProjectIdheckTest
+public class AssemblyInfoProjectIdCheckTest
 {
 //	private AssemblyInfoEntry assemblyEntry;
 //	private AssemblyInfoValidationheck check;
@@ -96,4 +102,35 @@ public class AssemblyInfoProjectIdheckTest
 //		assertEquals(0, result.count("AssemblyFieldandValueCheck-3", Severity.ERROR));
 //	}
 
+
+    @Test
+    public void testMissingProjectID() throws ValidationEngineException {
+        AssemblyInfoEntry entry = new AssemblyInfoEntry();
+        ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
+        assertEquals(1, result.count(AssemblyInfoProjectIdCheck.MESSAGE_KEY_MISSING_PROJECT_ID_ERROR, Severity.ERROR));
+    }
+
+    @Test
+    public void testInvalidProjectID() throws ValidationEngineException {
+        AssemblyInfoEntry entry = new AssemblyInfoEntry();
+        entry.setProjectId("PRJX9999");
+        ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
+        assertEquals(1, result.count(AssemblyInfoProjectIdCheck.MESSAGE_KEY_INVALID_PROJECT_ID_ERROR, Severity.ERROR));
+    }
+
+    @Test
+    public void testValidProjectID_2() throws ValidationEngineException {
+        AssemblyInfoEntry entry = new AssemblyInfoEntry();
+        entry.setProjectId("PRJEB1234"); // EMBL
+        ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
+        assertEquals(0, result.count());
+    }
+
+    @Test
+    public void testValidProjectID_1() throws ValidationEngineException {
+        AssemblyInfoEntry entry = new AssemblyInfoEntry();
+        entry.setProjectId("PRJDB1234"); // DDBJ
+        ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
+        assertEquals(0, result.count());
+    }
 }
