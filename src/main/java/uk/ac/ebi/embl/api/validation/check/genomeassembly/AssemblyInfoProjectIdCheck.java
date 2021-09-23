@@ -23,13 +23,15 @@ import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 
 @Description("")
 @RemoteExclude
-public class AssemblyInfoProjectIdheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
+public class AssemblyInfoProjectIdCheck extends GenomeAssemblyValidationCheck<AssemblyInfoEntry>
 {
    
-	private final String MESSAGE_KEY_MISSING_PROJECT_ID_ERROR = "AssemblyInfoMissingProjectIDCheck";
-	private final String MESSAGE_KEY_INVALID_PROJECT_ID_ERROR = "AssemblyInfoInvalidProjectIDCheck";
+	public static final String MESSAGE_KEY_MISSING_PROJECT_ID_ERROR = "AssemblyInfoMissingProjectIDCheck";
+	public static final String MESSAGE_KEY_INVALID_PROJECT_ID_ERROR = "AssemblyInfoInvalidProjectIDCheck";
+
+	private final String PROJECT_ID_REGEX = "^PRJ[END][A-Z]\\d+$";
 		
-    public AssemblyInfoProjectIdheck()
+    public AssemblyInfoProjectIdCheck()
 	{
 
 	}
@@ -46,7 +48,7 @@ public class AssemblyInfoProjectIdheck extends GenomeAssemblyValidationCheck<Ass
 			return result;
 		}
 		
-		if (!entry.getProjectId().matches("^PRJ[EN].*"))
+		if (!entry.getProjectId().matches(PROJECT_ID_REGEX))
 		{
 			reportError(entry.getOrigin(), MESSAGE_KEY_INVALID_PROJECT_ID_ERROR, entry.getProjectId());			
 		}		

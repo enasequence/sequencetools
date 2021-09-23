@@ -8,7 +8,7 @@ import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoMinGapLeng
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoPlatformCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProgramCheck;
-import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdheck;
+import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoProjectIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSamplewithDifferentProjectCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoSubmissionIdCheck;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoTypeCheck;
@@ -30,7 +30,7 @@ public enum GenomeAssemblyValidationUnit
 			AssemblyInfoNameCheck.class,
 			AssemblyInfoPlatformCheck.class,
 			AssemblyInfoProgramCheck.class,
-			AssemblyInfoProjectIdheck.class,
+			AssemblyInfoProjectIdCheck.class,
 			AssemblyInfoSamplewithDifferentProjectCheck.class,
 			AssemblyInfoSubmissionIdCheck.class,
 			AssemblyInfoTypeCheck.class
