@@ -89,4 +89,15 @@ public class NonAsciiCharacterFixTest {
         assertEquals(1, result.count("AsciiCharacterFix_1", Severity.FIX));
     }
 
+    @Test
+    public void testCheck_fixedIolateQualifier()
+    {
+        Feature feature = (new FeatureFactory()).createFeature(Feature.CDS_FEATURE_NAME);
+        feature.addQualifier((new QualifierFactory()).createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,"Ósk Lin"));
+        entry.addFeature(feature);
+        ValidationResult result = fixer.check(entry);
+        assertEquals(1, result.count("AsciiCharacterFix_1", Severity.FIX));
+        assertEquals("Osk Lin", feature.getSingleQualifier(Qualifier.ISOLATE_QUALIFIER_NAME).getValue());
+    }
+
 }
