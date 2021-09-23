@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.8.2'
+ext.version_base = '2.8.4'
 
 
 version = version_base
@@ -81,7 +81,7 @@ dependencies
             compile 'com.beust:jcommander:1.72'
             compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
-            implementation( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.3.1' )
+            compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.3.1' )
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'sub-taxonomy-client', version: '2.2.8')
             testCompile "junit:junit:4.13.1"
             testCompile 'org.easymock:easymock:4.2'
