@@ -27,14 +27,14 @@ public class TemplateEntryProcessorTest {
     private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
     private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
     private final static String MOL_TYPE = "/mol_type";
-    private String token="";
+    private static String token="";
     private TemplateEntryProcessor templateEntryProcessor;
     private TemplateVariables templateVariables;
     
     @Before
     public void setUp() throws Exception {
         templateEntryProcessor = getTemplateEntryProcessor();
-        SequenceToolsServices.init(new WebinSampleRetrievalService(getAuthToken(),true));
+        SequenceToolsServices.init(new WebinSampleRetrievalService(getAuthTokenForTest(),true));
     }
     
     @Test
@@ -57,6 +57,9 @@ public class TemplateEntryProcessorTest {
 
         // Test with taxId
         executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,molType_ERT000002 );
+
+        // Test with invalid taxid
+        executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000002 ,molType_ERT000002 );
 
         // Test with invalid organizm
         executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,molType_ERT000002 );
@@ -93,8 +96,9 @@ public class TemplateEntryProcessorTest {
 
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
-        assertEquals(sourceFeature.getTaxId(),Long.valueOf(taxId));
         assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
+        assertEquals(templateProcessorResultSet.getEntry().getDescription().getText(),"Homo sapiens partial 5S rRNA gene");
+        
     }
     
     public void executeEntryProcessInvalidOrganism(String scientificName, TemplateInfo templateInfo, String molType) throws Exception{
@@ -104,6 +108,17 @@ public class TemplateEntryProcessorTest {
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
         assertFalse(templateProcessorResultSet.getValidationResult().isValid());
+        assertTrue(messages.toString().contains("Scientific_name \""+scientificName+"\" is not submittable"));
+    }
+
+    public void executeEntryProcessInvalidTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
+
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002(taxId);
+        TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
+
+        Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
+        assertFalse(templateProcessorResultSet.getValidationResult().isValid());
+        assertTrue(messages.toString().contains("Scientific_name \""+taxId+"\" is not submittable"));
     }
     
     private TemplateEntryProcessor getTemplateEntryProcessor() {
@@ -124,11 +139,11 @@ public class TemplateEntryProcessorTest {
     private SubmissionOptions getOptions(){
         SubmissionOptions options=new SubmissionOptions();
         options.webinCliTestMode=true;
-        options.webinAuthToken = Optional.of(getAuthToken());
+        options.webinAuthToken = Optional.of(getAuthTokenForTest());
         return options;
     }
     
-    private String getAuthToken(){
+    public static String getAuthTokenForTest(){
 
         if(StringUtils.isNotEmpty(token)){
             return token;
