@@ -108,7 +108,7 @@ public class TemplateEntryProcessorTest {
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
         assertFalse(templateProcessorResultSet.getValidationResult().isValid());
-        assertTrue(messages.toString().contains("Scientific_name \""+scientificName+"\" is not submittable"));
+        assertTrue(messages.toString().contains("Organism name \""+scientificName+"\" is not submittable"));
     }
 
     public void executeEntryProcessInvalidTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
@@ -118,7 +118,7 @@ public class TemplateEntryProcessorTest {
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
         assertFalse(templateProcessorResultSet.getValidationResult().isValid());
-        assertTrue(messages.toString().contains("Scientific_name \""+taxId+"\" is not submittable"));
+        assertTrue(messages.toString().contains("Organism name \""+taxId+"\" is not submittable"));
     }
     
     private TemplateEntryProcessor getTemplateEntryProcessor() {

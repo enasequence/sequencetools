@@ -69,12 +69,13 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		}
 		
 		String scientificName = entry.getPrimarySourceFeature().getScientificName();
-		if(NumberUtils.isNumber(scientificName))
+		// ENA-4467: Commented since ORGANISM_NAME substituting will update taxId.
+		/*if(NumberUtils.isNumber(scientificName))
 		{
 			Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(new Long(scientificName));
 			entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
 			entry.getPrimarySourceFeature().setTaxId(taxon.getTaxId());
-		}
+		}*/
 		boolean is_environment_sample_exists = entry.getPrimarySourceFeature().getQualifiers(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME).size() != 0;
 		boolean is_isolation_source_exists = entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size() != 0;
 

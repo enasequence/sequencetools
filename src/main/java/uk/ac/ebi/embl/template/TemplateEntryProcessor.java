@@ -36,6 +36,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TemplateEntryProcessor {
     
@@ -240,7 +241,9 @@ public class TemplateEntryProcessor {
                     scientificName = taxon!=null ? taxon.getScientificName() : "";
                 }else {
                     // Check if the passed value is a valid organismName.
-                    scientificName = taxonHelper.isAnyNameSubmittable(fieldValue) ? fieldValue : "";
+                    List<Taxon> taxonList = taxonHelper.getTaxonsByAnyName(fieldValue);
+                    List<Taxon> submittableTaxonList=taxonList.stream().filter(taxon -> taxon.isSubmittable()).collect(Collectors.toList());
+                    scientificName = !submittableTaxonList.isEmpty() ? submittableTaxonList.get(0).getScientificName() : "";
                 }
                 
                 if(StringUtils.isEmpty(scientificName)){

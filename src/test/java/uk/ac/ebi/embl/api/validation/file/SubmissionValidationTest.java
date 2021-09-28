@@ -18,9 +18,16 @@ package uk.ac.ebi.embl.api.validation.file;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
@@ -33,6 +40,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.MasterEntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FileUtils;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
@@ -176,9 +184,27 @@ public abstract class SubmissionValidationTest {
 	{
 		FlatFileComparatorOptions options=new FlatFileComparatorOptions();
 		FlatFileComparator comparator=new FlatFileComparator(options);
-		return comparator.compare(file.getAbsolutePath()+".expected", file.getAbsolutePath()+".fixed");
+		File updatedFile=updateSubmissionDate(new File(file.getAbsolutePath()+".expected"));
+		return comparator.compare(updatedFile.getPath(), file.getAbsolutePath()+".fixed");
 	}
 
+	protected File updateSubmissionDate(File expectedFile) {
+		
+		String fileContent= null;
+		File updatedFile=null;
+		try {
+			fileContent = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(Files.readAllBytes(expectedFile.toPath()))).toString();
+			LocalDateTime localDateTime = LocalDateTime.now();
+			String currentDateStr = localDateTime.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")).toUpperCase();
+			String updatedFileContent = fileContent.replaceAll("Submitted \\([0-9]{2}-[A-Za-z]{3}-[0-9]{4}\\)", "Submitted (" + currentDateStr + ")");
+			updatedFile = new File(expectedFile.toPath() + ".updated.fixed");
+
+			Files.write(updatedFile.toPath(), updatedFileContent.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return updatedFile;
+	}
 	protected boolean compareOutputFixedFiles(String expected, String actual) throws FlatFileComparatorException
 	{
 		FlatFileComparatorOptions options=new FlatFileComparatorOptions();

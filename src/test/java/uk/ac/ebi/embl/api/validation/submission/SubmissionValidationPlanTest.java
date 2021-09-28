@@ -589,6 +589,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		String rootPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
 		File inputFile=new File(rootPath+tsvZipFile);
 		File outPutFile=new File(rootPath+tsvZipFile+".fixed");
+		File updatedOutPutFile=new File(rootPath+tsvZipFile+".expected.updated.fixed");
 		options.context = Optional.of(Context.sequence);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		SubmissionFile subFile=new SubmissionFile( FileType.TSV,inputFile,outPutFile);
@@ -604,5 +605,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		// Compare input and output files are correct
 		assertTrue(compareOutputFixedFiles(inputFile));
 		Files.deleteIfExists(outPutFile.toPath());
+		Files.deleteIfExists(updatedOutPutFile.toPath());
+		
 	}
 }
