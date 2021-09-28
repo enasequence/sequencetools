@@ -4,6 +4,8 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
+import uk.ac.ebi.embl.api.service.SequenceToolsServices;
+import uk.ac.ebi.embl.api.service.WebinSampleRetrievalService;
 import uk.ac.ebi.embl.api.validation.GenomeUtils;
 import uk.ac.ebi.embl.api.validation.GlobalDataSets;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
@@ -14,6 +16,7 @@ import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
+import uk.ac.ebi.embl.template.TemplateEntryProcessorTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -565,5 +568,44 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage(expectedMsg);
 		plan.execute();
+	}
+
+	@Test
+	public void testTSVSubmission() throws ValidationEngineException, FlatFileComparatorException, IOException {
+		SequenceToolsServices.init(new WebinSampleRetrievalService(TemplateEntryProcessorTest.getAuthTokenForTest(),true));
+		
+		// Test submission with taxId 9606 in ORGANISM_NAME
+		executeTSVSubmission("ERT000002-rRNA-with-taxid.tsv.gz");
+
+		// Test submission with sample organism name in ORGANISM_NAME
+		executeTSVSubmission("ERT000002-rRNA-with-organism-name.tsv.gz");
+		
+		// Test submission with sample SAMEA9403245 in ORGANISM_NAME
+		executeTSVSubmission("ERT000002-rRNA-with-sample.tsv.gz");
+
+	}
+	
+	public void executeTSVSubmission(String tsvZipFile) throws IOException, ValidationEngineException, FlatFileComparatorException {
+		String rootPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
+		File inputFile=new File(rootPath+tsvZipFile);
+		File outPutFile=new File(rootPath+tsvZipFile+".fixed");
+		File updatedOutPutFile=new File(rootPath+tsvZipFile+".expected.updated.fixed");
+		options.context = Optional.of(Context.sequence);
+		SubmissionFiles submissionFiles = new SubmissionFiles();
+		SubmissionFile subFile=new SubmissionFile( FileType.TSV,inputFile,outPutFile);
+		submissionFiles.addFile(subFile);
+		options.submissionFiles = Optional.of(submissionFiles);
+		options.reportDir = Optional.of(rootPath);
+		options.processDir = Optional.of(rootPath);
+
+		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
+		Files.deleteIfExists(Paths.get(options.processDir.get()+"/"+AssemblySequenceInfo.sequencefileName));
+		plan.execute();
+		
+		// Compare input and output files are correct
+		assertTrue(compareOutputFixedFiles(inputFile));
+		Files.deleteIfExists(outPutFile.toPath());
+		Files.deleteIfExists(updatedOutPutFile.toPath());
+		
 	}
 }

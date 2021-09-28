@@ -13,6 +13,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
+import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
@@ -23,6 +24,7 @@ import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
+import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
@@ -34,6 +36,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TemplateEntryProcessor {
     
@@ -78,6 +81,7 @@ public class TemplateEntryProcessor {
         replacePPNotes(templateVariables);
         replacePPGene(templateVariables);
         addSequenceLengthToken(templateVariables);
+        replaceOrganismToken(templateVariables,templateProcessorResultSet);
         replaceTokens(templateVariables);
         new SectionExtractor().removeSections(template, this.templateInfo.getSections(), templateVariables);
         StringBuilderUtils.removeUnmatchedTokenLines(template);
@@ -158,16 +162,6 @@ public class TemplateEntryProcessor {
                 entry.getReferences().add(reference);
         }*/
         templateProcessorResultSet.getValidationResult().append((validationPlan.execute(entry)));
-
-        if(entry.getPrimarySourceFeature().getTaxon() != null && entry.getDescription() != null ){
-            Long taxId = entry.getPrimarySourceFeature().getTaxon().getTaxId();
-            if(taxId != null && entry.getPrimarySourceFeature().getTaxon().getScientificName() != null) {
-                String taxIdStr = String.valueOf(taxId);
-                if(entry.getDescription().getText().trim().startsWith(taxIdStr)) {
-                    entry.getDescription().setText(entry.getDescription().getText().trim().replace(taxIdStr, entry.getPrimarySourceFeature().getTaxon().getScientificName()));
-                }
-            }
-        }
         templateProcessorResultSet.setEntry(entry);
         return templateProcessorResultSet;
     }
@@ -228,6 +222,49 @@ public class TemplateEntryProcessor {
         template = new StringBuilder(template.toString().replace(TemplateProcessorConstants.PP_ORGANELLE_TOKEN, ""));
     }
 
+    /**
+     * This method replaces {ORGANISM_NAME} with valid scientificName.
+     */
+    private void replaceOrganismToken(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet) throws Exception {
+        if (!template.toString().contains(TemplateProcessorConstants.ORGANISM_TOKEN))
+            return;
+        TaxonHelper taxonHelper=new TaxonHelperImpl();
+        String scientificName="";
+        
+        for (String fieldName: templateVariables.getTokenNames()) {
+            if (StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_TOKEN)) {
+                String fieldValue = templateVariables.getTokenValue(fieldName);
+                
+                if (Utils.isValidTaxId(fieldValue)) {
+                    // Check if the passed value is a valid taxId.
+                    Taxon taxon = taxonHelper.getTaxonById(Long.valueOf(fieldValue));
+                    scientificName = taxon!=null ? taxon.getScientificName() : "";
+                }else {
+                    // Check if the passed value is a valid organismName.
+                    List<Taxon> taxonList = taxonHelper.getTaxonsByAnyName(fieldValue);
+                    List<Taxon> submittableTaxonList=taxonList.stream().filter(taxon -> taxon.isSubmittable()).collect(Collectors.toList());
+                    scientificName = !submittableTaxonList.isEmpty() ? submittableTaxonList.get(0).getScientificName() : "";
+                }
+                
+                if(StringUtils.isEmpty(scientificName)){
+                    Sample sample;
+                    if((sample = getSampleById(fieldValue)) !=null) {
+                        // Get scientificName from sample.
+                        scientificName = sample.getOrganism();
+                    }
+                }
+                
+                if(StringUtils.isEmpty(scientificName)){
+                    ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "MasterEntrySourceCheck_2", fieldValue);
+                    templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
+                }else {
+                    String delimitedKey = StringBuilderUtils.encloseToken(TemplateProcessorConstants.ORGANISM_TOKEN);
+                    template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
+                }
+            }
+        }
+    }
+    
     private void replacePPNotes(TemplateVariables templateVariables) throws Exception {
         if (!template.toString().contains(TemplateProcessorConstants.PP_NOTES_TOKEN))
             return;
@@ -439,18 +476,24 @@ public class TemplateEntryProcessor {
                  */
                 String sampleValue = tsvFieldMap.get(tsvHeader);
                 // Get sample from cache if exists. 
-                sample = sampleCache.get(sampleValue);
-                if (sample == null) {
-                    try {
-                        // Get sample using server sample retrieval service.
-                        SampleRetrievalService sampleRetrievalService = SequenceToolsServices.sampleRetrievalService();
-                        sample = sampleRetrievalService.getSample(sampleValue);
-                        sampleCache.put(sampleValue, sample);
-                    }catch (Exception serviceiException){
-                        // DO NOTHING when there is no sample
-                    }
-                }
+                sample = getSampleById(sampleValue);
                 break;
+            }
+        }
+        return sample;
+    }
+    
+    public Sample getSampleById(String sampleId){
+        // Get sample from cache if exists. 
+        Sample sample = sampleCache.get(sampleId);
+        if (sample == null) {
+            try {
+                // Get sample using server sample retrieval service.
+                SampleRetrievalService sampleRetrievalService = SequenceToolsServices.sampleRetrievalService();
+                sample = sampleRetrievalService.getSample(sampleId);
+                sampleCache.put(sampleId, sample);
+            }catch (Exception serviceiException){
+                // DO NOTHING when there is no sample
             }
         }
         return sample;

@@ -1,0 +1,43 @@
+ID   XXX; SV 1; linear; genomic DNA; STD; ROD; 340 BP.
+XX
+ST * private
+XX
+AC   ;
+XX
+AC * _1
+XX
+XX
+DE   Rattus norvegicus mitochondrion partial 16S rRNA gene, clone 24
+XX
+KW   .
+XX
+OS   Rattus norvegicus
+OC   .
+OG   Mitochondrion
+XX
+RN   [1]
+RA   CLELAND;
+RT   ;
+RL   Submitted (28-SEP-2021) to the INSDC.
+RL   , The European Bioinformatics Institute (EMBL-EBI), Wellcome Genome Campus,
+RL   CB10 1SD, United Kingdom
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..340
+FT                   /organism="Rattus norvegicus"
+FT                   /organelle="mitochondrion"
+FT                   /mol_type="genomic DNA"
+FT                   /clone="24"
+FT   rRNA            <1..>340
+FT                   /gene="16S rRNA"
+FT                   /product="16S ribosomal RNA"
+XX
+SQ   Sequence 340 BP; 136 A; 102 C; 34 G; 68 T; 0 other;
+     actacgacat actacgacat actacgacat actacgacat actacgacat actacgacat        60
+     actacgacat actacgacat actacgacat actacgacat actacgacat actacgacat       120
+     actacgacat actacgacat actacgacat actacgacat actacgacat actacgacat       180
+     actacgacat actacgacat actacgacat actacgacat actacgacat actacgacat       240
+     actacgacat actacgacat actacgacat actacgacat actacgacat actacgacat       300
+     actacgacat actacgacat actacgacat actacgacat                             340
+//
