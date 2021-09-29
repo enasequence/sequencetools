@@ -83,10 +83,8 @@ public class DivisionFix extends EntryValidationCheck {
     }
     
     private String getDivisionByTaxid(SourceFeature primarySF){
-        String division = "";
-        if(primarySF.getTaxId()!=null && getDivisionFromCache(primarySF.getTaxId().toString())!=null){
-            division = getDivisionFromCache(primarySF.getTaxId().toString());
-        }else {
+        String division = getDivisionFromCache(primarySF.getTaxId().toString());
+        if(empty(division)){
             division = new TaxonomyClientImpl().getTaxonByTaxid(primarySF.getTaxId()).getDivision();
             saveDivisionCache(primarySF.getTaxId().toString(), division);
         }
@@ -94,10 +92,8 @@ public class DivisionFix extends EntryValidationCheck {
     }
     
     private String getDivisionByScientificName(SourceFeature primarySF){
-        String division = "";
-        if(primarySF.getScientificName()!=null && getDivisionFromCache(primarySF.getScientificName())!=null){
-            division = getDivisionFromCache(primarySF.getScientificName());
-        }else {
+        String division = getDivisionFromCache(primarySF.getScientificName());;
+        if(empty(division)){
             List<Taxon> taxonList;
             if (!(taxonList = new TaxonomyClientImpl().getTaxonByScientificName(primarySF.getScientificName())).isEmpty()) {
                 division = taxonList.get(0).getDivision();
@@ -108,6 +104,9 @@ public class DivisionFix extends EntryValidationCheck {
     }
     
     private String getDivisionFromCache(String divisionKey){
+        if (divisionKey == null) {
+            return null;
+        }
         return EmblEntryValidationPlan.divisionCache.get(divisionKey)!=null ?  EmblEntryValidationPlan.divisionCache.get(divisionKey) : null;
     }
     
