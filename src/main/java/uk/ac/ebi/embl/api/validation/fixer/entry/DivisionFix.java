@@ -87,7 +87,7 @@ public class DivisionFix extends EntryValidationCheck {
         if(primarySF.getTaxId()!=null && getDivisionFromCache(primarySF.getTaxId().toString())!=null){
             division = getDivisionFromCache(primarySF.getTaxId().toString());
         }else {
-            division = new TaxonomyClientImpl().getTaxonByTaxid(Long.valueOf(primarySF.getTaxId())).getDivision();
+            division = new TaxonomyClientImpl().getTaxonByTaxid(primarySF.getTaxId()).getDivision();
             saveDivisionCache(primarySF.getTaxId().toString(), division);
         }
         return division;

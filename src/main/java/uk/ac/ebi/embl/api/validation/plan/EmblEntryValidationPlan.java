@@ -26,14 +26,17 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureLocationCheck;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.sourcefeature.ChromosomeSourceQualifierCheck;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EmblEntryValidationPlan extends ValidationPlan
 {
 	int assemblySeqnumber=1;
+	public static HashMap<String, String> divisionCache = new HashMap<>();
     
 	public EmblEntryValidationPlan(EmblEntryValidationPlanProperty planProperty)
 	{
