@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
@@ -52,22 +52,18 @@ public class DivisionFix extends EntryValidationCheck {
         if (shouldSetDivision(entry)) {
             try {
                 SourceFeature primarySF = entry.getPrimarySourceFeature();
-                TaxonomyClient taxonomyClient = new TaxonomyClientImpl();
-
+                
                 // Get division using transgenic/pseduo
                 String division = (primarySF.isTransgenic()) ? "TGN" : (null != primarySF.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME)) ? "ENV" : "";
-
+                
                 // Get division using tax_id
                 if (empty(division) && primarySF.getTaxId() != null) {
-                    division = taxonomyClient.getTaxonByTaxid(Long.valueOf(primarySF.getTaxId())).getDivision();
+                    division = getDivisionByTaxid(primarySF);
                 }
 
                 // Get division using Scientific name
                 if (empty(division) && primarySF.getScientificName() != null) {
-                    List<Taxon> taxonList;
-                    if (!(taxonList = taxonomyClient.getTaxonByScientificName(primarySF.getScientificName())).isEmpty()) {
-                        division = taxonList.get(0).getDivision();
-                    }
+                    division = getDivisionByScientificName(primarySF);
                 }
 
                 // Set division if found one.
@@ -84,6 +80,39 @@ public class DivisionFix extends EntryValidationCheck {
             }
         }
         return result;
+    }
+    
+    private String getDivisionByTaxid(SourceFeature primarySF){
+        String division = "";
+        if(primarySF.getTaxId()!=null && getDivisionFromCache(primarySF.getTaxId().toString())!=null){
+            division = getDivisionFromCache(primarySF.getTaxId().toString());
+        }else {
+            division = new TaxonomyClientImpl().getTaxonByTaxid(Long.valueOf(primarySF.getTaxId())).getDivision();
+            saveDivisionCache(primarySF.getTaxId().toString(), division);
+        }
+        return division;
+    }
+    
+    private String getDivisionByScientificName(SourceFeature primarySF){
+        String division = "";
+        if(primarySF.getScientificName()!=null && getDivisionFromCache(primarySF.getScientificName())!=null){
+            division = getDivisionFromCache(primarySF.getScientificName());
+        }else {
+            List<Taxon> taxonList;
+            if (!(taxonList = new TaxonomyClientImpl().getTaxonByScientificName(primarySF.getScientificName())).isEmpty()) {
+                division = taxonList.get(0).getDivision();
+                saveDivisionCache(primarySF.getScientificName(), division);
+            }
+        }
+        return division;
+    }
+    
+    private String getDivisionFromCache(String divisionKey){
+        return EmblEntryValidationPlan.divisionCache.get(divisionKey)!=null ?  EmblEntryValidationPlan.divisionCache.get(divisionKey) : null;
+    }
+    
+    private void saveDivisionCache(String divisionKey, String division){
+        EmblEntryValidationPlan.divisionCache.put(divisionKey, division);
     }
     
     private boolean shouldSetDivision(Entry entry){
