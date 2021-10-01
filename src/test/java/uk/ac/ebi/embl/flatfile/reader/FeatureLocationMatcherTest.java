@@ -97,34 +97,14 @@ public class FeatureLocationMatcherTest extends TestCase {
         assertTrue(location.getVersion() == 1);
     }
 
-    public void testLocationMatcher_RightPartialRemoteRangeSamePosition() {
-        featureLocationMatcher.match("J00194.1:340..>340");
-        RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
-        assertFalse(featureLocationMatcher.isLeftPartial());
-        assertTrue(featureLocationMatcher.isRightPartial());
-        assertTrue(location.getBeginPosition() == 340);
-        assertTrue(location.getEndPosition() == 340);
-        assertTrue(location.getAccession().equals("J00194"));
-        assertTrue(location.getVersion() == 1);
-    }
-
-    public void testLocationMatcher_RightPartialRemoteRangeSamePosition_AlternateSyntax() {
-        featureLocationMatcher.match("J00194.1:>340");
-        RemoteBase location = (RemoteBase) featureLocationMatcher.getLocation();
-        assertFalse(featureLocationMatcher.isLeftPartial());
-        assertTrue(featureLocationMatcher.isRightPartial());
-        assertTrue(location.getBeginPosition() == 340);
-        assertTrue(location.getEndPosition() == 340);
-        assertTrue(location.getAccession().equals("J00194"));
-        assertTrue(location.getVersion() == 1);
-    }
-
     /*
-    This test shows that it may be an issue to use <50 to represent <50..50 as they may not be semantically the same.
-    <50     is read as -> a left partial local base (THERE IS NO SUCH THING AS LEFT OR RIGHT PARTIAL BASE!)
-    <50..50 is read as -> a left partial local range (with same begin and end positions)
+    This test shows the representation difference of <50 and <50..50 in the code:
+    <50     -> read as left partial local base (despite the fact the partiality is not used in junction with base location)
+    <50..50 -> read as left partial local range
+    In both cases, the begin and end positions are the same as expected.
      */
     public void nottestLocationMatcher_LeftAndRightPartialSyntax() {
+        // local cases
         featureLocationMatcher.match("<50");
         LocalBase location1 = (LocalBase) featureLocationMatcher.getLocation(); // NOTE read as local base
         assertTrue(featureLocationMatcher.isLeftPartial());
@@ -151,6 +131,26 @@ public class FeatureLocationMatcherTest extends TestCase {
         assertTrue(featureLocationMatcher.isRightPartial());
         assertTrue(location4.getBeginPosition() == 50);
         assertTrue(location4.getEndPosition() == 50);
+
+        // remote cases
+        featureLocationMatcher = new FeatureLocationMatcher(null);
+        featureLocationMatcher.match("J00194.1:>340");
+        RemoteBase location5 = (RemoteBase) featureLocationMatcher.getLocation();
+        assertFalse(featureLocationMatcher.isLeftPartial());
+        assertTrue(featureLocationMatcher.isRightPartial());
+        assertTrue(location5.getBeginPosition() == 340);
+        assertTrue(location5.getEndPosition() == 340);
+        assertTrue(location5.getAccession().equals("J00194"));
+        assertTrue(location5.getVersion() == 1);
+
+        featureLocationMatcher.match("J00194.1:340..>340");
+        RemoteRange location6 = (RemoteRange) featureLocationMatcher.getLocation();
+        assertFalse(featureLocationMatcher.isLeftPartial());
+        assertTrue(featureLocationMatcher.isRightPartial());
+        assertTrue(location6.getBeginPosition() == 340);
+        assertTrue(location6.getEndPosition() == 340);
+        assertTrue(location6.getAccession().equals("J00194"));
+        assertTrue(location6.getVersion() == 1);
     }
 
 }

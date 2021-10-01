@@ -53,17 +53,13 @@ public class FeatureLocationMatcher extends FlatFileMatcher {
 		if (operator == null) {
 			if (accession != null) {
 				if (rightPartial)
-					location = locationFactory.createRemoteRange(accession, version, getLong(GROUP_END_POSITION), getLong(GROUP_END_POSITION));
-				else if (leftPartial)
-					location = locationFactory.createRemoteRange(accession, version, getLong(GROUP_BEGIN_POSITION), getLong(GROUP_BEGIN_POSITION));
+					location = locationFactory.createRemoteBase(accession, version, getLong(GROUP_END_POSITION));
 				else
 					location = locationFactory.createRemoteBase(accession, version, getLong(GROUP_BEGIN_POSITION));
 			}
 			else {
 				if (rightPartial)
-					location = locationFactory.createLocalRange(getLong(GROUP_END_POSITION), getLong(GROUP_END_POSITION));
-				else if (leftPartial)
-					location = locationFactory.createLocalRange(getLong(GROUP_BEGIN_POSITION), getLong(GROUP_BEGIN_POSITION));
+					location = locationFactory.createLocalBase(getLong(GROUP_END_POSITION));
 				else
 					location = locationFactory.createLocalBase(getLong(GROUP_BEGIN_POSITION));
 			}
