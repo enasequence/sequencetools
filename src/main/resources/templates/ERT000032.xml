@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000032" version="2">
     <name>trnK-matK locus</name>
     <description>For complete or partial matK gene within the chloroplast trnK gene intron.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species). Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Nicotiana tabacum, Iris caucasica subsp. turcica, Aster indicus var. pinnatifidus"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Nicotiana tabacum, Iris caucasica subsp. turcica, Aster indicus var. pinnatifidus"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
     <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="river bank, shade of deciduous trees"/>

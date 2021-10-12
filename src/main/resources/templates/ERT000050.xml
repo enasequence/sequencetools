@@ -2,7 +2,7 @@
     <name>16S-23S Intergenic Spacer Region</name>
     <forms_name>16S-23S ISR</forms_name>
     <description>For submission of the 16S-23S rRNA intergenic spacer region: the transcribed spacer between the 16S rRNA and 23S rRNA genes of rRNA operons, found in prokaryotes and organelles</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism" tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
     <token name="ENV_SAMPLE" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number" tip="DSM 5432, BALB/c"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>

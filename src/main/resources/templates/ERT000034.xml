@@ -2,7 +2,7 @@
     <name>D-Loop</name>
     <forms_name>D-Loop</forms_name>
     <description>For mitochondrial D-loop (control region) sequences. All D-loops are considered partial.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species). Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number. This is NOT the organism name." tip="DSM 5432, BALB/c"/>
     <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which these sequence belongs."/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>

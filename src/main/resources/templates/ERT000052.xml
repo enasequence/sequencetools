@@ -2,7 +2,7 @@
     <name>ssRNA(-) Viral copy RNA</name>
     <forms_name>viral cRNA</forms_name>
     <description>For complete or partial viral copy RNA (cRNA) sequences, complementary to ssRNA(-) virus genomes. Only one CDS can be added; further CDS information should be provided in the curator comments section.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of virus (ICTV-approved or otherwise). Influenza virus has special nomenclature. Please contact us if you are unsure." tip="Influenza A virus (A/chicken/Germany/1949(H10N7)), New York virus"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of virus (ICTV-approved or otherwise), BioSample accession, SRA sample accession, or sample alias. Influenza virus has special nomenclature. Please contact us if you are unsure." tip="Influenza A virus (A/chicken/Germany/1949(H10N7)), New York virus"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain. This often contains the host, sample location, collection date and unique identifier" tip="Hu/GI.1/2003/4602/Moscow/RUS"/>
     <token name="SEROTYPE" type="TEXT_FIELD" mandatory="false" display_name="Serotype/Subtype" description="Name or identifier for serotype/subtype." tip="A, H1N1"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>

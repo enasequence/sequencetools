@@ -3,7 +3,7 @@
     <forms_name>ETS Region</forms_name>
     <description>For submission of External Transcribed Spacer (ETS) regions of the eukaryotic rDNA transcript; a region often used to study intrageneric relationships.</description>
     <!-- Fundamental Information -->
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism" tip="Saccharomyces cerevisiae, Nicotiana tabacum, Mephitis mephitis"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Saccharomyces cerevisiae, Nicotiana tabacum, Mephitis mephitis"/>
     <token name="ETS_TYPE" type="TEXT_CHOICE_FIELD" cv_name="ETS_type" mandatory="true" display_name="ETS type" description="Which ETS has been sequenced, the 5' ETS (upstream of 18S rRNA) or the 3' ETS (downstream of 26/28S rRNA)?" tip="5', 3'"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample that has been sequenced" tip="isolate#3, 654g14"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>

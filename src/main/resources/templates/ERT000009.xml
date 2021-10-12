@@ -2,7 +2,7 @@
     <name>ITS rDNA</name>
     <forms_name>ITS region</forms_name>
     <description>For ITS rDNA region. This checklist allows generic annotation of the ITS components (18S rRNA, ITS1, 5.8S rRNA, ITS2 and 28S rRNA). For annotation of the rRNA component only, please use the rRNA gene checklist.</description>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism." tip="uncultured mycorrhizal fungus, Allomyces javanicus, Glomus sp. 123"/>
+    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="uncultured mycorrhizal fungus, Allomyces javanicus, Glomus sp. 123"/>
     <token name="ENVSAM" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number." tip="DSM 5432, BALB/c"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>

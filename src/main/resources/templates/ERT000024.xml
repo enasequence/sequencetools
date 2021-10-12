@@ -3,7 +3,7 @@
     <forms_name>GSS</forms_name>
     <description>For submission of Genome Survey Sequences (GSS). These are short DNA sequences which inlude: random single pass genome survey sequences, single pass reads from cosmid/BAC/YAC ends (may be chromosome specific), exon trapped genomic sequences, Alu PCR sequences and transposon-tagged sequences.</description>
     <!-- Fundamental Information -->
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism" tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample that has been sequenced" tip="isolate#3, 654g14"/>
     <token name="CLONE_LIB" type="TEXT_FIELD" mandatory="true" display_name="Clone library" description="Name given to the sequenced clone library" tip="meristem, lib1"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="true" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>

@@ -4,7 +4,7 @@
     <description>For submission of Sanger-sequenced Expressed Sequence Tags (ESTs). ESTs are short transcripts ~500-800bp long usually of low quality as they are the result of only single pass reads. No feature annotation is recorded on ESTs.</description>
     <comment>For EST sequences, EMBL-bank requires additional source information, other than the organism name. Please provide as much detail as possible by selecting at least one relevant field below (e.g., tissue type, development stage)</comment>
     <token name="COMMENTS" type="TEXT_AREA_FIELD" mandatory="true" display_name="Experimental details" description="Please provide a brief experimental overview including library construction details. This will appear in a CC line."/>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism." tip="Mus musculus, Drosophila melanogaster, Homo sapiens"/>
+    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Mus musculus, Drosophila melanogaster, Homo sapiens"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number." tip="DSM 5432, BALB/c"/>
     <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which these sequence belongs."/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="true" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>

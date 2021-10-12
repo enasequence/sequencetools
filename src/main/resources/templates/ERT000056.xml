@@ -2,7 +2,7 @@
     <name>Mobile Element</name>
     <forms_name>Mobile Element</forms_name>
     <description>For the submission of a single complete or partial mobile element. This checklist captures the mobile element feature but does not allow for granular annotation of component parts, such as coding regions, repeat regions and miscellaneous features within the mobile element itself. If precise annotation or translation is required, please use an alternative submission route.</description>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species). Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
+    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
     <token name="ENVSAM" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number. This is NOT the organism name." tip="DSM 5432, BALB/c"/>
     <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which the sequence belongs."/>
@@ -76,59 +76,59 @@
     <section name="PF2_SCT" mandatory="PFSEQ2"/>
     <section name="PR2_SCT" mandatory="PRSEQ2"/>
     <template_string>
-        ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
-        XX
-        ST * {STATUS}
-        XX
-        AC   ;
-        XX
-        DE   {ORGANISM}{{ORGANDE_SCT}} {PP_ORGANELLE}{{/ORGANDE_SCT}} {{5PARTIAL_SCT}}partial {{/5PARTIAL_SCT}}{MOBNAME} {MOBTYPE}{{BREED_SCT}}, breed {BREED}{{/BREED_SCT}}{{CULT_SCT}}, cultivar {CULTIVAR}{{/CULT_SCT}}{{HAPLO_SCT}}, haplotype {HAPLOTYPE}{{/HAPLO_SCT}}{{STRAIN_SCT}}, strain {STRAIN}{{/STRAIN_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPECVOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
-        XX
-        KW   .
-        XX
-        OS
-        OC   .
-        XX
-        {CITATIONS}
-        FH   Key             Location/Qualifiers
-        FH
-        FT   source          1..{SEQUENCE_LENGTH}
-        FT                   /organism="{ORGANISM}"
-        FT                   /mol_type="genomic DNA"
-        FT                   /organelle="{ORGANELLE}"
-        FT                   /strain="{STRAIN}"
-        FT                   /clone="{CLONE}"
-        FT                   /isolate="{ISOLATE}"
-        FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
-        FT                   /lat_lon="{LATLON}"
-        FT                   /note="breed:{BREED}"
+ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM}{{ORGANDE_SCT}} {PP_ORGANELLE}{{/ORGANDE_SCT}} {{5PARTIAL_SCT}}partial {{/5PARTIAL_SCT}}{MOBNAME} {MOBTYPE}{{BREED_SCT}}, breed {BREED}{{/BREED_SCT}}{{CULT_SCT}}, cultivar {CULTIVAR}{{/CULT_SCT}}{{HAPLO_SCT}}, haplotype {HAPLOTYPE}{{/HAPLO_SCT}}{{STRAIN_SCT}}, strain {STRAIN}{{/STRAIN_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPECVOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
+XX
+KW   .
+XX
+OS
+OC   .
+XX
+{CITATIONS}
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism="{ORGANISM}"
+FT                   /mol_type="genomic DNA"
+FT                   /organelle="{ORGANELLE}"
+FT                   /strain="{STRAIN}"
+FT                   /clone="{CLONE}"
+FT                   /isolate="{ISOLATE}"
+FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
+FT                   /lat_lon="{LATLON}"
+FT                   /note="breed:{BREED}"
         {{ENV_SCT}}
-        FT                   /environmental_sample
+FT                   /environmental_sample
         {{/ENV_SCT}}
-        FT                   /sex="{SEX}"
-        FT                   /mating_type="{MATTYPE}"
-        FT                   /isolation_source="{ISOSOURCE}"
-        FT                   /collection_date="{COLDATE}"
-        FT                   /collected_by="{COLBY}"
-        FT                   /culture_collection="{CULTCOLL}"
-        FT                   /specimen_voucher="{SPECVOUCH}"
-        FT                   /bio_material="{BIOMAT}"
-        FT                   /cultivar="{CULTIVAR}"
-        FT                   /variety="{VARIETY}"
-        FT                   /ecotype="{ECOTYPE}"
-        FT                   /haplotype="{HAPLOTYPE}"
-        FT                   /dev_stage="{DEVSTAGE}"
-        FT                   /cell_type="{CELLTYPE}"
-        FT                   /tissue_type="{TISSUE}"
-        FT                   /host="{HOST}"
-        FT                   /lab_host="{LABHOST}"
-        FT                   /PCR_primers="{{PFNAME1_SCT}}fwd_name: {PFNAME1}, {{/PFNAME1_SCT}}fwd_seq: {PFSEQ1}, {{PF2_SCT}}{{PFNAME2_SCT}}fwd_name: {PFNAME2}, {{/PFNAME2_SCT}}{{PFSEQ2_SCT}}fwd_seq: {PFSEQ2}, {{/PFSEQ2_SCT}}{{/PF2_SCT}}{{PRNAME1_SCT}}rev_name: {PRNAME1}, {{/PRNAME1_SCT}}rev_seq: {PRSEQ1}{{PR2_SCT}}{{PRNAME2_SCT}}, rev_name: {PRNAME2}{{/PRNAME2_SCT}}{{PRSEQ2_SCT}}, rev_seq: {PRSEQ2}{{/PRSEQ2_SCT}}{{/PR2_SCT}}"
-        FT   mobile_element  {{5PARTIAL_SCT}}<![CDATA[<]]>{{/5PARTIAL_SCT}}{5MOB}..{{3PARTIAL_SCT}}<![CDATA[>]]>{{/3PARTIAL_SCT}}{3MOB}
-        FT                   /mobile_element_type="{MOBTYPE}:{MOBNAME}"
-        FT                   /rpt_family="{REPFAM}"
-        FT                   /note="{MOBNOTES}"
-        XX
-        {SEQUENCE}
-        //
+FT                   /sex="{SEX}"
+FT                   /mating_type="{MATTYPE}"
+FT                   /isolation_source="{ISOSOURCE}"
+FT                   /collection_date="{COLDATE}"
+FT                   /collected_by="{COLBY}"
+FT                   /culture_collection="{CULTCOLL}"
+FT                   /specimen_voucher="{SPECVOUCH}"
+FT                   /bio_material="{BIOMAT}"
+FT                   /cultivar="{CULTIVAR}"
+FT                   /variety="{VARIETY}"
+FT                   /ecotype="{ECOTYPE}"
+FT                   /haplotype="{HAPLOTYPE}"
+FT                   /dev_stage="{DEVSTAGE}"
+FT                   /cell_type="{CELLTYPE}"
+FT                   /tissue_type="{TISSUE}"
+FT                   /host="{HOST}"
+FT                   /lab_host="{LABHOST}"
+FT                   /PCR_primers="{{PFNAME1_SCT}}fwd_name: {PFNAME1}, {{/PFNAME1_SCT}}fwd_seq: {PFSEQ1}, {{PF2_SCT}}{{PFNAME2_SCT}}fwd_name: {PFNAME2}, {{/PFNAME2_SCT}}{{PFSEQ2_SCT}}fwd_seq: {PFSEQ2}, {{/PFSEQ2_SCT}}{{/PF2_SCT}}{{PRNAME1_SCT}}rev_name: {PRNAME1}, {{/PRNAME1_SCT}}rev_seq: {PRSEQ1}{{PR2_SCT}}{{PRNAME2_SCT}}, rev_name: {PRNAME2}{{/PRNAME2_SCT}}{{PRSEQ2_SCT}}, rev_seq: {PRSEQ2}{{/PRSEQ2_SCT}}{{/PR2_SCT}}"
+FT   mobile_element  {{5PARTIAL_SCT}}<![CDATA[<]]>{{/5PARTIAL_SCT}}{5MOB}..{{3PARTIAL_SCT}}<![CDATA[>]]>{{/3PARTIAL_SCT}}{3MOB}
+FT                   /mobile_element_type="{MOBTYPE}:{MOBNAME}"
+FT                   /rpt_family="{REPFAM}"
+FT                   /note="{MOBNOTES}"
+XX
+{SEQUENCE} 
+//
     </template_string><![CDATA[For the submission of a single complete or partial mobile element. This checklist captures the mobile element feature but does not allow for granular annotation of component parts, such as coding regions, repeat regions and miscellaneous features within the mobile element itself. If precise annotation or translation is required, please use an alternative submission route.]]><example_string/>
 </template>

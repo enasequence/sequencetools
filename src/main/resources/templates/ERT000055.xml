@@ -3,7 +3,7 @@
     <forms_name>STS</forms_name>
     <description>For submission of Sequence Tagged Sites (STS). The Sequence Tagged Site (STS) is a relatively short, easily PCR-amplified sequence (200 to 500 bp) which can be specifically amplified by PCR and detected in the presence of all other genomic sequences and whose location in the genome is mapped.</description>
     <!-- Fundamental Information -->
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism" tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample that has been sequenced" tip="isolate#3, 654g14"/>
     <token name="STD_NAME" type="TEXT_FIELD" mandatory="true" display_name="Marker name" description="Name given to the STS marker" tip="fragment12, HsapiensSTS265"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="true" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>

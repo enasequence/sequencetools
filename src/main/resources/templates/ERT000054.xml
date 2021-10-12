@@ -3,7 +3,7 @@
     <forms_name>Promoter</forms_name>
     <description>For submission of uni- or bi-directional gene promoter regions. Please note that CDS is not annotated.</description>
     <!-- Fundamental Information -->
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism" tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Escherichia coli, uncultured bacterium, Nicotiana tabacum"/>
     <token name="BI_PROM" type="BOOLEAN_FIELD" mandatory="true" display_name="Is this a bidirectional promoter?" description="Question to ascertain whether the promoter acts on multiple genes. If this is not known, please select NO" tip="yes, no"/>
     <token name="PROM_5'" type="TEXT_FIELD" mandatory="true" display_name="Promoter 5' end coordinate" description="The (approximate) coordinate of the 5' end of the promoter within the submitted sequence" tip="1"/>
     <token name="PROM_3'" type="TEXT_FIELD" mandatory="true" display_name="Promoter 3' end coordinate" description="The (approximate) coordinate of the 3' end of the promoter within the submitted sequence" tip="250"/>

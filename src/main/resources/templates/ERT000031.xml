@@ -2,7 +2,7 @@
     <name>Plant Viroid</name>
     <forms_name>Viroid</forms_name>
     <description>For complete circular ssRNA plant viroid sequences. Please do not use for other circular viruses.</description>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of the viroid (ICTV-approved or otherwise). Please contact us if you are unsure." tip="Apple scar skin viroid, Potato spindle tuber viroid"/>
+    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of the viroid (ICTV-approved or otherwise), BioSample accession, SRA sample accession, or sample alias. Please contact us if you are unsure." tip="Apple scar skin viroid, Potato spindle tuber viroid"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample/viroid that has been sequenced." tip="Pakistan-5"/>
     <token name="ISOSOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="apple orchard, host plant leaf tissue"/>

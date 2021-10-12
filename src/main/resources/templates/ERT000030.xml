@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000030" version="3">
     <name>MHC gene 1 exon</name>
     <description>For partial MHC class I or II antigens containing one exon ONLY.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species). Formal names should include subspecies (subsp.) if applicable." tip="Homo sapiens,Macaca mulatta,Ovis aries"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.) if applicable." tip="Homo sapiens,Macaca mulatta,Ovis aries"/>
     <token name="CHROMOSOME" type="TEXT_FIELD" mandatory="false" display_name="chromosome" description="Chromosome from which the sequence was obtained." tip="6"/>
     <token name="MAP" type="TEXT_FIELD" mandatory="false" display_name="map" description="Genomic map position of the submitted sequence." tip="8q12-q13"/>
     <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="haplotype" description="Name for a combination of alleles that are linked together on the same physical chromosome." tip="Dw3 B5 Cw1 A1"/>

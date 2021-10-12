@@ -2,7 +2,7 @@
     <name>Betasatellite sub-viral particle</name>
     <forms_name>Betasatellite</forms_name>
     <description>For submission of circular single stranded DNA betasatellite sequences of the Begomovirus genus.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of sub-viral particle (ICTV-approved or otherwise)" tip="Cotton leaf curl Multan betasatellite"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of sub-viral particle (ICTV-approved or otherwise), BioSample accession, SRA sample accession, or sample alias." tip="Cotton leaf curl Multan betasatellite"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="true" display_name="Isolate name" description="Name given to the sample that has been sequenced." tip="Pakistan-5"/>
     <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="true" display_name="Isolation source" description="Physical source of sample, usually host leaf" tip="host leaf"/>

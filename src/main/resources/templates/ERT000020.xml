@@ -2,7 +2,7 @@
     <name>COI gene</name>
     <forms_name>COI gene</forms_name>
     <description>For mitochondrial cytochrome oxidase subunit 1 genes.</description>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism." tip="Mus musculus, Drosophila melanogaster, Homo sapiens"/>
+    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Formal taxonomic name of organism, BioSample accession, SRA sample accession, or sample alias." tip="Mus musculus, Drosophila melanogaster, Homo sapiens"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number." tip="DSM 5432, BALB/c"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the environmental isolate that has been sequenced." tip="isolate#3, 654g14"/>
