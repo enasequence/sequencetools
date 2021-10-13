@@ -1,72 +1,73 @@
-<?xml version = '1.0' encoding = 'UTF-8'?><template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jweb-1a.ebi.ac.uk:21040/embl/genomes/submission/template.xsd" id="ERT000058" version="1">
-    <name>Multi-Locus Marker</name>
-    <forms_name>Multi-Locus Marker</forms_name>
-    <description>For the submission of multi-locus markers (e.g., tRNA + CDS + rRNA) from in vivo gemomic DNA. This checklist provides a simple submission process for organellar or nuclear regions containing multiple genes. For example, a region containing coding genes, rRNA genes and tRNA genes. Please note that individual feature annotation is not possible with this checklist.</description>
-    <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
-    <token name="ENVSAM" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
-    <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number. This is NOT the organism name." tip="DSM 5432, BALB/c"/>
-    <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which these sequence belongs."/>
-    <token name="REGION" type="TEXT_FIELD" mandatory="true" display_name="Region Name" description="The gene names within the submitted region. We will automatically append the word *region* to this." tip="cox1-trnL-cox2, cytb-trnT"/>
-    <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
-    <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
-    <token name="ISOSOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="fast-flowing river, microbial mat"/>
-    <token name="ORGANELLE" type="TEXT_CHOICE_FIELD" cv_name="organelle" mandatory="false" display_name="Organelle" description="Mandatory if a sequence originates from an intracellular structure other than nucleus." tip="mitochondrion, chloroplast, plastid"/>
-    <token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="Name of cultivated variety (plants only). Should not be included within the organism name." tip="Ixtapa, Maris Piper"/>
-    <token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety (varietas)" description="Officially recognised variety (mainly plants and fungi). Generally included in the organism name too, e.g., Amanita muscaria var. alba." tip="albiflorus, minor"/>
-    <token name="ECOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Ecotype" description="A population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat. Commonly applied to Arabidopsis thaliana stocks." tip="Columbia"/>
-    <token name="BREED" type="TEXT_FIELD" mandatory="false" display_name="Breed" description="Name of genetically-modified or artifically-selected for animal (farm animals, domesticated animals etc.)" tip="Large White, Berkshire"/>
-    <token name="CULTCOLL" type="TEXT_FIELD" mandatory="false" display_name="Culture collection" description="Reference to a live microbial or fungal culture or cell line in a curated culture collection see http://www.ebi.ac.uk/ena/WebFeat/qualifiers/culture_collection.html" tip="ATCC:26370"/>
-    <token name="SPECVOUCH" type="TEXT_FIELD" mandatory="false" display_name="Specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
-    <token name="BIOMAT" type="TEXT_FIELD" mandatory="false" display_name="Biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Culture Collection or Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
-    <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
-    <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridge, Bordeaux, North Altantic Ridge"/>
-    <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
-    <token name="LATLON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places.)" tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
-    <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
-    <token name="COLBY" type="TEXT_FIELD" mandatory="false" display_name="Collected by" description="Collector(s) of the sample."/>
-    <token name="SEX" type="TEXT_FIELD" mandatory="false" display_name="Sex of organism" description="Sex of organism sequence." tip="male, female, mixed"/>
-    <token name="MATTYPE" type="TEXT_FIELD" mandatory="false" display_name="Mating type" description="Mating type of prokaryotes and eukaryotes that undergo meiosis without sexually dimorphic gametes." tip="plus, minus"/>
-    <token name="TISSUE" type="TEXT_FIELD" mandatory="false" display_name="Tissue type" description="The tissue type from which the DNA was extracted." tip="liver, whole organism, blood"/>
-    <token name="DEVSTAGE" type="TEXT_FIELD" mandatory="false" display_name="Development stage" description="Developmental stage of the organism, either a named stage, or a measurement of time." tip="fourth instar larva, 3 day old, blastula"/>
-    <token name="CELLTYPE" type="TEXT_FIELD" mandatory="false" display_name="Cell type" description="Cell type (in a multicellular organism) from which sequence was generated." tip="CD4+ lymphocyte, palisade cell"/>
-    <token name="HOST" type="TEXT_FIELD" mandatory="false" display_name="Natural host" description="The natural host of the organism from which the sequenced material was taken." tip="Bos taurus"/>
-    <token name="LABHOST" type="TEXT_FIELD" mandatory="false" display_name="Laboratory host" description="The laboratory host of the organism from which the sequenced material was taken." tip="Mus musculus"/>
-    <token name="PFNAME1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer name" description="Name of the forward direction PCR primer."/>
-    <token name="PRNAME1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer name" description="Name of the reverse direction PCR primer."/>
-    <token name="PFSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="PRSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="PFNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
-    <token name="PRNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
-    <token name="PFSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="PRSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" variable_only="true" description="Nucleotide sequence that has been generated."/>
-    <token_group name="Basic Details" mandatory="true" contains="ORGANISM,ENVSAM,ORGANELLE,STRAIN,HAPLOTYPE,REGION,CLONE,ISOLATE,ISOSOURCE" description="Mandatory template-specific questions and basic source organism details."/>
-    <token_group name="Further taxonomy" mandatory="false" contains="CULTIVAR,VARIETY,ECOTYPE,BREED" description="Further taxonomic and phenotypic details (cultivar, variety, ecotype, breed.)"/>
-    <token_group name="Repository Data" mandatory="false" contains="CULTCOLL,SPECVOUCH,BIOMAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials.)"/>
-    <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LATLON" description="Geographic information about the source of the organism."/>
-    <token_group name="Further Sample Data" mandatory="false" contains="COLDATE,COLBY,SEX,MATTYPE,TISSUE,DEVSTAGE,CELLTYPE,HOST,LABHOST" description="Further information relating to the organism and its host (if applicable.)"/>
-    <token_group name="PCR Primers" mandatory="false" contains="PFNAME1,PFSEQ1,PRNAME1,PRSEQ1,PFNAME2,PFSEQ2,PRNAME2,PRSEQ2" description="Details of the PCR primers used."/>
-    <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
-    <section name="CLONE_SCT" mandatory="CLONE"/>
-    <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
-    <section name="STRAIN_SCT" mandatory="STRAIN"/>
-    <section name="ENV_SCT" mandatory="ENVSAM"/>
-    <section name="CULT_SCT" mandatory="CULTIVAR"/>
-    <section name="BREED_SCT" mandatory="BREED"/>
-    <section name="HAPLO_SCT" mandatory="HAPLOTYPE"/>
-    <section name="SPECVOUCH_SCT" mandatory="SPECVOUCH"/>
-    <section name="AREA_SCT" mandatory="AREA"/>
-    <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
-    <section name="ORGANDE_SCT" mandatory="ORGANELLE"/>
-    <section name="PFNAME1_SCT" mandatory="PFNAME1"/>
-    <section name="PRNAME1_SCT" mandatory="PRNAME1"/>
-    <section name="PFNAME2_SCT" mandatory="PFNAME2"/>
-    <section name="PRNAME2_SCT" mandatory="PRNAME2"/>
-    <section name="PFSEQ2_SCT" mandatory="PFSEQ2"/>
-    <section name="PRSEQ2_SCT" mandatory="PRSEQ2"/>
-    <section name="PF2_SCT" mandatory="PFSEQ2"/>
-    <section name="PR2_SCT" mandatory="PRSEQ2"/>
-    <template_string><![CDATA[ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jweb-1a.ebi.ac.uk:21040/embl/genomes/submission/template.xsd" id="ERT000058" version="1">
+  <name>Multi-Locus Marker</name>
+  <forms_name>Multi-Locus Marker</forms_name>
+  <description>For the submission of multi-locus markers (e.g., tRNA + CDS + rRNA) from in vivo gemomic DNA. This checklist provides a simple submission process for organellar or nuclear regions containing multiple genes. For example, a region containing coding genes, rRNA genes and tRNA genes. Please note that individual feature annotation is not possible with this checklist.</description>
+  <token name="ORGANISM" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), NCBI taxid, BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
+  <token name="ENVSAM" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
+  <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number. This is NOT the organism name." tip="DSM 5432, BALB/c"/>
+  <token name="HAPLOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Haplotype" description="The haplotype designation to which these sequence belongs."/>
+  <token name="REGION" type="TEXT_FIELD" mandatory="true" display_name="Region Name" description="The gene names within the submitted region. We will automatically append the word *region* to this." tip="cox1-trnL-cox2, cytb-trnT"/>
+  <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+  <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
+  <token name="ISOSOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="fast-flowing river, microbial mat"/>
+  <token name="ORGANELLE" type="TEXT_CHOICE_FIELD" cv_name="organelle" mandatory="false" display_name="Organelle" description="Mandatory if a sequence originates from an intracellular structure other than nucleus." tip="mitochondrion, chloroplast, plastid"/>
+  <token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="Name of cultivated variety (plants only). Should not be included within the organism name." tip="Ixtapa, Maris Piper"/>
+  <token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety (varietas)" description="Officially recognised variety (mainly plants and fungi). Generally included in the organism name too, e.g., Amanita muscaria var. alba." tip="albiflorus, minor"/>
+  <token name="ECOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Ecotype" description="A population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat. Commonly applied to Arabidopsis thaliana stocks." tip="Columbia"/>
+  <token name="BREED" type="TEXT_FIELD" mandatory="false" display_name="Breed" description="Name of genetically-modified or artifically-selected for animal (farm animals, domesticated animals etc.)" tip="Large White, Berkshire"/>
+  <token name="CULTCOLL" type="TEXT_FIELD" mandatory="false" display_name="Culture collection" description="Reference to a live microbial or fungal culture or cell line in a curated culture collection see http://www.ebi.ac.uk/ena/WebFeat/qualifiers/culture_collection.html" tip="ATCC:26370"/>
+  <token name="SPECVOUCH" type="TEXT_FIELD" mandatory="false" display_name="Specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
+  <token name="BIOMAT" type="TEXT_FIELD" mandatory="false" display_name="Biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Culture Collection or Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
+  <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
+  <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridge, Bordeaux, North Altantic Ridge"/>
+  <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
+  <token name="LATLON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places.)" tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
+  <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
+  <token name="COLBY" type="TEXT_FIELD" mandatory="false" display_name="Collected by" description="Collector(s) of the sample."/>
+  <token name="SEX" type="TEXT_FIELD" mandatory="false" display_name="Sex of organism" description="Sex of organism sequence." tip="male, female, mixed"/>
+  <token name="MATTYPE" type="TEXT_FIELD" mandatory="false" display_name="Mating type" description="Mating type of prokaryotes and eukaryotes that undergo meiosis without sexually dimorphic gametes." tip="plus, minus"/>
+  <token name="TISSUE" type="TEXT_FIELD" mandatory="false" display_name="Tissue type" description="The tissue type from which the DNA was extracted." tip="liver, whole organism, blood"/>
+  <token name="DEVSTAGE" type="TEXT_FIELD" mandatory="false" display_name="Development stage" description="Developmental stage of the organism, either a named stage, or a measurement of time." tip="fourth instar larva, 3 day old, blastula"/>
+  <token name="CELLTYPE" type="TEXT_FIELD" mandatory="false" display_name="Cell type" description="Cell type (in a multicellular organism) from which sequence was generated." tip="CD4+ lymphocyte, palisade cell"/>
+  <token name="HOST" type="TEXT_FIELD" mandatory="false" display_name="Natural host" description="The natural host of the organism from which the sequenced material was taken." tip="Bos taurus"/>
+  <token name="LABHOST" type="TEXT_FIELD" mandatory="false" display_name="Laboratory host" description="The laboratory host of the organism from which the sequenced material was taken." tip="Mus musculus"/>
+  <token name="PFNAME1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer name" description="Name of the forward direction PCR primer."/>
+  <token name="PRNAME1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer name" description="Name of the reverse direction PCR primer."/>
+  <token name="PFSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="PRSEQ1" type="TEXT_FIELD" mandatory="false" display_name="Reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="PFNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
+  <token name="PRNAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
+  <token name="PFSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="PRSEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" variable_only="true" description="Nucleotide sequence that has been generated."/>
+  <token_group name="Basic Details" mandatory="true" contains="ORGANISM,ENVSAM,ORGANELLE,STRAIN,HAPLOTYPE,REGION,CLONE,ISOLATE,ISOSOURCE" description="Mandatory template-specific questions and basic source organism details."/>
+  <token_group name="Further taxonomy" mandatory="false" contains="CULTIVAR,VARIETY,ECOTYPE,BREED" description="Further taxonomic and phenotypic details (cultivar, variety, ecotype, breed.)"/>
+  <token_group name="Repository Data" mandatory="false" contains="CULTCOLL,SPECVOUCH,BIOMAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials.)"/>
+  <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LATLON" description="Geographic information about the source of the organism."/>
+  <token_group name="Further Sample Data" mandatory="false" contains="COLDATE,COLBY,SEX,MATTYPE,TISSUE,DEVSTAGE,CELLTYPE,HOST,LABHOST" description="Further information relating to the organism and its host (if applicable.)"/>
+  <token_group name="PCR Primers" mandatory="false" contains="PFNAME1,PFSEQ1,PRNAME1,PRSEQ1,PFNAME2,PFSEQ2,PRNAME2,PRSEQ2" description="Details of the PCR primers used."/>
+  <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
+  <section name="CLONE_SCT" mandatory="CLONE"/>
+  <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+  <section name="STRAIN_SCT" mandatory="STRAIN"/>
+  <section name="ENV_SCT" mandatory="ENVSAM"/>
+  <section name="CULT_SCT" mandatory="CULTIVAR"/>
+  <section name="BREED_SCT" mandatory="BREED"/>
+  <section name="HAPLO_SCT" mandatory="HAPLOTYPE"/>
+  <section name="SPECVOUCH_SCT" mandatory="SPECVOUCH"/>
+  <section name="AREA_SCT" mandatory="AREA"/>
+  <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
+  <section name="ORGANDE_SCT" mandatory="ORGANELLE"/>
+  <section name="PFNAME1_SCT" mandatory="PFNAME1"/>
+  <section name="PRNAME1_SCT" mandatory="PRNAME1"/>
+  <section name="PFNAME2_SCT" mandatory="PFNAME2"/>
+  <section name="PRNAME2_SCT" mandatory="PRNAME2"/>
+  <section name="PFSEQ2_SCT" mandatory="PFSEQ2"/>
+  <section name="PRSEQ2_SCT" mandatory="PRSEQ2"/>
+  <section name="PF2_SCT" mandatory="PFSEQ2"/>
+  <section name="PR2_SCT" mandatory="PRSEQ2"/>
+  <template_string><![CDATA[ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
 XX
 ST * {STATUS}
 XX
@@ -76,7 +77,7 @@ DE   {ORGANISM}{{ORGANDE_SCT}} {PP_ORGANELLE}{{/ORGANDE_SCT}} genomic DNA contai
 XX
 KW   .
 XX
-OS
+OS   
 OC   .
 XX
 {CITATIONS}
@@ -106,7 +107,7 @@ FT                   /bio_material="{BIOMAT}"
 FT                   /cultivar="{CULTIVAR}"
 FT                   /variety="{VARIETY}"
 FT                   /ecotype="{ECOTYPE}"
-FT                   /haplotype="{HAPLOTYPE}"
+FT                   /haplotype="{HAPLOTYPE}"                  
 FT                   /dev_stage="{DEVSTAGE}"
 FT                   /cell_type="{CELLTYPE}"
 FT                   /tissue_type="{TISSUE}"
@@ -117,5 +118,6 @@ FT   misc_feature    <1..>{SEQUENCE_LENGTH}
 FT                   /note="genomic DNA containing {REGION} region"
 FT                   /note="gene boundaries, coding regions and loci partiality not recorded"
 XX
-{SEQUENCE}//]]></template_string><![CDATA[For the submission of marker sequences containing multiple gene features. For example, mitochondrial markers where the regoin contains coding genes, rRNA genes and tRNA genes. This template does not allow for individual feature annotation but keeps the gene name information within a misc_feature, thereby simplifying the submission process. If you wish to submit annotation of individual features and/or obtain translations for coding genes, please use an alternative submission route.]]><example_string/>
+{SEQUENCE}//]]></template_string><![CDATA[For the submission of marker sequences containing multiple gene features. For example, mitochondrial markers where the regoin contains coding genes, rRNA genes and tRNA genes. This template does not allow for individual feature annotation but keeps the gene name information within a misc_feature, thereby simplifying the submission process. If you wish to submit annotation of individual features and/or obtain translations for coding genes, please use an alternative submission route.]]>
+  <example_string/>
 </template>

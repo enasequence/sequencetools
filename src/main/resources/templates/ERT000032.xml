@@ -1,112 +1,114 @@
-<?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000032" version="2">
-    <name>trnK-matK locus</name>
-    <description>For complete or partial matK gene within the chloroplast trnK gene intron.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Nicotiana tabacum, Iris caucasica subsp. turcica, Aster indicus var. pinnatifidus"/>
-    <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
-    <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
-    <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="river bank, shade of deciduous trees"/>
-    <token name="SUBSPECIES" type="TEXT_FIELD" mandatory="false" display_name="Subspecies" description="Name of subspecies of a plant. Should be included within the organism name as well." tip="turcica"/>
-    <token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="Name of cultivated variety of a plant. Should not be included within the organism name." tip="Ixtapa, Maris Piper"/>
-    <token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety (varietas)" description="Officially recognised variety of a plant approved by the Botanical Code. Generally included in the organism name too, e.g., Amanita muscaria var. alba." tip="alba, pinnatifidus"/>
-    <token name="ECOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Ecotype" description="A population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat. Commonly applied to Arabidopsis thaliana stocks." tip="Columbia"/>
-    <token name="SPEC_VOUCH" type="TEXT_FIELD" mandatory="false" display_name="Specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
-    <token name="BIO_MAT" type="TEXT_FIELD" mandatory="false" display_name="Biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
-    <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
-    <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux"/>
-    <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
-    <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
-    <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
-    <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collected by" description="A name of the person who collected the original sample/specimen." tip="J. Brown"/>
-    <token name="TISSUE" type="TEXT_FIELD" mandatory="false" display_name="Tissue type" description="The tissue type from which the DNA was extracted." tip="leaf, whole organism"/>
-    <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
-    <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
-    <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="FWD_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
-    <token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
-    <token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="INFERTYPE" type="TEXT_CHOICE_FIELD" cv_name="inference_type" mandatory="false" display_name="inference type" description="Type of non-experimental evidence that supports the feature identification. Must have the field Inference Accession selected." tip="similar to DNA sequence"/>
-    <token name="INFER_ACC" type="TEXT_FIELD" mandatory="false" display_name="inference accession" description="A reference to a database entry, must contain an accession and version, or an algorithm including version. Must have the field Inference Type selected." tip="FM123456.1"/>
-    <token name="EXPERIMENT" type="TEXT_FIELD" mandatory="false" display_name="experiment" description="Brief description of the nature of the experimental evidence that supports the feature." tip="Northern blot"/>
-    <token name="5'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="5' CDS location" description="Start of the matK coding region relative to the submitted sequence. For a full length CDS this is the position of the first base of the start codon." tip=""/>
-    <token name="3'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="3' CDS location" description="End of the matK coding region relative to the submitted sequence. For a full length CDS this is the position of the last base of the stop codon." tip=""/>
-    <token name="CODONSTART" type="TEXT_CHOICE_FIELD" cv_name="reading_frame" mandatory="false" display_name="Reading Frame" description="Mandatory if your CDS is 5' partial as it defines the reading frame. Location of the first base of the first fully-encoded amino acid." tip="1,2 or 3"/>
-    <token name="5'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 5' ? (yes/no)" description="For an incomplete CDS with the start codon upstream of the submitted sequence."/>
-    <token name="3'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 3' ? (yes/no)" description="For an incomplete CDS with the stop codon downstream of the submitted sequence."/>
-    <token name="INTRON" type="BOOLEAN_FIELD" mandatory="true" display_name="trnK intron present?" description="For 5' or 3' flanking region of the trnK gene intron being present in the submitted sequence." tip=""/>
-    <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
-    <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,5'_CDS,3'_CDS,5'_PARTIAL,3'_PARTIAL,CODONSTART,INTRON" description="Mandatory template-specific fields and questions."/>
-    <token_group name="Basic Details" mandatory="false" contains="CLONE,ISOLATE,TISSUE" description="Basic sample details."/>
-    <token_group name="Further taxonomy" mandatory="false" contains="SUBSPECIES,CULTIVAR,VARIETY,ECOTYPE" description="Further taxonomic and phenotypic details (cultivar, variety, ecotype, breed)."/>
-    <token_group name="Repository Data" mandatory="false" contains="SPEC_VOUCH,BIO_MAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials)."/>
-    <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
-    <token_group name="Further Sample Data" mandatory="false" contains="ISOLATION_SOURCE,COLDATE,COL_BY" description="Further information relating to the organism."/>
-    <token_group name="Supporting evidence" mandatory="false" contains="INFERTYPE,INFER_ACC,EXPERIMENT" description="Additional info supporting identity of the sequenced matK gene region."/>
-    <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1,FWD_NAME2,FWD_SEQ2,REV_NAME2,REV_SEQ2" description="Details of the PCR primers used."/>
-    <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
-    <section name="PARTIAL_5_SCT" mandatory="5'_PARTIAL"/>
-    <section name="PARTIAL_3_SCT" mandatory="3'_PARTIAL"/>
-    <section name="CULT_SCT" mandatory="CULTIVAR"/>
-    <section name="CLONE_SCT" mandatory="CLONE"/>
-    <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
-    <section name="SPECVOUCH_SCT" mandatory="SPEC_VOUCH"/>
-    <section name="AREA_SCT" mandatory="AREA"/>
-    <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
-    <section name="PCR1f_SCT" mandatory="FWD_NAME1"/> redundant?
+<?xml version="1.0" encoding="UTF-8"?>
+<template id="ERT000032" version="2">
+  <name>trnK-matK locus</name>
+  <description>For complete or partial matK gene within the chloroplast trnK gene intron.</description>
+  <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), NCBI taxid, BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Nicotiana tabacum, Iris caucasica subsp. turcica, Aster indicus var. pinnatifidus"/>
+  <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+  <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced." tip="isolate#3, 654g14, individual 5"/>
+  <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="river bank, shade of deciduous trees"/>
+  <token name="SUBSPECIES" type="TEXT_FIELD" mandatory="false" display_name="Subspecies" description="Name of subspecies of a plant. Should be included within the organism name as well." tip="turcica"/>
+  <token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="Name of cultivated variety of a plant. Should not be included within the organism name." tip="Ixtapa, Maris Piper"/>
+  <token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety (varietas)" description="Officially recognised variety of a plant approved by the Botanical Code. Generally included in the organism name too, e.g., Amanita muscaria var. alba." tip="alba, pinnatifidus"/>
+  <token name="ECOTYPE" type="TEXT_FIELD" mandatory="false" display_name="Ecotype" description="A population within a given species displaying genetically based, phenotypic traits that reflect adaptation to a local habitat. Commonly applied to Arabidopsis thaliana stocks." tip="Columbia"/>
+  <token name="SPEC_VOUCH" type="TEXT_FIELD" mandatory="false" display_name="Specimen voucher" description="Reference to a physical specimen from a curated or lab herbarium, museum or tissue collection." tip="freetext like 99-SRNP-2003; structured like AMCC:101706"/>
+  <token name="BIO_MAT" type="TEXT_FIELD" mandatory="false" display_name="Biomaterial" description="Reference to a living specimen or direct DNA sample from zoos, aquaria, stock centres, seed banks, germplasm repositories and DNA banks. Use where Specimen Voucher are not appropriate." tip="freetext like AB12345; structured like CGC:CB3912"/>
+  <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
+  <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux"/>
+  <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
+  <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
+  <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
+  <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collected by" description="A name of the person who collected the original sample/specimen." tip="J. Brown"/>
+  <token name="TISSUE" type="TEXT_FIELD" mandatory="false" display_name="Tissue type" description="The tissue type from which the DNA was extracted." tip="leaf, whole organism"/>
+  <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
+  <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
+  <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="FWD_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
+  <token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
+  <token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="INFERTYPE" type="TEXT_CHOICE_FIELD" cv_name="inference_type" mandatory="false" display_name="inference type" description="Type of non-experimental evidence that supports the feature identification. Must have the field Inference Accession selected." tip="similar to DNA sequence"/>
+  <token name="INFER_ACC" type="TEXT_FIELD" mandatory="false" display_name="inference accession" description="A reference to a database entry, must contain an accession and version, or an algorithm including version. Must have the field Inference Type selected." tip="FM123456.1"/>
+  <token name="EXPERIMENT" type="TEXT_FIELD" mandatory="false" display_name="experiment" description="Brief description of the nature of the experimental evidence that supports the feature." tip="Northern blot"/>
+  <token name="5&apos;_CDS" type="INTEGER_FIELD" mandatory="true" display_name="5&apos; CDS location" description="Start of the matK coding region relative to the submitted sequence. For a full length CDS this is the position of the first base of the start codon." tip=""/>
+  <token name="3&apos;_CDS" type="INTEGER_FIELD" mandatory="true" display_name="3&apos; CDS location" description="End of the matK coding region relative to the submitted sequence. For a full length CDS this is the position of the last base of the stop codon." tip=""/>
+  <token name="CODONSTART" type="TEXT_CHOICE_FIELD" cv_name="reading_frame" mandatory="false" display_name="Reading Frame" description="Mandatory if your CDS is 5&apos; partial as it defines the reading frame. Location of the first base of the first fully-encoded amino acid." tip="1,2 or 3"/>
+  <token name="5&apos;_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 5&apos; ? (yes/no)" description="For an incomplete CDS with the start codon upstream of the submitted sequence."/>
+  <token name="3&apos;_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="CDS partial at 3&apos; ? (yes/no)" description="For an incomplete CDS with the stop codon downstream of the submitted sequence."/>
+  <token name="INTRON" type="BOOLEAN_FIELD" mandatory="true" display_name="trnK intron present?" description="For 5&apos; or 3&apos; flanking region of the trnK gene intron being present in the submitted sequence." tip=""/>
+  <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
+  <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,5&apos;_CDS,3&apos;_CDS,5&apos;_PARTIAL,3&apos;_PARTIAL,CODONSTART,INTRON" description="Mandatory template-specific fields and questions."/>
+  <token_group name="Basic Details" mandatory="false" contains="CLONE,ISOLATE,TISSUE" description="Basic sample details."/>
+  <token_group name="Further taxonomy" mandatory="false" contains="SUBSPECIES,CULTIVAR,VARIETY,ECOTYPE" description="Further taxonomic and phenotypic details (cultivar, variety, ecotype, breed)."/>
+  <token_group name="Repository Data" mandatory="false" contains="SPEC_VOUCH,BIO_MAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials)."/>
+  <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
+  <token_group name="Further Sample Data" mandatory="false" contains="ISOLATION_SOURCE,COLDATE,COL_BY" description="Further information relating to the organism."/>
+  <token_group name="Supporting evidence" mandatory="false" contains="INFERTYPE,INFER_ACC,EXPERIMENT" description="Additional info supporting identity of the sequenced matK gene region."/>
+  <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1,FWD_NAME2,FWD_SEQ2,REV_NAME2,REV_SEQ2" description="Details of the PCR primers used."/>
+  <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
+  <section name="PARTIAL_5_SCT" mandatory="5&apos;_PARTIAL"/>
+  <section name="PARTIAL_3_SCT" mandatory="3&apos;_PARTIAL"/>
+  <section name="CULT_SCT" mandatory="CULTIVAR"/>
+  <section name="CLONE_SCT" mandatory="CLONE"/>
+  <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+  <section name="SPECVOUCH_SCT" mandatory="SPEC_VOUCH"/>
+  <section name="AREA_SCT" mandatory="AREA"/>
+  <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
+  <section name="PCR1f_SCT" mandatory="FWD_NAME1"/> redundant?
     <section name="PCR2f_SCT" mandatory="FWD_NAME2"/>
-    <section name="PCR1r_SCT" mandatory="REV_NAME1"/>
-    <section name="PCR2r_SCT" mandatory="REV_NAME2"/>
-    <section name="INTRON_SCT" mandatory="INTRON"/>
-    <template_string>
-        ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
-        XX
-        ST * {STATUS}
-        XX
-        AC   ;
-        XX
-        DE   {ORGANISM_NAME} chloroplast {{PARTIAL_5_SCT}}partial {{/PARTIAL_5_SCT}}matK gene for maturase K{{INTRON_SCT}} and partial trnK gene intron{{/INTRON_SCT}}{{CULT_SCT}}, cultivar {CULTIVAR}{{/CULT_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPEC_VOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
-        XX
-        KW   .
-        XX
-        OS   {ORGANISM_NAME}
-        OC   .
-        XX
-        {CITATIONS}
-        FH   Key             Location/Qualifiers
-        FH
-        FT   source          1..{SEQUENCE_LENGTH}
-        FT                   /organism="{ORGANISM_NAME}"
-        FT                   /sub_species="{SUBSPECIES}"
-        FT                   /mol_type="genomic DNA"
-        FT                   /organelle="plastid:chloroplast"
-        FT                   /cultivar="{CULTIVAR}"
-        FT                   /variety="{VARIETY}"
-        FT                   /clone="{CLONE}"
-        FT                   /isolate="{ISOLATE}"
-        FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
-        FT                   /lat_lon="{LAT_LON}"
-        FT                   /isolation_source="{ISOLATION_SOURCE}"
-        FT                   /collection_date="{COLDATE}"
-        FT                   /collected_by="{COL_BY}"
-        FT                   /specimen_voucher="{SPEC_VOUCH}"
-        FT                   /bio_material="{BIO_MAT}"
-        FT                   /ecotype="{ECOTYPE}"
-        FT                   /tissue_type="{TISSUE}"
-        FT                   /PCR_primers="fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}{{PCR2f_SCT}}, fwd_name: {FWD_NAME2}, fwd_seq: {FWD_SEQ2}{{/PCR2f_SCT}}{{PCR1r_SCT}}, rev_name: {REV_NAME1}, rev_seq: {REV_SEQ1}{{/PCR1r_SCT}}{{PCR2r_SCT}}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}{{/PCR2r_SCT}}"
-        {{INTRON_SCT}}
-        FT   intron          <![CDATA[<]]>1..<![CDATA[>]]>{SEQUENCE_LENGTH}
-        FT                   /gene="trnK"
-        FT                   /note="group II intron"
-        {{/INTRON_SCT}}
-        FT   CDS             {{PARTIAL_5_SCT}}<![CDATA[<]]>{{/PARTIAL_5_SCT}}{5'_CDS}..{{PARTIAL_3_SCT}}<![CDATA[>]]>{{/PARTIAL_3_SCT}}{3'_CDS}
-        FT                   /transl_table=11
-        FT                   /codon_start={CODONSTART}
-        FT                   /gene="matK"
-        FT                   /product="maturase K"
-        FT                   /experiment="{EXPERIMENT}"
-        FT                   /inference="{INFERTYPE}:{INFER_ACC}"
-        XX
-        {SEQUENCE}//
-    </template_string><![CDATA[Please use this template only if you are wishing to submit chloroplast complete or partial trnK gene intron with complete or partial matK gene.]]><example_string/>
+  <section name="PCR1r_SCT" mandatory="REV_NAME1"/>
+  <section name="PCR2r_SCT" mandatory="REV_NAME2"/>
+  <section name="INTRON_SCT" mandatory="INTRON"/>
+  <template_string>
+ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM_NAME} chloroplast {{PARTIAL_5_SCT}}partial {{/PARTIAL_5_SCT}}matK gene for maturase K{{INTRON_SCT}} and partial trnK gene intron{{/INTRON_SCT}}{{CULT_SCT}}, cultivar {CULTIVAR}{{/CULT_SCT}}{{SPECVOUCH_SCT}}, specimen voucher {SPEC_VOUCH}{{/SPECVOUCH_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
+XX
+KW   .
+XX
+OS   {ORGANISM_NAME}
+OC   .
+XX
+{CITATIONS}
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism=&quot;{ORGANISM_NAME}&quot;
+FT                   /sub_species=&quot;{SUBSPECIES}&quot;
+FT                   /mol_type=&quot;genomic DNA&quot;
+FT                   /organelle=&quot;plastid:chloroplast&quot;
+FT                   /cultivar=&quot;{CULTIVAR}&quot;
+FT                   /variety=&quot;{VARIETY}&quot;
+FT                   /clone=&quot;{CLONE}&quot;
+FT                   /isolate=&quot;{ISOLATE}&quot;
+FT                   /country=&quot;{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}&quot;
+FT                   /lat_lon=&quot;{LAT_LON}&quot;
+FT                   /isolation_source=&quot;{ISOLATION_SOURCE}&quot;
+FT                   /collection_date=&quot;{COLDATE}&quot;
+FT                   /collected_by=&quot;{COL_BY}&quot;
+FT                   /specimen_voucher=&quot;{SPEC_VOUCH}&quot;
+FT                   /bio_material=&quot;{BIO_MAT}&quot;
+FT                   /ecotype=&quot;{ECOTYPE}&quot;
+FT                   /tissue_type=&quot;{TISSUE}&quot;
+FT                   /PCR_primers=&quot;fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}{{PCR2f_SCT}}, fwd_name: {FWD_NAME2}, fwd_seq: {FWD_SEQ2}{{/PCR2f_SCT}}{{PCR1r_SCT}}, rev_name: {REV_NAME1}, rev_seq: {REV_SEQ1}{{/PCR1r_SCT}}{{PCR2r_SCT}}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}{{/PCR2r_SCT}}&quot;
+{{INTRON_SCT}}
+FT   intron          <![CDATA[<]]>1..<![CDATA[>]]>{SEQUENCE_LENGTH}
+FT                   /gene=&quot;trnK&quot;
+FT                   /note=&quot;group II intron&quot;
+{{/INTRON_SCT}}  
+FT   CDS             {{PARTIAL_5_SCT}}<![CDATA[<]]>{{/PARTIAL_5_SCT}}{5&apos;_CDS}..{{PARTIAL_3_SCT}}<![CDATA[>]]>{{/PARTIAL_3_SCT}}{3&apos;_CDS}
+FT                   /transl_table=11
+FT                   /codon_start={CODONSTART}
+FT                   /gene=&quot;matK&quot;
+FT                   /product=&quot;maturase K&quot;
+FT                   /experiment=&quot;{EXPERIMENT}&quot;
+FT                   /inference=&quot;{INFERTYPE}:{INFER_ACC}&quot;
+XX
+{SEQUENCE}// 
+    </template_string><![CDATA[Please use this template only if you are wishing to submit chloroplast complete or partial trnK gene intron with complete or partial matK gene.]]>
+  <example_string/>
 </template>

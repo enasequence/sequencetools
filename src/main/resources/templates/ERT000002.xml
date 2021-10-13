@@ -1,14 +1,15 @@
-<?xml version = '1.0' encoding = 'UTF-8'?><template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jweb-1a.ebi.ac.uk:21040/embl/genomes/submission/template.xsd" id="ERT000002" version="3">
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jweb-1a.ebi.ac.uk:21040/embl/genomes/submission/template.xsd" id="ERT000002" version="3">
     <name>rRNA gene</name>
     <forms_name>rRNA gene</forms_name>
     <description>For ribosomal RNA genes from prokaryotic, nuclear or organellar DNA. All rRNAs are considered partial.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally genus and species), NCBI taxonomy id, BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable."  tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
+    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of organism (generally Genus+species), NCBI taxid, BioSample accession, SRA sample accession, or sample alias. Formal names should include subspecies (subsp.), variety (var.) and forma (f.) if applicable." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
     <token name="ENV_SAMPLE" type="BOOLEAN_FIELD" mandatory="true" display_name="Is your organism from an environmental/metagenomic/uncultured sample? (yes/no)" description="Environmental samples are those which are derived from direct sequencing of a bulk anonymous sample. Prokaryote/fungi from environmental samples are not culturable and so cannot be identified morphologically. Such organisms are prefixed with the term uncultured." tip="If yes, isolation source information is mandatory"/>
     <token name="SEDIMENT" type="TEXT_CHOICE_FIELD" cv_name="sediment_coefficient" mandatory="true" display_name="Sedimentation coefficient" description="The sedimentation coefficient of the rRNA. Selectable from a controlled list." tip="5S, 5.8S, 12S, 16S, 18S, 23S, 25S, 26S, 28S"/>
     <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain, typically a collection prefix followed by a number. This is NOT the organism name." tip="DSM 5432, BALB/c"/>
     <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library" tip="a2314_1296, lib1_b_9"/>
     <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample or environmental isolate that has been sequenced" tip="isolate#3, 654g14, individual 5"/>
-    <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site. For " tip="fast-flowing river, microbial mat"/>
+    <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography of sampling/isolation site." tip="fast-flowing river, microbial mat"/>
     <token name="ORGANELLE" type="TEXT_CHOICE_FIELD" cv_name="organelle" mandatory="false" display_name="Organelle" description="Mandatory if the rRNA gene is encoded within an intracellular structure other than the nucleus." tip="mitochondrion, chloroplast, plastid"/>
     <token name="CULTIVAR" type="TEXT_FIELD" mandatory="false" display_name="Cultivar" description="Name of cultivated variety (plants only). Should not be included within the organism name." tip="Ixtapa, Maris Piper"/>
     <token name="VARIETY" type="TEXT_FIELD" mandatory="false" display_name="Variety (varietas)" description="Officially recognised variety (mainly plants and fungi). Generally included in the organism name too, e.g., Amanita muscaria var. alba." tip="albiflorus, minor"/>
@@ -36,7 +37,7 @@
     <token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="name of the 2nd reverse direction PCR primer."/>
     <token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
     <token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="SEQUENCE" display_name="sequence" type="TEXT_AREA_FIELD" mandatory="true"  variable_only="true" description="Sequence"/>
+    <token name="SEQUENCE" display_name="sequence" type="TEXT_AREA_FIELD" mandatory="true" variable_only="true" description="Sequence"/>
     <token_group name="Basic Details" mandatory="true" contains="ORGANISM_NAME,ENV_SAMPLE,ORGANELLE,SEDIMENT,STRAIN,CLONE,ISOLATE,ISOLATION_SOURCE" description="Mandatory template-specific questions and basic source organism details."/>
     <token_group name="Further taxonomy" mandatory="false" contains="CULTIVAR,VARIETY,ECOTYPE,BREED" description="Further taxonomic and phenotypic details (cultivar, variety, ecotype, breed)."/>
     <token_group name="Repository Data" mandatory="false" contains="CULT_COLL,SPEC_VOUCH,BIO_MAT" description="References to biorepositories (culture collections, specimen vouchers and biomaterials)."/>
@@ -109,5 +110,6 @@ FT   rRNA            <1..>{SEQUENCE_LENGTH}
 FT                   /gene="{SEDIMENT} rRNA"
 FT                   /product="{SEDIMENT} ribosomal RNA"
 XX
-{SEQUENCE}//]]></template_string><![CDATA[Please use this template if you are wishing to submit only rRNA (5S, 5.8S, 12S, 16S, 18S, 23S, 25S, 26S, 28S) genes. If you wish to submit rDNA with ITS sequence, please use the ITS template. rRNA sequences should be submitted in the forward orientation. Note that all rRNAs are considered partial.]]><example_string/>
+{SEQUENCE}//]]></template_string><![CDATA[Please use this template if you are wishing to submit only rRNA (5S, 5.8S, 12S, 16S, 18S, 23S, 25S, 26S, 28S) genes. If you wish to submit rDNA with ITS sequence, please use the ITS template. rRNA sequences should be submitted in the forward orientation. Note that all rRNAs are considered partial.]]>
+    <example_string/>
 </template>

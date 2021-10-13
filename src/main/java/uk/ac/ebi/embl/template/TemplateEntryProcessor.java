@@ -258,10 +258,8 @@ public class TemplateEntryProcessor {
                     ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "MasterEntrySourceCheck_2", fieldValue);
                     templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
                 }else {
-                    String delimitedKey = StringBuilderUtils.encloseToken(TemplateProcessorConstants.ORGANISM_TOKEN);
-                    template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
-                    delimitedKey = StringBuilderUtils.encloseToken(TemplateProcessorConstants.ORGANISM_NAME_TOKEN);
-                    template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
+                    replaceOrganismTokenWithScientificname(TemplateProcessorConstants.ORGANISM_TOKEN,scientificName);
+                    replaceOrganismTokenWithScientificname(TemplateProcessorConstants.ORGANISM_NAME_TOKEN,scientificName);
                 }
             }
         }
@@ -537,5 +535,10 @@ public class TemplateEntryProcessor {
     private boolean isOrganismField(String fieldName){
         return StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_TOKEN) ||
                 StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_NAME_TOKEN);
+    }
+    
+    private void replaceOrganismTokenWithScientificname(String organismToken, String scientificName){
+        String delimitedKey = StringBuilderUtils.encloseToken(organismToken);
+        template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
     }
 }
