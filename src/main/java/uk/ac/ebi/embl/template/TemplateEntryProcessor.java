@@ -226,13 +226,13 @@ public class TemplateEntryProcessor {
      * This method replaces {ORGANISM_NAME} with valid scientificName.
      */
     private void replaceOrganismToken(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet) throws Exception {
-        if (!template.toString().contains(TemplateProcessorConstants.ORGANISM_TOKEN))
+        if (!templateContainsOrganismToken())
             return;
         TaxonHelper taxonHelper=new TaxonHelperImpl();
         String scientificName="";
         
         for (String fieldName: templateVariables.getTokenNames()) {
-            if (StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_TOKEN)) {
+            if (isOrganismField(fieldName)) {
                 String fieldValue = templateVariables.getTokenValue(fieldName);
                 
                 if (Utils.isValidTaxId(fieldValue)) {
@@ -258,8 +258,8 @@ public class TemplateEntryProcessor {
                     ValidationMessage<Origin> message = new ValidationMessage<Origin>(Severity.ERROR, "MasterEntrySourceCheck_2", fieldValue);
                     templateProcessorResultSet.getValidationResult().append(new ValidationResult().append(message));
                 }else {
-                    String delimitedKey = StringBuilderUtils.encloseToken(TemplateProcessorConstants.ORGANISM_TOKEN);
-                    template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
+                    replaceOrganismTokenWithScientificname(TemplateProcessorConstants.ORGANISM_TOKEN,scientificName);
+                    replaceOrganismTokenWithScientificname(TemplateProcessorConstants.ORGANISM_NAME_TOKEN,scientificName);
                 }
             }
         }
@@ -462,8 +462,8 @@ public class TemplateEntryProcessor {
         
         // Iterate TSV header fields.
         for (String tsvHeader : tsvFieldMap.keySet()) {
-            if (tsvHeader.equalsIgnoreCase(TemplateProcessorConstants.ORGANISM_TOKEN)) {
-                // When TSV header cell value is ORGANISM_NAME
+            if (isOrganismField(tsvHeader)) {
+                // When TSV header cell value is ORGANISM_NAME or ORGANISM
 
                 if (Utils.isValidTaxId(tsvFieldMap.get(tsvHeader))) {
                     // When field value is taxId pattern DO NOTHING
@@ -525,5 +525,20 @@ public class TemplateEntryProcessor {
             sampleInfo.setTaxId(Long.valueOf(sample.getTaxId()));
         }
         return sampleInfo;
+    }
+    
+    private boolean templateContainsOrganismToken(){
+        return template.toString().contains(TemplateProcessorConstants.ORGANISM_TOKEN) ||
+                template.toString().contains(TemplateProcessorConstants.ORGANISM_NAME_TOKEN);
+    }
+    
+    private boolean isOrganismField(String fieldName){
+        return StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_TOKEN) ||
+                StringUtils.equalsIgnoreCase(fieldName,TemplateProcessorConstants.ORGANISM_NAME_TOKEN);
+    }
+    
+    private void replaceOrganismTokenWithScientificname(String organismToken, String scientificName){
+        String delimitedKey = StringBuilderUtils.encloseToken(organismToken);
+        template = new StringBuilder(template.toString().replace(delimitedKey, scientificName));
     }
 }

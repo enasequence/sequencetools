@@ -1,108 +1,110 @@
-<?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000052" version="2">
-    <name>ssRNA(-) Viral copy RNA</name>
-    <forms_name>viral cRNA</forms_name>
-    <description>For complete or partial viral copy RNA (cRNA) sequences, complementary to ssRNA(-) virus genomes. Only one CDS can be added; further CDS information should be provided in the curator comments section.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of virus (ICTV-approved or otherwise). Influenza virus has special nomenclature. Please contact us if you are unsure." tip="Influenza A virus (A/chicken/Germany/1949(H10N7)), New York virus"/>
-    <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain. This often contains the host, sample location, collection date and unique identifier" tip="Hu/GI.1/2003/4602/Moscow/RUS"/>
-    <token name="SEROTYPE" type="TEXT_FIELD" mandatory="false" display_name="Serotype/Subtype" description="Name or identifier for serotype/subtype." tip="A, H1N1"/>
-    <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
-    <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample that has been sequenced." tip="Lon45"/>
-    <token name="SEGMENT" type="TEXT_FIELD" mandatory="false" display_name="Segment name" description="Name of the viral segment upon which the gene is encoded." tip="RNA1, L"/>
-    <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography or part of host from which the sample was taken" tip="fast-flowing river, host lung tissue"/>
-    <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
-    <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux, North Altantic Ridge"/>
-    <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
-    <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
-    <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collector" description="Name of the person or institute that originally collected the sample/organism" tip="Dan Janzen"/>
-    <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
-    <token name="HOST" type="TEXT_FIELD" mandatory="false" display_name="Natural host" description="The natural host of the organism from which the sequenced material was taken." tip="Homo sapiens, Bos taurus"/>
-    <token name="LAB_HOST" type="TEXT_FIELD" mandatory="false" display_name="Laboratory host" description="The laboratory host of the organism from which the sequenced material was taken." tip="Mus musculus"/>
-    <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
-    <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
-    <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="FWD_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
-    <token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
-    <token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="GENE" type="TEXT_FIELD" mandatory="true" display_name="gene" description="Symbol of the gene feature" tip="HA, NP"/>
-    <token name="PRODUCT" type="TEXT_FIELD" mandatory="true" display_name="product" description="Name of the product associated with the CDS." tip="haemagglutinin, nucleocapsid protein"/>
-    <token name="PSEUDO" type="BOOLEAN_FIELD" mandatory="true" display_name="pseudogene?" description="Is this sequence a defective molecule (e.g. mutated/truncated)?" tip="yes or no"/>
-    <token name="FUNCTION" type="TEXT_FIELD" mandatory="false" display_name="function" description="Function attributed to the protein." tip="cell recognition"/>
-    <token name="INFERTYPE" type="TEXT_CHOICE_FIELD" cv_name="inference_type" mandatory="false" display_name="inference type" description="Type of non-experimental evidence that supports the feature identification. Must have the field Inference Accession selected." tip="similar to DNA sequence"/>
-    <token name="INFER_ACC" type="TEXT_FIELD" mandatory="false" display_name="inference accession" description="A reference to a database entry, must contain an accession and version, or an algorithm including version. Must have the field Inference Type selected." tip="FM123456.1"/>
-    <token name="EXPERIMENT" type="TEXT_FIELD" mandatory="false" display_name="experiment" description="Brief description of the nature of the experimental evidence that supports the feature." tip="Northern blot"/>
-    <token name="5'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="5' CDS location" description="Start of the coding region relative to the submitted sequence. If the CDS is 5' partial, this value will be 1." tip=""/>
-    <token name="3'_CDS" type="INTEGER_FIELD" mandatory="true" display_name="3' CDS location" description="End of the coding region relative to the submitted sequence. If the CDS is 3' partial, this value will be equal to the last base in the sequence." tip=""/>
-    <token name="CODONSTART" type="TEXT_CHOICE_FIELD" cv_name="reading_frame" mandatory="false" display_name="Reading Frame" description="Mandatory if your CDS is 5' partial as it defines the reading frame. Location of the first base of the first fully-encoded amino acid." tip="1,2 or 3"/>
-    <token name="5'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="partial at 5' ? (yes/no)" description="For an incomplete CDS with the start codon upstream of the submitted sequence."/>
-    <token name="3'_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="partial at 3' ? (yes/no)" description="For an incomplete CDS with the stop codon downstream of the submitted sequence."/>
-    <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
-    <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,GENE,PRODUCT,PSEUDO,5'_CDS,3'_CDS,5'_PARTIAL,3'_PARTIAL,CODONSTART" description="Mandatory template-specific fields and questions."/>
-    <token_group name="Basic Details" mandatory="false" contains="STRAIN,SEROTYPE,CLONE,ISOLATE,SEGMENT,ISOLATION_SOURCE" description="Basic sample details."/>
-    <token_group name="Gene Details" mandatory="false" contains="FUNCTION,INFERTYPE,INFER_ACC,EXPERIMENT" description="Additional info relevant to the sequenced gene region."/>
-    <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
-    <token_group name="Further Sample Data" mandatory="false" contains="COL_BY,COLDATE,HOST,LAB_HOST" description="Further information relating to the organism and its host (if applicable)."/>
-    <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1,FWD_NAME2,FWD_SEQ2,REV_NAME2,REV_SEQ2" description="Details of the PCR primers used."/>
-    <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
-    <section name="PARTIAL_5_SCT" mandatory="5'_PARTIAL"/>
-    <section name="PARTIAL_3_SCT" mandatory="3'_PARTIAL"/>
-    <section name="SEGMENT_SCT" mandatory="SEGMENT"/>
-    <section name="CLONE_SCT" mandatory="CLONE"/>
-    <section name="PSEUDO_SCT" mandatory="PSEUDO"/>
-    <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
-    <section name="STRAIN_SCT" mandatory="STRAIN"/>
-    <section name="AREA_SCT" mandatory="AREA"/>
-    <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
-    <section name="PCR1f_SCT" mandatory="FWD_NAME1"/> redundant?
+<?xml version="1.0" encoding="UTF-8"?>
+<template id="ERT000052" version="2">
+  <name>ssRNA(-) Viral copy RNA</name>
+  <forms_name>viral cRNA</forms_name>
+  <description>For complete or partial viral copy RNA (cRNA) sequences, complementary to ssRNA(-) virus genomes. Only one CDS can be added; further CDS information should be provided in the curator comments section.</description>
+  <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of virus (ICTV-approved or otherwise), NCBI taxid, BioSample accession, SRA sample accession, or sample alias. Influenza, Norovirus, Sapovirus and HIV have special nomenclature. Please contact us if you are unsure." tip="Influenza A virus (A/chicken/Germany/1949(H10N7)), New York virus"/>
+  <token name="STRAIN" type="TEXT_FIELD" mandatory="false" display_name="Strain name" description="Name or identifier for strain. This often contains the host, sample location, collection date and unique identifier" tip="Hu/GI.1/2003/4602/Moscow/RUS"/>
+  <token name="SEROTYPE" type="TEXT_FIELD" mandatory="false" display_name="Serotype/Subtype" description="Name or identifier for serotype/subtype." tip="A, H1N1"/>
+  <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+  <token name="ISOLATE" type="TEXT_FIELD" mandatory="false" display_name="Isolate name" description="Name given to the sample that has been sequenced." tip="Lon45"/>
+  <token name="SEGMENT" type="TEXT_FIELD" mandatory="false" display_name="Segment name" description="Name of the viral segment upon which the gene is encoded." tip="RNA1, L"/>
+  <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="false" display_name="Isolation source" description="Physical geography or part of host from which the sample was taken" tip="fast-flowing river, host lung tissue"/>
+  <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
+  <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux, North Altantic Ridge"/>
+  <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
+  <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
+  <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collector" description="Name of the person or institute that originally collected the sample/organism" tip="Dan Janzen"/>
+  <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
+  <token name="HOST" type="TEXT_FIELD" mandatory="false" display_name="Natural host" description="The natural host of the organism from which the sequenced material was taken." tip="Homo sapiens, Bos taurus"/>
+  <token name="LAB_HOST" type="TEXT_FIELD" mandatory="false" display_name="Laboratory host" description="The laboratory host of the organism from which the sequenced material was taken." tip="Mus musculus"/>
+  <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
+  <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
+  <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="FWD_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer name" description="Name of the 2nd forward direction PCR primer."/>
+  <token name="REV_NAME2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer name" description="Name of the 2nd reverse direction PCR primer."/>
+  <token name="FWD_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="REV_SEQ2" type="TEXT_FIELD" mandatory="false" display_name="2nd reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="GENE" type="TEXT_FIELD" mandatory="true" display_name="gene" description="Symbol of the gene feature" tip="HA, NP"/>
+  <token name="PRODUCT" type="TEXT_FIELD" mandatory="true" display_name="product" description="Name of the product associated with the CDS." tip="haemagglutinin, nucleocapsid protein"/>
+  <token name="PSEUDO" type="BOOLEAN_FIELD" mandatory="true" display_name="pseudogene?" description="Is this sequence a defective molecule (e.g. mutated/truncated)?" tip="yes or no"/>
+  <token name="FUNCTION" type="TEXT_FIELD" mandatory="false" display_name="function" description="Function attributed to the protein." tip="cell recognition"/>
+  <token name="INFERTYPE" type="TEXT_CHOICE_FIELD" cv_name="inference_type" mandatory="false" display_name="inference type" description="Type of non-experimental evidence that supports the feature identification. Must have the field Inference Accession selected." tip="similar to DNA sequence"/>
+  <token name="INFER_ACC" type="TEXT_FIELD" mandatory="false" display_name="inference accession" description="A reference to a database entry, must contain an accession and version, or an algorithm including version. Must have the field Inference Type selected." tip="FM123456.1"/>
+  <token name="EXPERIMENT" type="TEXT_FIELD" mandatory="false" display_name="experiment" description="Brief description of the nature of the experimental evidence that supports the feature." tip="Northern blot"/>
+  <token name="5&apos;_CDS" type="INTEGER_FIELD" mandatory="true" display_name="5&apos; CDS location" description="Start of the coding region relative to the submitted sequence. If the CDS is 5&apos; partial, this value will be 1." tip=""/>
+  <token name="3&apos;_CDS" type="INTEGER_FIELD" mandatory="true" display_name="3&apos; CDS location" description="End of the coding region relative to the submitted sequence. If the CDS is 3&apos; partial, this value will be equal to the last base in the sequence." tip=""/>
+  <token name="CODONSTART" type="TEXT_CHOICE_FIELD" cv_name="reading_frame" mandatory="false" display_name="Reading Frame" description="Mandatory if your CDS is 5&apos; partial as it defines the reading frame. Location of the first base of the first fully-encoded amino acid." tip="1,2 or 3"/>
+  <token name="5&apos;_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="partial at 5&apos; ? (yes/no)" description="For an incomplete CDS with the start codon upstream of the submitted sequence."/>
+  <token name="3&apos;_PARTIAL" type="BOOLEAN_FIELD" mandatory="true" display_name="partial at 3&apos; ? (yes/no)" description="For an incomplete CDS with the stop codon downstream of the submitted sequence."/>
+  <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
+  <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,GENE,PRODUCT,PSEUDO,5&apos;_CDS,3&apos;_CDS,5&apos;_PARTIAL,3&apos;_PARTIAL,CODONSTART" description="Mandatory template-specific fields and questions."/>
+  <token_group name="Basic Details" mandatory="false" contains="STRAIN,SEROTYPE,CLONE,ISOLATE,SEGMENT,ISOLATION_SOURCE" description="Basic sample details."/>
+  <token_group name="Gene Details" mandatory="false" contains="FUNCTION,INFERTYPE,INFER_ACC,EXPERIMENT" description="Additional info relevant to the sequenced gene region."/>
+  <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
+  <token_group name="Further Sample Data" mandatory="false" contains="COL_BY,COLDATE,HOST,LAB_HOST" description="Further information relating to the organism and its host (if applicable)."/>
+  <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1,FWD_NAME2,FWD_SEQ2,REV_NAME2,REV_SEQ2" description="Details of the PCR primers used."/>
+  <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
+  <section name="PARTIAL_5_SCT" mandatory="5&apos;_PARTIAL"/>
+  <section name="PARTIAL_3_SCT" mandatory="3&apos;_PARTIAL"/>
+  <section name="SEGMENT_SCT" mandatory="SEGMENT"/>
+  <section name="CLONE_SCT" mandatory="CLONE"/>
+  <section name="PSEUDO_SCT" mandatory="PSEUDO"/>
+  <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+  <section name="STRAIN_SCT" mandatory="STRAIN"/>
+  <section name="AREA_SCT" mandatory="AREA"/>
+  <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
+  <section name="PCR1f_SCT" mandatory="FWD_NAME1"/> redundant?
     <section name="PCR2f_SCT" mandatory="FWD_NAME2"/>
-    <section name="PCR1r_SCT" mandatory="REV_NAME1"/>
-    <section name="PCR2r_SCT" mandatory="REV_NAME2"/>
-    <template_string>
-        ID   XXX; SV XXX; linear; viral cRNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
-        XX
-        ST * {STATUS}
-        XX
-        AC   ;
-        XX
-        DE   {ORGANISM_NAME}{{SEGMENT_SCT}} segment {SEGMENT},{{/SEGMENT_SCT}} {{PARTIAL_5_SCT}}partial {{/PARTIAL_5_SCT}}viral cRNA for {PRODUCT} ({GENE} {{PSEUDO_SCT}}pseudo{{/PSEUDO_SCT}}gene){{STRAIN_SCT}}, strain {STRAIN}{{/STRAIN_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
-        XX
-        KW   .
-        XX
-        OS   {ORGANISM_NAME}
-        OC   .
-        XX
-        {CITATIONS}
-        FH   Key             Location/Qualifiers
-        FH
-        FT   source          1..{SEQUENCE_LENGTH}
-        FT                   /organism="{ORGANISM_NAME}"
-        FT                   /mol_type="viral cRNA"
-        FT                   /serotype="{SEROTYPE}"
-        FT                   /segment="{SEGMENT}"
-        FT                   /clone="{CLONE}"
-        FT                   /strain="{STRAIN}"
-        FT                   /isolate="{ISOLATE}"
-        FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
-        FT                   /lat_lon="{LAT_LON}"
-        FT                   /isolation_source="{ISOLATION_SOURCE}"
-        FT                   /collection_date="{COLDATE}"
-        FT                   /collected_by="{COL_BY}"
-        FT                   /host="{HOST}"
-        FT                   /lab_host="{LAB_HOST}"
-        FT                   /PCR_primers="fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}{{PCR2f_SCT}}, fwd_name: {FWD_NAME2}, fwd_seq: {FWD_SEQ2}{{/PCR2f_SCT}}{{PCR1r_SCT}}, rev_name: {REV_NAME1}, rev_seq: {REV_SEQ1}{{/PCR1r_SCT}}{{PCR2r_SCT}}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}{{/PCR2r_SCT}}"
-        FT   CDS             {{PARTIAL_5_SCT}}<![CDATA[<]]>{{/PARTIAL_5_SCT}}{5'_CDS}..{{PARTIAL_3_SCT}}<![CDATA[>]]>{{/PARTIAL_3_SCT}}{3'_CDS}
-        FT                   /transl_table=1
-        FT                   /codon_start={CODONSTART}
-        {{PSEUDO_SCT}}
-        FT                   /pseudo
-        {{/PSEUDO_SCT}}
-        FT                   /gene="{GENE}"
-        FT                   /product="{PRODUCT}"
-        FT                   /function="{FUNCTION}"
-        FT                   /experiment="{EXPERIMENT}"
-        FT                   /inference="{INFERTYPE}:{INFER_ACC}"
-        XX
-        {SEQUENCE}//
-    </template_string><![CDATA[For complete or partial viral copy RNA (cRNA) from ssRNA(-) viruses, which contain positive sense coding genes. This template allows for annotation of a single gene; for further genes, please provide details in the curator comments section, and a curator will add them to the annotation.]]><example_string/>
+  <section name="PCR1r_SCT" mandatory="REV_NAME1"/>
+  <section name="PCR2r_SCT" mandatory="REV_NAME2"/>
+  <template_string>
+ID   XXX; SV XXX; linear; viral cRNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM_NAME}{{SEGMENT_SCT}} segment {SEGMENT},{{/SEGMENT_SCT}} {{PARTIAL_5_SCT}}partial {{/PARTIAL_5_SCT}}viral cRNA for {PRODUCT} ({GENE} {{PSEUDO_SCT}}pseudo{{/PSEUDO_SCT}}gene){{STRAIN_SCT}}, strain {STRAIN}{{/STRAIN_SCT}}{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
+XX
+KW   .
+XX
+OS   {ORGANISM_NAME}
+OC   .
+XX
+{CITATIONS}
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism=&quot;{ORGANISM_NAME}&quot;
+FT                   /mol_type=&quot;viral cRNA&quot;
+FT                   /serotype=&quot;{SEROTYPE}&quot;
+FT                   /segment=&quot;{SEGMENT}&quot;
+FT                   /clone=&quot;{CLONE}&quot;
+FT                   /strain=&quot;{STRAIN}&quot;
+FT                   /isolate=&quot;{ISOLATE}&quot;
+FT                   /country=&quot;{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}&quot;
+FT                   /lat_lon=&quot;{LAT_LON}&quot;
+FT                   /isolation_source=&quot;{ISOLATION_SOURCE}&quot;
+FT                   /collection_date=&quot;{COLDATE}&quot;
+FT                   /collected_by=&quot;{COL_BY}&quot;
+FT                   /host=&quot;{HOST}&quot;
+FT                   /lab_host=&quot;{LAB_HOST}&quot;
+FT                   /PCR_primers=&quot;fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}{{PCR2f_SCT}}, fwd_name: {FWD_NAME2}, fwd_seq: {FWD_SEQ2}{{/PCR2f_SCT}}{{PCR1r_SCT}}, rev_name: {REV_NAME1}, rev_seq: {REV_SEQ1}{{/PCR1r_SCT}}{{PCR2r_SCT}}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}{{/PCR2r_SCT}}&quot;
+FT   CDS             {{PARTIAL_5_SCT}}<![CDATA[<]]>{{/PARTIAL_5_SCT}}{5&apos;_CDS}..{{PARTIAL_3_SCT}}<![CDATA[>]]>{{/PARTIAL_3_SCT}}{3&apos;_CDS}
+FT                   /transl_table=1
+FT                   /codon_start={CODONSTART}
+{{PSEUDO_SCT}}
+FT                   /pseudo
+{{/PSEUDO_SCT}}
+FT                   /gene=&quot;{GENE}&quot;
+FT                   /product=&quot;{PRODUCT}&quot;
+FT                   /function=&quot;{FUNCTION}&quot;
+FT                   /experiment=&quot;{EXPERIMENT}&quot;
+FT                   /inference=&quot;{INFERTYPE}:{INFER_ACC}&quot;
+XX
+{SEQUENCE}// 
+    </template_string><![CDATA[For complete or partial viral copy RNA (cRNA) from ssRNA(-) viruses, which contain positive sense coding genes. This template allows for annotation of a single gene; for further genes, please provide details in the curator comments section, and a curator will add them to the annotation.]]>
+  <example_string/>
 </template>

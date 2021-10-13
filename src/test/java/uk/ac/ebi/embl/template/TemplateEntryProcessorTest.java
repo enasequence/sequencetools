@@ -25,7 +25,8 @@ public class TemplateEntryProcessorTest {
 
     private final static String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
     private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
-    private final static File templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
+    private final static File ERT000002_templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
+    private final static File ERT000056_templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000056.xml").toFile();
     private final static String MOL_TYPE = "/mol_type";
     private static String token="";
     private TemplateEntryProcessor templateEntryProcessor;
@@ -40,35 +41,77 @@ public class TemplateEntryProcessorTest {
     @Test
     public void  testEntryProcess_ERT000002() throws Exception {
 
-        TemplateInfo templateInfo_ERT000002 = new TemplateLoader().loadTemplateFromFile(templateFile);
+        TemplateInfo templateInfo_ERT000002 = new TemplateLoader().loadTemplateFromFile(ERT000002_templateFile);
         String molType_ERT000002 = getMolTypeFromTemplateForTest(templateInfo_ERT000002);
-
+        
         // Test with biosample Id
-        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000002 ,molType_ERT000002 );
+        TemplateVariables templateVariables = getTemplateVariables_ERT000002("SAMEA9403245");
+        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
         
         // Test with sample Id
-        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000002 ,molType_ERT000002 );
+        templateVariables = getTemplateVariables_ERT000002("ERS7118926");
+        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
         
         // Test with sample alias "test_custom"
-        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000002 ,molType_ERT000002 );
+         templateVariables = getTemplateVariables_ERT000002("test_custom");
+        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000002 ,molType_ERT000002, templateVariables);
 
         // Test with valid organism
-        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000002 ,molType_ERT000002 );
+        templateVariables = getTemplateVariables_ERT000002("test_custom");
+        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
 
         // Test with taxId
-        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,molType_ERT000002 );
+        templateVariables = getTemplateVariables_ERT000002("test_custom");
+        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,molType_ERT000002,"Homo sapiens partial 5S rRNA gene",templateVariables );
 
         // Test with invalid taxid
-        executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000002 ,molType_ERT000002 );
+        templateVariables = getTemplateVariables_ERT000002("960600000000");
+        executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
 
-        // Test with invalid organizm
-        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,molType_ERT000002 );
+        // Test with invalid organism
+        templateVariables = getTemplateVariables_ERT000002("JUNK");
+        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
+        
+    }
+
+    @Test
+    public void  testEntryProcess_ERT000056() throws Exception {
+        TemplateInfo templateInfo_ERT000056 = new TemplateLoader().loadTemplateFromFile(ERT000056_templateFile);
+        String molType_ERT000056 = getMolTypeFromTemplateForTest(templateInfo_ERT000056);
+
+        // Test with biosample Id
+        TemplateVariables templateVariables = getTemplateVariables_ERT000056("SAMEA9403245");
+        executeEntryProcessTestWithSample("SAMEA9403245",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
+
+        // Test with sample Id
+        templateVariables = getTemplateVariables_ERT000056("ERS7118926");
+        executeEntryProcessTestWithSample("ERS7118926",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
+
+        // Test with sample alias "test_custom"
+        templateVariables = getTemplateVariables_ERT000056("test_custom");
+        executeEntryProcessTestWithSample("test_custom",templateInfo_ERT000056 ,molType_ERT000056, templateVariables);
+
+        // Test with valid organism
+        templateVariables = getTemplateVariables_ERT000056("test_custom");
+        executeEntryProcessTestWithScientificName("Homo sapiens",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
+
+        // Test with taxId
+        templateVariables = getTemplateVariables_ERT000056("test_custom");
+        executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000056 ,molType_ERT000056,"Homo sapiens partial LINE-1 LINE",templateVariables );
+
+        // Test with invalid taxid
+        templateVariables = getTemplateVariables_ERT000056("960600000000");
+        executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
+
+        // Test with invalid organism
+        templateVariables = getTemplateVariables_ERT000056("JUNK");
+        executeEntryProcessInvalidOrganism("JUNK",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
 
     }
     
-    public void executeEntryProcessTestWithSample(String organismName, TemplateInfo templateInfo, String molType) throws Exception{
+    public void executeEntryProcessTestWithSample(String organismName, TemplateInfo templateInfo, String molType,TemplateVariables templateVariables) throws Exception{
         
-        TemplateVariables templateVariables = getTemplateVariables_ERT000002(organismName);
+        
         Sample sample=getSampleForTest(templateEntryProcessor,templateVariables);
         
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
@@ -79,9 +122,8 @@ public class TemplateEntryProcessorTest {
         assertEquals(sourceFeature.getScientificName(),sample.getOrganism());
     }
 
-    public void executeEntryProcessTestWithScientificName(String sceientificName, TemplateInfo templateInfo, String molType) throws Exception{
+    public void executeEntryProcessTestWithScientificName(String sceientificName, TemplateInfo templateInfo, String molType, TemplateVariables templateVariables) throws Exception{
         
-        TemplateVariables templateVariables = getTemplateVariables_ERT000002(sceientificName);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
         
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
@@ -89,21 +131,19 @@ public class TemplateEntryProcessorTest {
         assertEquals(sourceFeature.getScientificName(),sceientificName);
     }
 
-    public void executeEntryProcessTestWithTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
+    public void executeEntryProcessTestWithTaxId(String taxId, TemplateInfo templateInfo, String molType,String description, TemplateVariables templateVariables) throws Exception{
 
-        TemplateVariables templateVariables = getTemplateVariables_ERT000002(taxId);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         SourceFeature sourceFeature=templateProcessorResultSet.getEntry().getPrimarySourceFeature();
         assertTrue(templateProcessorResultSet.getValidationResult().isValid());
         assertEquals(sourceFeature.getScientificName(),"Homo sapiens");
-        assertEquals(templateProcessorResultSet.getEntry().getDescription().getText(),"Homo sapiens partial 5S rRNA gene");
+        assertEquals(templateProcessorResultSet.getEntry().getDescription().getText(),description);
         
     }
     
-    public void executeEntryProcessInvalidOrganism(String scientificName, TemplateInfo templateInfo, String molType) throws Exception{
+    public void executeEntryProcessInvalidOrganism(String scientificName, TemplateInfo templateInfo, String molType,TemplateVariables templateVariables) throws Exception{
 
-        TemplateVariables templateVariables = getTemplateVariables_ERT000002(scientificName);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
@@ -111,9 +151,8 @@ public class TemplateEntryProcessorTest {
         assertTrue(messages.toString().contains("Organism name \""+scientificName+"\" is not submittable"));
     }
 
-    public void executeEntryProcessInvalidTaxId(String taxId, TemplateInfo templateInfo, String molType) throws Exception{
+    public void executeEntryProcessInvalidTaxId(String taxId, TemplateInfo templateInfo, String molType,TemplateVariables templateVariables) throws Exception{
 
-        TemplateVariables templateVariables = getTemplateVariables_ERT000002(taxId);
         TemplateProcessorResultSet templateProcessorResultSet = templateEntryProcessor.processEntry(templateInfo, molType, templateVariables,getOptions().getProjectId());
 
         Collection<ValidationMessage<Origin>> messages=templateProcessorResultSet.getValidationResult().getMessages();
@@ -132,6 +171,21 @@ public class TemplateEntryProcessorTest {
         variablesMap.put("SEQUENCE","ACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACAT");
         variablesMap.put("SEDIMENT","5S");
         variablesMap.put("ENV_SAMPLE","no");
+        TemplateVariables templateVariables=new TemplateVariables(1,variablesMap);
+        return templateVariables;
+    }
+
+    private TemplateVariables getTemplateVariables_ERT000056(String organismName){
+        Map<String, String> variablesMap=new HashMap<>();
+        variablesMap.put("ORGANISM",organismName);
+        variablesMap.put("SEQUENCE","ACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACATACTACGACAT");
+        variablesMap.put("ENVSAM","no");
+        variablesMap.put("MOBTYPE","LINE");
+        variablesMap.put("MOBNAME","LINE-1");
+        variablesMap.put("5MOB","1");
+        variablesMap.put("3MOB","60");
+        variablesMap.put("5PARTIAL","yes");
+        variablesMap.put("3PARTIAL","no");
         TemplateVariables templateVariables=new TemplateVariables(1,variablesMap);
         return templateVariables;
     }

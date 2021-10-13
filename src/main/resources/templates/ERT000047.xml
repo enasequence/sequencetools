@@ -1,73 +1,75 @@
-<?xml version = '1.0' encoding = 'UTF-8'?><template id="ERT000047" version="1">
-    <name>Betasatellite sub-viral particle</name>
-    <forms_name>Betasatellite</forms_name>
-    <description>For submission of circular single stranded DNA betasatellite sequences of the Begomovirus genus.</description>
-    <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of sub-viral particle (ICTV-approved or otherwise)" tip="Cotton leaf curl Multan betasatellite"/>
-    <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
-    <token name="ISOLATE" type="TEXT_FIELD" mandatory="true" display_name="Isolate name" description="Name given to the sample that has been sequenced." tip="Pakistan-5"/>
-    <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="true" display_name="Isolation source" description="Physical source of sample, usually host leaf" tip="host leaf"/>
-    <token name="PSEUDO" type="BOOLEAN_FIELD" mandatory="true" display_name="Truncated/Nonfunctional betaC1 copy?" description="Is the betaC1 gene defective due to truncation or mutation?" tip="yes or no"/>
-    <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
-    <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux, North Altantic Ridge"/>
-    <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
-    <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
-    <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
-    <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collector" description="Name of the person or institute that originally collected the sample/organism" tip="Dan Janzen"/>
-    <token name="HOST" type="TEXT_FIELD" mandatory="true" display_name="Plant host" description="The plant from which the sequenced betasatellite was taken. Cultivar can be included" tip="Gossypium hirsutum"/>
-    <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
-    <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
-    <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
-    <token name="CDS_START" type="INTEGER_FIELD" mandatory="true" display_name="betaC1 start coordinate (negative sense)" description="Start position (T of TAC) of the negative sense CDS" tip="551"/>
-    <token name="CDS_END" type="INTEGER_FIELD" mandatory="true" display_name="betaC1 end coordinate (negative sense)" description="End position (T of ATT) of the negative sense CDS" tip="195"/>
-    <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
-    <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,ISOLATE,CLONE,HOST,ISOLATION_SOURCE,CDS_START,CDS_END,PSEUDO" description="Mandatory template-specific fields and questions."/>
-    <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
-    <token_group name="Further Sample Data" mandatory="false" contains="COLDATE,COL_BY" description="Further information relating to the organism and its host (if applicable)."/>
-    <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1" description="Details of the PCR primers used."/>
-    <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
-    <section name="CLONE_SCT" mandatory="CLONE"/>
-    <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
-    <section name="AREA_SCT" mandatory="AREA"/>
-    <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
-    <section name="PSEUDO_SCT" mandatory="PSEUDO"/>
-    <template_string>
-        ID   XXX; SV XXX; circular; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
-        XX
-        ST * {STATUS}
-        XX
-        AC   ;
-        XX
-        DE   {ORGANISM_NAME} complete sequence{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
-        XX
-        KW   .
-        XX
-        OS   {ORGANISM_NAME}
-        OC   .
-        XX
-        {CITATIONS}
-        FH   Key             Location/Qualifiers
-        FH
-        FT   source          1..{SEQUENCE_LENGTH}
-        FT                   /organism="{ORGANISM_NAME}"
-        FT                   /mol_type="genomic DNA"
-        FT                   /clone="{CLONE}"
-        FT                   /isolate="{ISOLATE}"
-        FT                   /country="{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}"
-        FT                   /lat_lon="{LAT_LON}"
-        FT                   /isolation_source="{ISOLATION_SOURCE}"
-        FT                   /collection_date="{COLDATE}"
-        FT                   /collected_by="{COL_BY}"
-        FT                   /host="{HOST}"
-        FT                   /PCR_primers="fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}"
-        FT   CDS             complement({CDS_END}..{CDS_START})
-        FT                   /transl_table=1
-        FT                   /gene="betaC1"
-        {{PSEUDO_SCT}}
-        FT                   /pseudo
-        {{/PSEUDO_SCT}}
-        FT                   /product="betaC1 protein"
-        XX
-        {SEQUENCE}//
-    </template_string><![CDATA[Please use this template only if you are wishing to submit complete betasatellite sequences from the Begomovirus genus of plant infective agents.]]><example_string/>
+<?xml version="1.0" encoding="UTF-8"?>
+<template id="ERT000047" version="1">
+  <name>Betasatellite sub-viral particle</name>
+  <forms_name>Betasatellite</forms_name>
+  <description>For submission of circular single stranded DNA betasatellite sequences of the Begomovirus genus.</description>
+  <token name="ORGANISM_NAME" type="TAXON_FIELD" mandatory="true" display_name="Organism" description="Full name of sub-viral particle (ICTV-approved or otherwise), NCBI taxid, BioSample accession, SRA sample accession, or sample alias." tip="Escherichia coli, uncultured bacterium, Bacillus sp. 654g14, Quercus ruber, Saccharomyces cerevisiae, Treponema pallidum subsp. pallidum"/>
+  <token name="CLONE" type="TEXT_FIELD" mandatory="false" display_name="Clone identifier" description="Identifier given to each clone in a sequenced library." tip="a2314_1296, lib1_b_9"/>
+  <token name="ISOLATE" type="TEXT_FIELD" mandatory="true" display_name="Isolate name" description="Name given to the sample that has been sequenced." tip="Pakistan-5"/>
+  <token name="ISOLATION_SOURCE" type="TEXT_FIELD" mandatory="true" display_name="Isolation source" description="Physical source of sample, usually host leaf" tip="host leaf"/>
+  <token name="PSEUDO" type="BOOLEAN_FIELD" mandatory="true" display_name="Truncated/Nonfunctional betaC1 copy?" description="Is the betaC1 gene defective due to truncation or mutation?" tip="yes or no"/>
+  <token name="COUNTRY" type="TEXT_CHOICE_FIELD" cv_name="country" mandatory="false" display_name="Country" description="Political name of country or ocean in which sequenced sample or isolate was collected." tip="France, China, Pacific Ocean"/>
+  <token name="AREA" type="TEXT_FIELD" mandatory="false" display_name="Geographic area" description="Political name of the area of country or ocean in which sequenced sample or isolate was collected. Must have Country selected." tip="Cambridgeshire, Bordeaux, North Altantic Ridge"/>
+  <token name="LOCALITY" type="TEXT_FIELD" mandatory="false" display_name="Locality" description="More geographic-specific location where sequenced material was sourced. Must have Country AND Geographic area selected." tip="York, Colton, Loch Ness"/>
+  <token name="LAT_LON" type="TEXT_FIELD" mandatory="false" display_name="Latitude/Longitude" description="Geographical coordinates of the location where the specimen was collected, in decimal degrees (to 2 places)." tip="47.94 N 28.12 W or 45.01 S 4.12 E"/>
+  <token name="COLDATE" type="TEXT_FIELD" mandatory="false" display_name="Collection date" description="Date of collection of the original sample/organism." tip="08-Mar-1975, Mar-1975, 1975"/>
+  <token name="COL_BY" type="TEXT_FIELD" mandatory="false" display_name="Collector" description="Name of the person or institute that originally collected the sample/organism" tip="Dan Janzen"/>
+  <token name="HOST" type="TEXT_FIELD" mandatory="true" display_name="Plant host" description="The plant from which the sequenced betasatellite was taken. Cultivar can be included" tip="Gossypium hirsutum"/>
+  <token name="FWD_NAME1" type="TEXT_FIELD" mandatory="false" display_name="forward primer name" description="Name of the forward direction PCR primer."/>
+  <token name="REV_NAME1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer name" description="Name of the reverse direction PCR primer."/>
+  <token name="FWD_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="forward primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="REV_SEQ1" type="TEXT_FIELD" mandatory="false" display_name="reverse primer sequence" description="Sequences should be given in the IUPAC degenerate-base alphabet, except for the modified bases; those must be enclosed within angle brackets."/>
+  <token name="CDS_START" type="INTEGER_FIELD" mandatory="true" display_name="betaC1 start coordinate (negative sense)" description="Start position (T of TAC) of the negative sense CDS" tip="551"/>
+  <token name="CDS_END" type="INTEGER_FIELD" mandatory="true" display_name="betaC1 end coordinate (negative sense)" description="End position (T of ATT) of the negative sense CDS" tip="195"/>
+  <token name="SEQUENCE" type="TEXT_AREA_FIELD" mandatory="true" display_name="Sequence" description="Sequence"/>
+  <token_group name="Mandatory Fields and Questions" mandatory="true" contains="ORGANISM_NAME,ISOLATE,CLONE,HOST,ISOLATION_SOURCE,CDS_START,CDS_END,PSEUDO" description="Mandatory template-specific fields and questions."/>
+  <token_group name="Geographic Source" mandatory="false" contains="COUNTRY,AREA,LOCALITY,LAT_LON" description="Geographic information on sequenced sample."/>
+  <token_group name="Further Sample Data" mandatory="false" contains="COLDATE,COL_BY" description="Further information relating to the organism and its host (if applicable)."/>
+  <token_group name="PCR Primers" mandatory="false" contains="FWD_NAME1,FWD_SEQ1,REV_NAME1,REV_SEQ1" description="Details of the PCR primers used."/>
+  <token_group name="Sequence" contains="SEQUENCE" description="Sequence data."/>
+  <section name="CLONE_SCT" mandatory="CLONE"/>
+  <section name="ISOLATE_SCT" mandatory="ISOLATE"/>
+  <section name="AREA_SCT" mandatory="AREA"/>
+  <section name="LOCALITY_SCT" mandatory="LOCALITY"/>
+  <section name="PSEUDO_SCT" mandatory="PSEUDO"/>
+  <template_string>
+ID   XXX; SV XXX; circular; genomic DNA; XXX; XXX; {SEQUENCE_LENGTH} BP.
+XX
+ST * {STATUS}
+XX
+AC   ;
+XX
+DE   {ORGANISM_NAME} complete sequence{{ISOLATE_SCT}}, isolate {ISOLATE}{{/ISOLATE_SCT}}{{CLONE_SCT}}, clone {CLONE}{{/CLONE_SCT}}
+XX
+KW   .
+XX
+OS   {ORGANISM_NAME}
+OC   .
+XX
+{CITATIONS}
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..{SEQUENCE_LENGTH}
+FT                   /organism=&quot;{ORGANISM_NAME}&quot;
+FT                   /mol_type=&quot;genomic DNA&quot;
+FT                   /clone=&quot;{CLONE}&quot;
+FT                   /isolate=&quot;{ISOLATE}&quot;
+FT                   /country=&quot;{COUNTRY}{{AREA_SCT}}:{AREA}{{LOCALITY_SCT}}, {LOCALITY}{{/LOCALITY_SCT}}{{/AREA_SCT}}&quot;
+FT                   /lat_lon=&quot;{LAT_LON}&quot;
+FT                   /isolation_source=&quot;{ISOLATION_SOURCE}&quot;
+FT                   /collection_date=&quot;{COLDATE}&quot;
+FT                   /collected_by=&quot;{COL_BY}&quot;
+FT                   /host=&quot;{HOST}&quot;
+FT                   /PCR_primers=&quot;fwd_name: {FWD_NAME1}, fwd_seq: {FWD_SEQ1}, rev_name: {REV_NAME2}, rev_seq: {REV_SEQ2}&quot;
+FT   CDS             complement({CDS_END}..{CDS_START})
+FT                   /transl_table=1
+FT                   /gene=&quot;betaC1&quot;
+{{PSEUDO_SCT}}
+FT                   /pseudo
+{{/PSEUDO_SCT}}
+FT                   /product=&quot;betaC1 protein&quot;
+XX
+{SEQUENCE}// 
+    </template_string><![CDATA[Please use this template only if you are wishing to submit complete betasatellite sequences from the Begomovirus genus of plant infective agents.]]>
+  <example_string/>
 </template>
