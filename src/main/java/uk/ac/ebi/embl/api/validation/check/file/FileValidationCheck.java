@@ -197,6 +197,7 @@ public abstract class FileValidationCheck {
 		return assemblyLevel;
 	}
 
+
 	// TODO: Genome length check should be generic given the tax id for all species with known expected genome length.
 	public void validateCovid19GenomeSize() throws ValidationEngineException {
 		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {

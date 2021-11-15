@@ -17,7 +17,9 @@ package uk.ac.ebi.embl.api.validation.fixer.feature;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +57,6 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 		for (Qualifier qualifier : latlonQualifiers) {
 			if(qualifier.getValue()==null)
 				continue;
-			Double lat = null, lon=null;
 			String direcSN,direcWE,latValue,lonValue;
 			Matcher matcher = pattern.matcher(qualifier.getValue());
 			if (matcher.find()) {
@@ -63,21 +64,15 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 				lonValue = matcher.group(4);
 				direcSN = matcher.group(3);
 				direcWE = matcher.group(6);
-				DecimalFormat df = new DecimalFormat("#.########");
-				df.setRoundingMode(RoundingMode.DOWN);
 				String newValue="";
 				if (latValue != null) {
-					lat = new Double(latValue);
-					lat = Double.parseDouble(df.format(lat));
-					newValue += lat+" ";
+					newValue += getLatLonValue(latValue) + " ";
 					if(direcSN!=null)
 					newValue+=direcSN+ " ";
 				}
 
 				if (lonValue != null) {
-					lon = new Double(lonValue);
-					lon =Double.parseDouble(df.format(lon));
-					newValue+=lon+" ";
+					newValue += getLatLonValue(lonValue) + " ";
 					if(direcWE!=null)
 						newValue+=direcWE;
 				}
@@ -92,11 +87,17 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
 				reportMessage(Severity.FIX, qualifier.getOrigin(), LatLonQualRemovedFix,qualifier.getValue());
 			}
 				
-			}
-
-
-		
+		}
 		return result;
 	}
 
+	public static Double getLatLonValue(String latLonValue) {
+		// Use UK locale for dot decimal notation.
+		DecimalFormat df = new DecimalFormat("#.########",
+				DecimalFormatSymbols.getInstance(Locale.UK));
+		df.setRoundingMode(RoundingMode.DOWN);
+		Double value = new Double(latLonValue);
+		value = Double.parseDouble(df.format(value));
+		return value;
+	}
 }

@@ -20,17 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.check.feature.QualifierCheck;
-import uk.ac.ebi.embl.api.validation.fixer.feature.ObsoleteFeatureFix;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -82,6 +77,7 @@ public class Lat_lonValueFixTest
 		ValidationResult validationResult = check.check(feature);
 		assertEquals(0, validationResult.count("Lat_lonValueFix", Severity.FIX));
 	}
+
 	@Test
 	public void testCheck_lat_lonValidValueExceedLimit()
 	{
@@ -93,4 +89,21 @@ public class Lat_lonValueFixTest
 	}
 
 
+	@Test
+	public void testLatLonValue()
+	{
+		assertEquals(new Double("1"), Lat_lonValueFix.getLatLonValue("1"));
+		assertEquals(new Double("1.5"), Lat_lonValueFix.getLatLonValue("1.5"));
+		assertEquals(new Double("1.55"), Lat_lonValueFix.getLatLonValue("1.55"));
+		assertEquals(new Double("1.555"), Lat_lonValueFix.getLatLonValue("1.555"));
+		assertEquals(new Double("1.5555"), Lat_lonValueFix.getLatLonValue("1.5555"));
+		assertEquals(new Double("1.55555"), Lat_lonValueFix.getLatLonValue("1.55555"));
+		assertEquals(new Double("1.555555"), Lat_lonValueFix.getLatLonValue("1.555555"));
+		assertEquals(new Double("1.5555555"), Lat_lonValueFix.getLatLonValue("1.5555555"));
+		assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.55555555"));
+		// Round down
+		assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555551"));
+		assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555555"));
+		assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555559"));
+	}
 }
