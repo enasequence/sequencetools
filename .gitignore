@@ -4,7 +4,6 @@
 .project
 .idea
 build
-gradlew
 gradle.properties
 src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt
 pom.xml
