@@ -14,9 +14,10 @@ import java.util.Set;
 public class CSVReader {
     private String currentLine;
     private final BufferedReader lineReader;
-    private Set<String> entryNames = new HashSet<>();
     private List<String> headerKeys;
     private int lineNumber = 0;
+    private int entryNumber = 0;
+    private Set<Integer> entryNumbers = new HashSet<>();
 
     public CSVReader(final InputStream inputReader,final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
         lineReader = new BufferedReader(new InputStreamReader(inputReader));
@@ -24,53 +25,55 @@ public class CSVReader {
     }
 
     public CSVLine readTemplateSpreadsheetLine() throws Exception {
-        CSVLine csvLine = null;
+        skipEmptyLinesAndComments();
         if (currentLine != null) {
-            if (currentLine.isEmpty()) {
-                currentLine = readLine();
-                return readTemplateSpreadsheetLine();//skip empty lines
-            }
-            prepareLineForParsing();
-            if (currentLine.startsWith(CSVWriter.HEADER_TOKEN)) {
-                currentLine = readLine();
-                return readTemplateSpreadsheetLine();//as this is the first line which is the header
-            }
-            if (currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN)) {
-                currentLine = readLine();
-                return readTemplateSpreadsheetLine();
-            }
-            final TemplateVariables entryTokensMap = new TemplateVariables();
-            final String[] currentTokenLine = StringUtils.splitPreserveAllTokens(currentLine, CSVWriter.UPLOAD_DELIMITER);
-            if ((currentTokenLine.length) != headerKeys.size()) {
-                String lineSummary = currentLine;
-                if (currentLine.length() > 10)
-                    lineSummary = currentLine.substring(0, 10);
-                throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + currentTokenLine.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
-            }
-
-            String entryNumber = currentTokenLine[0];
-            if (entryNames.contains(entryNumber.toUpperCase())) {
-                throw new TemplateUserError(CSVWriter.HEADER_TOKEN + " must be unique. "+ currentTokenLine[0] + " exists more than once" );
-            } else {
-                entryNames.add(entryNumber.toUpperCase());
-            }
-            entryTokensMap.setSequenceName(entryNumber);
-
-            for (int i = 1; i < currentTokenLine.length; i++) {
-                String tokenValue = currentTokenLine[i];
-                checkTokenForBannedCharacters(tokenValue);
-                tokenValue = tokenValue.replaceAll("<br>", "\n");
-                tokenValue = tokenValue.replaceAll(";", ",");
-                if (tokenValue.startsWith("\"") && tokenValue.endsWith("\"")) {
-                    tokenValue = StringUtils.stripStart(tokenValue, "\"");
-                    tokenValue = StringUtils.stripEnd(tokenValue, "\"");
-                }
-                entryTokensMap.addToken(headerKeys.get(i), tokenValue);
-            }
-            csvLine = new CSVLine(++lineNumber, entryTokensMap);
+            return processTemplateSpreadsheetLine();
         }
-        currentLine = readLine();
-        return csvLine;
+        return null;
+    }
+
+    public void skipEmptyLinesAndComments() throws Exception {
+        // Skip empty lines and comment lines.
+        while(currentLine != null && (
+              currentLine.isEmpty() ||
+              currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN))) {
+            readLine();
+        }
+    }
+
+    public CSVLine processTemplateSpreadsheetLine() throws Exception {
+        final TemplateVariables entryTokensMap = new TemplateVariables();
+        final String[] currentTokenLine = StringUtils.splitPreserveAllTokens(currentLine, CSVWriter.UPLOAD_DELIMITER);
+        if ((currentTokenLine.length) != headerKeys.size()) {
+            String lineSummary = currentLine;
+            if (currentLine.length() > 10)
+                lineSummary = currentLine.substring(0, 10);
+            throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + currentTokenLine.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
+        }
+
+        // The entry number will be used as the sequence name and must be unique
+        // for a submission.
+        entryNumber++;
+        if (entryNumbers.contains(entryNumber)) {
+            throw new TemplateUserError("Internal error: non-unique sequence number error" );
+        }
+        entryNumbers.add(entryNumber);
+
+        entryTokensMap.setSequenceName( String.valueOf(entryNumber));
+
+        for (int i = 1; i < currentTokenLine.length; i++) {
+            String tokenValue = currentTokenLine[i];
+            checkTokenForBannedCharacters(tokenValue);
+            tokenValue = tokenValue.replaceAll("<br>", "\n");
+            tokenValue = tokenValue.replaceAll(";", ",");
+            if (tokenValue.startsWith("\"") && tokenValue.endsWith("\"")) {
+                tokenValue = StringUtils.stripStart(tokenValue, "\"");
+                tokenValue = StringUtils.stripEnd(tokenValue, "\"");
+            }
+            entryTokensMap.addToken(headerKeys.get(i), tokenValue);
+        }
+        readLine();
+        return new CSVLine(++lineNumber, entryTokensMap);
     }
 
     private void checkTokenForBannedCharacters(final String tokenValue) throws Exception {
@@ -86,6 +89,9 @@ public class CSVReader {
     }
 
     private void prepareLineForParsing() {
+        if (currentLine == null) {
+            return;
+        }
         currentLine = currentLine.trim();
         if (currentLine.startsWith("\""))
             currentLine = currentLine.replaceFirst("\"", "");//get rid of starting " if present - open office puts these in for strings and they need to be removed
@@ -94,26 +100,23 @@ public class CSVReader {
     }
 
     private void readHeader(final int expectedMatchNumber, final List<TemplateTokenInfo> allTokens) throws Exception {
-        currentLine = readLine();
-        if (currentLine == null)
+        readLine();
+        if (currentLine == null) {
             throw new TemplateException("Template file is empty");
-        String header = null;
-        boolean headerFound = false;
-        while (currentLine != null) {
-            currentLine = currentLine.replaceFirst("\"", "");//get rid of starting " if present - open office puts these in for strings and they need to be removed
-            if (currentLine.startsWith(CSVWriter.HEADER_TOKEN)) {
-                header = currentLine;
-                headerFound = true;
-                break;
-            }
-            currentLine = readLine();
         }
-        if (!headerFound)
-            throw new TemplateUserError("Template header line not found, starts with : " + CSVWriter.HEADER_TOKEN);
+        String header = null;
+        skipEmptyLinesAndComments();
+        if (currentLine != null) {
+            header = currentLine;
+            readLine();
+        }
+        if (header == null) {
+            throw new TemplateUserError("Template file has no data");
+        }
         header = header.replaceAll("\"", "");//remove all speech marks - open office puts these in
         final String[] headerTokens = header.split(CSVWriter.UPLOAD_DELIMITER);
-        final List<String> recognizedKeys = new ArrayList<String>();
-        headerKeys = new ArrayList<String>();
+        final List<String> recognizedKeys = new ArrayList<>();
+        headerKeys = new ArrayList<>();
         /**
          * try to match the incoming header names with the token display names of the template. If not recognized, still
          * accept them with the value given as we accept additional fields.
@@ -143,9 +146,10 @@ public class CSVReader {
         }
     }
 
-    private String readLine() throws TemplateException {
+    private void readLine() throws TemplateException {
         try {
-            return lineReader.readLine();
+            currentLine = lineReader.readLine();
+            prepareLineForParsing();
         } catch (final IOException e) {
             throw new TemplateException(e);
         }

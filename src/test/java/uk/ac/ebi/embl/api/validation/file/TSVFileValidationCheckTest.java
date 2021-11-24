@@ -25,6 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
@@ -117,10 +119,12 @@ public class TSVFileValidationCheckTest {
                     return;
                 }
                 
-                        submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
-                if (!fileValidationCheck.check(submissionFile).isValid()) {
+                submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
+                ValidationResult result = fileValidationCheck.check(submissionFile);
+                if (!result.isValid()) {
                     valid = false;
                     System.out.println("Failed: " + tsvFile);
+                    result.getMessages(Severity.ERROR).forEach(m -> System.out.println(m.getMessage()));
                 }
             }
             assertTrue(valid);
@@ -197,13 +201,7 @@ public class TSVFileValidationCheckTest {
     public void ppGenePassedAsMarker() throws Exception {
         checkTSV("Sequence-PP_GENE-as-MARKER.tsv.gz", true, "");
     }
-
-    @Test
-    public void invalidEntryNumberDuplicate() throws Exception {
-        checkTSV("Sequence-invalid-entrynumber-duplicate.tsv.gz", false,
-                "ERROR: Missing message: ENTRYNUMBER must be unique. test1 exists more than once");
-    }
-
+    
     @Test
     public void invalidMarker() throws Exception {
         checkTSV("Sequence-invalid-marker.tsv.gz", false ,

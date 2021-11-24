@@ -1,1 +1,0 @@
-ERROR: Organism must belong to one of "Deltavirus, Retro-transcribing viruses, ssRNA viruses, dsRNA viruses, Satellites, Virus-associated RNAs, Viroids" when molecule type is "genomic RNA". [Sequence: 1 ,  line: 1]
