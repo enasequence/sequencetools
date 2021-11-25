@@ -72,7 +72,11 @@ public class TSVFileValidationCheckTest {
             "ERT000056-mobele.tsv.gz",
             "ERT000057-alphasat.tsv.gz",
             "ERT000058-MLmarker.tsv.gz",
-            "ERT000060-vUTR.tsv.gz"
+            "ERT000060-vUTR.tsv.gz",
+            // Test validation with entry number column
+            "with-entrynumber.tsv.gz",
+            // Test validation without entry number column
+            "without-entrynumber.tsv.gz"
     };
 
     @Before
