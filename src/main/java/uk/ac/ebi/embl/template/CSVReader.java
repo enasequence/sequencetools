@@ -11,6 +11,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_NAME_TOKEN;
+import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_TOKEN;
+
 public class CSVReader {
     private String currentLine;
     private final BufferedReader lineReader;
@@ -112,6 +115,10 @@ public class CSVReader {
         }
         if (header == null) {
             throw new TemplateUserError("Template file has no data");
+        }
+        if (!header.contains(ORGANISM_NAME_TOKEN) &&
+            !header.contains(ORGANISM_TOKEN)) {
+            throw new TemplateUserError("Template file has no header line");
         }
         header = header.replaceAll("\"", "");//remove all speech marks - open office puts these in
         final String[] headerTokens = header.split(CSVWriter.UPLOAD_DELIMITER);
