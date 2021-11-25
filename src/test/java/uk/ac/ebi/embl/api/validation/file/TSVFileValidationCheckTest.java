@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
@@ -44,35 +45,8 @@ public class TSVFileValidationCheckTest {
     private SubmissionFile submissionFile;
     private Path sequenceFixedFilePath = Paths.get(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
     private String reportsPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
-    private final static String[] allTemplatesA = {"ERT000002-rRNA.tsv.gz",
-            "ERT000003-EST-1.tsv.gz",
-            "ERT000006-SCM.tsv.gz",
-            "ERT000009-ITS.tsv.gz",
-            "ERT000020-COI.tsv.gz",
-            "ERT000024-GSS-1.tsv.gz",
-            "ERT000028-SVC.tsv.gz",
-            "ERT000029-SCGD.tsv.gz",
-            "ERT000030-MHC1.tsv.gz",
-         //   "ERT000031-viroid.tsv.gz",  issues with organism , need to be fixed
-            "ERT000032-matK.tsv.gz",
-            "ERT000034-Dloop.tsv.gz",
-            "ERT000035-IGS.tsv.gz",
-            "ERT000036-MHC2.tsv.gz",
-            "ERT000037-intron.tsv.gz",
-            "ERT000038-hyloMarker.tsv.gz",
-            "ERT000039-Sat.tsv.gz",
-            "ERT000042-ncRNA.tsv.gz",
-            "ERT000047-betasat.tsv.gz",
-            "ERT000050-ISR.tsv.gz",
-            "ERT000051-poly.tsv.gz",
-            "ERT000052-ssRNA.tsv.gz",
-            "ERT000053-ETS.tsv.gz",
-            "ERT000054-prom.tsv.gz",
-            "ERT000055-STS.tsv.gz",
-            "ERT000056-mobele.tsv.gz",
-            "ERT000057-alphasat.tsv.gz",
-            "ERT000058-MLmarker.tsv.gz",
-            "ERT000060-vUTR.tsv.gz"
+    private final static String[] allTemplatesA = {
+            "ERT000002-rRNA.tsv.gz"
     };
 
     @Before
@@ -105,36 +79,29 @@ public class TSVFileValidationCheckTest {
     }
 
     @Test
-    public void allTemplates() {
-        try {
-            boolean valid = true;
-            String templateDirStr=System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
-            for (String tsvFile : allTemplatesA) {
-                try {
-                    if (Files.exists(sequenceFixedFilePath))
-                        Files.delete(sequenceFixedFilePath);
-                    Files.createFile(sequenceFixedFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                
-                submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
-                ValidationResult result = fileValidationCheck.check(submissionFile);
-                if (!result.isValid()) {
-                    valid = false;
-                    System.out.println("Failed: " + tsvFile);
-                    result.getMessages(Severity.ERROR).forEach(m -> System.out.println(m.getMessage()));
-                }
+    public void allTemplates() throws ValidationEngineException {
+        boolean valid = true;
+        String templateDirStr=System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
+        for (String tsvFile : allTemplatesA) {
+            try {
+                if (Files.exists(sequenceFixedFilePath))
+                    Files.delete(sequenceFixedFilePath);
+                Files.createFile(sequenceFixedFilePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
             }
-            assertTrue(valid);
-            System.out.println("Finished.");
-            
-            
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
+            ValidationResult result = fileValidationCheck.check(submissionFile);
+            if (!result.isValid()) {
+                valid = false;
+                System.out.println("Failed: " + tsvFile);
+                result.getMessages(Severity.ERROR).forEach(m -> System.out.println(m.getMessage()));
+            }
         }
+        assertTrue(valid);
+        System.out.println("Finished.");
     }
 
 
