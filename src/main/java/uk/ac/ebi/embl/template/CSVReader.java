@@ -43,13 +43,14 @@ public class CSVReader {
     }
 
     public CSVLine processTemplateSpreadsheetLine() throws Exception {
-        final TemplateVariables entryTokensMap = new TemplateVariables();
-        final String[] currentTokenLine = StringUtils.splitPreserveAllTokens(currentLine, CSVWriter.UPLOAD_DELIMITER);
-        if ((currentTokenLine.length) != headerKeys.size()) {
+        final TemplateVariables templateVariables = new TemplateVariables();
+        final String[] tokenValues = StringUtils.splitPreserveAllTokens(currentLine, CSVWriter.UPLOAD_DELIMITER);
+        if ((tokenValues.length) != headerKeys.size()) {
             String lineSummary = currentLine;
-            if (currentLine.length() > 10)
+            if (currentLine.length() > 10) {
                 lineSummary = currentLine.substring(0, 10);
-            throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + currentTokenLine.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
+            }
+            throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + tokenValues.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
         }
 
         // The entry number will be used as the sequence name and must be unique
@@ -60,10 +61,10 @@ public class CSVReader {
         }
         entryNumbers.add(entryNumber);
 
-        entryTokensMap.setSequenceName( String.valueOf(entryNumber));
+        templateVariables.setSequenceName( String.valueOf(entryNumber));
 
-        for (int i = 0; i < currentTokenLine.length; i++) {
-            String tokenValue = currentTokenLine[i];
+        for (int i = 0; i < tokenValues.length; i++) {
+            String tokenValue = tokenValues[i];
             checkTokenForBannedCharacters(tokenValue);
             tokenValue = tokenValue.replaceAll("<br>", "\n");
             tokenValue = tokenValue.replaceAll(";", ",");
@@ -72,12 +73,13 @@ public class CSVReader {
                 tokenValue = StringUtils.stripEnd(tokenValue, "\"");
             }
 
+            // Remove columns with ignored header keys.
             if (!ignoredHeaderKeys.contains(headerKeys.get(i))) {
-                entryTokensMap.addToken(headerKeys.get(i), tokenValue);
+                templateVariables.addToken(headerKeys.get(i), tokenValue);
             }
         }
         readLine();
-        return new CSVLine(++lineNumber, entryTokensMap);
+        return new CSVLine(++lineNumber, templateVariables);
     }
 
     private void checkTokenForBannedCharacters(final String tokenValue) throws Exception {
