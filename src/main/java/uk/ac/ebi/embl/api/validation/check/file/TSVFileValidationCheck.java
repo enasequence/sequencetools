@@ -101,7 +101,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			}
 
 		} catch (TemplateUserError e) {
-			ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, e.getMessage());
+			ValidationMessage<Origin> validationMessage = new ValidationMessage<>(Severity.ERROR, ValidationMessage.NO_KEY);
+			validationMessage.setMessage( e.getMessage() );
 			validationResult.append(validationMessage);
 			try
 			{
