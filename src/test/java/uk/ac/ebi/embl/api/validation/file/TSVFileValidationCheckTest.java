@@ -46,7 +46,33 @@ public class TSVFileValidationCheckTest {
     private Path sequenceFixedFilePath = Paths.get(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
     private String reportsPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
     private final static String[] allTemplatesA = {
-            "ERT000002-rRNA.tsv.gz"
+            "ERT000002-rRNA.tsv.gz",
+            "ERT000003-EST-1.tsv.gz",
+            "ERT000006-SCM.tsv.gz",
+            "ERT000009-ITS.tsv.gz",
+            "ERT000020-COI.tsv.gz",
+            "ERT000024-GSS-1.tsv.gz",
+            "ERT000028-SVC.tsv.gz",
+            "ERT000029-SCGD.tsv.gz",
+            "ERT000030-MHC1.tsv.gz",
+            "ERT000032-matK.tsv.gz",
+            "ERT000034-Dloop.tsv.gz",
+            "ERT000035-IGS.tsv.gz",
+            "ERT000036-MHC2.tsv.gz",
+            "ERT000037-intron.tsv.gz",
+            "ERT000038-hyloMarker.tsv.gz",
+            "ERT000039-Sat.tsv.gz",
+            "ERT000042-ncRNA.tsv.gz",
+            "ERT000047-betasat.tsv.gz",
+            "ERT000050-ISR.tsv.gz",
+            "ERT000051-poly.tsv.gz",
+            "ERT000052-ssRNA.tsv.gz",
+            "ERT000053-ETS.tsv.gz",
+            "ERT000055-STS.tsv.gz",
+            "ERT000056-mobele.tsv.gz",
+            "ERT000057-alphasat.tsv.gz",
+            "ERT000058-MLmarker.tsv.gz",
+            "ERT000060-vUTR.tsv.gz"
     };
 
     @Before
@@ -194,22 +220,4 @@ public class TSVFileValidationCheckTest {
                 "Sequence-mandatory-field-missing.tsv.gz", false,
                 "ERROR: The following mandatory field(s) are missing SEDIMENT - All headers are capitalised. [Sequence: 1 ]");
     }
-
-    @Test
-    public void missingHeaderValues() {
-		/*
-		try {
-			StringBuilder validationResults = new StringBuilder();
-			SequenceValidator sequenceValidator = new SequenceValidator(10, 1000);
-			BufferedInputStream bufferedInputStremSubmittedData = new BufferedInputStream(new GZIPInputStream(new FileInputStream(SEQUENCE_BASE_DIR + "Sequence-missingHeaderValues.gz")));
-			HttpStatus httpStatus = sequenceValidator.doSequenceTsvFileValidation(bufferedInputStremSubmittedData, "ERT000029", validationResults);
-			assertEquals(HttpStatus.OK, httpStatus);
-			String expectedResults = new String(Files.readAllBytes(Paths.get(SEQUENCE_BASE_DIR + "Sequence-missingHeaderValues-expected-results.txt")));
-			assertEquals(expectedResults, validationResults.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		*/
-    }
-
 }

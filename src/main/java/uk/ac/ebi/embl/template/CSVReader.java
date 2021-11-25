@@ -6,10 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_NAME_TOKEN;
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_TOKEN;
@@ -18,9 +15,10 @@ public class CSVReader {
     private String currentLine;
     private final BufferedReader lineReader;
     private List<String> headerKeys;
+    private final List<String> ignoredHeaderKeys = Arrays.asList("ENTRYNUMBER");
     private int lineNumber = 0;
     private int entryNumber = 0;
-    private Set<Integer> entryNumbers = new HashSet<>();
+    private final Set<Integer> entryNumbers = new HashSet<>();
 
     public CSVReader(final InputStream inputReader,final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
         lineReader = new BufferedReader(new InputStreamReader(inputReader));
@@ -64,7 +62,7 @@ public class CSVReader {
 
         entryTokensMap.setSequenceName( String.valueOf(entryNumber));
 
-        for (int i = 1; i < currentTokenLine.length; i++) {
+        for (int i = 0; i < currentTokenLine.length; i++) {
             String tokenValue = currentTokenLine[i];
             checkTokenForBannedCharacters(tokenValue);
             tokenValue = tokenValue.replaceAll("<br>", "\n");
@@ -73,7 +71,10 @@ public class CSVReader {
                 tokenValue = StringUtils.stripStart(tokenValue, "\"");
                 tokenValue = StringUtils.stripEnd(tokenValue, "\"");
             }
-            entryTokensMap.addToken(headerKeys.get(i), tokenValue);
+
+            if (!ignoredHeaderKeys.contains(headerKeys.get(i))) {
+                entryTokensMap.addToken(headerKeys.get(i), tokenValue);
+            }
         }
         readLine();
         return new CSVLine(++lineNumber, entryTokensMap);
