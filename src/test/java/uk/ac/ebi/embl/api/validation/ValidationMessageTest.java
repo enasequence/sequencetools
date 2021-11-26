@@ -74,6 +74,18 @@ public class ValidationMessageTest {
     }
 
     @Test
+    public void
+    testWriteMessageNoKey() throws IOException
+    {
+        StringWriter str = new StringWriter();
+        ValidationMessage validationMessage = new ValidationMessage( Severity.ERROR, ValidationMessage.NO_KEY );
+        validationMessage.setMessage( "TEST" );
+        assertEquals("TEST", validationMessage.getMessage());
+        validationMessage.writeMessage(str);
+        assertEquals("ERROR: TEST\n", str.toString());
+    }
+
+    @Test
     public void 
     testWriteTextMessageChangedFormatter() throws IOException 
     {

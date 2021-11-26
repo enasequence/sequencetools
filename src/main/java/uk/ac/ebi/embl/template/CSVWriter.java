@@ -7,7 +7,6 @@ import java.util.List;
 
 public class CSVWriter {
     public static final String UPLOAD_DELIMITER = "\t";
-    public static final String HEADER_TOKEN = "ENTRYNUMBER";
 
     private PrintWriter lineWriter;
 
@@ -103,9 +102,6 @@ public class CSVWriter {
                 headerBuilder.append("\n");
             }
         }
-        headerBuilder.append(HEADER_TOKEN);
-        headerBuilder.append(UPLOAD_DELIMITER);
-
         for (TemplateTokenInfo variable : variableTokenNames) {
             headerBuilder.append(variable.getDisplayName());
             headerBuilder.append(UPLOAD_DELIMITER);

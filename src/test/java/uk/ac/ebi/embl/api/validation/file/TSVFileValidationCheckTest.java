@@ -25,6 +25,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
@@ -42,7 +45,8 @@ public class TSVFileValidationCheckTest {
     private SubmissionFile submissionFile;
     private Path sequenceFixedFilePath = Paths.get(System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
     private String reportsPath = System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
-    private final static String[] allTemplatesA = {"ERT000002-rRNA.tsv.gz",
+    private final static String[] allTemplatesA = {
+            "ERT000002-rRNA.tsv.gz",
             "ERT000003-EST-1.tsv.gz",
             "ERT000006-SCM.tsv.gz",
             "ERT000009-ITS.tsv.gz",
@@ -51,7 +55,6 @@ public class TSVFileValidationCheckTest {
             "ERT000028-SVC.tsv.gz",
             "ERT000029-SCGD.tsv.gz",
             "ERT000030-MHC1.tsv.gz",
-         //   "ERT000031-viroid.tsv.gz",  issues with organism , need to be fixed
             "ERT000032-matK.tsv.gz",
             "ERT000034-Dloop.tsv.gz",
             "ERT000035-IGS.tsv.gz",
@@ -65,12 +68,15 @@ public class TSVFileValidationCheckTest {
             "ERT000051-poly.tsv.gz",
             "ERT000052-ssRNA.tsv.gz",
             "ERT000053-ETS.tsv.gz",
-            "ERT000054-prom.tsv.gz",
             "ERT000055-STS.tsv.gz",
             "ERT000056-mobele.tsv.gz",
             "ERT000057-alphasat.tsv.gz",
             "ERT000058-MLmarker.tsv.gz",
-            "ERT000060-vUTR.tsv.gz"
+            "ERT000060-vUTR.tsv.gz",
+            // Test validation with entry number column
+            "with-entrynumber.tsv.gz",
+            // Test validation without entry number column
+            "without-entrynumber.tsv.gz"
     };
 
     @Before
@@ -103,34 +109,29 @@ public class TSVFileValidationCheckTest {
     }
 
     @Test
-    public void allTemplates() {
-        try {
-            boolean valid = true;
-            String templateDirStr=System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
-            for (String tsvFile : allTemplatesA) {
-                try {
-                    if (Files.exists(sequenceFixedFilePath))
-                        Files.delete(sequenceFixedFilePath);
-                    Files.createFile(sequenceFixedFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                
-                        submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
-                if (!fileValidationCheck.check(submissionFile).isValid()) {
-                    valid = false;
-                    System.out.println("Failed: " + tsvFile);
-                }
+    public void allTemplates() throws ValidationEngineException {
+        boolean valid = true;
+        String templateDirStr=System.getProperty("user.dir") + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/";
+        for (String tsvFile : allTemplatesA) {
+            try {
+                if (Files.exists(sequenceFixedFilePath))
+                    Files.delete(sequenceFixedFilePath);
+                Files.createFile(sequenceFixedFilePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
             }
-            assertTrue(valid);
-            System.out.println("Finished.");
-            
-            
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            submissionFile = new SubmissionFile(SubmissionFile.FileType.TSV, new File(templateDirStr + tsvFile), sequenceFixedFilePath.toFile());
+            ValidationResult result = fileValidationCheck.check(submissionFile);
+            if (!result.isValid()) {
+                valid = false;
+                System.out.println("Failed: " + tsvFile);
+                result.getMessages(Severity.ERROR).forEach(m -> System.out.println(m.getMessage()));
+            }
         }
+        assertTrue(valid);
+        System.out.println("Finished.");
     }
 
 
@@ -197,13 +198,7 @@ public class TSVFileValidationCheckTest {
     public void ppGenePassedAsMarker() throws Exception {
         checkTSV("Sequence-PP_GENE-as-MARKER.tsv.gz", true, "");
     }
-
-    @Test
-    public void invalidEntryNumberDuplicate() throws Exception {
-        checkTSV("Sequence-invalid-entrynumber-duplicate.tsv.gz", false,
-                "ERROR: Missing message: ENTRYNUMBER must be unique. test1 exists more than once");
-    }
-
+    
     @Test
     public void invalidMarker() throws Exception {
         checkTSV("Sequence-invalid-marker.tsv.gz", false ,
@@ -229,22 +224,4 @@ public class TSVFileValidationCheckTest {
                 "Sequence-mandatory-field-missing.tsv.gz", false,
                 "ERROR: The following mandatory field(s) are missing SEDIMENT - All headers are capitalised. [Sequence: 1 ]");
     }
-
-    @Test
-    public void missingHeaderValues() {
-		/*
-		try {
-			StringBuilder validationResults = new StringBuilder();
-			SequenceValidator sequenceValidator = new SequenceValidator(10, 1000);
-			BufferedInputStream bufferedInputStremSubmittedData = new BufferedInputStream(new GZIPInputStream(new FileInputStream(SEQUENCE_BASE_DIR + "Sequence-missingHeaderValues.gz")));
-			HttpStatus httpStatus = sequenceValidator.doSequenceTsvFileValidation(bufferedInputStremSubmittedData, "ERT000029", validationResults);
-			assertEquals(HttpStatus.OK, httpStatus);
-			String expectedResults = new String(Files.readAllBytes(Paths.get(SEQUENCE_BASE_DIR + "Sequence-missingHeaderValues-expected-results.txt")));
-			assertEquals(expectedResults, validationResults.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		*/
-    }
-
 }

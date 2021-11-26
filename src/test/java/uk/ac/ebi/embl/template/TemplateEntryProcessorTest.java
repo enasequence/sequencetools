@@ -30,7 +30,6 @@ public class TemplateEntryProcessorTest {
     private final static String MOL_TYPE = "/mol_type";
     private static String token="";
     private TemplateEntryProcessor templateEntryProcessor;
-    private TemplateVariables templateVariables;
     
     @Before
     public void setUp() throws Exception {
