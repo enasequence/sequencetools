@@ -15,10 +15,12 @@ public class CSVReader {
     private String currentLine;
     private final BufferedReader lineReader;
     private List<String> headerKeys;
-    private final List<String> ignoredHeaderKeys = Arrays.asList("ENTRYNUMBER");
     private int lineNumber = 0;
-    private int entryNumber = 0;
-    private final Set<Integer> entryNumbers = new HashSet<>();
+    private final Set<String> sequenceNames = new HashSet<>();
+    // Sequence name can be given using ENTRYNUMBER or SEQUENCENAME. If not provided
+    // then the sequence number will be used as the sequence name.
+    private final List<String> sequenceNameHeaderKeys = Arrays.asList("ENTRYNUMBER", "SEQUENCENAME");
+    private int sequenceNumber = 0;
 
     public CSVReader(final InputStream inputReader,final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
         lineReader = new BufferedReader(new InputStreamReader(inputReader));
@@ -53,16 +55,7 @@ public class CSVReader {
             throw new TemplateUserError("There are " + headerKeys.size() + " tokens specified in the header but " + tokenValues.length + " values for entry on line " + lineSummary + "..., please check your import file data is properly delimited with a 'tab'.");
         }
 
-        // The entry number will be used as the sequence name and must be unique
-        // for a submission.
-        entryNumber++;
-        if (entryNumbers.contains(entryNumber)) {
-            throw new TemplateUserError("Internal error: non-unique sequence number error" );
-        }
-        entryNumbers.add(entryNumber);
-
-        templateVariables.setSequenceName( String.valueOf(entryNumber));
-
+        String sequenceName = null;
         for (int i = 0; i < tokenValues.length; i++) {
             String tokenValue = tokenValues[i];
             checkTokenForBannedCharacters(tokenValue);
@@ -73,11 +66,30 @@ public class CSVReader {
                 tokenValue = StringUtils.stripEnd(tokenValue, "\"");
             }
 
-            // Remove columns with ignored header keys.
-            if (!ignoredHeaderKeys.contains(headerKeys.get(i))) {
+            if (!sequenceNameHeaderKeys.contains(headerKeys.get(i))) {
                 templateVariables.addToken(headerKeys.get(i), tokenValue);
             }
+            else {
+                sequenceName = tokenValue;
+            }
         }
+
+        // If the submitter does not provide a sequence name then
+        // use the sequence number as the sequence name.
+        ++sequenceNumber;
+        if (sequenceName == null) {
+            sequenceName = String.valueOf(sequenceNumber);
+        }
+        // The sequence names must be unique.
+        if (sequenceNames.contains(sequenceName)) {
+            throw new TemplateUserError("Non-unique sequence name: " + sequenceName);
+        }
+        else {
+            sequenceNames.add(sequenceName);
+        }
+
+        templateVariables.setSequenceName( sequenceName );
+
         readLine();
         return new CSVLine(++lineNumber, templateVariables);
     }
