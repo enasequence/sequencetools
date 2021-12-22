@@ -23,10 +23,10 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,6 +54,7 @@ public class QualifierCheckTest {
         DataRow dataRow5 = new DataRow("protein_id",	"N",	"Y",	"Y",	"^\\s*([A-Z]{3}\\d{5})(\\.)(\\d+)\\s*$",	"93",	"(null)");
         DataRow dataRow6 = new DataRow("inference",	"N",	"Y",	"Y",	"^((COORDINATES|DESCRIPTION|EXISTENCE):)?([^\\:\\(]+)(\\(same\\sspecies\\))?(:.+)?$",	"89",	"(null)");
         DataRow dataRow7 = new DataRow("ncRNA_class", "N", "Y", "Y", "^(.*)$", "95", "(null)");
+        DataRow dataRow8 = new DataRow("regulatory_class", "N", "Y", "Y", "^([\\w\\s]+)$", "108", "(null)");
 
         DataRow regexRow = new DataRow("collection_date", "3", "FALSE", "Oct");
         DataRow regexRow2 = new DataRow("rpt_type","1","TRUE","tandem,inverted,flanking,terminal,direct,dispersed,other");
@@ -61,12 +62,15 @@ public class QualifierCheckTest {
         DataRow regexRow4 = new DataRow("lat_lon", "6", "FALSE", "E,W");
         DataRow regexRow5 = new DataRow("inference","3","TRUE","ab initio prediction,alignment,non-experimental evidence no additional details recorded,nucleotide motif,profile,protein motif,similar to AA sequence,similar to DNA sequence,similar to RNA sequence,similar to RNA sequence{COM} EST,similar to RNA sequence{COM} mRNA,similar to RNA sequence{COM} other RNA,similar to sequence");
         DataRow regexRow6 = new DataRow("ncRNA_class", "1", "TRUE", "other,ribozyme,snoRNA,snRNA,SRP_RNA,antisense_RNA,autocatalytically_spliced_intron,hammerhead_ribozyme,RNase_P_RNA,RNase_MRP_RNA,telomerase_RNA,guide_RNA,rasiRNA,vault_RNA,piRNA,miRNA,siRNA,scRNA,lncRNA,pre_miRNA,sgRNA,scaRNA,Y_RNA,circRNA");
+        DataRow regexRow7 = new DataRow("regulatory_class", "1", "TRUE", "attenuator,CAAT_signal,enhancer,enhancer_blocking_element,GC_signal,imprinting_control_region,insulator,locus_control_region,minus_35_signal,minus_10_signal,response_element,polyA_signal_sequence,promoter,ribosome_binding_site,riboswitch,silencer,TATA_box,terminator,other,replication_regulatory_region," +
+                "transcriptional_cis_regulatory_region,recoding_stimulatory_region,DNase_I_hypersensitive_site,matrix_attachment_region,recombination_enhancer,uORF");
+
 
         DataRow artemisRow = new DataRow("color");
         DataRow artemisRow2 = new DataRow("assembly_id");
 
-        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6, dataRow7);
-        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5, regexRow6);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_QUALIFIER_VALUES, dataRow1, dataRow2, dataRow3, dataRow4, dataRow5, dataRow6, dataRow7, dataRow8);
+        GlobalDataSets.addTestDataSet(GlobalDataSetFile.FEATURE_REGEX_GROUPS, regexRow,regexRow2,regexRow3,regexRow4,regexRow5, regexRow6,regexRow7);
         GlobalDataSets.addTestDataSet(GlobalDataSetFile.ARTEMIS_QUALIFIERS, artemisRow,artemisRow2);
         check = new QualifierCheck();
     }
@@ -268,8 +272,17 @@ public class QualifierCheckTest {
     public void testCheck_ncRNA_NotPermittedValue() {
         feature.addQualifier("ncRNA_class", "abc");
         ValidationResult validationResult = check.check(feature);
-        assertTrue(!validationResult.isValid());
+        assertFalse(validationResult.isValid());
         Collection<ValidationMessage<Origin>> messages = validationResult.getMessages("QualifierCheck-4");
         assertTrue(messages.size() == 1);
     }
+
+    @Test
+    public void testCheck_regulatory_class_Value() {
+
+        feature.addQualifier("regulatory_class","recombination_enhancer");
+        ValidationResult validationResult = check.check(feature);
+        assertTrue(validationResult.isValid());
+    }
+
 }

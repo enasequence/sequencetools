@@ -65,9 +65,9 @@ public class FastaFileReader extends FlatFileEntryReader
             {
             	String entryname=entry.getPrimaryAccession()==null?entry.getSubmitterAccession():entry.getPrimaryAccession();
             	if(entryname==null)
-            	throw new IOException("Invalid Sequence:Failed to read the Sequence at line :"+lineReader.getCurrentLine());
+            	throw new IOException("Invalid Sequence:Failed to read the Sequence at line :"+lineReader.getCurrentLine(), e);
             	else
-                throw new IOException("Invalid Sequence:Failed to read the Sequence of : "+entryname);
+                throw new IOException("Invalid Sequence:Failed to read the Sequence of : "+entryname, e);
 
             }
 		}
