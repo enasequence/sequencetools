@@ -379,9 +379,6 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	}
 
     public void clearFeatures() {
-       for (Feature f : features) {
-          f.removeAllQualifiers();
-       }
         features.clear();
     }
 
