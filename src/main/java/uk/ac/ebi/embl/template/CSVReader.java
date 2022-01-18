@@ -1,6 +1,7 @@
 package uk.ac.ebi.embl.template;
 
 import org.apache.commons.lang.StringUtils;
+import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,9 +40,19 @@ public class CSVReader {
         // Skip empty lines and comment lines.
         while(currentLine != null && (
               currentLine.isEmpty() ||
-              currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN))) {
+              currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN) || 
+              isValidChecklistIdLine(currentLine))) {
             readLine();
         }
+    }
+
+    /**
+     * Check if the TSV file's first line match chicklist id line
+     * Example: Checklist	ERT000002	rRNA gene
+     */
+    public static boolean isValidChecklistIdLine(String currentLine){
+        String[] lineArr=currentLine.split(TSVFileValidationCheck.SPACE_TOKEN);
+        return lineArr[0].equals(TSVFileValidationCheck.CHECKLIST_TEMPLATE_LINE_PREFIX) && lineArr[1].matches(TSVFileValidationCheck.TEMPLATE_ID_PATTERN);
     }
 
     public CSVLine processTemplateSpreadsheetLine() throws Exception {
