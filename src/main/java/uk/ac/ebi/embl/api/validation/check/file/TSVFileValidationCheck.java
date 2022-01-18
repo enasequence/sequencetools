@@ -155,7 +155,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 					.findFirst();
 			if (optional.isPresent()) {
 				String templateIdLine = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").replace(CHECKLIST_TEMPLATE_LINE_PREFIX,"").trim();
-				templateId = getTemplateId(templateIdLine);
+				templateId = templateIdLine.split(SPACE_TOKEN)[0];
 				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
 					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003",
 							ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
@@ -163,13 +163,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return templateId;
-	}
-
-	private String getTemplateId(String line) {
-		Pattern pattern = Pattern.compile(TEMPLATE_ID_PATTERN);
-		Matcher matcher = pattern.matcher(line);
-		String templateId = matcher.find() ? matcher.group(1) : "";
 		return templateId;
 	}
 }
