@@ -142,8 +142,8 @@ public class CSVReader {
         if (header == null) {
             throw new TemplateUserError("Template file has no data");
         }
-        if (!header.contains(ORGANISM_NAME_TOKEN) &&
-            !header.contains(ORGANISM_TOKEN)) {
+        if (!header.toUpperCase().contains(ORGANISM_NAME_TOKEN) &&
+            !header.toUpperCase().contains(ORGANISM_TOKEN)) {
             throw new TemplateUserError("Template file has no header line");
         }
         header = header.replaceAll("\"", "");//remove all speech marks - open office puts these in
