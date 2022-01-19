@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,15 +35,12 @@ import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.template.*;
 
 @Description("")
 public class TSVFileValidationCheck extends FileValidationCheck {
 	public final static String TEMPLATE_FILE_NAME = "TEMPLATE_";
-	private final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
-	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
 
 	public TSVFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
 		super(options, sharedInfo);
@@ -146,14 +145,17 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
 	private String getTemplateIdFromTsvFile( File submittedFile ) throws ValidationEngineException {
 		String templateId = null;
-		try( BufferedReader reader = new BufferedReader( new InputStreamReader(new GZIPInputStream(new FileInputStream( submittedFile)), StandardCharsets.UTF_8)) ){
-			Optional<String> optional =  reader.lines()
-					.filter(line -> line.startsWith( TEMPLATE_ACCESSION_LINE))
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(submittedFile)), StandardCharsets.UTF_8))) {
+			Optional<String> templateIdOpt = reader.lines()
+					.limit(10)
+					.map(line -> CSVReader.getChecklistIdFromIdLine(line))
+					.filter(id -> id != null)
 					.findFirst();
-			if (optional.isPresent()) {
-				templateId = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").trim();
-				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
-					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003",
+			
+			if (templateIdOpt.isPresent()) {
+				templateId = templateIdOpt.orElse(null);	
+				if (StringUtils.isEmpty(templateId))
+					throw new ValidationEngineException("Template id: '" + templateId + " is not valid. Example id is ERT000003",
 							ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			}
 		} catch (IOException e) {
@@ -161,5 +163,4 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		}
 		return templateId;
 	}
-
 }

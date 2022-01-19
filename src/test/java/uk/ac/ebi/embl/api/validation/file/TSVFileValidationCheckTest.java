@@ -76,7 +76,10 @@ public class TSVFileValidationCheckTest {
             // Test validation with entry number column
             "with-entrynumber.tsv.gz",
             // Test validation without entry number column
-            "without-entrynumber.tsv.gz"
+            "without-entrynumber.tsv.gz",
+            // Test with Checklist template id 
+            "ERT000002-rRNA-with-checklist-line.tsv.gz"
+            
     };
 
     @Before
