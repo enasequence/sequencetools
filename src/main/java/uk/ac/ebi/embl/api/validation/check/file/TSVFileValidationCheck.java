@@ -41,10 +41,6 @@ import uk.ac.ebi.embl.template.*;
 @Description("")
 public class TSVFileValidationCheck extends FileValidationCheck {
 	public final static String TEMPLATE_FILE_NAME = "TEMPLATE_";
-	public final static String TEMPLATE_ID_PATTERN = "(ERT[0-9]+)";
-	private final static String TEMPLATE_ACCESSION_LINE = "#template_accession";
-	public final static String CHECKLIST_TEMPLATE_LINE_PREFIX = "Checklist";
-	public static final String SPACE_TOKEN = "\\s+";
 
 	public TSVFileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
 		super(options, sharedInfo);
@@ -149,15 +145,17 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
 	private String getTemplateIdFromTsvFile( File submittedFile ) throws ValidationEngineException {
 		String templateId = null;
-		try( BufferedReader reader = new BufferedReader( new InputStreamReader(new GZIPInputStream(new FileInputStream( submittedFile)), StandardCharsets.UTF_8)) ){
-			Optional<String> optional =  reader.lines()
-					.filter(line -> line.startsWith( TEMPLATE_ACCESSION_LINE) || CSVReader.isValidChecklistIdLine(line))
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(submittedFile)), StandardCharsets.UTF_8))) {
+			Optional<String> templateIdOpt = reader.lines()
+					.limit(10)
+					.map(line -> CSVReader.getChecklistIdFromIdLine(line))
+					.filter(id -> id != null)
 					.findFirst();
-			if (optional.isPresent()) {
-				String templateIdLine = optional.get().replace(TEMPLATE_ACCESSION_LINE, "").replace(CHECKLIST_TEMPLATE_LINE_PREFIX,"").trim();
-				templateId = templateIdLine.split(SPACE_TOKEN)[0];
-				if (templateId.isEmpty() || !templateId.matches(TEMPLATE_ID_PATTERN))
-					throw new ValidationEngineException(TEMPLATE_ACCESSION_LINE + " template id '" + templateId + " is missing or not in the correct format. Example id is ERT000003",
+			
+			if (templateIdOpt.isPresent()) {
+				templateId = templateIdOpt.orElse(null);	
+				if (StringUtils.isEmpty(templateId))
+					throw new ValidationEngineException("Template id: '" + templateId + " is not valid. Example id is ERT000003",
 							ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			}
 		} catch (IOException e) {

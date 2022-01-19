@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_NAME_TOKEN;
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_TOKEN;
@@ -23,7 +25,14 @@ public class CSVReader {
     private final List<String> sequenceNameHeaderKeys = Arrays.asList("ENTRYNUMBER", "SEQUENCENAME");
     private int sequenceNumber = 0;
 
-    public CSVReader(final InputStream inputReader,final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
+     /**
+      * Checklist ERT000028 Single Viral CDS 
+      * or 
+      * #template_accession ERT000028
+      */ 
+    private final static Pattern CHECKLIST_ID_LINE_PATTERN = Pattern.compile("^[^\\s]+\\s+(ERT\\d+).*");
+
+    public CSVReader(final InputStream inputReader, final List<TemplateTokenInfo> allTokens, final int expectedMatchNumber) throws Exception {
         lineReader = new BufferedReader(new InputStreamReader(inputReader));
         readHeader(expectedMatchNumber, allTokens);
     }
@@ -38,21 +47,12 @@ public class CSVReader {
 
     public void skipEmptyLinesAndComments() throws Exception {
         // Skip empty lines and comment lines.
-        while(currentLine != null && (
-              currentLine.isEmpty() ||
-              currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN) || 
-              isValidChecklistIdLine(currentLine))) {
+        while (currentLine != null && (
+                currentLine.isEmpty() ||
+                currentLine.startsWith(FastaSpreadsheetConverter.COMMENT_TOKEN) ||
+                isValidChecklistIdLine(currentLine))) {
             readLine();
         }
-    }
-
-    /**
-     * Check if the TSV file's first line match chicklist id line
-     * Example: Checklist	ERT000002	rRNA gene
-     */
-    public static boolean isValidChecklistIdLine(String currentLine){
-        String[] lineArr=currentLine.split(TSVFileValidationCheck.SPACE_TOKEN);
-        return lineArr[0].equals(TSVFileValidationCheck.CHECKLIST_TEMPLATE_LINE_PREFIX) && lineArr[1].matches(TSVFileValidationCheck.TEMPLATE_ID_PATTERN);
     }
 
     public CSVLine processTemplateSpreadsheetLine() throws Exception {
@@ -186,5 +186,17 @@ public class CSVReader {
         } catch (final IOException e) {
             throw new TemplateException(e);
         }
+    }
+
+    public static boolean isValidChecklistIdLine(String line) {
+        return CHECKLIST_ID_LINE_PATTERN.matcher(line).matches();
+    }
+
+    public static String getChecklistIdFromIdLine(String line) {
+        Matcher m = CHECKLIST_ID_LINE_PATTERN.matcher(line);
+        if (m.matches()) {
+            return m.group(1);
+        }
+        return null;
     }
 }
