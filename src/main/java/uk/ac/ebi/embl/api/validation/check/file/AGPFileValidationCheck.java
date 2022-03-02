@@ -23,10 +23,7 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -42,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -276,6 +274,12 @@ public class AGPFileValidationCheck extends FileValidationCheck
 								}
 							}
 						}
+					} else {
+						String ex = "";
+						for(ValidationMessage<Origin> msg: result.getMessages(Severity.ERROR)) {
+							ex+=msg+" ";
+						}
+						throw new ValidationEngineException(ex);
 					}
 				result=reader.read();
 				}
