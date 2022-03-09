@@ -38,6 +38,19 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertEquals("PLN", entry.getDivision());
 		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
+	public void testRead_PRIDiv() throws IOException {
+		initLineReader(
+				"LOCUS       SCU49845     5028 bp    RNA             circular PRI 21-JUN-1999"
+		);
+		ValidationResult result = (new LocusReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertNull(entry.getPrimaryAccession());
+		assertNull(entry.getSequence().getMoleculeType());
+		assertEquals(Topology.CIRCULAR, entry.getSequence().getTopology());
+		assertEquals("PRI", entry.getDivision());
+		assertEquals("STD", entry.getDataClass());
+		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+	}
 
 	public void testRead_CircularTopology() throws IOException {
 		initLineReader(
