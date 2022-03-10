@@ -1251,9 +1251,12 @@ public class Utils {
 	 * @return
 	 */
 	public static String removeAccents(String text) {
-		return text == null ? null :
-				Normalizer.normalize(text, Normalizer.Form.NFD)
-						.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		if (text == null) {
+			return null;
+		}
+		text = Normalizer.normalize(text, Normalizer.Form.NFD)
+				.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		return text.replaceAll("[^\\p{ASCII}]", "?");
 	}
 
 	public static boolean isValidTaxId(String taxId) {

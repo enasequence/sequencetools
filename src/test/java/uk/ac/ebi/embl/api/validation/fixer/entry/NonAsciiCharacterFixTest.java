@@ -62,8 +62,9 @@ public class NonAsciiCharacterFixTest {
     {
         entry.setComment(new Text("unknown character with ���"));
         ValidationResult result = fixer.check(entry);
-        assertEquals(0, result.count(Severity.FIX)); // expected: not caught and not possible to fix
+        assertEquals(1, result.count(Severity.FIX)); // expected: not caught and not possible to fix
         assertTrue(result.isValid());
+        assertEquals("unknown character with ???", entry.getComment().getText());
     }
 
     @Test
