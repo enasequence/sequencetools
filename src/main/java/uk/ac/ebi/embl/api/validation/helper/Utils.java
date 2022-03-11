@@ -1246,11 +1246,11 @@ public class Utils {
 	}
 
 	/**
-	 * Removes Unicode accents and diacritics.
+	 * Removes accents and replaces non-ASCII characters with ?
 	 * @param text
 	 * @return
 	 */
-	public static String removeAccents(String text) {
+	public static String convertToAscii(String text) {
 		if (text == null) {
 			return null;
 		}
