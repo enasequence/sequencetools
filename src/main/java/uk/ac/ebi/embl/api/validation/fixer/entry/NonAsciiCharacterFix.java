@@ -89,7 +89,7 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
     private void attemptFix(Text text) {
         if (text != null && text.getText() != null) {
             if (Utils.hasNonAscii(text.getText())) {
-                String fixed = Utils.removeAccents(text.getText());
+                String fixed = Utils.convertToAscii(text.getText());
                 if (!fixed.equals(text.getText())) {
                     text.setText(fixed);
                     reportMessage(Severity.FIX, text.getOrigin(), ASCII_CHARACTER_FIX, text.getText(), fixed);
@@ -100,7 +100,7 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
 
     private String fixedStr(String str) {
         if (Utils.hasNonAscii(str)) {
-            return Utils.removeAccents(str);
+            return Utils.convertToAscii(str);
         }
         return str;
     }

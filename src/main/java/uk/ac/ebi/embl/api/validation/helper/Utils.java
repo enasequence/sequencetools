@@ -1246,14 +1246,17 @@ public class Utils {
 	}
 
 	/**
-	 * Removes Unicode accents and diacritics.
+	 * Removes accents and replaces non-ASCII characters with ?
 	 * @param text
 	 * @return
 	 */
-	public static String removeAccents(String text) {
-		return text == null ? null :
-				Normalizer.normalize(text, Normalizer.Form.NFD)
-						.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+	public static String convertToAscii(String text) {
+		if (text == null) {
+			return null;
+		}
+		text = Normalizer.normalize(text, Normalizer.Form.NFD)
+				.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		return text.replaceAll("[^\\p{ASCII}]", "?");
 	}
 
 	public static boolean isValidTaxId(String taxId) {
