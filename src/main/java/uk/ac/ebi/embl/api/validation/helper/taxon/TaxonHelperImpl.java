@@ -181,7 +181,7 @@ public class TaxonHelperImpl implements TaxonHelper {
 	public List<Taxon> getTaxonsByAnyName(String anyName) {
 		String key = normalizeString(anyName);
 		List<Taxon> taxonList = taxonAnyNameCache.get(key);
-		if( taxonList == null) {
+		if( taxonList == null || taxonList.isEmpty()) {
 			taxonList = taxonomyClient.getTaxonByAnyName(anyName);
 			if(taxonList == null) {
 				return null;
