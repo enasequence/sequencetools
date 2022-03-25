@@ -183,8 +183,8 @@ public class TaxonHelperImpl implements TaxonHelper {
 		List<Taxon> taxonList = taxonAnyNameCache.get(key);
 		if( taxonList == null || taxonList.isEmpty()) {
 			taxonList = taxonomyClient.getTaxonByAnyName(anyName);
-			if(taxonList == null) {
-				return null;
+			if(taxonList == null || taxonList.isEmpty()) {
+				return Collections.emptyList();
 			} else {
 				taxonAnyNameCache.put(key, taxonList);
 			}
