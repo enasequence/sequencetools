@@ -126,6 +126,187 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		//System.out.print(writer.toString());
 		assertEquals(entryString, writer.toString());
 	}
+	public void testRead_EntryFeatureSortIntrons() throws IOException {
+		String entryString =
+				"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
+						"XX\n" +
+						"ST * private 01-JAN-2003\n" +
+						"XX\n" +
+						"AC   A00001; A00002;\n" +
+						"XX\n" +
+						"AC * _AAAAA\n" +
+						"XX\n" +
+						"PR   Project:3443;\n" +
+						"XX\n" +
+						"DT   28-JAN-1993 (Rel. 34, Created)\n" +
+						"DT   11-MAY-2001 (Rel. 67, Last updated, Version 2)\n" +
+						"XX\n" +
+						"DE   Cauliflower mosaic virus satellite cDNA.\n" +
+						"XX\n" +
+						"KW   .\n" +
+						"XX\n" +
+						"OS   Cauliflower mosaic virus\n" +
+						"OC   Viruses; Retro-transcribing viruses; Caulimoviridae; Caulimovirus.\n" +
+						"XX\n" +
+						"OS   uncultured alphaproteobacterium\n" +
+						"OC   unclassified sequences.\n" +
+						"XX\n" +
+						"RN   [1]\n" +
+						"RP   1-335\n" +
+						"RX   HELLO; hello.\n" +
+						"RG   blah blah\n" +
+						"RA   Baulcombe D.C., Mayo M.A., Harrison B.D., Bevan M.W.;\n" +
+						"RT   \"Modification of plant viruses or their effects.\";\n" +
+						"RL   Patent number EP0242016-A/1, 21-OCT-1987.\n" +
+						"RL   AGRICULTURAL GENETICS COMPANY LIMITED.\n" +
+						"XX\n" +
+						"DR   database; primary accession; secondary accession.\n" +
+						"DR   database2; primary accession2; secondary accession2.\n" +
+						"XX\n" +
+						"CC   comment comment comment comment comment\n" +
+						"CC   comment comment comment comment comment\n" +
+						"XX\n" +
+						"FH   Key             Location/Qualifiers\n" +
+						"FH\n" +
+						"FT   CDS             1..300\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   intron            500..700\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1b\n" +
+						"FT   intron            500..550\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   intron            500..450\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   source          1..335\n" +
+						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
+						"FT                   /db_xref=\"taxon:10641\"\n" +
+						"FT   primer_bind     1..23\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 5' primer\"\n" +
+						"FT   operon          <1..1295\n" +
+						"FT                   /operon=\"example\"\n" +
+						"FT   source          1..1295\n" +
+						"FT                   /organism=\"uncultured alphaproteobacterium\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
+						"FT                   /clone=\"alp23\"\n" +
+						"FT   mat_peptide     31..297\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   sig_peptide     1..30\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   primer_bind     complement(1271..1294)\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 3' primer\"\n" +
+						"XX\n" +
+						"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
+						"XX\n" +
+						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
+						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
+						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
+						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
+						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
+						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
+						"//\n";
+		String expectedEntryString =
+				"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
+						"XX\n" +
+						"ST * private 01-JAN-2003\n" +
+						"XX\n" +
+						"AC   A00001; A00002;\n" +
+						"XX\n" +
+						"AC * _AAAAA\n" +
+						"XX\n" +
+						"PR   Project:3443;\n" +
+						"XX\n" +
+						"DT   28-JAN-1993 (Rel. 34, Created)\n" +
+						"DT   11-MAY-2001 (Rel. 67, Last updated, Version 2)\n" +
+						"XX\n" +
+						"DE   Cauliflower mosaic virus satellite cDNA.\n" +
+						"XX\n" +
+						"KW   .\n" +
+						"XX\n" +
+						"OS   Cauliflower mosaic virus\n" +
+						"OC   Viruses; Retro-transcribing viruses; Caulimoviridae; Caulimovirus.\n" +
+						"XX\n" +
+						"OS   uncultured alphaproteobacterium\n" +
+						"OC   unclassified sequences.\n" +
+						"XX\n" +
+						"RN   [1]\n" +
+						"RP   1-335\n" +
+						"RX   HELLO; hello.\n" +
+						"RG   blah blah\n" +
+						"RA   Baulcombe D.C., Mayo M.A., Harrison B.D., Bevan M.W.;\n" +
+						"RT   \"Modification of plant viruses or their effects.\";\n" +
+						"RL   Patent number EP0242016-A/1, 21-OCT-1987.\n" +
+						"RL   AGRICULTURAL GENETICS COMPANY LIMITED.\n" +
+						"XX\n" +
+						"DR   database; primary accession; secondary accession.\n" +
+						"DR   database2; primary accession2; secondary accession2.\n" +
+						"XX\n" +
+						"CC   comment comment comment comment comment\n" +
+						"CC   comment comment comment comment comment\n" +
+						"XX\n" +
+						"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
+						"XX\n" +
+						"FH   Key             Location/Qualifiers\n" +
+						"FH\n" +
+						"FT   source          1..1295\n" +
+						"FT                   /organism=\"uncultured alphaproteobacterium\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
+						"FT                   /clone=\"alp23\"\n" +
+						"FT   source          1..335\n" +
+						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
+						"FT                   /db_xref=\"taxon:10641\"\n" +
+						"FT   operon          <1..1295\n" +
+						"FT                   /operon=\"example\"\n" +
+						"FT   CDS             1..300\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   sig_peptide     1..30\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   primer_bind     1..23\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 5' primer\"\n" +
+						"FT   mat_peptide     31..297\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   intron          500..450\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   intron          500..550\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   intron          500..700\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1b\n" +
+						"FT   primer_bind     complement(1271..1294)\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 3' primer\"\n" +
+						"XX\n" +
+						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
+						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
+						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
+						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
+						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
+						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
+						"//\n";
+		setBufferedReader(entryString);
+		EntryReader reader = new EmblEntryReader(bufferedReader);
+		ValidationResult result = reader.read();
+		Entry entry = reader.getEntry();
+		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+		for ( ValidationMessage<Origin> message : messages) {
+			System.out.println(message.getMessage());
+		}
+		assertEquals(0, result.count(Severity.ERROR));
+		StringWriter writer = new StringWriter();
+		assertTrue(new EmblEntryWriter(entry).write(writer));
+		//System.out.print(writer.toString());
+		assertEquals(expectedEntryString, writer.toString());
+	}
 
 	public void testRead_EntryFeatureSort() throws IOException {
 		String entryString =

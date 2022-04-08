@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,9 +36,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
-	
+
 	private static final long serialVersionUID = -13325880439686170L;
-	
+
 	public static final String CDS_FEATURE_NAME = "CDS";
 	public static final String SIG_PEPTIDE_FEATURE_NAME = "sig_peptide";
 	public static final String MAP_PEPTIDE_FEATURE_NAME = "map_peptide";
@@ -67,9 +67,9 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
     public static final String REGULATORY_FEATURE_NAME = "regulatory";
     public static final String PROPETIDE_FEATURE_NAME ="propeptide";
 
-    
+
     public static final String ASSEMBLY_GAP_FEATURE_NAME = "assembly_gap";
-    
+
     private Origin origin;
 	private String id;
 	private String name;
@@ -78,14 +78,14 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 	private List<XRef> xRefs;
 
     protected Feature(String featureName) {
-		this.name = featureName;		
+		this.name = featureName;
 		this.qualifiers = new ArrayList<Qualifier>();
 		this.xRefs = new ArrayList<XRef>();
 	}
 
 	protected Feature(String featureName, boolean join) {
 		this.name = featureName;
-		
+
 		if (join) {
 			this.locations = new Join<Location>();
 		} else {
@@ -94,15 +94,15 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		this.qualifiers = new ArrayList<Qualifier>();
 		this.xRefs = new ArrayList<XRef>();
 	}
-	
+
 	public Origin getOrigin() {
 		return origin;
 	}
 
 	public void setOrigin(Origin origin) {
 		this.origin = origin;
-	}	
-	
+	}
+
 	public List<Qualifier> getQualifiers(String name) {
 		List<Qualifier> result = new ArrayList<Qualifier>();
 		if (name == null) {
@@ -135,7 +135,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		List<Qualifier> qualifiers = getQualifiers(name);
 		return (qualifiers == null || qualifiers.isEmpty())? null : qualifiers.get(0);
 	}
-		
+
 	public String getSingleQualifierValue(String name) {
 		Qualifier qualifier = getSingleQualifier(name);
 		if (qualifier == null) {
@@ -153,7 +153,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		}
 		qualifier.setValue(null);
 	}
-		
+
 	public void setSingleQualifierValue(String name, String value) {
 		Qualifier qualifier = getSingleQualifier(name);
 		if (qualifier == null) {
@@ -163,7 +163,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		}
 		qualifier.setValue(value);
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -195,16 +195,16 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 	public void setLocations(CompoundLocation<Location> locations) {
 		this.locations = locations;
 	}
-	
+
 	public List<Qualifier> getQualifiers() {
 		return Collections.unmodifiableList(this.qualifiers);
 	}
-	
+
 	public boolean addQualifier(String name) {
 		QualifierFactory factory = new QualifierFactory();
 		return this.qualifiers.add(factory.createQualifier(name));
 	}
-		
+
 	public boolean addQualifier(String name, String value) {
 		QualifierFactory factory = new QualifierFactory();
 		return this.qualifiers.add(factory.createQualifier(name, value));
@@ -213,21 +213,21 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 	public boolean addQualifier(Qualifier qualifier) {
 		return this.qualifiers.add(qualifier);
 	}
-	
+
 	public boolean addQualifiers(Collection<Qualifier> qualifiers) {
 		if (qualifiers == null) {
 			return false;
 		}
 		return this.qualifiers.addAll(qualifiers);
 	}
-	
+
 	public boolean removeQualifier(Qualifier qualifier) {
 		return this.qualifiers.remove(qualifier);
 	}
 
 	public boolean removeSingleQualifier(String name) {
 		for (Qualifier qualifier: this.qualifiers) {
-			if (qualifier.getName().equals(name)) {				
+			if (qualifier.getName().equals(name)) {
 				return removeQualifier(qualifier);
 			}
 		}
@@ -237,8 +237,8 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 
 	public void removeAllQualifiers() {
 		qualifiers.clear();
-	}	
-	
+	}
+
 	public boolean removeQualifiersWithValue(String qualifierName, String qualifierValue) {
 		for (Qualifier qualifier: getQualifiers(qualifierName)) {
 			if (qualifier.getValue().equals(qualifierValue)) {
@@ -257,21 +257,21 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 	public List<XRef> getXRefs() {
 		return Collections.unmodifiableList(this.xRefs);
 	}
-	
+
 	public boolean addXRef(XRef xRef) {
 		return this.xRefs.add(xRef);
 	}
-	
+
 	public boolean addXRefs(Collection<XRef> xRefs) {
 		if (xRefs == null) {
 			return false;
 		}
 		return this.xRefs.addAll(xRefs);
 	}
-	
+
 	public boolean removeXRef(XRef xRef) {
 		return this.xRefs.remove(xRef);
-	}	
+	}
 
 	@Override
 	public int hashCode() {
@@ -314,7 +314,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		// Source features go before other features.
 		if (name.equals(Feature.SOURCE_FEATURE_NAME) &&
 			!otherName.equals(Feature.SOURCE_FEATURE_NAME)) {
-				return -1;				
+				return -1;
 		}
 		if (otherName.equals(Feature.SOURCE_FEATURE_NAME) &&
 			!name.equals(Feature.SOURCE_FEATURE_NAME)) {
@@ -323,30 +323,17 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 
 		Long minPosition = this.getLocations().getMinPosition();
 		Long maxPosition = this.getLocations().getMaxPosition();
-		
+
 		Long otherMinPosition = o.getLocations().getMinPosition();
 		Long otherMaxPosition = o.getLocations().getMaxPosition();
-		
+
 		// Order features with smaller minimum positions first.
 		if (!minPosition.equals(otherMinPosition)) {
 			return minPosition.compareTo(otherMinPosition);
 		}
-
-		// Order exons smaller maximum positions first.
-		else if ((name.equals(Feature.EXON_FEATURE_NAME)) &&
-				(otherName.equals(Feature.EXON_FEATURE_NAME))) {
-			return maxPosition.compareTo(otherMaxPosition);	// Smaller maximum position first.
-		}
-		// Order introns smallest maximum positions first.
-		else if ((name.equals(Feature.INTRON_FEATURE_NAME)) &&
-				(otherName.equals(Feature.INTRON_FEATURE_NAME))) {
-			return maxPosition.compareTo(otherMaxPosition);	// Smaller maximum position first.
-		}
-
-		// Order largest maximum positions first.
 		return otherMaxPosition.compareTo(maxPosition);
-	}		
-	
+	}
+
 	@Override
 	public String toString() {
 		final ToStringBuilder builder = new ToStringBuilder(this);
@@ -376,7 +363,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 
         return builder.toString();
     }
-    
+
 	public Long getLength()
 	{
 		Long minPosition = null;
@@ -390,8 +377,8 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 		{
 			return maxPosition - minPosition+1;
 		}
-		
+
 		return null;
-		
+
 	}
 }
