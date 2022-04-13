@@ -215,12 +215,6 @@ public class TSVFileValidationCheckTest {
     }
 
     @Test
-    public void nonAsciiCharacters() throws Exception {
-        checkTSV("Sequence-non-ascii-characters.gz", false ,
-                "ERROR: Flatfile contains non-ascii characters:");
-    }
-
-    @Test
     public void
     testInvalidMandatoryFieldsPresent() throws Exception {
         checkTSV(
