@@ -69,16 +69,12 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
         }
         for (Feature feature : entry.getFeatures()) {
             for (Qualifier qualifier : feature.getQualifiers()) {
-                if (qualifier.getName().equals(Qualifier.COUNTRY_QUALIFIER_NAME)
-                        || qualifier.getName().equals(Qualifier.ISOLATE_QUALIFIER_NAME) ) {
-
-                    String qualifierValue = qualifier.getValue();
-                    if (qualifierValue != null) {
-                        String fixedVal = fixedStr(qualifierValue);
-                        if (!fixedVal.equals(qualifierValue)) {
-                            qualifier.setValue(fixedVal);
-                            reportMessage(Severity.FIX, qualifier.getOrigin(), ASCII_CHARACTER_FIX, qualifierValue, fixedVal);
-                        }
+                String qualifierValue = qualifier.getValue();
+                if (qualifierValue != null) {
+                    String fixedVal = fixedStr(qualifierValue);
+                    if (!fixedVal.equals(qualifierValue)) {
+                        qualifier.setValue(fixedVal);
+                        reportMessage(Severity.FIX, qualifier.getOrigin(), ASCII_CHARACTER_FIX, qualifierValue, fixedVal);
                     }
                 }
             }
