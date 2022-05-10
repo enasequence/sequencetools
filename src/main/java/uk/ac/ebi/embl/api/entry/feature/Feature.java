@@ -332,17 +332,6 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 			return minPosition.compareTo(otherMinPosition);
 		}
 
-		// Order exons smaller maximum positions first.
-		else if ((name.equals(Feature.EXON_FEATURE_NAME)) &&
-				(otherName.equals(Feature.EXON_FEATURE_NAME))) {
-			return maxPosition.compareTo(otherMaxPosition);	// Smaller maximum position first.
-		}
-		// Order introns smallest maximum positions first.
-		else if ((name.equals(Feature.INTRON_FEATURE_NAME)) &&
-				(otherName.equals(Feature.INTRON_FEATURE_NAME))) {
-			return maxPosition.compareTo(otherMaxPosition);	// Smaller maximum position first.
-		}
-
 		// Order largest maximum positions first.
 		return otherMaxPosition.compareTo(maxPosition);
 	}		

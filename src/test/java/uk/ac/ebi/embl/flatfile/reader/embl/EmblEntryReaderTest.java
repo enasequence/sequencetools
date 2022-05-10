@@ -270,12 +270,12 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"FT                   /note=\"PCR 5' primer\"\n" +                    
 			"FT   mat_peptide     31..297\n" +
 			"FT                   /gene=\"T\"\n" +
-			"FT   exon            500..550\n" +
-			"FT                   /gene=\"x\"\n" +
-			"FT                   /number=1a\n" +
 			"FT   exon            500..700\n" +
 			"FT                   /gene=\"x\"\n" +
 			"FT                   /number=1b\n" +
+			"FT   exon            500..550\n" +
+			"FT                   /gene=\"x\"\n" +
+			"FT                   /number=1a\n" +
 			"FT   primer_bind     complement(1271..1294)\n" +
 			"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
 			"FT                   /note=\"PCR 3' primer\"\n" +
