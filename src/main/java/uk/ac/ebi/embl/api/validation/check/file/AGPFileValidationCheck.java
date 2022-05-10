@@ -279,17 +279,22 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						for(ValidationMessage<Origin> msg: result.getMessages(Severity.ERROR)) {
 							ex+=msg+" ";
 						}
-						throw new ValidationEngineException(ex);
+						throw new ValidationEngineException(ex, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 					}
 				result=reader.read();
 				}
 
 				if(getContigDB()!=null)
 					getContigDB().commit();
-			}catch(Exception e)
-			{
-				if(getContigDB()!=null)
+			} catch(ValidationEngineException e) {
+				if(getContigDB()!=null) {
 					getContigDB().close();
+				}
+				throw e;
+			} catch(Exception e) {
+				if(getContigDB()!=null) {
+					getContigDB().close();
+				}
 				throw new ValidationEngineException(e);
 			}
 

@@ -141,7 +141,7 @@ public class SubmissionValidationPlan
 			try {
 				if (options.reportFile.isPresent()) {
 					new DefaultSubmissionReporter(new HashSet<>(Arrays.asList(Severity.ERROR, Severity.WARNING, Severity.FIX, Severity.INFO)))
-							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage()+" Causeed by:"+e.getCause());
+							.writeToFile(options.reportFile.get(), Severity.ERROR, e.getMessage() + (e.getCause() == null ? "" : " Caused by:"+e.getCause()));
 				}
 				if (!options.isWebinCLI && options.context.isPresent() && options.context.get() == Context.genome && check != null && check.getMessageStats() != null)
 					check.getReporter().writeToFile(Paths.get(options.reportDir.get()), check.getMessageStats());

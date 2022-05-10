@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.10.0'
+ext.version_base = '2.10.1'
 
 
 version = version_base
@@ -108,6 +108,10 @@ artifacts
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 publishing {

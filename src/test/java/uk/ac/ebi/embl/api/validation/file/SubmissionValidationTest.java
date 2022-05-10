@@ -51,6 +51,8 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 public abstract class SubmissionValidationTest {
 
+	public static final String RESOURCE_FILE_SEPARATOR = "/";
+
 	protected SubmissionOptions options =null;
 
 	protected FileValidationCheck.SharedInfo sharedInfo;
@@ -135,9 +137,9 @@ public abstract class SubmissionValidationTest {
 	protected String getReducedFilePath(String rootPath, String fileName) {
 		if(!fileName.endsWith("expected")) {
 			if(fileName.startsWith("chromosome")) {
-				rootPath = rootPath + File.separator ;
+				rootPath = rootPath + RESOURCE_FILE_SEPARATOR ;
 			} else {
-				rootPath = rootPath + File.separator + "reduced" + File.separator;
+				rootPath = rootPath + RESOURCE_FILE_SEPARATOR + "reduced" + RESOURCE_FILE_SEPARATOR;
 			}
 		}
 		URL url = SubmissionValidationTest.class.getClassLoader().getResource(rootPath + fileName);

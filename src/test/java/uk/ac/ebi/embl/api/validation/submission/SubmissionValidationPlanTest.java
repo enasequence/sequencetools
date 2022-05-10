@@ -58,7 +58,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	// Make sure we store the references given in Webin-CLI manifest.
 	@Test
 	public void testGenomeWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
-		String rootPath = "genome"+ File.separator+ "flatfile_add_reference" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "flatfile_add_reference" + RESOURCE_FILE_SEPARATOR;
 		String fileName = "valid_genome_flatfile.txt";
 		options.context = Optional.of(Context.genome);
 		options.assemblyInfoEntry.get().setAuthors("Kirstein I., Wichels A.;");
@@ -86,7 +86,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String rootPath = "genome"+ File.separator+ "multilevel_scaffold" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "multilevel_scaffold" + RESOURCE_FILE_SEPARATOR;
 		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "agp_scafoold_levels.txt";
 		String chrListFileName = "chromosome_list_scaffold_levels.txt";
@@ -123,7 +123,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaFlatfile() throws ValidationEngineException, FlatFileComparatorException
 	{
-		String rootPath = "genome"+ File.separator+ "fasta_flatfile" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "fasta_flatfile" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
@@ -146,7 +146,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaChromosomeListErrorSequenceless() throws ValidationEngineException, IOException
 	{
-		String rootPath = "genome"+ File.separator+ "sequenceless_chr" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "sequenceless_chr" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA));
@@ -155,9 +155,9 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.reportDir = Optional.of(initSubmissionTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_genome_fasta.txt", FileType.FASTA).getFile().getParent());
 
-		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"fasta.info"));
-		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"agp.info"));
-		Files.deleteIfExists(Paths.get(options.reportDir.get()+File.separator+"flatfile.info"));
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+RESOURCE_FILE_SEPARATOR+"fasta.info"));
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+RESOURCE_FILE_SEPARATOR+"agp.info"));
+		Files.deleteIfExists(Paths.get(options.reportDir.get()+RESOURCE_FILE_SEPARATOR+"flatfile.info"));
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		thrown.expect(ValidationEngineException.class);
 		thrown.expectMessage("Sequenceless chromosomes are not allowed in assembly : IWGSC_CSS_6DL_SCAFF_3330719,IWGSC_CSS_6DL_SCAFF_3330717,IWGSC_CSS_6DL_SCAFF_3330716");
@@ -168,7 +168,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Ignore
 	public void testGenomeSubmissionWithFastawithValidChromosomeList() throws ValidationEngineException, FlatFileComparatorException
 	{
-		//String rootPath = "genome"+ File.separator+ "sequenceless_chr" + File.separator;
+		//String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "sequenceless_chr" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile("valid_genome_fasta_chromosome.txt", FileType.FASTA));
@@ -187,7 +187,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFlatfileAGP() throws FlatFileComparatorException, ValidationEngineException, IOException, InterruptedException
 	{
-		String rootPath = "genome"+ File.separator+ "agp_flatfile" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "agp_flatfile" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE));
@@ -213,7 +213,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaAGP() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String rootPath = "genome"+ File.separator+ "agp_fasta" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "agp_fasta" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_fastaforAgp.txt", FileType.FASTA));
@@ -239,7 +239,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaAGPUnlocalisedList() throws FlatFileComparatorException, ValidationEngineException, IOException
 	{
-		String rootPath = "genome"+ File.separator+ "agp_unlocalised" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "agp_unlocalised" + RESOURCE_FILE_SEPARATOR;
 
 		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "agp_scaffold_levels.txt";
@@ -278,7 +278,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFastaAGPChromosomeList() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String rootPath = "genome"+ File.separator+ "agp_fasta_chr_list" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "agp_fasta_chr_list" + RESOURCE_FILE_SEPARATOR;
 
 		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
 		String agpFileName = "agp_scafoold_levels_1.txt";
@@ -313,7 +313,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeWithFasta() throws ValidationEngineException, FlatFileComparatorException
 	{
-		String rootPath = "genome"+ File.separator+ "fasta" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "fasta" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA));
@@ -333,7 +333,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testGenomeSubmissionFastaAnnotationOnly() throws FlatFileComparatorException, ValidationEngineException
 	{
-		String rootPath = "genome"+ File.separator+ "annotation_only" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "annotation_only" + RESOURCE_FILE_SEPARATOR;
 		options.context = Optional.of(Context.genome);
 		SubmissionFiles submissionFiles = new SubmissionFiles();
 		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, "valid_fastaforAnnotationOnly.txt", FileType.FASTA));
@@ -357,7 +357,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		//anootation file has annotations for 1 contig, 1 scaffold and 1 chromosome ,
 		// after execution this will be verified by comparing contigs and scaffolds reduced file and chromosome flatfile.
 		// also verified by comparing existing enapro loading flatfiles.
-		String rootPath = "genome"+ File.separator+ "agp_annotation_only" + File.separator;
+		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "agp_annotation_only" + RESOURCE_FILE_SEPARATOR;
 		String fastaFileName = "valid_fasta.txt";
 		String agpFileName = "valid_agp.txt";
 		String chrListFileName = "valid_chromosome_list.txt";
