@@ -42,6 +42,9 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
     public void validate() throws ValidationEngineException {
 
+        // Initialise SampleRetrievalService.
+        SequenceToolsServices.init(new WebinSampleRetrievalService(options.webinAuthToken.get(),options.webinCliTestMode));
+
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
         if (!options.isWebinCLI && !validationResult.isValid()) {
             StringBuilder sb = new StringBuilder();
@@ -67,10 +70,6 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         try {
             options = mapManifestToSubmissionOptions(manifest);
             FeatureReader.isWebinCli = true;
-
-            // Initialise SampleRetrievalService.
-            SequenceToolsServices.init(new WebinSampleRetrievalService(options.webinAuthToken.get(),options.webinCliTestMode));
-
             validate();
         } catch (ValidationEngineException vee) {
             switch (vee.getErrorType()) {
