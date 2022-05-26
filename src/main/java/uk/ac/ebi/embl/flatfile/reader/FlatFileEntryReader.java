@@ -37,6 +37,7 @@ public abstract class FlatFileEntryReader implements FlatFileReader<Entry> {
 	read() throws IOException 
 	{
         ValidationMessageManager.addBundle(FlatFileValidations.FLAT_FILE_BUNDLE);
+        ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		validationResult = new ValidationResult();
 		readLines();
 		return validationResult;
