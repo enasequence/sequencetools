@@ -79,6 +79,19 @@ public class MasterEntryService {
             masterEntry.setComment(new Text(comment));
         }
 
+        if (Context.transcriptome == options.context.get() && masterEntry != null) {
+            try {
+                String ccLine = utils.getCommentsToTranscriptomeMaster(options.analysisId.get());
+                if ( StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+                    ccLine += "\n" + masterEntry.getComment().getText();
+                }
+                masterEntry.setComment(new Text(ccLine));
+            } catch (SQLException throwables) {
+                throw new ValidationEngineException(throwables);
+            }
+
+        }
+
         return masterEntry;
     }
 

@@ -581,6 +581,24 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return masterEntry;
 	}
 
+	public String getCommentsToTranscriptomeMaster(String analysisId) throws SQLException {
+		String analysisQuery = "select " +
+				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) name, " +
+				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/PLATFORM/text()' PASSING analysis_xml RETURNING CONTENT)) platform, " +
+				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/PROGRAM/text()' PASSING analysis_xml RETURNING CONTENT)) program, " +
+				"from analysis " +
+				"where analysis_id=?";
+		ResultSet rs;
+		try (PreparedStatement stmt = connection.prepareStatement(analysisQuery)) {
+			stmt.setString(1, analysisId);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return  "Assembly Name: " + rs.getString("name") + "\nAssembly Method: " + rs.getString("platform") + "\nSequencing Technology: " + rs.getString("program");
+			}
+		}
+		return null;
+	}
+
 
 	private SampleInfo getSampleInfo(String sampleId) throws SQLException {
 
@@ -650,5 +668,5 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			}
 		}
 	}
-   
+
 }
