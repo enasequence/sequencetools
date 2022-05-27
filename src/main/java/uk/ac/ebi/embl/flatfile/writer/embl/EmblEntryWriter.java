@@ -33,6 +33,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 public class EmblEntryWriter extends EntryWriter {
 
 	private boolean isConvff = false;
+	private boolean showAcStartLine = true;
 	public EmblEntryWriter(Entry entry) {
 		super(entry);
 		wrapType = WrapType.EMBL_WRAP;
@@ -62,7 +63,7 @@ public class EmblEntryWriter extends EntryWriter {
 		if (new ACWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
-		if(new ACStarWriter(entry).write(writer)) {
+		if (showAcStartLine && new ACStarWriter(entry).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
 		if(new PRWriter(entry, wrapType).write(writer)) {
@@ -161,4 +162,12 @@ public class EmblEntryWriter extends EntryWriter {
             }
         }
     }
+
+	public boolean isShowAcStartLine() {
+		return showAcStartLine;
+	}
+
+	public void setShowAcStartLine(boolean showAcStartLine) {
+		this.showAcStartLine = showAcStartLine;
+	}
 }
