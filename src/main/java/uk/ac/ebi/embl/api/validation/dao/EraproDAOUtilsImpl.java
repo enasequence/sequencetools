@@ -594,18 +594,14 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				" platform varchar2(4000) PATH 'PLATFORM', " +
 				" program varchar2(4000) PATH 'PROGRAM') a " +
 				" where analysis_id =?";
-		ResultSet rs = null;
+
 		try (PreparedStatement stmt = connection.prepareStatement(analysisQuery)) {
 			stmt.setString(1, analysisId);
-			rs = stmt.executeQuery();
-			if (rs.next()) {
-				return  "Assembly Name: " + rs.getString("name") + "\nAssembly Method: " + rs.getString("platform") + "\nSequencing Technology: " + rs.getString("program");
+			try ( ResultSet rs = stmt.executeQuery()){
+				if (rs.next()) {
+					return "Assembly Name: " + rs.getString("name") + "\nAssembly Method: " + rs.getString("platform") + "\nSequencing Technology: " + rs.getString("program");
+				}
 			}
-		} finally {
-			try {
-				if(rs != null)
-					rs.close();
-			} catch (Exception e) {}
 		}
 		return null;
 	}
