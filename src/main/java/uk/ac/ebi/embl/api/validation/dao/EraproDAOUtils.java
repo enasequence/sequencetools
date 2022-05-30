@@ -25,6 +25,7 @@ public interface EraproDAOUtils
     boolean isProjectValid(String text) throws SQLException;
 	boolean isIgnoreErrors(String submissionAccountId, String context, String name) throws SQLException;
 	Analysis getAnalysis(String analysisId) throws SQLException;
+	String getCommentsToTranscriptomeMaster(String analysisId) throws SQLException;
 
 	class AssemblySubmissionInfo
 	{
