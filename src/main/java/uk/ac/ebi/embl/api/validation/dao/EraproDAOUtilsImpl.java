@@ -582,19 +582,30 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	public String getCommentsToTranscriptomeMaster(String analysisId) throws SQLException {
-		String analysisQuery = "select " +
-				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/NAME/text()' PASSING analysis_xml RETURNING CONTENT)) name, " +
-				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/PLATFORM/text()' PASSING analysis_xml RETURNING CONTENT)) platform, " +
-				"XMLSERIALIZE(CONTENT XMLQuery('/ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY/PROGRAM/text()' PASSING analysis_xml RETURNING CONTENT)) program, " +
-				"from analysis " +
-				"where analysis_id=?";
-		ResultSet rs;
+		String analysisQuery = "select" +
+				"a.name," +
+				"a.platform," +
+				"a.program" +
+				" from analysis," +
+				"  XMLTABLE('//ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY'" +
+				" PASSING analysis_xml" +
+				" COLUMNS " +
+				" name varchar2(4000) PATH 'NAME'," +
+				" platform varchar2(4000) PATH 'PLATFORM', " +
+				" program varchar2(4000) PATH 'PROGRAM') a " +
+				" where analysis_id =?";
+		ResultSet rs = null;
 		try (PreparedStatement stmt = connection.prepareStatement(analysisQuery)) {
 			stmt.setString(1, analysisId);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return  "Assembly Name: " + rs.getString("name") + "\nAssembly Method: " + rs.getString("platform") + "\nSequencing Technology: " + rs.getString("program");
 			}
+		} finally {
+			try {
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {}
 		}
 		return null;
 	}
