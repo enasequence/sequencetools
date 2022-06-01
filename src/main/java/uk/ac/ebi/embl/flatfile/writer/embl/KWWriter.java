@@ -24,6 +24,8 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.Writer;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -40,6 +42,8 @@ public class KWWriter extends FlatFileWriter {
 		StringBuilder block = new StringBuilder();
 		boolean firstKeyword = true;
 		LinkedHashSet<Text> keywords=new LinkedHashSet<Text>();
+		// Sort KW using keyword length.
+		Collections.sort(entry.getKeywords(),(a, b)->Integer.compare(a.getText().length(), b.getText().length()));
 		for(Text keyword:entry.getKeywords())
 		{
 			keywords.add(keyword);
