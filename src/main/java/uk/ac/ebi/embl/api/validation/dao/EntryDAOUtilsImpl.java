@@ -20,8 +20,15 @@ import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
 	private final Connection connection;
-	
-	public EntryDAOUtilsImpl(Connection connection)
+	private static EntryDAOUtilsImpl entryDAOUtils;
+
+	public static EntryDAOUtilsImpl getEntryDAOUtilsImpl(Connection connection) {
+		if(null == entryDAOUtils ) {
+			entryDAOUtils = new EntryDAOUtilsImpl(connection);
+		}
+		return entryDAOUtils;
+	}
+	private EntryDAOUtilsImpl(Connection connection)
 	{
 		this.connection = connection;
 	}
@@ -318,7 +325,17 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		}
 	}
 
-	
+	@Override
+	public String getNewProteinId() throws SQLException {
+		try (PreparedStatement pstsmt = connection.prepareStatement("select prefix_pkg.get_new_protein_id from dual");
+			 ResultSet rs = pstsmt.executeQuery()) {
+			if (rs.next()) {
+				return rs.getString(1);
+			} else {
+				return null;
+			}
+		}
+	}
 
   
 }

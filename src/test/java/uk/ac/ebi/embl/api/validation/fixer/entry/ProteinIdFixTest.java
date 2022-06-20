@@ -32,18 +32,16 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import java.sql.SQLException;
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ProteinIdRemovalFixTest
+public class ProteinIdFixTest
 {
 
 	private Entry entry;
 	private Feature cdsFeature;
 	private FeatureFactory featureFactory;
-	private ProteinIdRemovalFix check;
+	private ProteinIdFix check;
 	private EntryFactory entryFactory;
 	private EmblEntryValidationPlanProperty property;
 	private EntryDAOUtils entryDAOUtils;
@@ -56,7 +54,7 @@ public class ProteinIdRemovalFixTest
 		featureFactory = new FeatureFactory();
 		entry = entryFactory.createEntry();
 		cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
-		check = new ProteinIdRemovalFix();
+		check = new ProteinIdFix();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
 

@@ -153,6 +153,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			else
 				{
 					if(fixedFileWriter != null) {
+						assignProteinAccession(entry);
 						new EmblEntryWriter(entry).write(fixedFileWriter);
 						constructAGPSequence(entry);
 						writeEntryToFile(entry, submissionFile);

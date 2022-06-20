@@ -33,7 +33,5 @@ public interface EntryDAOUtils
 	public boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
 
 
-
-
-
+    String getNewProteinId() throws SQLException;
 }

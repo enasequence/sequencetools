@@ -22,6 +22,8 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
+import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
@@ -35,6 +37,7 @@ import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
@@ -805,5 +808,34 @@ public abstract class FileValidationCheck {
 		public PrintWriter scaffoldsReducedFileWriter =null;
 		public PrintWriter chromosomesFileWriter =null;
 		public String assemblyType =null;
+	}
+
+	void assignProteinAccession(Entry entry) throws ValidationEngineException {
+
+		// isRemote == isWebinCLI
+		if (getOptions().getEntryValidationPlanProperty().isRemote.get() ||
+				!(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CHROMOSOME)) {
+			return;
+		}
+
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		for (Feature feature : entry.getFeatures())
+		{
+			//assign new protein_id
+			if (feature instanceof CdsFeature) {
+				try {
+					String proteinId = EntryDAOUtilsImpl.getEntryDAOUtilsImpl(getOptions().enproConnection.get()).getNewProteinId();
+					if (null == proteinId) {
+						throw new ValidationEngineException("Unknown issue, could not assign new protein_id");
+					}
+					feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId));
+
+				} catch (SQLException e) {
+					throw new ValidationEngineException(e);
+				}
+			}
+		}
 	}
 }
