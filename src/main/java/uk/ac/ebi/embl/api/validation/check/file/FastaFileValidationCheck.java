@@ -64,7 +64,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 			}
 		}
 
-		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
 		{
 			clearReportFile(getReportFile(submissionFile));
 
@@ -143,11 +143,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				}
 				else
 				{
-					if(fixedFileWriter != null) {
-						assignProteinAccession(entry);
-						new EmblEntryWriter(entry).write(fixedFileWriter);
-						writeEntryToFile(entry, submissionFile);
-					}
+					assignProteinAccessionAndWriteToFile(entry, submissionFile, false);
 				}
 				parseResult= reader.read();
 				validationResult.append(planResult);
