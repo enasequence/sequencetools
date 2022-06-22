@@ -67,7 +67,8 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
 			}
 		}
-		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());
+			PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			clearReportFile(getReportFile(submissionFile));
 			if(!validateFileFormat(submissionFile.getFile(), uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType.AGP))
@@ -151,7 +152,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			}
     			else
 				{
-					assignProteinAccessionAndWriteToFile(entry, submissionFile, true);
+					assignProteinAccessionAndWriteToFile(entry, fixedFileWriter, submissionFile, true);
 				}
 				parseResult = reader.read();
 				validationResult.append(parseResult);

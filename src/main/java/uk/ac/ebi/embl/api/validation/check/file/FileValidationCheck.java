@@ -738,17 +738,15 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	void assignProteinAccessionAndWriteToFile(Entry entry, SubmissionFile submissionFile, boolean isAGP) throws ValidationEngineException, IOException {
-		try (PrintWriter fixedFileWriter = getFixedFileWriter(submissionFile)) {
-			if (fixedFileWriter != null) {
-				assignProteinAccession(entry);
-				new EmblEntryWriter(entry).write(fixedFileWriter);
-				if(isAGP) {
-					constructAGPSequence(entry);
-				}
-				if(getOptions().context.get() != Context.sequence) {
-					writeEntryToFile(entry, submissionFile);
-				}
+	void assignProteinAccessionAndWriteToFile(Entry entry, PrintWriter fixedFileWriter, SubmissionFile submissionFile, boolean isAGP) throws ValidationEngineException, IOException {
+		if (fixedFileWriter != null) {
+			assignProteinAccession(entry);
+			new EmblEntryWriter(entry).write(fixedFileWriter);
+			if (isAGP) {
+				constructAGPSequence(entry);
+			}
+			if (getOptions().context.get() != Context.sequence) {
+				writeEntryToFile(entry, submissionFile);
 			}
 		}
 	}
@@ -907,7 +905,7 @@ public abstract class FileValidationCheck {
 					if (null == proteinId) {
 						throw new ValidationEngineException("Unknown issue, could not assign new protein_id");
 					}
-					feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId));
+					feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId+".1"));
 
 				} catch (SQLException e) {
 					throw new ValidationEngineException(e);

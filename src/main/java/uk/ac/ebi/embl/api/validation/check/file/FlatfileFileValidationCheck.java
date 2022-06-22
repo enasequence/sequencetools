@@ -60,7 +60,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		ValidationResult validationResult = new ValidationResult();
 		Origin origin =null;
 
-		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()))
+		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile()); PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile))
 		{
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			clearReportFile(getReportFile(submissionFile));
@@ -149,7 +149,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				assignProteinAccessionAndWriteToFile(entry, submissionFile, false);
+				assignProteinAccessionAndWriteToFile(entry, fixedFileWriter, submissionFile, false);
 			}
 			parseResult = entryReader.read();
 			validationResult.append(parseResult);
