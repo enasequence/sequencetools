@@ -152,11 +152,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
     			}
     			else
 				{
-					if(fixedFileWriter != null) {
-						new EmblEntryWriter(entry).write(fixedFileWriter);
-						constructAGPSequence(entry);
-						writeEntryToFile(entry, submissionFile);
-					}
+					assignProteinAccessionAndWriteToFile(entry, fixedFileWriter, submissionFile, true);
 				}
 				parseResult = reader.read();
 				validationResult.append(parseResult);
@@ -176,67 +172,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 	        registerAGPfileInfo();
 		return validationResult;
 	}
-
-	private void constructAGPSequence(Entry entry) throws ValidationEngineException
-    {
-		try
-		{
- 		ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
- 
-		ConcurrentMap contigMap =null;
-		if(getContigDB()!=null) {
-			contigMap = getContigDB().hashMap("map").createOrOpen();
-		}
-
-			for (AgpRow currObjectAGPRow : entry.getSequence().getSortedAGPRows()) {
-				if (!currObjectAGPRow.isGap()) {
-
-					Object sequence;
-					if (currObjectAGPRow.getComponent_id() != null && getContigDB() != null) {
-						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
-						Object seqsOfCurrRowComponent = contigMap.get(currObjectAGPRow.getComponent_id().toLowerCase());
-						if (seqsOfCurrRowComponent != null) {
-							for (AgpRow component : (List<AgpRow>) seqsOfCurrRowComponent) {
-								//proceed only if the component belongs to the current object(AGP row)
-								if (component.getObject().equalsIgnoreCase(currObjectAGPRow.getObject())) {
-									sequence = component.getSequence();
-									if(sequence != null) {
-										sequenceBuffer.put((byte[]) sequence);
-									} else {
-											throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + currObjectAGPRow.getComponent_id());
-									}
-								}
-							}
-						} else {
-							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+currObjectAGPRow.getComponent_id());
-						}
-					} else {
-						throw new ValidationEngineException("Either Component missing for current entry or sequence db(contigDB) not available."+entry.getSubmitterAccession());
-					}
-
-				} else if (currObjectAGPRow.getGap_length() != null)
-					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), currObjectAGPRow.getGap_length().intValue()).getBytes());
-			}
-			entry.getSequence().setSequence(sequenceBuffer);
-
-			//check if the current object(scaffold) is placed(will be a component) on another object(could be another scaffold/chromosome)
-			//if yes, construct sequence for all the objects where the current object has been placed
-			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(entry.getSubmitterAccession().toLowerCase());
-			if (agpRows != null) {
-				for (AgpRow agpRow : agpRows) {
-					agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
-				}
-				contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
-			}
-
-			getContigDB().commit();
-
-		}catch(Exception e)
-		{
-			closeMapDB(getContigDB());
-			throw new ValidationEngineException(e);
-		}
-		}
 
 	@Override
 	public ValidationResult check() throws ValidationEngineException {

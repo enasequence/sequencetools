@@ -143,10 +143,7 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				}
 				else
 				{
-					if(fixedFileWriter != null) {
-						new EmblEntryWriter(entry).write(fixedFileWriter);
-						writeEntryToFile(entry, submissionFile);
-					}
+					assignProteinAccessionAndWriteToFile(entry, fixedFileWriter, submissionFile, false);
 				}
 				parseResult= reader.read();
 				validationResult.append(planResult);

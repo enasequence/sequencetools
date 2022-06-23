@@ -149,12 +149,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			}
 			else
 			{
-				if(fixedFileWriter != null) {
-					new EmblEntryWriter(entry).write(fixedFileWriter);
-					if(options.context.get() != Context.sequence) {
-						writeEntryToFile(entry, submissionFile);
-					}
-				}
+				assignProteinAccessionAndWriteToFile(entry, fixedFileWriter, submissionFile, false);
 			}
 			parseResult = entryReader.read();
 			validationResult.append(parseResult);

@@ -15,14 +15,11 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.plan;
 
-import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
-import uk.ac.ebi.embl.api.storage.DataManager;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
-import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -111,7 +108,7 @@ public abstract class ValidationPlan {
 		 check.setEmblEntryValidationPlanProperty(planProperty);
 		 if(planProperty.enproConnection.get()!=null&&entryDAOUtils==null)
 		 {
-			 entryDAOUtils=new EntryDAOUtilsImpl(planProperty.enproConnection.get());
+			 entryDAOUtils= EntryDAOUtilsImpl.getEntryDAOUtilsImpl(planProperty.enproConnection.get());
 		 }
 		 check.setEntryDAOUtils(entryDAOUtils);
 		 if(planProperty.eraproConnection.get()!=null&&eraproDAOUtils==null)

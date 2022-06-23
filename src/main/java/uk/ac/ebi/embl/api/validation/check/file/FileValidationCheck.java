@@ -22,6 +22,8 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
+import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
+import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
@@ -35,6 +37,7 @@ import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
@@ -55,6 +58,7 @@ import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -734,6 +738,80 @@ public abstract class FileValidationCheck {
 		}
 	}
 
+	void assignProteinAccessionAndWriteToFile(Entry entry, PrintWriter fixedFileWriter, SubmissionFile submissionFile, boolean isAGP) throws ValidationEngineException, IOException {
+		if (fixedFileWriter != null) {
+			assignProteinAccession(entry);
+			new EmblEntryWriter(entry).write(fixedFileWriter);
+			if (isAGP) {
+				constructAGPSequence(entry);
+			}
+			if (getOptions().context.get() != Context.sequence) {
+				writeEntryToFile(entry, submissionFile);
+			}
+		}
+	}
+
+	private void constructAGPSequence(Entry entry) throws ValidationEngineException
+	{
+		try
+		{
+			ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
+
+			ConcurrentMap contigMap =null;
+			if(getContigDB()!=null) {
+				contigMap = getContigDB().hashMap("map").createOrOpen();
+			}
+
+			for (AgpRow currObjectAGPRow : entry.getSequence().getSortedAGPRows()) {
+				if (!currObjectAGPRow.isGap()) {
+
+					Object sequence;
+					if (currObjectAGPRow.getComponent_id() != null && getContigDB() != null) {
+						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
+						Object seqsOfCurrRowComponent = contigMap.get(currObjectAGPRow.getComponent_id().toLowerCase());
+						if (seqsOfCurrRowComponent != null) {
+							for (AgpRow component : (List<AgpRow>) seqsOfCurrRowComponent) {
+								//proceed only if the component belongs to the current object(AGP row)
+								if (component.getObject().equalsIgnoreCase(currObjectAGPRow.getObject())) {
+									sequence = component.getSequence();
+									if(sequence != null) {
+										sequenceBuffer.put((byte[]) sequence);
+									} else {
+										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + currObjectAGPRow.getComponent_id());
+									}
+								}
+							}
+						} else {
+							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+currObjectAGPRow.getComponent_id());
+						}
+					} else {
+						throw new ValidationEngineException("Either Component missing for current entry or sequence db(contigDB) not available."+entry.getSubmitterAccession());
+					}
+
+				} else if (currObjectAGPRow.getGap_length() != null)
+					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), currObjectAGPRow.getGap_length().intValue()).getBytes());
+			}
+			entry.getSequence().setSequence(sequenceBuffer);
+
+			//check if the current object(scaffold) is placed(will be a component) on another object(could be another scaffold/chromosome)
+			//if yes, construct sequence for all the objects where the current object has been placed
+			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(entry.getSubmitterAccession().toLowerCase());
+			if (agpRows != null) {
+				for (AgpRow agpRow : agpRows) {
+					agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+				}
+				contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
+			}
+
+			getContigDB().commit();
+
+		}catch(Exception e)
+		{
+			closeMapDB(getContigDB());
+			throw new ValidationEngineException(e);
+		}
+	}
+
 	void addSubmitterSeqIdQual(Entry entry) {
 		if (getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
 				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD
@@ -805,5 +883,34 @@ public abstract class FileValidationCheck {
 		public PrintWriter scaffoldsReducedFileWriter =null;
 		public PrintWriter chromosomesFileWriter =null;
 		public String assemblyType =null;
+	}
+
+	void assignProteinAccession(Entry entry) throws ValidationEngineException {
+
+		// isRemote == isWebinCLI
+		if (getOptions().getEntryValidationPlanProperty().isRemote.get() ||
+				!(getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_CONTIG
+				|| getOptions().getEntryValidationPlanProperty().validationScope.get() == ValidationScope.ASSEMBLY_SCAFFOLD
+				|| getOptions().context.get() == Context.transcriptome )) {
+			return;
+		}
+
+		QualifierFactory qualifierFactory = new QualifierFactory();
+		for (Feature feature : entry.getFeatures())
+		{
+			//assign new protein_id
+			if (feature instanceof CdsFeature) {
+				try {
+					String proteinId = EntryDAOUtilsImpl.getEntryDAOUtilsImpl(getOptions().enproConnection.get()).getNewProteinId();
+					if (null == proteinId) {
+						throw new ValidationEngineException("Unknown issue, could not assign new protein_id");
+					}
+					feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId+".1"));
+
+				} catch (SQLException e) {
+					throw new ValidationEngineException(e);
+				}
+			}
+		}
 	}
 }
