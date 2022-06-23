@@ -583,9 +583,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 	public String getCommentsToTranscriptomeMaster(String analysisId) throws SQLException {
 		String analysisQuery = "select" +
-				"a.name," +
-				"a.platform," +
-				"a.program" +
+				" a.name," +
+				" a.platform," +
+				" a.program" +
 				" from analysis," +
 				"  XMLTABLE('//ANALYSIS_SET/ANALYSIS/ANALYSIS_TYPE/TRANSCRIPTOME_ASSEMBLY'" +
 				" PASSING analysis_xml" +
