@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @Description("Invalid base: {0}.Sequence starts and/or ends with 'n' characters")
-@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_TRANSCRIPTOME})
+@ExcludeScope(validationScope={ValidationScope.ASSEMBLY_CONTIG,ValidationScope.ASSEMBLY_SCAFFOLD,ValidationScope.ASSEMBLY_CHROMOSOME,ValidationScope.ASSEMBLY_TRANSCRIPTOME,ValidationScope.NCBI})
 public class SequenceBasesCheck extends SequenceValidationCheck {
 
 	private final static String MESSAGE_ID = "SequenceBasesCheck";
