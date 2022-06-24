@@ -57,9 +57,10 @@ public class EmblEntryWriter extends EntryWriter {
 		if(new IDWriter(entry).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
+		/* Comment for ENA-5106
 		if(new STStarWriter(entry).write(writer)) {
 			writer.write(SEPARATOR_LINE);
-		}
+		}*/
 		if (new ACWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}

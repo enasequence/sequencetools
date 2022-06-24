@@ -56,8 +56,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		String entryString =
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
-			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
 			"AC * _AAAAA\n" +
@@ -211,8 +209,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		String expectedEntryString =
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
-			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
 			"AC * _AAAAA\n" +
@@ -309,8 +305,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"\n" +
 			"\n" +
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
-			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
@@ -481,8 +475,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		String expectedEntryString =
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
-			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
 			"AC * _AAAAA\n" +
@@ -535,8 +527,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"//\n" +
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
-			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
 			"AC * _AAAAA\n" +
@@ -588,8 +578,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 			"//\n" +
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
-			"XX\n" +
-			"ST * private 01-JAN-2003\n" +
 			"XX\n" +
 			"AC   A00001; A00002;\n" +
 			"XX\n" +			
