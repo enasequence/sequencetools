@@ -1,7 +1,5 @@
 ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; 1320 BP.
 XX
-ST * draft
-XX
 AC   ;
 XX
 DE   Caenorhabditis briggsae contig cb25.fpc4171, from assembly cb3, whole
