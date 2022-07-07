@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class TranslationTableDescriptor {
 
-	private final static Map<Integer, TranslationTableDescriptor> TABLES = 
+	public final static Map<Integer, TranslationTableDescriptor> TABLES = 
 		new HashMap<Integer, TranslationTableDescriptor>();
 	
 	static {
@@ -197,7 +197,8 @@ public class TranslationTableDescriptor {
 				33, 
 				"Cephalodiscidae Mitochondrial UAA-Tyr Code",
 				"FFLLSSSSYYY*CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSSKVVVVAAAADDEEGGGG",
-				"--M-----*-----M-------------M-------------M-----------")
+				"---M-------*-------M---------------M---------------M------------")
+				           
 			);
 		
 	}

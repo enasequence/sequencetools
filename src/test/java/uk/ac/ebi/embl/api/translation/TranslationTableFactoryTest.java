@@ -37,21 +37,8 @@ public class TranslationTableFactoryTest {
 	
 	@Test
 	public void test() {
-		testTranslationTable(1);
-        testTranslationTable(2); 
-        testTranslationTable(3); 
-        testTranslationTable(4); 
-        testTranslationTable(5); 
-        testTranslationTable(6); 
-        testTranslationTable(9); 
-        testTranslationTable(10); 
-        testTranslationTable(11); 
-        testTranslationTable(12); 
-        testTranslationTable(13); 
-        testTranslationTable(14); 
-        testTranslationTable(16);
-        testTranslationTable(21);
-        testTranslationTable(22);
-        testTranslationTable(23);
+		for(Integer number: TranslationTableDescriptor.TABLES.keySet()){
+            testTranslationTable(number);
+        }
 	}	
 }
