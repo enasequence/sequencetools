@@ -31,23 +31,10 @@ public class TranslationTableFactory {
 		new HashMap<Integer, TranslationTable>();
 
 	static {
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(1));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(2));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(3));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(4));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(5));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(6));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(9));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(10));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(11));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(12));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(13));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(14));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(16));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(21));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(22));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(23));
-		addTranslationTable(TranslationTableDescriptor.getDescriptor(24));
+		
+		for(Integer number: TranslationTableDescriptor.TABLES.keySet()){
+			addTranslationTable(TranslationTableDescriptor.getDescriptor(number));
+		}
 	}
 
 	private static void addTranslationTable(
