@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
@@ -236,8 +237,18 @@ public abstract class FileValidationCheck {
 		throw new ValidationEngineException("Sequenceless chromosomes are not allowed in assembly : "+String.join(",",sequencelessChromosomes),ReportErrorType.VALIDATION_ERROR);
 
 	}
-	
-	
+
+	public void verifyUnlocalisedObjectNames() throws ValidationEngineException {
+		if( sharedInfo.unlocalisedEntryNames.size() > 0) {
+			return;
+		}
+		for (String unlocalisedEntryName : sharedInfo.unlocalisedEntryNames) {
+			if (!sharedInfo.sequenceInfo.containsKey(unlocalisedEntryName.toUpperCase())) {
+				throw new ValidationEngineException("Unlocalised Object name is not available in any of the file(flatfile/fasta/agp) : " + unlocalisedEntryName,
+						ReportErrorType.VALIDATION_ERROR);
+			}
+		}
+	}
 	public String getDataclass(String entryName)
 	{
 		String dataclass=null;
