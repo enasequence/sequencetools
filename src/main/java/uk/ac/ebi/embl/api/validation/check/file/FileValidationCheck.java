@@ -244,7 +244,7 @@ public abstract class FileValidationCheck {
 		}
 		for (String unlocalisedEntryName : sharedInfo.unlocalisedEntryNames) {
 			if (!sharedInfo.sequenceInfo.containsKey(unlocalisedEntryName.toUpperCase())) {
-				throw new ValidationEngineException("Unlocalised Object name is not available in any of the file(flatfile/fasta/agp) : " + unlocalisedEntryName,
+				throw new ValidationEngineException("Unlocalised list file contains a sequence name that is not found in this submission " + unlocalisedEntryName,
 						ReportErrorType.VALIDATION_ERROR);
 			}
 		}
