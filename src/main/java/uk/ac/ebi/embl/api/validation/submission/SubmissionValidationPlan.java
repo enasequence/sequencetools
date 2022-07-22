@@ -124,6 +124,7 @@ public class SubmissionValidationPlan
 				registerSequences();
 				check.validateCovid19GenomeSize();
 				check.validateSequencelessChromosomes();
+				check.verifyUnlocalisedObjectNames();
 
 				String assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
