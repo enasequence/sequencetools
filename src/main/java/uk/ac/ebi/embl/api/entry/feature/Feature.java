@@ -45,6 +45,7 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
 	public static final String MAT_PEPTIDE_FEATURE_NAME = "mat_peptide";
 	public static final String TRANSIT_PEPTIDE_FEATURE_NAME = "transit_peptide";
 	public static final String SOURCE_FEATURE_NAME = "source";
+	public static final String OLD_SEQUENCE_FEATURE_NAME = "old_sequence";
 	public static final String PRIMER_BIND_FEATURE_NAME = "primer_bind";
 	public static final String EXON_FEATURE_NAME = "exon";
 	public static final String INTRON_FEATURE_NAME = "intron";

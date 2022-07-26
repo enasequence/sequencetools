@@ -162,7 +162,7 @@ public enum ValidationUnit
 	        		HoldDateFix.class,//include for all
 					ReferencePositionFix.class,//include for all
 					DataclassFix.class,//include for all
-					DivisionFix.class,
+					DivisionFix.class, //include for all
 					TPA_dataclass_Fix.class,//exclude for master
 					AccessionFix.class,//exclude for master
 					NonAsciiCharacterFix.class,//include for all
@@ -209,7 +209,8 @@ public enum ValidationUnit
 	    		    AssemblyLevelEntryNameFix.class,
 	    		    GaptoAssemblyGapFeatureFix.class,//exclude for master
 					Linkage_evidenceFix.class,//exclude for master
-					DescriptionCheck.class//only for template submissions
+					DescriptionCheck.class,//only for template submissions
+					QualifierRemovalFix.class 
 	        ),
 			CHROMOSOME_LIST_CHECKS
 			(
