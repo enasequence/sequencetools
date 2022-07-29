@@ -47,7 +47,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertNull(entry.getPrimaryAccession());
 		assertNull(entry.getSequence().getMoleculeType());
 		assertEquals(Topology.CIRCULAR, entry.getSequence().getTopology());
-		assertEquals("PRI", entry.getDivision());
+		assertEquals("MAM", entry.getDivision());
 		assertEquals("STD", entry.getDataClass());
 		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}

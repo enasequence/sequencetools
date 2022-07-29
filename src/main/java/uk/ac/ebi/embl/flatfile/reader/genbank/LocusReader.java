@@ -82,29 +82,30 @@ public class LocusReader extends SingleLineBlockReader {
 		
 		if (matcher.isValueXXX(GROUP_DIVISION)) {
 			String division = matcher.getUpperString(GROUP_DIVISION);
-		    if (division.equals("PHG")||
-  		  		division.equals("ENV")||
-  				division.equals("FUN")||
-  				division.equals("HUM")||
-  				division.equals("INV")||
-  				division.equals("MAM")||
-  				division.equals("VRT")||
-  				division.equals("MUS")||
-  				division.equals("PLN")||
-  				division.equals("PRO")||
-  				division.equals("ROD")||
-  				division.equals("SYN")||
-  				division.equals("TGN")||
-  				division.equals("UNC")||
-				division.equals("PRI")||
-				division.equals("BCT")||
-				division.equals("VRL")) {
-					entry.setDivision(division);
-					entry.setDataClass("STD");
-				}
-  		    	else
-  		    	 entry.setDataClass(division);
-  		}
+			if (division.equals("PHG") ||
+					division.equals("ENV") ||
+					division.equals("FUN") ||
+					division.equals("HUM") ||
+					division.equals("INV") ||
+					division.equals("MAM") ||
+					division.equals("VRT") ||
+					division.equals("MUS") ||
+					division.equals("PLN") ||
+					division.equals("PRO") ||
+					division.equals("ROD") ||
+					division.equals("SYN") ||
+					division.equals("TGN") ||
+					division.equals("UNC") ||
+					division.equals("BCT") ||
+					division.equals("VRL")) {
+				entry.setDivision(division);
+				entry.setDataClass("STD");
+			} else if (division.equals("PRI")) {
+				entry.setDivision("MAM");
+				entry.setDataClass("STD");
+			} else
+				entry.setDataClass(division);
+		}
 		Date ffDate = matcher.getDay(GROUP_DATE);
 		entry.setFFDate( ffDate );
 		entry.setLastUpdated( ffDate );
