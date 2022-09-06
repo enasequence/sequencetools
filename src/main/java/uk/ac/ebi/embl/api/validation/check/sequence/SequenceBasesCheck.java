@@ -31,6 +31,7 @@ public class SequenceBasesCheck extends SequenceValidationCheck {
 	private final static String MESSAGE_ID = "SequenceBasesCheck";
 	private final static String TERMINAL_N_ID = "SequenceBasesCheck-2";
 
+	private boolean ignoreTerminalNError = false;
 	public ValidationResult check(Sequence sequence) {
 		ValidationResult result = new ValidationResult();
 		if (sequence == null || sequence.getSequenceByte() == null||sequence.getContigs().size()>0) {
@@ -45,8 +46,10 @@ public class SequenceBasesCheck extends SequenceValidationCheck {
         byte[] sequenceByte= sequence.getSequenceByte();
         if(sequence.getTopology() != null && !sequence.getTopology().equals(Sequence.Topology.CIRCULAR))
         {
-        	
-        if(sequenceByte!=null&&sequenceByte.length!=0&&('n'==sequenceByte[0]||'n'==sequenceByte[sequenceByte.length-1]))
+
+        if( !ignoreTerminalNError &&
+				sequenceByte != null && sequenceByte.length != 0
+				&& ('n'==sequenceByte[0] || 'n' == sequenceByte[sequenceByte.length-1]) )
         {
            	 reportError(result, TERMINAL_N_ID);
         }
@@ -109,4 +112,7 @@ public class SequenceBasesCheck extends SequenceValidationCheck {
 		return result;
 	}
 
+	public void setIgnoreTerminalNError(boolean ignoreTerminalNError) {
+		this.ignoreTerminalNError = ignoreTerminalNError;
+	}
 }
