@@ -31,6 +31,7 @@ public class SequenceBasesCheck extends EntryValidationCheck {
         uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck check =
 			new uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck();
 		check.setOrigin(entry.getOrigin());
+		check.setIgnoreTerminalNError(Entry.PAT_DATACLASS.equals(entry.getDataClass()));
 		return check.check(entry.getSequence());
 	}
 }
