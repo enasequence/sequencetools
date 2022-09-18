@@ -1024,42 +1024,53 @@ public class Utils {
 			entry.setDescription(new Text(masterDescription));
 		} else if (null != assemblyLevel && (0 == assemblyLevel || 1 == assemblyLevel)) {
 			if (Entry.WGS_DATACLASS.equals(entry.getDataClass()))
-				entry.setDescription(new Text(String.format("%s, contig: %s", masterDescription, entry.getSubmitterAccession())));
+				entry.setDescription(new Text(getContigDescription(masterDescription, entry.getSubmitterAccession())));
 			else
-				entry.setDescription(new Text(String.format("%s, scaffold: %s", masterDescription, entry.getSubmitterAccession())));
+				entry.setDescription(new Text(getScaffoldDescription(masterDescription, entry.getSubmitterAccession())));
 
 		} else {
 			SourceFeature feature = entry.getPrimarySourceFeature();
+			String description = getChromosomeDescription(feature, masterDescription, entry.getSubmitterAccession());
+			entry.setDescription(new Text(description));
+		}
+	}
 
-			Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
-			Qualifier chromosome = feature.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME);
-			Qualifier organelle = feature.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME);
-			Qualifier segment = feature.getSingleQualifier(Qualifier.SEGMENT_QUALIFIER_NAME);
-			List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME);
+	public static String getContigDescription(String masterDescription, String submitterAccession) {
+		return String.format("%s, contig: %s", masterDescription, submitterAccession);
+	}
 
+	public static String getScaffoldDescription(String masterDescription, String submitterAccession) {
+		return String.format("%s, scaffold: %s", masterDescription, submitterAccession);
+	}
 
-			if (null != plasmid && null != plasmid.getValue()) {
-				entry.setDescription(new Text(String.format("%s, plasmid: %s", masterDescription, plasmid.getValue())));
-			} else if (null != chromosome && null != chromosome.getValue()) {
-				entry.setDescription(new Text(String.format("%s, chromosome: %s", masterDescription, chromosome.getValue())));
-			} else if (null != organelle && null != organelle.getValue()) {
-				entry.setDescription(new Text(String.format("%s, organelle: %s", masterDescription, organelle.getValue())));
-			} else if (null != segment && null != segment.getValue()) {
-				entry.setDescription(new Text(String.format("%s, segment: %s", masterDescription, segment.getValue())));
-			} else if (note != null && note.size() != 0) {
-				List<Qualifier> monopartiteQualifier = note.stream().filter(qual -> "monopartite".equals(qual.getValue())).collect(Collectors.toList());
-				if (monopartiteQualifier.size() > 0) {
-					StringBuilder descr = new StringBuilder(String.format("%s, complete genome: ", masterDescription));
-					monopartiteQualifier.forEach((q) ->
-					{
-						descr.append(q.getValue());
-					});
-					entry.setDescription(new Text(descr.toString()));
-				} else
-					entry.setDescription(new Text(String.format("%s, %s", masterDescription, entry.getSubmitterAccession())));
-			} else {
-				entry.setDescription(new Text(String.format("%s, %s", masterDescription, entry.getSubmitterAccession())));
-			}
+	public static String getChromosomeDescription(SourceFeature feature, String masterDescription, String submitterAccession) {
+		Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
+		Qualifier chromosome = feature.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME);
+		Qualifier organelle = feature.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME);
+		Qualifier segment = feature.getSingleQualifier(Qualifier.SEGMENT_QUALIFIER_NAME);
+		List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME);
+
+		if (null != plasmid && null != plasmid.getValue()) {
+			return String.format("%s, plasmid: %s", masterDescription, plasmid.getValue());
+		} else if (null != chromosome && null != chromosome.getValue()) {
+			return String.format("%s, chromosome: %s", masterDescription, chromosome.getValue());
+		} else if (null != organelle && null != organelle.getValue()) {
+			return String.format("%s, organelle: %s", masterDescription, organelle.getValue());
+		} else if (null != segment && null != segment.getValue()) {
+			return String.format("%s, segment: %s", masterDescription, segment.getValue());
+		} else if (note != null && note.size() != 0) {
+			List<Qualifier> monopartiteQualifier = note.stream().filter(qual -> "monopartite".equals(qual.getValue())).collect(Collectors.toList());
+			if (monopartiteQualifier.size() > 0) {
+				StringBuilder descr = new StringBuilder(String.format("%s, complete genome: ", masterDescription));
+				monopartiteQualifier.forEach((q) ->
+				{
+					descr.append(q.getValue());
+				});
+				return descr.toString();
+			} else
+				return String.format("%s, %s", masterDescription, submitterAccession);
+		} else {
+			return String.format("%s, %s", masterDescription, submitterAccession);
 		}
 	}
 
