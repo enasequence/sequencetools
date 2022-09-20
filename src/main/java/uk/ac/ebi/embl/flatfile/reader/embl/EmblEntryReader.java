@@ -47,12 +47,13 @@ EmblEntryReader extends EntryReader
         MASTER_FORMAT, 
         EPO_FORMAT,
         NCR_FORMAT,
-        ASSEMBLY_FILE_FORMAT
+        ASSEMBLY_FILE_FORMAT,
+		REDUCED_FILE_FORMAT
 	};
-	
+
 
 //TODO: delete!
-    public 
+    public
     EmblEntryReader( BufferedReader reader )
     {
 
@@ -100,7 +101,13 @@ EmblEntryReader extends EntryReader
     {
        getBlockCounter().clear();
        getSkipTagCounter().clear();
-        if( format.equals( Format.EMBL_FORMAT ) )
+		if( format.equals( Format.REDUCED_FILE_FORMAT ) )
+		{
+			addBlockReader(new IDReader(lineReader));
+			addBlockReader(new COReader(lineReader));
+			addBlockReader(new SQReader(lineReader));
+			addBlockReader(new FHReader(lineReader));
+		} else if( format.equals( Format.EMBL_FORMAT ) )
         {
 			addBlockReader(new IDReader(lineReader));
 			addBlockReader(new ACReader(lineReader));
