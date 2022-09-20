@@ -130,6 +130,9 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 	private boolean isSingletonAgp=false;
 	private boolean isNonExpandedCON=false;
 	private int sequenceCount;
+
+	private int scaffoldSequenceCount;
+
 	private int entryType;
 	/**
 	 * get sequence coverage numbers with keys BP, A, C, G, T or other
@@ -679,6 +682,13 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
 		this.sequenceCount = sequenceCount;
 	}
 
+	public int getScaffoldSequenceCount() {
+		return scaffoldSequenceCount;
+	}
+
+	public void setScaffoldSequenceCount(int scaffoldSequenceCount) {
+		this.scaffoldSequenceCount = scaffoldSequenceCount;
+	}
 
 	public int getEntryType() {
 		return entryType;
