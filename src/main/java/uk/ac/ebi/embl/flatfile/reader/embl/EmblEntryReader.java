@@ -36,6 +36,8 @@ EmblEntryReader extends EntryReader
     private static final List<String> NONE_OR_ONCE_BLOCKS  = Arrays.asList( EmblTag.ST_STAR_TAG, EmblTag.DT_TAG, EmblTag.KW_TAG, EmblTag.PR_TAG, EmblTag.SQ_TAG, EmblTag.AH_TAG, EmblTag.CO_TAG, EmblTag.MASTER_CON_TAG, EmblTag.MASTER_WGS_TAG,
 			EmblTag.MASTER_TPA_TAG);
     private boolean skipSourceFeature=false;
+	private boolean isReducedFlatfile=false;
+
 
     private Format format = null;
 
@@ -47,12 +49,13 @@ EmblEntryReader extends EntryReader
         MASTER_FORMAT, 
         EPO_FORMAT,
         NCR_FORMAT,
-        ASSEMBLY_FILE_FORMAT
+        ASSEMBLY_FILE_FORMAT,
+		REDUCED_FILE_FORMAT
 	};
-	
+
 
 //TODO: delete!
-    public 
+    public
     EmblEntryReader( BufferedReader reader )
     {
 
@@ -100,7 +103,14 @@ EmblEntryReader extends EntryReader
     {
        getBlockCounter().clear();
        getSkipTagCounter().clear();
-        if( format.equals( Format.EMBL_FORMAT ) )
+		if( format.equals( Format.REDUCED_FILE_FORMAT ) )
+		{
+			isReducedFlatfile = true;
+			addBlockReader(new IDReader(lineReader));
+			addBlockReader(new COReader(lineReader));
+			addBlockReader(new SQReader(lineReader));
+			addBlockReader(new FHReader(lineReader));
+		} else if( format.equals( Format.EMBL_FORMAT ) )
         {
 			addBlockReader(new IDReader(lineReader));
 			addBlockReader(new ACReader(lineReader));
@@ -269,7 +279,7 @@ EmblEntryReader extends EntryReader
 
         if( lineReader.getCurrentTag().equals( EmblTag.FT_TAG ) )
         {
-			append((new FeatureReader(lineReader,skipSourceFeature)).read(entry));
+			append((new FeatureReader(lineReader,skipSourceFeature, isReducedFlatfile)).read(entry));
 			Integer count = getBlockCounter().get(EmblTag.FT_TAG);
 			getBlockCounter().put(EmblTag.FT_TAG, ++count);
 			return true;

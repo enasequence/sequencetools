@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
+import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 public class EmblEntryReaderTest extends EmblReaderTest {
    public final static String FLAT_FILES_RES_DIR = "/flatfiles/examples/";
@@ -123,6 +124,100 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		assertTrue(new EmblEntryWriter(entry).write(writer));
 		//System.out.print(writer.toString());
 		assertEquals(entryString, writer.toString());
+	}
+
+	public void testReadWriteReducedFileOnly() throws IOException {
+		String entryString =
+				"ID   A00001; SV 1; linear; unassigned DNA; CON; XXX; 339 BP.\n" +
+						"XX\n" +
+						"FH   Key             Location/Qualifiers\n" +
+						"FH\n" +
+						"FT   CDS             1..300\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   exon            500..700\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1b\n" +
+						"FT   exon            500..550\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   source          1..335\n" +
+						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+						"FT   primer_bind     1..23\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 5' primer\"\n" +
+						"FT   operon          <1..1295\n" +
+						"FT                   /operon=\"example\"\n" +
+						"FT   source          1..1295\n" +
+						"FT                   /organism=\"uncultured alphaproteobacterium\"\n" +
+						"FT   mat_peptide     31..297\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   sig_peptide     1..30\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   primer_bind     complement(1271..1294)\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 3' primer\"\n" +
+						"XX\n" +
+						"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
+						"XX\n" +
+						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
+						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
+						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
+						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
+						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
+						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
+						"//\n";
+		String expectedEntryString =
+				"ID   A00001; SV 1; linear; unassigned DNA; CON; XXX; 339 BP.\n" +
+						"XX\n" +
+						"FH   Key             Location/Qualifiers\n" +
+						"FH\n" +
+						"FT   source          1..335\n" +
+						"FT                   /submitter_seqid=\"\"\n"+
+						"FT   operon          <1..1295\n" +
+						"FT                   /operon=\"example\"\n" +
+						"FT   CDS             1..300\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   sig_peptide     1..30\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   primer_bind     1..23\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 5' primer\"\n" +
+						"FT   mat_peptide     31..297\n" +
+						"FT                   /gene=\"T\"\n" +
+						"FT   exon            500..700\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1b\n" +
+						"FT   exon            500..550\n" +
+						"FT                   /gene=\"x\"\n" +
+						"FT                   /number=1a\n" +
+						"FT   primer_bind     complement(1271..1294)\n" +
+						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
+						"FT                   /note=\"PCR 3' primer\"\n" +
+						"XX\n" +
+						"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
+						"XX\n" +
+						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
+						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
+						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
+						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
+						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
+						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
+						"//\n";
+		setBufferedReader(entryString);
+		EntryReader reader = new EmblEntryReader(bufferedReader, EmblEntryReader.Format.REDUCED_FILE_FORMAT, null);
+		ValidationResult result = reader.read();
+		Entry entry = reader.getEntry();
+		Collection<ValidationMessage<Origin>> messages = result.getMessages();
+		for ( ValidationMessage<Origin> message : messages) {
+			System.out.println(message.getMessage());
+		}
+		assertEquals(0, result.count(Severity.ERROR));
+		StringWriter writer = new StringWriter();
+		assertTrue(new EmblReducedFlatFileWriter(entry).write(writer));
+		//System.out.print(writer.toString());
+		assertEquals(expectedEntryString, writer.toString());
 	}
 
 	public void testRead_EntryFeatureSort() throws IOException {
