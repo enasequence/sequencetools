@@ -8,11 +8,11 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.util;
+package uk.ac.ebi.embl.common.accession;
 
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.AccessionMatcher;
-import uk.ac.ebi.ena.exception.AccessionValidationException;
+import uk.ac.ebi.embl.common.exceptions.AccessionValidationException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SequenceAccessionUtil {
+public class SequenceAccessionRangeSplitter {
 
     private static final String DEFAULT_RANGES_SEPARATOR = ",";
 

@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.ena.util;
+package uk.ac.ebi.embl.common.accession;
 
 import org.junit.Test;
 
@@ -17,50 +17,50 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SequenceAccessionUtilTest {
+public class SequenceAccessionRangeSplitterTest {
 
     @Test
     public void getAccessionRangesNullAccession() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges(null);
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges(null);
         assertEquals(0, ranges.size());
     }
 
     @Test
     public void getAccessionRangesEmptyAccession() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("");
         assertEquals(0, ranges.size());
     }
 
     @Test
     public void getAccessionRangesSingleAccession() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("A00001");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("A00001");
         assertEquals(1, ranges.size());
         assertEquals(new AccessionRange("A00001", "A00001"), ranges.get(0));
     }
 
     @Test
     public void getAccessionRangesSingleRange() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("A00001-A00002");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("A00001-A00002");
         assertEquals(new AccessionRange("A00001", "A00002"), ranges.get(0));
     }
 
     @Test
     public void getAccessionRangesTwoRanges() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("A00001-A00002,A00003-A00004");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("A00001-A00002,A00003-A00004");
         assertTrue(ranges.contains(new AccessionRange("A00001", "A00002")));
         assertTrue(ranges.contains(new AccessionRange("A00003", "A00004")));
     }
 
     @Test
     public void getAccessionRangesSingleAndRange() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("A00001,A00003-A00004");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("A00001,A00003-A00004");
         assertTrue(ranges.contains(new AccessionRange("A00001", "A00001")));
         assertTrue(ranges.contains(new AccessionRange("A00003", "A00004")));
     }
 
     @Test
     public void getAccessionRangesRangeAndSingle() {
-        List<AccessionRange> ranges = SequenceAccessionUtil.getAccessionRanges("A00001-A00002,A00003");
+        List<AccessionRange> ranges = SequenceAccessionRangeSplitter.getAccessionRanges("A00001-A00002,A00003");
         assertTrue(ranges.contains(new AccessionRange("A00001", "A00002")));
         assertTrue(ranges.contains(new AccessionRange("A00003", "A00003")));
     }
@@ -68,7 +68,7 @@ public class SequenceAccessionUtilTest {
     @Test
     public void getAccessionRangesThreeRanges() {
         List<AccessionRange> ranges =
-            SequenceAccessionUtil.getAccessionRanges("A00001-A00002,A00003-A00004,A00005-A00006");
+            SequenceAccessionRangeSplitter.getAccessionRanges("A00001-A00002,A00003-A00004,A00005-A00006");
         assertTrue(ranges.contains(new AccessionRange("A00001", "A00002")));
         assertTrue(ranges.contains(new AccessionRange("A00003", "A00004")));
         assertTrue(ranges.contains(new AccessionRange("A00005", "A00006")));
@@ -76,25 +76,25 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void getAccessionsNullAccession() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions(null);
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions(null);
         assertEquals(0, accessions.size());
     }
 
     @Test
     public void getAccessionsEmptyAccession() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("");
         assertEquals(0, accessions.size());
     }
 
     @Test
     public void getAccessionsSingleAccession() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("A00001");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("A00001");
         assertTrue(accessions.contains("A00001"));
     }
 
     @Test
     public void getAccessionsSingleRange() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("A00001-A00002");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("A00001-A00002");
         assertTrue(accessions.contains("A00001"));
         assertTrue(accessions.contains("A00002"));
     }
@@ -102,7 +102,7 @@ public class SequenceAccessionUtilTest {
     @Test
     public void getAccessionsTwoRanges() {
         List<String> accessions =
-            SequenceAccessionUtil.getAccessions("A00001-A00002,A00003-A00004");
+            SequenceAccessionRangeSplitter.getAccessions("A00001-A00002,A00003-A00004");
         assertTrue(accessions.contains("A00001"));
         assertTrue(accessions.contains("A00002"));
         assertTrue(accessions.contains("A00003"));
@@ -111,7 +111,7 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void getAccessionsSingleAndRange() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("A00001,A00003-A00004");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("A00001,A00003-A00004");
         assertTrue(accessions.contains("A00001"));
         assertTrue(accessions.contains("A00003"));
         assertTrue(accessions.contains("A00004"));
@@ -119,7 +119,7 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void getAccessionsRangeAndSingle() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("A00001-A00002,A00003");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("A00001-A00002,A00003");
         assertTrue(accessions.contains("A00001"));
         assertTrue(accessions.contains("A00002"));
         assertTrue(accessions.contains("A00003"));
@@ -127,7 +127,7 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void getAccessionsThreeRanges() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("A00001-A00002,A00003-A00004,A00005-A00006");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("A00001-A00002,A00003-A00004,A00005-A00006");
         assertTrue(accessions.contains("A00001"));
         assertTrue(accessions.contains("A00002"));
         assertTrue(accessions.contains("A00003"));
@@ -138,7 +138,7 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void getAccessionsWgs() {
-        List<String> accessions = SequenceAccessionUtil.getAccessions("CAQO01000001-CAQO01000100");
+        List<String> accessions = SequenceAccessionRangeSplitter.getAccessions("CAQO01000001-CAQO01000100");
         assertEquals(100, accessions.size());
         assertTrue(accessions.contains("CAQO01000001"));
         assertTrue(accessions.contains("CAQO01000010"));
@@ -147,55 +147,55 @@ public class SequenceAccessionUtilTest {
 
     @Test
     public void countAccessionsNullAccession() {
-        int cnt = SequenceAccessionUtil.count(null);
+        int cnt = SequenceAccessionRangeSplitter.count(null);
         assertEquals(0, cnt);
     }
 
     @Test
     public void countAccessionsEmptyAccession() {
-        int cnt = SequenceAccessionUtil.count("");
+        int cnt = SequenceAccessionRangeSplitter.count("");
         assertEquals(0, cnt);
     }
 
     @Test
     public void countAccessionsSingleAccession() {
-        int cnt = SequenceAccessionUtil.count("A00001");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001");
         assertEquals(1, cnt);
     }
 
     @Test
     public void countAccessionsSingleSameRange() {
-        int cnt = SequenceAccessionUtil.count("A00001-A00001");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001-A00001");
         assertEquals(1, cnt);
     }
 
     @Test
     public void countAccessionsSingleRange() {
-        int cnt = SequenceAccessionUtil.count("A00001-A00002");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001-A00002");
         assertEquals(2, cnt);
     }
 
     @Test
     public void countAccessionsTwoRanges() {
-        int cnt = SequenceAccessionUtil.count("A00001-A00002,A00003-A00004");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001-A00002,A00003-A00004");
         assertEquals(4, cnt);
     }
 
     @Test
     public void countAccessionsSingleAndRange() {
-        int cnt = SequenceAccessionUtil.count("A00001,A00003-A00004");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001,A00003-A00004");
         assertEquals(3, cnt);
     }
 
     @Test
     public void countAccessionsRangeAndSingle() {
-        int cnt = SequenceAccessionUtil.count("A00001-A00002,A00003");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001-A00002,A00003");
         assertEquals(3, cnt);
     }
 
     @Test
     public void countAccessionsThreeRanges() {
-        int cnt = SequenceAccessionUtil.count("A00001-A00002,A00003-A00004,A00005-A00006");
+        int cnt = SequenceAccessionRangeSplitter.count("A00001-A00002,A00003-A00004,A00005-A00006");
         assertEquals(6, cnt);
     }
 }
