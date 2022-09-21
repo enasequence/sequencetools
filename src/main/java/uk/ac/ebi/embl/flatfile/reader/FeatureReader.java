@@ -37,7 +37,7 @@ public class FeatureReader extends FlatFileLineReader {
 
 	public static boolean isWebinCli = false;
 	private boolean skipSource = false;
-
+	private boolean isReducedFlatfile = false;
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
     }
@@ -46,6 +46,12 @@ public class FeatureReader extends FlatFileLineReader {
     	super(lineReader);
     	this.skipSource=skipSource;
     }
+
+	public FeatureReader(LineReader lineReader,boolean skipSource, boolean isReducedFlatfile) {
+		super(lineReader);
+		this.skipSource=skipSource;
+		this.isReducedFlatfile = isReducedFlatfile;
+	}
     private static final int LOCATION_BEGIN_POS = 21;
     private static final int QUALIFIER_BEGIN_POS = 21;
     int quotecount=0;
@@ -83,7 +89,9 @@ public class FeatureReader extends FlatFileLineReader {
 		while (true) {
 			Qualifier qualifier = readQualifier();
 			if (qualifier != null) {
-				if (qualifier.getName().equals("organism")) {
+				if(isReducedFlatfile) {
+					feature.addQualifier(qualifier);
+				} else if (qualifier.getName().equals("organism")) {
 					if (!(feature instanceof SourceFeature)) {
 						error("FT.6", qualifier.getName()); // Invalid feature qualifier.
 					}
@@ -152,7 +160,7 @@ public class FeatureReader extends FlatFileLineReader {
 				break;
 			}
 		}
-		if((feature instanceof SourceFeature)&& !moltypeFound&&!skipSource)
+		if(!isReducedFlatfile && (feature instanceof SourceFeature) && !moltypeFound && !skipSource)
 		{
 			error("FT.9");
 		}

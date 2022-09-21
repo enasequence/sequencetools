@@ -142,8 +142,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FT                   /number=1a\n" +
 						"FT   source          1..335\n" +
 						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
-						"FT                   /mol_type=\"unassigned DNA\"\n" +
-						"FT                   /db_xref=\"taxon:10641\"\n" +
 						"FT   primer_bind     1..23\n" +
 						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
 						"FT                   /note=\"PCR 5' primer\"\n" +
@@ -151,8 +149,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FT                   /operon=\"example\"\n" +
 						"FT   source          1..1295\n" +
 						"FT                   /organism=\"uncultured alphaproteobacterium\"\n" +
-						"FT                   /mol_type=\"unassigned DNA\"\n" +
-						"FT                   /clone=\"alp23\"\n" +
 						"FT   mat_peptide     31..297\n" +
 						"FT                   /gene=\"T\"\n" +
 						"FT   sig_peptide     1..30\n" +
