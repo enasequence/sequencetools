@@ -27,6 +27,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.service.WebinERAService;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
@@ -52,8 +53,12 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			if(!options.isWebinCLI && StringUtils.isBlank(templateId ) ) {
-				 templateId = new EraproDAOUtilsImpl(options.eraproConnection.get()).getTemplateId(options.analysisId.get());
+			if(!options.isWebinCLI) {
+				if (StringUtils.isBlank(templateId)) {
+					templateId = new EraproDAOUtilsImpl(options.eraproConnection.get()).getTemplateId(options.analysisId.get());
+				} else {
+					WebinERAService.getWebinERAService(options.getWebinERAServiceUrl(), options.getWebinERAServiceUser(), options.getWebinERAServicePassword()).saveTemplateId(options.analysisId.get(), templateId);
+				}
 			}
 			if(templateId == null)
 				throw new ValidationEngineException("Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
@@ -64,6 +69,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 			if (!submittedDataFile.exists())
 				throw new ValidationEngineException(submittedDataFile.getAbsolutePath() +  " file does not exist", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 			TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
+
 			TemplateProcessor templateProcessor;
 			if (options.isWebinCLI)
 				templateProcessor = new TemplateProcessor(templateInfo, null);
