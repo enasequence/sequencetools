@@ -29,6 +29,8 @@ public class SubmissionOptions
 	public  Optional<File> reportFile = Optional.empty();
 	public  Optional<Boolean> ignoreError = Optional.empty();
 	public  Optional<String> webinAuthToken = Optional.empty();
+
+	public  Optional<ServiceConfig> serviceConfig = Optional.empty();
 	private EmblEntryValidationPlanProperty property =null;
 
 	public  boolean webinCliTestMode = false;
@@ -96,6 +98,10 @@ public class SubmissionOptions
 		if (!isWebinCLI && ignoreError.isPresent()) {
 					ignoreErrors = ignoreError.get();
 		}
+
+		if(!isWebinCLI && context.get() == Context.sequence && !serviceConfig.isPresent()) {
+			throw new ValidationEngineException("SubmissionOptions:Service configuration is mandatory for sequence context");
+		}
 	}
 	
 	public EmblEntryValidationPlanProperty getEntryValidationPlanProperty()
@@ -124,5 +130,17 @@ public class SubmissionOptions
 		property.taxonHelper.set(new TaxonHelperImpl());
 		property.isRemote.set(isWebinCLI);
 		return property;
+	}
+
+	public String getWebinERAServiceUrl() {
+		return serviceConfig.get().getEraServiceUrl();
+	}
+
+	public String getWebinERAServiceUser() {
+		return serviceConfig.get().getEraServiceUser();
+	}
+
+	public String getWebinERAServicePassword() {
+		return serviceConfig.get().getEraServicePassword();
 	}
 }
