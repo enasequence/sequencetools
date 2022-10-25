@@ -38,6 +38,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.template.*;
+import webin.era.serivce.client.model.AnalysisEntity;
 
 @Description("")
 public class TSVFileValidationCheck extends FileValidationCheck {
@@ -53,15 +54,20 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 		try (PrintWriter fixedFileWriter=getFixedFileWriter(submissionFile)) {
              clearReportFile(getReportFile(submissionFile));
 			String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
-			if(!options.isWebinCLI) {
-				if (StringUtils.isBlank(templateId)) {
-					templateId = new EraproDAOUtilsImpl(options.eraproConnection.get()).getTemplateId(options.analysisId.get());
-				} else {
-					WebinERAService.getWebinERAService(options.getWebinERAServiceUrl(), options.getWebinERAServiceUser(), options.getWebinERAServicePassword()).saveTemplateId(options.analysisId.get(), templateId);
-				}
-			}
-			if(templateId == null)
+			if(StringUtils.isBlank(templateId)) {
 				throw new ValidationEngineException("Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+			}
+			if(!options.isWebinCLI) {
+				WebinERAService webinERAService = WebinERAService.getWebinERAService(options.getWebinERAServiceUrl(), options.getWebinERAServiceUser(),
+						options.getWebinERAServicePassword());
+				AnalysisEntity analysis = webinERAService.getAnalysis(options.analysisId.get());
+				if(analysis== null || analysis.getAnalysisId() == null) {
+					throw new ValidationEngineException("Missing analysis in database:"+ options.analysisId.get(), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				}
+				analysis.setTemplateId(templateId);
+				webinERAService.updateAnalysis(analysis);
+			}
+
 			File submittedDataFile =  submissionFile.getFile();
 			String templateDir = submittedDataFile.getParent();
 			File templateFile = getTemplateFromResourceAndWriteToProcessDir(templateId, templateDir);

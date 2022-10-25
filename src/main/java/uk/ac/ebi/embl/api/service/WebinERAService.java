@@ -1,6 +1,5 @@
 package uk.ac.ebi.embl.api.service;
 
-import org.springframework.web.client.RestClientException;
 import webin.era.serivce.client.model.AnalysisEntity;
 import webin.era.service.sdk.SequenceProcessApi;
 import webin.era.service.sdk.client.ApiClient;
@@ -35,17 +34,10 @@ public class WebinERAService {
         apiInstance = new SequenceProcessApi(apiClient);
     }
 
-
-    public void saveTemplateId(String analysisId, String templateId) {
-        try {
-            AnalysisEntity analysis = new AnalysisEntity();
-            analysis.setAnalysisId(analysisId);
-            analysis.setTemplateId(templateId);
-            apiInstance.updateAnalysis(analysis);
-        } catch (RestClientException e) {
-            System.err.println("Exception when calling SequenceProcessApi#updateAnalysis");
-            System.err.println("Status code: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public AnalysisEntity getAnalysis(String analysisId) {
+        return apiInstance.getAnalysis(analysisId);
+    }
+    public void updateAnalysis(AnalysisEntity analysisEntity) {
+        apiInstance.updateAnalysis(analysisEntity);
     }
 }
