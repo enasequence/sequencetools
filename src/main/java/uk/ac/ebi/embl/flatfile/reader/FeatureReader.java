@@ -272,9 +272,10 @@ public class FeatureReader extends FlatFileLineReader {
 		String qualifierString = nextLine.substring(QUALIFIER_BEGIN_POS); 
 		qualifierBuilder.append(qualifierString);
 		// Do not add space if the last character on the line is '-'.
-		boolean noAddSpace =
+		/*boolean noAddSpace =
 			qualifierString.length() > 0 &&
-			qualifierString.charAt(qualifierString.length() - 1) == '-';
+			qualifierString.charAt(qualifierString.length() - 1) == '-';*/
+		boolean noAddSpace = false;
     	boolean addSpace =
     			!qualifierString.startsWith("/replace") &&
     			!qualifierString.startsWith("/rpt_unit_seq") &&
@@ -308,9 +309,9 @@ public class FeatureReader extends FlatFileLineReader {
 			}
 			qualifierString = nextLine.substring(QUALIFIER_BEGIN_POS);
 			qualifierBuilder.append(qualifierString);	
-			noAddSpace =
+			/*noAddSpace =
 				qualifierString.length() > 0 &&
-				qualifierString.charAt(qualifierString.length() - 1) == '-';			
+				qualifierString.charAt(qualifierString.length() - 1) == '-';	*/		
 		}
 		if (qualifierBuilder.length() == 0) {
 			return null;
