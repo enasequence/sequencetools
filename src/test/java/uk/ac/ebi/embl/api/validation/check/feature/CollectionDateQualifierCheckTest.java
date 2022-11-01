@@ -25,6 +25,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
+import java.text.ParseException;
+
 import static org.junit.Assert.*;
 
 public class CollectionDateQualifierCheckTest {
@@ -105,7 +107,90 @@ public class CollectionDateQualifierCheckTest {
 		assertFalse(validationResult.isValid());
 		assertFalse(check.isValid(qualifier.getValue()));
 	}
-			
+
+	@Test
+	public void testCheck_InvalidDayMonth() throws ParseException {
+	/*	assertTrue(GenericValidator.isDate("2024-03-28", "yyyy-MM-dd", true));
+		assertTrue(GenericValidator.isDate("2024-12", "yyyy-MM", true));
+
+
+		assertTrue(GenericValidator.isDate("2024-mar", "yyyy-MMM", true));
+
+		assertTrue(GenericValidator.isDate("2024", "yyyy", true));
+*/
+		qualifier.setValue("51-Oct-2022");  //invalid date
+		ValidationResult validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+
+		qualifier.setValue("00-Oct-2022");  //invalid date
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("01-Ott-2022");  //invalid month
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("01-00-2022");  //invalid month
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("01-Oct-2022");  //valid date
+		validationResult = check.check(feature);
+		assertEquals(0, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("01-Ott-2022");  //invalid month
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("2022-10-02");  //valid date
+		validationResult = check.check(feature);
+		assertEquals(0, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("2022-15-01");  //invalid month
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+
+		qualifier.setValue("00-00-2022");  //invalid month
+		validationResult = check.check(feature);
+		assertEquals(1, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(check.isValid(qualifier.getValue()));
+
+		qualifier.setValue("2022-10-02");  //valid date
+		validationResult = check.check(feature);
+		assertEquals(0, validationResult.count(
+				"CollectionDateQualifierCheck_1", Severity.ERROR));
+		assertTrue(validationResult.isValid());
+		assertTrue(check.isValid(qualifier.getValue()));
+	}
+
 	@Test
 	public void testCheck_validDate1() {
 		qualifier.setValue("21-Oct-1952");

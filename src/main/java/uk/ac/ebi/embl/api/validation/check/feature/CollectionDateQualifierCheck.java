@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.validator.GenericValidator;
+
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -41,26 +43,33 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 	private final static String DATE_FORMAT_ERROR = "CollectionDateQualifierCheck_1";
 	private final static String FUTURE_DATE_ERROR = "CollectionDateQualifierCheck_2";
 
-	private final static Pattern INSDC_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{2})-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "DD-Mmm-YYYY"
-	private final static Pattern INSDC_DATE_FORMAT_PATTERN_2 = Pattern.compile("^((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "Mmm-YYYY"
+	public final static String INSDC_DATE_FORMAT_1 = "dd-MMM-yyyy"; // dd-MMM-yyyy
+	public final static String INSDC_DATE_FORMAT_2 = "MMM-yyyy"; // MMM-yyyy
+	public final static String ISO_DATE_FORMAT_1 = "yyyy"; // yyyy
+	public final static String ISO_DATE_FORMAT_2 = "yyyy-MM"; // yyyy-MM
+	public final static String ISO_DATE_FORMAT_3 = "yyyy-MM-dd"; // yyyy-MM-dd
+	public final static String ISO_DATE_FORMAT_4 = "yyyy-MM-dd'T'HH'Z'"; // yyyy-MM-ddThhZ
+	public final static String ISO_DATE_FORMAT_5 = "yyyy-MM-dd'T'HH:mm'Z'"; // yyyy-MM-ddThh:mmZ
+	public final static String ISO_DATE_FORMAT_6 = "yyyy-MM-dd'T'HH:mm:ss'Z'"; // yyyy-MM-ddThh:mmZ
 
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{4})$"); // YYYY
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_2 = Pattern.compile("^(\\d{4})-(\\d{2})$"); // YYYY-MM
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_3 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})$"); // YYYY-MM-DD
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_4 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})Z$"); // YYYY-MM-DDThhZ
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_5 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mmZ
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_6 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mm:ssZ
+	public final static Pattern INSDC_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{2})-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "DD-Mmm-YYYY"
+	public final static Pattern INSDC_DATE_FORMAT_PATTERN_2 = Pattern.compile("^((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "Mmm-YYYY"
 
-	
-	private final static SimpleDateFormat INSDC_DATE_FORMAT_1 = new SimpleDateFormat("dd-MMM-yyyy"); // dd-MMM-yyyy
-	private final static SimpleDateFormat INSDC_DATE_FORMAT_2 = new SimpleDateFormat("MMM-yyyy"); // MMM-yyyy
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{4})$"); // YYYY
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_2 = Pattern.compile("^(\\d{4})-(\\d{2})$"); // YYYY-MM
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_3 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})$"); // YYYY-MM-DD
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_4 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})Z$"); // YYYY-MM-DDThhZ
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_5 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mmZ
+	public final static Pattern ISO_DATE_FORMAT_PATTERN_6 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mm:ssZ
+	private final static SimpleDateFormat INSDC_DATE_FORMAT_1_SDF = new SimpleDateFormat(INSDC_DATE_FORMAT_1); // dd-MMM-yyyy
+	private final static SimpleDateFormat INSDC_DATE_FORMAT_2_SDF = new SimpleDateFormat(INSDC_DATE_FORMAT_2); // MMM-yyyy
+	private final static SimpleDateFormat ISO_DATE_FORMAT_1_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_1); // yyyy
+	private final static SimpleDateFormat ISO_DATE_FORMAT_2_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_2); // yyyy-MM
+	private final static SimpleDateFormat ISO_DATE_FORMAT_3_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_3); // yyyy-MM-dd
+	private final static SimpleDateFormat ISO_DATE_FORMAT_4_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_4); // yyyy-MM-ddThhZ
+	private final static SimpleDateFormat ISO_DATE_FORMAT_5_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_5); // yyyy-MM-ddThh:mmZ
+	private final static SimpleDateFormat ISO_DATE_FORMAT_6_SDF = new SimpleDateFormat(ISO_DATE_FORMAT_6); // yyyy-MM-ddThh:mmZ
 
-	private final static SimpleDateFormat ISO_DATE_FORMAT_1 = new SimpleDateFormat("yyyy"); // yyyy
-	private final static SimpleDateFormat ISO_DATE_FORMAT_2 = new SimpleDateFormat("yyyy-MM"); // yyyy-MM
-	private final static SimpleDateFormat ISO_DATE_FORMAT_3 = new SimpleDateFormat("yyyy-MM-dd"); // yyyy-MM-dd
-	private final static SimpleDateFormat ISO_DATE_FORMAT_4 = new SimpleDateFormat("yyyy-MM-dd'T'HH'Z'"); // yyyy-MM-ddThhZ
-	private final static SimpleDateFormat ISO_DATE_FORMAT_5 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // yyyy-MM-ddThh:mmZ
-	private final static SimpleDateFormat ISO_DATE_FORMAT_6 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // yyyy-MM-ddThh:mmZ
 
 	private final static Pattern DATE_RANGE_PATTERN = Pattern.compile("^([^/]+)/([^/]+)$");
 	
@@ -140,11 +149,22 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 			}
 		} else {
 			CheckDateResult dateResult = checkDate(value);
-			if (dateResult == null ) {
+			if (dateResult == null) {
 				return false;// invalid date format
-			} else if(isFutureDate(dateResult.date)) {
+			}
+
+			if (dateResult.formatString.equals(ISO_DATE_FORMAT_4) || dateResult.formatString.equals(ISO_DATE_FORMAT_5) || dateResult.formatString.equals(ISO_DATE_FORMAT_6)) {
+				value = value.split("T")[0];
+				if (!GenericValidator.isDate(value, "yyyy-MM-dd", true)) {
+					return false;
+				}
+			} else if (!GenericValidator.isDate(value, dateResult.formatString, true)) {
+				return false;
+			}
+			if (isFutureDate(dateResult.date)) {
 				throw new FutureDateException();
 			}
+
 		}
 		return true;
 	}
@@ -154,56 +174,60 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 
 	private static class CheckDateResult
 	{
-		public CheckDateResult( Pattern pattern, Date date) {
+		public CheckDateResult( Pattern pattern, Date date, String formatString) {
 			this.pattern = pattern;
 			this.date = date;
+			this.formatString = formatString;
 		}
-		
+
 		public Pattern pattern;
 		public Date date;
+		public String formatString;
 	}
 
 	private CheckDateResult checkDate( String value)
 	{
+		CheckDateResult checkDateResult = null;
 		try {
 			Date collectionDate;
-			if (INSDC_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_1.parse(value)) != null)
+			if (INSDC_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_1_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_1, collectionDate);
+				checkDateResult = new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_1, collectionDate, INSDC_DATE_FORMAT_1);
 			}
-			else if (INSDC_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_2.parse(value)) != null)
+			else if (INSDC_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_2_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_2, collectionDate);
+				checkDateResult = new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_2, collectionDate, INSDC_DATE_FORMAT_2);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_1.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_1_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_1, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_1, collectionDate, ISO_DATE_FORMAT_1);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_2.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_2_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_2, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_2, collectionDate, ISO_DATE_FORMAT_2);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_3.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_3.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_3.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_3_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_3, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_3, collectionDate, ISO_DATE_FORMAT_3);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_4.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_4.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_4.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_4_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_4, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_4, collectionDate, ISO_DATE_FORMAT_4);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_5.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_5.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_5.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_5_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_5, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_5, collectionDate, ISO_DATE_FORMAT_5);
 			}
-			else if (ISO_DATE_FORMAT_PATTERN_6.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_6.parse(value)) != null)
+			else if (ISO_DATE_FORMAT_PATTERN_6.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_6_SDF.parse(value)) != null)
 			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_6, collectionDate);
+				checkDateResult = new CheckDateResult(ISO_DATE_FORMAT_PATTERN_6, collectionDate, ISO_DATE_FORMAT_6);
 			}
 		} 
 		catch (ParseException ignored)
 		{
 		}
-		return null;
+
+		return checkDateResult;
 	}
 
 	private boolean isFutureDate(Date collectionDate) {
