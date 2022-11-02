@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -25,325 +24,176 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
-import java.text.ParseException;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
+import static uk.ac.ebi.embl.api.validation.check.feature.CollectionDateQualifierCheck.*;
 
 public class CollectionDateQualifierCheckTest {
 
-	private Feature feature;
-	private Qualifier qualifier;
+	private final static CollectionDateQualifierCheck CHECK = new CollectionDateQualifierCheck();
 
-	private CollectionDateQualifierCheck check;
-	FeatureFactory featureFactory = new FeatureFactory();
-	QualifierFactory qualifierFactory = new QualifierFactory();
-
-	@Before
-	public void setUp() {
-		feature = featureFactory.createFeature("feature");
-		qualifier = qualifierFactory
-				.createQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
-		feature.addQualifier(qualifier);
-		check = new CollectionDateQualifierCheck();
+	private static Feature feature(String value) {
+		Feature feature = (new FeatureFactory()).createFeature("feature");
+		if (value != null) {
+			Qualifier qualifier = (new QualifierFactory()).createQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
+			qualifier.setValue(value);
+			feature.addQualifier(qualifier);
+		}
+		return feature;
 	}
 
 	@Test
-	public void testCheck_NoFeature() {
-		assertTrue(check.check(null).isValid());
+	public void testValid_NoFeature() {
+		assertTrue(CHECK.check(null).isValid());
 	}
 
 	@Test
-	public void testCheck_NoDate() {
-		feature.removeQualifier(qualifier);
-		assertTrue(check.check(feature).isValid());
+	public void testValid_NoQualifier() {
+		assertTrue(CHECK.check(feature(null)).isValid());
 	}
 
 	@Test
-	public void testCheck_invalidDate() {
-		qualifier.setValue("INVALID");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
+	public void testInvalidDate() {
+		testInvalidDate("INVALID", "CollectionDateQualifierCheck_1");
+		testInvalidDate("INVALID-INVALID", "CollectionDateQualifierCheck_1");
+		testInvalidDate("INVALID-INVALID-INVALID", "CollectionDateQualifierCheck_1");
+		testInvalidDate("INVALID-INVALID-INVALIDTINVALIDZ", "CollectionDateQualifierCheck_1");
+		testInvalidDate("INVALID-INVALID-INVALIDTINVALID:INVALIDZ", "CollectionDateQualifierCheck_1");
 	}
 
 	@Test
-	public void testCheck_invalidDateRange() {
-		qualifier.setValue("2004/2003"); // from date is > to date
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-	}	
-	
-	@Test
-	public void testCheck_futureDate1() {
-		qualifier.setValue("2050");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
+	public void testInvalidDate_Future() {
+		testInvalidDate("21-Oct-2050", "CollectionDateQualifierCheck_2");
+		testInvalidDate("Oct-2050", "CollectionDateQualifierCheck_2");
+		testInvalidDate("2050", "CollectionDateQualifierCheck_2");
+		testInvalidDate("2050-10-21T11:43Z", "CollectionDateQualifierCheck_2");
+		testInvalidDate("2050-10-21T11Z", "CollectionDateQualifierCheck_2");
+		testInvalidDate("2050-10-21", "CollectionDateQualifierCheck_2");
+		testInvalidDate("2050-10" ,"CollectionDateQualifierCheck_2");
 	}
 
 	@Test
-	public void testCheck_futureDate2() {
-		qualifier.setValue("Oct-2050");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-	}
-	
-	@Test
-	public void testCheck_futureDate3() {
-		qualifier.setValue("21-Oct-2050");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
+	public void testInvalidDate_Day() {
+		testInvalidDate("100-Oct-2022", "CollectionDateQualifierCheck_1");
+		testInvalidDate("00-Oct-2022", "CollectionDateQualifierCheck_1");
+		testInvalidDate("0-Oct-2022", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-100T11:43Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-100T11Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-100", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-00T11:43Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-00T11Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-00", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-0T11:43Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-0T11Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-0", "CollectionDateQualifierCheck_1");
 	}
 
 	@Test
-	public void testCheck_InvalidDayMonth() throws ParseException {
-	/*	assertTrue(GenericValidator.isDate("2024-03-28", "yyyy-MM-dd", true));
-		assertTrue(GenericValidator.isDate("2024-12", "yyyy-MM", true));
-
-
-		assertTrue(GenericValidator.isDate("2024-mar", "yyyy-MMM", true));
-
-		assertTrue(GenericValidator.isDate("2024", "yyyy", true));
-*/
-		qualifier.setValue("51-Oct-2022");  //invalid date
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-
-		qualifier.setValue("00-Oct-2022");  //invalid date
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("01-Ott-2022");  //invalid month
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("01-00-2022");  //invalid month
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("01-Oct-2022");  //valid date
-		validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("01-Ott-2022");  //invalid month
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("2022-10-02");  //valid date
-		validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("2022-15-01");  //invalid month
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-
-		qualifier.setValue("00-00-2022");  //invalid month
-		validationResult = check.check(feature);
-		assertEquals(1, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertFalse(validationResult.isValid());
-		assertFalse(check.isValid(qualifier.getValue()));
-
-		qualifier.setValue("2022-10-02");  //valid date
-		validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
+	public void testInvalidDate_Month() {
+		testInvalidDate("10-Ott-2022", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-100-10T11:43Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-00-10T11Z", "CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-0-10", "CollectionDateQualifierCheck_1");
 	}
 
 	@Test
-	public void testCheck_validDate1() {
-		qualifier.setValue("21-Oct-1952");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
+	public void testInvalidDate_Hour() {
+		testInvalidDate("2022-10-21T100:43Z","CollectionDateQualifierCheck_1");
+		testInvalidDate("2022-10-21T100Z","CollectionDateQualifierCheck_1");
 	}
 
 	@Test
-	public void testCheck_validDate2() {
-		qualifier.setValue("Oct-1952");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
+	public void testInvalidDate_Minute() {
+		testInvalidDate("2022-10-21T10:100Z","CollectionDateQualifierCheck_1");
 	}
 
 	@Test
-	public void testCheck_validDate3() {
-		qualifier.setValue("1952");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
+	public void testInvalidDateRange() {
+		testInvalidDate("2004/2003", "CollectionDateQualifierCheck_1");  // from date is > to date
 	}
 
 	@Test
-	public void testCheck_validDate4() {
-		qualifier.setValue("1952-10-21T11:43Z");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}
-	
-	@Test
-	public void testCheck_validDate5() {
-		qualifier.setValue("1952-10-21T11Z");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
+	public void testValidDate() {
+		testValidDate("21-Oct-1952",
+				LocalDateTime.of(1952, 10, 21, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDate("Oct-1952",
+				LocalDateTime.of(1952, 10, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDate("1952",
+				LocalDateTime.of(1952, DEFAULT_MONTH, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDate("1952-10-21T11:43Z",
+				LocalDateTime.of(1952, 10, 21, 11, 43));
+		testValidDate("1952-10-21T11Z",
+				LocalDateTime.of(1952, 10, 21, 11, DEFAULT_MINUTE));
+		testValidDate("1952-10-21",
+				LocalDateTime.of(1952, 10, 21, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDate("1952-10",
+				LocalDateTime.of(1952, 10, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
 	}	
 
 	@Test
-	public void testCheck_validDate6() {
-		qualifier.setValue("1952-10-21");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
+	public void testValidDateRange() {
 
-	@Test
-	public void testCheck_validDate7() {
-		qualifier.setValue("1952-10");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
+		testValidDateRange("21-Oct-1952/15-Feb-1953",
+				LocalDateTime.of(1952, 10, 21, DEFAULT_HOUR, DEFAULT_MINUTE),
+				LocalDateTime.of(1953,2, 15, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDateRange("Oct-1952/Feb-1953",
+				LocalDateTime.of(1952, 10, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE),
+				LocalDateTime.of(1953,2, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDateRange("1952/1953",
+				LocalDateTime.of(1952, DEFAULT_MONTH, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE),
+				LocalDateTime.of(1953,DEFAULT_MONTH, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDateRange("1952-10-21T11:43Z/1952-10-21T17:43Z",
+				LocalDateTime.of(1952, 10, 21, 11, 43),
+				LocalDateTime.of(1952,10,21,17,43));
+		testValidDateRange("1952-10-21/1953-02-15",
+				LocalDateTime.of(1952, 10, 21, DEFAULT_HOUR, DEFAULT_MINUTE),
+				LocalDateTime.of(1953,02, 15, DEFAULT_HOUR, DEFAULT_MINUTE));
+		testValidDateRange("1952-10/1953-02",
+				LocalDateTime.of(1952, 10, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE),
+				LocalDateTime.of(1953,02, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
 
-	@Test
-	public void testCheck_validDate8() {
-		qualifier.setValue("21-Oct-1952/15-Feb-1953");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
+	}
 
-	@Test
-	public void testCheck_validDate9() {
-		qualifier.setValue("Oct-1952/Feb-1953");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
-	
-	@Test
-	public void testCheck_validDate10() {
-		qualifier.setValue("1952/1953");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
+	private static void testInvalidDate(String value, String messageKey) {
+		ValidationResult validationResult = CHECK.check(feature(value));
+		assertEquals(1, validationResult.count(messageKey, Severity.ERROR));
+		assertFalse(validationResult.isValid());
+		assertFalse(CHECK.isValid(value));
+	}
 
-	@Test
-	public void testCheck_validDate11() {
-		qualifier.setValue("1952-10-21/1953-02-15");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
+	private static void testValidDate(String value, LocalDateTime expected) {
+		ValidationResult validationResult = CHECK.check(feature(value));
 		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
+		assertTrue(CHECK.isValid(value));
+		try {
+			assertTrue(CHECK.isValidDate(value));
+			CollectionDateQualifierCheck.ParseDateResult dateResult = CHECK.parseDate(value);
+			assertEquals(expected, dateResult.date);
+		}
+		catch (CollectionDateQualifierCheck.FutureDateException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
-	@Test
-	public void testCheck_validDate12() {
-		qualifier.setValue("1952-10/1953-02");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
+	private void testValidDateRange(String value, LocalDateTime expectedFrom, LocalDateTime expectedTo) {
+		ValidationResult validationResult = CHECK.check(feature(value));
 		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}	
-	
-	@Test
-	public void testCheck_validDate13() {
-		qualifier.setValue("1952-10-21T11:43Z/1952-10-21T17:43Z");
-		ValidationResult validationResult = check.check(feature);
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_1", Severity.ERROR));
-		assertEquals(0, validationResult.count(
-				"CollectionDateQualifierCheck_2", Severity.ERROR));
-		assertTrue(validationResult.isValid());
-		assertTrue(check.isValid(qualifier.getValue()));
-	}		
+		assertTrue(CHECK.isValid(value));
+		try {
+			assertTrue(CHECK.isValidDate(value));
+
+			String fromValue = value.split("/")[0];
+			String toValue = value.split("/")[1];
+
+			CollectionDateQualifierCheck.ParseDateResult fromResult = CHECK.parseDate(fromValue);
+			CollectionDateQualifierCheck.ParseDateResult toResult = CHECK.parseDate(toValue);
+
+			assertEquals(expectedFrom, fromResult.date);
+			assertEquals(expectedTo, toResult.date);
+		}
+		catch (CollectionDateQualifierCheck.FutureDateException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }
