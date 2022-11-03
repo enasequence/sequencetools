@@ -416,7 +416,8 @@ public abstract class FileValidationCheck {
 
 	protected  PrintWriter getContigsReducedFileWriter(SubmissionFile submissionFile) throws IOException {
 		if (sharedInfo.contigsReducedFileWriter == null) {
-			sharedInfo.contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent() + File.separator + "reduced" + File.separator +  contigFileName), StandardCharsets.UTF_8));
+			sharedInfo.contigsReducedFileWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(submissionFile.getFile().getParent()
+					+ File.separator + "reduced" + File.separator +  contigFileName), StandardCharsets.UTF_8));
 		}
 		return sharedInfo.contigsReducedFileWriter;
 	}
@@ -752,11 +753,12 @@ public abstract class FileValidationCheck {
 	void assignProteinAccessionAndWriteToFile(Entry entry, PrintWriter fixedFileWriter, SubmissionFile submissionFile, boolean isAGP) throws ValidationEngineException, IOException {
 		if (fixedFileWriter != null) {
 			assignProteinAccession(entry);
-			new EmblEntryWriter(entry).write(fixedFileWriter);
-			if (isAGP) {
-				constructAGPSequence(entry);
-			}
-			if (getOptions().context.get() != Context.sequence) {
+			if (getOptions().context.get() == Context.sequence) {
+				new EmblEntryWriter(entry).write(fixedFileWriter);
+			} else {
+				if (isAGP) {
+					constructAGPSequence(entry);
+				}
 				writeEntryToFile(entry, submissionFile);
 			}
 		}
