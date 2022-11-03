@@ -15,10 +15,12 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,32 +42,51 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 
 	private final static String DATE_FORMAT_ERROR = "CollectionDateQualifierCheck_1";
 	private final static String FUTURE_DATE_ERROR = "CollectionDateQualifierCheck_2";
-
-	private final static Pattern INSDC_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{2})-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "DD-Mmm-YYYY"
-	private final static Pattern INSDC_DATE_FORMAT_PATTERN_2 = Pattern.compile("^((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))-(\\d{4})$"); // "Mmm-YYYY"
-
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_1 = Pattern.compile("^(\\d{4})$"); // YYYY
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_2 = Pattern.compile("^(\\d{4})-(\\d{2})$"); // YYYY-MM
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_3 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})$"); // YYYY-MM-DD
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_4 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})Z$"); // YYYY-MM-DDThhZ
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_5 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mmZ
-	private final static Pattern ISO_DATE_FORMAT_PATTERN_6 = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})Z$"); // YYYY-MM-DDThh:mm:ssZ
-
-	
-	private final static SimpleDateFormat INSDC_DATE_FORMAT_1 = new SimpleDateFormat("dd-MMM-yyyy"); // dd-MMM-yyyy
-	private final static SimpleDateFormat INSDC_DATE_FORMAT_2 = new SimpleDateFormat("MMM-yyyy"); // MMM-yyyy
-
-	private final static SimpleDateFormat ISO_DATE_FORMAT_1 = new SimpleDateFormat("yyyy"); // yyyy
-	private final static SimpleDateFormat ISO_DATE_FORMAT_2 = new SimpleDateFormat("yyyy-MM"); // yyyy-MM
-	private final static SimpleDateFormat ISO_DATE_FORMAT_3 = new SimpleDateFormat("yyyy-MM-dd"); // yyyy-MM-dd
-	private final static SimpleDateFormat ISO_DATE_FORMAT_4 = new SimpleDateFormat("yyyy-MM-dd'T'HH'Z'"); // yyyy-MM-ddThhZ
-	private final static SimpleDateFormat ISO_DATE_FORMAT_5 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // yyyy-MM-ddThh:mmZ
-	private final static SimpleDateFormat ISO_DATE_FORMAT_6 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // yyyy-MM-ddThh:mmZ
-
 	private final static Pattern DATE_RANGE_PATTERN = Pattern.compile("^([^/]+)/([^/]+)$");
-	
-	private final static Date currentDate = Calendar.getInstance().getTime();
-	
+
+	public final static String INSDC_DATE_FORMAT_1 = "dd-MMM-yyyy"; // dd-MMM-yyyy
+	public final static String INSDC_DATE_FORMAT_2 = "MMM-yyyy"; // MMM-yyyy
+	public final static String ISO_DATE_FORMAT_1 = "yyyy"; // yyyy
+	public final static String ISO_DATE_FORMAT_2 = "yyyy-MM"; // yyyy-MM
+	public final static String ISO_DATE_FORMAT_3 = "yyyy-MM-dd"; // yyyy-MM-dd
+	public final static String ISO_DATE_FORMAT_4 = "yyyy-MM-dd'T'HH'Z'"; // yyyy-MM-ddThhZ
+	public final static String ISO_DATE_FORMAT_5 = "yyyy-MM-dd'T'HH:mm'Z'"; // yyyy-MM-ddThh:mmZ
+	public final static String ISO_DATE_FORMAT_6 = "yyyy-MM-dd'T'HH:mm:ss'Z'"; // yyyy-MM-ddThh:mmZ
+
+	private final static DateTimeFormatter INSDC_DATE_FORMATTER_1 = formatter(INSDC_DATE_FORMAT_1); // dd-MMM-yyyy
+	private final static DateTimeFormatter INSDC_DATE_FORMATTER_2 = formatter(INSDC_DATE_FORMAT_2); // MMM-yyyy
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_1 = formatter(ISO_DATE_FORMAT_1); // yyyy
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_2 = formatter(ISO_DATE_FORMAT_2); // yyyy-MM
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_3 = formatter(ISO_DATE_FORMAT_3); // yyyy-MM-dd
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_4 = formatter(ISO_DATE_FORMAT_4); // yyyy-MM-ddThhZ
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_5 = formatter(ISO_DATE_FORMAT_5); // yyyy-MM-ddThh:mmZ
+	private final static DateTimeFormatter ISO_DATE_FORMATTER_6 = formatter(ISO_DATE_FORMAT_6); // yyyy-MM-ddThh:mmZ
+
+	private final static List<DateTimeFormatter> DATE_FORMATTERS = Arrays.asList(
+			INSDC_DATE_FORMATTER_1,
+			INSDC_DATE_FORMATTER_2,
+			ISO_DATE_FORMATTER_1,
+			ISO_DATE_FORMATTER_2,
+			ISO_DATE_FORMATTER_3,
+			ISO_DATE_FORMATTER_4,
+			ISO_DATE_FORMATTER_5,
+			ISO_DATE_FORMATTER_6);
+
+	final static int DEFAULT_MONTH = 1;
+	final static int DEFAULT_DAY = 1;
+	final static int DEFAULT_HOUR = 0;
+	final static int DEFAULT_MINUTE = 0;
+	final static int DEFAULT_SECOND = 0;
+
+	private static DateTimeFormatter formatter(String pattern) {
+		return new DateTimeFormatterBuilder().appendPattern(pattern)
+				.parseDefaulting(ChronoField.MONTH_OF_YEAR, DEFAULT_MONTH)
+				.parseDefaulting(ChronoField.DAY_OF_MONTH, DEFAULT_DAY)
+				.parseDefaulting(ChronoField.HOUR_OF_DAY, DEFAULT_HOUR)
+				.parseDefaulting(ChronoField.MINUTE_OF_HOUR, DEFAULT_MINUTE)
+				.parseDefaulting(ChronoField.SECOND_OF_MINUTE, DEFAULT_SECOND).toFormatter();
+	}
+
 	public ValidationResult check(Feature feature) 
 	{
 		result = new ValidationResult();
@@ -118,95 +139,77 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck
 		return value == null || value.isEmpty() || StringUtils.deleteWhitespace(value).isEmpty();
 	}
 
-	private boolean isValidDate(String value) throws FutureDateException {
+	/** Returns true if the date is valid or null if the date is invalid or in the future.
+	 *
+	 * @param value the date string
+	 * @return true if the date is valid or null if the date is invalid.
+	 * @throws FutureDateException if the date is in the future
+	 */
+	boolean isValidDate(String value) throws FutureDateException {
 
-		Matcher m = DATE_RANGE_PATTERN.matcher(value);
+		Matcher dateRangeMatcher = DATE_RANGE_PATTERN.matcher(value);
 
-		if (m.matches()) {
-			CheckDateResult fromResult = checkDate(m.group(1));
-			CheckDateResult toResult = checkDate(m.group(2));
+		if (dateRangeMatcher.matches()) {
+			ParseDateResult fromResult = parseDate(dateRangeMatcher.group(1));
+			ParseDateResult toResult = parseDate(dateRangeMatcher.group(2));
 
 			if (fromResult == null || toResult == null) {
 				return false; // invalid date format
 			} else {
-				if (isFutureDate(fromResult.date) || isFutureDate(toResult.date)) { //from_date or to_date after current date
-					throw new FutureDateException();
-				}
-				if (fromResult.pattern != toResult.pattern) { // Different range date formats.
+				if (fromResult.formatter != toResult.formatter) { // Different range date formats.
 					return false;
 				}
-				// From date in a range is larger than to date.
+				// To date must be after from date.
 				return fromResult.date.compareTo(toResult.date) <= 0;
 			}
 		} else {
-			CheckDateResult dateResult = checkDate(value);
-			if (dateResult == null ) {
+			ParseDateResult dateResult = parseDate(value);
+			if (dateResult == null) {
 				return false;// invalid date format
-			} else if(isFutureDate(dateResult.date)) {
-				throw new FutureDateException();
 			}
 		}
 		return true;
 	}
 
-	private static class FutureDateException extends Exception {
+	static class FutureDateException extends Exception {
     }
 
-	private static class CheckDateResult
+	static class ParseDateResult
 	{
-		public CheckDateResult( Pattern pattern, Date date) {
-			this.pattern = pattern;
+		public ParseDateResult(String value, LocalDateTime date, DateTimeFormatter formatter) {
+			this.value = value;
 			this.date = date;
+			this.formatter = formatter;
 		}
-		
-		public Pattern pattern;
-		public Date date;
+		/** The date string. */
+		public final String value;
+
+		/** The parsed date. */
+		public final LocalDateTime date;
+
+		/** The used date formatted. */
+		public final DateTimeFormatter formatter;
 	}
 
-	private CheckDateResult checkDate( String value)
+	/** Parses the date and returns null if the date could not be parsed.
+	 *
+	 * @param value the date string
+	 * @return date or null if the date could not be parsed.
+	 * @throws FutureDateException if the date is in the future
+	 */
+	ParseDateResult parseDate(String value) throws FutureDateException
 	{
-		try {
-			Date collectionDate;
-			if (INSDC_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_1.parse(value)) != null)
-			{
-				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_1, collectionDate);
+		for (DateTimeFormatter formatter : DATE_FORMATTERS) {
+			try {
+				LocalDateTime date = LocalDateTime.from(formatter.parse(value));
+				if (LocalDateTime.now().isBefore(date)) {
+					throw new FutureDateException();
+				}
+				return new ParseDateResult(value, date, formatter);
+			} catch (DateTimeParseException ex) {
+				// Ignore error
 			}
-			else if (INSDC_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = INSDC_DATE_FORMAT_2.parse(value)) != null)
-			{
-				return new CheckDateResult(INSDC_DATE_FORMAT_PATTERN_2, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_1.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_1.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_1, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_2.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_2.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_2, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_3.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_3.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_3, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_4.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_4.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_4, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_5.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_5.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_5, collectionDate);
-			}
-			else if (ISO_DATE_FORMAT_PATTERN_6.matcher(value).matches() && (collectionDate = ISO_DATE_FORMAT_6.parse(value)) != null)
-			{
-				return new CheckDateResult(ISO_DATE_FORMAT_PATTERN_6, collectionDate);
-			}
-		} 
-		catch (ParseException ignored)
-		{
 		}
-		return null;
-	}
-
-	private boolean isFutureDate(Date collectionDate) {
-		return collectionDate.compareTo(currentDate) > 0;
+		return null; // invalid date format
 	}
 }
