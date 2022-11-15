@@ -105,8 +105,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		plan.execute();
 		assertEquals(1, plan.getUnplacedEntryNames().size());
 		assertTrue( plan.getUnplacedEntryNames().contains("IWGSC_CSS_6DL_scaff_3330718".toUpperCase()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath, "valid_fastaforAGP_contigs.reduced.expected"),
@@ -135,9 +133,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_fasta.txt", FileType.FASTA).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath ,"valid_genome_flatfile.txt", FileType.FASTA).getFile()));
-
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath, "contigs.reduced.expected"),
 				getReducedFilePath(rootPath ,FileValidationCheck.contigFileName)));
@@ -199,8 +194,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_agp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
@@ -225,8 +218,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaagp.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
@@ -261,8 +252,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(plan.getUnplacedEntryNames().isEmpty());
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"valid_fastaforAGP_contigs.reduced.expected"),
@@ -298,8 +287,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
 		assertTrue(plan.getUnplacedEntryNames().isEmpty());
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
@@ -324,7 +311,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath, "valid_genome_fasta.txt", FileType.FASTA).getFile()));
+
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
 				getReducedFilePath(rootPath,  FileValidationCheck.contigFileName)));
@@ -344,7 +331,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.processDir = Optional.of(initSubmissionTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FASTA).getFile().getParent());
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
 		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,"valid_fastaforAnnotationOnly.txt", FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
@@ -381,9 +367,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 
 		assertEquals(plan.getUnplacedEntryNames().size(), 1);
 		assertEquals(plan.getUnplacedEntryNames().toArray()[0].toString(), "IWGSC_CSS_6DL_SCAFF_3330717");
-
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,fastaFileName, FileType.FLATFILE).getFile()));
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(rootPath,agpFileName, FileType.FLATFILE).getFile()));
 
 		assertTrue(compareOutputFixedFiles(
 				getReducedFilePath(rootPath,"contigs.reduced.expected"),
