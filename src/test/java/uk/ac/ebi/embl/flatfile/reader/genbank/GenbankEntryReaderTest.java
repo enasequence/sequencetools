@@ -38,7 +38,7 @@ public class GenbankEntryReaderTest extends EmblReaderTest {
 			"ACCESSION   DP000153\n"+
 			"VERSION     DP000153.1\n" +
 			"KEYWORDS    .\n"+
-			"SOURCE      Mus musculus (house mouse)\n" +
+			"SOURCE      Mus musculus\n" +
 			"  ORGANISM  Mus musculus\n" +
 			"            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;\n" +
 			"            Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia;\n" +

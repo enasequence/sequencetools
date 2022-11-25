@@ -41,30 +41,6 @@ public class SourceReaderTest extends GenbankReaderTest {
 		assertEquals(0, result.count(Severity.ERROR));*/
     }
 
-	public void testReadWithCommonNameWrapped() throws IOException {
-		initLineReader(
-			"SOURCE      hello (you\n" +
-			"            too)\n"
-		);
-		SourceReader reader = (new SourceReader(lineReader));
-		ValidationResult result = reader.read(entry);
-		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(
-				"you too",
-				reader.getCache().getCommonName("hello"));
-    }	
-
-	public void testReadWithCommonNameNoWrapped() throws IOException {
-		initLineReader(
-			"SOURCE      hello (A/equine/Ibadan/6/91(H3N8))\n"
-		);
-		SourceReader reader = (new SourceReader(lineReader));
-		ValidationResult result = reader.read(entry);
-		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(
-				"A/equine/Ibadan/6/91(H3N8)",
-				reader.getCache().getCommonName("hello"));
-    }		
 	
 	public void testRead_EmptyLine() throws IOException {
 		initLineReader(
