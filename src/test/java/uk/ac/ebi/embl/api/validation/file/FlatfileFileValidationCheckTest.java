@@ -81,7 +81,6 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 			assertTrue(check.check(file).isValid());
-	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 		
 		@Test
@@ -102,7 +101,6 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 	        options.init();
 			FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 			assertTrue(check.check(file).isValid());
-	        assertTrue(compareOutputFixedFiles(file.getFile()));
 		}
 
 	@Test
@@ -122,7 +120,6 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
-		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 
 	@Test
@@ -142,7 +139,6 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
-		assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 
 		@Test

@@ -75,8 +75,6 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 				validateContig("valid_flatfileforAgp.txt", FileType.FLATFILE, check.getContigDB());
 				assertTrue(check.check(submissionFiles.getFiles().get(0)).isValid());
 
-				assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileforAgp.txt", FileType.FLATFILE).getFile()));
-				assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_flatfileagp.txt", FileType.AGP).getFile()));
 				//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_flatfileagp.txt.fixed", FileType.FLATFILE).getFile()));
 			/*	ConcurrentMap seqMap = check.getSequenceDB().hashMap("map").createOrOpen();
 				String seq1 = seqMap.get("IWGSC_CSS_6DL_scaff_3330716".toUpperCase()).toString();
@@ -112,8 +110,6 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			check.createContigDB();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA,check.getContigDB());
 			assertTrue(check.check(submissionFiles.getFiles().get(0)).isValid());
-			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_fastaforAgp.txt", FileType.FLATFILE).getFile()));
-			assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile(agpFileName, FileType.FLATFILE).getFile()));
 			//assertTrue(compareOutputSequenceFiles(initSubmissionFixedSequenceTestFile("valid_fastaagp.txt.fixed", FileType.FLATFILE).getFile()));
 			check.getContigDB().close();
 		}

@@ -55,33 +55,6 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.forceReducedFlatfileCreation=true;
 	}
 
-	// Make sure we store the references given in Webin-CLI manifest.
-	@Test
-	public void testGenomeWithFlatfileAddReference() throws ValidationEngineException, FlatFileComparatorException, ParseException {
-		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "flatfile_add_reference" + RESOURCE_FILE_SEPARATOR;
-		String fileName = "valid_genome_flatfile.txt";
-		options.context = Optional.of(Context.genome);
-		options.assemblyInfoEntry.get().setAuthors("Kirstein I., Wichels A.;");
-		options.assemblyInfoEntry.get().setAddress("Biologische Anstalt Helgoland, Alfred-Wegener-Institut, Helmholtz Zentrum " +
-				"fur Polar- und Meeresforschung, Kurpromenade 27498 Helgoland, Germany");
-
-		DateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-		options.assemblyInfoEntry.get().setDate(format.parse("17-JUL-2019"));
-		SubmissionFiles submissionFiles = new SubmissionFiles();
-		submissionFiles.addFile(initSubmissionFixedTestFile(rootPath, fileName , FileType.FLATFILE));
-		options.submissionFiles = Optional.of(submissionFiles);
-		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
-		options.reportDir = Optional.of(initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getParent());
-		options.processDir = Optional.of(initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getParent());
-
-		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
-		plan.execute();
-		String expectedFile =  "valid_genome_flatfile_ref_change.txt.expected";
-		FlatFileComparator comparator=new FlatFileComparator(new FlatFileComparatorOptions());
-		assertTrue( comparator.compare(initSubmissionFixedTestFile(rootPath, expectedFile, FileType.FLATFILE).getFile().getAbsolutePath(),
-				initSubmissionTestFile(rootPath, fileName, FileType.FLATFILE).getFile().getAbsolutePath()+".fixed"));
-	}
-
 	
 	@Test
 	public void testGenomeWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException
@@ -391,8 +364,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.processDir = Optional.of(subFile.getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
-		plan.execute();
-		assertTrue(compareOutputFixedFiles(subFile.getFile()));
+		ValidationResult validationResult = plan.execute();
+		assertTrue(validationResult.isValid());
 	}
 	
 	@Test
@@ -407,8 +380,8 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		options.processDir = Optional.of(initSubmissionTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile().getParent());
 
 		SubmissionValidationPlan plan = new SubmissionValidationPlan(options);
-		plan.execute();
-		assertTrue(compareOutputFixedFiles(initSubmissionFixedTestFile("valid_transcriptom_flatfile.txt", FileType.FLATFILE).getFile()));
+		ValidationResult validationResult = plan.execute();
+		assertTrue(validationResult.isValid());
 	}
 
 	@Test

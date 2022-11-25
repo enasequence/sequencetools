@@ -81,7 +81,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         options.init();
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
-        assertTrue(compareOutputFixedFiles(file.getFile()));
 	}
 	
 	@Test
@@ -101,12 +100,6 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 		FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
 //
 		assertTrue(check.check(file).isValid());
-		String expectedString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".expected")));
-		String actualString = new String(Files.readAllBytes(Paths.get(file.getFile().getAbsolutePath()+".fixed")));
-        System.out.println(expectedString);
-        System.out.println("=====================================================================");
-        System.out.println(actualString);
-        assertTrue(compareOutputFixedFiles(file.getFile()));
      /*   ConcurrentMap map = check.getSequenceDB().hashMap("map").createOrOpen();
         assertEquals("caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",map.get("IWGSC_CSS_6DL_contig_209591".toUpperCase()));
         assertEquals("gttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggtttttttttttttttttttttttttttttttttg",map.get("IWGSC_CSS_6DL_contig_209592".toUpperCase()));
