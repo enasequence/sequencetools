@@ -198,13 +198,15 @@ public class AGPFileValidationCheck extends FileValidationCheck
 						for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 							if (!agpRow.isGap()) {
 								if (agpRow.getComponent_id() != null && getContigDB() != null) {
-									ConcurrentMap<String, Object> map = getContigDB().hashMap("map", Serializer.STRING, getContigDB().getDefaultSerializer()).createOrOpen();
-									List<AgpRow> agpRows = (List<AgpRow>) map.get(agpRow.getComponent_id().toLowerCase());
+									//<componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
+									// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
+									ConcurrentMap<String, Object> componentAGPRowsMap = getContigDB().hashMap("map", Serializer.STRING, getContigDB().getDefaultSerializer()).createOrOpen();
+									List<AgpRow> agpRows = (List<AgpRow>) componentAGPRowsMap.get(agpRow.getComponent_id().toLowerCase());
 									if (agpRows == null) {
 										agpRows = new ArrayList<>();
 									}
 									agpRows.add(agpRow);
-									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
+									componentAGPRowsMap.put(agpRow.getComponent_id().toLowerCase(), agpRows);
 									sharedInfo.agpPlacedComponents.add(agpRow.getComponent_id().toUpperCase());
 								}
 							}
