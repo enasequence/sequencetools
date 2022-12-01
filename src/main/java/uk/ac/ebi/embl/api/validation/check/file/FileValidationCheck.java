@@ -28,7 +28,6 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
@@ -93,7 +92,7 @@ public abstract class FileValidationCheck {
 
 	// cobtigDB has just one ConcurrentHasMap <componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
 	// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
-	private DB contigDB =null;
+	private DB componentAGPRowsMapDB =null;
 	public static final String contigFileName = "contigs.reduced.tmp";
 	public static final String scaffoldFileName = "scaffolds.reduced.tmp";
 	public static final String chromosomeFileName = "chromosome.flatfile.tmp";
@@ -486,8 +485,8 @@ public abstract class FileValidationCheck {
 			// scaff1 contig1 1-100 : contig1 is placed in  scaff1 &  scaff2. We are setting sequence for scaff1 &  scaff2
 			// scaff2 contig1 300-500
 			// scaff3 scaff1 1-300 : currently we are not setting seq to it bcoz scaff1 is not part of fasta/flatfile
-			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
-				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
+			if (getComponentAGPRowsMapDB() != null && entry.getSubmitterAccession() != null) {
+				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());
 				if (agpRows != null) {
 					for (AgpRow agpRow : agpRows) {
@@ -503,8 +502,8 @@ public abstract class FileValidationCheck {
 			}
 
 		} catch (Exception e) {
-			if (getContigDB() != null)
-				getContigDB().close();
+			if (getComponentAGPRowsMapDB() != null)
+				getComponentAGPRowsMapDB().close();
 			throw e;
 		}
 	}
@@ -659,11 +658,11 @@ public abstract class FileValidationCheck {
 				db.close();
 		}
 	}
-	public DB getContigDB() {
-		return contigDB;
+	public DB getComponentAGPRowsMapDB() {
+		return componentAGPRowsMapDB;
 	}
-	public void setContigDB(DB contigDB) {
-		this.contigDB = contigDB;
+	public void setComponentAGPRowsMapDB(DB componentAGPRowsMapDB) {
+		this.componentAGPRowsMapDB = componentAGPRowsMapDB;
 	}
 	
 	boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
@@ -782,14 +781,14 @@ public abstract class FileValidationCheck {
 			ByteBuffer sequenceBuffer = ByteBuffer.wrap(new byte[Long.valueOf(conEntry.getSequence().getLength()).intValue()]);
 
 			ConcurrentMap contigMap =null;
-			if(getContigDB()!=null) {
-				contigMap = getContigDB().hashMap("map").createOrOpen();
+			if(getComponentAGPRowsMapDB()!=null) {
+				contigMap = getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
 			}
 
 			for (AgpRow sequencePlacedInCONEntry : conEntry.getSequence().getSortedAGPRows()) {
 				if (!sequencePlacedInCONEntry.isGap()) {
 					Object sequence;
-					if (sequencePlacedInCONEntry.getComponent_id() != null && getContigDB() != null) {
+					if (sequencePlacedInCONEntry.getComponent_id() != null && getComponentAGPRowsMapDB() != null) {
 						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
 						Object allPlacementOfCurrentlyPlacedSequence = contigMap.get(sequencePlacedInCONEntry.getComponent_id().toLowerCase());
 						if (allPlacementOfCurrentlyPlacedSequence != null) {
@@ -831,11 +830,11 @@ public abstract class FileValidationCheck {
 				contigMap.put(conEntry.getSubmitterAccession().toLowerCase(), agpRows);
 			}
 
-			getContigDB().commit();
+			getComponentAGPRowsMapDB().commit();
 
 		}catch(Exception e)
 		{
-			closeMapDB(getContigDB());
+			closeMapDB(getComponentAGPRowsMapDB());
 			throw new ValidationEngineException(e);
 		}
 	}

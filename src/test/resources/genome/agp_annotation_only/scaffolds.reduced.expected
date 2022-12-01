@@ -10,13 +10,13 @@ XX
 CO   join(complement(IWGSC_CSS_6DL_contig_209593.0:1..330),
 CO   complement(IWGSC_CSS_6DL_contig_209594.0:1..100))
 XX
-SQ   Sequence 430 BP; 11 A; 0 C; 322 G; 97 T; 0 other;
-     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga        60
-     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       120
-     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       180
-     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       240
-     aggggggggg gggggggggg gggggggggg gggggggggg gggggggggg ggggggggga       300
-     aggggggggg gggggggggg gggggggggg gttttttttt tttttttttt tttttttttt       360
-     tttttttttt tttttttttt tttttttttg gttttttttt tttttttttt tttttttttt       420
-     tttttttttt                                                              430
+SQ   Sequence 430 BP; 97 A; 322 C; 0 G; 11 T; 0 other;
+     cccccccccc cccccccccc ccccccccct tccccccccc cccccccccc cccccccccc        60
+     cccccccccc cccccccccc ccccccccct tccccccccc cccccccccc cccccccccc       120
+     cccccccccc cccccccccc ccccccccct tccccccccc cccccccccc cccccccccc       180
+     cccccccccc cccccccccc ccccccccct tccccccccc cccccccccc cccccccccc       240
+     cccccccccc cccccccccc ccccccccct tccccccccc cccccccccc cccccccccc       300
+     cccccccccc cccccccccc ccccccccct aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa       360
+     aaaaaaaaac caaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa       420
+     aaaaaaaaac                                                              430
 //
