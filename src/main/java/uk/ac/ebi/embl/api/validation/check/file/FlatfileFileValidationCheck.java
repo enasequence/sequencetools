@@ -19,29 +19,21 @@ import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader.Format;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Description("")
 public class FlatfileFileValidationCheck extends FileValidationCheck
@@ -158,11 +150,11 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}catch(ValidationEngineException e)
 		{
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getContigDB(), getAnnotationDB());
+			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 			throw e;
 		} catch (Exception ex) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, ex.getMessage(),origin);
-			closeMapDB(getContigDB(), getAnnotationDB());
+			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
 

@@ -20,7 +20,6 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
@@ -84,7 +83,7 @@ public class SubmissionValidationPlan
 				agpCheck = new AGPFileValidationCheck(options, fileValidationCheckSharedInfo);
 				if (fileValidationCheckSharedInfo.hasAgp) {
 					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-					agpCheck.setContigDB(contigDB);
+					agpCheck.setComponentAGPRowsMapDB(contigDB);
 					agpCheck.createContigDB();
 				}
 			}
@@ -231,7 +230,7 @@ public class SubmissionValidationPlan
 					check.setAnnotationDB(annotationDB);
 					}
 					if (contigDB != null)
-						check.setContigDB(contigDB);
+						check.setComponentAGPRowsMapDB(contigDB);
 					result = check.check(fastaFile);
 					if (!result.isValid()) {
 						if (options.isWebinCLI)
@@ -263,7 +262,7 @@ public class SubmissionValidationPlan
 				for (SubmissionFile flatfile : submissionFiles) {
 					fileName = flatfile.getFile().getName();
 					if (contigDB != null)
-						check.setContigDB(contigDB);
+						check.setComponentAGPRowsMapDB(contigDB);
 					result = check.check(flatfile);
 					if (!result.isValid()) {
 						if (options.isWebinCLI)

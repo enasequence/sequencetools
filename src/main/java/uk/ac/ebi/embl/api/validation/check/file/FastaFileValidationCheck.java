@@ -24,7 +24,6 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
-import uk.ac.ebi.embl.api.validation.helper.ByteBufferUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -32,7 +31,6 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -149,18 +147,18 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				validationResult.append(planResult);
 				sharedInfo.sequenceCount++;
 			}
-			if(getContigDB()!=null)
+			if(getComponentAGPRowsMapDB()!=null)
 			{
-				getContigDB().commit();
+				getComponentAGPRowsMapDB().commit();
 			}
 		} catch (ValidationEngineException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getAnnotationDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getComponentAGPRowsMapDB());
 			throw e;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getAnnotationDB(), getContigDB());
+			closeMapDB(getAnnotationDB(), getComponentAGPRowsMapDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 
