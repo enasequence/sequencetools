@@ -90,7 +90,7 @@ public abstract class FileValidationCheck {
 
 	private  DB annotationDB = null;
 
-	// cobtigDB has just one ConcurrentHasMap <componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
+	// componentAGPRowsMapDB has just one ConcurrentHasMap <componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
 	// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
 	private DB componentAGPRowsMapDB =null;
 	public static final String contigFileName = "contigs.reduced.tmp";
