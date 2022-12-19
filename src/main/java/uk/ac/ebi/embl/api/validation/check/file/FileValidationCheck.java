@@ -764,7 +764,9 @@ public abstract class FileValidationCheck {
 		if (fixedFileWriter != null) {
 			assignProteinAccession(entry);
 			if (getOptions().context.get() == Context.sequence) {
-				new EmblEntryWriter(entry).write(fixedFileWriter);
+				EmblEntryWriter emblEntryWriter = new EmblEntryWriter(entry);
+				emblEntryWriter.setShowSTStartLine(true);
+				emblEntryWriter.write(fixedFileWriter);
 			} else {
 				if (isAGP) { //TODO: do not do this for webin-cli
 					constructAGPSequence(entry);
