@@ -18,7 +18,6 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 import org.junit.Before;
@@ -35,9 +34,8 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureTranslationCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class CdsFeatureTranslationCheckTest {
 
@@ -54,9 +52,9 @@ public class CdsFeatureTranslationCheckTest {
 		Sequence sequence=sequenceFactory.createSequenceByte("gttttgtttgatggagaattgcgcagaggggttatatctgcgtgaggatctgtcactcgg".getBytes());
 		entry = entryFactory.createEntry();
 		entry.setSequence(sequence);
-        TaxonHelper taxonHelper = createMock(TaxonHelper.class);
+        TaxonomyClient taxonClient = createMock(TaxonomyClient.class);
         EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-        property.taxonHelper.set(taxonHelper);
+        property.taxonClient.set(taxonClient);
         check = new CdsFeatureTranslationCheck();
         check.setEmblEntryValidationPlanProperty(property);
     }

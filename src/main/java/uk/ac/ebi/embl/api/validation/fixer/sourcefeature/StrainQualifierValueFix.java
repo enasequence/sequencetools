@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
 @Description("strain qualifier value \"{0}\" has been changed to \"{1}\" " + "entry description \"{0}\" has been changed to \"{1}\"")
@@ -63,7 +62,7 @@ public class StrainQualifierValueFix extends EntryValidationCheck
 		{
 			strainQualifierValue = strainQualifierValue.substring(0, strainQualifierValue.length() - 1);
 		}
-		boolean isOrganismFormal = getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismFormal(source.getScientificName());
+		boolean isOrganismFormal = getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismFormal(source.getScientificName());
 
 		if (!isOrganismFormal)
 		{

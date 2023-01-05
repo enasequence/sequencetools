@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.sequence.SequenceBasesCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.*;
@@ -277,8 +277,8 @@ public class Translator extends AbstractTranslator
 	}
 
 	private Integer getEntryTranslationTable(Integer featureTranslationTable,
-			TaxonHelper taxHelper, Entry entry,
-			ValidationResult validationResult) throws ValidationException
+											 TaxonomyClient taxonomyClient, Entry entry,
+											 ValidationResult validationResult) throws ValidationException
 	{
 		Integer translationTable = null;
 
@@ -288,11 +288,11 @@ public class Translator extends AbstractTranslator
 			Taxon taxon = null;
 			if (sourceFeature.getTaxon().getTaxId() != null)
 			{
-				taxon = taxHelper.getTaxonById(sourceFeature.getTaxon()
+				taxon = taxonomyClient.getTaxonByTaxid(sourceFeature.getTaxon()
 						.getTaxId());
 			} else if (sourceFeature.getTaxon().getScientificName() != null)
 			{
-				taxon = taxHelper.getTaxonByScientificName(sourceFeature
+				taxon = taxonomyClient.getTaxonByScientificName(sourceFeature
 						.getTaxon().getScientificName());
 			}
 

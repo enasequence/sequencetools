@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 @ExcludeScope( validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
@@ -52,7 +51,7 @@ public class HostQualifierCheck extends FeatureValidationCheck
 		{
 			String hostQualifierValue=hostQualifier.getValue();
 			
-			List<Taxon> taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
+			List<Taxon> taxon=getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonsByCommonName(hostQualifierValue);
 			if(taxon != null && !taxon.isEmpty()) {
 				reportError(hostQualifier.getOrigin(), INVALID_HOST_MESSAGE_ID,hostQualifier.getValue());
 			}

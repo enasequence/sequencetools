@@ -108,7 +108,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
 
                     Segment segment = segmentFactory.createSegment(entry.getSequence(), peptideFeature.getLocations());
 
-                    translator.configureFromFeature(peptideFeature, getEmblEntryValidationPlanProperty().taxonHelper.get(), entry);
+                    translator.configureFromFeature(peptideFeature, getEmblEntryValidationPlanProperty().taxonClient.get(), entry);
 
                     ExtendedResult<TranslationResult> peptideResult=null;
 

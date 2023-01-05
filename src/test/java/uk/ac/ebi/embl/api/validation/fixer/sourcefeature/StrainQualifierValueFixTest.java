@@ -34,9 +34,9 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.sourcefeature.StrainQualifierValueFix;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -51,7 +51,7 @@ public class StrainQualifierValueFixTest
 	public EntryFactory entryFactory;
 	public FeatureFactory featureFactory;
 	public QualifierFactory qualifierFactory;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonClient;
 
 	@Before
 	public void setUp() throws SQLException
@@ -62,9 +62,9 @@ public class StrainQualifierValueFixTest
 		qualifierFactory = new QualifierFactory();
 		featureFactory = new FeatureFactory();
 		entry = entryFactory.createEntry();
-		taxonHelper = createMock(TaxonHelper.class);
+		taxonClient = createMock(TaxonomyClient.class);
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.taxonHelper.set(taxonHelper);
+		property.taxonClient.set(taxonClient);
 		check = new StrainQualifierValueFix();
 		check.setEmblEntryValidationPlanProperty(property);
 	}
@@ -134,8 +134,8 @@ public class StrainQualifierValueFixTest
 		sourceFeature.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "VMP-1(T)");
 		sourceFeature.setScientificName("Transposon Tn1546");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.isOrganismFormal("Transposon Tn1546")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+		expect(taxonClient.isOrganismFormal("Transposon Tn1546")).andReturn(Boolean.TRUE);
+		replay(taxonClient);
 		ValidationResult validationResult = check.check(entry);
 		assertEquals("type strain: VMP-1", entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME).getValue());
 		assertTrue(validationResult.isValid());

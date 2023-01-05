@@ -10,8 +10,8 @@ import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 public class SubmissionOptions
 {
@@ -127,7 +127,7 @@ public class SubmissionOptions
 			property.sequenceNumber.set(1);
 		}
 		property.ignore_errors.set(ignoreErrors);
-		property.taxonHelper.set(new TaxonHelperImpl());
+		property.taxonClient.set(new TaxonomyClientImpl());
 		property.isRemote.set(isWebinCLI);
 		return property;
 	}

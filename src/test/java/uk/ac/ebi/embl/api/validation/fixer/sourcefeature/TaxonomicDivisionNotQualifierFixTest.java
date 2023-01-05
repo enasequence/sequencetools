@@ -26,8 +26,8 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import uk.ac.ebi.ena.taxonomy.taxon.TaxonFactory;
 
@@ -45,7 +45,7 @@ public class TaxonomicDivisionNotQualifierFixTest
 	FeatureFactory featureFactory;
 	private TaxonomicDivisionNotQualifierFix check;
 	private EmblEntryValidationPlanProperty property;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonomyClient;
 
 	@Before
 	public void setUp() throws SQLException
@@ -56,8 +56,8 @@ public class TaxonomicDivisionNotQualifierFixTest
 		entry = entryFactory.createEntry();
 		sourceFeature = featureFactory.createSourceFeature();
 		property=new EmblEntryValidationPlanProperty();
-		taxonHelper=createMock(TaxonHelper.class);
-		property.taxonHelper.set(taxonHelper);
+		taxonomyClient =createMock(TaxonomyClient.class);
+		property.taxonClient.set(taxonomyClient);
 
 		DataRow dataRow1 = new DataRow(Qualifier.LAT_LON_QUALIFIER_NAME, "HUM");
 		DataRow dataRow2 = new DataRow("dev_stage", "PRO");
@@ -98,9 +98,9 @@ public class TaxonomicDivisionNotQualifierFixTest
 		Taxon taxon=taxonFactory.createTaxon();
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
-		replay(taxonHelper);
-		property.taxonHelper.set(taxonHelper);
+		expect(taxonomyClient.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
+		replay(taxonomyClient);
+		property.taxonClient.set(taxonomyClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		assertTrue(check.check(entry).isValid());
 	}
@@ -112,9 +112,9 @@ public class TaxonomicDivisionNotQualifierFixTest
 		Taxon taxon=taxonFactory.createTaxon();
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
-		replay(taxonHelper);
-		property.taxonHelper.set(taxonHelper);
+		expect(taxonomyClient.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
+		replay(taxonomyClient);
+		property.taxonClient.set(taxonomyClient);
 		sourceFeature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "Akio Tani");
 		check.setEmblEntryValidationPlanProperty(property);
 		ValidationResult result=check.check(entry);
@@ -129,9 +129,9 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
-		replay(taxonHelper);
-		property.taxonHelper.set(taxonHelper);
+		expect(taxonomyClient.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
+		replay(taxonomyClient);
+		property.taxonClient.set(taxonomyClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		ValidationResult result = check.check(entry);
 		assertEquals(0, result.count("TaxonomicDivisionNotQualifierFix", Severity.ERROR));
@@ -145,9 +145,9 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
-		replay(taxonHelper);
-		property.taxonHelper.set(taxonHelper);
+		expect(taxonomyClient.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
+		replay(taxonomyClient);
+		property.taxonClient.set(taxonomyClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		sourceFeature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "Akio Tani");
 		ValidationResult result = check.check(entry);
@@ -162,9 +162,9 @@ public class TaxonomicDivisionNotQualifierFixTest
 		taxon.setDivision("HUM");
 		sourceFeature.setScientificName("Homo sapiens");
 		entry.addFeature(sourceFeature);
-		expect(taxonHelper.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
-		replay(taxonHelper);
-		property.taxonHelper.set(taxonHelper);
+		expect(taxonomyClient.getTaxonByScientificName("Homo sapiens")).andReturn(taxon);
+		replay(taxonomyClient);
+		property.taxonClient.set(taxonomyClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		Feature feature=featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
 		feature.setSingleQualifierValue(Qualifier.CITATION_QUALIFIER_NAME, "Akio Tani");

@@ -33,15 +33,15 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class MoleculeTypeAndOrganismCheckTest {
 
 	private Entry entry;
 	private Feature source;
 	private MoleculeTypeAndOrganismCheck check;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonomyClient;
 
 	@Before
 	public void setUp() throws SQLException {
@@ -57,8 +57,8 @@ public class MoleculeTypeAndOrganismCheckTest {
 		Sequence sequence = sequenceFactory.createSequence();
 		entry.setSequence(sequence);
 
-		taxonHelper = createMock(TaxonHelper.class);
-		property.taxonHelper.set(taxonHelper);
+		taxonomyClient = createMock(TaxonomyClient.class);
+		property.taxonClient.set(taxonomyClient);
 		DataRow dataRow = new DataRow("Deltavirus,Retro-transcribing viruses,ssRNA viruses,dsRNA viruses", "genomic RNA");
 		GlobalDataSets.addTestDataSet(GlobalDataSetFile.MOLTYPE_ORGANISM, dataRow);
 		check = new MoleculeTypeAndOrganismCheck();
@@ -96,11 +96,11 @@ public class MoleculeTypeAndOrganismCheckTest {
 		entry.getSequence().setMoleculeType("genomic RNA");
 		source.addQualifier("organism", "Deltavirus");
 
-		expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[] {
+		expect(taxonomyClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonomyClient.isChildOfAny("Deltavirus", new String[] {
 						"Deltavirus", "Retro-transcribing viruses",
 						"ssRNA viruses", "dsRNA viruses" })).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+		replay(taxonomyClient);
 
 		assertTrue(check.check(entry).isValid());
 	}

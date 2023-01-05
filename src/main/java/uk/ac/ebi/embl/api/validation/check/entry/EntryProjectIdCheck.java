@@ -78,13 +78,13 @@ public class EntryProjectIdCheck extends EntryValidationCheck {
 				{  
 					Feature source = sourceFeatures.iterator().next();
 					Qualifier organismQualifier = source.getSingleQualifier(Qualifier.ORGANISM_QUALIFIER_NAME);
-					// System.out.println("match found"+taxonHelper.isChildOf(organismQualifier.getValue(),
+					// System.out.println("match found"+taxonomyClient.isChildOf(organismQualifier.getValue(),
 					// "viruses"));
 					if (organismQualifier != null)
 					{
-						if (getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(organismQualifier.getValue()))
+						if (getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismValid(organismQualifier.getValue()))
 						{
-							if (getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organismQualifier.getValue(), "Viruses"))
+							if (getEmblEntryValidationPlanProperty().taxonClient.get().isChildOf(organismQualifier.getValue(), "Viruses"))
 
 							{
 								virus = true;

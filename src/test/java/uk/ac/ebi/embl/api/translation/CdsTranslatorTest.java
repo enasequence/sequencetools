@@ -38,9 +38,9 @@ import uk.ac.ebi.embl.api.validation.ExtendedResult;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.RepositoryException;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class CdsTranslatorTest {
 
@@ -64,10 +64,10 @@ public class CdsTranslatorTest {
         entry.addFeature(cdsFeature);
         entry.addFeature(sourceFeature);
         EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
-        property.taxonHelper.set(createMock(TaxonHelper.class));
+        property.taxonClient.set(createMock(TaxonomyClient.class));
         cdsTranslator = new CdsTranslator(property);
         EmblEntryValidationPlanProperty fixingProperty=new EmblEntryValidationPlanProperty();
-        fixingProperty.taxonHelper.set(createMock(TaxonHelper.class));
+        fixingProperty.taxonClient.set(createMock(TaxonomyClient.class));
         fixingProperty.isFixMode.set(true);
         fixingProperty.isFixCds.set(true);
         fixingCdsTranslator = new CdsTranslator(fixingProperty);

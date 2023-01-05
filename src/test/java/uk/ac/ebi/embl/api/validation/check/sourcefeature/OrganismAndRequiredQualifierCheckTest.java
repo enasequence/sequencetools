@@ -30,14 +30,14 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class OrganismAndRequiredQualifierCheckTest {
 
 	private SourceFeature source;
 	private OrganismAndRequiredQualifierCheck check;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonomyClient;
 
 	@Before
 	public void setUp() throws SQLException {
@@ -45,11 +45,11 @@ public class OrganismAndRequiredQualifierCheckTest {
 		FeatureFactory featureFactory = new FeatureFactory();
 		source = featureFactory.createSourceFeature();
 
-		taxonHelper = createMock(TaxonHelper.class);
+		taxonomyClient = createMock(TaxonomyClient.class);
 		DataRow dataRow = new DataRow("strain,environmental_sample", "Bacteria,Archaea", "ERROR");
 
         EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-        property.taxonHelper.set(taxonHelper);
+        property.taxonClient.set(taxonomyClient);
         GlobalDataSets.addTestDataSet(GlobalDataSetFile.ORGANISM_REQUIRED_QUALIFIER, dataRow);
 		check = new OrganismAndRequiredQualifierCheck( );
 		check.setEmblEntryValidationPlanProperty(property);
@@ -69,12 +69,12 @@ public class OrganismAndRequiredQualifierCheckTest {
 	public void testCheck_NoQualifiers() {
 		source.setSingleQualifierValue("organism", "Bacteria");
 
-		expect(taxonHelper.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
-		expect(taxonHelper.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
-		replay(taxonHelper);
+		expect(taxonomyClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
+		expect(taxonomyClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
+		replay(taxonomyClient);
 
 		ValidationResult result = check.check(source);
-        verify(taxonHelper);
+        verify(taxonomyClient);
 		assertEquals(1, result.count("OrganismAndRequiredQualifierCheck", Severity.ERROR));
 	}
 
@@ -105,12 +105,12 @@ public class OrganismAndRequiredQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Bacteria");
 		source.setSingleQualifier("qual");
 
-		expect(taxonHelper.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
-		expect(taxonHelper.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
-        replay(taxonHelper);
+		expect(taxonomyClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
+		expect(taxonomyClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
+        replay(taxonomyClient);
 
 		ValidationResult result = check.check(source);
-        verify(taxonHelper);
+        verify(taxonomyClient);
 		assertEquals(1, result.count("OrganismAndRequiredQualifierCheck", Severity.ERROR));
 	}
 
@@ -143,12 +143,12 @@ public class OrganismAndRequiredQualifierCheckTest {
 	public void testCheck_Message() {
 		source.setSingleQualifierValue("organism", "Bacteria");
 
-		expect(taxonHelper.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
-		expect(taxonHelper.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
-        replay(taxonHelper);
+		expect(taxonomyClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.TRUE).once();
+		expect(taxonomyClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE).once();
+        replay(taxonomyClient);
 
 		ValidationResult result = check.check(source);
-        verify(taxonHelper);
+        verify(taxonomyClient);
 		Collection<ValidationMessage<Origin>> messages = result.getMessages(
                 "OrganismAndRequiredQualifierCheck", Severity.ERROR);
 		assertEquals(

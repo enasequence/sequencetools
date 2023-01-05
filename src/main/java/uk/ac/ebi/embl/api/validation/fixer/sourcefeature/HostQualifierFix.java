@@ -45,9 +45,9 @@ public class HostQualifierFix extends FeatureValidationCheck
 		List<Qualifier> hostQualifiers = source.getQualifiers(Qualifier.HOST_QUALIFIER_NAME);
 		for (Qualifier hostQualifier : hostQualifiers) {
 			String hostQualifierValue = hostQualifier.getValue();
-			if (!getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(hostQualifierValue)) {
+			if (!getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismValid(hostQualifierValue)) {
 
-				List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByCommonName(hostQualifierValue);
+				List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonsByCommonName(hostQualifierValue);
 				if (taxon != null && !taxon.isEmpty()) {
 					String newValue = taxon.get(0).getScientificName();
 					if (newValue != null) {

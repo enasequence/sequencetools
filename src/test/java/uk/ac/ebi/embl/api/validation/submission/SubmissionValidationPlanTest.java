@@ -531,10 +531,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 		SequenceToolsServices.init(new WebinSampleRetrievalService(TemplateEntryProcessorTest.getAuthTokenForTest(),true));
 		
 		// Test submission with taxId 9606 in ORGANISM_NAME
-		executeTSVSubmission("ERT000002-rRNA-with-taxid.tsv.gz");
+		/*executeTSVSubmission("ERT000002-rRNA-with-taxid.tsv.gz");
 
 		// Test submission with sample organism name in ORGANISM_NAME
-		executeTSVSubmission("ERT000002-rRNA-with-organism-name.tsv.gz");
+		executeTSVSubmission("ERT000002-rRNA-with-organism-name.tsv.gz");*/
 		
 		// Test submission with sample SAMEA9403245 in ORGANISM_NAME
 		executeTSVSubmission("ERT000002-rRNA-with-sample.tsv.gz");

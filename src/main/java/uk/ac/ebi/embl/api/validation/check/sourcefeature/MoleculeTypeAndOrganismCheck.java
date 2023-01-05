@@ -68,8 +68,8 @@ public class MoleculeTypeAndOrganismCheck extends EntryValidationCheck {
 					reportError(entry, requiredOrganisms, moleculeType);
 				}
 				for (Qualifier organism : organisms) {
-					if (getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(organism.getValue()) &&
-                        !getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOfAny(organism.getValue(), requiredOrganisms)) {
+					if (getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismValid(organism.getValue()) &&
+                        !getEmblEntryValidationPlanProperty().taxonClient.get().isChildOfAny(organism.getValue(), requiredOrganisms)) {
 						reportError(entry, requiredOrganisms, moleculeType);
 					}
 				}

@@ -100,7 +100,7 @@ public class DivisionFix extends EntryValidationCheck {
         String division = getDivisionFromCache(primarySF.getScientificName());;
         if(empty(division)){
             List<Taxon> taxonList;
-            if (!(taxonList = new TaxonomyClientImpl().getTaxonByScientificName(primarySF.getScientificName())).isEmpty()) {
+            if (!(taxonList = new TaxonomyClientImpl().getTaxonsByScientificName(primarySF.getScientificName())).isEmpty()) {
                 division = taxonList.get(0).getDivision();
                 saveDivisionCache(primarySF.getScientificName(), division);
             }

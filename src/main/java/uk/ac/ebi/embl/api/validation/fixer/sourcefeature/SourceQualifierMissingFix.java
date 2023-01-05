@@ -18,8 +18,6 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.math.NumberUtils;
-
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -63,7 +61,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 		if(entry.getPrimarySourceFeature().getTaxId()!=null)//set the scientific name based on taxid
 		{
-            Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(entry.getPrimarySourceFeature().getTaxId());
+            Taxon taxon=getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonByTaxid(entry.getPrimarySourceFeature().getTaxId());
             if(taxon!=null)
             entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
 		}
@@ -72,7 +70,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		// ENA-4467: Commented since ORGANISM_NAME substituting will update taxId.
 		/*if(NumberUtils.isNumber(scientificName))
 		{
-			Taxon taxon=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonById(new Long(scientificName));
+			Taxon taxon=getEmblEntryValidationPlanProperty().taxonomyClient.get().getTaxonById(new Long(scientificName));
 			entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
 			entry.getPrimarySourceFeature().setTaxId(taxon.getTaxId());
 		}*/
@@ -87,7 +85,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 		if (scientificName != null)
 		{
 			boolean isSourceOrganismMetagenome = getEmblEntryValidationPlanProperty() != null
-					&&  getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(scientificName);
+					&&  getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismMetagenome(scientificName);
 
 			boolean hasMetagenomeSource = fixMetagenomeSource(entry.getPrimarySourceFeature(), scientificName);
 
@@ -137,7 +135,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 
 			if(!is_environment_sample_exists)
 			{
-				Taxon taxon= getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(scientificName);
+				Taxon taxon= getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonByScientificName(scientificName);
 			
 				if(taxon != null && taxon.getLineage() != null)
 				{
@@ -184,7 +182,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck
 			if (metagenomeSourceQualifiers.size() == 1) {
 				String metagenomeSourceScientificName = metagenomeSourceQualifiers.get(0).getValue();
 				if (getEmblEntryValidationPlanProperty() != null) {
-					Taxon taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonByScientificName(metagenomeSourceScientificName);
+					Taxon taxon = getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonByScientificName(metagenomeSourceScientificName);
 					if(taxon != null) {
 						if (taxon.getScientificName().equalsIgnoreCase(organismScientificName)) {
 							source.removeSingleQualifier(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME);

@@ -123,9 +123,9 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck
 							try
 							{
 								if (cdsFeatures.size() != 0)
-									result.append(trans.configureFromFeature(cdsFeatures.get(0), getEmblEntryValidationPlanProperty().taxonHelper.get(), entry));
+									result.append(trans.configureFromFeature(cdsFeatures.get(0), getEmblEntryValidationPlanProperty().taxonClient.get(), entry));
 								else
-									result.append(trans.configureFromFeature(null, getEmblEntryValidationPlanProperty().taxonHelper.get(), entry));
+									result.append(trans.configureFromFeature(null, getEmblEntryValidationPlanProperty().taxonClient.get(), entry));
 							} catch (ValidationException e)
 							{
 								reportException(result, e, entry, cdsFeatures.get(0));

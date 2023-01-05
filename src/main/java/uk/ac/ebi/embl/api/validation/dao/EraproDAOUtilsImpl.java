@@ -18,9 +18,9 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.dao.model.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -396,7 +396,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		SampleInfo sampleInfo = getSampleInfo(sampleId);
-		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonHelperImpl(), sampleInfo);
+		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonomyClientImpl(), sampleInfo);
 	}
 
 	@Override
@@ -444,7 +444,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		SequenceFactory sequenceFactory = new SequenceFactory();
 		SourceFeature sourceFeature = null;
-		TaxonHelper taxonHelper=new TaxonHelperImpl();
+		TaxonomyClient taxonClient=new TaxonomyClientImpl();
 		String sampleId = null;
 		String projectId;
 		SampleInfo sampleInfo = null;
@@ -539,7 +539,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				sampleInfo = getSampleInfo(sampleId);
 				sampleInfo.setSampleId(sampleId);
 
-				if(molType!=null&&taxonHelper.isChildOf(sampleInfo.getScientificName(), "Viruses"))
+				if(molType!=null&&taxonClient.isChildOf(sampleInfo.getScientificName(), "Viruses"))
 				{
 					masterEntry.getSequence().setMoleculeType(molType);
 				}
@@ -572,7 +572,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			masterEntry.addReference(getSubmitterReference(analysisId));
 		}
 
-		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonHelper, sampleInfo);
+		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonClient, sampleInfo);
 
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);

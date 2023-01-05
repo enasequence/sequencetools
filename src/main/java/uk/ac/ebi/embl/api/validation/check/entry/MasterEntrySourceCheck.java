@@ -54,16 +54,16 @@ public class MasterEntrySourceCheck extends EntryValidationCheck {
 			reportError(entry.getPrimarySourceFeature().getOrigin(),MASTER_ENTRY_SOURCE_MESSAGE_ID);
 		}
 		
-		if(getEmblEntryValidationPlanProperty().taxonHelper.get()!=null)
+		if(getEmblEntryValidationPlanProperty().taxonClient.get()!=null)
 		{
-			boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(organism);
+			boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismSubmittable(organism);
 			boolean isTaxidSubmittable=isOrganismSubmittable;
 			boolean isAnyNameSubmittable=false;
 			if(taxId!=null)		
-				isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+				isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonClient.get().isTaxidSubmittable(taxId);
 			if(!isOrganismSubmittable&&!isTaxidSubmittable)
 			{
-				isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(organism);
+				isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonClient.get().isAnyNameSubmittable(organism);
 				 if(!isAnyNameSubmittable)
 				 reportError(entry.getOrigin(),MASTER_ENTRY_ORGANISM_MESSAGE_ID,organism);
 			}

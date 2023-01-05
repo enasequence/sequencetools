@@ -3,7 +3,9 @@ package uk.ac.ebi.embl.template;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -12,6 +14,7 @@ import uk.ac.ebi.embl.api.service.WebinSampleRetrievalService;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.ena.taxonomy.taxon.TaxonomyException;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.io.File;
@@ -30,6 +33,9 @@ public class TemplateEntryProcessorTest {
     private final static String MOL_TYPE = "/mol_type";
     private static String token="";
     private TemplateEntryProcessor templateEntryProcessor;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     
     @Before
     public void setUp() throws Exception {
@@ -64,8 +70,11 @@ public class TemplateEntryProcessorTest {
         executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000002 ,molType_ERT000002,"Homo sapiens partial 5S rRNA gene",templateVariables );
 
         // Test with invalid taxid
+        expectedException.expect(TaxonomyException.class);
+        expectedException.expectMessage("Invalid HTTP response code: 400");
         templateVariables = getTemplateVariables_ERT000002("960600000000");
         executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000002 ,molType_ERT000002,templateVariables );
+        
 
         // Test with invalid organism
         templateVariables = getTemplateVariables_ERT000002("JUNK");
@@ -99,6 +108,8 @@ public class TemplateEntryProcessorTest {
         executeEntryProcessTestWithTaxId("9606",templateInfo_ERT000056 ,molType_ERT000056,"Homo sapiens partial LINE-1 LINE",templateVariables );
 
         // Test with invalid taxid
+        expectedException.expect(TaxonomyException.class);
+        expectedException.expectMessage("Invalid HTTP response code: 400");
         templateVariables = getTemplateVariables_ERT000056("960600000000");
         executeEntryProcessInvalidTaxId("960600000000",templateInfo_ERT000056 ,molType_ERT000056,templateVariables );
 

@@ -30,13 +30,11 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 import java.sql.SQLException;
-import java.util.Collection;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
@@ -49,7 +47,7 @@ public class PeptideFeatureCheckTest {
 	private FeatureFactory featureFactory;
     private LocationFactory locationFactory;
 	private PeptideFeatureCheck check;
-    private TaxonHelper taxonHelper;
+    private TaxonomyClient taxonomyClient;
     private EntryFactory entryFactory;
 
     @Before
@@ -73,8 +71,8 @@ public class PeptideFeatureCheckTest {
 		entry.addFeature(cdsFeature);
         entry.setSequence(new SequenceFactory().createSequenceByte(TEST_SEQUENCE.getBytes()));
 
-        taxonHelper = createMock(TaxonHelper.class);
-        property.taxonHelper.set(taxonHelper);
+        taxonomyClient = createMock(TaxonomyClient.class);
+        property.taxonClient.set(taxonomyClient);
 		check = new PeptideFeatureCheck();
 		check.setEmblEntryValidationPlanProperty(property);
 	}

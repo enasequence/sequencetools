@@ -71,11 +71,11 @@ public class SourceQualifierFix extends EntryValidationCheck
 
 		if(metagenomeSourceQual != null ) {
 			String metegenomeSource = metagenomeSourceQual.getValue();
-			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(metegenomeSource);
+			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonsByScientificName(metegenomeSource);
 
 			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome")
 					|| taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L
-					|| !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
+					|| !getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismMetagenome(metegenomeSource)) {
 				entry.getPrimarySourceFeature().removeQualifier(metagenomeSourceQual);
 				reportMessage(Severity.FIX, source.getOrigin(), QUALIFIER_DELETED, Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME, metegenomeSource);
 			}

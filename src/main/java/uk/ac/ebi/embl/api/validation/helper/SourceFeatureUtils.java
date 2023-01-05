@@ -15,7 +15,7 @@ import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.check.feature.MasterSourceQualifierValidator;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl.MASTERSOURCEQUALIFIERS;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public class SourceFeatureUtils {
@@ -95,9 +95,9 @@ public class SourceFeatureUtils {
 
 	}
 
-	public void addExtraSourceQualifiers(SourceFeature source,TaxonHelper taxonHelper,String uniqueName)
+	public void addExtraSourceQualifiers(SourceFeature source,TaxonomyClient taxonomyClient,String uniqueName)
 	{
-		if(addUniqueName && taxonHelper.isProkaryotic(source.getScientificName()) && source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
+		if(addUniqueName && taxonomyClient.isProkaryotic(source.getScientificName()) && source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size()==0)
 		{
 			source.addQualifier( new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME,uniqueName));
 		}
@@ -106,24 +106,24 @@ public class SourceFeatureUtils {
 			source.addQualifier(isolationSourceQualifier);	
 	}
 
-	public SourceFeature constructSourceFeature(SampleEntity sample, TaxonHelper taxonHelper, SampleInfo sampleInfo) {
+	public SourceFeature constructSourceFeature(SampleEntity sample, TaxonomyClient taxonomyClient, SampleInfo sampleInfo) {
 		FeatureFactory featureFactory = new FeatureFactory();
 		SourceFeature sourceFeature = featureFactory.createSourceFeature();
 		sourceFeature.setTaxId(sampleInfo.getTaxId());
 		sourceFeature.setScientificName(sampleInfo.getScientificName());
 		sourceFeature.setMasterLocation();
-		addQualifiers(sourceFeature,sample,taxonHelper,sampleInfo);
+		addQualifiers(sourceFeature,sample,taxonomyClient,sampleInfo);
 		return sourceFeature;
 	}
 
-	public SourceFeature updateSourceFeature(SourceFeature sourceFeature, SampleEntity sample, TaxonHelper taxonHelper, SampleInfo sampleInfo) {
+	public SourceFeature updateSourceFeature(SourceFeature sourceFeature, SampleEntity sample, TaxonomyClient taxonomyClient, SampleInfo sampleInfo) {
 		sourceFeature.setTaxId(sampleInfo.getTaxId());
 		sourceFeature.setScientificName(sampleInfo.getScientificName());
-		addQualifiers(sourceFeature,sample,taxonHelper,sampleInfo);
+		addQualifiers(sourceFeature,sample,taxonomyClient,sampleInfo);
 		return sourceFeature;
 	}
 	
-	public void addQualifiers(SourceFeature sourceFeature,SampleEntity sample,TaxonHelper taxonHelper, SampleInfo sampleInfo){
+	public void addQualifiers(SourceFeature sourceFeature,SampleEntity sample,TaxonomyClient taxonomyClient, SampleInfo sampleInfo){
 		String latitude = null;
 		String longitude = null;
 		String country = null;
@@ -171,11 +171,11 @@ public class SourceFeatureUtils {
 			addSourceQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country == null ? region : region == null ? country : country + ":" + region, sourceFeature);
 		}
 
-		Taxon taxon = taxonHelper.getTaxonById(sampleInfo.getTaxId());
+		Taxon taxon = taxonomyClient.getTaxonByTaxid(sampleInfo.getTaxId());
 		if (taxon != null) {
 			sourceFeature.setTaxon(taxon);
 		}
-		addExtraSourceQualifiers(sourceFeature, taxonHelper, sampleInfo.getUniqueName());
+		addExtraSourceQualifiers(sourceFeature, taxonomyClient, sampleInfo.getUniqueName());
 	}
 
 }
