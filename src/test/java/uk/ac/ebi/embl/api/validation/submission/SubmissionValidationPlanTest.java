@@ -56,12 +56,13 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	}
 
 	
+	//1
 	@Test
 	public void testGenomeWithFastaAGPMultiLevel() throws FlatFileComparatorException, ValidationEngineException
 	{
 		String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "multilevel_scaffold" + RESOURCE_FILE_SEPARATOR;
 		String fastaFileName = "valid_fastaforAgp_scaffold_levels.txt";
-		String agpFileName = "agp_scafoold_levels.txt";
+		String agpFileName = "agp_scafoold_levels.txt";//IWGSC_CSS_6DL_scaff_3330716
 		String chrListFileName = "chromosome_list_scaffold_levels.txt";
 		options.context = Optional.of(Context.genome);
 

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.api.validation.check.file;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mapdb.Serializer;
 import uk.ac.ebi.embl.agp.reader.AGPFileReader;
 import uk.ac.ebi.embl.agp.reader.AGPLineReader;
@@ -28,18 +27,14 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
-import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
-import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -166,7 +161,7 @@ public class AGPFileValidationCheck extends FileValidationCheck
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			throw new ValidationEngineException(e.getMessage(), e);
 		} finally {
-			closeMapDB(getContigDB(), getAnnotationDB());
+			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 		}
 		if(validationResult.isValid())
 	        registerAGPfileInfo();
@@ -197,14 +192,16 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 						for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 							if (!agpRow.isGap()) {
-								if (agpRow.getComponent_id() != null && getContigDB() != null) {
-									ConcurrentMap<String, Object> map = getContigDB().hashMap("map", Serializer.STRING, getContigDB().getDefaultSerializer()).createOrOpen();
-									List<AgpRow> agpRows = (List<AgpRow>) map.get(agpRow.getComponent_id().toLowerCase());
+								if (agpRow.getComponent_id() != null && getComponentAGPRowsMapDB() != null) {
+									//<componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
+									// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
+									ConcurrentMap<String, Object> componentAGPRowsMap = getComponentAGPRowsMapDB().hashMap("map", Serializer.STRING, getComponentAGPRowsMapDB().getDefaultSerializer()).createOrOpen();
+									List<AgpRow> agpRows = (List<AgpRow>) componentAGPRowsMap.get(agpRow.getComponent_id().toLowerCase());
 									if (agpRows == null) {
 										agpRows = new ArrayList<>();
 									}
 									agpRows.add(agpRow);
-									map.put(agpRow.getComponent_id().toLowerCase(), agpRows);
+									componentAGPRowsMap.put(agpRow.getComponent_id().toLowerCase(), agpRows);
 									sharedInfo.agpPlacedComponents.add(agpRow.getComponent_id().toUpperCase());
 								}
 							}
@@ -219,16 +216,16 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				result=reader.read();
 				}
 
-				if(getContigDB()!=null)
-					getContigDB().commit();
+				if(getComponentAGPRowsMapDB()!=null)
+					getComponentAGPRowsMapDB().commit();
 			} catch(ValidationEngineException e) {
-				if(getContigDB()!=null) {
-					getContigDB().close();
+				if(getComponentAGPRowsMapDB()!=null) {
+					getComponentAGPRowsMapDB().close();
 				}
 				throw e;
 			} catch(Exception e) {
-				if(getContigDB()!=null) {
-					getContigDB().close();
+				if(getComponentAGPRowsMapDB()!=null) {
+					getComponentAGPRowsMapDB().close();
 				}
 				throw new ValidationEngineException(e);
 			}

@@ -34,6 +34,7 @@ public class EmblEntryWriter extends EntryWriter {
 
 	private boolean isConvff = false;
 	private boolean showAcStartLine = true;
+	private boolean showSTStartLine = false;
 	public EmblEntryWriter(Entry entry) {
 		super(entry);
 		wrapType = WrapType.EMBL_WRAP;
@@ -57,10 +58,10 @@ public class EmblEntryWriter extends EntryWriter {
 		if(new IDWriter(entry).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
-		/* Comment for ENA-5106
-		if(new STStarWriter(entry).write(writer)) {
+
+		if(showSTStartLine && new STStarWriter(entry).write(writer)) {
 			writer.write(SEPARATOR_LINE);
-		}*/
+		}
 		if (new ACWriter(entry, wrapType).write(writer)) {
 			writer.write(SEPARATOR_LINE);
 		}
@@ -170,5 +171,9 @@ public class EmblEntryWriter extends EntryWriter {
 
 	public void setShowAcStartLine(boolean showAcStartLine) {
 		this.showAcStartLine = showAcStartLine;
+	}
+
+	public void setShowSTStartLine(boolean showSTStartLine) {
+		this.showSTStartLine = showSTStartLine;
 	}
 }

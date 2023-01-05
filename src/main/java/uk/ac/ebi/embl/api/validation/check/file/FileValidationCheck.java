@@ -34,6 +34,7 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.sequence.ReverseComplementer;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
@@ -88,7 +89,10 @@ public abstract class FileValidationCheck {
 	protected SharedInfo sharedInfo;
 
 	private  DB annotationDB = null;
-	private DB contigDB =null;
+
+	// componentAGPRowsMapDB has just one ConcurrentHasMap <componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
+	// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
+	private DB componentAGPRowsMapDB =null;
 	public static final String contigFileName = "contigs.reduced.tmp";
 	public static final String scaffoldFileName = "scaffolds.reduced.tmp";
 	public static final String chromosomeFileName = "chromosome.flatfile.tmp";
@@ -477,22 +481,29 @@ public abstract class FileValidationCheck {
 			if (entry.getSequence() == null) {
 				return;
 			}
-			// scaff1 contig1 -ok first we set seq for this , no issues
-			//scaff2 scaff1 - currently we are not setting seq to it bcoz it is not part of ff or fasta
-			if (getContigDB() != null && entry.getSubmitterAccession() != null) {
-				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getContigDB().hashMap("map").createOrOpen();
+			// this is where we set sequence for the scaffolds(if the current contig is placed in multiple scaffolds we set sequence to all scaffolds based on range )
+			// scaff1 contig1 1-100 : contig1 is placed in  scaff1 &  scaff2. We are setting sequence for scaff1 &  scaff2
+			// scaff2 contig1 300-500
+			// scaff3 scaff1 1-300 : currently we are not setting seq to it bcoz scaff1 is not part of fasta/flatfile
+			if (getComponentAGPRowsMapDB() != null && entry.getSubmitterAccession() != null) {
+				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());
 				if (agpRows != null) {
 					for (AgpRow agpRow : agpRows) {
-						agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+						if("-".equals(agpRow.getOrientation()) || "minus".equals(agpRow.getOrientation())) {
+							ReverseComplementer reverseComplementer = new ReverseComplementer();
+							agpRow.setSequence(reverseComplementer.reverseComplementByte(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end())));
+						} else {
+							agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+						}
 					}
 					contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
 				}
 			}
 
 		} catch (Exception e) {
-			if (getContigDB() != null)
-				getContigDB().close();
+			if (getComponentAGPRowsMapDB() != null)
+				getComponentAGPRowsMapDB().close();
 			throw e;
 		}
 	}
@@ -647,11 +658,11 @@ public abstract class FileValidationCheck {
 				db.close();
 		}
 	}
-	public DB getContigDB() {
-		return contigDB;
+	public DB getComponentAGPRowsMapDB() {
+		return componentAGPRowsMapDB;
 	}
-	public void setContigDB(DB contigDB) {
-		this.contigDB = contigDB;
+	public void setComponentAGPRowsMapDB(DB componentAGPRowsMapDB) {
+		this.componentAGPRowsMapDB = componentAGPRowsMapDB;
 	}
 	
 	boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
@@ -753,9 +764,11 @@ public abstract class FileValidationCheck {
 		if (fixedFileWriter != null) {
 			assignProteinAccession(entry);
 			if (getOptions().context.get() == Context.sequence) {
-				new EmblEntryWriter(entry).write(fixedFileWriter);
+				EmblEntryWriter emblEntryWriter = new EmblEntryWriter(entry);
+				emblEntryWriter.setShowSTStartLine(true);
+				emblEntryWriter.write(fixedFileWriter);
 			} else {
-				if (isAGP) {
+				if (isAGP) { //TODO: do not do this for webin-cli
 					constructAGPSequence(entry);
 				}
 				writeEntryToFile(entry, submissionFile);
@@ -763,63 +776,67 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	private void constructAGPSequence(Entry entry) throws ValidationEngineException
+	private void constructAGPSequence(Entry conEntry) throws ValidationEngineException
 	{
 		try
 		{
-			ByteBuffer sequenceBuffer=ByteBuffer.wrap(new byte[new Long(entry.getSequence().getLength()).intValue()]);
+			ByteBuffer sequenceBuffer = ByteBuffer.wrap(new byte[Long.valueOf(conEntry.getSequence().getLength()).intValue()]);
 
 			ConcurrentMap contigMap =null;
-			if(getContigDB()!=null) {
-				contigMap = getContigDB().hashMap("map").createOrOpen();
+			if(getComponentAGPRowsMapDB()!=null) {
+				contigMap = getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
 			}
 
-			for (AgpRow currObjectAGPRow : entry.getSequence().getSortedAGPRows()) {
-				if (!currObjectAGPRow.isGap()) {
-
+			for (AgpRow sequencePlacedInCONEntry : conEntry.getSequence().getSortedAGPRows()) {
+				if (!sequencePlacedInCONEntry.isGap()) {
 					Object sequence;
-					if (currObjectAGPRow.getComponent_id() != null && getContigDB() != null) {
+					if (sequencePlacedInCONEntry.getComponent_id() != null && getComponentAGPRowsMapDB() != null) {
 						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
-						Object seqsOfCurrRowComponent = contigMap.get(currObjectAGPRow.getComponent_id().toLowerCase());
-						if (seqsOfCurrRowComponent != null) {
-							for (AgpRow component : (List<AgpRow>) seqsOfCurrRowComponent) {
-								//proceed only if the component belongs to the current object(AGP row)
-								if (component.getObject().equalsIgnoreCase(currObjectAGPRow.getObject())) {
+						Object allPlacementOfCurrentlyPlacedSequence = contigMap.get(sequencePlacedInCONEntry.getComponent_id().toLowerCase());
+						if (allPlacementOfCurrentlyPlacedSequence != null) {
+							for (AgpRow component : (List<AgpRow>) allPlacementOfCurrentlyPlacedSequence) {
+								//proceed only if the component belongs to the current object(AGP row).Basically, filter the sequence parts placed in current CON entry
+								if (component.getObject().equalsIgnoreCase(sequencePlacedInCONEntry.getObject())) {
 									sequence = component.getSequence();
 									if(sequence != null) {
+										//It has been already reverseComplemented(if orientation is -) in collectContigInfo(same file) method
 										sequenceBuffer.put((byte[]) sequence);
 									} else {
-										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + currObjectAGPRow.getComponent_id());
+										throw new ValidationEngineException("Failed to contruct AGP Sequence. invalid component:" + sequencePlacedInCONEntry.getComponent_id());
 									}
 								}
 							}
 						} else {
-							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+currObjectAGPRow.getComponent_id());
+							throw new ValidationEngineException("Component not available in sequence lookup db(contigDB)"+sequencePlacedInCONEntry.getComponent_id());
 						}
 					} else {
-						throw new ValidationEngineException("Either Component missing for current entry or sequence db(contigDB) not available."+entry.getSubmitterAccession());
+						throw new ValidationEngineException("Either Component missing for current conEntry or sequence db(contigDB) not available."+conEntry.getSubmitterAccession());
 					}
 
-				} else if (currObjectAGPRow.getGap_length() != null)
-					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), currObjectAGPRow.getGap_length().intValue()).getBytes());
+				} else if (sequencePlacedInCONEntry.getGap_length() != null)
+					sequenceBuffer.put(StringUtils.repeat("N".toLowerCase(), sequencePlacedInCONEntry.getGap_length().intValue()).getBytes());
 			}
-			entry.getSequence().setSequence(sequenceBuffer);
+			conEntry.getSequence().setSequence(sequenceBuffer);
 
 			//check if the current object(scaffold) is placed(will be a component) on another object(could be another scaffold/chromosome)
 			//if yes, construct sequence for all the objects where the current object has been placed
-			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(entry.getSubmitterAccession().toLowerCase());
+			List<AgpRow> agpRows = (List<AgpRow>) contigMap.get(conEntry.getSubmitterAccession().toLowerCase());
 			if (agpRows != null) {
 				for (AgpRow agpRow : agpRows) {
-					agpRow.setSequence(entry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+					agpRow.setSequence(conEntry.getSequence().getSequenceByte(agpRow.getComponent_beg(), agpRow.getComponent_end()));
+					if("-".equals(agpRow.getOrientation()) || "minus".equals(agpRow.getOrientation())) {
+						ReverseComplementer reverseComplementer = new ReverseComplementer();
+						agpRow.setSequence(reverseComplementer.reverseComplementByte(agpRow.getSequence()));
+					}
 				}
-				contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
+				contigMap.put(conEntry.getSubmitterAccession().toLowerCase(), agpRows);
 			}
 
-			getContigDB().commit();
+			getComponentAGPRowsMapDB().commit();
 
 		}catch(Exception e)
 		{
-			closeMapDB(getContigDB());
+			closeMapDB(getComponentAGPRowsMapDB());
 			throw new ValidationEngineException(e);
 		}
 	}
