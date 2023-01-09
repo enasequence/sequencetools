@@ -11,7 +11,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class SubmissionOptions
 {
@@ -127,7 +127,7 @@ public class SubmissionOptions
 			property.sequenceNumber.set(1);
 		}
 		property.ignore_errors.set(ignoreErrors);
-		property.taxonClient.set(new TaxonomyClientImpl());
+		property.taxonClient.set(new TaxonomyClient());
 		property.isRemote.set(isWebinCLI);
 		return property;
 	}

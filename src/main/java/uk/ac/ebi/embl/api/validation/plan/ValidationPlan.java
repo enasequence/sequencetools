@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 /**
  * This class is intended for implementation of validation execution plan. 
@@ -48,7 +48,7 @@ public abstract class ValidationPlan {
 	{
     	this(property.validationScope.get(),property.isDevMode.get());
     	this.planProperty=property;
-    	this.planProperty.taxonClient.set(new TaxonomyClientImpl());
+    	this.planProperty.taxonClient.set(new TaxonomyClient());
     	this.remote= property.isRemote.get();
     
 	}

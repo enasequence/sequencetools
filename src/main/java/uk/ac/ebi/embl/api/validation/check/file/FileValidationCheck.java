@@ -56,7 +56,6 @@ import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -103,7 +102,7 @@ public abstract class FileValidationCheck {
 		this.sharedInfo = sharedInfo;
 
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
-		taxonomyClient =new TaxonomyClientImpl();
+		taxonomyClient =new TaxonomyClient();
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);

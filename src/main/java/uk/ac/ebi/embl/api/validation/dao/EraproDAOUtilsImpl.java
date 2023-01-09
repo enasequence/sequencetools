@@ -20,7 +20,6 @@ import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -396,7 +395,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		SampleInfo sampleInfo = getSampleInfo(sampleId);
-		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonomyClientImpl(), sampleInfo);
+		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonomyClient(), sampleInfo);
 	}
 
 	@Override
@@ -444,7 +443,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		SequenceFactory sequenceFactory = new SequenceFactory();
 		SourceFeature sourceFeature = null;
-		TaxonomyClient taxonClient=new TaxonomyClientImpl();
+		TaxonomyClient taxonClient=new TaxonomyClient();
 		String sampleId = null;
 		String projectId;
 		SampleInfo sampleInfo = null;

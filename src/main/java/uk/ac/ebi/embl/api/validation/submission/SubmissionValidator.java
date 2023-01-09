@@ -14,7 +14,7 @@ import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
@@ -126,7 +126,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             }
             sampleInfo.setUniqueName(manifest.getName());
 
-            SourceFeature sourceFeature = new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClientImpl(), sampleInfo);
+            SourceFeature sourceFeature = new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
             sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
 
             options.source = Optional.of(sourceFeature);

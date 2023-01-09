@@ -15,7 +15,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 public class EntryDAOUtilsImpl implements EntryDAOUtils
 {
@@ -44,7 +43,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils
 		boolean virus=false;
 		if(source!=null)
 		{
-			TaxonomyClient taxonomyClient= new TaxonomyClientImpl();
+			TaxonomyClient taxonomyClient= new TaxonomyClient();
 		String scientificName=source.getScientificName();
 		 virus=taxonomyClient.isChildOf(scientificName, "Viruses");
 		}

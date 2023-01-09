@@ -31,7 +31,6 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
 
 public class MasterEntrySourceCheckTest {
 
@@ -94,7 +93,7 @@ public class MasterEntrySourceCheckTest {
 	public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-		TaxonomyClient taxonClient= new TaxonomyClientImpl();
+		TaxonomyClient taxonClient= new TaxonomyClient();
 		property.taxonClient.set(taxonClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
@@ -111,7 +110,7 @@ public class MasterEntrySourceCheckTest {
 	public void testCheck_validSourcefeatureSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-		TaxonomyClient taxonClient= new TaxonomyClientImpl();
+		TaxonomyClient taxonClient= new TaxonomyClient();
 		property.taxonClient.set(taxonClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();

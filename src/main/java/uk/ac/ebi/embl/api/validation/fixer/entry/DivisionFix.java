@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
-import uk.ac.ebi.ena.taxonomy.client.TaxonomyClientImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class DivisionFix extends EntryValidationCheck {
         String division = getDivisionFromCache(primarySF.getTaxId().toString());
         if(empty(division)){
             if(primarySF.getTaxId()!=null) {
-                Taxon taxon = new TaxonomyClientImpl().getTaxonByTaxid(primarySF.getTaxId());
+                Taxon taxon = new TaxonomyClient().getTaxonByTaxid(primarySF.getTaxId());
                 if(taxon != null && taxon.getDivision() != null) {
                     division = taxon.getDivision();
                 }
@@ -100,7 +100,7 @@ public class DivisionFix extends EntryValidationCheck {
         String division = getDivisionFromCache(primarySF.getScientificName());;
         if(empty(division)){
             List<Taxon> taxonList;
-            if (!(taxonList = new TaxonomyClientImpl().getTaxonsByScientificName(primarySF.getScientificName())).isEmpty()) {
+            if (!(taxonList = new TaxonomyClient().getTaxonsByScientificName(primarySF.getScientificName())).isEmpty()) {
                 division = taxonList.get(0).getDivision();
                 saveDivisionCache(primarySF.getScientificName(), division);
             }
