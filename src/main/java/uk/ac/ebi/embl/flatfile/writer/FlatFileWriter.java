@@ -40,12 +40,14 @@ public abstract class FlatFileWriter {
 	private static final int GENBANK_OPTIMAL_LINE_LENGTH = 79;
 
 	private static final int MAXIMUM_LINE_LENGTH = 51200;
+	private Integer customMaximumLineLength = null;
 
 	protected WrapChar wrapChar;
 
 	protected WrapType wrapType;
 
 	protected Entry entry;
+	private boolean forceLineBreak = false;
 
 	public FlatFileWriter(Entry entry) {
 		this.entry = entry;
@@ -65,9 +67,7 @@ public abstract class FlatFileWriter {
 	}
 
 	private static boolean isWrapChar(char c, WrapChar wrapChar) {
-		return
-			((wrapChar == WrapChar.WRAP_CHAR_SPACE) && (c == ' ') ||
-			 (wrapChar == WrapChar.WRAP_CHAR_BREAK) && (c == ' '));
+		return (wrapChar == WrapChar.WRAP_CHAR_SPACE) && (c == ' ') ;
 	}
 
 	private static boolean isSplitChar(char c, WrapChar wrapChar) {
@@ -101,13 +101,9 @@ public abstract class FlatFileWriter {
 	 */
 	protected void writeBlock(Writer writer, String firstLineHeader,
 									 String header, String block) throws IOException {
-		writeBlock(writer, firstLineHeader, header, block, wrapType, wrapChar, header.length());
-	}
-
-	public static void writeBlock(Writer writer, String firstLineHeader,
-			String header, String block, WrapType wrapType, WrapChar wrapChar, int headerLength) throws IOException {
 
 		int lineLength = block.length();
+		int headerLength = header.length();
 
 		int maximumLineLength = MAXIMUM_LINE_LENGTH - headerLength;		
 		int lineNumber = 0;		
@@ -123,7 +119,7 @@ public abstract class FlatFileWriter {
 		// Remove whitespace characters.
 		block = PATTERN.matcher(block).replaceAll(" ");
 
-		while (lineLength > optimalLineLength) {
+		while (lineLength > optimalLineLength && (customMaximumLineLength == null || lineLength > customMaximumLineLength)) {
 			int end = optimalLineLength;
 			
 			// Split line on wrap character.
@@ -140,9 +136,10 @@ public abstract class FlatFileWriter {
 
 			// Break line at optimal line length if no luck finding a split 
 			// character and we have set to break.
-			if (end == 0) {
-				if (wrapChar == WrapChar.WRAP_CHAR_BREAK)
-					end = optimalLineLength;
+			if (end == 0 && forceLineBreak) {
+				if(customMaximumLineLength == null) { //retain exiting business
+					end = optimalLineLength; //forceBreak default
+				}
 			}
 
 			// Split line between optimal line length and maximum line length or
@@ -157,6 +154,12 @@ public abstract class FlatFileWriter {
 						break;
 				}
 			}
+
+			//if we ended up no luck finding a way to split
+			if(customMaximumLineLength != null && (end == 0 || end > customMaximumLineLength ) ) {
+				end = customMaximumLineLength;
+			}
+
 			// No terminating quote on its own line.
 			if ((lineLength - end) == 1 && block.charAt(end) == '"') {
 				++end;
@@ -175,7 +178,7 @@ public abstract class FlatFileWriter {
 				}
 			}
 
-			block = block.substring(writeLength, block.length());
+			block = block.substring(writeLength);
 			lineLength -= writeLength;
 		}
 
@@ -204,5 +207,13 @@ public abstract class FlatFileWriter {
 	 */
 	public static boolean isBlankString(String string) {
 		return string == null || string.trim().equals("");
+	}
+
+	public void setForceLineBreak(boolean forceLineBreak) {
+		this.forceLineBreak = forceLineBreak;
+	}
+
+	public void setCustomMaximumLineLength(int forceBreakLength) {
+		this.customMaximumLineLength = forceBreakLength;
 	}
 }

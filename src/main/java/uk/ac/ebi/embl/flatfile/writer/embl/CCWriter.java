@@ -34,11 +34,16 @@ public class CCWriter extends FlatFileWriter {
 		super(entry);
 	}
 
+	public CCWriter(Entry entry, WrapType wrapType) {
+		super(entry, wrapType);
+	}
 	public boolean write(Writer writer) throws IOException {
 		if (entry.getComment() == null ||
 			isBlankString(entry.getComment().getText())) {
 			return false;
 		}
+		setForceLineBreak(true);
+		setCustomMaximumLineLength(200);
 		if(wrapType==WrapType.EMBL_WRAP)
 		{
         setWrapChar(WrapChar.WRAP_CHAR_SPACE);

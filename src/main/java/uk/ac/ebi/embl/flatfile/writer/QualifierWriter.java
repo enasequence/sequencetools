@@ -34,7 +34,13 @@ public class QualifierWriter extends FlatFileWriter {
 		this.qualifier = qualifier;
 		this.header = header;		
 		if (qualifier != null) {
-			wrapChar = getWrapChar(qualifier.getName());
+			wrapChar = WrapChar.WRAP_CHAR_SPACE;
+			if (qualifier.getName().equals("replace") ||
+					qualifier.getName().equals("rpt_unit_seq") ||
+					qualifier.getName().equals("PCR_primers") ||
+					qualifier.getName().equals("translation")) {
+				setForceLineBreak(true);
+			}
 		}
 	}
 
@@ -46,16 +52,6 @@ public class QualifierWriter extends FlatFileWriter {
 	
 	private String header;
 	private boolean wrapOnly = false;
-	
-	private WrapChar getWrapChar(String name) {
-		if (name.equals("replace") ||
-			name.equals("rpt_unit_seq") ||
-			name.equals("PCR_primers") ||
-			name.equals("translation")) {
-			return WrapChar.WRAP_CHAR_BREAK;
-		}
-		return WrapChar.WRAP_CHAR_SPACE;
-	}
 
 	public boolean write(Writer writer) throws IOException {
 		if (qualifier == null) {
