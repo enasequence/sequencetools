@@ -42,8 +42,10 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
 
     public void validate() throws ValidationEngineException {
 
-        // Initialise SampleRetrievalService.
-        SequenceToolsServices.init(new WebinSampleRetrievalService(options.webinAuthToken.get(),options.webinCliTestMode));
+        if(options.context.get() == Context.sequence) {
+            // Initialise SampleRetrievalService.
+            SequenceToolsServices.init(new WebinSampleRetrievalService(options.webinAuthToken.get(), options.webinCliTestMode));
+        }
         
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();
         if (!options.isWebinCLI && !validationResult.isValid()) {
