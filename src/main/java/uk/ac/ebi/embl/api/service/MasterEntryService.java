@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
+import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -68,7 +69,7 @@ public class MasterEntryService {
             StringWriter strWriter = new StringWriter();
             try {
                 FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-                        WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
+                        WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), true, 200);
             } catch (IOException ex) {
                 throw new ValidationEngineException(ex);
             }

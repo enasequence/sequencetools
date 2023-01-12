@@ -39,6 +39,8 @@ public class CCWriter extends FlatFileWriter {
 			isBlankString(entry.getComment().getText())) {
 			return false;
 		}
+		setForceLineBreak(true);
+		setCustomMaximumLineLength(200);
 		if(wrapType==WrapType.EMBL_WRAP)
 		{
         setWrapChar(WrapChar.WRAP_CHAR_SPACE);
@@ -51,9 +53,7 @@ public class CCWriter extends FlatFileWriter {
 		List<String> comments = Arrays.asList(entry.getComment().getText().split("\n"));
 
 		for (String line : comments) {
-			writer.write(EmblPadding.CC_PADDING);
-			writer.write(line);
-			writer.write("\n");
+			writeBlock(writer, EmblPadding.CC_PADDING, line);
 		}
 		}
 		return true;
