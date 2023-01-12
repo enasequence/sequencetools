@@ -14,7 +14,6 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
-import uk.ac.ebi.embl.api.validation.fixer.entry.DivisionFix;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
@@ -23,12 +22,12 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
-import uk.ac.ebi.embl.flatfile.writer.WrapType;
-import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
+
+import static uk.ac.ebi.embl.flatfile.writer.embl.CCWriter.CC_OPTIMAL_LINE_LENGTH;
 
 public class MasterEntryService {
 
@@ -69,7 +68,7 @@ public class MasterEntryService {
             StringWriter strWriter = new StringWriter();
             try {
                 FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-                        WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), true, 200);
+                       WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), true, CC_OPTIMAL_LINE_LENGTH);
             } catch (IOException ex) {
                 throw new ValidationEngineException(ex);
             }

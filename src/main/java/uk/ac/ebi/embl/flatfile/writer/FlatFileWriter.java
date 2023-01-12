@@ -49,7 +49,7 @@ public abstract class FlatFileWriter {
 
 	private boolean forceLineBreak = false;
 
-	private Integer customMaximumLineLength = null;
+	private Integer optimalLineLength;
 
 	public FlatFileWriter(Entry entry) {
 		this.entry = entry;
@@ -103,25 +103,25 @@ public abstract class FlatFileWriter {
 	 */
 	protected void writeBlock(Writer writer, String firstLineHeader,
 									 String header, String block) throws IOException {
-		writeBlock(writer, firstLineHeader, header, block, wrapType, wrapChar, header.length(), forceLineBreak, customMaximumLineLength);
+
+		int optimalLineLength = this.optimalLineLength != null ? this.optimalLineLength :
+				getDefaultOptimalLineLength(wrapType);
+
+		writeBlock(writer, firstLineHeader, header, block, wrapChar, header.length(), forceLineBreak, optimalLineLength);
 	}
 
 	public static void writeBlock(Writer writer, String firstLineHeader,
-			String header, String block, WrapType wrapType, WrapChar wrapChar, int headerLength, boolean forceBreak, Integer customMaxLineLength) throws IOException {
+			String header, String block, WrapChar wrapChar, int headerLength, boolean forceBreak, int optimalLineLength) throws IOException {
+
+		// Subtract header length from the optimal line length.
+		optimalLineLength = optimalLineLength - headerLength;
+		// Subtract header length from the maximum line length.
+		int maxLineLength = MAXIMUM_LINE_LENGTH - headerLength;
 
 		int remainingLineLength = block.length();
 
-		int maximumLineLength = customMaxLineLength == null ? MAXIMUM_LINE_LENGTH - headerLength: customMaxLineLength - headerLength;
-		int lineNumber = 0;		
-				
-		int optimalLineLength = EMBL_OPTIMAL_LINE_LENGTH - headerLength;
-		if (wrapType == WrapType.GENBANK_WRAP) {		
-			optimalLineLength = GENBANK_OPTIMAL_LINE_LENGTH - headerLength;
-		}
-		if (wrapType == WrapType.NO_WRAP) {
-			optimalLineLength = maximumLineLength;
-		}
-		
+		int lineNumber = 0;
+
 		// Remove whitespace characters.
 		block = PATTERN.matcher(block).replaceAll(" ");
 
@@ -143,7 +143,6 @@ public abstract class FlatFileWriter {
 			// Break line at optimal line length if no luck finding a split 
 			// character and we have set to break.
 			if (end == 0 && forceBreak) {
-				if (customMaxLineLength == null)
 					end = optimalLineLength;
 			}
 
@@ -155,7 +154,7 @@ public abstract class FlatFileWriter {
 						&& !isSplitChar(block.charAt(end - 1), wrapChar)) {
 					++end;
 					// Break line at maximum line length.
-					if (end == maximumLineLength)
+					if (end == maxLineLength)
 						break;
 				}
 			}
@@ -187,6 +186,17 @@ public abstract class FlatFileWriter {
 		}
 	}
 
+	public static int getDefaultOptimalLineLength(WrapType wrapType) {
+		int optimalLineLength = EMBL_OPTIMAL_LINE_LENGTH;
+		if (wrapType == WrapType.GENBANK_WRAP) {
+			optimalLineLength = GENBANK_OPTIMAL_LINE_LENGTH;
+		}
+		if (wrapType == WrapType.NO_WRAP) {
+			optimalLineLength = MAXIMUM_LINE_LENGTH;
+		}
+		return optimalLineLength;
+	}
+
 	protected static void writeLine(Writer writer, String firstLineHeader,
 			String header, String line, int lineNumber) throws IOException {
 
@@ -212,7 +222,7 @@ public abstract class FlatFileWriter {
 		this.forceLineBreak = forceLineBreak;
 	}
 
-	public void setCustomMaximumLineLength(Integer customMaximumLineLength) {
-		this.customMaximumLineLength = customMaximumLineLength;
+	public void setOptimalLineLength(int optimalLineLength) {
+		this.optimalLineLength = optimalLineLength;
 	}
 }
