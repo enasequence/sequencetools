@@ -22,12 +22,13 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
+import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
 
-import static uk.ac.ebi.embl.flatfile.writer.embl.CCWriter.CC_OPTIMAL_LINE_LENGTH;
+import static uk.ac.ebi.embl.flatfile.writer.FlatFileWriter.getDefaultOptimalLineLength;
 
 public class MasterEntryService {
 
@@ -67,8 +68,12 @@ public class MasterEntryService {
         if (masterEntry != null && StringUtils.isNotBlank(masterEntry.getComment().getText())) {
             StringWriter strWriter = new StringWriter();
             try {
+                // Wrap the comment line using the default optimal line length.
+                // Force wrapping is done in the CCWriter.
+                // TODO: we should have a unit test for the comment contructed from the XML
                 FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-                       WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), true, CC_OPTIMAL_LINE_LENGTH);
+                       WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), false,
+                        getDefaultOptimalLineLength(WrapType.EMBL_WRAP));
             } catch (IOException ex) {
                 throw new ValidationEngineException(ex);
             }

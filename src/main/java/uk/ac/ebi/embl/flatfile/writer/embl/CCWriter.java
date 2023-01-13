@@ -26,7 +26,7 @@ import java.io.Writer;
  */
 public class CCWriter extends FlatFileWriter {
 
-	public static final int CC_OPTIMAL_LINE_LENGTH = 200;
+	private static final int CC_OPTIMAL_LINE_LENGTH = 200;
 
 	public CCWriter(Entry entry) {
 		super(entry);

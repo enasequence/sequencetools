@@ -47,8 +47,14 @@ public abstract class FlatFileWriter {
 
 	protected Entry entry;
 
+	/** If true and if the line is longer than the optimal line length and we can't break the line on space before
+	 * the optimal line length then we will force a line break at the optimal line length.
+	 */
 	private boolean forceLineBreak = false;
 
+	/** The optimal maximum line length. We will attempt to break blocks into lines using space so that each line
+	 * is no longer the optimal line length.
+	 */
 	private Integer optimalLineLength;
 
 	public FlatFileWriter(Entry entry) {
