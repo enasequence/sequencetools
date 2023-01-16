@@ -72,8 +72,7 @@ public class MasterEntryService {
                 // Force wrapping is done in the CCWriter.
                 // TODO: we should have a unit test for the comment contructed from the XML
                 FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-                       WrapChar.WRAP_CHAR_SPACE, EmblPadding.CC_PADDING.length(), false,
-                        getDefaultOptimalLineLength(WrapType.EMBL_WRAP));
+                       WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(), true, null);
             } catch (IOException ex) {
                 throw new ValidationEngineException(ex);
             }

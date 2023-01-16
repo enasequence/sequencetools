@@ -109,18 +109,14 @@ public abstract class FlatFileWriter {
 	 */
 	protected void writeBlock(Writer writer, String firstLineHeader,
 									 String header, String block) throws IOException {
-
-		int optimalLineLength = this.optimalLineLength != null ? this.optimalLineLength :
-				getDefaultOptimalLineLength(wrapType);
-
-		writeBlock(writer, firstLineHeader, header, block, wrapChar, header.length(), forceLineBreak, optimalLineLength);
+		writeBlock(writer, firstLineHeader, header, block, wrapChar,wrapType, header.length(), forceLineBreak, this.optimalLineLength);
 	}
 
 	public static void writeBlock(Writer writer, String firstLineHeader,
-			String header, String block, WrapChar wrapChar, int headerLength, boolean forceBreak, int optimalLineLength) throws IOException {
+			String header, String block, WrapChar wrapChar, WrapType wrapType, int headerLength, boolean forceBreak, Integer optimalLineLength) throws IOException {
 
 		// Subtract header length from the optimal line length.
-		optimalLineLength = optimalLineLength - headerLength;
+		optimalLineLength = optimalLineLength == null ? getDefaultOptimalLineLength(wrapType) - headerLength: optimalLineLength- headerLength;
 		// Subtract header length from the maximum line length.
 		int maxLineLength = MAXIMUM_LINE_LENGTH - headerLength;
 
