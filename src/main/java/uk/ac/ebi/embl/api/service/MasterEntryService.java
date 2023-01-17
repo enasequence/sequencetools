@@ -44,7 +44,8 @@ public class MasterEntryService {
         if (options.isWebinCLI) {
             masterEntry = getMasterEntryFromWebinCli(options);
         } else {
-            masterEntry = getMasterEntryFromSubmittedXml(options);
+            EraproDAOUtils utils = new EraproDAOUtilsImpl(options.eraproConnection.get());
+            masterEntry = getMasterEntryFromSubmittedXml(options, utils);
         }
 
         if (Context.transcriptome == options.context.get() && masterEntry != null) {
@@ -57,48 +58,40 @@ public class MasterEntryService {
         return masterEntry;
     }
 
-    private Entry getMasterEntryFromSubmittedXml(SubmissionOptions options) throws ValidationEngineException {
-        Entry masterEntry;
-        EraproDAOUtils utils = new EraproDAOUtilsImpl(options.eraproConnection.get());
+    Entry getMasterEntryFromSubmittedXml(SubmissionOptions options, EraproDAOUtils eraproDAOUtils) throws ValidationEngineException {
+
         try {
-            masterEntry = utils.createMasterEntry(options.analysisId.get(), getAnalysisType(options));
-        } catch (SQLException ex) {
+            Entry masterEntry = eraproDAOUtils.createMasterEntry(options.analysisId.get(), getAnalysisType(options));
+            if (masterEntry != null) {
+
+                if ( StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+                    masterEntry.setComment(new Text(formatComment(masterEntry.getComment().getText())));
+                }
+
+                if (Context.transcriptome == options.context.get() ) {
+                    String ccLine = eraproDAOUtils.getCommentsToTranscriptomeMaster(options.analysisId.get());
+                    if (StringUtils.isNotBlank(masterEntry.getComment().getText())) {
+                        ccLine += "\n" + masterEntry.getComment().getText();
+                    }
+                    masterEntry.setComment(new Text(ccLine));
+                }
+            }
+            return masterEntry;
+        } catch (SQLException | IOException ex) {
             throw new ValidationEngineException(ex);
         }
-        if (masterEntry != null && StringUtils.isNotBlank(masterEntry.getComment().getText())) {
-            StringWriter strWriter = new StringWriter();
-            try {
-                // Wrap the comment line using the default optimal line length.
-                // Force wrapping is done in the CCWriter.
-                // TODO: we should have a unit test for the comment contructed from the XML
-                FlatFileWriter.writeBlock(strWriter, "", "", masterEntry.getComment().getText(),
-                       WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(), true, null);
-            } catch (IOException ex) {
-                throw new ValidationEngineException(ex);
-            }
-            String comment = strWriter.toString().trim();
-            if (comment.length() - 1 == comment.lastIndexOf("\n")) {
-                comment = comment.substring(0, comment.length() - 1);
-            }
-            masterEntry.setComment(new Text(comment));
-        }
-
-        if (Context.transcriptome == options.context.get() && masterEntry != null) {
-            try {
-                String ccLine = utils.getCommentsToTranscriptomeMaster(options.analysisId.get());
-                if ( StringUtils.isNotBlank(masterEntry.getComment().getText())) {
-                    ccLine += "\n" + masterEntry.getComment().getText();
-                }
-                masterEntry.setComment(new Text(ccLine));
-            } catch (SQLException throwables) {
-                throw new ValidationEngineException(throwables);
-            }
-
-        }
-
-        return masterEntry;
     }
 
+    private String formatComment(String commentText) throws IOException {
+        StringWriter strWriter = new StringWriter();
+        FlatFileWriter.writeBlock(strWriter, "", "", commentText,
+                WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(), false, null);
+        String comment = strWriter.toString().trim();
+        if (comment.length() - 1 == comment.lastIndexOf("\n")) {
+            comment = comment.substring(0, comment.length() - 1);
+        }
+        return comment;
+    }
     private Entry getMasterEntryFromWebinCli(SubmissionOptions options) throws ValidationEngineException {
         if (!options.assemblyInfoEntry.isPresent()) {
             throw new ValidationEngineException("SubmissionOption assemblyInfoEntry must be given to generate master entry");
