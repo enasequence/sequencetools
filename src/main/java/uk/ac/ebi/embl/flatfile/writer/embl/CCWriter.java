@@ -18,17 +18,15 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
-import uk.ac.ebi.embl.flatfile.writer.WrapChar;
-import uk.ac.ebi.embl.flatfile.writer.WrapType;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
 
 /** Flat file writer for the CC lines.
  */
 public class CCWriter extends FlatFileWriter {
+
+	private static final int CC_OPTIMAL_LINE_LENGTH = 200;
 
 	public CCWriter(Entry entry) {
 		super(entry);
@@ -39,22 +37,16 @@ public class CCWriter extends FlatFileWriter {
 			isBlankString(entry.getComment().getText())) {
 			return false;
 		}
-		if(wrapType==WrapType.EMBL_WRAP)
-		{
-        setWrapChar(WrapChar.WRAP_CHAR_SPACE);
-		StringBuilder block= new StringBuilder();
-		block.append(entry.getComment().getText());
-    	writeBlock(writer, EmblPadding.CC_PADDING, block.toString());
-		}
-		else
-		{
-		List<String> comments = Arrays.asList(entry.getComment().getText().split("\n"));
-
-		for (String line : comments) {
-			writer.write(EmblPadding.CC_PADDING);
-			writer.write(line);
-			writer.write("\n");
-		}
+		// Preserve CC line wrapping provided by the submitter while
+		// keeping the lines shorter than 200 characters as requested
+		// by NCBI. This is done by using optimal line length of 200
+		// and force break. The optimal line length is longer then
+		// the default optimal line length to preserve the submitter
+		// provided CC line wrapping as much as possible.
+		setForceLineBreak(true);
+		setOptimalLineLength(CC_OPTIMAL_LINE_LENGTH);
+		for (String line : entry.getComment().getText().split("\n")) {
+			writeBlock(writer, EmblPadding.CC_PADDING, line);
 		}
 		return true;
 	}

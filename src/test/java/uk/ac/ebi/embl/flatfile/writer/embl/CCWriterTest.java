@@ -16,14 +16,13 @@
 package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
 public class CCWriterTest extends EmblWriterTest {
 
-	public void testWrite_Comment() throws IOException {
+	public void testWriteComment() throws IOException {
 		entry.setComment(new Text(
 				"-------------- Genome Center\n" +
 				"     Center: NIH Intramural Sequencing Center\n" +
@@ -33,8 +32,7 @@ public class CCWriterTest extends EmblWriterTest {
 				"All clones contained in this assembly were sequenced by the\nNIH Intramural Sequencing Center (NISC).  This multi-clone\nDNA sequence was assembled by NISC staff."));				
 		StringWriter writer = new StringWriter();
 		assertTrue(new CCWriter(entry).write(writer));
-		assertEquals(
-				"CC   -------------- Genome Center\n" +
+		assertEquals("CC   -------------- Genome Center\n" +
 				"CC        Center: NIH Intramural Sequencing Center\n" +
 				"CC        Center code: NISC\n" +
 				"CC        Web site: http://www.nisc.nih.gov\n" +
@@ -44,6 +42,59 @@ public class CCWriterTest extends EmblWriterTest {
 				"CC   DNA sequence was assembled by NISC staff.\n",
 				writer.toString());
 	}
+
+	public void testWriteCommentSingleLengthyLineCantSplit() throws IOException {
+		entry.setComment(new Text(
+				"-------------- Genome Center\n" +
+						"     Center: NIH Intramural Sequencing Center\n" +
+						"All-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC)."));
+		StringWriter writer = new StringWriter();
+		CCWriter ccWriter = new CCWriter(entry);
+		assertTrue(ccWriter.write(writer));
+		assertEquals(
+				"CC   -------------- Genome Center\n" +
+						"CC        Center: NIH Intramural Sequencing Center\n" +
+						"CC   All-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).\n" ,
+				writer.toString());
+	}
+
+	public void testWriteCommentLengthyLineSpaceBeforeMaxLength() throws IOException {
+		entry.setComment(new Text(
+				"-------------- Genome Center\n" +
+						"     Center: NIH Intramural Sequencing Center\n" +
+						"All-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center (NISC)."));
+		StringWriter writer = new StringWriter();
+		CCWriter ccWriter = new CCWriter(entry);
+		assertTrue(ccWriter.write(writer));
+		assertEquals(
+				"CC   -------------- Genome Center\n" +
+						"CC        Center: NIH Intramural Sequencing Center\n" +
+						"CC   All-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center " +
+						"(NISC).\n" ,
+				writer.toString());
+	}
+	public void testWriteCommentMultipleLengthyLine() throws IOException {
+		entry.setComment(new Text(
+				"-------------- Genome Center\n" +
+						"     Center: NIH Intramural Sequencing Center\n" +
+						"1-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-1" +
+						"2-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-2" +
+						"3-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-3" +
+						"4-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-4" +
+						"5-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-5"));
+		StringWriter writer = new StringWriter();
+		CCWriter ccWriter = new CCWriter(entry);
+		assertTrue(ccWriter.write(writer));
+		assertEquals(
+				"CC   -------------- Genome Center\n" +
+						"CC        Center: NIH Intramural Sequencing Center\n" +
+						"CC   1-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-12-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Int\n" +
+						"CC   ramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-23-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-3\n" +
+						"CC   4-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Intramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-45-clones-contained-in-this-assembly-were-sequenced-by-the-NIH-Int\n" +
+						"CC   ramural-Sequencing-Center-(NISC).-This-multi-clone-DNA-sequence-5\n",
+				writer.toString());
+	}
+
 
 	public void testWrite_NoComment() throws IOException {
 		entry.setComment(null);

@@ -34,7 +34,8 @@ public class ErrorMsgWriter extends FlatFileWriter {
     public ErrorMsgWriter(Entry entry, WrapType wrapType, List<String> errorMsgList) {
         super(entry, wrapType);
         this.errorMsgs = errorMsgList;
-        setWrapChar(WrapChar.WRAP_CHAR_BREAK);
+        setWrapChar(WrapChar.WRAP_CHAR_SPACE);
+        setForceLineBreak(true);
     }
 
     public boolean write(Writer writer) throws IOException {
