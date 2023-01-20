@@ -49,7 +49,7 @@ public class MasterEntryService {
         }
 
         if (Context.transcriptome == options.context.get() && masterEntry != null) {
-            addTranscriptomeInfo(masterEntry);
+            masterEntry.getSequence().setMoleculeType("transcribed RNA");
         }
 
         // Validate and fix the master entry.
@@ -123,7 +123,6 @@ public class MasterEntryService {
         if (masterEntry.getSequence().getTopology() == null)
             masterEntry.getSequence().setTopology(Sequence.Topology.LINEAR);
         source.setMasterLocation();
-        masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
         masterEntry.addProjectAccession(new Text(infoEntry.getProjectId()));
         masterEntry.addXRef(new XRef("BioSample", infoEntry.getBiosampleId()));
         if (infoEntry.isTpa()) {
@@ -152,10 +151,5 @@ public class MasterEntryService {
             default:
                 return null;
         }
-    }
-
-    private void addTranscriptomeInfo(Entry masterEntry) {
-        masterEntry.getSequence().setMoleculeType("transcribed RNA");
-        masterEntry.setStatus(Entry.Status.getStatus(2));
     }
 }

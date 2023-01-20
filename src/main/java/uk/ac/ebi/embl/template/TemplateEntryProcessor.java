@@ -104,7 +104,6 @@ public class TemplateEntryProcessor {
         }
         entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceName()));
         addDataToEntry(entry, templateVariables);
-        entry.setStatus(Entry.Status.PRIVATE);
         
         // Update SourceFeature using sample values.
         updateSourceFeatureUsingOrganismFieldValue(entry,templateVariables);
