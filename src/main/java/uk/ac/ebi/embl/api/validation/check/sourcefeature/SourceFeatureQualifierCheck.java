@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.ArrayList;
@@ -86,15 +87,16 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
 			if(source!=null&&source.getScientificName()!=null)
 			{
-				boolean isOrganismSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismSubmittable(source.getScientificName());
+				boolean binomialRequired = EntryUtils.isBinomialRequired(entry,getEmblEntryValidationPlanProperty().validationScope.get());
+				boolean isOrganismSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismSubmittable(source.getScientificName(),binomialRequired);
 				boolean isTaxidSubmittable=isOrganismSubmittable;
 				boolean isAnyNameSubmittable=false;
 				Long taxId = source.getTaxId();
 				if(taxId!=null)		
-					isTaxidSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isTaxidSubmittable(taxId);
+					isTaxidSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isTaxidSubmittable(taxId,binomialRequired);
 				if(!isOrganismSubmittable && !isTaxidSubmittable)
 				{
-					isAnyNameSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isAnyNameSubmittable(source.getScientificName());
+					isAnyNameSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isAnyNameSubmittable(source.getScientificName(),binomialRequired);
 					 if(!isAnyNameSubmittable)
 						 reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName());
 				}
