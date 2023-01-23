@@ -85,7 +85,7 @@ public class MasterEntryService {
     private String formatComment(String commentText) throws IOException {
         StringWriter strWriter = new StringWriter();
         FlatFileWriter.writeBlock(strWriter, "", "", commentText,
-                WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(), false, null);
+                WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(), false, null, null);
         String comment = strWriter.toString().trim();
         if (comment.length() - 1 == comment.lastIndexOf("\n")) {
             comment = comment.substring(0, comment.length() - 1);

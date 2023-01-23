@@ -89,7 +89,8 @@ public class EmblQualifierWriterTest extends EmblWriterTest {
 				"FT                   a note this is a note this is a note this is a note this is\n" +
 				"FT                   a note this is a note this is a note this is a note this is\n" +
 				"FT                   a note this is a note \"\n" +
-				"FT                   /note=\"thisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanote\"\n",
+				"FT                   /note=\"thisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisa\n" +
+				"FT                   notethisisanotethisisanote\"\n",
 			writer.toString());	
 	} 		
 	

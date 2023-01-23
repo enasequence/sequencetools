@@ -27,7 +27,7 @@ public class FlatFileWriterTest {
                         "to synteny with the GCA_003309015.1 assembly of Sparus aurata.";
 
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP,
-                EmblPadding.CC_PADDING.length(), true, null);
+                EmblPadding.CC_PADDING.length(), true, null, null);
 
         String output = strWriter.toString();
         if (output.endsWith("\n")) {
@@ -57,7 +57,7 @@ public class FlatFileWriterTest {
                 "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage ";
 
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
-                true, null);
+                true, null, null);
 
         String output = strWriter.toString();
         if (output.endsWith("\n")) {
@@ -74,7 +74,7 @@ public class FlatFileWriterTest {
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         strWriter = new StringWriter();
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
-                true, null);
+                true, null, null);
         output = strWriter.toString();
         if (output.endsWith("\n")) {
             assertEquals(output.length() - 1, output.lastIndexOf("\n"));
@@ -95,7 +95,7 @@ public class FlatFileWriterTest {
                 "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage ";
 
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
-                true, 200);
+                true, 200, null);
 
         String output = strWriter.toString();
         if (output.endsWith("\n")) {
@@ -114,7 +114,7 @@ public class FlatFileWriterTest {
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         strWriter = new StringWriter();
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
-                true, 200);
+                true, 200, null);
         String output = strWriter.toString();
         if (output.endsWith("\n")) {
             assertEquals(output.length() - 1, output.lastIndexOf("\n"));
@@ -132,7 +132,7 @@ public class FlatFileWriterTest {
         String comment = "";
         strWriter = new StringWriter();
         FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
-                true, null);
+                true, null, null);
         String output = strWriter.toString();
         if (output.endsWith("\n")) {
             assertEquals(output.length() - 1, output.lastIndexOf("\n"));
