@@ -18,6 +18,5 @@ package uk.ac.ebi.embl.flatfile.writer;
 public enum WrapChar {
     WRAP_CHAR_SPACE,
     WRAP_CHAR_SEMICOLON,
-    WRAP_CHAR_COMMA,
-    WRAP_CHAR_BREAK
+    WRAP_CHAR_COMMA
 }

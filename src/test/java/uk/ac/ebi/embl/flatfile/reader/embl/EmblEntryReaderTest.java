@@ -571,7 +571,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 			"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
 			"XX\n" +
 			"AC   A00001; A00002;\n" +
-			"XX\n" +			
+			"XX\n" +
 			"AC * _AAAAA\n" +
 			"XX\n" +
 			"PR   Project:3443;\n" +
@@ -742,134 +742,6 @@ public class EmblEntryReaderTest extends EmblReaderTest {
         }
 		assertEquals(expectedEntryString, writer.toString());
 	}	
-
-// TODO remove this test, the feature tested is commented in EmblEntryReader
-//	public void testRead_CdsEntry() throws IOException {
-//		String entryString =
-//			"ID   CAA00001; SV 1; linear; unassigned DNA; PAT; PRO; 1155 BP.\n" +
-//			"XX\n" +
-//			"PA   A00033.1\n" +
-//			"XX\n" +
-//			"DE   Bacillus subtilis hypothetical protein\n" +
-//			"XX\n" +
-//			"OS   Bacillus subtilis\n" +
-//			"OC   Bacteria; Firmicutes; Bacillales; Bacillaceae; Bacillus.\n" +
-//			"OX   NCBI_TaxID=1423;\n" +
-//			"XX\n" +
-//			"FH   Key             Location/Qualifiers\n" +
-//			"FH\n" +
-//			"FT   source          1..1155\n" +
-//			"FT                   /organism=\"Bacillus subtilis\"\n" +
-//			"FT                   /mol_type=\"unassigned DNA\"\n" +
-//			"FT   CDS             A00033.1:1..1155\n" +
-//			"FT                   /transl_table=11\n" +
-//			"FT                   /gene=\"xylR\"\n" +
-//			"FT                   /protein_id=\"CAA00001.1\"\n" +
-//			"FT                   /translation=\"MDIAHQTFVKKVNQKLLLKEILKNSPISRAKLSEMTGLNKSTVSS\n" +
-//			"FT                   QVNTLMKESMVFEIGQGQSSGGRRPVMLVFNKKAGYSVGIDVGVDYINGILTDLEGTIV\n" +
-//			"FT                   LDQYRHLESNSPEITKDILIDMIHHFITQMPQSPYGFIGIGICVPGLIDKDQKIVFTPN\n" +
-//			"FT                   SNWRDIDLKSSIQEKYNVSVFIENEANAGAYGEKLFGAAKNHDNIIYVSISTGIGIGVI\n" +
-//			"FT                   INNHLYRGVSGFSGEMGHMTIDFNGPKCSCGNRGCWELYASEKALLKSLQTKEKKLSYQ\n" +
-//			"FT                   DIINLAHLNDIGTLNALQNFGFYLGIGLTNILNTFNPQAVILRNSIIESHPMVLNSMRS\n" +
-//			"FT                   EVSSRVYSQLGNSYELLPSSLGQNAPALGMSSIVIDHFLDMITM\"\n" +
-//			"XX\n" +
-//			"SQ   Sequence 1155 BP; 405 A; 191 C; 216 G; 343 T; 0 other; 1773891441 CRC32;\n" +
-//			"     gtggatatcg ctcatcaaac ctttgtcaaa aaagtaaatc aaaagttatt attaaaagaa        60\n" +
-//			"     atccttaaaa attcacctat ttcaagagca aaattatctg aaatgactgg attaaataaa       120\n" +
-//			"     tcaactgtct catcacaggt aaacacgtta atgaaagaaa gtatggtatt tgaaataggt       180\n" +
-//			"     caaggacaat caagtggcgg aagaagacct gtcatgcttg tttttaataa aaaggcagga       240\n" +
-//			"     tactccgttg gaatagatgt tggtgtggat tatattaatg gcattttaac agaccttgaa       300\n" +
-//			"     ggaacaatcg ttcttgatca ataccgccat ttggaatcca attctccaga aataacgaaa       360\n" +
-//			"     gacattttga ttgatatgat tcatcacttt attacgcaaa tgccccaatc tccgtacggg       420\n" +
-//			"     tttattggta taggtatttg cgtgcctgga ctcattgata aagatcaaaa aattgttttc       480\n" +
-//			"     actccgaact ccaactggag agatattgac ttaaaatctt cgatacaaga gaagtacaat       540\n" +
-//			"     gtgtctgttt ttattgaaaa tgaggcaaat gctggcgcat atggagaaaa actatttgga       600\n" +
-//			"     gctgcaaaaa atcacgataa cattatttac gtaagtatca gcacaggaat agggatcggt       660\n" +
-//			"     gttattatca acaatcattt atatagagga gtaagcggct tctctggaga aatgggacat       720\n" +
-//			"     atgacaatag actttaatgg tcctaaatgc agttgcggaa accgaggatg ctgggaattg       780\n" +
-//			"     tatgcttcag agaaggcttt attaaaatct cttcagacca aagagaaaaa actgtcctat       840\n" +
-//			"     caagatatca taaacctcgc ccatctgaat gatatcggaa ccttaaatgc attacaaaat       900\n" +
-//			"     tttggattct atttaggaat aggccttacc aatattctaa atactttcaa cccacaagcc       960\n" +
-//			"     gtaattttaa gaaatagcat aattgaatcg catcctatgg ttttaaattc aatgagaagt      1020\n" +
-//			"     gaagtatcat caagggttta ttcccaatta ggcaatagct atgaattatt gccatcttcc      1080\n" +
-//			"     ttaggacaga atgcaccggc attaggaatg tcctccattg tgattgatca ttttctggac      1140\n" +
-//			"     atgattacaa tgtaa                                                       1155\n" +
-//			"//\n";			
-//		String expectedEntryString =
-//			"ID   CAA00001; SV 1; linear; unassigned DNA; PAT; PRO; 1155 BP.\n" +
-//			"XX\n" +
-//			"AC   CAA00001;\n" +
-//			"XX\n" +
-//			"DE   Bacillus subtilis hypothetical protein\n" +
-//			"XX\n" +
-//			"KW   .\n" +
-//			"XX\n" +
-//			"OS   Bacillus subtilis\n" +
-//			"OC   Bacteria; Firmicutes; Bacillales; Bacillaceae; Bacillus.\n" +
-//			"XX\n" +
-//			"DR   EMBL; A00033.1.\n" +
-//			"XX\n" +
-//			"FH   Key             Location/Qualifiers\n" +
-//			"FH\n" +
-//			"FT   source          1..1155\n" +
-//			"FT                   /organism=\"Bacillus subtilis\"\n" +
-//			"FT                   /mol_type=\"unassigned DNA\"\n" +
-//			"FT                   /db_xref=\"taxon:1423\"\n" +
-//			"FT   CDS             A00033.1:1..1155\n" +
-//			"FT                   /transl_table=11\n" +
-//			"FT                   /gene=\"xylR\"\n" +
-//			"FT                   /protein_id=\"CAA00001.1\"\n" +
-//			"FT                   /translation=\"MDIAHQTFVKKVNQKLLLKEILKNSPISRAKLSEMTGLNKSTVSS\n" +
-//			"FT                   QVNTLMKESMVFEIGQGQSSGGRRPVMLVFNKKAGYSVGIDVGVDYINGILTDLEGTIV\n" +
-//			"FT                   LDQYRHLESNSPEITKDILIDMIHHFITQMPQSPYGFIGIGICVPGLIDKDQKIVFTPN\n" +
-//			"FT                   SNWRDIDLKSSIQEKYNVSVFIENEANAGAYGEKLFGAAKNHDNIIYVSISTGIGIGVI\n" +
-//			"FT                   INNHLYRGVSGFSGEMGHMTIDFNGPKCSCGNRGCWELYASEKALLKSLQTKEKKLSYQ\n" +
-//			"FT                   DIINLAHLNDIGTLNALQNFGFYLGIGLTNILNTFNPQAVILRNSIIESHPMVLNSMRS\n" +
-//			"FT                   EVSSRVYSQLGNSYELLPSSLGQNAPALGMSSIVIDHFLDMITM\"\n" +
-//			"XX\n" +
-//			"SQ   Sequence 1155 BP; 405 A; 191 C; 216 G; 343 T; 0 other;\n" +
-//			"     gtggatatcg ctcatcaaac ctttgtcaaa aaagtaaatc aaaagttatt attaaaagaa        60\n" +
-//			"     atccttaaaa attcacctat ttcaagagca aaattatctg aaatgactgg attaaataaa       120\n" +
-//			"     tcaactgtct catcacaggt aaacacgtta atgaaagaaa gtatggtatt tgaaataggt       180\n" +
-//			"     caaggacaat caagtggcgg aagaagacct gtcatgcttg tttttaataa aaaggcagga       240\n" +
-//			"     tactccgttg gaatagatgt tggtgtggat tatattaatg gcattttaac agaccttgaa       300\n" +
-//			"     ggaacaatcg ttcttgatca ataccgccat ttggaatcca attctccaga aataacgaaa       360\n" +
-//			"     gacattttga ttgatatgat tcatcacttt attacgcaaa tgccccaatc tccgtacggg       420\n" +
-//			"     tttattggta taggtatttg cgtgcctgga ctcattgata aagatcaaaa aattgttttc       480\n" +
-//			"     actccgaact ccaactggag agatattgac ttaaaatctt cgatacaaga gaagtacaat       540\n" +
-//			"     gtgtctgttt ttattgaaaa tgaggcaaat gctggcgcat atggagaaaa actatttgga       600\n" +
-//			"     gctgcaaaaa atcacgataa cattatttac gtaagtatca gcacaggaat agggatcggt       660\n" +
-//			"     gttattatca acaatcattt atatagagga gtaagcggct tctctggaga aatgggacat       720\n" +
-//			"     atgacaatag actttaatgg tcctaaatgc agttgcggaa accgaggatg ctgggaattg       780\n" +
-//			"     tatgcttcag agaaggcttt attaaaatct cttcagacca aagagaaaaa actgtcctat       840\n" +
-//			"     caagatatca taaacctcgc ccatctgaat gatatcggaa ccttaaatgc attacaaaat       900\n" +
-//			"     tttggattct atttaggaat aggccttacc aatattctaa atactttcaa cccacaagcc       960\n" +
-//			"     gtaattttaa gaaatagcat aattgaatcg catcctatgg ttttaaattc aatgagaagt      1020\n" +
-//			"     gaagtatcat caagggttta ttcccaatta ggcaatagct atgaattatt gccatcttcc      1080\n" +
-//			"     ttaggacaga atgcaccggc attaggaatg tcctccattg tgattgatca ttttctggac      1140\n" +
-//			"     atgattacaa tgtaa                                                       1155\n" +
-//			"//\n";			
-//		StringWriter writer = new StringWriter();                      
-//		setBufferedReader(entryString);
-//		EntryReader reader = new EmblEntryReader(bufferedReader, EmblEntryReader.Format.CDS_FORMAT, null);
-//        while (true) {
-//    		ValidationResult result = reader.read();
-//    		Entry entry = reader.getEntry();
-//    		Collection<ValidationMessage<Origin>> messages = result.getMessages();
-//    		for ( ValidationMessage<Origin> message : messages) {
-//    			System.out.println(message.getMessage());			
-//    		}
-//			if (!reader.isEntry()) {
-//				break;
-//			}
-//			assertEquals(1, result.count(Severity.ERROR));// BLOCKS(RN,RL,RT(citation),AC)
-//															// MUST EXIST
-//															// ATLEAST ONCE
-//
-//    		assertTrue(new EmblEntryWriter(entry).write(writer));
-//        }
-//		assertEquals(expectedEntryString, writer.toString());
-//	}	
 
 	@Ignore
 	public void testRead_MasterEntry() throws IOException {

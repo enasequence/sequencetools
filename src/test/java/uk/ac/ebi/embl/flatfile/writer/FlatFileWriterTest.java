@@ -6,7 +6,7 @@ import uk.ac.ebi.embl.flatfile.EmblPadding;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FlatFileWriterTest {
 
@@ -24,14 +24,15 @@ public class FlatFileWriterTest {
                         "using the PacBio reads and Arrow, followed by two rounds of Illumina polishing using " +
                         "the 10X data and freebayes. Finally, the assembly was manually improved using gEVAL to " +
                         "correct mis-joins and improve concordance with the raw data. Chromosomes are named according " +
-                        "to synteny with the GCA_003309015.1 assembly of Sparus aurata." ;
+                        "to synteny with the GCA_003309015.1 assembly of Sparus aurata.";
 
-        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP,
+                EmblPadding.CC_PADDING.length(), true, null);
 
         String output = strWriter.toString();
-        if(output.endsWith("\n")) {
-            assertEquals(output.length()-1, output.lastIndexOf("\n"));
-            output = output.substring(0,output.length()-1);
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
         }
         String expectedComment = "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage\n" +
                 "Illumina HiSeqX data from a 10X Genomics Chromium library generated at the\n" +
@@ -50,32 +51,34 @@ public class FlatFileWriterTest {
     }
 
     @Test
-    public void writeCCSingleLine() throws IOException {
+    public void writeSingleLineBreakAtDefaultOptimalLength() throws IOException {
         StringWriter strWriter = new StringWriter();
         String comment =
-                "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage " ;
+                "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage ";
 
-        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
+                true, null);
 
         String output = strWriter.toString();
-        if(output.endsWith("\n")) {
-            assertEquals(output.length()-1, output.lastIndexOf("\n"));
-            output = output.substring(0,output.length()-1);
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
         }
         String expectedComment = "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage ";
         assertEquals(expectedComment, output);
 
         //no space or break
         comment = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                +"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                +"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                +"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         strWriter = new StringWriter();
-        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
+                true, null);
         output = strWriter.toString();
-        if(output.endsWith("\n")) {
-            assertEquals(output.length()-1, output.lastIndexOf("\n"));
-            output = output.substring(0,output.length()-1);
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
         }
         assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" +
@@ -83,17 +86,58 @@ public class FlatFileWriterTest {
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" +
                 "a", output);
-        //null not allowed, empty string
-        comment = "";
-        strWriter = new StringWriter();
-        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapType.EMBL_WRAP, WrapChar.WRAP_CHAR_BREAK, EmblPadding.CC_PADDING.length());
-        output = strWriter.toString();
-        if(output.endsWith("\n")) {
-            assertEquals(output.length()-1, output.lastIndexOf("\n"));
-            output = output.substring(0,output.length()-1);
+    }
+
+    @Test
+    public void writeSingleLine() throws IOException {
+        StringWriter strWriter = new StringWriter();
+        String comment =
+                "The assembly fSpaAur1.1 is based on ~56x PacBio Sequel data, ~62x coverage ";
+
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
+                true, 200);
+
+        String output = strWriter.toString();
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
         }
-        assertEquals("", output);
+    }
+
+    @Test
+    public void writeSingleLineBreakAtCustomOptimalLength() throws IOException {
+        StringWriter strWriter = new StringWriter();
+        //no space or break
+        String comment = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        strWriter = new StringWriter();
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
+                true, 200);
+        String output = strWriter.toString();
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
+        }
+        assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" +
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", output);
     }
 
 
+    @Test
+    public void writeEmptyLine() throws IOException {
+        StringWriter strWriter = new StringWriter();
+        //null not allowed, empty string
+        String comment = "";
+        strWriter = new StringWriter();
+        FlatFileWriter.writeBlock(strWriter, "", "", comment, WrapChar.WRAP_CHAR_SPACE, WrapType.EMBL_WRAP, EmblPadding.CC_PADDING.length(),
+                true, null);
+        String output = strWriter.toString();
+        if (output.endsWith("\n")) {
+            assertEquals(output.length() - 1, output.lastIndexOf("\n"));
+            output = output.substring(0, output.length() - 1);
+        }
+        assertEquals("", output);
+    }
 }

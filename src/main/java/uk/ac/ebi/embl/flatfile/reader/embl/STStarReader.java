@@ -18,7 +18,6 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.SingleLineBlockReader;
-import uk.ac.ebi.embl.flatfile.reader.StatusMatcher;
 
 /** Reader for the flat file ST * lines.
  */
@@ -32,16 +31,8 @@ public class STStarReader extends SingleLineBlockReader {
 	public String getTag() {
 		return EmblTag.ST_STAR_TAG;
 	}
-	
 	@Override
 	protected void read(String block) {
-		StatusMatcher matcher = new StatusMatcher(this);
-		if (!matcher.match(block)) {
-			error("FF.1", getTag());
-		}
-		else {
-			entry.setStatus(matcher.getStatus());
-			entry.setHoldDate(matcher.getHoldDate());
-		}
+		// Ignore ST start line.
 	}
 }

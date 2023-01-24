@@ -590,7 +590,6 @@ public abstract class FileValidationCheck {
 		entry.removeProjectAccessions();
 		entry.addProjectAccession(new Text(options.getProjectId()));
 		entry.getSequence().setVersion(1);
-		entry.setStatus(Entry.Status.PRIVATE);
    		if (entry.getSecondaryAccessions() != null && !entry.getSecondaryAccessions().isEmpty())
       		entry.getSecondaryAccessions().clear();
 
@@ -764,7 +763,6 @@ public abstract class FileValidationCheck {
 			assignProteinAccession(entry);
 			if (getOptions().context.get() == Context.sequence) {
 				EmblEntryWriter emblEntryWriter = new EmblEntryWriter(entry);
-				emblEntryWriter.setShowSTStartLine(true);
 				emblEntryWriter.write(fixedFileWriter);
 			} else {
 				if (isAGP) { //TODO: do not do this for webin-cli

@@ -499,7 +499,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			{
 				masterExists = true;
 				//masterEntry.setHoldDate(masterInfoRs.getDate("hold_date"));//hold_date always should be null , as entry status depends on study_id
-				masterEntry.setStatus(Entry.Status.getStatus(2));//assembly new entries status should always be private
 				submissionAccountId = masterInfoRs.getString("submission_account_id");
 				sampleId = masterInfoRs.getString("sample_id");
 
