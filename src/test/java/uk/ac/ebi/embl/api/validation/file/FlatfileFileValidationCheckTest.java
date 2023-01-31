@@ -115,7 +115,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.submissionFiles =Optional.of(submissionFiles);
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
-		options.context = Optional.of(Context.genome);
+		options.context = Optional.of(Context.sequence);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);
@@ -134,7 +134,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest
 		options.submissionFiles =Optional.of(submissionFiles);
 		options.reportDir = Optional.of(file.getFile().getParent());
 		options.processDir = Optional.of(file.getFile().getParent());
-		options.context = Optional.of(Context.genome);
+		options.context = Optional.of(Context.sequence);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		options.init();
 		FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options, sharedInfo);

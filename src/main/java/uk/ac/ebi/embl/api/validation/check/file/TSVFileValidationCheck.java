@@ -21,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +28,6 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.service.WebinERAService;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
@@ -94,7 +90,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 				entry = templateProcessorResultSet.getEntry();
 				if(entry != null)
 				{
-					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 					appendHeader(entry);
 				}
 				if( options.context.get() == Context.sequence && !validateSequenceCountForTemplate(validationResult, submissionFile)) {

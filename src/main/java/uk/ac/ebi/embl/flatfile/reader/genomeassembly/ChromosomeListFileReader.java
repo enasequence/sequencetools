@@ -5,7 +5,8 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+import uk.ac.ebi.embl.api.validation.fixer.entry.ChromosomeNameFix;
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.common.CommonUtil;
 
 import java.io.BufferedReader;
@@ -38,8 +39,7 @@ public class ChromosomeListFileReader extends GCSEntryReader
     private Set<String> chromosomeNames= new HashSet<String>();
     private Set<String> objectNames= new HashSet<String>();
     List<ChromosomeEntry> chromosomeEntries =new ArrayList<ChromosomeEntry>();
-	private static String[] chromosomeNamesToFixArray = new String[] { "chromosome", "chrom", "chrm", "chr", "linkage-group", "linkage group", "plasmid"};
-	
+
     public ChromosomeListFileReader(File file)
     {
     	this.file=file;
@@ -80,15 +80,15 @@ public class ChromosomeListFileReader extends GCSEntryReader
 				else
 				{
 					ChromosomeEntry chromosomeEntry = new ChromosomeEntry();
-					chromosomeEntry.setObjectName(EntryNameFix.getFixedEntryName(fields[OBJECT_NAME_COLUMN]));
-					String chrName = EntryNameFix.getFixedEntryName(fields[CHROMOSOME_NAME_COLUMN]);
-					try {
-						chromosomeEntry.setChromosomeName(fixChromosomeName(chrName));
-					} catch (DataFormatException e) {
-						error(lineNumber, e.getMessage());
-					}
-					if(!chrName.equals(chromosomeEntry.getChromosomeName()))
-						fix(lineNumber, "ChromosomeListNameFix",chrName, chromosomeEntry.getChromosomeName() );
+					String submitterAccession = SubmitterAccessionFix.fix(fields[OBJECT_NAME_COLUMN]);
+					chromosomeEntry.setObjectName(submitterAccession);
+
+					String chromosomeName = fields[CHROMOSOME_NAME_COLUMN];
+					String fixedChromosomeName = ChromosomeNameFix.fix(chromosomeName);
+					chromosomeEntry.setChromosomeName(fixedChromosomeName);
+
+					if(!chromosomeName.equals(fixedChromosomeName))
+						fix(lineNumber, "ChromosomeListNameFix", chromosomeName, fixedChromosomeName);
 
 					String[] topologyAndChrType = fields[CHROMOSOME_TYPE_COLUMN].split("-");
 					if (topologyAndChrType.length == 2) {
@@ -117,34 +117,6 @@ public class ChromosomeListFileReader extends GCSEntryReader
 			}
 		}
 		return validationResult;
-	}
-
-
-	public  static String fixChromosomeName(String field) throws DataFormatException {
-    	if(field == null )
-    		return field;
-
-		String fixedChrName = field.trim();
-
-		if(fixedChrName.isEmpty())
-    		return field;
-
-
-		for(String match: chromosomeNamesToFixArray )  {
-			if(StringUtils.containsIgnoreCase(fixedChrName,match)) {
-				fixedChrName = StringUtils.remove(fixedChrName,fixedChrName
-						.substring(StringUtils.indexOfIgnoreCase(fixedChrName,match),StringUtils.indexOfIgnoreCase(fixedChrName,match)+match.length()));
-				if(StringUtils.isBlank(fixedChrName.trim())) {
-					throw new DataFormatException( "ChromosomeListNameInvalidReaderMsg");
-				}
-			}
-		}
-
-		if(fixedChrName.equalsIgnoreCase("mitocondria") || fixedChrName.equalsIgnoreCase("mitochondria") ) {
-			fixedChrName = "MT";
-		}
-
-    	return fixedChrName;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.SequenceReader;
@@ -51,7 +52,7 @@ public class FastaFileReader extends FlatFileEntryReader
 		String object_name = readObjectName(lineReader);
 		if (object_name != null)
 		{
-			entry.setSubmitterAccession(object_name);
+			entry.setSubmitterAccession(SubmitterAccessionFix.fix(object_name));
 			Text header = new Text(lineReader.getCurrentLine());
 			entry.setComment(header);
 			isEntry=true;

@@ -11,6 +11,7 @@ import uk.ac.ebi.embl.api.service.SampleRetrievalService;
 import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
@@ -102,7 +103,7 @@ public class TemplateEntryProcessor {
         if(StringUtils.isNotEmpty(projectId)) {
             entry.addProjectAccession(new Text(projectId));
         }
-        entry.setSubmitterAccession(String.valueOf(templateVariables.getSequenceName()));
+        entry.setSubmitterAccession(SubmitterAccessionFix.fix(templateVariables.getSequenceName()));
         addDataToEntry(entry, templateVariables);
         
         // Update SourceFeature using sample values.

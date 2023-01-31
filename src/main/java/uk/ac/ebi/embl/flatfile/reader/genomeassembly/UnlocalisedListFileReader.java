@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.zip.DataFormatException;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.UnlocalisedEntry;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.fixer.entry.ChromosomeNameFix;
 import uk.ac.ebi.embl.common.CommonUtil;
 
 public class UnlocalisedListFileReader extends GCSEntryReader
@@ -32,7 +32,7 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 	public ValidationResult read() throws FileNotFoundException, IOException
 	{
 		int lineNumber = 1;
-		
+
 		try(BufferedReader reader= CommonUtil.bufferedReaderFromFile(file))
 		{
 			String line;
@@ -48,20 +48,18 @@ public class UnlocalisedListFileReader extends GCSEntryReader
 				{
 				   UnlocalisedEntry unlocalisedEntry = new UnlocalisedEntry();
 					unlocalisedEntry.setObjectName(fields[OBJECT_NAME_COLUMN]);
-					String chrName = fields[CHROMOSOME_NAME_COLUMN];
-					try {
-						unlocalisedEntry.setChromosomeName(ChromosomeListFileReader.fixChromosomeName(chrName));
-					} catch(DataFormatException e) {
-						error(lineNumber, e.getMessage());
-					}
-					if(!chrName.equals(unlocalisedEntry.getChromosomeName()))
-						fix(lineNumber, "ChromosomeListNameFix",chrName, unlocalisedEntry.getChromosomeName() );
+					String chromosomeName = fields[CHROMOSOME_NAME_COLUMN];
+					String fixedChromosomeName = ChromosomeNameFix.fix(chromosomeName);
+					unlocalisedEntry.setChromosomeName(fixedChromosomeName);
+
+					if(!chromosomeName.equals(fixedChromosomeName))
+						fix(lineNumber, "ChromosomeListNameFix",chromosomeName, fixedChromosomeName);
 
 					unlocalisedEntry.setOrigin(new FlatFileOrigin(lineNumber));
 					unlocalisedEntries.add(unlocalisedEntry);
 				}
+				lineNumber++;
 			}
-			lineNumber++;
 		}
 		return validationResult;
 	}

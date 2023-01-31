@@ -17,8 +17,7 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileMatcher;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -50,22 +49,8 @@ public class ACStarReader extends SingleLineBlockReader {
 			error("FF.1", getTag());
 			return;
 		}
-		String submitterAccession = matcher.getString(GROUP_SUBMITTER_ACCESSION);
-
-		int i = 0;
-		if(submitterAccession != null) {
-			if(submitterAccession.endsWith(";")) {
-				submitterAccession = submitterAccession.substring(0,submitterAccession.length()-1);
-			}
-			while ( submitterAccession.length()>i && submitterAccession.charAt(i) == '_') {
-				++i;
-			}
-			if (i > 0) {
-				submitterAccession = submitterAccession.substring(i);
-			}
-		}
 		
-		entry.setSubmitterAccession(submitterAccession);
+		entry.setSubmitterAccession(SubmitterAccessionFix.fix(matcher.getString(GROUP_SUBMITTER_ACCESSION)));
 		entry.setSubmitterWgsVersion(matcher.getInteger(GROUP_SUBMITTER_WGS_VERSION));
 	}	
 }

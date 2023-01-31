@@ -74,7 +74,6 @@ public class ChromosomeListFileReaderTest
 		ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
 		ValidationResult parseResult=reader.read();
 		assertTrue(parseResult.isValid());
-		assertEquals(1,parseResult.getMessages("ChromosomeListNameFix").size());
 		assertEquals("test1", reader.chromosomeEntries.get(1).getChromosomeName());
 	}
 

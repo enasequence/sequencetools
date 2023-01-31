@@ -43,14 +43,11 @@ public class AssemblyLevelEntryNameFix extends EntryValidationCheck
 
 		if(entry.getSubmitterAccession()!=null)
 			return result;
+
 		String seqType = ValidationScope.ASSEMBLY_CONTIG.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "contig" : ValidationScope.ASSEMBLY_SCAFFOLD.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "scaffold" : ValidationScope.ASSEMBLY_CHROMOSOME.equals(getEmblEntryValidationPlanProperty().validationScope.get()) ? "chromosome":"entry";
-		String entryName= seqType+ getEmblEntryValidationPlanProperty().sequenceNumber.get();
-		
-		if(entry.getSubmitterAccession()==null)
-		{
-			entry.setSubmitterAccession(entryName);
-			reportMessage(Severity.FIX, entry.getOrigin(), ENTRYNAME_FIX_ID ,seqType, entryName);
-		}
+		String submitterAccession = seqType + getEmblEntryValidationPlanProperty().sequenceNumber.get();
+		entry.setSubmitterAccession(submitterAccession);
+		reportMessage(Severity.FIX, entry.getOrigin(), ENTRYNAME_FIX_ID ,seqType, submitterAccession );
 
 		return result;
 	}
