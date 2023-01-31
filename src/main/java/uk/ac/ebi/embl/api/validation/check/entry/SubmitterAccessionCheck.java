@@ -79,10 +79,13 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
                 reportError(entry.getOrigin(), SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID, entry.getSubmitterAccession());
             }
         } else {
-            if (!isSubmitterAccession && isSubmitterSeqIdQualifierValue) {
-                // Set submitter accession from /submitter_seqid.
-                entry.setSubmitterAccession(submitterSeqIdQualifier.getValue());
-            }
+            // Current behaviour does not set the submitter accession
+            // from /submitter_seqid except for ENA sequences submitted
+            // through Webin.
+            // if (!isSubmitterAccession && isSubmitterSeqIdQualifierValue) {
+            //    // Set submitter accession from /submitter_seqid.
+            //    entry.setSubmitterAccession(submitterSeqIdQualifier.getValue());
+            //}
         }
 
         return result;

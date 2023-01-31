@@ -100,7 +100,11 @@ public class SubmitterAccessionCheckTest {
                     validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
                 assertEquals("test1", entry.getSubmitterAccession());
             } else {
-                assertEquals("___t e s t 1___", entry.getSubmitterAccession());
+                // Current behaviour does not set the submitter accession
+                // from /submitter_seqid except for ENA sequences submitted
+                // through Webin.
+                //assertEquals("___t e s t 1___", entry.getSubmitterAccession());
+                assertNull(entry.getSubmitterAccession());
             }
         }
     }
