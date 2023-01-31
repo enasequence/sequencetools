@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.flatfile.writer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -27,12 +26,13 @@ import java.io.Writer;
 public class QualifierWriter extends FlatFileWriter {
 
 	private Qualifier qualifier;
+	private static final int NOTE_MAX_LINE_LENGTH = 200;
 
 	public QualifierWriter(Entry entry, Qualifier qualifier, WrapType wrapType,
 			String header) {
 		super(entry, wrapType);
 		this.qualifier = qualifier;
-		this.header = header;		
+		this.header = header;
 		if (qualifier != null) {
 			wrapChar = WrapChar.WRAP_CHAR_SPACE;
 			if (qualifier.getName().equals("replace") ||
@@ -40,6 +40,8 @@ public class QualifierWriter extends FlatFileWriter {
 					qualifier.getName().equals("PCR_primers") ||
 					qualifier.getName().equals("translation")) {
 				setForceLineBreak(true);
+			} else if (qualifier.getName().equals(Qualifier.NOTE_QUALIFIER_NAME)) {
+				setMaximumLineLength(NOTE_MAX_LINE_LENGTH);
 			}
 		}
 	}
