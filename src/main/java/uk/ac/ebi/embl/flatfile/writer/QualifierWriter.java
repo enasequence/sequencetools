@@ -17,7 +17,6 @@ package uk.ac.ebi.embl.flatfile.writer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -42,7 +41,7 @@ public class QualifierWriter extends FlatFileWriter {
 					qualifier.getName().equals("translation")) {
 				setForceLineBreak(true);
 			} else if (qualifier.getName().equals(Qualifier.NOTE_QUALIFIER_NAME)) {
-				setCustomMaximumLineLength(NOTE_MAX_LINE_LENGTH);
+				setMaximumLineLength(NOTE_MAX_LINE_LENGTH);
 			}
 		}
 	}

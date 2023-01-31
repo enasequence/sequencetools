@@ -57,7 +57,7 @@ public abstract class FlatFileWriter {
 	 */
 	private Integer optimalLineLength;
 
-	private Integer customMaximumLineLength;
+	private Integer maximumLineLength;
 
 	public FlatFileWriter(Entry entry) {
 		this.entry = entry;
@@ -111,16 +111,16 @@ public abstract class FlatFileWriter {
 	 */
 	protected void writeBlock(Writer writer, String firstLineHeader,
 									 String header, String block) throws IOException {
-		writeBlock(writer, firstLineHeader, header, block, wrapChar,wrapType, header.length(), forceLineBreak, this.optimalLineLength, this.customMaximumLineLength);
+		writeBlock(writer, firstLineHeader, header, block, wrapChar,wrapType, header.length(), forceLineBreak, this.optimalLineLength, this.maximumLineLength);
 	}
 
 	public static void writeBlock(Writer writer, String firstLineHeader,
-			String header, String block, WrapChar wrapChar, WrapType wrapType, int headerLength, boolean forceBreak, Integer optimalLineLength, Integer customMaxLineLength) throws IOException {
+			String header, String block, WrapChar wrapChar, WrapType wrapType, int headerLength, boolean forceBreak, Integer optimalLineLength, Integer maximumLineLength) throws IOException {
 
 		// Subtract header length from the optimal line length.
 		optimalLineLength = optimalLineLength == null ? getDefaultOptimalLineLength(wrapType) - headerLength: optimalLineLength- headerLength;
 		// Subtract header length from the maximum line length.
-		int maxLineLength = customMaxLineLength == null? MAXIMUM_LINE_LENGTH - headerLength : customMaxLineLength - headerLength;
+		int maxLineLength = maximumLineLength == null? MAXIMUM_LINE_LENGTH - headerLength : maximumLineLength - headerLength;
 
 		int remainingLineLength = block.length();
 
@@ -230,7 +230,7 @@ public abstract class FlatFileWriter {
 		this.optimalLineLength = optimalLineLength;
 	}
 
-	public void setCustomMaximumLineLength(Integer customMaximumLineLength) {
-		this.customMaximumLineLength = customMaximumLineLength;
+	public void setMaximumLineLength(Integer maximumLineLength) {
+		this.maximumLineLength = maximumLineLength;
 	}
 }
