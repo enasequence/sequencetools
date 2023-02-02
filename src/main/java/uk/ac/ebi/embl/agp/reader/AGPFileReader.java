@@ -12,7 +12,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -112,10 +112,9 @@ public class AGPFileReader extends FlatFileEntryReader
 		}
 		else
 		{
-			String object_name=StringUtils.removeEnd(fields[OBJECT].replaceAll("\\s", ""),";");
-			entry.setSubmitterAccession(object_name);
-			agpRow.setObject(object_name);
-			
+			String submitterAccession = SubmitterAccessionFix.fix(fields[OBJECT]);
+			entry.setSubmitterAccession(submitterAccession);
+			agpRow.setObject(submitterAccession);
 		}
 	
 		// OBJECT_BEG
@@ -256,7 +255,8 @@ public class AGPFileReader extends FlatFileEntryReader
 			}
 			else
 			{
-				agpRow.setComponent_id(EntryNameFix.getFixedEntryName(StringUtils.removeEnd(fields[COMPONENT_ID].replaceAll("\\s", ""),";")));
+				String submitterAccession = SubmitterAccessionFix.fix(fields[COMPONENT_ID]);
+				agpRow.setComponent_id(submitterAccession);
 			}
 			
 			// COMPONENT_BEG

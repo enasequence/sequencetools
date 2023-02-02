@@ -30,7 +30,6 @@ import java.util.List;
 @Description("Entryname has been fixed from \"{0}\" to \"{1}\"")
 public class AccessionFix extends EntryValidationCheck {
 
-	private final static String FIX_ID = "SubmitterAccessionFix";
 	private final static String REMOVE_MASTER_ACCESSION_FIX = "MaterAccessionRemovalFix";
 
 	public AccessionFix() {
@@ -40,13 +39,6 @@ public class AccessionFix extends EntryValidationCheck {
 		result = new ValidationResult();
 		if(entry == null)
 			return result;
-		if(entry.getSubmitterAccession() != null) {
-			String entryName = EntryNameFix.getFixedEntryName(entry.getSubmitterAccession());
-			if (!entryName.equals(entry.getSubmitterAccession())) {
-				entry.setSubmitterAccession(entryName);
-				reportMessage(Severity.FIX, entry.getOrigin(), FIX_ID, entryName, entry.getSubmitterAccession());
-			}
-		}
 		if (entry.getSecondaryAccessions() != null) {
 			List<Text> masterAccnsToRemove = new ArrayList<>();
 			for (Text accn : entry.getSecondaryAccessions()) {

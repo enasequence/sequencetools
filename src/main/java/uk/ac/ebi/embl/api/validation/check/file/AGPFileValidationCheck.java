@@ -24,7 +24,6 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -90,7 +89,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 				Entry entry = reader.getEntry();
 				origin = entry.getOrigin();
-				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 
 				//set validation scope and collect unplacedEntries
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
@@ -187,7 +185,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 					if(result.isValid())
 					{
 						Entry entry = reader.getEntry();
-						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 						addAgpEntryName(entry.getSubmitterAccession().toUpperCase());
 
 						for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {

@@ -5,11 +5,9 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -53,16 +51,8 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 
 				Entry entry = entryReader.getEntry();
 				if (entry.getSequence() == null || entry.getSequence().getSequenceByte() == null) {
-					if (entry.getSubmitterAccession() == null) {
-						if (entry.getPrimarySourceFeature() == null || entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME) == null) {
-							entry.setSubmitterAccession(entry.getPrimaryAccession());
-						} else {
-							entry.setSubmitterAccession(entry.getPrimarySourceFeature().getSingleQualifierValue(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME));
-						}
-					}
-					entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 					if(StringUtils.isBlank(entry.getSubmitterAccession())) {
-						throw new ValidationEngineException("Entry name can not be null for annotation entry.");
+						throw new ValidationEngineException("Missing submitter sequence name for annotation only entry.");
 					}
 					entry.setDataClass(getDataclass(entry.getSubmitterAccession()));
 					getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));

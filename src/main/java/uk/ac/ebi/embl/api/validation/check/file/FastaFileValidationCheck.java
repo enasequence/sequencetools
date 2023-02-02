@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.fixer.entry.EntryNameFix;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -87,12 +86,8 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				Entry entry = reader.getEntry();
 
 				origin=entry.getOrigin();
-				entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getSubmitterAccession()));
 				if(getOptions().context.get()==Context.genome)
 				{
-					if (entry.getSubmitterAccession() == null) {
-						entry.setSubmitterAccession(EntryNameFix.getFixedEntryName(entry.getPrimaryAccession()));
-					}
 					getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
 					collectContigInfo(entry);
 				}

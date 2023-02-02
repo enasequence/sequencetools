@@ -462,18 +462,7 @@ public abstract class FileValidationCheck {
 	protected void collectContigInfo(Entry entry) throws Exception {
 		try {
 			if (entry.getSubmitterAccession() == null)
-				entry.setSubmitterAccession(entry.getPrimaryAccession());
-			if (entry.getSubmitterAccession() == null)
-				throw new ValidationEngineException("Submitter accession missing for an entry");
-			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase()))
-			if (entry.getSubmitterAccession() == null) {
-				if(entry.getPrimaryAccession() == null) {
-					throw new ValidationEngineException("Both submitter accession and primary accession missing for an entry");
-				} else {
-					entry.setSubmitterAccession(entry.getPrimaryAccession());
-				}
-			}
-
+				throw new ValidationEngineException("Submitter sequence name missing for an entry");
 			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) {
 				return;
 			}

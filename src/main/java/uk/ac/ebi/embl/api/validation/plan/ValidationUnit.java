@@ -1,7 +1,7 @@
 package uk.ac.ebi.embl.api.validation.plan;
 
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.entries.Entry_NameCheck;
+import uk.ac.ebi.embl.api.validation.check.entries.NonUniqueSubmitterAccessionCheck;
 import uk.ac.ebi.embl.api.validation.check.entry.*;
 import uk.ac.ebi.embl.api.validation.check.feature.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.ChromosomeListChromosomeLocationCheck;
@@ -66,7 +66,8 @@ public enum ValidationUnit
 				),
 	        SEQUENCE_ENTRY_CHECKS
 	        (
-	        		Entry_NameCheck.class,//exclude for master and include for assemblies
+	        		NonUniqueSubmitterAccessionCheck.class,//exclude for master and include for assemblies
+					SubmitterAccessionCheck.class,//exclude for master
 					AssemblySecondarySpanCheck.class,//exclude for all assemblies
 					DataclassCheck.class,//exclude for assembly master 
 					KWCheck.class,//exclude for assembly master
@@ -148,7 +149,6 @@ public enum ValidationUnit
 					AGPValidationCheck.class,//exclude for master
 					AsciiCharacterCheck.class,//include for all
 					NCBIQualifierCheck.class,//exclude for master
-					EntryNameExistsCheck.class,//exclude for master
 	        		LocustagExistsCheck.class,//exclude for master
 	        		AssemblyLevelDataclassCheck.class,//exclude for master
 	        		AssemblyTopologyCheck.class,//exclude for master
