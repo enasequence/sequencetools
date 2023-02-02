@@ -29,8 +29,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
-import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 @Description("/locus_tag  must exist for annotated contigs/scaffolds/chromosomes")
 @ExcludeScope(validationScope={ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
@@ -66,8 +65,8 @@ public class LocustagExistsCheck extends EntryValidationCheck {
 		   if(entry.getPrimarySourceFeature()!=null)
 		   {
 		   String scientificName=entry.getPrimarySourceFeature().getScientificName();
-           TaxonHelper taxonHelper=getEmblEntryValidationPlanProperty().taxonHelper.get();
-           if(taxonHelper.isChildOf(scientificName, "Viruses"))
+           TaxonomyClient taxonClient=getEmblEntryValidationPlanProperty().taxonClient.get();
+           if(taxonClient.isChildOf(scientificName, "Viruses"))
         	   return result;
 		   }
 		if(SequenceEntryUtils.hasAnnotation(entry)&&!SequenceEntryUtils.isQualifierAvailable(Qualifier.LOCUS_TAG_QUALIFIER_NAME, entry))

@@ -39,8 +39,8 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class EntryProjectIdCheckTest {
 
@@ -49,7 +49,7 @@ public class EntryProjectIdCheckTest {
 	FeatureFactory featureFactory;
 	Feature feature;
 	Qualifier qualifier;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonomyClient;
 	private SourceFeature source;
 	EmblEntryValidationPlanProperty property;
 	EntryDAOUtils entryDAOUtils;
@@ -59,10 +59,10 @@ public class EntryProjectIdCheckTest {
 		ValidationMessageManager
 				.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		check = new EntryProjectIdCheck();
-		taxonHelper = createMock(TaxonHelper.class);
+		taxonomyClient = createMock(TaxonomyClient.class);
 		property=new EmblEntryValidationPlanProperty();
 		check1 = new EntryProjectIdCheck();
-		property.taxonHelper.set(taxonHelper);
+		property.taxonClient.set(taxonomyClient);
 		property.validationScope.set(ValidationScope.EMBL);
 		check1.setEmblEntryValidationPlanProperty(property);
 		check.setEmblEntryValidationPlanProperty(property);
@@ -95,9 +95,9 @@ public class EntryProjectIdCheckTest {
 		source.setSingleQualifierValue("organism", "abcdef");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-		expect(taxonHelper.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+		expect(taxonomyClient.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
+		expect(taxonomyClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		replay(taxonomyClient);
 		ValidationResult result = check1.check(entry);
 		assertTrue(result.isValid());
 		
@@ -113,10 +113,10 @@ public class EntryProjectIdCheckTest {
 		source.setSingleQualifierValue("organism", "Bacteria");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-		expect(taxonHelper.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Bacteria", "Viruses")).andReturn(Boolean.FALSE);
-		replay(taxonHelper);
+		expect(taxonomyClient.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
+		expect(taxonomyClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonomyClient.isChildOf("Bacteria", "Viruses")).andReturn(Boolean.FALSE);
+		replay(taxonomyClient);
 		ValidationResult result = check1.check(entry);
 		assertTrue(!result.isValid());
 		
@@ -131,10 +131,10 @@ public class EntryProjectIdCheckTest {
 		source.setSingleQualifierValue("organism", "Bacteria");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-		expect(taxonHelper.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Bacteria", "Viruses")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+		expect(taxonomyClient.isOrganismValid("abcdef")).andReturn(Boolean.FALSE);
+		expect(taxonomyClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonomyClient.isChildOf("Bacteria", "Viruses")).andReturn(Boolean.TRUE);
+		replay(taxonomyClient);
 		ValidationResult result = check1.check(entry);
 		assertTrue(result.isValid());
 		

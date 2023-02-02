@@ -86,7 +86,7 @@ public class OrganismAndRequiredQualifierCheck extends FeatureValidationCheck {
         }
 
         for (String expectedOrganism : expectedOrganisms) {
-            if (getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organism, expectedOrganism)) {
+            if (getEmblEntryValidationPlanProperty().taxonClient.get().isChildOf(organism, expectedOrganism)) {
                 reportMessage(severity, sourceFeature.getOrigin(), MESSAGE_ID, Utils.paramArrayToString(requiredQualifiers), expectedOrganism);
             }
         }

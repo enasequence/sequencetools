@@ -36,15 +36,15 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class OrganismAndPermittedQualifierCheckTest {
 
 	private Entry entry;
 	private SourceFeature source;
 	private OrganismAndPermittedQualifierCheck check;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonClient;
 	EntryFactory entryFactory;
 	FeatureFactory featureFactory;
 	EmblEntryValidationPlanProperty property;
@@ -57,8 +57,8 @@ public class OrganismAndPermittedQualifierCheckTest {
 		entry=entryFactory.createEntry();
 		property=new EmblEntryValidationPlanProperty();
 		source=featureFactory.createSourceFeature();
-		taxonHelper = createMock(TaxonHelper.class);
-		property.taxonHelper.set(taxonHelper);
+		taxonClient = createMock(TaxonomyClient.class);
+		property.taxonClient.set(taxonClient);
 		DataRow dataRow = new DataRow("virion", "Viruses,Viroids");
         GlobalDataSets.addTestDataSet(GlobalDataSetFile.ORG_PERMITTED_QUALIFIER, dataRow);
 		check = new OrganismAndPermittedQualifierCheck();
@@ -110,12 +110,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Bacteria");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-		expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Bacteria", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
-		replay(taxonHelper);
+		expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Bacteria", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.FALSE);
+		expect(taxonClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
+		expect(taxonClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
+		replay(taxonClient);
 
 		ValidationResult result = check.check(entry);
 		assertEquals(1, result.count("OrganismAndPermittedQualifierCheck3", Severity.ERROR));
@@ -126,12 +126,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Deltavirus");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.FALSE);
-		replay(taxonHelper);	
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.FALSE);
+		expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.FALSE);
+		replay(taxonClient);	
 		
 		assertTrue(check.check(entry).isValid());
 	}
@@ -141,12 +141,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Bacteria");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Bacteria", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
-		expect(taxonHelper.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
-		replay(taxonHelper);		
+        expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Bacteria", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.FALSE);
+		expect(taxonClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
+		expect(taxonClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
+		replay(taxonClient);		
 
 		ValidationResult result = check.check(entry);
 		Collection<ValidationMessage<Origin>> messages = result.getMessages(
@@ -164,12 +164,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Deltavirus");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
+		replay(taxonClient);
 		property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
 		check.setEmblEntryValidationPlanProperty(property);
 		ValidationResult result = check.check(entry);
@@ -184,12 +184,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Deltavirus");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
+		replay(taxonClient);
 		property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
 		check.setEmblEntryValidationPlanProperty(property);		ValidationResult result = check.check(entry);
 		assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size()==0);
@@ -204,12 +204,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Deltavirus");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
+		replay(taxonClient);
 		property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
 		check.setEmblEntryValidationPlanProperty(property);		ValidationResult result = check.check(entry);
 		assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size()==1);
@@ -225,12 +225,12 @@ public class OrganismAndPermittedQualifierCheckTest {
 		source.setSingleQualifierValue("organism", "Deltavirus");
 		source.setSingleQualifier("virion");
 		entry.addFeature(source);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-        expect(taxonHelper.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
-		expect(taxonHelper.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
-		replay(taxonHelper);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+        expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOfAny("Deltavirus", new String[]{"Viruses", "Viroids"})).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
+		expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
+		replay(taxonClient);
 		property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
 		check.setEmblEntryValidationPlanProperty(property);		ValidationResult result = check.check(entry);
 		assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size()==1);

@@ -87,15 +87,15 @@ public class OrganismAndPermittedQualifierCheck extends EntryValidationCheck {
                 continue;
             }
 
-            if (getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(organism) && !getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOfAny(organism, organisms)) {
+            if (getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismValid(organism) && !getEmblEntryValidationPlanProperty().taxonClient.get().isChildOfAny(organism, organisms)) {
             	reportError(source.getOrigin(),MESSAGE_ID_2 , organism , Utils.paramArrayToString(organisms),permittedQualifier, Utils.paramArrayToString(organisms));
                 }
             
         }
 		if (organismQualifier != null
-				&& getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismValid(organismQualifier.getValue())
-				&& (getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organismQualifier.getValue(),"Bacteria")
-				|| getEmblEntryValidationPlanProperty().taxonHelper.get().isChildOf(organismQualifier.getValue(),"Archaea"))
+				&& getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismValid(organismQualifier.getValue())
+				&& (getEmblEntryValidationPlanProperty().taxonClient.get().isChildOf(organismQualifier.getValue(),"Bacteria")
+				|| getEmblEntryValidationPlanProperty().taxonClient.get().isChildOf(organismQualifier.getValue(),"Archaea"))
 				&& getEmblEntryValidationPlanProperty().validationScope.get().equals(ValidationScope.EMBL_TEMPLATE)) {
 
 			List<Qualifier> geneQualifiers=SequenceEntryUtils.getQualifiers(Qualifier.GENE_QUALIFIER_NAME, entry);

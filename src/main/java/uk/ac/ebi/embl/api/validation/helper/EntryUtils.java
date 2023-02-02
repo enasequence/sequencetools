@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 
 public class EntryUtils
 {
@@ -294,6 +295,22 @@ public class EntryUtils
 		masterEntry.addKeyword(new Text("Third Party Data"));
 		masterEntry.addKeyword(new Text("TPA"));
 		masterEntry.addKeyword(new Text("TPA:assembly"));
+	}
+
+	public static boolean isGenome(ValidationScope scope){
+		return scope == ValidationScope.ASSEMBLY_MASTER ||
+				scope == ValidationScope.ASSEMBLY_CONTIG ||
+				scope == ValidationScope.ASSEMBLY_SCAFFOLD ||
+				scope == ValidationScope.ASSEMBLY_CHROMOSOME;
+	}
+
+	public static boolean isEnvironmentalSample(Entry entry){
+		return entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME) != null;
+	}
+
+	public static boolean isBinomialRequired(Entry entry, ValidationScope scope){
+		// If the scope is GENOME and sample is NOT environmental.
+		return	EntryUtils.isGenome(scope) && !EntryUtils.isEnvironmentalSample(entry);			
 	}
 
 }

@@ -42,10 +42,10 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.check.feature.CdsFeatureAminoAcidCheck;
 import uk.ac.ebi.embl.api.RepositoryException;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public class CdsTranslator {
@@ -224,7 +224,7 @@ public class CdsTranslator {
          * set up the translator with the details from the cds feature
          */
         try {
-            validationResult.append(configureFromFeature(cds, planProperty.taxonHelper.get(), entry));
+            validationResult.append(configureFromFeature(cds, planProperty.taxonClient.get(), entry));
         } catch (ValidationException e) {
             reportException(
                     validationResult,
@@ -297,7 +297,7 @@ public class CdsTranslator {
 
 
     public ValidationResult configureFromFeature(CdsFeature feature,
-                                                 TaxonHelper taxHelper, Entry entry) throws ValidationException
+                                                 TaxonomyClient taxonomyClient, Entry entry) throws ValidationException
     {
         ValidationResult validationResult = new ValidationResult();
         Integer featureTranslationTable = null;
@@ -313,11 +313,11 @@ public class CdsTranslator {
             Taxon taxon = null;
             if (sourceFeature.getTaxon().getTaxId() != null)
             {
-                taxon = taxHelper.getTaxonById(sourceFeature.getTaxon()
+                taxon = taxonomyClient.getTaxonByTaxid(sourceFeature.getTaxon()
                         .getTaxId());
             } else if (sourceFeature.getTaxon().getScientificName() != null)
             {
-                taxon = taxHelper.getTaxonByScientificName(sourceFeature
+                taxon = taxonomyClient.getTaxonByScientificName(sourceFeature
                         .getTaxon().getScientificName());
             }
 

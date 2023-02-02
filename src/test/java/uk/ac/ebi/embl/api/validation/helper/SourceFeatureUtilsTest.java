@@ -6,7 +6,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class SourceFeatureUtilsTest {
     public void constructSourceFeature() {
         String sampleId = "ERS4477947";
         SourceFeature source = new SourceFeatureUtils().constructSourceFeature(getSampleEntity(),
-                new TaxonHelperImpl(), getSampleInfo(sampleId));
+                new TaxonomyClient(), getSampleInfo(sampleId));
         assertEquals(7, source.getQualifiers().size());//6 from sample + organism qualifier
         assertEquals("2020-03-09", source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
         assertEquals("Spain:Valencia", source.getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME).getValue());

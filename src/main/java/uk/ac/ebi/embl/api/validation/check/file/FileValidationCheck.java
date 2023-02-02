@@ -43,8 +43,6 @@ import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.report.SubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -57,6 +55,7 @@ import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -83,7 +82,7 @@ public abstract class FileValidationCheck {
 
 	protected ConcurrentMap<String, AtomicLong> messageStats = null;
 
-	protected TaxonHelper taxonHelper= null;
+	protected TaxonomyClient taxonomyClient = null;
 	protected PrintWriter fixedFileWriter =null;
 
 	protected SharedInfo sharedInfo;
@@ -103,7 +102,7 @@ public abstract class FileValidationCheck {
 		this.sharedInfo = sharedInfo;
 
 		messageStats =  new ConcurrentHashMap<String, AtomicLong>();
-		taxonHelper =new TaxonHelperImpl();
+		taxonomyClient =new TaxonomyClient();
 		ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);	
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);		
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
@@ -551,7 +550,7 @@ public abstract class FileValidationCheck {
 						.findFirst();
 				if(chromosomeQualifierMap.isPresent())
 				{	
-					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue().setAndGetQualifiers(taxonHelper.isChildOf(
+					List<Qualifier> chromosomeQualifiers = chromosomeQualifierMap.get().getValue().setAndGetQualifiers(taxonomyClient.isChildOf(
 							sharedInfo.masterEntry
 									.getPrimarySourceFeature()
 									.getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME),

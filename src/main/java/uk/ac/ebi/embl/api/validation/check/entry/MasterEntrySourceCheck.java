@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 @Description("Multiple strain/isolate qualifiers are not allowed in Source feature"
 		+ "Organism name \"{0}\" is not submittable")
@@ -54,22 +55,21 @@ public class MasterEntrySourceCheck extends EntryValidationCheck {
 			reportError(entry.getPrimarySourceFeature().getOrigin(),MASTER_ENTRY_SOURCE_MESSAGE_ID);
 		}
 		
-		if(getEmblEntryValidationPlanProperty().taxonHelper.get()!=null)
+		if(getEmblEntryValidationPlanProperty().taxonClient.get()!=null)
 		{
-			boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(organism);
+			boolean binomialRequired = EntryUtils.isBinomialRequired(entry,getEmblEntryValidationPlanProperty().validationScope.get());
+			boolean isOrganismSubmittable=getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismSubmittable(organism,binomialRequired);
 			boolean isTaxidSubmittable=isOrganismSubmittable;
 			boolean isAnyNameSubmittable=false;
 			if(taxId!=null)		
-				isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+				isTaxidSubmittable=getEmblEntryValidationPlanProperty().taxonClient.get().isTaxidSubmittable(taxId,binomialRequired);
 			if(!isOrganismSubmittable&&!isTaxidSubmittable)
 			{
-				isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(organism);
+				isAnyNameSubmittable= getEmblEntryValidationPlanProperty().taxonClient.get().isAnyNameSubmittable(organism,binomialRequired);
 				 if(!isAnyNameSubmittable)
 				 reportError(entry.getOrigin(),MASTER_ENTRY_ORGANISM_MESSAGE_ID,organism);
 			}
-			
 		}
 		return result;
 	}
-
 }

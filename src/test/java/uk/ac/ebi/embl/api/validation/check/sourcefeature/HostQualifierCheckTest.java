@@ -17,18 +17,18 @@ package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
 import java.sql.SQLException;
 
+
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.check.sourcefeature.HostQualifierCheck;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,13 +38,13 @@ public class HostQualifierCheckTest
 	private HostQualifierCheck check;
 	private EmblEntryValidationPlanProperty planProperty;
 
-	@Before
+	@Before 
 	public void setUp() throws SQLException
 	{
 		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		check=new HostQualifierCheck();
 		planProperty=new EmblEntryValidationPlanProperty();
-		planProperty.taxonHelper.set(new TaxonHelperImpl());
+		planProperty.taxonClient.set(new TaxonomyClient());
 		check.setEmblEntryValidationPlanProperty(planProperty);
 		FeatureFactory featureFactory = new FeatureFactory();
 		source = featureFactory.createSourceFeature();

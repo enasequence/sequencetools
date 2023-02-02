@@ -13,8 +13,6 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
@@ -24,6 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
 import uk.ac.ebi.embl.flatfile.writer.embl.CCWriter;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
@@ -227,7 +226,7 @@ public class TemplateEntryProcessor {
     private void replaceOrganismToken(TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet) throws Exception {
         if (!templateContainsOrganismToken())
             return;
-        TaxonHelper taxonHelper=new TaxonHelperImpl();
+        TaxonomyClient taxonomyClient=new TaxonomyClient();
         String scientificName="";
         
         for (String fieldName: templateVariables.getTokenNames()) {
@@ -236,11 +235,11 @@ public class TemplateEntryProcessor {
                 
                 if (Utils.isValidTaxId(fieldValue)) {
                     // Check if the passed value is a valid taxId.
-                    Taxon taxon = taxonHelper.getTaxonById(Long.valueOf(fieldValue));
+                    Taxon taxon = taxonomyClient.getTaxonByTaxid(Long.valueOf(fieldValue));
                     scientificName = taxon!=null ? taxon.getScientificName() : "";
                 }else {
                     // Check if the passed value is a valid organismName.
-                    List<Taxon> taxonList = taxonHelper.getTaxonsByAnyName(fieldValue);
+                    List<Taxon> taxonList = taxonomyClient.getTaxonsByAnyName(fieldValue);
                     List<Taxon> submittableTaxonList=taxonList.stream().filter(taxon -> taxon.isSubmittable()).collect(Collectors.toList());
                     scientificName = !submittableTaxonList.isEmpty() ? submittableTaxonList.get(0).getScientificName() : "";
                 }
@@ -509,11 +508,11 @@ public class TemplateEntryProcessor {
     }
 
     private SourceFeature updateSourceFeature(SourceFeature sourceFeature,SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new SourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonHelperImpl(), sampleInfo);
+        return new SourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonomyClient(), sampleInfo);
     }
 
     public SourceFeature createSourceFeature(SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonHelperImpl(), sampleInfo);
+        return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
     }
 
     private SampleInfo getSampleInfo(Sample sample){

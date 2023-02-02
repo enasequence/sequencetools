@@ -36,8 +36,9 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +56,7 @@ public class AntiCodonTranslationCheckTest {
 	private Sequence sequence;
 	private SourceFeature source;
 	private CdsFeature cds;
-	private TaxonHelper taxonHelper;
+	private TaxonomyClient taxonClient;
 
 	@Before
 	public void setUp() throws SQLException {
@@ -65,9 +66,9 @@ public class AntiCodonTranslationCheckTest {
 		locationFactory = new LocationFactory();
 		sequenceFactory = new SequenceFactory();
 		check = new AntiCodonTranslationCheck();
-		taxonHelper = createMock(TaxonHelper.class);
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
-		property.taxonHelper.set(taxonHelper);
+		taxonClient = createMock(TaxonomyClient.class);
+		property.taxonClient.set(taxonClient);
 		check1 = new AntiCodonTranslationCheck();
 		check1.setEmblEntryValidationPlanProperty(property);
 		entry = entryFactory.createEntry();

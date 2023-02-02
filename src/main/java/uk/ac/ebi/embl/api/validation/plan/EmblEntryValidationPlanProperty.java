@@ -8,7 +8,7 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class EmblEntryValidationPlanProperty
 {
@@ -18,7 +18,7 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Boolean> isDevMode = new ValidationPlanProperty<>(false);
 	public final ValidationPlanProperty<Boolean> isFixMode = new ValidationPlanProperty<>(false);
 	public final ValidationPlanProperty<Integer> minGapLength = new ValidationPlanProperty<>(0);
-	public final ValidationPlanProperty<TaxonHelper> taxonHelper = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<TaxonomyClient> taxonClient = new ValidationPlanProperty<>(null);
 	public final ValidationPlanProperty<Boolean> isRemote=new ValidationPlanProperty<>(false);
 	public final ValidationPlanProperty<FileType> fileType=new ValidationPlanProperty<>(FileType.EMBL);
 	public final ValidationPlanProperty<String> analysis_id=new ValidationPlanProperty<>(null);

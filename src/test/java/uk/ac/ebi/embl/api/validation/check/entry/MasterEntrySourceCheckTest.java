@@ -25,14 +25,12 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelper;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class MasterEntrySourceCheckTest {
 
@@ -95,8 +93,8 @@ public class MasterEntrySourceCheckTest {
 	public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-		TaxonHelper taxonHelper= new TaxonHelperImpl();
-		property.taxonHelper.set(taxonHelper);
+		TaxonomyClient taxonClient= new TaxonomyClient();
+		property.taxonClient.set(taxonClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
 		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"dfgh");
@@ -112,8 +110,8 @@ public class MasterEntrySourceCheckTest {
 	public void testCheck_validSourcefeatureSubmittable() throws SQLException {
 		EmblEntryValidationPlanProperty property=new EmblEntryValidationPlanProperty();
 		property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
-		TaxonHelper taxonHelper= new TaxonHelperImpl();
-		property.taxonHelper.set(taxonHelper);
+		TaxonomyClient taxonClient= new TaxonomyClient();
+		property.taxonClient.set(taxonClient);
 		check.setEmblEntryValidationPlanProperty(property);
 		SourceFeature source= (new FeatureFactory()).createSourceFeature();
 		source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME,"dfgh");

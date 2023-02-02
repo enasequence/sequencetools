@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 import java.util.ArrayList;
@@ -87,15 +87,16 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID,source.getScientificName());
 			if(source!=null&&source.getScientificName()!=null)
 			{
-				boolean isOrganismSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismSubmittable(source.getScientificName());
+				boolean binomialRequired = EntryUtils.isBinomialRequired(entry,getEmblEntryValidationPlanProperty().validationScope.get());
+				boolean isOrganismSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismSubmittable(source.getScientificName(),binomialRequired);
 				boolean isTaxidSubmittable=isOrganismSubmittable;
 				boolean isAnyNameSubmittable=false;
 				Long taxId = source.getTaxId();
 				if(taxId!=null)		
-					isTaxidSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isTaxidSubmittable(taxId);
+					isTaxidSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isTaxidSubmittable(taxId,binomialRequired);
 				if(!isOrganismSubmittable && !isTaxidSubmittable)
 				{
-					isAnyNameSubmittable = getEmblEntryValidationPlanProperty().taxonHelper.get().isAnyNameSubmittable(source.getScientificName());
+					isAnyNameSubmittable = getEmblEntryValidationPlanProperty().taxonClient.get().isAnyNameSubmittable(source.getScientificName(),binomialRequired);
 					 if(!isAnyNameSubmittable)
 						 reportError(entry.getOrigin(),NOT_SUBMITTABLE_ORGANISM_MESSAGE_ID,source.getScientificName());
 				}
@@ -157,11 +158,11 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 				reportError(origin, MORE_THAN_ONE_METAGENOME_SOURCE);
 			}
 			String metegenomeSource = metagenomeSourceQual.get(0).getValue();
-			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(metegenomeSource);
+			List<Taxon> taxon = getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonsByScientificName(metegenomeSource);
 
 			if(metegenomeSource == null || !metegenomeSource.toLowerCase().contains("metagenome")
 					|| taxon == null || taxon.isEmpty() || taxon.get(0).getTaxId() == 408169L
-					|| !getEmblEntryValidationPlanProperty().taxonHelper.get().isOrganismMetagenome(metegenomeSource)) {
+					|| !getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismMetagenome(metegenomeSource)) {
 				reportError(origin, INVALID_METAGENOME_SOURCE, metegenomeSource);
 			}
 		}
@@ -199,7 +200,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
 	
 	public boolean isOrganismUnique(String scientificName)
     {
-		List<Taxon> taxons=getEmblEntryValidationPlanProperty().taxonHelper.get().getTaxonsByScientificName(scientificName);
+		List<Taxon> taxons=getEmblEntryValidationPlanProperty().taxonClient.get().getTaxonsByScientificName(scientificName);
 
     	if(taxons!=null&&taxons.size()>1)
         {

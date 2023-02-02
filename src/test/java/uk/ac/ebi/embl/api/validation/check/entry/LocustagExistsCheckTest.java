@@ -30,8 +30,8 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.helper.taxon.TaxonHelperImpl;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 import java.sql.SQLException;
 
@@ -46,7 +46,7 @@ public class LocustagExistsCheckTest {
 		EntryFactory entryFactory = new EntryFactory();
 		planProperty=new EmblEntryValidationPlanProperty();
 		planProperty.fileType.set(FileType.EMBL);
-		planProperty.taxonHelper.set(new TaxonHelperImpl());
+		planProperty.taxonClient.set(new TaxonomyClient());
 		entry = entryFactory.createEntry();
 		entry.setDataClass(Entry.WGS_DATACLASS);
 		check = new LocustagExistsCheck();
