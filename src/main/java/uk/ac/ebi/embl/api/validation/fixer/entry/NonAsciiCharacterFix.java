@@ -12,6 +12,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.UTF8ToAscii7Converter;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 
 /**
@@ -23,6 +24,8 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 @ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class NonAsciiCharacterFix extends EntryValidationCheck {
     private static final String ASCII_CHARACTER_FIX = "AsciiCharacterFix_1";
+
+    private final UTF8ToAscii7Converter converter = new UTF8ToAscii7Converter();
 
     public ValidationResult check(Entry entry) {
         result = new ValidationResult();
@@ -85,7 +88,7 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
     private void attemptFix(Text text) {
         if (text != null && text.getText() != null) {
             if (Utils.hasNonAscii(text.getText())) {
-                String fixed = Utils.convertToAscii(text.getText());
+                String fixed = converter.convert(text.getText());
                 if (!fixed.equals(text.getText())) {
                     text.setText(fixed);
                     reportMessage(Severity.FIX, text.getOrigin(), ASCII_CHARACTER_FIX, text.getText(), fixed);
@@ -96,7 +99,7 @@ public class NonAsciiCharacterFix extends EntryValidationCheck {
 
     private String fixedStr(String str) {
         if (Utils.hasNonAscii(str)) {
-            return Utils.convertToAscii(str);
+            return converter.convert(str);
         }
         return str;
     }
