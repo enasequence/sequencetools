@@ -1,38 +1,55 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
-
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class UTF8ToAscii7ConverterTest {
 
     private final UTF8ToAscii7Converter converter = new UTF8ToAscii7Converter();
 
     @Test
-    public void convertUTF8() {
+    public void testUTF8Conversion() {
         // Remove diacritics
-        Assert.assertEquals("olivia", converter.convert("ölivia"));
-        Assert.assertEquals("Rafael", converter.convert("Ráfáél"));
-        Assert.assertEquals("This is a funny String", converter.convert("Tĥïŝ ĩš â fůňnŷ Šťŕĭńġ"));
-
-        // Replace non-printable ascii characters with ?
-        Assert.assertEquals("M?kki B", converter.convert("Mύkki B"));
-        Assert.assertEquals("unknown  ??? character", converter.convert("unknown  ��� character"));
-        Assert.assertEquals("?upp", converter.convert("∆upp"));
-        Assert.assertEquals("11?cu", converter.convert("11Φcu"));
+        assertEquals("olivia", converter.convert("ölivia"));
+        assertEquals("Rafael", converter.convert("Ráfáél"));
+        assertEquals("This is a funny String", converter.convert("Tĥïŝ ĩš â fůňnŷ Šťŕĭńġ"));
+        assertEquals("M?kki B", converter.convert("Mύkki B"));
+        assertEquals("???", converter.convert("���"));;
+        assertEquals("ou est ton esprit d'aventure", converter.convert("où est ton esprit d'aventure"));
+        assertEquals("Wer sieht die Stabe vorubergehen?", converter.convert("Wer sieht die Stäbe vorübergehen?"));
+        assertEquals("??? ???? ??? ???????????", converter.convert("где твой дух приключений"));
+        assertEquals("????", converter.convert("شوبو"));
+        assertEquals("????????????", converter.convert("母语教师领衔在线直播课程"));
     }
 
     @Test
-    public void convertAscii() {
-        for (char c = 0; c <= 255; c++) {
-            if (Integer.valueOf(c) < ' ' || c > '~') {
-                //      if (Integer.valueOf(c) < 32 /* space */ || Integer.valueOf(c) > 126 /* ~ */ ) {
-                // Replace non-printable ascii characters with ?
-                Assert.assertEquals("Character: " + Integer.valueOf(c), "?", String.valueOf(c));
-            } else {
-                // Printable ASCII7 character
-                Assert.assertEquals("Character: " + Integer.valueOf(c), String.valueOf(c), converter.convert(String.valueOf(c)));
-            }
+    public void testAscii7ValidRangeConversion() {
+        String str = "  \" !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"";
+        assertEquals(str, converter.convert(str));
+    }
+
+    @Test
+    public void testAscii8ValidRangeConversion() {
+        String expected = "AAAAAAACEEEEIIIIENOOOOO?OUUUUY?saaaaaaaceeeeiiiienooooo?ouuuuypy";
+        String str = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+        assertEquals(expected, converter.convert(str));
+    }
+
+
+    @Test
+    public void testAscii7InvalidRangeConversion() {
+        for (char c = 0; c < ' '; c++) {
+            assertEquals("?", converter.convert(String.valueOf(c)));
+        }
+        char del = 0x7F;
+        assertEquals("?", converter.convert(String.valueOf(del)));
+    }
+
+    @Test
+    public void testAscii8InvalidRangeConversion() {
+        for (char c = '€'; c <= 'À'; c++) {
+            assertEquals("?", converter.convert(String.valueOf(c)));
         }
     }
 }
