@@ -55,10 +55,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		Origin origin =null;
 		ConcurrentMap annotationMap = null;
 		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
-			if (getAnnotationDB() == null) {
+			if (sharedInfo.annotationDB == null) {
 				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
 			} else {
-				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+				annotationMap = sharedInfo.annotationDB.hashMap("map").createOrOpen();
 			}
 		}
 		try(BufferedReader fileReader= CommonUtil.bufferedReaderFromFile(submissionFile.getFile());
@@ -158,8 +158,6 @@ public class AGPFileValidationCheck extends FileValidationCheck
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
 			throw new ValidationEngineException(e.getMessage(), e);
-		} finally {
-			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 		}
 		if(validationResult.isValid())
 	        registerAGPfileInfo();
@@ -189,10 +187,10 @@ public class AGPFileValidationCheck extends FileValidationCheck
 
 						for (AgpRow agpRow : entry.getSequence().getSortedAGPRows()) {
 							if (!agpRow.isGap()) {
-								if (agpRow.getComponent_id() != null && getComponentAGPRowsMapDB() != null) {
+								if (agpRow.getComponent_id() != null && sharedInfo.contigDB != null) {
 									//<componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
 									// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
-									ConcurrentMap<String, Object> componentAGPRowsMap = getComponentAGPRowsMapDB().hashMap("map", Serializer.STRING, getComponentAGPRowsMapDB().getDefaultSerializer()).createOrOpen();
+									ConcurrentMap<String, Object> componentAGPRowsMap = sharedInfo.contigDB.hashMap("map", Serializer.STRING, sharedInfo.contigDB.getDefaultSerializer()).createOrOpen();
 									List<AgpRow> agpRows = (List<AgpRow>) componentAGPRowsMap.get(agpRow.getComponent_id().toLowerCase());
 									if (agpRows == null) {
 										agpRows = new ArrayList<>();
@@ -213,17 +211,11 @@ public class AGPFileValidationCheck extends FileValidationCheck
 				result=reader.read();
 				}
 
-				if(getComponentAGPRowsMapDB()!=null)
-					getComponentAGPRowsMapDB().commit();
+				if(sharedInfo.contigDB!=null)
+					sharedInfo.contigDB.commit();
 			} catch(ValidationEngineException e) {
-				if(getComponentAGPRowsMapDB()!=null) {
-					getComponentAGPRowsMapDB().close();
-				}
 				throw e;
 			} catch(Exception e) {
-				if(getComponentAGPRowsMapDB()!=null) {
-					getComponentAGPRowsMapDB().close();
-				}
 				throw new ValidationEngineException(e);
 			}
 

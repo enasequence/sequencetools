@@ -2,7 +2,6 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -42,7 +41,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					new EmblEntryReader(fileReader, format, submissionFile.getFile().getName());
 			ValidationResult parseResult = entryReader.read();
 			validationResult.append(parseResult);
-			ConcurrentMap<String, Entry> map = (ConcurrentMap<String, Entry>) getAnnotationDB().hashMap("map").createOrOpen();
+			ConcurrentMap<String, Entry> annotationMap = (ConcurrentMap<String, Entry>) sharedInfo.annotationDB.hashMap("map").createOrOpen();
 			while (entryReader.isEntry()) {
 				if (!parseResult.isValid()) {
 					getReporter().writeToFile(getReportFile(submissionFile), parseResult);
@@ -60,7 +59,7 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 					appendHeader(entry);
 					addSubmitterSeqIdQual(entry);
 					if (entry.getSubmitterAccession() != null) {
-						map.put(entry.getSubmitterAccession().toUpperCase(), entry);
+						annotationMap.put(entry.getSubmitterAccession().toUpperCase(), entry);
 					}
 					parseResult = entryReader.read();
 					validationResult.append(parseResult);
@@ -75,10 +74,9 @@ public class AnnotationOnlyFlatfileValidationCheck extends FileValidationCheck
 		} catch (Exception e) {
 			throw new ValidationEngineException(e.getMessage(), e);
 		} finally {
-			if(getAnnotationDB() != null) {
-				getAnnotationDB().commit();
+			if(sharedInfo.annotationDB != null) {
+				sharedInfo.annotationDB.commit();
 			}
-			//closeMapDB(getAnnotationDB());
 		}
 		return validationResult;
 	}

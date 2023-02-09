@@ -20,8 +20,6 @@ import org.junit.Test;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
@@ -55,103 +53,6 @@ public class SubmitterAccessionCheckTest {
     public void setUp() {
         ValidationMessageManager
                 .addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
-    }
-
-    /**
-     * Test that check fixes the submitter accession.
-     */
-    @Test
-    public void testCheck_FromSubmitterAccession() throws Exception {
-        for (ValidationScope validationScope : ValidationScope.values()) {
-            TestValidationPlan validationPlan = testValidationPlan(validationScope);
-            EntryFactory entryFactory = new EntryFactory();
-            Entry entry = entryFactory.createEntry();
-            entry.setSubmitterAccession("___t e s t 1___");
-            ValidationResult result = validationPlan.execute(entry);
-            assertTrue(result.isValid());
-            if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME ||
-                    validationScope == ValidationScope.ASSEMBLY_SCAFFOLD ||
-                    validationScope == ValidationScope.ASSEMBLY_CONTIG ||
-                    validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
-                assertEquals("test1", entry.getSubmitterAccession());
-            } else {
-                assertEquals("___t e s t 1___", entry.getSubmitterAccession());
-            }
-        }
-    }
-
-    /**
-     * Test that check fixes and sets the submitter accession from the /submitter_seqid qualifier.
-     */
-    @Test
-    public void testCheck_FromSubmitterSeqId() throws Exception {
-        for (ValidationScope validationScope : ValidationScope.values()) {
-            TestValidationPlan validationPlan = testValidationPlan(validationScope);
-            EntryFactory entryFactory = new EntryFactory();
-            Entry entry = entryFactory.createEntry();
-            entry.addFeature(new FeatureFactory().createSourceFeature());
-            entry.getPrimarySourceFeature().addQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, "___t e s t 1___");
-            assertNull(entry.getSubmitterAccession());
-            ValidationResult result = validationPlan.execute(entry);
-            assertTrue(result.isValid());
-            if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME ||
-                    validationScope == ValidationScope.ASSEMBLY_SCAFFOLD ||
-                    validationScope == ValidationScope.ASSEMBLY_CONTIG ||
-                    validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
-                assertEquals("test1", entry.getSubmitterAccession());
-            } else {
-                // Current behaviour does not set the submitter accession
-                // from /submitter_seqid except for ENA sequences submitted
-                // through Webin.
-                //assertEquals("___t e s t 1___", entry.getSubmitterAccession());
-                assertNull(entry.getSubmitterAccession());
-            }
-        }
-    }
-
-    /**
-     * Test that the test does not fail if submitter accessions are consistent.
-     */
-    @Test
-    public void testCheck_Consistent() throws Exception {
-        for (ValidationScope validationScope : ValidationScope.values()) {
-            TestValidationPlan validationPlan = testValidationPlan(validationScope);
-            EntryFactory entryFactory = new EntryFactory();
-            Entry entry = entryFactory.createEntry();
-            entry.setSubmitterAccession("test1");
-            entry.addFeature(new FeatureFactory().createSourceFeature());
-            entry.getPrimarySourceFeature().addQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, "test1");
-            ValidationResult result = validationPlan.execute(entry);
-            assertTrue(result.isValid());
-            assertEquals("test1", entry.getSubmitterAccession());
-        }
-    }
-
-    /**
-     * Test that the test fails if submitter accessions are inconsistent.
-     */
-    @Test
-    public void testCheck_Inconsistent() throws Exception {
-        for (ValidationScope validationScope : ValidationScope.values()) {
-            TestValidationPlan validationPlan = testValidationPlan(validationScope);
-            EntryFactory entryFactory = new EntryFactory();
-            Entry entry = entryFactory.createEntry();
-            entry.setSubmitterAccession("test1");
-            entry.addFeature(new FeatureFactory().createSourceFeature());
-            entry.getPrimarySourceFeature().addQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, "test2");
-            ValidationResult result = validationPlan.execute(entry);
-            if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME ||
-                    validationScope == ValidationScope.ASSEMBLY_SCAFFOLD ||
-                    validationScope == ValidationScope.ASSEMBLY_CONTIG ||
-                    validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
-                assertFalse(result.isValid());
-                assertEquals(1, result.count("SubmitterAccessionCheck_3", Severity.ERROR));
-                assertEquals("test1", entry.getSubmitterAccession());
-            } else {
-                assertTrue(result.isValid());
-                assertEquals("test1", entry.getSubmitterAccession());
-            }
-        }
     }
 
     /**

@@ -87,11 +87,7 @@ public abstract class FileValidationCheck {
 
 	protected SharedInfo sharedInfo;
 
-	private  DB annotationDB = null;
 
-	// componentAGPRowsMapDB has just one ConcurrentHasMap <componentAGPRowsMap> is to group which component placed where. If one component(let's say contig1) contig is placed in multiple scaffolds,
-	// this map will contain all the scaffolds where that component(contig1) has been placed. K<contig1> V<all scaffolds in AGPROW format>
-	private DB componentAGPRowsMapDB =null;
 	public static final String contigFileName = "contigs.reduced.tmp";
 	public static final String scaffoldFileName = "scaffolds.reduced.tmp";
 	public static final String chromosomeFileName = "chromosome.flatfile.tmp";
@@ -145,22 +141,22 @@ public abstract class FileValidationCheck {
 		if(reportfilePath!=null)
 			Files.deleteIfExists(reportfilePath);
 	}
-	protected ValidationScope getValidationScope(String entryName1) throws ValidationEngineException
+	protected ValidationScope getValidationScope(String submitterAccession) throws ValidationEngineException
 	{
 		switch (options.context.get()) {
 			case genome:
-				final String entryNameUpper = entryName1.toUpperCase();
-				if (sharedInfo.chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(entryNameUpper))) {
-					if(sharedInfo.unlocalisedEntryNames.contains(entryNameUpper) ) {
+				String submitterAccessionUpper = submitterAccession.toUpperCase();
+				if (sharedInfo.chromosomeNameQualifiers.keySet().stream().anyMatch(s -> s.equalsIgnoreCase(submitterAccessionUpper))) {
+					if(sharedInfo.unlocalisedEntryNames.contains(submitterAccessionUpper) ) {
 						throw new ValidationEngineException("Sequence can not exist in both chromosome and unlocalised list");
 					}
 					return ValidationScope.ASSEMBLY_CHROMOSOME;
 				}
 
-				if (sharedInfo.agpEntryNames.contains(entryNameUpper)) {
-					if (!sharedInfo.unlocalisedEntryNames.contains(entryNameUpper)) {
+				if (sharedInfo.agpEntryNames.contains(submitterAccessionUpper)) {
+					if (!sharedInfo.unlocalisedEntryNames.contains(submitterAccessionUpper)) {
 
-						sharedInfo.unplacedEntryNames.add(entryNameUpper);
+						sharedInfo.unplacedEntryNames.add(submitterAccessionUpper);
 					}
 					return ValidationScope.ASSEMBLY_SCAFFOLD;
 				} else {
@@ -206,7 +202,7 @@ public abstract class FileValidationCheck {
 
 
 	// TODO: Genome length check should be generic given the tax id for all species with known expected genome length.
-	public void validateCovid19GenomeSize() throws ValidationEngineException {
+	public static void validateCovid19GenomeSize(SharedInfo sharedInfo) throws ValidationEngineException {
 		if (sharedInfo.assemblyType != null && sharedInfo.assemblyType.equalsIgnoreCase(AssemblyType.COVID_19_OUTBREAK.getValue())) {
 
 			long genomeSize = GenomeUtils.calculateGenomeSize(sharedInfo.sequenceInfo, sharedInfo.agpPlacedComponents);
@@ -217,7 +213,7 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	public void validateDuplicateEntryNames() throws ValidationEngineException
+	public static void validateDuplicateEntryNames(SharedInfo sharedInfo) throws ValidationEngineException
 	{
 		if(sharedInfo.duplicateEntryNames.size()>0)
 		{
@@ -225,12 +221,12 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	public void validateSequencelessChromosomes() throws ValidationEngineException
+	public static void validateSequencelessChromosomes(SharedInfo sharedInfo) throws ValidationEngineException
 	{
 		List<String> sequencelessChromosomes =new ArrayList<String>();
 		for(String chromosomeName: sharedInfo.chromosomeNameQualifiers.keySet())
 			{
-				if(!hasSequenceInfo(chromosomeName))
+				if(!hasSequenceInfo(chromosomeName, sharedInfo))
 				{
 					sequencelessChromosomes.add(chromosomeName);
 				}
@@ -240,7 +236,7 @@ public abstract class FileValidationCheck {
 
 	}
 
-	public void verifyUnlocalisedObjectNames() throws ValidationEngineException {
+	public static void verifyUnlocalisedObjectNames(SharedInfo sharedInfo) throws ValidationEngineException {
 		if( sharedInfo.unlocalisedEntryNames.size() > 0) {
 			return;
 		}
@@ -251,7 +247,7 @@ public abstract class FileValidationCheck {
 			}
 		}
 	}
-	public String getDataclass(String entryName)
+	public String getDataclass(String submitterAccession)
 	{
 		String dataclass=null;
 		switch(getOptions().context.get())
@@ -276,7 +272,7 @@ public abstract class FileValidationCheck {
 				dataclass= Entry.CON_DATACLASS;
 				break;
 			case EMBL:
-				if(entryName!=null&& sharedInfo.agpEntryNames.contains(entryName.toUpperCase()))
+				if(submitterAccession!=null && sharedInfo.agpEntryNames.contains(submitterAccession.toUpperCase()))
 					dataclass= Entry.CON_DATACLASS;
 				switch(getOptions().getEntryValidationPlanProperty().validationScope.get())
 				{
@@ -460,7 +456,6 @@ public abstract class FileValidationCheck {
 	}
 
 	protected void collectContigInfo(Entry entry) throws Exception {
-		try {
 			if (entry.getSubmitterAccession() == null)
 				throw new ValidationEngineException("Submitter sequence name missing for an entry");
 			if (!sharedInfo.agpEntryNames.isEmpty() && sharedInfo.agpEntryNames.contains(entry.getSubmitterAccession().toUpperCase())) {
@@ -473,8 +468,8 @@ public abstract class FileValidationCheck {
 			// scaff1 contig1 1-100 : contig1 is placed in  scaff1 &  scaff2. We are setting sequence for scaff1 &  scaff2
 			// scaff2 contig1 300-500
 			// scaff3 scaff1 1-300 : currently we are not setting seq to it bcoz scaff1 is not part of fasta/flatfile
-			if (getComponentAGPRowsMapDB() != null && entry.getSubmitterAccession() != null) {
-				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
+			if (sharedInfo.contigDB != null && entry.getSubmitterAccession() != null) {
+				ConcurrentMap<String, List<AgpRow>> contigMap = (ConcurrentMap<String, List<AgpRow>>) sharedInfo.contigDB.hashMap("map").createOrOpen();
 				List<AgpRow> agpRows = contigMap.get(entry.getSubmitterAccession().toLowerCase());
 				if (agpRows != null) {
 					for (AgpRow agpRow : agpRows) {
@@ -488,12 +483,6 @@ public abstract class FileValidationCheck {
 					contigMap.put(entry.getSubmitterAccession().toLowerCase(), agpRows);
 				}
 			}
-
-		} catch (Exception e) {
-			if (getComponentAGPRowsMapDB() != null)
-				getComponentAGPRowsMapDB().close();
-			throw e;
-		}
 	}
 
 	protected void addAgpEntryName(String entryName) throws ValidationEngineException {
@@ -617,7 +606,7 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	public  boolean isGenbank(File f) throws ValidationEngineException {
+	public static boolean isGenbank(File f) throws ValidationEngineException {
 		try(BufferedReader br = CommonUtil.bufferedReaderFromFile(f)) {
 			String line;
 			if((line = br.readLine()) != null){
@@ -629,29 +618,6 @@ public abstract class FileValidationCheck {
 		return false;
 	}
 
-	public void setAnnotationDB(DB annotationDB)
-	{
-		this.annotationDB=annotationDB;
-	}
-
-	public DB getAnnotationDB()
-	{
-		return this.annotationDB;
-	}
-	public static void closeMapDB(DB ... dbs) {
-		for(DB db: dbs)
-		{
-			if(db != null)
-				db.close();
-		}
-	}
-	public DB getComponentAGPRowsMapDB() {
-		return componentAGPRowsMapDB;
-	}
-	public void setComponentAGPRowsMapDB(DB componentAGPRowsMapDB) {
-		this.componentAGPRowsMapDB = componentAGPRowsMapDB;
-	}
-	
 	boolean validateFileFormat(File file,uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType fileType) throws IOException
 	{  
 		String flat_file_token= "ID";
@@ -711,7 +677,7 @@ public abstract class FileValidationCheck {
 		}
 	
 
-	public boolean hasSequenceInfo(String entryName)
+	public static boolean hasSequenceInfo(String entryName, SharedInfo sharedInfo)
 	{
 		return sharedInfo.sequenceInfo.entrySet().stream().anyMatch(x->x.getKey().equalsIgnoreCase(entryName));
 
@@ -769,14 +735,14 @@ public abstract class FileValidationCheck {
 			ByteBuffer sequenceBuffer = ByteBuffer.wrap(new byte[Long.valueOf(conEntry.getSequence().getLength()).intValue()]);
 
 			ConcurrentMap contigMap =null;
-			if(getComponentAGPRowsMapDB()!=null) {
-				contigMap = getComponentAGPRowsMapDB().hashMap("map").createOrOpen();
+			if(sharedInfo.contigDB!=null) {
+				contigMap = sharedInfo.contigDB.hashMap("map").createOrOpen();
 			}
 
 			for (AgpRow sequencePlacedInCONEntry : conEntry.getSequence().getSortedAGPRows()) {
 				if (!sequencePlacedInCONEntry.isGap()) {
 					Object sequence;
-					if (sequencePlacedInCONEntry.getComponent_id() != null && getComponentAGPRowsMapDB() != null) {
+					if (sequencePlacedInCONEntry.getComponent_id() != null && sharedInfo.contigDB != null) {
 						//Component can be a contig/scaffold, single contig(component) can be placed in multiple agp objects(scaffold/chromosomes)
 						Object allPlacementOfCurrentlyPlacedSequence = contigMap.get(sequencePlacedInCONEntry.getComponent_id().toLowerCase());
 						if (allPlacementOfCurrentlyPlacedSequence != null) {
@@ -818,11 +784,10 @@ public abstract class FileValidationCheck {
 				contigMap.put(conEntry.getSubmitterAccession().toLowerCase(), agpRows);
 			}
 
-			getComponentAGPRowsMapDB().commit();
+			sharedInfo.contigDB.commit();
 
 		}catch(Exception e)
 		{
-			closeMapDB(getComponentAGPRowsMapDB());
 			throw new ValidationEngineException(e);
 		}
 	}
@@ -848,7 +813,7 @@ public abstract class FileValidationCheck {
 		}
 	}
 
-	public boolean hasAnnotationFlatfile() throws ValidationEngineException {
+	public static boolean hasAnnotationOnlyFlatfile(SubmissionOptions options) throws ValidationEngineException {
 		for (SubmissionFile submissionFile : options.submissionFiles.get().getFiles(SubmissionFile.FileType.FLATFILE)) {
 			boolean isGenbankFile = isGenbank(submissionFile.getFile());
 			EmblEntryReader.Format format = options.context.get() == Context.genome ? EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT : EmblEntryReader.Format.EMBL_FORMAT;
@@ -875,6 +840,9 @@ public abstract class FileValidationCheck {
 	}
 
 	public static class SharedInfo {
+		public DB contigDB;
+		public DB annotationDB;
+
 		public Entry masterEntry =null;
 
 		public int sequenceCount = 0;
@@ -882,18 +850,18 @@ public abstract class FileValidationCheck {
 		public boolean hasAnnotationOnlyFlatfile = false;
 		public boolean hasAgp = false;
 
-		public HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>();
-		public List<String> chromosomeNames =new ArrayList<>();
-		public Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>();
-		public Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>();
-		public Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>();
-		public Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>();
-		public List<String> duplicateEntryNames = new ArrayList<>();
-		public HashSet<String> entryNames = new HashSet<>();
-		public Set<String> agpEntryNames =new HashSet<>();
-		public Set<String> agpPlacedComponents =new HashSet<>();
-		public Set<String> unplacedEntryNames =new HashSet<>();
-		public Set<String> unlocalisedEntryNames = new HashSet<>();
+		public final HashMap<String, ChromosomeEntry> chromosomeNameQualifiers = new HashMap<>(); // key is uppercase submitter accession
+		public final List<String> chromosomeNames =new ArrayList<>(); // key is uppercase submitter accessio
+		public final Map<String, AssemblySequenceInfo> sequenceInfo = new LinkedHashMap<>(); // key is uppercase submitter accessio
+		public final Map<String,AssemblySequenceInfo> fastaInfo = new LinkedHashMap<>(); // key is uppercase submitter accessio
+		public final Map<String,AssemblySequenceInfo> flatfileInfo = new LinkedHashMap<>(); // key is uppercase submitter accessio
+		public final Map<String,AssemblySequenceInfo> agpInfo = new LinkedHashMap<>(); // key is uppercase submitter accessio
+		public final List<String> duplicateEntryNames = new ArrayList<>(); // key is uppercase submitter accessio
+		public final HashSet<String> entryNames = new HashSet<>(); // key is uppercase submitter accessio
+		public final Set<String> agpEntryNames =new HashSet<>(); // key is uppercase submitter accessio
+		public final Set<String> agpPlacedComponents =new HashSet<>(); // key is uppercase submitter accessio
+		public final Set<String> unplacedEntryNames =new HashSet<>(); // key is uppercase submitter accessio
+		public final Set<String> unlocalisedEntryNames = new HashSet<>(); // key is uppercase submitter accessio
 		public PrintWriter contigsReducedFileWriter =null;
 		public PrintWriter scaffoldsReducedFileWriter =null;
 		public PrintWriter chromosomesFileWriter =null;

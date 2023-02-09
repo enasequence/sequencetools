@@ -54,10 +54,10 @@ public class FastaFileValidationCheck extends FileValidationCheck
 		ConcurrentMap annotationMap = null;
 		Origin origin =null;
 		if(sharedInfo.hasAnnotationOnlyFlatfile ) {
-			if (getAnnotationDB() == null) {
+			if (sharedInfo.annotationDB == null) {
 				throw new ValidationEngineException("Annotations are not parsed and stored in lookup db.", ValidationEngineException.ReportErrorType.SYSTEM_ERROR);
 			} else {
-				annotationMap = getAnnotationDB().hashMap("map").createOrOpen();
+				annotationMap = sharedInfo.annotationDB.hashMap("map").createOrOpen();
 			}
 		}
 
@@ -142,18 +142,16 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				validationResult.append(planResult);
 				sharedInfo.sequenceCount++;
 			}
-			if(getComponentAGPRowsMapDB()!=null)
+			if(sharedInfo.contigDB !=null)
 			{
-				getComponentAGPRowsMapDB().commit();
+				sharedInfo.contigDB.commit();
 			}
 		} catch (ValidationEngineException e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getAnnotationDB(), getComponentAGPRowsMapDB());
 			throw e;
 		}
 		catch (Exception e) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getAnnotationDB(), getComponentAGPRowsMapDB());
 			throw new ValidationEngineException(e.getMessage(), e);
 		}
 

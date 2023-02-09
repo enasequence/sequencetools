@@ -12,6 +12,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -51,6 +52,11 @@ public class AGPFileReader extends FlatFileEntryReader
 	private boolean hasNonSingletonAgp = false;
         
     protected int nextEntryLine = currentEntryLine;
+
+	@Override
+	protected void afterReadLines(ValidationResult validationResult) {
+		SubmitterAccessionFix.fix(getEntry());
+	}
 
 	@Override
 	public void readLines() throws IOException

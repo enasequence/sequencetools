@@ -41,15 +41,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck.*;
+
 public class SubmissionValidationPlan
 {
 	private final SubmissionOptions options;
 
-	private final FileValidationCheck.SharedInfo fileValidationCheckSharedInfo = new FileValidationCheck.SharedInfo();
+	private final FileValidationCheck.SharedInfo sharedInfo = new FileValidationCheck.SharedInfo();
 
 	FileValidationCheck check = null;
-	DB annotationDB =null;
-	DB contigDB =null;
     String fastaFlagFileName ="fasta.validated";
     String agpFlagFileName ="agp.validated";
     String flatfileFlagFileName ="flatfile.validated";
@@ -70,8 +70,8 @@ public class SubmissionValidationPlan
 		{
 			//TODO: check for a way to log INFO messages
 			options.init();
-			fileValidationCheckSharedInfo.hasAgp = options.submissionFiles.get().getFiles(FileType.AGP).size() > 0;
-			fileValidationCheckSharedInfo.assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
+			sharedInfo.hasAgp = options.submissionFiles.get().getFiles(FileType.AGP).size() > 0;
+			sharedInfo.assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
 			//Validation Order shouldn't be changed
 			if(options.context.get().getFileTypes().contains(FileType.MASTER))
 				createMaster();
@@ -80,10 +80,9 @@ public class SubmissionValidationPlan
 			if(options.context.get().getFileTypes().contains(FileType.UNLOCALISED_LIST))
 				validateUnlocalisedList();
 			if (options.context.get().getFileTypes().contains(FileType.AGP)) {
-				agpCheck = new AGPFileValidationCheck(options, fileValidationCheckSharedInfo);
-				if (fileValidationCheckSharedInfo.hasAgp) {
-					contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-					agpCheck.setComponentAGPRowsMapDB(contigDB);
+				agpCheck = new AGPFileValidationCheck(options, sharedInfo);
+				if (sharedInfo.hasAgp) {
+					sharedInfo.contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getcontigDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 					agpCheck.createContigDB();
 				}
 			}
@@ -118,18 +117,18 @@ public class SubmissionValidationPlan
 					return validationResult;
 			}
 
-			check.validateDuplicateEntryNames();
+			validateDuplicateEntryNames(sharedInfo);
 			if(Context.genome == options.context.get()) {
 				registerSequences();
-				check.validateCovid19GenomeSize();
-				check.validateSequencelessChromosomes();
-				check.verifyUnlocalisedObjectNames();
+				validateCovid19GenomeSize(sharedInfo);
+				validateSequencelessChromosomes(sharedInfo);
+				verifyUnlocalisedObjectNames(sharedInfo);
 
 				String assemblyType = options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
 				throwValidationResult(uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
 							options.ignoreErrors, getSequencecount(0), getSequencecount(1), getSequencecount(2), assemblyType));
 
-				if(!options.isWebinCLI && !FileValidationCheck.excludeDistribution(fileValidationCheckSharedInfo.assemblyType))
+				if(!options.isWebinCLI && !FileValidationCheck.excludeDistribution(sharedInfo.assemblyType))
 				{
 					writeUnplacedList();
 				}
@@ -151,7 +150,12 @@ public class SubmissionValidationPlan
 			}
 			throw e;
 		} finally {
-			FileValidationCheck.closeMapDB(contigDB, annotationDB);
+			if (sharedInfo.contigDB != null) {
+				sharedInfo.contigDB.close();
+			}
+			if (sharedInfo.annotationDB != null) {
+				sharedInfo.annotationDB.close();
+			}
 			if(check != null) {
 				check.flushAndCloseFileWriters();
 			}
@@ -160,7 +164,7 @@ public class SubmissionValidationPlan
 	}
 
 	public Set<String> getUnplacedEntryNames() {
-		return fileValidationCheckSharedInfo.unplacedEntryNames;
+		return sharedInfo.unplacedEntryNames;
 	}
 
 	private ValidationResult createMaster() throws ValidationEngineException
@@ -168,10 +172,10 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		try
 		{
-			masterCheck = new MasterEntryValidationCheck(options, fileValidationCheckSharedInfo);
+			masterCheck = new MasterEntryValidationCheck(options, sharedInfo);
 			if(options.processDir.isPresent()
 					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
-					&& fileValidationCheckSharedInfo.masterEntry != null ) {
+					&& sharedInfo.masterEntry != null ) {
 				return result;
 			}
 
@@ -198,7 +202,7 @@ public class SubmissionValidationPlan
          return result;
 		String fileName = null;
 		try {
-			check = new ChromosomeListFileValidationCheck(options, fileValidationCheckSharedInfo);
+			check = new ChromosomeListFileValidationCheck(options, sharedInfo);
 			for (SubmissionFile chromosomeListFile : options.submissionFiles.get().getFiles(FileType.CHROMOSOME_LIST)) {
 				fileName= chromosomeListFile.getFile().getName();
 				result = check.check(chromosomeListFile);
@@ -217,7 +221,7 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFasta() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		check = new FastaFileValidationCheck(options, fileValidationCheckSharedInfo);
+		check = new FastaFileValidationCheck(options, sharedInfo);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
 			return result;
 		String fileName=null;
@@ -226,11 +230,6 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile fastaFile : submissionFiles) {
 					fileName = fastaFile.getFile().getName();
-					if(fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
-					check.setAnnotationDB(annotationDB);
-					}
-					if (contigDB != null)
-						check.setComponentAGPRowsMapDB(contigDB);
 					result = check.check(fastaFile);
 					if (!result.isValid()) {
 						if (options.isWebinCLI)
@@ -251,7 +250,7 @@ public class SubmissionValidationPlan
 	private ValidationResult validateFlatfile() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		check = new FlatfileFileValidationCheck(options, fileValidationCheckSharedInfo);
+		check = new FlatfileFileValidationCheck(options, sharedInfo);
 		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
 			return result;
 		String fileName=null;
@@ -261,8 +260,6 @@ public class SubmissionValidationPlan
 			if(!submissionFiles.isEmpty()) {
 				for (SubmissionFile flatfile : submissionFiles) {
 					fileName = flatfile.getFile().getName();
-					if (contigDB != null)
-						check.setComponentAGPRowsMapDB(contigDB);
 					result = check.check(flatfile);
 					if (!result.isValid()) {
 						if (options.isWebinCLI)
@@ -314,7 +311,7 @@ public class SubmissionValidationPlan
 		String fileName=null;
 		try
 		{
-			check = new UnlocalisedListFileValidationCheck(options, fileValidationCheckSharedInfo);
+			check = new UnlocalisedListFileValidationCheck(options, sharedInfo);
 			for(SubmissionFile unlocalisedListFile:options.submissionFiles.get().getFiles(FileType.UNLOCALISED_LIST))
 			{	fileName= unlocalisedListFile.getFile().getName();
 				result = check.check(unlocalisedListFile);
@@ -333,22 +330,20 @@ public class SubmissionValidationPlan
 
 	private void registerSequences() throws ValidationEngineException
 	{
-		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
-		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
-		fileValidationCheckSharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
-		AssemblySequenceInfo.writeMapObject(fileValidationCheckSharedInfo.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
+		sharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.fastafileName));
+		sharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.flatfilefileName));
+		sharedInfo.sequenceInfo.putAll(AssemblySequenceInfo.getMapObject(options.processDir.get(), AssemblySequenceInfo.agpfileName));
+		AssemblySequenceInfo.writeMapObject(sharedInfo.sequenceInfo,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
 	private ValidationResult validateAnnotationOnlyFlatfile() throws ValidationEngineException {
 		String fileName = null;
 		ValidationResult result = new ValidationResult();
 		try {
-			check = new AnnotationOnlyFlatfileValidationCheck(options, fileValidationCheckSharedInfo);
-			fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile = check.hasAnnotationFlatfile();
-			if (fileValidationCheckSharedInfo.hasAnnotationOnlyFlatfile) {
-				annotationDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getAnnoationDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
-				check.setAnnotationDB(annotationDB);
-				agpCheck.setAnnotationDB(annotationDB);
+			check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
+			sharedInfo.hasAnnotationOnlyFlatfile = hasAnnotationOnlyFlatfile(options);
+			if (sharedInfo.hasAnnotationOnlyFlatfile) {
+				sharedInfo.annotationDB = DBMaker.fileDB(options.reportDir.get() + File.separator + getAnnoationDbname()).fileDeleteAfterClose().closeOnJvmShutdown().make();
 			} else {
 				return result;
 			}
@@ -356,7 +351,6 @@ public class SubmissionValidationPlan
 			for (SubmissionFile annotationOnlyFlatfile : options.submissionFiles.get().getFiles(FileType.FLATFILE)) {
 				fileName = annotationOnlyFlatfile.getFile().getName();
 				result = check.check(annotationOnlyFlatfile);
-				annotationDB = check.getAnnotationDB();
 				if (!result.isValid()) {
 					if (options.isWebinCLI)
 						throwValidationCheckException(FileType.ANNOTATION_ONLY_FLATFILE, annotationOnlyFlatfile);
@@ -375,7 +369,7 @@ public class SubmissionValidationPlan
 		ValidationResult result = new ValidationResult();
 		try
 		{
-			check = new TSVFileValidationCheck(options, fileValidationCheckSharedInfo);
+			check = new TSVFileValidationCheck(options, sharedInfo);
 			for(SubmissionFile tsvFile:options.submissionFiles.get().getFiles(FileType.TSV))
 			{
 				fileName = tsvFile.getFile().getName();
@@ -433,7 +427,7 @@ public class SubmissionValidationPlan
 
 	private long getSequencecount(int assemblyLevel)
 	{
-		return fileValidationCheckSharedInfo.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
+		return sharedInfo.sequenceInfo.values().stream().filter(p->p.getAssemblyLevel()==assemblyLevel).count();
 	}
 
 	private void writeUnplacedList() throws ValidationEngineException
@@ -447,7 +441,7 @@ public class SubmissionValidationPlan
 		}
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(options.processDir.get()+File.separator+"unplaced.txt")))
 		{
-			oos.writeObject(fileValidationCheckSharedInfo.unplacedEntryNames);
+			oos.writeObject(sharedInfo.unplacedEntryNames);
 
 		}catch(Exception e)
 		{
@@ -460,7 +454,7 @@ public class SubmissionValidationPlan
 		if(options.processDir.isPresent() && Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,AssemblySequenceInfo.sequencefileName))))
 			return;
 
-		AssemblySequenceInfo.writeObject(fileValidationCheckSharedInfo.sequenceCount,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
+		AssemblySequenceInfo.writeObject(sharedInfo.sequenceCount,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
 	}
 
 	private void flagValidation(FileType fileType) throws IOException
