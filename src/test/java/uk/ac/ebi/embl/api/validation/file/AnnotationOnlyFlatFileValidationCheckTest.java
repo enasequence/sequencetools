@@ -71,7 +71,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
-		check.setAnnotationDB(db);
+		sharedInfo.annotationDB = db;
 		assertTrue(check.check(file).isValid());
 		validateContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
 		db.close();
@@ -93,7 +93,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.init();
 		check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
-		check.setAnnotationDB(db);
+		sharedInfo.annotationDB = db;
 		assertTrue(check.check(file).isValid());
 
 		validateInvalidContig("valid_fastaforAnnotationOnly.txt",FileType.FASTA,db);
@@ -113,7 +113,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		options.locusTagPrefixes = Optional.of(new ArrayList<>(Collections.singletonList("SPLC1")));
 		check = new FastaFileValidationCheck(options, sharedInfo);
-		check.setAnnotationDB(db);
+		sharedInfo.annotationDB = db;
 
 		ValidationResult result = check.check(file);
 		assertFalse(result.isValid());
@@ -131,7 +131,6 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
 		options.context = Optional.of(Context.genome);
 		if(fileType==FileType.FASTA) {
 			check = new FastaFileValidationCheck(options, sharedInfo);
-			check.setAnnotationDB(db);
 		}
 		if(fileType==FileType.FLATFILE) {
 			check = new FlatfileFileValidationCheck(options, sharedInfo);

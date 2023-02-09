@@ -138,11 +138,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 		}catch(ValidationEngineException e)
 		{
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);
-			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 			throw e;
 		} catch (Exception ex) {
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, ex.getMessage(),origin);
-			closeMapDB(getComponentAGPRowsMapDB(), getAnnotationDB());
 			throw new ValidationEngineException(ex.getMessage(),ex);
 		}
 

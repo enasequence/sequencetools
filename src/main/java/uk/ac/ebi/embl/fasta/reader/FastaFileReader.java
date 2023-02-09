@@ -9,6 +9,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileEntryReader;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
@@ -35,6 +36,11 @@ public class FastaFileReader extends FlatFileEntryReader
 
     protected int currentEntryLine = 1;
     protected int nextEntryLine = currentEntryLine;
+
+	@Override
+	protected void afterReadLines(ValidationResult validationResult) {
+		SubmitterAccessionFix.fix(getEntry());
+	}
 
 	@Override
 	public void readLines() throws IOException

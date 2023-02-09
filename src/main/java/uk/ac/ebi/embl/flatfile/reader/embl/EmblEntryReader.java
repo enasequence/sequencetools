@@ -23,6 +23,8 @@ import java.util.List;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.*;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -97,8 +99,12 @@ EmblEntryReader extends EntryReader
 		addBlockReaders(format);
 	}
 
+	@Override
+	protected void afterReadLines(ValidationResult validationResult) {
+		SubmitterAccessionFix.fix(getEntry());
+	}
 
-    private void 
+	private void
     addBlockReaders( Format format )
     {
        getBlockCounter().clear();

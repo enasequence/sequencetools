@@ -40,9 +40,12 @@ public abstract class FlatFileEntryReader implements FlatFileReader<Entry> {
         ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
 		validationResult = new ValidationResult();
 		readLines();
+        afterReadLines(validationResult);
 		return validationResult;
 	}
 
+    protected void afterReadLines(ValidationResult validationResult) {
+    }
 
 	public final ValidationResult 
     skip() throws IOException 
