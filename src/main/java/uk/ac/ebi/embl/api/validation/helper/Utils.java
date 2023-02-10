@@ -1237,24 +1237,6 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * Checks specified string for non-ascii chars.
-	 *
-	 * @param text
-	 * @return
-	 */
-	public static boolean hasNonAscii(String text) {
-		if (text == null)
-			return false;
-
-		for (int i = 0; i < text.length(); i++) {
-			if (!CharUtils.isAscii(text.charAt(i))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean isValidTaxId(String taxId) {
 		Matcher matcher = taxIdPattern.matcher(taxId);
 		return matcher.matches();

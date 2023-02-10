@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UTF8ToAscii7ConverterTest {
+public class Ascii7CharacterConverterTest {
 
-    private final UTF8ToAscii7Converter converter = new UTF8ToAscii7Converter();
+    private final Ascii7CharacterConverter converter = new Ascii7CharacterConverter();
 
     @Test
     public void testUTF8Conversion() {
