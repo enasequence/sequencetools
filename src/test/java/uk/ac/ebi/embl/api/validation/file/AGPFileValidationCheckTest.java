@@ -67,6 +67,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.init();
 			AGPFileValidationCheck check = new AGPFileValidationCheck(options, sharedInfo);
 			try {
+				sharedInfo.hasAgp = true;
 				sharedInfo.contigDB = DBMaker.fileDB(options.reportDir.get() + File.separator + ".contig").closeOnJvmShutdown().fileDeleteAfterOpen().transactionEnable().make();
 				check.createContigDB();
 				validateContig("valid_flatfileforAgp.txt", FileType.FLATFILE);
@@ -92,6 +93,7 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest
 			options.processDir = Optional.of(initSubmissionTestFile(agpFileName, FileType.AGP).getFile().getParent());
 			options.init();
 			AGPFileValidationCheck check= new AGPFileValidationCheck(options, sharedInfo);
+			sharedInfo.hasAgp = true;
 			sharedInfo.contigDB = DBMaker.fileDB(options.reportDir.get()+File.separator+".contig").deleteFilesAfterClose().closeOnJvmShutdown().transactionEnable().make();
 			check.createContigDB();
 			validateContig("valid_fastaforAgp.txt",  FileType.FASTA);

@@ -89,7 +89,9 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				if(getOptions().context.get()==Context.genome)
 				{
 					getOptions().getEntryValidationPlanProperty().sequenceNumber.set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get()+1);
-					collectContigInfo(entry);
+					if (sharedInfo.hasAgp) {
+						collectContigInfo(entry);
+					}
 				}
 				getOptions().getEntryValidationPlanProperty().validationScope.set(getValidationScope(entry.getSubmitterAccession()));
 				getOptions().getEntryValidationPlanProperty().fileType.set(uk.ac.ebi.embl.api.validation.FileType.FASTA);

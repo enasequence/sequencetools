@@ -87,7 +87,9 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
             		continue;
             	}
             	else  {
-					collectContigInfo(entry);
+					if (sharedInfo.hasAgp) {
+						collectContigInfo(entry);
+					}
 				}
             }
 
