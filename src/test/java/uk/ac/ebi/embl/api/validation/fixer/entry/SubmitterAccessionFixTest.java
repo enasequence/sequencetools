@@ -31,7 +31,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         put("te    st1", "test1");
         put("test1;", "test1");
-        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
+        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
 
     private static Map<String, String> fixMapFastaFileReader = new HashMap<String, String>() {{
@@ -42,7 +42,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         // put("te    st1", "test1"); // does not parse internal spaces
         put("test1;", "test1");
-        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
+        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
 
     private static Map<String, String> fixMapEmblEntryReader = new HashMap<String, String>() {{
@@ -53,7 +53,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         // put("te    st1", "test1"); // does not parse internal spaces
         put("test1;", "test1");
-        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
+        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
 
     private static Map<String, String> fixMapAGPReader = new HashMap<String, String>() {{
@@ -64,7 +64,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         // put("te    st1", "test1"); // does not parse internal spaces
         put("test1;", "test1");
-        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
+        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
 
     private void assertFixEntry(

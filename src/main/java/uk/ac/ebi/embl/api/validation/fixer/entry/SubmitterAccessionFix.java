@@ -47,7 +47,7 @@ public class SubmitterAccessionFix {
             // Remove whitespace, ''', '"' characters.
             submitterAccession = submitterAccession.replaceAll("[\\s'\\\"]", "");
             // Replace '\', '/', '=', ';', ',' characters with a '_' character.
-            submitterAccession = submitterAccession.replaceAll("[\\\\/\\=\\;\\,]", "_");
+            submitterAccession = submitterAccession.replaceAll("[\\\\/\\;\\,]", "_");
             // Remove leading and trailing '_' characters.
             submitterAccession = StringUtils.strip(submitterAccession, "_");
             // Coalesce '_' characters.
