@@ -22,15 +22,21 @@ import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
-import java.util.List;
-
 /** Reader for the flat file AC lines. Accession number
  * ranges will not be expanded.
  */
 public class ACReader extends MultiLineBlockReader {
-	
+
+	private final boolean readSecondaryAccessions;
+
 	public ACReader(LineReader lineReader) {
 		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
+		this.readSecondaryAccessions = true;
+	}
+
+	public ACReader(LineReader lineReader, boolean readSecondaryAccessions) {
+		super(lineReader, ConcatenateType.CONCATENATE_SPACE);
+		this.readSecondaryAccessions = readSecondaryAccessions;
 	}
 
 	@Override
@@ -46,8 +52,10 @@ public class ACReader extends MultiLineBlockReader {
 		for (String accession : FlatFileUtils.split(block, ";")) {
 			if (isFirstAccession) {
 				if (noPrimaryAccession) {
-					Text secAccession = new Text(accession, getOrigin());
-					entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
+					if (readSecondaryAccessions) {
+						Text secAccession = new Text(accession, getOrigin());
+						entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
+					}
 				} else {
 					if (idLinePrimaryAccession != null
 							&& !idLinePrimaryAccession.equalsIgnoreCase(accession))
@@ -59,7 +67,7 @@ public class ACReader extends MultiLineBlockReader {
 					}
 				}
 				isFirstAccession = false;
-			} else {
+			} else if (readSecondaryAccessions) {
 				Text secAccession = new Text(accession, getOrigin());
 				entry.addSecondaryAccessions(Utils.expandRanges(secAccession));
 			}
