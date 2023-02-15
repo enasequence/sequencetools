@@ -34,7 +34,6 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
-import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1236,38 +1235,6 @@ public class Utils {
 			default:
 				return null;
 		}
-	}
-
-	/**
-	 * Checks specified string for non-ascii chars.
-	 *
-	 * @param text
-	 * @return
-	 */
-	public static boolean hasNonAscii(String text) {
-		if (text == null)
-			return false;
-
-		for (int i = 0; i < text.length(); i++) {
-			if (!CharUtils.isAscii(text.charAt(i))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Removes accents and replaces non-ASCII characters with ?
-	 * @param text
-	 * @return
-	 */
-	public static String convertToAscii(String text) {
-		if (text == null) {
-			return null;
-		}
-		text = Normalizer.normalize(text, Normalizer.Form.NFD)
-				.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-		return text.replaceAll("[^\\p{ASCII}]", "?");
 	}
 
 	public static boolean isValidTaxId(String taxId) {

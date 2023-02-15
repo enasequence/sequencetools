@@ -147,7 +147,6 @@ public enum ValidationUnit
 					MoleculeTypeAndDataclassCheck.class,//exclude for master
 					SequenceToGapFeatureBasesCheck.class,//exclude for master
 					AGPValidationCheck.class,//exclude for master
-					AsciiCharacterCheck.class,//include for all
 					NCBIQualifierCheck.class,//exclude for master
 	        		LocustagExistsCheck.class,//exclude for master
 	        		AssemblyLevelDataclassCheck.class,//exclude for master
@@ -165,7 +164,7 @@ public enum ValidationUnit
 					DivisionFix.class, //include for all
 					TPA_dataclass_Fix.class,//exclude for master
 					AccessionFix.class,//exclude for master
-					NonAsciiCharacterFix.class,//include for all
+					Ascii7CharacterFix.class,//include for all
 					CollectionDateQualifierFix.class,//include for all
 					Isolation_sourceQualifierFix.class,//include for all
 					HostQualifierFix.class,//include for all
