@@ -149,5 +149,56 @@ public class ValidationResultTest {
         validationResult.append(validationMessage2);
         validationResult.writeMessageStats(str);
         assertEquals("2\tERROR\tQualifierCheck-1\tFeature qualifier \"{0}\" is not recognized.\n", str.toString());
+    }
+
+    @Test
+    public void testMinSeverity() {
+        Severity originalMinSeverity = ValidationResult.getMinSeverity();
+        try {
+            ValidationResult result = new ValidationResult();
+
+            ValidationResult.setMinSeverity(Severity.ERROR);
+            result.append(ValidationMessage.message(Severity.ERROR, ""));
+            result.append(ValidationMessage.message(Severity.WARNING, ""));
+            result.append(ValidationMessage.message(Severity.INFO, ""));
+            result.append(ValidationMessage.message(Severity.FIX, ""));
+            assertEquals(result.getMessages(Severity.ERROR).size(), 1);
+            assertEquals(result.getMessages(Severity.WARNING).size(), 0);
+            assertEquals(result.getMessages(Severity.INFO).size(), 0);
+            assertEquals(result.getMessages(Severity.FIX).size(), 0);
+
+            ValidationResult.setMinSeverity(Severity.WARNING);
+            result.append(ValidationMessage.message(Severity.ERROR, ""));
+            result.append(ValidationMessage.message(Severity.WARNING, ""));
+            result.append(ValidationMessage.message(Severity.INFO, ""));
+            result.append(ValidationMessage.message(Severity.FIX, ""));
+            assertEquals(result.getMessages(Severity.ERROR).size(), 2);
+            assertEquals(result.getMessages(Severity.WARNING).size(), 1);
+            assertEquals(result.getMessages(Severity.INFO).size(), 0);
+            assertEquals(result.getMessages(Severity.FIX).size(), 0);
+
+            ValidationResult.setMinSeverity(Severity.INFO);
+            result.append(ValidationMessage.message(Severity.ERROR, ""));
+            result.append(ValidationMessage.message(Severity.WARNING, ""));
+            result.append(ValidationMessage.message(Severity.INFO, ""));
+            result.append(ValidationMessage.message(Severity.FIX, ""));
+            assertEquals(result.getMessages(Severity.ERROR).size(), 3);
+            assertEquals(result.getMessages(Severity.WARNING).size(), 2);
+            assertEquals(result.getMessages(Severity.INFO).size(), 1);
+            assertEquals(result.getMessages(Severity.FIX).size(), 0);
+
+            ValidationResult.setMinSeverity(Severity.FIX);
+            result.append(ValidationMessage.message(Severity.ERROR, ""));
+            result.append(ValidationMessage.message(Severity.WARNING, ""));
+            result.append(ValidationMessage.message(Severity.INFO, ""));
+            result.append(ValidationMessage.message(Severity.FIX, ""));
+            assertEquals(result.getMessages(Severity.ERROR).size(), 4);
+            assertEquals(result.getMessages(Severity.WARNING).size(), 3);
+            assertEquals(result.getMessages(Severity.INFO).size(), 2);
+            assertEquals(result.getMessages(Severity.FIX).size(), 1);
         }
+        finally {
+            ValidationResult.setMinSeverity(originalMinSeverity);
+        }
+    }
 }
