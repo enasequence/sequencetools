@@ -16,18 +16,18 @@
 package uk.ac.ebi.embl.api.validation;
 
 public enum Severity {
-	ERROR(3),
-	WARNING(2),
-	INFO(1),
-	FIX(0);
+    ERROR(3),
+    WARNING(2),
+    INFO(1),
+    FIX(0);
 
-    private Integer intVal;
+    private Integer level;
 
-    Severity(Integer intVal) {
-        this.intVal = intVal;
+    Severity(Integer level) {
+        this.level = level;
     }
 
-    public Integer getIntVal() {
-        return intVal;
+    public boolean isLessSevereThan(Severity severity) {
+        return this.level < severity.level;
     }
 }

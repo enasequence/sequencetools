@@ -39,6 +39,8 @@ public class ValidationResult implements Serializable {
 
 	private static MessageFormatter defaultMessageFormatter =  ValidationMessage.TEXT_MESSAGE_FORMATTER_TRAILING_LINE_END; //ValidationMessage.getDefaultMessageFormatter();
 
+	private static Severity minSeverity = Severity.FIX;
+
 	private Collection<ValidationMessage<Origin>> messages;
     private String reportMessage;
 	private boolean writeCuratorMessage = true;
@@ -68,9 +70,16 @@ public class ValidationResult implements Serializable {
     {
     	return ValidationResult.defaultMessageFormatter;
     }
-    
-    
-    public Origin getDefaultOrigin() {
+
+	public static Severity getMinSeverity() {
+		return minSeverity;
+	}
+
+	public static void setMinSeverity(Severity minSeverity) {
+		ValidationResult.minSeverity = minSeverity;
+	}
+
+	public Origin getDefaultOrigin() {
     	return defaultOrigin;
     }
     
@@ -133,6 +142,12 @@ public class ValidationResult implements Serializable {
 		if (message == null) {
 			return;
 		}
+		if (message.getSeverity() != null && minSeverity != null) {
+			if (message.getSeverity().isLessSevereThan(minSeverity)) {
+				return;
+			}
+		}
+
 		if( null != defaultOrigin ) {
 			message.addOrigin( defaultOrigin );
 		}
