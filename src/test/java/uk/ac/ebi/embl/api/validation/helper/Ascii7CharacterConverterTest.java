@@ -24,32 +24,45 @@ public class Ascii7CharacterConverterTest {
     }
 
     @Test
-    public void testAscii7ValidRangeConversion() {
-        String str = "  \" !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"";
+    public void testAscii7ControlCharacterReplacement() {
+        for (char c = (char) 0; c <= (char) 31; c++) {
+            if (c == '\t') {
+                assertEquals("Character: " + (int) c, "\t", converter.convert(String.valueOf(c)));
+            } else if (c == '\n') {
+                assertEquals("Character: " + (int) c, "\n", converter.convert(String.valueOf(c)));
+            } else {
+                assertEquals("Character: " + (int) c, "", converter.convert(String.valueOf(c)));
+            }
+        }
+        char del = 0x7F;
+        assertEquals("", converter.convert(String.valueOf(del)));
+    }
+
+    @Test
+    public void testAscii7PrintableCharacterConversion() {
+        String str = "\n\t  \" !\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"";
         assertEquals(str, converter.convert(str));
     }
 
     @Test
-    public void testAscii8ValidRangeConversion() {
-        String expected = "AAAAAAACEEEEIIIIENOOOOO?OUUUUY?saaaaaaaceeeeiiiienooooo?ouuuuypy";
+    public void testAscii8ControlCharacterRemoval() {
+        for (char c = (char) 128; c <= (char) 160; c++) {
+            assertEquals(c + ":" + (int) c, "", converter.convert(String.valueOf(c)));
+        }
+    }
+
+    @Test
+    public void testAscii8SymbolCharacterReplacement() {
+        for (char c = (char) 161; c <= (char) 191; c++) {
+            assertEquals(c + ":" + (int) c, "?", converter.convert(String.valueOf(c)));
+        }
+    }
+
+    @Test
+    public void testAscii8PrintableCharacterConversion() {
         String str = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+        String expected = "AAAAAAACEEEEIIIIENOOOOO?OUUUUY?saaaaaaaceeeeiiiienooooo?ouuuuypy";
         assertEquals(expected, converter.convert(str));
     }
 
-
-    @Test
-    public void testAscii7InvalidRangeConversion() {
-        for (char c = 0; c < ' '; c++) {
-            assertEquals("?", converter.convert(String.valueOf(c)));
-        }
-        char del = 0x7F;
-        assertEquals("?", converter.convert(String.valueOf(del)));
-    }
-
-    @Test
-    public void testAscii8InvalidRangeConversion() {
-        for (char c = '€'; c <= 'À'; c++) {
-            assertEquals("?", converter.convert(String.valueOf(c)));
-        }
-    }
 }

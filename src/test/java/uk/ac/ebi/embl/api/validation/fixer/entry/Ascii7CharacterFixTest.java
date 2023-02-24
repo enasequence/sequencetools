@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 public class Ascii7CharacterFixTest {
 
-    private final static String TEXT = "Šťŕĭńġ���";
-    private final static String FIXED_TEXT = "String???";
+    private final static String TEXT = "This is a multi-line comment with tabs  Šťŕĭńġ\n���";
+    private final static String FIXED_TEXT = "This is a multi-line comment with tabs  String\n???";
     private final Ascii7CharacterFix fix = new Ascii7CharacterFix();
 
     private Entry entry;
