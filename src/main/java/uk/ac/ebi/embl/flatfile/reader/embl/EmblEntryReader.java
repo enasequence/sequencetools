@@ -101,14 +101,13 @@ EmblEntryReader extends EntryReader
 
     @Override
     protected void afterReadLines(ValidationResult validationResult) {
+		if (this.format == Format.ASSEMBLY_FILE_FORMAT &&
+				getEntry().getSubmitterAccession() == null &&
+				getEntry().getPrimaryAccession() != null) {
+			// Allow submitter accession to be provided on the ID or AC line.
+			getEntry().setSubmitterAccession(getEntry().getPrimaryAccession());
+		}
 		SubmitterAccessionFix.fix(getEntry());
-        if (this.format == Format.ASSEMBLY_FILE_FORMAT &&
-                getEntry().getSubmitterAccession() == null &&
-                getEntry().getPrimaryAccession() != null) {
-            // Allow submitter accession to be provided on the ID or AC line.
-            getEntry().setSubmitterAccession(SubmitterAccessionFix.fix(getEntry().getPrimaryAccession()));
-        }
-
     }
 
 	private void
