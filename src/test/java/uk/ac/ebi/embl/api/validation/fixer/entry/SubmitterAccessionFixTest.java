@@ -17,8 +17,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME;
 
 public class SubmitterAccessionFixTest {
@@ -31,7 +30,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         put("te    st1", "test1");
         put("test1;", "test1");
-        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
+        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
     }};
 
     private static Map<String, String> fixMapFastaFileReader = new HashMap<String, String>() {{
@@ -127,7 +126,7 @@ public class SubmitterAccessionFixTest {
     }
 
     @Test
-    public void testEmblEntryReader() {
+    public void testEmblEntryReaderACStarLine() {
         fixMapEmblEntryReader.forEach((submitterName, fixedSubmitterName) -> {
             String str =
                     "ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; 60 BP.\n" +
@@ -157,6 +156,67 @@ public class SubmitterAccessionFixTest {
     }
 
     @Test
+    public void testEmblEntryReaderACLine() {
+        fixMapEmblEntryReader.forEach((submitterName, fixedSubmitterName) -> {
+            String str =
+                    "ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; 60 BP.\n" +
+                            "XX\n" +
+                            "AC   " + submitterName + "\n" +
+                            "XX\n" +
+                            "FH   Key             Location/Qualifiers\n" +
+                            "FH\n" +
+                            "FT   source          1..1260\n" +
+                            "FT                   /organism=\"Caenorhabditis briggsae\"\n" +
+                            "FT                   /strain=\"AF16\"\n" +
+                            "FT                   /mol_type=\"genomic DNA\"\n" +
+                            "XX\n" +
+                            "SQ   Sequence 1320 BP; 385 A; 250 C; 216 G; 469 T; 0 other;\n" +
+                            "     tagtcaaaca gtaattgccc aatttgatgg atactgtgaa ttaaatcgat ccgaatttca        60\n" +
+                            "//\n";
+            BufferedReader bufferedReader = new BufferedReader(new StringReader(str));
+            EmblEntryReader reader = new EmblEntryReader(
+                    bufferedReader, EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT, null);
+            try {
+                reader.read();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            Entry entry = reader.getEntry();
+            assertEquals(fixedSubmitterName, entry.getSubmitterAccession());
+        });
+    }
+
+    @Test
+    public void testEmblEntryReaderIDLine() {
+        fixMapEmblEntryReader.forEach((submitterName, fixedSubmitterName) -> {
+            String str =
+                    "ID   " + submitterName + "; SV XXX; linear; genomic DNA; XXX; XXX; 60 BP.\n" +
+                            "XX\n" +
+                            "FH   Key             Location/Qualifiers\n" +
+                            "FH\n" +
+                            "FT   source          1..1260\n" +
+                            "FT                   /organism=\"Caenorhabditis briggsae\"\n" +
+                            "FT                   /strain=\"AF16\"\n" +
+                            "FT                   /mol_type=\"genomic DNA\"\n" +
+                            "XX\n" +
+                            "SQ   Sequence 1320 BP; 385 A; 250 C; 216 G; 469 T; 0 other;\n" +
+                            "     tagtcaaaca gtaattgccc aatttgatgg atactgtgaa ttaaatcgat ccgaatttca        60\n" +
+                            "//\n";
+            BufferedReader bufferedReader = new BufferedReader(new StringReader(str));
+            EmblEntryReader reader = new EmblEntryReader(
+                    bufferedReader, EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT, null);
+            try {
+                reader.read();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            Entry entry = reader.getEntry();
+            System.out.println("XXX:original " + submitterName + ", fixed " + fixedSubmitterName + ",actual submitter name: " + entry.getSubmitterAccession());
+            assertEquals(fixedSubmitterName, entry.getSubmitterAccession());
+        });
+    }
+
+    @Test
     public void testAGPFileReader() {
         fixMapAGPReader.forEach((submitterName, fixedSubmitterName) -> {
             String str =
@@ -167,7 +227,7 @@ public class SubmitterAccessionFixTest {
                             "# ASSEMBLY DATE: 09-November-2011\n" +
                             "# GENOME CENTER: NCBI\n" +
                             "# DESCRIPTION: Example AGP specifying the assembly of scaffolds from WGS contigs\n" +
-                            submitterName + "	1	330	1	W	" + submitterName + "	1	330	+\n"+
+                            submitterName + "	1	330	1	W	" + submitterName + "	1	330	+\n" +
                             submitterName + "	355	654	3	W	" + submitterName + "	1	300	+\n";
             BufferedReader bufferedReader = new BufferedReader(new StringReader(str));
             AGPFileReader reader = new AGPFileReader(new AGPLineReader(bufferedReader));

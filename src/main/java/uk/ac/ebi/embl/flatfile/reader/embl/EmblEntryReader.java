@@ -99,10 +99,16 @@ EmblEntryReader extends EntryReader
 		addBlockReaders(format);
 	}
 
-	@Override
-	protected void afterReadLines(ValidationResult validationResult) {
+    @Override
+    protected void afterReadLines(ValidationResult validationResult) {
+		if (this.format == Format.ASSEMBLY_FILE_FORMAT &&
+				getEntry().getSubmitterAccession() == null &&
+				getEntry().getPrimaryAccession() != null) {
+			// Allow submitter accession to be provided on the ID or AC line.
+			getEntry().setSubmitterAccession(getEntry().getPrimaryAccession());
+		}
 		SubmitterAccessionFix.fix(getEntry());
-	}
+    }
 
 	private void
     addBlockReaders( Format format )
@@ -236,8 +242,10 @@ EmblEntryReader extends EntryReader
 			addBlockReader(new RXReader(lineReader));
         } else if( format.equals( Format.ASSEMBLY_FILE_FORMAT ) )
         {
-     			addBlockReader(new IDReader(lineReader));
-     			addSkipTagCounterHolder(new ACReader(lineReader));
+                // Allow submitter accession to be provided on the ID line.
+                addBlockReader(new IDReader(lineReader, true));
+                // Allow submitter accession to be provided on the AC line.
+                addBlockReader(new ACReader(lineReader, false));
      			addSkipTagCounterHolder(new PRReader(lineReader));
      			addSkipTagCounterHolder(new DEReader(lineReader));
      			addSkipTagCounterHolder(new KWReader(lineReader));
