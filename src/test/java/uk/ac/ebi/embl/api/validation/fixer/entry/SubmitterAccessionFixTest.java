@@ -30,7 +30,7 @@ public class SubmitterAccessionFixTest {
         put("te____st1", "te_st1");
         put("te    st1", "test1");
         put("test1;", "test1");
-        put("\\/=;'\"test\\/=;'\"1\\/=;'\"", "test_1");
+        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
 
     private static Map<String, String> fixMapFastaFileReader = new HashMap<String, String>() {{
@@ -39,7 +39,7 @@ public class SubmitterAccessionFixTest {
         put("  test1  ", "test1");
         put("__test1__", "test1");
         put("te____st1", "te_st1");
-        // put("te    st1", "test1"); // does not parse internal spaces
+        // put("te    st1", "test1"); // does not accept internal spaces
         put("test1;", "test1");
         put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
@@ -50,18 +50,19 @@ public class SubmitterAccessionFixTest {
         put("  test1  ", "test1");
         put("__test1__", "test1");
         put("te____st1", "te_st1");
-        // put("te    st1", "test1"); // does not parse internal spaces
-        put("test1;", "test1");
-        put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
+        // put("te    st1", "test1"); // does not accept internal spaces
+        // put("test1;", "test1"); // does not accept semicolon
+        put("\\/'\"test\\/'\"1\\/'\"", "test_1"); // does not accept semicolon
+
     }};
 
     private static Map<String, String> fixMapAGPReader = new HashMap<String, String>() {{
         // submitterAccession, fixedSubmitterAccession
         put("test1", "test1");
-        // put("  test1  ", "test1"); // does not parse leading or trailing spaces
+        // put("  test1  ", "test1"); // does not accept leading or trailing spaces
         put("__test1__", "test1");
         put("te____st1", "te_st1");
-        // put("te    st1", "test1"); // does not parse internal spaces
+        // put("te    st1", "test1"); // does not accept internal spaces
         put("test1;", "test1");
         put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
     }};
