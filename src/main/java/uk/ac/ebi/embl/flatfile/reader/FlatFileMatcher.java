@@ -19,8 +19,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class FlatFileMatcher {
 	
@@ -149,7 +148,7 @@ public class FlatFileMatcher {
 		if (value == null) {
 			return null;
 		}
-		Date date = FlatFileUtils.getDay(value);
+		Date date = FlatFileDateUtils.getDay(value);
 		if (date == null) {
 			error("FF.2", value);
 		}
@@ -163,7 +162,7 @@ public class FlatFileMatcher {
 		if (value == null) {
 			return null;
 		}
-		Date date = FlatFileUtils.getYear(value);
+		Date date = FlatFileDateUtils.getYear(value);
 		if (date == null) {
 			error("FF.4", value);
 		}
@@ -175,7 +174,7 @@ public class FlatFileMatcher {
         if (value == null) {
             return null;
         }
-        Date date = FlatFileUtils.getYear(value);
+        Date date = FlatFileDateUtils.getYear(value);
         if (date == null) {
             error("FF.4", value);
         }

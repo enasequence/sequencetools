@@ -20,15 +20,14 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Thesis;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.genbank.JournalWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class GenbankThesisWriterTest extends GenbankWriterTest {
 
     public void testWrite_Thesis() throws IOException {
 		ReferenceFactory referenceFactory = new ReferenceFactory();
     	Thesis thesis = referenceFactory.createThesis("My most important work",
-    			FlatFileUtils.getDay("10-SEP-1998"), "Universitaet Muenchen");    	
+    			FlatFileDateUtils.getDay("10-SEP-1998"), "Universitaet Muenchen");
         StringWriter writer = new StringWriter();
         assertTrue(new JournalWriter(entry, thesis, wrapType).write(writer));
         // System.out.print(writer.toString());

@@ -10,11 +10,11 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 public class ReferenceUtilsTest  {
 
     ReferenceUtils refutils = new ReferenceUtils();
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
     @Test
     public void testConstructReferenceWithoutConsortiumAndBroker() throws ValidationEngineException, UnsupportedEncodingException, ParseException {
@@ -48,7 +47,7 @@ public class ReferenceUtilsTest  {
 
         SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
         submitterReference.setSubmissionAccountId("Webin-256");
-        submitterReference.setFirstCreated(sdf.parse("22-SEP-2020"));
+        submitterReference.setFirstCreated(FlatFileDateUtils.getDay("22-SEP-2020"));
 
         Reference reference = refutils.constructSubmitterReference(submitterReference);
         assertNotNull(reference);
@@ -89,7 +88,7 @@ public class ReferenceUtilsTest  {
 
         SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
         submitterReference.setSubmissionAccountId("Webin-256");
-        submitterReference.setFirstCreated( sdf.parse("22-SEP-2020"));
+        submitterReference.setFirstCreated(FlatFileDateUtils.getDay("22-SEP-2020"));
 
         Reference reference = refutils.constructSubmitterReference(submitterReference);
         assertNotNull(reference);
@@ -125,7 +124,7 @@ public class ReferenceUtilsTest  {
 
         SubmitterReference submitterReference = new SubmitterReference(submissionContactList, submissionAccount);
         submitterReference.setSubmissionAccountId("Webin-256");
-        submitterReference.setFirstCreated(sdf.parse("22-SEP-2020"));
+        submitterReference.setFirstCreated(FlatFileDateUtils.getDay("22-SEP-2020"));
 
         Reference reference = refutils.constructSubmitterReference(submitterReference);
         assertNotNull(reference);

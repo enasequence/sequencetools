@@ -20,7 +20,7 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class LocusWriterTest extends GenbankWriterTest {
 
@@ -32,7 +32,7 @@ public class LocusWriterTest extends GenbankWriterTest {
         entry.getSequence().setMoleculeType("genomic DNA");
        // entry.getSequence().setLength(335);
         entry.setDataClass("EST");
-        entry.setLastUpdated(FlatFileUtils.getDay("05-SEP-2006"));
+        entry.setLastUpdated(FlatFileDateUtils.getDay("05-SEP-2006"));
         StringWriter writer = new StringWriter();
         assertTrue(new LocusWriter(entry).write(writer));
         //System.out.print(writer.toString());

@@ -12,9 +12,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
-import uk.ac.ebi.embl.api.validation.helper.FlatFileComparator;
 import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
-import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorOptions;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 import uk.ac.ebi.embl.template.TemplateEntryProcessorTest;
 
@@ -22,9 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 

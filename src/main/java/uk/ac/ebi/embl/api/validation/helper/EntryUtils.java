@@ -3,10 +3,7 @@ package uk.ac.ebi.embl.api.validation.helper;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -170,23 +167,7 @@ public class EntryUtils
 	     String asciiString = new String(encodedString.replaceAll(regex, "").getBytes("ascii"), "ascii");
 	     return asciiString;
 	}
-	
-	 /** Returns the day given a string in format dd-MMM-yyyy.
-     */	
-	public static Date getDay(String string) {
-		if (string == null) {
-			return null;
-		}
-		Date date = null;
-		try {
-			date = (new SimpleDateFormat("dd-MMM-yyyy").parse(string));
-		}
-		catch (ParseException ex) {
-			return null;
-		}
-		return date;
-	}
-	
+
 	public static Entry convertAGPtofeatureNContigs(Entry entry)
 	{
 		FeatureFactory featureFactory=new FeatureFactory();

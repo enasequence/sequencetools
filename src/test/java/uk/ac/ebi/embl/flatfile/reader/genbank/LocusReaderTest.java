@@ -21,8 +21,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.reader.genbank.LocusReader;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class LocusReaderTest extends GenbankReaderTest {
 	
@@ -36,7 +35,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertNull(entry.getSequence().getMoleculeType());
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
-		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
 	public void testRead_PRIDiv() throws IOException {
 		initLineReader(
@@ -49,7 +48,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertEquals(Topology.CIRCULAR, entry.getSequence().getTopology());
 		assertEquals("MAM", entry.getDivision());
 		assertEquals("STD", entry.getDataClass());
-		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
 
 	public void testRead_CircularTopology() throws IOException {
@@ -62,7 +61,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertNull(entry.getSequence().getMoleculeType());
 		assertEquals(Topology.CIRCULAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
-		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
 	
 	public void testRead_LinearTopology() throws IOException {
@@ -74,7 +73,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertNull(entry.getPrimaryAccession());
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
-		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
 	
 	public void testRead_InvalidTopology() throws IOException {
@@ -128,7 +127,7 @@ public class LocusReaderTest extends GenbankReaderTest {
 		assertNull(entry.getPrimaryAccession());
 		assertEquals(Topology.LINEAR, entry.getSequence().getTopology());
 		assertEquals("PLN", entry.getDivision());
-		assertEquals(FlatFileUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("21-JUN-1999"), entry.getLastUpdated());
 	}
 	
 	public void testRead_Origin() throws IOException {

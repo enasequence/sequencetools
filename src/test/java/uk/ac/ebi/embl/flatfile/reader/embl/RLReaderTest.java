@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("117", book.getFirstPage());
 		assertEquals("132", book.getLastPage());
 		assertEquals("Munksgaard, Copenhagen", book.getPublisher());
-		assertEquals(FlatFileUtils.getYear("1979"), book.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1979"), book.getYear());
 	}	
 	
 	public void testRead_BookNoBookTitle() throws IOException {
@@ -117,7 +117,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("48_V", article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 
 	public void testReadArticle_NoIssue() throws IOException {
@@ -136,7 +136,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNull(article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 		
 	public void testReadArticle_NoVolume() throws IOException {
@@ -155,7 +155,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("48_V", article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 	
 	public void testReadArticle_NoPage() throws IOException {
@@ -174,7 +174,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("48_V", article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 
 	public void testReadArticle_NoYear() throws IOException {
@@ -210,7 +210,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("2", article.getVolume());
 		assertEquals("2006.0007", article.getFirstPage());
 		assertEquals("2006.0007", article.getLastPage());
-        assertEquals(FlatFileUtils.getYear("2006"), article.getYear());
+        assertEquals(FlatFileDateUtils.getYear("2006"), article.getYear());
 	}
 	
 	public void testRead_Patent() throws IOException {
@@ -229,7 +229,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertEquals("O238993", patent.getPatentNumber());
 		assertEquals("A", patent.getPatentType());
 		assertEquals(new Integer(3), patent.getSequenceNumber());
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), patent.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
 		assertTrue(patent.getApplicants().size() == 2);
 		assertEquals("BAYER AG", patent.getApplicants().get(0));
 		assertEquals("GOOGLE AG", patent.getApplicants().get(1));
@@ -296,7 +296,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Thesis);
 		Thesis thesis = (Thesis)reference.getPublication();
-		assertEquals(FlatFileUtils.getYear("1998"), thesis.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), thesis.getYear());
 		assertEquals(
 				"Universitaet Muenchen near Berlin",			
 				thesis.getInstitute());
@@ -329,7 +329,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Thesis);
 		Thesis thesis = (Thesis)reference.getPublication();
-		assertEquals(FlatFileUtils.getYear("1998"), thesis.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), thesis.getYear());
 		assertNull(thesis.getInstitute());
 	}		
 	
@@ -350,7 +350,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertEquals(
 				"Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",				
 				submission.getSubmitterAddress());
@@ -369,7 +369,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertEquals(
 				"Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",				
 				submission.getSubmitterAddress());
@@ -403,7 +403,7 @@ public class RLReaderTest extends EmblReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertNull(submission.getSubmitterAddress());	
 	}	
 		
