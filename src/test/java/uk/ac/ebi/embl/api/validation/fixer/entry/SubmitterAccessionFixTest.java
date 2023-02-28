@@ -157,37 +157,6 @@ public class SubmitterAccessionFixTest {
     }
 
     @Test
-    public void testEmblEntryReaderACLine() {
-        fixMapEmblEntryReader.forEach((submitterName, fixedSubmitterName) -> {
-            String str =
-                    "ID   XXX; SV XXX; linear; genomic DNA; XXX; XXX; 60 BP.\n" +
-                            "XX\n" +
-                            "AC   " + submitterName + "\n" +
-                            "XX\n" +
-                            "FH   Key             Location/Qualifiers\n" +
-                            "FH\n" +
-                            "FT   source          1..1260\n" +
-                            "FT                   /organism=\"Caenorhabditis briggsae\"\n" +
-                            "FT                   /strain=\"AF16\"\n" +
-                            "FT                   /mol_type=\"genomic DNA\"\n" +
-                            "XX\n" +
-                            "SQ   Sequence 1320 BP; 385 A; 250 C; 216 G; 469 T; 0 other;\n" +
-                            "     tagtcaaaca gtaattgccc aatttgatgg atactgtgaa ttaaatcgat ccgaatttca        60\n" +
-                            "//\n";
-            BufferedReader bufferedReader = new BufferedReader(new StringReader(str));
-            EmblEntryReader reader = new EmblEntryReader(
-                    bufferedReader, EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT, null);
-            try {
-                reader.read();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            Entry entry = reader.getEntry();
-            assertEquals(fixedSubmitterName, entry.getSubmitterAccession());
-        });
-    }
-
-    @Test
     public void testEmblEntryReaderIDLine() {
         fixMapEmblEntryReader.forEach((submitterName, fixedSubmitterName) -> {
             String str =

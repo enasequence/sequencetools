@@ -244,9 +244,8 @@ EmblEntryReader extends EntryReader
         {
                 // Allow submitter accession to be provided on the ID line.
                 addBlockReader(new IDReader(lineReader, true));
-                // Allow submitter accession to be provided on the AC line.
-                addBlockReader(new ACReader(lineReader, false));
-     			addSkipTagCounterHolder(new PRReader(lineReader));
+				addSkipTagCounterHolder(new ACReader(lineReader));
+				addSkipTagCounterHolder(new PRReader(lineReader));
      			addSkipTagCounterHolder(new DEReader(lineReader));
      			addSkipTagCounterHolder(new KWReader(lineReader));
      			addBlockReader(new DTReader(lineReader));
