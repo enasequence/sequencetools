@@ -20,6 +20,7 @@ import java.io.Writer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Patent;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
@@ -58,7 +59,7 @@ public class GenbankPatentWriter extends FlatFileWriter {
 		}
 		if (patent.getDay() != null) {
 			writer.write(" ");
-			writer.write(DAY_FORMAT.format(patent.getDay()).toUpperCase());
+			writer.write(FlatFileDateUtils.formatAsDay(patent.getDay()));
 		}
 		writer.write(";\n");
 		if (patent.getApplicants() != null) {

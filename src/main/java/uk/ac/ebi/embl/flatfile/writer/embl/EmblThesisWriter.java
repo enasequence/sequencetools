@@ -21,6 +21,7 @@ import java.io.Writer;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Thesis;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -49,7 +50,7 @@ public class EmblThesisWriter extends FlatFileWriter {
 		StringBuilder block = new StringBuilder();
 		block.append("Thesis (");
 		if (thesis.getYear() != null) {
-			block.append(YEAR_FORMAT.format(thesis.getYear()).toUpperCase());
+			block.append(FlatFileDateUtils.formatAsYear(thesis.getYear()));
 		}
 		block.append(")");
 		if (!isBlankString(thesis.getInstitute())) {

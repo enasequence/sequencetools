@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uk.ac.ebi.embl.flatfile.EmblPadding;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -70,7 +71,7 @@ public class EmblArticleWriter extends FlatFileWriter {
 		}
 		if (article.getYear() != null) {
 			block.append("(");
-			block.append(YEAR_FORMAT.format(article.getYear()).toUpperCase());
+			block.append(FlatFileDateUtils.formatAsYear(article.getYear()));
 			block.append(")");
 		}
 		block.append(".");	

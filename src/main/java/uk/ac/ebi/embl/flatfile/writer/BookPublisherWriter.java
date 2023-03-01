@@ -20,6 +20,7 @@ import java.io.Writer;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.reference.Book;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 /** Flat file writer for the book publisher lines.
  */
@@ -46,7 +47,7 @@ public class BookPublisherWriter extends FlatFileWriter {
 		}		
 		if (book.getYear() != null) {
 			block.append(" (");
-			block.append(YEAR_FORMAT.format(book.getYear()).toUpperCase());
+			block.append(FlatFileDateUtils.formatAsYear(book.getYear()));
 			block.append(")");
 		}
 		writeBlock(writer, firstLineHeader, header, block.toString());

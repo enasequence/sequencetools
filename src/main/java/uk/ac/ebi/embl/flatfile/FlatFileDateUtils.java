@@ -24,13 +24,15 @@ import java.util.Locale;
 
 public abstract class FlatFileDateUtils {
 
-    private static DateTimeFormatter DATE_FORMATTER;
+    private static DateTimeFormatter DAY_FORMATTER;
+
+    private static DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy", Locale.UK);
 
     static {
         DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
         builder.parseCaseInsensitive();
         builder.appendPattern("dd-MMM-yyyy");
-        DATE_FORMATTER = builder.toFormatter(Locale.UK);
+        DAY_FORMATTER = builder.toFormatter(Locale.UK);
     }
 
     /**
@@ -44,7 +46,7 @@ public abstract class FlatFileDateUtils {
             return null;
         }
         try {
-            return getDate(LocalDate.from(DATE_FORMATTER.parse(str)));
+            return getDate(LocalDate.from(DAY_FORMATTER.parse(str)));
         } catch (Exception ex) {
             return null;
         }
@@ -63,7 +65,37 @@ public abstract class FlatFileDateUtils {
         return getDay("01-JAN-" + str);
     }
 
+    /**
+     * Formats the date as uppercase dd-MMM-yyyy format.
+     *
+     * @param date the date to convert
+     * @return the date in uppercase dd-MMM-yyyy format.
+     */
+    public static String formatAsDay(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return DAY_FORMATTER.format(LocalDate.from(getLocalDate(date))).toUpperCase();
+    }
+
+    /**
+     * Formats the date as yyyy format.
+     *
+     * @param date the date to convert
+     * @return the date in yyyy format.
+     */
+    public static String formatAsYear(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return YEAR_FORMATTER.format(LocalDate.from(getLocalDate(date)));
+    }
+
     public static Date getDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static LocalDate getLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

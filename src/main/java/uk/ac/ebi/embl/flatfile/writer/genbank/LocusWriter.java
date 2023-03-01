@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 
@@ -140,7 +141,7 @@ public class LocusWriter extends FlatFileWriter {
 
 		writer.write(" ");
 		if (entry.getLastUpdated() != null) {
-			writer.write(DAY_FORMAT.format(entry.getLastUpdated()).toUpperCase());
+			writer.write(FlatFileDateUtils.formatAsDay(entry.getLastUpdated()));
 		}	
 		else {
 			writer.write("XXX");

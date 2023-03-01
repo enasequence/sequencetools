@@ -22,8 +22,6 @@ import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.LineReader;
 import uk.ac.ebi.embl.flatfile.reader.MultiLineBlockReader;
 
-import java.util.List;
-
 /** Reader for the flat file AC lines. Accession number
  * ranges will not be expanded.
  */
