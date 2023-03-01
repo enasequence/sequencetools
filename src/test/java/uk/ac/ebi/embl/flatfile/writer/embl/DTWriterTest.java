@@ -18,14 +18,13 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.embl.DTWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class DTWriterTest extends EmblWriterTest {
 
 	public void testWrite_Date() throws IOException {
-		entry.setFirstPublic(FlatFileUtils.getDay("06-SEP-2006"));
-		entry.setLastUpdated(FlatFileUtils.getDay("05-SEP-2006"));            
+		entry.setFirstPublic(FlatFileDateUtils.getDay("06-SEP-2006"));
+		entry.setLastUpdated(FlatFileDateUtils.getDay("05-SEP-2006"));
 		entry.setFirstPublicRelease(1);
 		entry.setLastUpdatedRelease(2);
 		entry.setVersion(1);

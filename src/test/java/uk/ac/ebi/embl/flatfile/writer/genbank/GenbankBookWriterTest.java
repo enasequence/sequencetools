@@ -20,8 +20,7 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.Book;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.genbank.JournalWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class GenbankBookWriterTest extends GenbankWriterTest {
 
@@ -32,7 +31,7 @@ public class GenbankBookWriterTest extends GenbankWriterTest {
 				"41ST ANNUAL REGIONAL MEETING OF THE EASTERN NEW YORK, CONNECTICUT VALLEY, NEW YORK CITY, AND NORTHEAST BRANCHES OF THE AMERICAN SOCIETY FOR MICROBIOLOGY",
 				"12", "25",
 		"American Society of Microbiology Eastern New York Branch, NY, USA");
-		book.setYear(FlatFileUtils.getDay("10-SEP-1998"));
+		book.setYear(FlatFileDateUtils.getDay("10-SEP-1998"));
 		book.addEditor(referenceFactory.createPerson("Unknown", "A."));
 		book.addEditor(referenceFactory.createPerson("Unknown", "B."));
 		StringWriter writer = new StringWriter();

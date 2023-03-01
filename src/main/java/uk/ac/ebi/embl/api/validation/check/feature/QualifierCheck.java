@@ -69,37 +69,6 @@ public class QualifierCheck extends FeatureValidationCheck {
                     //check the NOVALUE requirement
                     QualifierHelper.checkNoValue(qualifier, qualifierInfo.isNoValue(), feature.getName()).ifPresent(result::append);
 
-
-                    /**
-                     * do a check to see if the date is a legitimate one for collection date
-                     * Added separate check for the collection date
-                     */
-                     /*if (qualifierName.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME) && value != null) {
-
-                       String dateFormat1 = "^(\\w){3}\\s*(-)\\s*(\\d{4})$";//MMM-yyy
-                        String dateFormat2 = "^(\\d{1,2})\\s*(-)\\s*(.*)\\s*(-)\\s*(\\d{4})$";//dd-MMM-yyyy
-
-                        if (value.matches(dateFormat1) || value.matches(dateFormat2)) {
-
-                            SimpleDateFormat sdf;
-
-                            if (value.matches(dateFormat1)) {
-                                sdf = new SimpleDateFormat("MMM-yyyy");
-                            } else {
-                                sdf = new SimpleDateFormat("dd-MMM-yyyy");
-                            }
-                            sdf.setLenient(false);
-
-                            try {
-                                sdf.parse(qualifier.getValue());
-                            } catch (ParseException e) {
-                                reportError(qualifier.getOrigin(), COLLECTION_DATE_ID,
-                                        qualifierName, qualifier.getValue());
-
-                            }
-                        }
-                    }*/
-
                     //todo check the 'NEW' field
 
                     switch(qualifierName) {

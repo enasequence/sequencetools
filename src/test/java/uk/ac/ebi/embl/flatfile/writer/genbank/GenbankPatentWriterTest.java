@@ -20,8 +20,7 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.Patent;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.genbank.JournalWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class GenbankPatentWriterTest extends GenbankWriterTest {
 
@@ -29,7 +28,7 @@ public class GenbankPatentWriterTest extends GenbankWriterTest {
     	ReferenceFactory referenceFactory = new ReferenceFactory();
     	Patent patent = referenceFactory.createPatent(
 			"Isolation, description and sequencing of a novel species (of an established genus): Bacillus samanii sp nov. from snow",
-			"EP", "O238993", "A", 3, FlatFileUtils.getDay("10-SEP-1998"));
+			"EP", "O238993", "A", 3, FlatFileDateUtils.getDay("10-SEP-1998"));
     	patent.addApplicant("BAYER AG");
     	patent.addApplicant("GOOGLE AG");
 	    StringWriter writer = new StringWriter();

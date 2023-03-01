@@ -17,6 +17,7 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.flatfile.EmblPadding;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 
 import java.io.IOException;
@@ -45,24 +46,24 @@ public class DTWriter extends FlatFileWriter {
     	    if( entry.getLastUpdated() != null) {
                 if(isConvff) {
                     writer.write(EmblPadding.DT_PADDING);
-                    writer.write(DAY_FORMAT.format(entry.getFirstPublic() == null? entry.getLastUpdated() : entry.getFirstPublic() ).toUpperCase());
+                    writer.write(FlatFileDateUtils.formatAsDay(entry.getFirstPublic() == null? entry.getLastUpdated() : entry.getFirstPublic() ));
                     writer.write(" (Created)\n");
                 }
 
                 writer.write(EmblPadding.DT_PADDING);
-                writer.write(DAY_FORMAT.format(entry.getLastUpdated()).toUpperCase());
+                writer.write(FlatFileDateUtils.formatAsDay(entry.getLastUpdated()));
                 writer.write(" (Last updated)\n");
                 return true;
             }
     		return false;
     	}
         writer.write(EmblPadding.DT_PADDING);        
-        writer.write(DAY_FORMAT.format(entry.getFirstPublic()).toUpperCase());
+        writer.write(FlatFileDateUtils.formatAsDay(entry.getFirstPublic()));
         writer.write(" (Rel. ");
         writer.write(entry.getFirstPublicRelease().toString());
         writer.write(", Created)\n");
         writer.write(EmblPadding.DT_PADDING);        
-        writer.write(DAY_FORMAT.format(entry.getLastUpdated()).toUpperCase());
+        writer.write(FlatFileDateUtils.formatAsDay(entry.getLastUpdated()));
         writer.write(" (Rel. ");
         writer.write(entry.getLastUpdatedRelease().toString());
         writer.write(", Last updated, Version ");

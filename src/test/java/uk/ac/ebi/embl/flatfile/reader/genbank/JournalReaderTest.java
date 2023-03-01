@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.api.entry.reference.Thesis;
 import uk.ac.ebi.embl.api.entry.reference.Unpublished;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class JournalReaderTest extends GenbankReaderTest {
 
@@ -57,7 +57,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("117", book.getFirstPage());
 		assertEquals("132", book.getLastPage());
 		assertEquals("Munksgaard, Copenhagen", book.getPublisher());
-		assertEquals(FlatFileUtils.getYear("1979"), book.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1979"), book.getYear());
 	}	
 	
 	public void testRead_BookNoBookTitle() throws IOException {
@@ -107,7 +107,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("48_V",article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 	
 	public void testReadArticleWithComma_NoIssue() throws IOException {
@@ -126,7 +126,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNull(article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 
 	public void testReadArticleWithComma_NoVolume() throws IOException {
@@ -145,7 +145,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null, article.getVolume());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());	}	
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());	}
 
 	public void testReadArticleWithComma_NoYear() throws IOException {
 		initLineReader(
@@ -163,7 +163,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("48_V",article.getIssue());
 		assertEquals("322X81", article.getFirstPage());
 		assertEquals("32Y287", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2018"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2018"), article.getYear());
 	}
 
 	public void testArticleNoVolIssue() throws IOException {
@@ -183,7 +183,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals(null, article.getFirstPage());
 		assertEquals(null, article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2018"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2018"),article.getYear());
 	}
 
 	public void testArticleVolFirstpage() throws IOException {
@@ -202,7 +202,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals("34", article.getFirstPage());
 		assertEquals(null, article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2017"),article.getYear());
 	}
 
 	public void testArticleVolPageRange() throws IOException {
@@ -221,7 +221,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals("34", article.getFirstPage());
 		assertEquals("100", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2017"),article.getYear());
 	}
 
 	public void testArticleInvalidVol() throws IOException {
@@ -240,7 +240,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals("34", article.getFirstPage());
 		assertEquals("100", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2017"),article.getYear());
 	}
 
 	public void testArticlePageWithMultipleHyphen() throws IOException {
@@ -274,7 +274,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("1-2",article.getIssue());
 		assertEquals(null, article.getFirstPage());
 		assertEquals(null, article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2016"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2016"),article.getYear());
 	}
 
 	public void testArticleOnlyPageRange() throws IOException {
@@ -293,7 +293,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals(null, article.getFirstPage());
 		assertEquals(null, article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2017"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2017"),article.getYear());
 	}
 
 	public void testArticleWithCommaNoPage() throws IOException {
@@ -311,7 +311,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals(null,article.getIssue());
 		assertEquals("Germany", article.getFirstPage());
 		assertEquals(null, article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2016"),article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2016"),article.getYear());
 	}
 
 	public void testRead_ArticleWithCommaNoLastPage() throws IOException {
@@ -330,7 +330,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("1",article.getIssue());
 		assertEquals("19", article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2002"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2002"), article.getYear());
 	}	
 
 	public void testRead_ArticleWithCommaNoLastPage2() throws IOException {
@@ -349,7 +349,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("1",article.getIssue());
 		assertEquals("19", article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2002"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2002"), article.getYear());
 	}	
 	
 	public void testRead_ArticleWithoutComma() throws IOException {
@@ -369,7 +369,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("48_V",article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 
 	public void testRead_ArticleWithoutComma_OnlyJournal() throws IOException {
@@ -388,7 +388,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNull(article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}	
 	
 	public void testRead_ArticleWithoutComma_NoIssue() throws IOException {
@@ -408,7 +408,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNull(article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1998"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
 	}
 	
 	public void testRead_ArticleWithoutComma_NoVolume() throws IOException {
@@ -430,7 +430,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNull(article.getIssue());
 		assertNull(article.getFirstPage());
 		assertNull(article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("1999"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1999"), article.getYear());
 	}	
 
 	public void testRead_ArticleIssueWithComma() throws IOException {
@@ -449,7 +449,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("2,3,4",article.getIssue());
 		assertEquals("251", article.getFirstPage());
 		assertEquals("257", article.getLastPage());
-		assertEquals(FlatFileUtils.getYear("2000"), article.getYear());
+		assertEquals(FlatFileDateUtils.getYear("2000"), article.getYear());
 	}	
 		
 	public void testRead_Patent() throws IOException {
@@ -468,7 +468,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("O238993", patent.getPatentNumber());
 		assertEquals("A", patent.getPatentType());
 		assertEquals(new Integer(3), patent.getSequenceNumber());
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), patent.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
 		assertTrue(patent.getApplicants().size() == 2);
 		assertEquals("BAYER AG", patent.getApplicants().get(0));
 		assertEquals("GOOGLE AG", patent.getApplicants().get(1));
@@ -490,7 +490,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("O238993", patent.getPatentNumber());
 		assertEquals("A", patent.getPatentType());
 		assertEquals(new Integer(3), patent.getSequenceNumber());
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), patent.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
 		assertTrue(patent.getApplicants().size() == 2);
 		assertEquals("BAYER AG", patent.getApplicants().get(0));
 		assertEquals("GOOGLE AG", patent.getApplicants().get(1));
@@ -578,7 +578,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertEquals("2000297097", patent.getPatentNumber());
 		assertEquals("A", patent.getPatentType());
 		assertEquals(new Integer(1), patent.getSequenceNumber());
-		assertEquals(FlatFileUtils.getDay("24-OCT-2000"), patent.getDay());
+		assertEquals(FlatFileDateUtils.getDay("24-OCT-2000"), patent.getDay());
 		assertTrue(patent.getApplicants().size() == 0);
 	}	
 		
@@ -593,7 +593,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Thesis);
 		Thesis thesis = (Thesis)reference.getPublication();
-		assertEquals(FlatFileUtils.getYear("1998"), thesis.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), thesis.getYear());
 		assertEquals(
 				"Universitaet Muenchen near Berlin",			
 				thesis.getInstitute());
@@ -626,7 +626,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Thesis);
 		Thesis thesis = (Thesis)reference.getPublication();
-		assertEquals(FlatFileUtils.getYear("1998"), thesis.getYear());
+		assertEquals(FlatFileDateUtils.getYear("1998"), thesis.getYear());
 		assertNull(thesis.getInstitute());
 	}		
 	
@@ -647,7 +647,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertEquals(
 				"Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",				
 				submission.getSubmitterAddress());
@@ -666,7 +666,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertEquals(
 				"Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",				
 				submission.getSubmitterAddress());
@@ -689,7 +689,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertEquals(
 				"Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",
 				submission.getSubmitterAddress());
@@ -722,7 +722,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertNull(submission.getSubmitterAddress());
 	}
 
@@ -741,7 +741,7 @@ public class JournalReaderTest extends GenbankReaderTest {
 		assertNotNull(reference.getPublication());
 		assertTrue(reference.getPublication() instanceof Submission);
 		Submission submission = (Submission)reference.getPublication();
-		assertEquals(FlatFileUtils.getDay("10-SEP-1998"), submission.getDay());
+		assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), submission.getDay());
 		assertNull(submission.getSubmitterAddress());
 	}
 

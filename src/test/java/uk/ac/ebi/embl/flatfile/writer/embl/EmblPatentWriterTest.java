@@ -20,8 +20,7 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.Patent;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.embl.RLWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class EmblPatentWriterTest extends EmblWriterTest {
 
@@ -29,7 +28,7 @@ public class EmblPatentWriterTest extends EmblWriterTest {
     	ReferenceFactory referenceFactory = new ReferenceFactory();
     	Patent patent = referenceFactory.createPatent(
 			"Isolation, description and sequencing of a novel species (of an established genus): Bacillus samanii sp nov. from snow",
-			"EPO", "238993", "A", 3, FlatFileUtils.getDay("10-SEP-1998"));
+			"EPO", "238993", "A", 3, FlatFileDateUtils.getDay("10-SEP-1998"));
     	patent.addApplicant("BAYER AG");
     	patent.addApplicant("GOOGLE AG");
     	patent.addApplicant("BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH AG");

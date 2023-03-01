@@ -19,8 +19,7 @@ import java.io.IOException;
 
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.reader.embl.DTReader;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class DTReaderTest extends EmblReaderTest {
 
@@ -31,9 +30,9 @@ public class DTReaderTest extends EmblReaderTest {
 		);
 		ValidationResult result = (new DTReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(FlatFileUtils.getDay("28-JAN-1993"), entry.getFirstPublic());
+		assertEquals(FlatFileDateUtils.getDay("28-JAN-1993"), entry.getFirstPublic());
 		assertEquals(new Integer(34), entry.getFirstPublicRelease());
-		assertEquals(FlatFileUtils.getDay("11-MAY-2001"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("11-MAY-2001"), entry.getLastUpdated());
 		assertEquals(new Integer(67), entry.getLastUpdatedRelease());
 		assertEquals(new Integer(2), entry.getVersion());
 	}
@@ -44,9 +43,9 @@ public class DTReaderTest extends EmblReaderTest {
 		);
 		ValidationResult result = (new DTReader(lineReader)).read(entry);
 		assertEquals(0, result.count(Severity.ERROR));
-		assertEquals(FlatFileUtils.getDay("28-JAN-1993"), entry.getFirstPublic());
+		assertEquals(FlatFileDateUtils.getDay("28-JAN-1993"), entry.getFirstPublic());
 		assertEquals(new Integer(34), entry.getFirstPublicRelease());
-		assertEquals(FlatFileUtils.getDay("11-MAY-2001"), entry.getLastUpdated());
+		assertEquals(FlatFileDateUtils.getDay("11-MAY-2001"), entry.getLastUpdated());
 		assertEquals(new Integer(67), entry.getLastUpdatedRelease());
 		assertEquals(new Integer(2), entry.getVersion());
 	}

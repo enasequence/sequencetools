@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblLineReader;
 
 import java.io.BufferedReader;
@@ -243,7 +243,7 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
 		article.setIssue("48");
 		article.setFirstPage("32281");
 		article.setLastPage("32287");
-		article.setYear(FlatFileUtils.getDay("10-SEP-1998"));
+		article.setYear(FlatFileDateUtils.getDay("10-SEP-1998"));
 
 		EmblLineReader lineReader = new EmblLineReader(new BufferedReader(new StringReader(
 				"RA   Antonellis A., Ayele K., Benjamin B., Blakesley R.W., Boakye A., Bouffard G.G., Brinkley C., Brooks S., Chu G., Coleman H., Engle J., Gestole M., Greene A., Guan X., Gupta J., Haghighi P., Han J., Hansen N., Ho S.-L., Hu P., Hunter G., Hurle B., Idol J.R., Kwong P., Laric P., Larson S., Lee-Lin S.-Q., Legaspi R., Madden M., Maduro Q.L., Maduro V.B., Margulies E.H., Masiello C., Maskeri B., McDowell J., Mojidi H.A., Mullikin J.C., Oestreicher J.S., Park M., Portnoy M.E., Prasad A., Puri O., Reddix-Dugue N., Schandler K., Schueler M.G., Sison C., Stantripop S., Stephen E., Taye A., Thomas J.W., Thomas P.J., Tsipouri V., Ung L., Vogt J.L., Wetherby K.D., Young A., Green E.D.")));

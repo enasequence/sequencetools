@@ -18,6 +18,7 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 import java.io.IOException;
 import java.io.Writer;
 
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
@@ -68,7 +69,7 @@ public class GenbankArticleWriter extends FlatFileWriter {
 		}
 		if (article.getYear() != null) {
 			block.append("(");
-			block.append(YEAR_FORMAT.format(article.getYear()).toUpperCase());
+			block.append(FlatFileDateUtils.formatAsYear(article.getYear()));
 			block.append(")");
 		}
 		if (inPress) {

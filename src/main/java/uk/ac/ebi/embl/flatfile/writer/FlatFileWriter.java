@@ -19,21 +19,11 @@ import uk.ac.ebi.embl.api.entry.Entry;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 /** A base class for all flat file writers.
  */
 public abstract class FlatFileWriter {
-  
-  public static final String DAY_FORMAT_STRING = "dd-MMM-yyyy";
-
-	protected final DateFormat DAY_FORMAT = 
-		new SimpleDateFormat(DAY_FORMAT_STRING);
-	
-	public final DateFormat YEAR_FORMAT = 
-		new SimpleDateFormat("yyyy");
 
 	private static final int EMBL_OPTIMAL_LINE_LENGTH = 80;
 	

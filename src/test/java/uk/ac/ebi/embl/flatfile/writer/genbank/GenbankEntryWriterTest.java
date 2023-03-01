@@ -33,10 +33,9 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.reader.genbank.AuthorsReader;
 import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankLineReader;
-import uk.ac.ebi.embl.flatfile.writer.genbank.GenbankEntryWriter;
 
 public class GenbankEntryWriterTest extends GenbankWriterTest {
 
@@ -44,7 +43,7 @@ public class GenbankEntryWriterTest extends GenbankWriterTest {
 		SequenceFactory sequenceFactory = new SequenceFactory();
 		entry.setSequence(sequenceFactory.createSequenceByte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes()));
 		entry.setPrimaryAccession("DP000153");
-		entry.setLastUpdated(FlatFileUtils.getDay("10-SEP-1998"));
+		entry.setLastUpdated(FlatFileDateUtils.getDay("10-SEP-1998"));
 		entry.getSequence().setVersion(1);
 		entry.getSequence().setTopology(Topology.LINEAR);
 		entry.getSequence().setMoleculeType("genomic RNA");
@@ -62,7 +61,7 @@ public class GenbankEntryWriterTest extends GenbankWriterTest {
 		article.setIssue("48");
 		article.setFirstPage("32281");
 		article.setLastPage("32287");
-		article.setYear(FlatFileUtils.getDay("10-SEP-1998"));
+		article.setYear(FlatFileDateUtils.getDay("10-SEP-1998"));
 		GenbankLineReader lineReader = new GenbankLineReader();
 		lineReader.getCache().setPublication(article);
 		lineReader.setReader(new BufferedReader(new StringReader(

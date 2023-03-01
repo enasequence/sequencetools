@@ -15,17 +15,11 @@
  ******************************************************************************/
 package uk.ac.ebi.embl.flatfile;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
 public abstract class FlatFileUtils {
 
-	private static final SimpleDateFormat dateMonYear = new SimpleDateFormat("dd-MMM-yyyy");
-	private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
     /** Removes all whitespace characters from the beginning and
      * end of the string starting from the given position. 
      */
@@ -227,39 +221,6 @@ public abstract class FlatFileUtils {
 		return string.replaceAll(String.valueOf(c), "");
 	}
 
-    /** Returns the day given a string in format dd-MMM-yyyy.
-     */	
-	public static Date getDay(String string) {
-		if (string == null) {
-			return null;
-		}
-		Locale.setDefault(Locale.UK);
-		Date date = null;
-		try {
-			date = ((SimpleDateFormat)dateMonYear.clone()).parse(string);
-		}
-		catch (ParseException ex) {
-			return null;
-		}
-		return date;
-	}
-	
-    /** Returns the year given a string in format yyyy.
-     */	
-	public static Date getYear(String string) {
-		if (string == null) {
-			return null;
-		}
-		Date date = null;
-		try {
-			date = ((SimpleDateFormat)year.clone()) .parse(string);
-		}
-		catch (ParseException ex) {
-			return null;
-		}
-		return date;
-	}
-	
 	/** Returns true if a string is either null or empty.
 	 * 
 	 * @param string the input string.

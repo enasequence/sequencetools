@@ -20,15 +20,14 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.genbank.JournalWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class GenbankSubmissionWriterTest extends GenbankWriterTest {
 	
 	public void testWrite_Submission()  throws IOException {
 		ReferenceFactory referenceFactory = new ReferenceFactory();
 		Submission submission = referenceFactory.createSubmission(
-				"", FlatFileUtils.getDay("10-SEP-1998"),	null);
+				"", FlatFileDateUtils.getDay("10-SEP-1998"),	null);
 		submission.setSubmitterAddress("Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA");
 		StringWriter writer = new StringWriter();
 		assertTrue(new JournalWriter(entry, submission, wrapType).write(writer));

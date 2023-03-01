@@ -20,8 +20,7 @@ import java.io.StringWriter;
 
 import uk.ac.ebi.embl.api.entry.reference.Article;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.writer.genbank.JournalWriter;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 
 public class GenbankArticleWriterTest extends GenbankWriterTest {
 
@@ -34,7 +33,7 @@ public class GenbankArticleWriterTest extends GenbankWriterTest {
     	article.setIssue("48");
     	article.setFirstPage("32281");
     	article.setLastPage("32287");
-    	article.setYear(FlatFileUtils.getDay("10-SEP-1998"));
+    	article.setYear(FlatFileDateUtils.getDay("10-SEP-1998"));
         StringWriter writer = new StringWriter();
         assertTrue(new JournalWriter(entry, article, wrapType).write(writer));
         //System.out.print(writer.toString());

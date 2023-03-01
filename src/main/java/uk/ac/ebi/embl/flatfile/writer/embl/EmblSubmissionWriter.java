@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import uk.ac.ebi.embl.flatfile.EmblPadding;
+import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 import uk.ac.ebi.embl.flatfile.writer.WrapChar;
 import uk.ac.ebi.embl.flatfile.writer.WrapType;
@@ -49,7 +50,7 @@ public class EmblSubmissionWriter extends FlatFileWriter {
 		writer.write(header);
 		writer.write("Submitted (");
 		if (submission.getDay() != null) {
-			writer.write(DAY_FORMAT.format(submission.getDay()).toUpperCase());
+			writer.write(FlatFileDateUtils.formatAsDay(submission.getDay()));
 		}
 
 		writer.write(") to the INSDC.\n");
