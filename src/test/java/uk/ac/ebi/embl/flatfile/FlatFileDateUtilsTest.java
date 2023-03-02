@@ -78,4 +78,11 @@ public class FlatFileDateUtilsTest {
         LocalDate localDate = FlatFileDateUtils.getLocalDate(date);
         assertEquals(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), date.getTime());
     }
+
+    @Test
+    public void testGetLocalDateFromSqlDate() {
+        Date sqlDate = new java.sql.Date(FlatFileDateUtils.getDate(LocalDate.of(1971, 1, 1)).getTime());
+        LocalDate localDate = FlatFileDateUtils.getLocalDate(sqlDate);
+        assertEquals(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(), sqlDate.getTime());
+    }
 }

@@ -92,10 +92,14 @@ public abstract class FlatFileDateUtils {
     }
 
     public static Date getDate(LocalDate localDate) {
+        
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     public static LocalDate getLocalDate(Date date) {
+        if(date instanceof java.sql.Date) {
+            date = new java.util.Date(date.getTime());
+        }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }
