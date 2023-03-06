@@ -41,6 +41,7 @@ public class SubmissionOptions
 	public  boolean isWebinCLI = false;
 	public boolean forceReducedFlatfileCreation = false;
 	private String projectId;
+	private String templateId;
 
 	public String getProjectId() {
 		return projectId;
@@ -48,6 +49,14 @@ public class SubmissionOptions
 
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
 	}
 
 	public void init() throws ValidationEngineException
