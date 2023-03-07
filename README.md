@@ -2,36 +2,14 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/590acad80798461da13b6f581c4365f6)](https://app.codacy.com/app/enasequence/sequencetools?utm_source=github.com&utm_medium=referral&utm_content=enasequence/sequencetools&utm_campaign=badger)
 
-
-SequenceTools is a set of Java tools and APIs for working with sequence data including EMBL-Bank and NCBI flat file parsers and writers and validation and fixing functionality. 
+Sequencetools is a Java library for reading and validating EMBL-Bank and GenBank flat files and related file formats. It is used by Webin-CLI and ENA's internal processing pipelines.
 
 # License
 
-Copyright 2015 EMBL - European Bioinformatics Institute Licensed under the Apache License, Version 2.0 (the "License"); 
+Copyright 2015-2023 EMBL - European Bioinformatics Institute Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
 You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-# Download
-
-[sequencetools] (https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence) <br />
-
-[embl-api-ff](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-ff) : Flatfile Parser and writer <br /> 
-
-[embl-api-core](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-core) : Flatfile Validator and fixer <br />
-
-[embl-api-validator](https://mvnrepository.com/artifact/uk.ac.ebi.ena.sequence/embl-api-validator) : 
-Flatfile validator/fixer client for execution <br />
-
-
-# Usage
-
-Source code build instructions are given [Here](https://github.com/enasequence/sequencetools/wiki/Build-Instructions)
-
-Validator download and execution instructions are given [Here](http://www.ebi.ac.uk/ena/software/flat-file-validator)
-
-
-
 
 
 
