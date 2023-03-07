@@ -1,7 +1,5 @@
 # Sequencetools
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/590acad80798461da13b6f581c4365f6)](https://app.codacy.com/app/enasequence/sequencetools?utm_source=github.com&utm_medium=referral&utm_content=enasequence/sequencetools&utm_campaign=badger)
-
 Sequencetools is a Java library for reading and validating EMBL-Bank and GenBank flat files and related file formats. It is used by Webin-CLI and ENA's internal processing pipelines.
 
 # License
