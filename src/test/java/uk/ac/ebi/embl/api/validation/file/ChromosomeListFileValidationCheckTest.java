@@ -55,11 +55,11 @@ public class ChromosomeListFileValidationCheckTest  extends SubmissionValidation
 		SubmissionFile file=initSubmissionTestFile("chromosome_list.txt",SubmissionFile.FileType.CHROMOSOME_LIST);
 		ChromosomeListFileValidationCheck check = new ChromosomeListFileValidationCheck(options, sharedInfo);
 		assertTrue(check.check(file).isValid());
-		assertEquals(check.getChromosomeQualifeirs().size(),2);
+		assertEquals(check.getChromosomeQualifiers().size(),2);
 		List<Qualifier> qualifiers =new ArrayList<>();
-		for(String key:check.getChromosomeQualifeirs().keySet())
+		for(String key:check.getChromosomeQualifiers().keySet())
 		{
-			for(Qualifier qual:check.getChromosomeQualifeirs().get(key).setAndGetQualifiers(false))
+			for(Qualifier qual:check.getChromosomeQualifiers().get(key).setAndGetQualifiers(false))
 			{
 				qualifiers.add(qual);
 			}

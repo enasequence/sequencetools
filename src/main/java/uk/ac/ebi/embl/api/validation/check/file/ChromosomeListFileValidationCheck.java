@@ -21,7 +21,6 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.plan.GenomeAssemblyValidationPlan;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionValidationPlan;
 import uk.ac.ebi.embl.flatfile.reader.genomeassembly.ChromosomeListFileReader;
 
 import java.util.HashMap;
@@ -92,7 +91,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck
 		return validationResult;
 	}
 
- 	public HashMap<String,ChromosomeEntry> getChromosomeQualifeirs()
+ 	public HashMap<String,ChromosomeEntry> getChromosomeQualifiers()
  	{
  		return sharedInfo.chromosomeNameQualifiers;
  	}
