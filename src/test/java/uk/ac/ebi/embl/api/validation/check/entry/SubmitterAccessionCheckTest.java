@@ -47,6 +47,10 @@ public class SubmitterAccessionCheckTest {
             execute(check, entry);
             return validationResult;
         }
+        
+        public EmblEntryValidationPlanProperty getProperty(){
+            return planProperty;
+        }
     }
 
     @Before
@@ -109,6 +113,30 @@ public class SubmitterAccessionCheckTest {
                     validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
                 assertTrue(!result.isValid());
                 assertEquals(1, result.count("SubmitterAccessionCheck_2", Severity.ERROR));
+            } else {
+                assertTrue(result.isValid());
+            }
+        }
+    }
+
+    /**
+     * Test that check fails if the submitter accession is over maximum length.
+     */
+    @Test
+    public void testCheck_OverMaximumLengthSubmitterAccessionAndIgnoreError() throws Exception {
+        for (ValidationScope validationScope : ValidationScope.values()) {
+            TestValidationPlan validationPlan = testValidationPlan(validationScope);
+            EntryFactory entryFactory = new EntryFactory();
+            Entry entry = entryFactory.createEntry();
+            entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
+            validationPlan.getProperty().ignore_errors.set(true);
+            
+            ValidationResult result = validationPlan.execute(entry);
+            if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME ||
+                    validationScope == ValidationScope.ASSEMBLY_SCAFFOLD ||
+                    validationScope == ValidationScope.ASSEMBLY_CONTIG ||
+                    validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
+                assertTrue(result.isValid());
             } else {
                 assertTrue(result.isValid());
             }
