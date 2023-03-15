@@ -896,4 +896,17 @@ public abstract class FileValidationCheck {
 			}
 		}
 	}
+	
+	public void validateUnlocalisedEntryNames() throws ValidationEngineException {
+		Set<String> unFoundUnlocalisedNames = new TreeSet<>();
+		if (!sharedInfo.unlocalisedEntryNames.isEmpty()) {
+			for (String unlocalisedNames : sharedInfo.unlocalisedEntryNames) {
+				if (!sharedInfo.entryNames.contains(unlocalisedNames)) {
+					unFoundUnlocalisedNames.add(unlocalisedNames);
+				}
+			}
+			if (!unFoundUnlocalisedNames.isEmpty())
+				throw new ValidationEngineException("The below unlocalised entry name are not found in submission file: \n" + String.join("\n", unFoundUnlocalisedNames), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+		}
+	}
 }

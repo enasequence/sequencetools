@@ -137,6 +137,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck
 			validationResult.append(parseResult);
 			sharedInfo.sequenceCount++;
 		}
+		validateUnlocalisedEntryNames();
 		}catch(ValidationEngineException e)
 		{
 			getReporter().writeToFile(getReportFile(submissionFile),Severity.ERROR, e.getMessage(),origin);

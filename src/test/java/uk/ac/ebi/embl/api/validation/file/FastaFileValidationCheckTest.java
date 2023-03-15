@@ -31,8 +31,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 @Description("")
@@ -105,5 +109,29 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
         assertEquals("gttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggttttttttttttttttttttttttttttttttttttttttttttttttttttttttttggtttttttttttttttttttttttttttttttttg",map.get("IWGSC_CSS_6DL_contig_209592".toUpperCase()));
         assertEquals("aggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggggggggggggggggggggggggggggaaggggggggggggggggggggggggggggggggga",map.get("IWGSC_CSS_6DL_contig_209593".toUpperCase()));
         check.getSequenceDB().close();*/
+	}
+	
+	@Test
+	public void testValidateUnlocalisedEntryNames() throws ValidationEngineException {
+	   
+		sharedInfo = new FileValidationCheck.SharedInfo();
+		sharedInfo.entryNames.addAll(Arrays.asList("1","2","3","4","5"));
+		sharedInfo.unlocalisedEntryNames.addAll(Arrays.asList("1","2","3"));
+		FileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
+		check.validateUnlocalisedEntryNames();
+
+		sharedInfo = new FileValidationCheck.SharedInfo();
+		sharedInfo.entryNames.addAll(Arrays.asList("1","2","3","4","5"));
+		sharedInfo.unlocalisedEntryNames.addAll(Arrays.asList("Not-found-1","1","Not-found-3","2","3","Not-found-2"));
+		FileValidationCheck check1 = new FastaFileValidationCheck(options, sharedInfo);
+		Exception exception = assertThrows(ValidationEngineException.class, () ->
+				 check1.validateUnlocalisedEntryNames()
+		);
+
+		String expectedMessage="The below unlocalised entry name are not found in submission file: \n" +
+				"Not-found-1\n" +
+				"Not-found-2\n" +
+				"Not-found-3";
+		assertTrue(exception.getMessage().equals(expectedMessage));
 	}
 }
