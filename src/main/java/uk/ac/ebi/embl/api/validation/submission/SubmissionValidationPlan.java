@@ -118,6 +118,7 @@ public class SubmissionValidationPlan
 			}
 
 			validateDuplicateEntryNames(sharedInfo);
+			validateUnlocalisedEntryNames(sharedInfo);
 			if(Context.genome == options.context.get()) {
 				registerSequences();
 				validateCovid19GenomeSize(sharedInfo);

@@ -144,8 +144,6 @@ public class FastaFileValidationCheck extends FileValidationCheck
 				validationResult.append(planResult);
 				sharedInfo.sequenceCount++;
 			}
-
-			validateUnlocalisedEntryNames();
 			if(sharedInfo.contigDB !=null)
 			{
 				sharedInfo.contigDB.commit();

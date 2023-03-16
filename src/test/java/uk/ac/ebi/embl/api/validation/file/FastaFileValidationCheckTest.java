@@ -118,20 +118,18 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest
 		sharedInfo.entryNames.addAll(Arrays.asList("1","2","3","4","5"));
 		sharedInfo.unlocalisedEntryNames.addAll(Arrays.asList("1","2","3"));
 		FileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
-		check.validateUnlocalisedEntryNames();
+		check.validateUnlocalisedEntryNames(sharedInfo);
 
 		sharedInfo = new FileValidationCheck.SharedInfo();
 		sharedInfo.entryNames.addAll(Arrays.asList("1","2","3","4","5"));
 		sharedInfo.unlocalisedEntryNames.addAll(Arrays.asList("Not-found-1","1","Not-found-3","2","3","Not-found-2"));
 		FileValidationCheck check1 = new FastaFileValidationCheck(options, sharedInfo);
 		Exception exception = assertThrows(ValidationEngineException.class, () ->
-				 check1.validateUnlocalisedEntryNames()
+				 check1.validateUnlocalisedEntryNames(sharedInfo)
 		);
 
-		String expectedMessage="The below unlocalised entry name are not found in submission file: \n" +
-				"Not-found-1\n" +
-				"Not-found-2\n" +
-				"Not-found-3";
+		String expectedMessage="No sequences found for the following unlocalised sequence object names: " +
+				"Not-found-1,Not-found-2,Not-found-3";
 		assertTrue(exception.getMessage().equals(expectedMessage));
 	}
 }

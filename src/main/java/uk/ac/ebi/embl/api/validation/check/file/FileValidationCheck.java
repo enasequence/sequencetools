@@ -897,16 +897,16 @@ public abstract class FileValidationCheck {
 		}
 	}
 	
-	public void validateUnlocalisedEntryNames() throws ValidationEngineException {
+	public static void validateUnlocalisedEntryNames(SharedInfo sharedInfo) throws ValidationEngineException {
 		Set<String> unFoundUnlocalisedNames = new TreeSet<>();
 		if (!sharedInfo.unlocalisedEntryNames.isEmpty()) {
-			for (String unlocalisedNames : sharedInfo.unlocalisedEntryNames) {
-				if (!sharedInfo.entryNames.contains(unlocalisedNames)) {
-					unFoundUnlocalisedNames.add(unlocalisedNames);
+			for (String unlocalisedName : sharedInfo.unlocalisedEntryNames) {
+				if (!sharedInfo.entryNames.contains(unlocalisedName)) {
+					unFoundUnlocalisedNames.add(unlocalisedName);
 				}
 			}
 			if (!unFoundUnlocalisedNames.isEmpty())
-				throw new ValidationEngineException("The below unlocalised entry name are not found in submission file: \n" + String.join("\n", unFoundUnlocalisedNames), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+				throw new ValidationEngineException("No sequences found for the following unlocalised sequence object names: " + String.join(",", unFoundUnlocalisedNames), ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
 		}
 	}
 }
