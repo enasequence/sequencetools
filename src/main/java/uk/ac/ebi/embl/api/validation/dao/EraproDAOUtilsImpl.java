@@ -641,7 +641,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		SampleEntity sample =new SampleEntity();
 		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()'," +
-				"value varchar2(4000) PATH 'VALUE/text()') t1 where sample_id =?";
+				"value clob PATH 'VALUE/text()') t1 where sample_id =?";
 		PreparedStatement select_sourcequalifiers_pstmt = null;
 		ResultSet select_sourcequalifers_rs = null;
 
