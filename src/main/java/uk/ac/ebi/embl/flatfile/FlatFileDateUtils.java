@@ -32,7 +32,7 @@ public abstract class FlatFileDateUtils {
         DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
         builder.parseCaseInsensitive();
         builder.appendPattern("dd-MMM-yyyy");
-        DAY_FORMATTER = builder.toFormatter(Locale.UK);
+        DAY_FORMATTER = builder.toFormatter(Locale.ENGLISH);
     }
 
     /**
