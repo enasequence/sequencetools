@@ -34,7 +34,7 @@ public class RemoteRange extends Range implements RemoteLocation, Serializable {
 		this.sequenceAccession = new SequenceAccession(accession, version);
 	}
 	
-	protected RemoteRange(String accession, Integer version, Long beginPosition, Long endPosition) {
+	public RemoteRange(String accession, Integer version, Long beginPosition, Long endPosition) {
 		super(beginPosition, endPosition);
 		this.sequenceAccession = new SequenceAccession(accession, version);
 	}
