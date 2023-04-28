@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.12.1.CREATE_REDUCED_FLATFILE'
+ext.version_base = '2.12.2.CREATE_REDUCED_FLATFILE'
 
 
 version = version_base
