@@ -16,6 +16,8 @@
 package uk.ac.ebi.embl.flatfile.reader;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,8 @@ public class FeatureReader extends FlatFileLineReader {
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
     }
+
+	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME));
 
 	public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
@@ -88,7 +92,16 @@ public class FeatureReader extends FlatFileLineReader {
 
 		while (true) {
 			Qualifier qualifier = readQualifier();
+
 			if (qualifier != null) {
+
+				for(IgnoreQualifier ignoreQualifier : ignoreQualifierList){
+					if(ignoreQualifier.isIgnored(feature.getName(), qualifier.getName())){
+						//do nothing
+						return;
+					}
+				}
+				
 				if(isReducedFlatfile) {
 					feature.addQualifier(qualifier);
 				} else if (qualifier.getName().equals("organism")) {
@@ -363,6 +376,29 @@ public class FeatureReader extends FlatFileLineReader {
 	{
 		quotecount += StringUtils.countMatches(line, "\"");
 		return quotecount % 2 == 0;
+	}
+}
+
+class IgnoreQualifier {
+	private final String featureName;
+	private final String qualifierName;
+
+	IgnoreQualifier(String featureName, String qualifierName){
+		this.featureName = featureName;
+		this.qualifierName = qualifierName;
+	}
+
+	public String getFeatureName() {
+		return featureName;
+	}
+
+	public String getQualifierName() {
+		return qualifierName;
+	}
+	
+	public boolean isIgnored(String featureName, String qualifierName){
+		return featureName.equals(this.featureName) && qualifierName.equals(this.qualifierName);
+		
 	}
 }
 
