@@ -75,25 +75,22 @@ public class FeatureReader extends FlatFileLineReader {
 			return;
 		}
 
-        if((Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && skipSource)
-                || (!Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && lineReader.getReaderOptions() != null && lineReader.getReaderOptions().isParseSourceOnly()))
-        {
-            while(true)
-            {
-                lineReader.readLine();
-                String nextLine = lineReader.getNextMaskedLine();
+		if ((Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && skipSource)
+				|| (!Feature.SOURCE_FEATURE_NAME.equals(feature.getName()) && lineReader.getReaderOptions() != null && lineReader.getReaderOptions().isParseSourceOnly())) {
+			while (true) {
+				lineReader.readLine();
+				String nextLine = lineReader.getNextMaskedLine();
 
-                if(isFeature(nextLine))
-                {
-                    break;
-                }
-            }
-        }
+				if (isFeature(nextLine)) {
+					break;
+				}
+			}
+		}
 
 		while (true) {
 			Qualifier qualifier = readQualifier();
 
-			if (qualifier != null && ! isQualifierIgnored(feature.getName(), qualifier.getName())) {
+			if (qualifier != null && !isQualifierIgnored(feature.getName(), qualifier.getName())) {
 				if (isReducedFlatfile) {
 					feature.addQualifier(qualifier);
 				} else if (qualifier.getName().equals("organism")) {
@@ -154,8 +151,7 @@ public class FeatureReader extends FlatFileLineReader {
 				break;
 			}
 		}
-		if(!isReducedFlatfile && (feature instanceof SourceFeature) && !moltypeFound && !skipSource)
-		{
+		if (!isReducedFlatfile && (feature instanceof SourceFeature) && !moltypeFound && !skipSource) {
 			error("FT.9");
 		}
 		entry.addFeature(feature);
