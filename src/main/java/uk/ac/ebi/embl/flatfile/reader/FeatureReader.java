@@ -111,10 +111,7 @@ public class FeatureReader extends FlatFileLineReader {
 							sourceFeature.setTaxId(taxId);
 						}
 						if (lineage != null) {
-
 							sourceFeature.getTaxon().setLineage(lineage);
-							;
-
 						}
 					}
 				} else if (qualifier.getName().equals("mol_type")) {
