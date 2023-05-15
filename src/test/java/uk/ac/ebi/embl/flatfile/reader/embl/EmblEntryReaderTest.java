@@ -895,6 +895,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FT                   /locus_tag=\"BN5_00001\"\n" +
 						"FT   repeat_region   15..71\n" +
 						"FT                   /note=\"BN5_00001\"\n" +
+						"FT                   /locus_tag=\"BN5_00001\"\n" +
 						"FT   primer_bind     complement(1271..1294)\n" +
 						"FT                   /PCR_conditions=\"annealing temp 65 degrees C\"\n" +
 						"FT                   /note=\"PCR 3' primer\"\n" +
@@ -946,6 +947,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FH\n" +
 						"FT   CDS             1..300\n" +
 						"FT                   /gene=\"T\"\n" +
+						"FT   repeat_region   15..71\n" +
 						"FT   repeat_region   15..71\n" +
 						"FT                   /note=\"BN5_00001\"\n" +
 						"FT   primer_bind     complement(1271..1294)\n" +

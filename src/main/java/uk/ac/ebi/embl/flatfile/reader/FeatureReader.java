@@ -95,79 +95,66 @@ public class FeatureReader extends FlatFileLineReader {
 
 			if (qualifier != null) {
 
-				for(IgnoreQualifier ignoreQualifier : ignoreQualifierList){
-					if(ignoreQualifier.isIgnored(feature.getName(), qualifier.getName())){
-						//do nothing
-						return;
-					}
-				}
-				
-				if(isReducedFlatfile) {
-					feature.addQualifier(qualifier);
-				} else if (qualifier.getName().equals("organism")) {
-					if (!(feature instanceof SourceFeature)) {
-						error("FT.6", qualifier.getName()); // Invalid feature qualifier.
-					}
-					else {
-						SourceFeature sourceFeature = ((SourceFeature)feature);
-						String scientificName = qualifier.getValue();
-						sourceFeature.setScientificName(scientificName);
-						String lineage = getCache().getLineage(scientificName);
-						String commonName = getCache().getCommonName(scientificName);
-						sourceFeature.setCommonName(commonName);
-						Long taxId = getCache().getTaxId(scientificName);
-						if (taxId != null) {
-							sourceFeature.setTaxId(taxId);
-						}
-						if (lineage != null) {
-
-							sourceFeature.getTaxon().setLineage(lineage);;
-
-						}
-					}
-				}
-				else if (qualifier.getName().equals("mol_type")) {
-					if (!(feature instanceof SourceFeature)) {
-						error("FT.14", qualifier.getName(), "source");
-					}
-					else {
-						moltypeFound = true;
-						String value = qualifier.getValue();
-						getCache().setMolType(value);
-						String oldValue = entry.getSequence().getMoleculeType();
-						if (!FlatFileUtils.isBlankString(value) &&
-								!FlatFileUtils.isBlankString(oldValue) &&
-								!value.equals(oldValue)) {
-							error("FT.7", qualifier.getName(), value, oldValue); // Inconsistent feature qualifier.
-						}
-						else {
-							entry.getSequence().setMoleculeType(qualifier.getValue());
-						}
-					}
-
-				}
-				else if (qualifier.getName().equals("db_xref")) {
-					XRefTaxonMatcher taxonXrefMatcher = new XRefTaxonMatcher(this);
-					if (taxonXrefMatcher.match(qualifier.getValue())) {
+				if(!isQualifierIgnored(feature.getName(), qualifier.getName())) {
+					if (isReducedFlatfile) {
+						feature.addQualifier(qualifier);
+					} else if (qualifier.getName().equals("organism")) {
 						if (!(feature instanceof SourceFeature)) {
 							error("FT.6", qualifier.getName()); // Invalid feature qualifier.
+						} else {
+							SourceFeature sourceFeature = ((SourceFeature) feature);
+							String scientificName = qualifier.getValue();
+							sourceFeature.setScientificName(scientificName);
+							String lineage = getCache().getLineage(scientificName);
+							String commonName = getCache().getCommonName(scientificName);
+							sourceFeature.setCommonName(commonName);
+							Long taxId = getCache().getTaxId(scientificName);
+							if (taxId != null) {
+								sourceFeature.setTaxId(taxId);
+							}
+							if (lineage != null) {
+
+								sourceFeature.getTaxon().setLineage(lineage);
+								;
+
+							}
 						}
-						else {
-							((SourceFeature)feature).setTaxId(taxonXrefMatcher.getTaxId());
+					} else if (qualifier.getName().equals("mol_type")) {
+						if (!(feature instanceof SourceFeature)) {
+							error("FT.14", qualifier.getName(), "source");
+						} else {
+							moltypeFound = true;
+							String value = qualifier.getValue();
+							getCache().setMolType(value);
+							String oldValue = entry.getSequence().getMoleculeType();
+							if (!FlatFileUtils.isBlankString(value) &&
+									!FlatFileUtils.isBlankString(oldValue) &&
+									!value.equals(oldValue)) {
+								error("FT.7", qualifier.getName(), value, oldValue); // Inconsistent feature qualifier.
+							} else {
+								entry.getSequence().setMoleculeType(qualifier.getValue());
+							}
 						}
+
+					} else if (qualifier.getName().equals("db_xref")) {
+						XRefTaxonMatcher taxonXrefMatcher = new XRefTaxonMatcher(this);
+						if (taxonXrefMatcher.match(qualifier.getValue())) {
+							if (!(feature instanceof SourceFeature)) {
+								error("FT.6", qualifier.getName()); // Invalid feature qualifier.
+							} else {
+								((SourceFeature) feature).setTaxId(taxonXrefMatcher.getTaxId());
+							}
+						} else {
+							XRefQualifierMatcher xrefQualifierMatcher = new XRefQualifierMatcher(this);
+							if (!xrefQualifierMatcher.match(qualifier.getValue())) {
+								error("FT.6", qualifier.getName()); // Invalid feature qualifier.
+							} else {
+								feature.addXRef(xrefQualifierMatcher.getXref());
+							}
+						}
+					} else {
+						feature.addQualifier(qualifier);
 					}
-					else {
-						XRefQualifierMatcher xrefQualifierMatcher = new XRefQualifierMatcher(this);
-						if (!xrefQualifierMatcher.match(qualifier.getValue())) {
-							error("FT.6", qualifier.getName()); // Invalid feature qualifier.
-						}
-						else {
-							feature.addXRef(xrefQualifierMatcher.getXref());
-						}
-					}
-				}
-				else {
-					feature.addQualifier(qualifier);
 				}
 			} else {
 				break;
@@ -377,6 +364,15 @@ public class FeatureReader extends FlatFileLineReader {
 		quotecount += StringUtils.countMatches(line, "\"");
 		return quotecount % 2 == 0;
 	}
+
+	public boolean isQualifierIgnored(String featureName, String qualifierName){
+		for(IgnoreQualifier ignoreQualifier : ignoreQualifierList){
+			if( featureName.equals(ignoreQualifier.getFeatureName()) && qualifierName.equals(ignoreQualifier.getQualifierName())){
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 class IgnoreQualifier {
@@ -396,9 +392,5 @@ class IgnoreQualifier {
 		return qualifierName;
 	}
 	
-	public boolean isIgnored(String featureName, String qualifierName){
-		return featureName.equals(this.featureName) && qualifierName.equals(this.qualifierName);
-		
-	}
 }
 
