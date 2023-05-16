@@ -147,7 +147,7 @@ public class FeatureReader extends FlatFileLineReader {
 				} else {
 					feature.addQualifier(qualifier);
 				}
-			} else {
+			} else if(qualifier == null) {
 				break;
 			}
 		}
