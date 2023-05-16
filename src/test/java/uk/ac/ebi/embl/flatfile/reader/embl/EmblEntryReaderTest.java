@@ -949,6 +949,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FT   CDS             1..300\n" +
 						"FT                   /gene=\"T\"\n" +
 						"FT   repeat_region   15..71\n" +
+						"FT                   /note=\"BN5_00005\"\n" +
 						"FT   repeat_region   72..100\n" +
 						"FT                   /note=\"BN5_00001\"\n" +
 						"FT   primer_bind     complement(1271..1294)\n" +
