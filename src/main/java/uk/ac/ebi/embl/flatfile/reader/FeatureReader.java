@@ -44,7 +44,9 @@ public class FeatureReader extends FlatFileLineReader {
     	super(lineReader);
     }
 
-	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME));
+	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COUNTRY_QUALIFIER_NAME,"missing: third party data"),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COLLECTION_DATE_QUALIFIER_NAME,"missing: third party data"));
 
 	public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
@@ -90,7 +92,7 @@ public class FeatureReader extends FlatFileLineReader {
 		while (true) {
 			Qualifier qualifier = readQualifier();
 
-			if (qualifier != null && !isQualifierIgnored(feature.getName(), qualifier.getName())) {
+			if (qualifier != null && !isQualifierIgnored(feature.getName(), qualifier.getName(),qualifier.getValue())) {
 				if (isReducedFlatfile) {
 					feature.addQualifier(qualifier);
 				} else if (qualifier.getName().equals("organism")) {
@@ -355,10 +357,19 @@ public class FeatureReader extends FlatFileLineReader {
 		return quotecount % 2 == 0;
 	}
 
-	public boolean isQualifierIgnored(String featureName, String qualifierName){
+	public boolean isQualifierIgnored(String featureName, String qualifierName, String qualifierValue){
 		for(IgnoreQualifier ignoreQualifier : ignoreQualifierList){
-			if( featureName.equals(ignoreQualifier.getFeatureName()) && qualifierName.equals(ignoreQualifier.getQualifierName())){
-				return true;
+			if(ignoreQualifier.getQualifierValue() == null) {
+				if (featureName.equals(ignoreQualifier.getFeatureName()) && 
+						qualifierName.equals(ignoreQualifier.getQualifierName())) {
+					return true;
+				}
+			}else{
+				if (featureName.equals(ignoreQualifier.getFeatureName()) && 
+						qualifierName.equals(ignoreQualifier.getQualifierName()) && 
+						qualifierValue.equals(ignoreQualifier.getQualifierValue())) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -368,10 +379,18 @@ public class FeatureReader extends FlatFileLineReader {
 class IgnoreQualifier {
 	private final String featureName;
 	private final String qualifierName;
+	private final String qualifierValue;
 
 	IgnoreQualifier(String featureName, String qualifierName){
 		this.featureName = featureName;
 		this.qualifierName = qualifierName;
+		this.qualifierValue = null;
+	}
+
+	IgnoreQualifier(String featureName, String qualifierName, String qualifierValue){
+		this.featureName = featureName;
+		this.qualifierName = qualifierName;
+		this.qualifierValue = qualifierValue;
 	}
 
 	public String getFeatureName() {
@@ -381,6 +400,9 @@ class IgnoreQualifier {
 	public String getQualifierName() {
 		return qualifierName;
 	}
-	
+
+	public String getQualifierValue() {
+		return qualifierValue;
+	}
 }
 
