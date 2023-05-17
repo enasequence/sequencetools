@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,14 +43,6 @@ public class FeatureReader extends FlatFileLineReader {
     public FeatureReader(LineReader lineReader) {
     	super(lineReader);
     }
-
-	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(
-			new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME, false),
-			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COUNTRY_QUALIFIER_NAME,true),
-			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COLLECTION_DATE_QUALIFIER_NAME,true),
-			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.LAT_LON_QUALIFIER_NAME,true)
-			);
-
 	public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
     	this.skipSource=skipSource;
@@ -95,7 +87,7 @@ public class FeatureReader extends FlatFileLineReader {
 		while (true) {
 			Qualifier qualifier = readQualifier();
 
-			if (qualifier != null && !isQualifierIgnored(feature.getName(), qualifier.getName(),qualifier.getValue())) {
+			if (qualifier != null && !IgnoreQualifier.isIgnore(feature.getName(), qualifier.getName(), qualifier.getValue())) {
 				if (isReducedFlatfile) {
 					feature.addQualifier(qualifier);
 				} else if (qualifier.getName().equals("organism")) {
@@ -207,13 +199,13 @@ public class FeatureReader extends FlatFileLineReader {
 		feature.getLocations().setOrigin(new FlatFileOrigin(lineReader.getFileId(), firstLineNumber, lastLineNumber));
 		return feature;
 	}
-    
+
     private CompoundLocation<Location> readLocation(
     		String locationString) throws IOException {
 		if (FlatFileUtils.isBlankString(locationString)) {
 			error("FT.3"); // Missing feature location.
 			return null;
-		}    	
+		}
     	StringBuilder locationBuilder = new StringBuilder();
     	locationBuilder.append(locationString);
 		while (true) {
@@ -234,8 +226,8 @@ public class FeatureReader extends FlatFileLineReader {
 			locationString = nextLine.substring(LOCATION_BEGIN_POS);
     		if (!FlatFileUtils.isBlankString(locationString)) {
     			locationBuilder.append(locationString);
-    		}    			
-			lineReader.readLine();			
+    		}
+			lineReader.readLine();
 		}
     	FeatureLocationsMatcher matcher = new FeatureLocationsMatcher(this,lineReader.getReaderOptions().isIgnoreParserErrors());
     	if (!matcher.match(locationBuilder.toString())) {
@@ -243,9 +235,9 @@ public class FeatureReader extends FlatFileLineReader {
     		return null;
     	}
     	CompoundLocation<Location> location = matcher.getCompoundLocation();
-    	return location;		
+    	return location;
     }
-          
+
     private Qualifier readQualifier() throws IOException {
 		int firstLineNumber = 0;
 		int lastLineNumber = 0;
@@ -253,9 +245,9 @@ public class FeatureReader extends FlatFileLineReader {
 			return null;
 		}
 		String nextLine = lineReader.getNextMaskedLine();
-		
+
 		nextLine=StringEscapeUtils.unescapeHtml4(nextLine);
-		
+
 		if (!isQualifier(nextLine)) {
 			return null;
 		}
@@ -264,7 +256,7 @@ public class FeatureReader extends FlatFileLineReader {
 			return null;
 		}
     	StringBuilder qualifierBuilder = new StringBuilder();
-		String qualifierString = nextLine.substring(QUALIFIER_BEGIN_POS); 
+		String qualifierString = nextLine.substring(QUALIFIER_BEGIN_POS);
 		qualifierBuilder.append(qualifierString);
 		// Do not add space if the last character on the line is '-'.
 		boolean noAddSpace =
@@ -279,14 +271,14 @@ public class FeatureReader extends FlatFileLineReader {
 			String tempLine=nextLine ;
 			lineReader.readLine();
 			if (firstLineNumber == 0 ) {
-				firstLineNumber = lineReader.getCurrentLineNumber();				
+				firstLineNumber = lineReader.getCurrentLineNumber();
 			}
 			lastLineNumber = lineReader.getCurrentLineNumber();
 			if (!lineReader.joinLine()) {
 				break;
 			}
 			nextLine = lineReader.getNextMaskedLine();
-						
+
     		if (isFeature(nextLine)) {
     			break;
     		}
@@ -302,10 +294,10 @@ public class FeatureReader extends FlatFileLineReader {
 				qualifierBuilder.append(" ");
 			}
 			qualifierString = nextLine.substring(QUALIFIER_BEGIN_POS);
-			qualifierBuilder.append(qualifierString);	
+			qualifierBuilder.append(qualifierString);
 			noAddSpace =
 				qualifierString.length() > 0 &&
-				qualifierString.charAt(qualifierString.length() - 1) == '-';			
+				qualifierString.charAt(qualifierString.length() - 1) == '-';
 		}
 		if (qualifierBuilder.length() == 0) {
 			return null;
@@ -314,14 +306,14 @@ public class FeatureReader extends FlatFileLineReader {
 		if (!qualifierMatcher.match(qualifierBuilder.toString())) {
 			error("FT.5", "Invalid feature qualifier.");
 			return null;
-		}		
+		}
 		Qualifier qualifier = qualifierMatcher.getQualifier();
 		if(qualifier!=null)
 		qualifier.setOrigin(
 				new FlatFileOrigin(lineReader.getFileId(), firstLineNumber, lastLineNumber));
 		return qualifier;
     }
-    
+
     private boolean isFeature(String line) {
     	for (int i = 0 ; i < LOCATION_BEGIN_POS && i < line.length() ; ++i) {
     		if (line.charAt(i) != ' ') {
@@ -329,22 +321,22 @@ public class FeatureReader extends FlatFileLineReader {
     		}
     	}
     	return false;
-    }    
-    
+    }
+
 	private static final Pattern QUALIFIER_PATTERN_1 = Pattern.compile(
 			"^\\/[a-zA-Z1-9-_]+\\=.*");
 
 	private static final Pattern QUALIFIER_PATTERN_2 = Pattern.compile(
-			"^\\/[a-zA-Z1-9-_]+\\s*$");	
-    
+			"^\\/[a-zA-Z1-9-_]+\\s*$");
+
     private boolean isQualifier(String line) {
     	if (line.length() <= QUALIFIER_BEGIN_POS) {
-    		return false; 
+    		return false;
     	}
 		if (line.charAt(QUALIFIER_BEGIN_POS) != '/') {
 			return false;
 		}
-    	
+
     	String str = line.substring(21);
     	Matcher matcher = QUALIFIER_PATTERN_1.matcher(str);
     	if (matcher.matches()) {
@@ -352,56 +344,25 @@ public class FeatureReader extends FlatFileLineReader {
     	}
     	matcher = QUALIFIER_PATTERN_2.matcher(str);
     	return matcher.matches();
-   }  
+   }
 
 	private boolean isQuoteBalance(String line)
 	{
 		quotecount += StringUtils.countMatches(line, "\"");
 		return quotecount % 2 == 0;
 	}
-
-	public boolean isQualifierIgnored(String featureName, String qualifierName, String qualifierValue){
-		
-		for(IgnoreQualifier ignoreQualifier : ignoreQualifierList) {
-			// Check if the featureName + qualifierName is ignored.
-			if (featureName.equals(ignoreQualifier.getFeatureName()) &&
-					qualifierName.equals(ignoreQualifier.getQualifierName())) {
-				// Check if featureName + qualifierName + values are ignored.
-				if (ignoreQualifier.compareWithValue()) {
-					return ignoreQualifier.ignoreValue.contains(qualifierValue);
-				} else {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 }
 
 class IgnoreQualifier {
-	private final String featureName;
-	private final String qualifierName;
-	private final boolean ignoreWithValue;
 
-	IgnoreQualifier(String featureName, String qualifierName, boolean ignoreWithValue){
-		this.featureName = featureName;
-		this.qualifierName = qualifierName;
-		this.ignoreWithValue = ignoreWithValue;
-	}
-
-	public String getFeatureName() {
-		return featureName;
-	}
-
-	public String getQualifierName() {
-		return qualifierName;
-	}
-	
-	public boolean compareWithValue() {
-		return ignoreWithValue;
-	}
-
-	List<String> ignoreValue= Arrays.asList("missing: control sample",
+	private static final List<IgnoreQualifier> IGNORE_QUALIFIERS = Arrays.asList(
+			new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME, false),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME, Qualifier.COUNTRY_QUALIFIER_NAME,true),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME, Qualifier.COLLECTION_DATE_QUALIFIER_NAME,true),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME, Qualifier.LAT_LON_QUALIFIER_NAME,true)
+	);
+	private static final List<String> MISSING_VALUE_TERMS = Arrays.asList(
+			"missing: control sample",
 			"missing: data agreement established pre-2023",
 			"missing: endangered species",
 			"missing: human-identifiable",
@@ -413,5 +374,35 @@ class IgnoreQualifier {
 			"not collected",
 			"not provided",
 			"restricted access");
-}
 
+	private final String featureName;
+	private final String qualifierName;
+	private final boolean ignoreMissingValueTerms;
+
+	IgnoreQualifier(String featureName, String qualifierName, boolean ignoreMissingValueTerms){
+		this.featureName = featureName;
+		this.qualifierName = qualifierName;
+		this.ignoreMissingValueTerms = ignoreMissingValueTerms;
+	}
+
+    /** Returns true if the qualifier should be ignored. Ignoring a qualifier during parsing
+     * avoids first creating the qualifier and having to later remove it.
+     * @return true if the qualifier should be ignored.
+     */
+	public static boolean isIgnore(String featureName, String qualifierName, String qualifierValue) {
+        for (IgnoreQualifier ignoreQualifier : IGNORE_QUALIFIERS) {
+            if (featureName.equals(ignoreQualifier.featureName) &&
+                qualifierName.equals(ignoreQualifier.qualifierName)) {
+                // Qualifier is a candidate for being ignored.
+                if (ignoreQualifier.ignoreMissingValueTerms) {
+                    // Ignore qualifier if the qualifier value matches one of missing value terms.
+                    return ignoreQualifier.MISSING_VALUE_TERMS.contains(qualifierValue);
+                } else {
+                    // Ignore qualifier regardless of its value.
+                    return true;
+                }
+            }
+        }
+		return false;
+    }
+}
