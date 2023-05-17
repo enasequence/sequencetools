@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Ignore;
 
@@ -35,6 +37,20 @@ import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
 
 public class EmblEntryReaderTest extends EmblReaderTest {
    public final static String FLAT_FILES_RES_DIR = "/flatfiles/examples/";
+
+	private static final List<String> MISSING_VALUE_TERMS = Arrays.asList(
+			"missing: control sample",
+			"missing: data agreement established pre-2023",
+			"missing: endangered species",
+			"missing: human-identifiable",
+			"missing: lab stock",
+			"missing: sample group",
+			"missing: synthetic construct",
+			"missing: third party data",
+			"not applicable",
+			"not collected",
+			"not provided",
+			"restricted access");
 
    private String getEntryStringFromResourceFile(String file) throws Exception {
       InputStream is = getClass().getResourceAsStream(FLAT_FILES_RES_DIR + file);
@@ -979,70 +995,10 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 		assertEquals(expectedEntryString, writer.toString());
 	}
 
-	public void testRead_IgnoreMissingCountry() throws IOException {
-		String entryString =
-				"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
-						"XX\n" +
-						"ST * private 01-JAN-2003\n" +
-						"XX\n" +
-						"AC   A00001; A00002;\n" +
-						"XX\n" +
-						"AC * _AAAAA\n" +
-						"XX\n" +
-						"PR   Project:3443;\n" +
-						"XX\n" +
-						"DT   28-JAN-1993 (Rel. 34, Created)\n" +
-						"DT   11-MAY-2001 (Rel. 67, Last updated, Version 2)\n" +
-						"XX\n" +
-						"DE   Cauliflower mosaic virus satellite cDNA.\n" +
-						"XX\n" +
-						"KW   .\n" +
-						"XX\n" +
-						"OS   Cauliflower mosaic virus\n" +
-						"OC   Viruses; Retro-transcribing viruses; Caulimoviridae; Caulimovirus.\n" +
-						"XX\n" +
-						"OS   uncultured alphaproteobacterium\n" +
-						"OC   unclassified sequences.\n" +
-						"XX\n" +
-						"RN   [1]\n" +
-						"RP   1-335\n" +
-						"RX   HELLO; hello.\n" +
-						"RG   blah blah\n" +
-						"RA   Baulcombe D.C., Mayo M.A., Harrison B.D., Bevan M.W.;\n" +
-						"RT   \"Modification of plant viruses or their effects.\";\n" +
-						"RL   Patent number EP0242016-A/1, 21-OCT-1987.\n" +
-						"RL   AGRICULTURAL GENETICS COMPANY LIMITED.\n" +
-						"XX\n" +
-						"DR   database; primary accession; secondary accession.\n" +
-						"DR   database2; primary accession2; secondary accession2.\n" +
-						"XX\n" +
-						"CC   comment comment comment comment comment\n" +
-						"CC   comment comment comment comment comment\n" +
-						"XX\n" +
-						"FH   Key             Location/Qualifiers\n" +
-						"FH\n" +
-						"FT   source          1..335\n" +
-						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
-						"FT                   /mol_type=\"unassigned DNA\"\n" +
-						"FT                   /country=\"missing: third party data\"\n" +
-						"FT                   /collection_date=\"missing: third party data\"\n" +
-						"FT                   /lat_lon=\"not provided\"\n" +
-						"FT                   /db_xref=\"taxon:10641\"\n" +
-						"FT   CDS             1..300\n" +
-						"FT                   /gene=\"T\"\n" +
-						"XX\n" +
-						"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
-						"XX\n" +
-						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
-						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
-						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
-						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
-						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
-						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
-						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
-						"//\n";
-		String expectedEntryString =
-				"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 339 BP.\n" +
+	public void testRead_IgnoreMissingValueTerms() throws IOException {
+
+	   String expectedEntryString =
+				"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 60 BP.\n" +
 						"XX\n" +
 						"AC   A00001; A00002;\n" +
 						"XX\n" +
@@ -1086,27 +1042,82 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"FT   CDS             1..300\n" +
 						"FT                   /gene=\"T\"\n" +
 						"XX\n" +
-						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
+						"SQ   Sequence 60 BP; 11 A; 8 C; 21 G; 20 T; 0 other;\n" +
 						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
-						"     cggtgtggga tacctccctg ctaaggcggg ttgagtgatg ttccctcgga ctggggaccg       120\n" +
-						"     ctggcttgcg agctatgtcc gctactctca gtactacact ctcatttgag cccccgctca       180\n" +
-						"     gtttgctagc agaacccggc acatggttcg ccgataccat ggaatttcga aagaaacact       240\n" +
-						"     ctgttaggtg gtatgagtca tgacgcacgc agggagaggc taaggcttat gctatgctga       300\n" +
-						"     tctccgtgaa tgtctatcat tcctacacag gacccrask                              339\n" +
 						"//\n";
-		setBufferedReader(entryString);
-		EntryReader reader = new EmblEntryReader(bufferedReader);
-		ValidationResult result = reader.read();
-		Entry entry = reader.getEntry();
-		Collection<ValidationMessage<Origin>> messages = result.getMessages();
-		for ( ValidationMessage<Origin> message : messages) {
-			System.out.println(message.getMessage());
+		
+		for (String missingValues: MISSING_VALUE_TERMS) {
+			String entryString =
+					"ID   A00001; SV 1; linear; unassigned DNA; PAT; XXX; 60 BP.\n" +
+							"XX\n" +
+							"ST * private 01-JAN-2003\n" +
+							"XX\n" +
+							"AC   A00001; A00002;\n" +
+							"XX\n" +
+							"AC * _AAAAA\n" +
+							"XX\n" +
+							"PR   Project:3443;\n" +
+							"XX\n" +
+							"DT   28-JAN-1993 (Rel. 34, Created)\n" +
+							"DT   11-MAY-2001 (Rel. 67, Last updated, Version 2)\n" +
+							"XX\n" +
+							"DE   Cauliflower mosaic virus satellite cDNA.\n" +
+							"XX\n" +
+							"KW   .\n" +
+							"XX\n" +
+							"OS   Cauliflower mosaic virus\n" +
+							"OC   Viruses; Retro-transcribing viruses; Caulimoviridae; Caulimovirus.\n" +
+							"XX\n" +
+							"OS   uncultured alphaproteobacterium\n" +
+							"OC   unclassified sequences.\n" +
+							"XX\n" +
+							"RN   [1]\n" +
+							"RP   1-335\n" +
+							"RX   HELLO; hello.\n" +
+							"RG   blah blah\n" +
+							"RA   Baulcombe D.C., Mayo M.A., Harrison B.D., Bevan M.W.;\n" +
+							"RT   \"Modification of plant viruses or their effects.\";\n" +
+							"RL   Patent number EP0242016-A/1, 21-OCT-1987.\n" +
+							"RL   AGRICULTURAL GENETICS COMPANY LIMITED.\n" +
+							"XX\n" +
+							"DR   database; primary accession; secondary accession.\n" +
+							"DR   database2; primary accession2; secondary accession2.\n" +
+							"XX\n" +
+							"CC   comment comment comment comment comment\n" +
+							"CC   comment comment comment comment comment\n" +
+							"XX\n" +
+							"FH   Key             Location/Qualifiers\n" +
+							"FH\n" +
+							"FT   source          1..335\n" +
+							"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+							"FT                   /mol_type=\"unassigned DNA\"\n" +
+							"FT                   /country=" + missingValues + "\n" +
+							"FT                   /collection_date=" + missingValues + "\n" +
+							"FT                   /lat_lon=" + missingValues + "\n" +
+							"FT                   /db_xref=\"taxon:10641\"\n" +
+							"FT   CDS             1..300\n" +
+							"FT                   /gene=\"T\"\n" +
+							"XX\n" +
+							"CO   join(AL358912.1:1..39187,gap(unk100),gap(43))\n" +
+							"XX\n" +
+							"SQ   Sequence 60 BP; 11 A; 8 C; 21 G; 20 T; 0 other;\n" +
+							"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +
+							"//\n";
+
+			setBufferedReader(entryString);
+			EntryReader reader = new EmblEntryReader(bufferedReader);
+			ValidationResult result = reader.read();
+			Entry entry = reader.getEntry();
+			Collection<ValidationMessage<Origin>> messages = result.getMessages();
+			for (ValidationMessage<Origin> message : messages) {
+				System.out.println(message.getMessage());
+			}
+			assertEquals(0, result.count(Severity.ERROR));
+			StringWriter writer = new StringWriter();
+			assertTrue(new EmblEntryWriter(entry).write(writer));
+			//System.out.print(writer.toString());
+			assertEquals(expectedEntryString, writer.toString());
 		}
-		assertEquals(0, result.count(Severity.ERROR));
-		StringWriter writer = new StringWriter();
-		assertTrue(new EmblEntryWriter(entry).write(writer));
-		//System.out.print(writer.toString());
-		assertEquals(expectedEntryString, writer.toString());
 	}
 
 	public void testReadCDSEntryWithoutCOLine() throws Exception {
