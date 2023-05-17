@@ -1021,12 +1021,13 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"XX\n" +
 						"FH   Key             Location/Qualifiers\n" +
 						"FH\n" +
-						"FT   source          1..53326\n" +
-						"FT                   /organism=\"Oryza sativa Indica Group\"\n" +
-						"FT                   /mol_type=\"genomic DNA\"\n" +
-						"FT                   /db_xref=\"taxon:39946\"\n" +
-						"FT                   /collection_date=\"missing: third party data\"\n" +
+						"FT   source          1..335\n" +
+						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
 						"FT                   /country=\"missing: third party data\"\n" +
+						"FT                   /collection_date=\"missing: third party data\"\n" +
+						"FT                   /lat_lon=\"not provided\"\n" +
+						"FT                   /db_xref=\"taxon:10641\"\n" +
 						"FT   CDS             1..300\n" +
 						"FT                   /gene=\"T\"\n" +
 						"XX\n" +
@@ -1056,6 +1057,9 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"XX\n" +
 						"KW   .\n" +
 						"XX\n" +
+						"OS   Cauliflower mosaic virus\n" +
+						"OC   Viruses; Retro-transcribing viruses; Caulimoviridae; Caulimovirus.\n" +
+						"XX\n" +
 						"RN   [1]\n" +
 						"RP   1-335\n" +
 						"RX   HELLO; hello.\n" +
@@ -1075,9 +1079,12 @@ public class EmblEntryReaderTest extends EmblReaderTest {
 						"XX\n" +
 						"FH   Key             Location/Qualifiers\n" +
 						"FH\n" +
+						"FT   source          1..335\n" +
+						"FT                   /organism=\"Cauliflower mosaic virus\"\n" +
+						"FT                   /mol_type=\"unassigned DNA\"\n" +
+						"FT                   /db_xref=\"taxon:10641\"\n" +
 						"FT   CDS             1..300\n" +
 						"FT                   /gene=\"T\"\n" +
-						"FT                   /note=\"BN5_00001\"\n" +
 						"XX\n" +
 						"SQ   Sequence 339 BP; 70 A; 82 C; 95 G; 89 T; 3 other;\n" +
 						"     gttttgtttg atggagaatt gcgcagaggg gttatatctg cgtgaggatc tgtcactcgg        60\n" +

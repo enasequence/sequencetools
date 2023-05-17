@@ -44,9 +44,12 @@ public class FeatureReader extends FlatFileLineReader {
     	super(lineReader);
     }
 
-	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME),
-			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COUNTRY_QUALIFIER_NAME,"missing: third party data"),
-			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COLLECTION_DATE_QUALIFIER_NAME,"missing: third party data"));
+	private final static List<IgnoreQualifier> ignoreQualifierList = Arrays.asList(
+			new IgnoreQualifier(Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME, false),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COUNTRY_QUALIFIER_NAME,true),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.COLLECTION_DATE_QUALIFIER_NAME,true),
+			new IgnoreQualifier(Feature.SOURCE_FEATURE_NAME,Qualifier.LAT_LON_QUALIFIER_NAME,true)
+			);
 
 	public FeatureReader(LineReader lineReader,boolean skipSource) {
     	super(lineReader);
@@ -358,16 +361,15 @@ public class FeatureReader extends FlatFileLineReader {
 	}
 
 	public boolean isQualifierIgnored(String featureName, String qualifierName, String qualifierValue){
-		for(IgnoreQualifier ignoreQualifier : ignoreQualifierList){
-			if(ignoreQualifier.getQualifierValue() == null) {
-				if (featureName.equals(ignoreQualifier.getFeatureName()) && 
-						qualifierName.equals(ignoreQualifier.getQualifierName())) {
-					return true;
-				}
-			}else{
-				if (featureName.equals(ignoreQualifier.getFeatureName()) && 
-						qualifierName.equals(ignoreQualifier.getQualifierName()) && 
-						qualifierValue.equals(ignoreQualifier.getQualifierValue())) {
+		
+		for(IgnoreQualifier ignoreQualifier : ignoreQualifierList) {
+			// Check if the featureName + qualifierName is ignored.
+			if (featureName.equals(ignoreQualifier.getFeatureName()) &&
+					qualifierName.equals(ignoreQualifier.getQualifierName())) {
+				// Check if featureName + qualifierName + values are ignored.
+				if (ignoreQualifier.compareWithValue()) {
+					return ignoreQualifier.ignoreValue.contains(qualifierValue);
+				} else {
 					return true;
 				}
 			}
@@ -379,18 +381,12 @@ public class FeatureReader extends FlatFileLineReader {
 class IgnoreQualifier {
 	private final String featureName;
 	private final String qualifierName;
-	private final String qualifierValue;
+	private final boolean ignoreWithValue;
 
-	IgnoreQualifier(String featureName, String qualifierName){
+	IgnoreQualifier(String featureName, String qualifierName, boolean ignoreWithValue){
 		this.featureName = featureName;
 		this.qualifierName = qualifierName;
-		this.qualifierValue = null;
-	}
-
-	IgnoreQualifier(String featureName, String qualifierName, String qualifierValue){
-		this.featureName = featureName;
-		this.qualifierName = qualifierName;
-		this.qualifierValue = qualifierValue;
+		this.ignoreWithValue = ignoreWithValue;
 	}
 
 	public String getFeatureName() {
@@ -400,9 +396,22 @@ class IgnoreQualifier {
 	public String getQualifierName() {
 		return qualifierName;
 	}
-
-	public String getQualifierValue() {
-		return qualifierValue;
+	
+	public boolean compareWithValue() {
+		return ignoreWithValue;
 	}
+
+	List<String> ignoreValue= Arrays.asList("missing: control sample",
+			"missing: data agreement established pre-2023",
+			"missing: endangered species",
+			"missing: human-identifiable",
+			"missing: lab stock",
+			"missing: sample group",
+			"missing: synthetic construct",
+			"missing: third party data",
+			"not applicable",
+			"not collected",
+			"not provided",
+			"restricted access");
 }
 
