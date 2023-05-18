@@ -150,11 +150,11 @@ public class SourceQualifierMissingFixTest
 		SourceFeature sourceFeature = featureFactory.createSourceFeature();
 		Qualifier organismQualifier = qualifierFactory.createQualifier(
 				Qualifier.ORGANISM_QUALIFIER_NAME,
-				"Fusobacterium nucleatum subsp. animalis D11");
+				"Fusobacterium animalis D11");
 		sourceFeature.addQualifier(organismQualifier);
 		Qualifier metagenomeSourceQualifier = qualifierFactory.createQualifier(
 				Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME,
-				"Fusobacterium nucleatum subsp. animalis D11");
+				"Fusobacterium animalis D11");
 		sourceFeature.addQualifier(metagenomeSourceQualifier);
 		entry.addFeature(feature);
 		entry.addFeature(sourceFeature);
