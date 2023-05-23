@@ -2,6 +2,11 @@ package uk.ac.ebi.embl.api.validation.dao;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
+import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
+import uk.ac.ebi.biosamples.model.Sample;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -19,9 +24,12 @@ import uk.ac.ebi.embl.api.validation.dao.model.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
+import uk.ac.ebi.embl.common.CredentialsGuard;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
+import uk.ac.ebi.ena.webin.cli.service.BiosamplesService;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,6 +45,17 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
+	private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+
+	private final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
+		new RestTemplateBuilder(),
+		URI.create("https://www.ebi.ac.uk/ena/submit/webin/auth/token"),
+		"Webin-40894",
+		CredentialsGuard.dec("+qKOpX2y+/hYqDF3JHTf0Ow5T4/h/IL1"),
+		Arrays.asList(AuthRealm.ENA)
+	);
+
+	private BiosamplesService biosamplesService = new BiosamplesService();
 
 	public enum MASTERSOURCEQUALIFIERS
 	{
@@ -394,8 +413,25 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
-		SampleInfo sampleInfo = getSampleInfo(sampleId);
-		return new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), new TaxonomyClient(), sampleInfo);
+		SampleInfo sampleInfo = null;
+		SampleEntity sampleEntity = null;
+
+		String biosamplesId = getCorrespondingBiosamplesId(sampleId);
+		if (biosamplesId != null) {
+			Sample biosamplesSample = biosamplesService.findSampleById(biosamplesId, webinAuthClientService.getJwt());
+			if (biosamplesSample != null) {
+				sampleInfo = getSampleInfoFromBiosamplesSample(biosamplesSample);
+				sampleEntity = getSampleAttributesFromBiosamplesSample(biosamplesSample);
+			}
+		}
+
+		// If sample information was not found in Biosamples then retrieve it from ERAPRO.
+		if (sampleInfo == null) {
+			sampleInfo = getSampleInfo(sampleId);
+			sampleEntity = getSampleAttributes(sampleId);
+		}
+
+		return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
 	}
 
 	@Override
@@ -604,10 +640,25 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
+	private String getCorrespondingBiosamplesId(String sampleId) throws SQLException {
+		String biosamplesId = null;
+
+		try (PreparedStatement ps = connection.prepareStatement("select biosample_id from sample where sample_id=?")) {
+			ps.setString(1, sampleId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					biosamplesId = rs.getString(1);
+				}
+			}
+		}
+
+		return biosamplesId;
+	}
 
 	private SampleInfo getSampleInfo(String sampleId) throws SQLException {
-
 		SampleInfo sampleInfo = new SampleInfo();
+
 		String sampleTaxonQuery = "select sample_alias, nvl(fixed_tax_id, tax_id) tax_id, nvl(fixed_scientific_name, scientific_name) scientific_name" +
 				" from sample where sample_id=?";
 
@@ -674,4 +725,38 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 	}
 
+	private SampleInfo getSampleInfoFromBiosamplesSample(Sample biosamplesSample) {
+		SampleInfo sampleInfo = new SampleInfo();
+
+		if (biosamplesSample != null) {
+			sampleInfo.setUniqueName(biosamplesSample.getAccession());
+			sampleInfo.setScientificName(biosamplesSample.getAttributes().stream()
+				.filter(attr -> attr.getType() != null && attr.getType().equals("scientific name"))
+				.findFirst()
+				.map(attr -> attr.getValue())
+				.orElse(null));
+			sampleInfo.setTaxId(biosamplesSample.getTaxId());
+			sampleInfo.setSampleId(biosamplesSample.getAccession());
+		}
+
+		return sampleInfo;
+	}
+
+	private SampleEntity getSampleAttributesFromBiosamplesSample(Sample biosamplesSample) {
+		SampleEntity sample = new SampleEntity();
+
+		Map<String,String> attributes = new HashMap<>();
+
+		if (biosamplesSample != null) {
+			biosamplesSample.getAttributes().forEach(biosamplesAttribute -> {
+				String tag = biosamplesAttribute.getTag();
+				if (StringUtils.isNotBlank(tag))
+					attributes.put(tag, biosamplesAttribute.getValue());
+			});
+		}
+
+		sample.setAttributes(attributes);
+
+		return sample;
+	}
 }
