@@ -65,6 +65,18 @@ repositories {
             header( HttpHeaderAuthentication )
         }
 
+        // For BioSamples client
+        maven {
+            url 'https://gitlab.ebi.ac.uk/api/v4/projects/2669/packages/maven'
+
+            credentials(HttpHeaderCredentials) {
+                name = "Private-Token"
+                value = biosamples_gitlab_private_token
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
     }
     mavenCentral()
 }
@@ -72,22 +84,44 @@ repositories {
 dependencies
         {
             compile 'log4j:log4j:1.2.17'
+
             compile 'commons-collections:commons-collections:3.2.2'
             compile 'commons-dbutils:commons-dbutils:1.5'
             compile 'commons-lang:commons-lang:2.6'
+
             compile 'org.apache.commons:commons-lang3:3.0'
             compile 'org.apache.commons:commons-compress:1.20'
+
             compile 'org.json:json:20131018'
+
             compile 'com.beust:jcommander:1.72'
+
             compile 'com.googlecode.java-diff-utils:diffutils:1.2.1'
+
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
-            compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.3.1' )
+
+            compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.6.0' )
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.2')
+            implementation ('uk.ac.ebi.biosamples:client:5.2.14-RC1') {
+                exclude group: 'org.bouncycastle'
+                exclude group: 'asm'
+                exclude group: 'org.ow2.asm', module: 'asm'
+                exclude group: 'net.minidev', module: 'asm'
+                exclude group: 'ch.qos.logback', module: 'logback-classic'
+            }
+
+            implementation group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
+
             testImplementation 'org.mockito:mockito-core:3.12.4'
             testCompile "junit:junit:4.13.1"
             testCompile 'org.easymock:easymock:4.2'
-            implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.0.RELEASE') {
-                exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+
+            testImplementation(group: 'com.oracle', name: 'ojdbc8', version: '12.2.0.1.0')
+
+            testImplementation('org.springframework.boot:spring-boot-starter:2.2.0.RELEASE')
+            testImplementation('org.springframework.boot:spring-boot-starter-jdbc:2.2.0.RELEASE')
+            testImplementation('org.springframework.boot:spring-boot-starter-test:2.2.0.RELEASE') {
+                exclude group: 'com.vaadin.external.google', module: 'android-json'
             }
         }
 
