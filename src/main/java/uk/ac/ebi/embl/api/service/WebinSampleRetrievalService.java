@@ -21,7 +21,7 @@ public class WebinSampleRetrievalService implements SampleRetrievalService {
         SampleXmlService sampleXmlService=getSampleXmlService( webinAuthToken, webinCliTestMode);
         
         Sample sampleOb=sampleService.getSample(sampleId);
-        Sample sampleFromXml=sampleXmlService.getSample(sampleOb.getSraSampleIdId());
+        Sample sampleFromXml=sampleXmlService.getSample(sampleOb.getBioSampleId());
         sampleOb.setAttributes(sampleFromXml.getAttributes());
         return sampleOb;
     }
