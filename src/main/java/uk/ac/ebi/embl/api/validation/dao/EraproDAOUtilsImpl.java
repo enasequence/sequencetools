@@ -13,17 +13,21 @@ import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.XRef;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.dao.model.*;
+import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
+import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
+import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
-import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
+import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.common.CredentialsGuard;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.webin.cli.service.BiosamplesService;
@@ -34,7 +38,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -419,13 +430,16 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String biosamplesId = getCorrespondingBiosamplesId(sampleId);
 		if (biosamplesId != null) {
 			Sample biosamplesSample = biosamplesService.findSampleById(biosamplesId, webinAuthClientService.getJwt());
-			if (biosamplesSample != null) {
+			// If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then do nothing.
+			// This could point to the fact the sample was originally created on ENA before Nov 2022 as a private sample.
+			// All private ENA samples before Nov 2022 were not fully imported into Biosamples.
+			if (biosamplesSample != null && biosamplesSample.getTaxId() != null) {
 				sampleInfo = getSampleInfoFromBiosamplesSample(biosamplesSample);
 				sampleEntity = getSampleAttributesFromBiosamplesSample(biosamplesSample);
 			}
 		}
 
-		// If sample information was not found in Biosamples then retrieve it from ERAPRO.
+		// If sample information was not retreived from Biosamples then retrieve it from ENA.
 		if (sampleInfo == null) {
 			sampleInfo = getSampleInfo(sampleId);
 			sampleEntity = getSampleAttributes(sampleId);
@@ -641,19 +655,19 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 
 	private String getCorrespondingBiosamplesId(String sampleId) throws SQLException {
-		String biosamplesId = null;
+		String result = null;
 
 		try (PreparedStatement ps = connection.prepareStatement("select biosample_id from sample where sample_id=?")) {
 			ps.setString(1, sampleId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					biosamplesId = rs.getString(1);
+					result = rs.getString(1);
 				}
 			}
 		}
 
-		return biosamplesId;
+		return result;
 	}
 
 	private SampleInfo getSampleInfo(String sampleId) throws SQLException {
