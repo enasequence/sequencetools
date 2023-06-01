@@ -31,6 +31,10 @@ public class SubmissionOptions
 	public  Optional<String> webinAuthToken = Optional.empty();
 
 	public  Optional<ServiceConfig> serviceConfig = Optional.empty();
+
+	public  Optional<String> biosamplesWebinUsername = Optional.empty();
+	public  Optional<String> biosamplesWebinPassword = Optional.empty();
+
 	private EmblEntryValidationPlanProperty property =null;
 
 	public  boolean webinCliTestMode = false;
@@ -138,6 +142,12 @@ public class SubmissionOptions
 		property.ignore_errors.set(ignoreErrors);
 		property.taxonClient.set(new TaxonomyClient());
 		property.isRemote.set(isWebinCLI);
+
+		if(biosamplesWebinUsername.isPresent() && biosamplesWebinPassword.isPresent()) {
+			property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
+			property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
+		}
+
 		return property;
 	}
 

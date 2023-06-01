@@ -20,10 +20,7 @@ public class WebinSampleRetrievalService implements SampleRetrievalService {
         SampleService sampleService=getSampleService( webinAuthToken, webinCliTestMode);
         SampleXmlService sampleXmlService=getSampleXmlService( webinAuthToken, webinCliTestMode);
         
-        Sample sampleOb=sampleService.getSample(sampleId);
-        Sample sampleFromXml=sampleXmlService.getSample(sampleOb.getBioSampleId());
-        sampleOb.setAttributes(sampleFromXml.getAttributes());
-        return sampleOb;
+        return sampleService.getSample(sampleId);
     }
 
     private SampleService getSampleService(String authToken, boolean webinCliTestMode){

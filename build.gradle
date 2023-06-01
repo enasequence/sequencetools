@@ -100,17 +100,8 @@ dependencies
 
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
 
-            compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.6.0' )
+            implementation( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.6.0' )
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.2')
-            implementation ('uk.ac.ebi.biosamples:client:5.2.14-RC1') {
-                exclude group: 'org.bouncycastle'
-                exclude group: 'asm'
-                exclude group: 'org.ow2.asm', module: 'asm'
-                exclude group: 'net.minidev', module: 'asm'
-                exclude group: 'ch.qos.logback', module: 'logback-classic'
-            }
-
-            implementation group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
 
             testImplementation 'org.mockito:mockito-core:3.12.4'
             testCompile "junit:junit:4.13.1"
@@ -168,5 +159,19 @@ publishing {
                 header( HttpHeaderAuthentication )
             }
         }       
+    }
+}
+
+test {
+    if( System.env.webin_cli_password ) {
+        environment 'webin-cli-password', System.env.webin_cli_password
+    } else {
+        environment 'webin-cli-password', webinCliPassword
+    }
+
+    if( System.env.webin_cli_username ) {
+        environment 'webin-cli-username', System.env.webin_cli_username
+    } else {
+        environment 'webin-cli-username', webinCliUsername
     }
 }

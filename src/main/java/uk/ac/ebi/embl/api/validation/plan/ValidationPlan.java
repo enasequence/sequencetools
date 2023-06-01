@@ -113,7 +113,8 @@ public abstract class ValidationPlan {
 		 check.setEntryDAOUtils(entryDAOUtils);
 		 if(planProperty.eraproConnection.get()!=null&&eraproDAOUtils==null)
 		 {
-			 eraproDAOUtils = new EraproDAOUtilsImpl(planProperty.eraproConnection.get());
+			 eraproDAOUtils = new EraproDAOUtilsImpl(planProperty.eraproConnection.get(),
+				 planProperty.biosamplesWebinUsername.get(), planProperty.biosamplesWebinPassword.get());
 		 }
 		 
 		check.setEraproDAOUtils(eraproDAOUtils);
