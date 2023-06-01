@@ -44,7 +44,8 @@ public class MasterEntryService {
         if (options.isWebinCLI) {
             masterEntry = getMasterEntryFromWebinCli(options);
         } else {
-            EraproDAOUtils utils = new EraproDAOUtilsImpl(options.eraproConnection.get());
+            EraproDAOUtils utils = new EraproDAOUtilsImpl(options.eraproConnection.get(),
+                options.biosamplesWebinUsername.get(), options.biosamplesWebinPassword.get());
             masterEntry = getMasterEntryFromSubmittedXml(options, utils);
         }
 

@@ -26,18 +26,21 @@ public class EraproDAOUtilsImplTest {
      * important details are absent, it is not safe to load such samples from Biosamples. */
     private static final String PRIVATE_SRA_PRE_NOV22_SAMPLE_ID = "ERS7118926";
 
+    private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-cli-username");
+    private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-cli-password");
+
     @Autowired
     private DataSource dataSource;
 
     @Test
     public void testGetSourceFeature() throws Exception {
         try (Connection conn = dataSource.getConnection()) {
-            EraproDAOUtilsImpl eraproDAOUtils = new EraproDAOUtilsImpl(conn);
+            EraproDAOUtilsImpl eraproDAOUtils = new EraproDAOUtilsImpl(conn, WEBIN_ACCOUNT_USERNAME, WEBIN_ACCOUNT_PASSWORD);
 
             SourceFeature sourceFeature = eraproDAOUtils.getSourceFeature(SAMPLE_ID);
 
-            Assert.assertEquals(new Long(9606), sourceFeature.getTaxId());
             Assert.assertEquals("Homo sapiens", sourceFeature.getScientificName());
+            Assert.assertEquals(new Long(9606), sourceFeature.getTaxId());
 
             sourceFeature = eraproDAOUtils.getSourceFeature(PRIVATE_SRA_PRE_NOV22_SAMPLE_ID);
 

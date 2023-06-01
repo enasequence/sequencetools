@@ -2,7 +2,6 @@ package uk.ac.ebi.embl.api.validation.dao;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
 import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
@@ -28,9 +27,9 @@ import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
-import uk.ac.ebi.embl.common.CredentialsGuard;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.webin.cli.service.BiosamplesService;
+import uk.ac.ebi.ena.webin.cli.service.WebinService;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -56,17 +55,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
 	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
-	private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+	private final WebinAuthClientService webinAuthClientService;
 
-	private final WebinAuthClientService webinAuthClientService = new WebinAuthClientService(
-		new RestTemplateBuilder(),
-		URI.create("https://www.ebi.ac.uk/ena/submit/webin/auth/token"),
-		"Webin-40894",
-		CredentialsGuard.dec("+qKOpX2y+/hYqDF3JHTf0Ow5T4/h/IL1"),
-		Arrays.asList(AuthRealm.ENA)
-	);
+	private final BiosamplesService biosamplesService;
 
-	private BiosamplesService biosamplesService = new BiosamplesService();
+	private final String biosamplesWebinUsername;
+	private final String biosamplesWebinPassword;
 
 	public enum MASTERSOURCEQUALIFIERS
 	{
@@ -138,9 +132,20 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 	
 
-	public EraproDAOUtilsImpl (Connection connection)
+	public EraproDAOUtilsImpl (Connection connection, String biosamplesWebinUsername, String biosamplesWebinPassword)
 	{
-		this.connection=connection;
+		this.connection = connection;
+
+		if(StringUtils.isBlank(biosamplesWebinUsername) || StringUtils.isBlank(biosamplesWebinPassword)) {
+			throw new IllegalArgumentException("Invalid Biosamples Webin username or password.");
+		}
+
+		this.biosamplesWebinUsername = biosamplesWebinUsername;
+		this.biosamplesWebinPassword = biosamplesWebinPassword;
+
+		this.webinAuthClientService = createWebinAuthClientService();
+
+		this.biosamplesService = new BiosamplesService();
 	}
 
 	/**
@@ -422,6 +427,15 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 	}
 
+	/**
+	 * Given SRA sample ID is used to look up corresponding Biosample accession which then is used to retreive sample
+	 * information from Biosamples first. If the sample could not be retrieved from Biosamples then it is loaded
+	 * from ERAPRO.
+	 *
+	 * @param sampleId SRA sample accession.
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		SampleInfo sampleInfo = null;
@@ -439,7 +453,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			}
 		}
 
-		// If sample information was not retreived from Biosamples then retrieve it from ENA.
+		// If sample information was not retreived from Biosamples then retrieve it from ERAPRO.
 		if (sampleInfo == null) {
 			sampleInfo = getSampleInfo(sampleId);
 			sampleEntity = getSampleAttributes(sampleId);
@@ -743,9 +757,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		SampleInfo sampleInfo = new SampleInfo();
 
 		if (biosamplesSample != null) {
-			sampleInfo.setUniqueName(biosamplesSample.getAccession());
+			sampleInfo.setUniqueName(biosamplesSample.getName());
 			sampleInfo.setScientificName(biosamplesSample.getAttributes().stream()
-				.filter(attr -> attr.getType() != null && attr.getType().equals("scientific name"))
+				.filter(attr -> attr.getType() != null && attr.getType().equals("organism"))
 				.findFirst()
 				.map(attr -> attr.getValue())
 				.orElse(null));
@@ -763,14 +777,24 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 		if (biosamplesSample != null) {
 			biosamplesSample.getAttributes().forEach(biosamplesAttribute -> {
-				String tag = biosamplesAttribute.getTag();
-				if (StringUtils.isNotBlank(tag))
-					attributes.put(tag, biosamplesAttribute.getValue());
+				String type = biosamplesAttribute.getType();
+				if (StringUtils.isNotBlank(type))
+					attributes.put(type, biosamplesAttribute.getValue());
 			});
 		}
 
 		sample.setAttributes(attributes);
 
 		return sample;
+	}
+
+	private WebinAuthClientService createWebinAuthClientService() {
+		return new WebinAuthClientService(
+			new RestTemplateBuilder(),
+			URI.create(WebinService.WEBIN_AUTH_PROD_URL),
+			biosamplesWebinUsername,
+			biosamplesWebinPassword,
+			Arrays.asList(AuthRealm.ENA)
+		);
 	}
 }

@@ -30,4 +30,7 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Integer> sequenceNumber = new ValidationPlanProperty<>(0);
 	public final ValidationPlanProperty<Boolean> ncbiCon = new ValidationPlanProperty<>(false);
 	public final ValidationPlanProperty<Boolean> isSourceUpdate = new ValidationPlanProperty<>(false);
+
+	public final ValidationPlanProperty<String> biosamplesWebinUsername = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> biosamplesWebinPassword = new ValidationPlanProperty<>(null);
 }
