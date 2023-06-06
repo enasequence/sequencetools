@@ -581,8 +581,13 @@ public abstract class FileValidationCheck {
 		} else {
 
 			if (!getOptions().isWebinCLI) {
-				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(options.eraproConnection.get(),
-					options.biosamplesWebinUsername.get(), options.biosamplesWebinPassword.get());
+				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(
+					options.eraproConnection.get(),
+					options.webinUsername.get(),
+					options.webinPassword.get(),
+					options.biosamplesProxyWebinUsername.get(),
+					options.biosamplesProxyWebinPassword.get());
+
 				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {
 					reference = eraProDao.getSubmitterReference(options.analysisId.get());

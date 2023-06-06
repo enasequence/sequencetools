@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
 
-import static uk.ac.ebi.embl.flatfile.writer.FlatFileWriter.getDefaultOptimalLineLength;
-
 public class MasterEntryService {
 
     MasterEntryService() {
@@ -44,8 +42,12 @@ public class MasterEntryService {
         if (options.isWebinCLI) {
             masterEntry = getMasterEntryFromWebinCli(options);
         } else {
-            EraproDAOUtils utils = new EraproDAOUtilsImpl(options.eraproConnection.get(),
-                options.biosamplesWebinUsername.get(), options.biosamplesWebinPassword.get());
+            EraproDAOUtils utils = new EraproDAOUtilsImpl(
+                options.eraproConnection.get(),
+                options.webinUsername.get(),
+                options.webinPassword.get(),
+                options.biosamplesProxyWebinUsername.get(),
+                options.biosamplesProxyWebinPassword.get());
             masterEntry = getMasterEntryFromSubmittedXml(options, utils);
         }
 

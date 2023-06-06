@@ -2,10 +2,6 @@ package uk.ac.ebi.embl.api.validation.dao;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import uk.ac.ebi.biosamples.client.model.auth.AuthRealm;
-import uk.ac.ebi.biosamples.client.service.WebinAuthClientService;
-import uk.ac.ebi.biosamples.model.Sample;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -28,17 +24,15 @@ import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
-import uk.ac.ebi.ena.webin.cli.service.BiosamplesService;
-import uk.ac.ebi.ena.webin.cli.service.WebinService;
+import uk.ac.ebi.ena.webin.cli.service.SampleService;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,17 +44,12 @@ import java.util.regex.Pattern;
 
 public class EraproDAOUtilsImpl implements EraproDAOUtils 
 {
-	private Connection connection;
+	private final Connection connection;
 	private final ReferenceUtils referenceUtils = new ReferenceUtils();
-	HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
-	HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
+	private final HashMap<String,AssemblySubmissionInfo> assemblySubmissionInfocache= new HashMap<String, AssemblySubmissionInfo>();
+	private final HashMap<String, Entry> masterCache = new HashMap<String,Entry>();
 
-	private final WebinAuthClientService webinAuthClientService;
-
-	private final BiosamplesService biosamplesService;
-
-	private final String biosamplesWebinUsername;
-	private final String biosamplesWebinPassword;
+	private final SampleService sampleService;
 
 	public enum MASTERSOURCEQUALIFIERS
 	{
@@ -132,20 +121,30 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	}
 	
 
-	public EraproDAOUtilsImpl (Connection connection, String biosamplesWebinUsername, String biosamplesWebinPassword)
+	public EraproDAOUtilsImpl (
+		Connection connection,
+		String webinUsername,
+		String webinPassword,
+		String biosamplesProxyWebinUsername,
+		String biosamplesProxyWebinPassword)
 	{
 		this.connection = connection;
 
-		if(StringUtils.isBlank(biosamplesWebinUsername) || StringUtils.isBlank(biosamplesWebinPassword)) {
-			throw new IllegalArgumentException("Invalid Biosamples Webin username or password.");
+		if(StringUtils.isBlank(webinUsername) || StringUtils.isBlank(webinPassword)) {
+			throw new IllegalArgumentException("Invalid Webin username or password.");
 		}
 
-		this.biosamplesWebinUsername = biosamplesWebinUsername;
-		this.biosamplesWebinPassword = biosamplesWebinPassword;
+		if(StringUtils.isBlank(biosamplesProxyWebinUsername) || StringUtils.isBlank(biosamplesProxyWebinPassword)) {
+			throw new IllegalArgumentException("Invalid Biosamples Proxy Webin username or password.");
+		}
 
-		this.webinAuthClientService = createWebinAuthClientService();
-
-		this.biosamplesService = new BiosamplesService();
+		sampleService = new SampleService.Builder()
+			.setUserName(webinUsername)
+			.setPassword(webinPassword)
+			.setBiosamplesWebinUserName(biosamplesProxyWebinUsername)
+			.setBiosamplesWebinPassword(biosamplesProxyWebinPassword)
+			.setTest(false)
+			.build();
 	}
 
 	/**
@@ -427,37 +426,12 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 	}
 
-	/**
-	 * Given SRA sample ID is used to look up corresponding Biosample accession which then is used to retreive sample
-	 * information from Biosamples first. If the sample could not be retrieved from Biosamples then it is loaded
-	 * from ERAPRO.
-	 *
-	 * @param sampleId SRA sample accession.
-	 * @return
-	 * @throws Exception
-	 */
 	@Override
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
-		SampleInfo sampleInfo = null;
-		SampleEntity sampleEntity = null;
+		Sample sample = sampleService.getSample(sampleId);
 
-		String biosamplesId = getCorrespondingBiosamplesId(sampleId);
-		if (biosamplesId != null) {
-			Sample biosamplesSample = biosamplesService.findSampleById(biosamplesId, webinAuthClientService.getJwt());
-			// If, either, sample is not found on Biosamples or has incomplete metadata (e.g. Tax ID) then do nothing.
-			// This could point to the fact the sample was originally created on ENA before Nov 2022 as a private sample.
-			// All private ENA samples before Nov 2022 were not fully imported into Biosamples.
-			if (biosamplesSample != null && biosamplesSample.getTaxId() != null) {
-				sampleInfo = getSampleInfoFromBiosamplesSample(biosamplesSample);
-				sampleEntity = getSampleAttributesFromBiosamplesSample(biosamplesSample);
-			}
-		}
-
-		// If sample information was not retreived from Biosamples then retrieve it from ERAPRO.
-		if (sampleInfo == null) {
-			sampleInfo = getSampleInfo(sampleId);
-			sampleEntity = getSampleAttributes(sampleId);
-		}
+		SampleInfo sampleInfo = getSampleInfo(sample);
+		SampleEntity sampleEntity = getSampleAttributes(sample);
 
 		return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
 	}
@@ -510,6 +484,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		TaxonomyClient taxonClient=new TaxonomyClient();
 		String sampleId = null;
 		String projectId;
+		Sample sample = null;
 		SampleInfo sampleInfo = null;
 		String prevSampleId = null;
 		String prevProjectId = null;
@@ -598,7 +573,9 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 					EntryUtils.setKeyWords(masterEntry);
 				}
 
-				sampleInfo = getSampleInfo(sampleId);
+				sample = sampleService.getSample(sampleId);
+
+				sampleInfo = getSampleInfo(sample);
 				sampleInfo.setSampleId(sampleId);
 
 				if(molType!=null&&taxonClient.isChildOf(sampleInfo.getScientificName(), "Viruses"))
@@ -634,7 +611,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			masterEntry.addReference(getSubmitterReference(analysisId));
 		}
 
-		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sampleId), taxonClient, sampleInfo);
+		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sample), taxonClient, sampleInfo);
 
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
@@ -684,64 +661,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return result;
 	}
 
-	private SampleInfo getSampleInfo(String sampleId) throws SQLException {
-		SampleInfo sampleInfo = new SampleInfo();
-
-		String sampleTaxonQuery = "select sample_alias, nvl(fixed_tax_id, tax_id) tax_id, nvl(fixed_scientific_name, scientific_name) scientific_name" +
-				" from sample where sample_id=?";
-
-		PreparedStatement selectTaxonPstmt = null;
-		ResultSet selectTaxonRs = null;
-
-		try {
-			selectTaxonPstmt = connection.prepareStatement(sampleTaxonQuery);
-			selectTaxonPstmt.setString(1, sampleId);
-			selectTaxonRs = selectTaxonPstmt.executeQuery();
-			if (selectTaxonRs.next()) {
-				sampleInfo.setUniqueName(selectTaxonRs.getString("sample_alias"));
-				sampleInfo.setScientificName(selectTaxonRs.getString("scientific_name"));
-				sampleInfo.setTaxId(Long.valueOf(selectTaxonRs.getString("tax_id")));
-			}
-		} finally {
-			DbUtils.closeQuietly(selectTaxonRs);
-			DbUtils.closeQuietly(selectTaxonPstmt);
-		}
-		sampleInfo.setSampleId(sampleId);
-		return sampleInfo;
-	}
-
-	/**
-	 * @param sampleId
-	 * @return SampleEntity constructed using sample.xml, SourceFeature qualifiers will be constructed later
-	 * from SAMPLE_ATTRIBUTE in sample.xml
-	 * @throws SQLException
-	 */
-	private SampleEntity getSampleAttributes( String sampleId) throws SQLException {
-
-		SampleEntity sample =new SampleEntity();
-		String select_sourcefeature_Query = "select t1.tag, t1.value from sample,XMLTable('//SAMPLE_ATTRIBUTE'PASSING sample_xml COLUMNS tag varchar2(4000) PATH 'TAG/text()'," +
-				"value clob PATH 'VALUE/text()') t1 where sample_id =?";
-		PreparedStatement select_sourcequalifiers_pstmt = null;
-		ResultSet select_sourcequalifers_rs = null;
-
-		try {
-			select_sourcequalifiers_pstmt = connection.prepareStatement(select_sourcefeature_Query);
-			select_sourcequalifiers_pstmt.setString(1, sampleId);
-			select_sourcequalifers_rs = select_sourcequalifiers_pstmt.executeQuery();
-			Map<String,String> attributes = new HashMap<>();
-			while (select_sourcequalifers_rs.next()) {
-				String tag = select_sourcequalifers_rs.getString(1);
-				if(StringUtils.isNotBlank(tag) )
-					attributes.put(tag,select_sourcequalifers_rs.getString(2));
-			}
-			sample.setAttributes(attributes);
-		} finally {
-			DbUtils.closeQuietly(select_sourcequalifers_rs);
-			DbUtils.closeQuietly(select_sourcequalifiers_pstmt);
-		}
-		return sample;
-	}
-
 	private void setXrefs(String refs, Entry masterEntry) {
 		if (StringUtils.isNotBlank(refs)) {
 			String patternS = "<PRIMARY_ID>(.*)<\\/PRIMARY_ID>";
@@ -753,48 +672,34 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 	}
 
-	private SampleInfo getSampleInfoFromBiosamplesSample(Sample biosamplesSample) {
+	private SampleInfo getSampleInfo(Sample sample) {
 		SampleInfo sampleInfo = new SampleInfo();
 
-		if (biosamplesSample != null) {
-			sampleInfo.setUniqueName(biosamplesSample.getName());
-			sampleInfo.setScientificName(biosamplesSample.getAttributes().stream()
-				.filter(attr -> attr.getType() != null && attr.getType().equals("organism"))
-				.findFirst()
-				.map(attr -> attr.getValue())
-				.orElse(null));
-			sampleInfo.setTaxId(biosamplesSample.getTaxId());
-			sampleInfo.setSampleId(biosamplesSample.getAccession());
+		if (sample != null) {
+			sampleInfo.setUniqueName(sample.getName());
+			sampleInfo.setScientificName(sample.getOrganism());
+			sampleInfo.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
+			sampleInfo.setSampleId(sample.getBioSampleId());
 		}
 
 		return sampleInfo;
 	}
 
-	private SampleEntity getSampleAttributesFromBiosamplesSample(Sample biosamplesSample) {
+	private SampleEntity getSampleAttributes(Sample biosamplesSample) {
 		SampleEntity sample = new SampleEntity();
 
 		Map<String,String> attributes = new HashMap<>();
 
-		if (biosamplesSample != null) {
+		if (biosamplesSample != null && biosamplesSample.getAttributes() != null) {
 			biosamplesSample.getAttributes().forEach(biosamplesAttribute -> {
-				String type = biosamplesAttribute.getType();
-				if (StringUtils.isNotBlank(type))
-					attributes.put(type, biosamplesAttribute.getValue());
+				String name = biosamplesAttribute.getName();
+				if (StringUtils.isNotBlank(name))
+					attributes.put(name, biosamplesAttribute.getValue());
 			});
 		}
 
 		sample.setAttributes(attributes);
 
 		return sample;
-	}
-
-	private WebinAuthClientService createWebinAuthClientService() {
-		return new WebinAuthClientService(
-			new RestTemplateBuilder(),
-			URI.create(WebinService.WEBIN_AUTH_PROD_URL),
-			biosamplesWebinUsername,
-			biosamplesWebinPassword,
-			Arrays.asList(AuthRealm.ENA)
-		);
 	}
 }
