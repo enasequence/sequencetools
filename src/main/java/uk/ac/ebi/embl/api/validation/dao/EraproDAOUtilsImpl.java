@@ -645,22 +645,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		return null;
 	}
 
-	private String getCorrespondingBiosamplesId(String sampleId) throws SQLException {
-		String result = null;
-
-		try (PreparedStatement ps = connection.prepareStatement("select biosample_id from sample where sample_id=?")) {
-			ps.setString(1, sampleId);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					result = rs.getString(1);
-				}
-			}
-		}
-
-		return result;
-	}
-
 	private void setXrefs(String refs, Entry masterEntry) {
 		if (StringUtils.isNotBlank(refs)) {
 			String patternS = "<PRIMARY_ID>(.*)<\\/PRIMARY_ID>";
