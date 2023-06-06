@@ -163,15 +163,29 @@ publishing {
 }
 
 test {
-    if( System.env.webin_cli_password ) {
-        environment 'webin-cli-password', System.env.webin_cli_password
+    // Webin account
+    if( System.env.webin_password ) {
+        environment 'webin-password', System.env.webin_password
     } else {
-        environment 'webin-cli-password', webinCliPassword
+        environment 'webin-password', webinPassword
     }
 
-    if( System.env.webin_cli_username ) {
-        environment 'webin-cli-username', System.env.webin_cli_username
+    if( System.env.webin_username ) {
+        environment 'webin-username', System.env.webin_username
     } else {
-        environment 'webin-cli-username', webinCliUsername
+        environment 'webin-username', webinUsername
+    }
+
+    // Biosamples Webin account
+    if( System.env.biosamples_webin_password ) {
+        environment 'biosamples-webin-password', System.env.biosamples_webin_password
+    } else {
+        environment 'biosamples-webin-password', biosamplesWebinPassword
+    }
+
+    if( System.env.biosamples_webin_username ) {
+        environment 'biosamples-webin-username', System.env.biosamples_webin_username
+    } else {
+        environment 'biosamples-webin-username', biosamplesWebinUsername
     }
 }

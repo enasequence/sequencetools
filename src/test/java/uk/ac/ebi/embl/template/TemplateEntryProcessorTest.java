@@ -26,7 +26,17 @@ import static org.junit.Assert.*;
 
 public class TemplateEntryProcessorTest {
 
-    private final static String AUTH_JSON="{\"authRealms\":[\"ENA\"],\"password\":\"sausages\",\"username\":\"Webin-256\"}";
+    public static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
+    public static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
+
+    public static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
+    public static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
+
+    private final static String AUTH_JSON = String.format(
+        "{\"authRealms\":[\"ENA\"],\"password\":\"%s\",\"username\":\"%s\"}",
+        WEBIN_ACCOUNT_PASSWORD,
+        WEBIN_ACCOUNT_USERNAME);
+
     private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
     private final static File ERT000002_templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
     private final static File ERT000056_templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000056.xml").toFile();
@@ -40,7 +50,8 @@ public class TemplateEntryProcessorTest {
     @Before
     public void setUp() throws Exception {
         templateEntryProcessor = getTemplateEntryProcessor();
-        SequenceToolsServices.init(new WebinSampleRetrievalService(getAuthTokenForTest(),true));
+        SequenceToolsServices.init(new WebinSampleRetrievalService(
+            getAuthTokenForTest(), BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME, BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD, true));
     }
     
     @Test

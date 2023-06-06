@@ -29,11 +29,13 @@ public class SubmissionOptions
 	public  Optional<File> reportFile = Optional.empty();
 	public  Optional<Boolean> ignoreError = Optional.empty();
 	public  Optional<String> webinAuthToken = Optional.empty();
+	public  Optional<String> webinUsername = Optional.empty();
+	public  Optional<String> webinPassword = Optional.empty();
 
 	public  Optional<ServiceConfig> serviceConfig = Optional.empty();
 
-	public  Optional<String> biosamplesWebinUsername = Optional.empty();
-	public  Optional<String> biosamplesWebinPassword = Optional.empty();
+	public  Optional<String> biosamplesProxyWebinUsername = Optional.empty();
+	public  Optional<String> biosamplesProxyWebinPassword = Optional.empty();
 
 	private EmblEntryValidationPlanProperty property =null;
 
@@ -143,9 +145,14 @@ public class SubmissionOptions
 		property.taxonClient.set(new TaxonomyClient());
 		property.isRemote.set(isWebinCLI);
 
-		if(biosamplesWebinUsername.isPresent() && biosamplesWebinPassword.isPresent()) {
-			property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
-			property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
+		if(webinUsername.isPresent() && webinPassword.isPresent()) {
+			property.webinUsername.set(webinUsername.get());
+			property.webinPassword.set(webinPassword.get());
+		}
+
+		if(biosamplesProxyWebinUsername.isPresent() && biosamplesProxyWebinPassword.isPresent()) {
+			property.biosamplesProxyWebinUsername.set(biosamplesProxyWebinUsername.get());
+			property.biosamplesProxyWebinPassword.set(biosamplesProxyWebinPassword.get());
 		}
 
 		return property;

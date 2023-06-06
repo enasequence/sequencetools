@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import uk.ac.ebi.embl.api.entry.AgpRow;
+
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
@@ -31,6 +31,9 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<Boolean> ncbiCon = new ValidationPlanProperty<>(false);
 	public final ValidationPlanProperty<Boolean> isSourceUpdate = new ValidationPlanProperty<>(false);
 
-	public final ValidationPlanProperty<String> biosamplesWebinUsername = new ValidationPlanProperty<>(null);
-	public final ValidationPlanProperty<String> biosamplesWebinPassword = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> webinUsername = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> webinPassword = new ValidationPlanProperty<>(null);
+
+	public final ValidationPlanProperty<String> biosamplesProxyWebinUsername = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> biosamplesProxyWebinPassword = new ValidationPlanProperty<>(null);
 }
