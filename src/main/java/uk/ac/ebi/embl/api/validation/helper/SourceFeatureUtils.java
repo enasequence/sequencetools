@@ -1,6 +1,5 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,12 +10,12 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.check.feature.MasterSourceQualifierValidator;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl.MASTERSOURCEQUALIFIERS;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SourceFeatureUtils {
 
@@ -106,31 +105,31 @@ public class SourceFeatureUtils {
 			source.addQualifier(isolationSourceQualifier);	
 	}
 
-	public SourceFeature constructSourceFeature(SampleEntity sample, TaxonomyClient taxonomyClient, SampleInfo sampleInfo) {
+	public SourceFeature constructSourceFeature(Sample sample, TaxonomyClient taxonomyClient) {
 		FeatureFactory featureFactory = new FeatureFactory();
 		SourceFeature sourceFeature = featureFactory.createSourceFeature();
-		sourceFeature.setTaxId(sampleInfo.getTaxId());
-		sourceFeature.setScientificName(sampleInfo.getScientificName());
+		sourceFeature.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
+		sourceFeature.setScientificName(sample.getOrganism());
 		sourceFeature.setMasterLocation();
-		addQualifiers(sourceFeature,sample,taxonomyClient,sampleInfo);
+		addQualifiers(sourceFeature,sample,taxonomyClient);
 		return sourceFeature;
 	}
 
-	public SourceFeature updateSourceFeature(SourceFeature sourceFeature, SampleEntity sample, TaxonomyClient taxonomyClient, SampleInfo sampleInfo) {
-		sourceFeature.setTaxId(sampleInfo.getTaxId());
-		sourceFeature.setScientificName(sampleInfo.getScientificName());
-		addQualifiers(sourceFeature,sample,taxonomyClient,sampleInfo);
+	public SourceFeature updateSourceFeature(SourceFeature sourceFeature, Sample sample, TaxonomyClient taxonomyClient) {
+		sourceFeature.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
+		sourceFeature.setScientificName(sample.getOrganism());
+		addQualifiers(sourceFeature,sample,taxonomyClient);
 		return sourceFeature;
 	}
 	
-	public void addQualifiers(SourceFeature sourceFeature,SampleEntity sample,TaxonomyClient taxonomyClient, SampleInfo sampleInfo){
+	public void addQualifiers(SourceFeature sourceFeature,Sample sample,TaxonomyClient taxonomyClient){
 		String latitude = null;
 		String longitude = null;
 		String country = null;
 		String region = null;
-		for (Map.Entry<String, String> entry : sample.getAttributes().entrySet()) {
-			String tag = entry.getKey();
-			String value = entry.getValue();
+		for (Attribute attribute : sample.getAttributes()) {
+			String tag = attribute.getName();
+			String value = attribute.getValue();
 			if (isCovidTaxId(sourceFeature.getTaxId()) && tag != null) {
 				// Master source qualifiers values created from multiple sample fields are constructed here.
 				if (tag.toLowerCase().contains("latitude")) {
@@ -171,11 +170,11 @@ public class SourceFeatureUtils {
 			addSourceQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country == null ? region : region == null ? country : country + ":" + region, sourceFeature);
 		}
 
-		Taxon taxon = taxonomyClient.getTaxonByTaxid(sampleInfo.getTaxId());
+		Taxon taxon = taxonomyClient.getTaxonByTaxid(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
 		if (taxon != null) {
 			sourceFeature.setTaxon(taxon);
 		}
-		addExtraSourceQualifiers(sourceFeature, taxonomyClient, sampleInfo.getUniqueName());
+		addExtraSourceQualifiers(sourceFeature, taxonomyClient, sample.getName());
 	}
 
 }

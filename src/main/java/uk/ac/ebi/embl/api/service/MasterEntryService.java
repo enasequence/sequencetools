@@ -46,8 +46,8 @@ public class MasterEntryService {
                 options.eraproConnection.get(),
                 options.webinUsername.get(),
                 options.webinPassword.get(),
-                options.biosamplesProxyWebinUsername.get(),
-                options.biosamplesProxyWebinPassword.get());
+                options.biosamplesWebinUsername.get(),
+                options.biosamplesWebinPassword.get());
             masterEntry = getMasterEntryFromSubmittedXml(options, utils);
         }
 

@@ -12,11 +12,9 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.SampleInfo;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.dao.model.Analysis;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
@@ -42,7 +40,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EraproDAOUtilsImpl implements EraproDAOUtils 
+public class EraproDAOUtilsImpl implements EraproDAOUtils
 {
 	private final Connection connection;
 	private final ReferenceUtils referenceUtils = new ReferenceUtils();
@@ -125,8 +123,8 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		Connection connection,
 		String webinUsername,
 		String webinPassword,
-		String biosamplesProxyWebinUsername,
-		String biosamplesProxyWebinPassword)
+		String biosamplesWebinUsername,
+		String biosamplesWebinPassword)
 	{
 		this.connection = connection;
 
@@ -134,15 +132,15 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			throw new IllegalArgumentException("Invalid Webin username or password.");
 		}
 
-		if(StringUtils.isBlank(biosamplesProxyWebinUsername) || StringUtils.isBlank(biosamplesProxyWebinPassword)) {
-			throw new IllegalArgumentException("Invalid Biosamples Proxy Webin username or password.");
+		if(StringUtils.isBlank(biosamplesWebinUsername) || StringUtils.isBlank(biosamplesWebinPassword)) {
+			throw new IllegalArgumentException("Invalid Biosamples Webin username or password.");
 		}
 
 		sampleService = new SampleService.Builder()
 			.setUserName(webinUsername)
 			.setPassword(webinPassword)
-			.setBiosamplesWebinUserName(biosamplesProxyWebinUsername)
-			.setBiosamplesWebinPassword(biosamplesProxyWebinPassword)
+			.setBiosamplesWebinUserName(biosamplesWebinUsername)
+			.setBiosamplesWebinPassword(biosamplesWebinPassword)
 			.setTest(false)
 			.build();
 	}
@@ -430,10 +428,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 	public SourceFeature getSourceFeature(String sampleId) throws Exception {
 		Sample sample = sampleService.getSample(sampleId);
 
-		SampleInfo sampleInfo = getSampleInfo(sample);
-		SampleEntity sampleEntity = getSampleAttributes(sample);
-
-		return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
+		return new SourceFeatureUtils().constructSourceFeature(sample, new TaxonomyClient());
 	}
 
 	@Override
@@ -485,7 +480,6 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		String sampleId = null;
 		String projectId;
 		Sample sample = null;
-		SampleInfo sampleInfo = null;
 		String prevSampleId = null;
 		String prevProjectId = null;
 		String author = null;
@@ -575,10 +569,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 				sample = sampleService.getSample(sampleId);
 
-				sampleInfo = getSampleInfo(sample);
-				sampleInfo.setSampleId(sampleId);
-
-				if(molType!=null&&taxonClient.isChildOf(sampleInfo.getScientificName(), "Viruses"))
+				if(molType!=null&&taxonClient.isChildOf(sample.getOrganism(), "Viruses"))
 				{
 					masterEntry.getSequence().setMoleculeType(molType);
 				}
@@ -611,7 +602,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 			masterEntry.addReference(getSubmitterReference(analysisId));
 		}
 
-		sourceFeature = new SourceFeatureUtils().constructSourceFeature(getSampleAttributes(sample), taxonClient, sampleInfo);
+		sourceFeature = new SourceFeatureUtils().constructSourceFeature(sample, taxonClient);
 
 		masterEntry.addFeature(sourceFeature);
 		String description = SequenceEntryUtils.generateMasterEntryDescription(sourceFeature, analysisType, isTpa);
@@ -654,36 +645,5 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 				masterEntry.addXRef(new XRef("ENA", m.group(1)));
 			}
 		}
-	}
-
-	private SampleInfo getSampleInfo(Sample sample) {
-		SampleInfo sampleInfo = new SampleInfo();
-
-		if (sample != null) {
-			sampleInfo.setUniqueName(sample.getName());
-			sampleInfo.setScientificName(sample.getOrganism());
-			sampleInfo.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
-			sampleInfo.setSampleId(sample.getBioSampleId());
-		}
-
-		return sampleInfo;
-	}
-
-	private SampleEntity getSampleAttributes(Sample biosamplesSample) {
-		SampleEntity sample = new SampleEntity();
-
-		Map<String,String> attributes = new HashMap<>();
-
-		if (biosamplesSample != null && biosamplesSample.getAttributes() != null) {
-			biosamplesSample.getAttributes().forEach(biosamplesAttribute -> {
-				String name = biosamplesAttribute.getName();
-				if (StringUtils.isNotBlank(name))
-					attributes.put(name, biosamplesAttribute.getValue());
-			});
-		}
-
-		sample.setAttributes(attributes);
-
-		return sample;
 	}
 }

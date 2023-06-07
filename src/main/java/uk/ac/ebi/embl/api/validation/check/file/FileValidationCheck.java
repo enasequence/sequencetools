@@ -585,8 +585,8 @@ public abstract class FileValidationCheck {
 					options.eraproConnection.get(),
 					options.webinUsername.get(),
 					options.webinPassword.get(),
-					options.biosamplesProxyWebinUsername.get(),
-					options.biosamplesProxyWebinPassword.get());
+					options.biosamplesWebinUsername.get(),
+					options.biosamplesWebinPassword.get());
 
 				Reference reference =  eraProDao.getReference(entry, options.analysisId.get(), AnalysisType.SEQUENCE_FLATFILE);
 				if(reference == null) {

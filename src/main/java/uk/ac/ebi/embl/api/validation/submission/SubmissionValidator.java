@@ -9,7 +9,6 @@ import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.service.WebinSampleRetrievalService;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.check.genomeassembly.AssemblyInfoNameCheck;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
@@ -22,6 +21,7 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 import java.io.File;
 import java.util.*;
@@ -46,8 +46,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             // Initialise SampleRetrievalService.
             SequenceToolsServices.init(new WebinSampleRetrievalService(
                 options.webinAuthToken.get(),
-                options.biosamplesProxyWebinUsername.get(),
-                options.biosamplesProxyWebinPassword.get(),
+                options.biosamplesWebinAuthToken.get(),
                 options.webinCliTestMode));
         }
         
@@ -121,17 +120,7 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             assemblyInfo.setBiosampleId(manifest.getSample().getBioSampleId());
             assemblyInfo.setOrganism(manifest.getSample().getOrganism());
 
-            SampleEntity sampleEntity = new SampleEntity();
-            sampleEntity.setAttributes(attributesListToMap(manifest.getSample().getAttributes()));
-
-            SampleInfo sampleInfo = new SampleInfo();
-            sampleInfo.setScientificName(manifest.getSample().getOrganism());
-            if (manifest.getSample().getTaxId() != null) {
-                sampleInfo.setTaxId(manifest.getSample().getTaxId().longValue());
-            }
-            sampleInfo.setUniqueName(manifest.getName());
-
-            SourceFeature sourceFeature = new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
+            SourceFeature sourceFeature = new SourceFeatureUtils().constructSourceFeature(manifest.getSample(), new TaxonomyClient());
             sourceFeature.addQualifier(Qualifier.DB_XREF_QUALIFIER_NAME, String.valueOf(manifest.getSample().getTaxId()));
 
             options.source = Optional.of(sourceFeature);

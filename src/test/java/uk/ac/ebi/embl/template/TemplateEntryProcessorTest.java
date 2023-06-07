@@ -29,13 +29,18 @@ public class TemplateEntryProcessorTest {
     public static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
     public static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
 
-    public static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
-    public static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
+    public static final String BIOSAMPLES_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
+    public static final String BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
 
-    private final static String AUTH_JSON = String.format(
+    public final static String WEBIN_AUTH_JSON = String.format(
         "{\"authRealms\":[\"ENA\"],\"password\":\"%s\",\"username\":\"%s\"}",
         WEBIN_ACCOUNT_PASSWORD,
         WEBIN_ACCOUNT_USERNAME);
+
+    public final static String BIOSAMPLES_WEBIN_AUTH_JSON = String.format(
+        "{\"authRealms\":[\"ENA\"],\"password\":\"%s\",\"username\":\"%s\"}",
+        BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD,
+        BIOSAMPLES_WEBIN_ACCOUNT_USERNAME);
 
     private final static String TEST_AUTH_URL="https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
     private final static File ERT000002_templateFile = Paths.get(System.getProperty("user.dir") + "/src/main/resources/templates/ERT000002.xml").toFile();
@@ -51,7 +56,7 @@ public class TemplateEntryProcessorTest {
     public void setUp() throws Exception {
         templateEntryProcessor = getTemplateEntryProcessor();
         SequenceToolsServices.init(new WebinSampleRetrievalService(
-            getAuthTokenForTest(), BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME, BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD, true));
+            getAuthTokenForTest(WEBIN_AUTH_JSON), getAuthTokenForTest(BIOSAMPLES_WEBIN_AUTH_JSON), true));
     }
     
     @Test
@@ -214,11 +219,11 @@ public class TemplateEntryProcessorTest {
     private SubmissionOptions getOptions(){
         SubmissionOptions options=new SubmissionOptions();
         options.webinCliTestMode=true;
-        options.webinAuthToken = Optional.of(getAuthTokenForTest());
+        options.webinAuthToken = Optional.of(getAuthTokenForTest(WEBIN_AUTH_JSON));
         return options;
     }
     
-    public static String getAuthTokenForTest(){
+    public static String getAuthTokenForTest(String authJson){
 
         if(StringUtils.isNotEmpty(token)){
             return token;
@@ -227,7 +232,7 @@ public class TemplateEntryProcessorTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request =
-                new HttpEntity<String>(AUTH_JSON, headers);
+                new HttpEntity<String>(authJson, headers);
         ResponseEntity<String> response =
                 restTemplate.postForEntity(TEST_AUTH_URL,request, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());

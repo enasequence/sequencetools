@@ -20,8 +20,8 @@ public class EraproDAOUtilsImplTest {
     private static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
     private static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
 
-    private static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
-    private static final String BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
+    private static final String BIOSAMPLES_WEBIN_ACCOUNT_USERNAME = System.getenv("biosamples-webin-username");
+    private static final String BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD = System.getenv("biosamples-webin-password");
 
     private static final String SAMPLE_ID = "ERS6455303";
 
@@ -42,8 +42,8 @@ public class EraproDAOUtilsImplTest {
                 conn,
                 WEBIN_ACCOUNT_USERNAME,
                 WEBIN_ACCOUNT_PASSWORD,
-                BIOSAMPLES_PROXY_WEBIN_ACCOUNT_USERNAME,
-                BIOSAMPLES_PROXY_WEBIN_ACCOUNT_PASSWORD);
+                BIOSAMPLES_WEBIN_ACCOUNT_USERNAME,
+                BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD);
 
             SourceFeature sourceFeature = eraproDAOUtils.getSourceFeature(SAMPLE_ID);
 

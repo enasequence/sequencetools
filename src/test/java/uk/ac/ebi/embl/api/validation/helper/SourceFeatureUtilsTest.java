@@ -4,13 +4,13 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.SampleInfo;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,8 +19,7 @@ public class SourceFeatureUtilsTest {
     @Test
     public void constructSourceFeature() {
         String sampleId = "ERS4477947";
-        SourceFeature source = new SourceFeatureUtils().constructSourceFeature(getSampleEntity(),
-                new TaxonomyClient(), getSampleInfo(sampleId));
+        SourceFeature source = new SourceFeatureUtils().constructSourceFeature(getSample(sampleId), new TaxonomyClient());
         assertEquals(7, source.getQualifiers().size());//6 from sample + organism qualifier
         assertEquals("2020-03-09", source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
         assertEquals("Spain:Valencia", source.getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME).getValue());
@@ -35,37 +34,35 @@ public class SourceFeatureUtilsTest {
         assertEquals("Severe acute respiratory syndrome coronavirus 2", taxon.getScientificName());
     }
 
+    // This to do comment was moved here from its previous spot before the refactor.
     //TODO: ask about lat lon unit
-    private SampleEntity getSampleEntity() {
-        SampleEntity sample = new SampleEntity();
-        Map<String, String> attr = new HashMap<>();
-        attr.put("sample_description", "hCoV-19/Spain/Valencia27/2020");
-        attr.put("collection date", "2020-03-09"); //1
-        attr.put("geographic location (latitude)", "39.47");//3
-        attr.put("geographic location (longitude)", "0.38 E");//3
-        attr.put("geographic location (region and locality)", "Valencia");//2
-        attr.put("host common name", "Human");
-        attr.put("geographic location (country and/or sea)", "Spain");//2
-        attr.put("host subject id", "18218863");
-        attr.put("host age", "81");
-        attr.put("host health state", "not provided");
-        attr.put("host sex", "male");
-        attr.put("host scientific name", "Homo sapiens");//4
-        attr.put("isolate", "hCoV-19/Spain/Valencia27/2020");//5
-        attr.put("GISAID Accession ID","GISAID123");//6
-        attr.put("isolation source host-associated", "Nasopharyngeal exudate");
-        attr.put("ENA-CHECKLIST", "ERC000033");
-        sample.setAttributes(attr);
+    private Sample getSample(String sampleId) {
+        Sample sample = new Sample();
+        sample.setSraSampleId(sampleId);
+        sample.setName("hCoV-19/Spain/Valencia27/2020");
+        sample.setOrganism("Severe acute respiratory syndrome coronavirus 2");
+        sample.setTaxId(2697049);
+
+        List<Attribute> attributes = new ArrayList<>();
+        attributes.add(new Attribute("sample_description", "hCoV-19/Spain/Valencia27/2020"));
+        attributes.add(new Attribute("collection date", "2020-03-09")); //1
+        attributes.add(new Attribute("geographic location (latitude)", "39.47"));//3
+        attributes.add(new Attribute("geographic location (longitude)", "0.38 E"));//3
+        attributes.add(new Attribute("geographic location (region and locality)", "Valencia"));//2
+        attributes.add(new Attribute("host common name", "Human"));
+        attributes.add(new Attribute("geographic location (country and/or sea)", "Spain"));//2
+        attributes.add(new Attribute("host subject id", "18218863"));
+        attributes.add(new Attribute("host age", "81"));
+        attributes.add(new Attribute("host health state", "not provided"));
+        attributes.add(new Attribute("host sex", "male"));
+        attributes.add(new Attribute("host scientific name", "Homo sapiens"));//4
+        attributes.add(new Attribute("isolate", "hCoV-19/Spain/Valencia27/2020"));//5
+        attributes.add(new Attribute("GISAID Accession ID","GISAID123"));//6
+        attributes.add(new Attribute("isolation source host-associated", "Nasopharyngeal exudate"));
+        attributes.add(new Attribute("ENA-CHECKLIST", "ERC000033"));
+
+        sample.setAttributes(attributes);
+
         return sample;
-    }
-
-
-    private SampleInfo getSampleInfo(String sampleId) {
-        SampleInfo sampleInfo = new SampleInfo();
-        sampleInfo.setSampleId(sampleId);
-        sampleInfo.setUniqueName("hCoV-19/Spain/Valencia27/2020");
-        sampleInfo.setScientificName("Severe acute respiratory syndrome coronavirus 2");
-        sampleInfo.setTaxId(2697049L);
-        return sampleInfo;
     }
 }

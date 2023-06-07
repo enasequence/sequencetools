@@ -34,8 +34,9 @@ public class SubmissionOptions
 
 	public  Optional<ServiceConfig> serviceConfig = Optional.empty();
 
-	public  Optional<String> biosamplesProxyWebinUsername = Optional.empty();
-	public  Optional<String> biosamplesProxyWebinPassword = Optional.empty();
+	public  Optional<String> biosamplesWebinAuthToken = Optional.empty();
+	public  Optional<String> biosamplesWebinUsername = Optional.empty();
+	public  Optional<String> biosamplesWebinPassword = Optional.empty();
 
 	private EmblEntryValidationPlanProperty property =null;
 
@@ -150,9 +151,9 @@ public class SubmissionOptions
 			property.webinPassword.set(webinPassword.get());
 		}
 
-		if(biosamplesProxyWebinUsername.isPresent() && biosamplesProxyWebinPassword.isPresent()) {
-			property.biosamplesProxyWebinUsername.set(biosamplesProxyWebinUsername.get());
-			property.biosamplesProxyWebinPassword.set(biosamplesProxyWebinPassword.get());
+		if(biosamplesWebinUsername.isPresent() && biosamplesWebinPassword.isPresent()) {
+			property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
+			property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
 		}
 
 		return property;

@@ -10,7 +10,6 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.service.SampleRetrievalService;
 import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.model.SampleEntity;
 import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
 import uk.ac.ebi.embl.api.validation.helper.SourceFeatureUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
@@ -443,9 +442,7 @@ public class TemplateEntryProcessor {
         
         if (sample != null && entry.getPrimarySourceFeature() != null) {
             SourceFeature sourceFeature = entry.getPrimarySourceFeature();
-            SampleInfo sampleInfo = getSampleInfo(sample);
-            SampleEntity sampleEntity = getSampleEntity(sample);
-            updateSourceFeature(sourceFeature, sampleEntity, sampleInfo);
+            updateSourceFeature(sourceFeature, sample);
             entry.addXRef(new XRef("BioSample", sample.getBioSampleId()));
         }
     }
@@ -498,32 +495,12 @@ public class TemplateEntryProcessor {
         return sample;
     }
 
-    private SampleEntity getSampleEntity(Sample sample){
-        SampleEntity sampleEntity = new SampleEntity();
-        Map<String,String> attributeMap=new HashMap();
-        for(Attribute attribute: sample.getAttributes()){
-            attributeMap.put(attribute.getName(),attribute.getValue());
-        }
-        sampleEntity.setAttributes(attributeMap);
-        return sampleEntity;
+    private SourceFeature updateSourceFeature(SourceFeature sourceFeature,Sample sampleEntity) throws Exception {
+        return new SourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonomyClient());
     }
 
-    private SourceFeature updateSourceFeature(SourceFeature sourceFeature,SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new SourceFeatureUtils().updateSourceFeature(sourceFeature, sampleEntity, new TaxonomyClient(), sampleInfo);
-    }
-
-    public SourceFeature createSourceFeature(SampleEntity sampleEntity,SampleInfo sampleInfo) throws Exception {
-        return new SourceFeatureUtils().constructSourceFeature(sampleEntity, new TaxonomyClient(), sampleInfo);
-    }
-
-    private SampleInfo getSampleInfo(Sample sample){
-        SampleInfo sampleInfo=new SampleInfo();
-        sampleInfo.setScientificName(sample.getOrganism());
-        sampleInfo.setUniqueName(sample.getName());
-        if(sample.getTaxId()!=null) {
-            sampleInfo.setTaxId(Long.valueOf(sample.getTaxId()));
-        }
-        return sampleInfo;
+    public SourceFeature createSourceFeature(Sample sample) throws Exception {
+        return new SourceFeatureUtils().constructSourceFeature(sample, new TaxonomyClient());
     }
     
     private boolean templateContainsOrganismToken(){

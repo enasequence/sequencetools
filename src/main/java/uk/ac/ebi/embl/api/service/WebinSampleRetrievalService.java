@@ -6,18 +6,15 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 public class WebinSampleRetrievalService implements SampleRetrievalService {
 
     private final String webinAuthToken;
-    private final String biosamplesProxyWebinUsername;
-    private final String biosamplesProxyWebinPassword;
+    private final String biosamplesWebinAuthToken;
     private final boolean webinCliTestMode;
 
     public WebinSampleRetrievalService(
         String webinAuthToken,
-        String biosamplesProxyWebinUsername,
-        String biosamplesProxyWebinPassword,
+        String biosamplesWebinAuthToken,
         boolean webinCliTestMode) {
         this.webinAuthToken=webinAuthToken;
-        this.biosamplesProxyWebinUsername = biosamplesProxyWebinUsername;
-        this.biosamplesProxyWebinPassword = biosamplesProxyWebinPassword;
+        this.biosamplesWebinAuthToken = biosamplesWebinAuthToken;
         this.webinCliTestMode=webinCliTestMode;
     }
     
@@ -32,8 +29,7 @@ public class WebinSampleRetrievalService implements SampleRetrievalService {
     private SampleService getSampleService(String authToken, boolean webinCliTestMode){
         return new SampleService.Builder()
                 .setAuthToken(authToken)
-                .setBiosamplesWebinUserName(biosamplesProxyWebinUsername)
-                .setBiosamplesWebinPassword(biosamplesProxyWebinPassword)
+                .setBiosamplesWebinAuthToken(authToken)
                 .setTest(webinCliTestMode)
                 .build();
     }

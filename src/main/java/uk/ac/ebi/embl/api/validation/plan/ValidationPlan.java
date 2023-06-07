@@ -117,8 +117,8 @@ public abstract class ValidationPlan {
 				 planProperty.eraproConnection.get(),
 				 planProperty.webinUsername.get(),
 				 planProperty.webinPassword.get(),
-				 planProperty.biosamplesProxyWebinUsername.get(),
-				 planProperty.biosamplesProxyWebinPassword.get());
+				 planProperty.biosamplesWebinUsername.get(),
+				 planProperty.biosamplesWebinPassword.get());
 		 }
 		 
 		check.setEraproDAOUtils(eraproDAOUtils);

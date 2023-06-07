@@ -34,6 +34,6 @@ public class EmblEntryValidationPlanProperty
 	public final ValidationPlanProperty<String> webinUsername = new ValidationPlanProperty<>(null);
 	public final ValidationPlanProperty<String> webinPassword = new ValidationPlanProperty<>(null);
 
-	public final ValidationPlanProperty<String> biosamplesProxyWebinUsername = new ValidationPlanProperty<>(null);
-	public final ValidationPlanProperty<String> biosamplesProxyWebinPassword = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> biosamplesWebinUsername = new ValidationPlanProperty<>(null);
+	public final ValidationPlanProperty<String> biosamplesWebinPassword = new ValidationPlanProperty<>(null);
 }
