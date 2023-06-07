@@ -160,9 +160,8 @@ public class SourceQualifierMissingFixTest
 		entry.addFeature(sourceFeature);
 		ValidationResult validationResult = check.check(entry);
 		assertTrue(validationResult.isValid());
-		assertEquals(2, validationResult.getMessages(Severity.FIX).size());
-		assertEquals(1, validationResult.count("SourceQualifierMissingFix_2",Severity.FIX));
-		assertEquals(1, validationResult.count("SourceQualifierMissingFix_3",Severity.FIX));
+		assertEquals(1, validationResult.getMessages(Severity.FIX).size());
+		assertEquals(1, validationResult.count("MetagenomeSourceQualifierRemoved",Severity.FIX));
 	}
 
 	@Test
