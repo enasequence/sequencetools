@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.16.0'
+ext.version_base = '2.16.1'
 
 
 version = version_base
@@ -99,7 +99,7 @@ dependencies
 
             compile group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
 
-            implementation( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.6.0' )
+            implementation( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.6.1' )
             compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.2')
 
             testImplementation 'org.mockito:mockito-core:3.12.4'
