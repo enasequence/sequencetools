@@ -50,13 +50,6 @@ public class SubmissionValidationPlan
 	private final FileValidationCheck.SharedInfo sharedInfo = new FileValidationCheck.SharedInfo();
 
 	FileValidationCheck check = null;
-    String fastaFlagFileName ="fasta.validated";
-    String agpFlagFileName ="agp.validated";
-    String flatfileFlagFileName ="flatfile.validated";
-    String chromosomelistFlagFileName ="chromosomelist.validated";
-    String masterFlagFileName ="master.validated";
-
-
     AGPFileValidationCheck agpCheck=null;
     MasterEntryValidationCheck masterCheck = null;
 
@@ -174,20 +167,12 @@ public class SubmissionValidationPlan
 		try
 		{
 			masterCheck = new MasterEntryValidationCheck(options, sharedInfo);
-			if(options.processDir.isPresent()
-					&& Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,masterFlagFileName)))
-					&& sharedInfo.masterEntry != null ) {
-				return result;
-			}
-
 			result = masterCheck.check();
 			if(!result.isValid()) {
 				if(options.isWebinCLI)
 					throw new ValidationEngineException("Master entry validation failed",ReportErrorType.VALIDATION_ERROR );
 				return result;
 			}
-			if(!options.isWebinCLI)
-			     flagValidation(FileType.MASTER);
 		}catch(Exception e)
 		{
 			throwValidationEngineException(FileType.MASTER.name(),e,"master.dat");
@@ -199,8 +184,6 @@ public class SubmissionValidationPlan
 	private ValidationResult validateChromosomeList() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,chromosomelistFlagFileName))))
-         return result;
 		String fileName = null;
 		try {
 			check = new ChromosomeListFileValidationCheck(options, sharedInfo);
@@ -223,8 +206,6 @@ public class SubmissionValidationPlan
 	{
 		ValidationResult result = new ValidationResult();
 		check = new FastaFileValidationCheck(options, sharedInfo);
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fastaFlagFileName))))
-			return result;
 		String fileName=null;
 		try {
 			List<SubmissionFile> submissionFiles =  options.submissionFiles.get().getFiles(FileType.FASTA);
@@ -238,8 +219,6 @@ public class SubmissionValidationPlan
 						return result;
 					}
 				}
-				if (!options.isWebinCLI)
-					flagValidation(FileType.FASTA);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -252,8 +231,6 @@ public class SubmissionValidationPlan
 	{
 		ValidationResult result = new ValidationResult();
 		check = new FlatfileFileValidationCheck(options, sharedInfo);
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,flatfileFlagFileName))))
-			return result;
 		String fileName=null;
 		try
 		{
@@ -268,8 +245,6 @@ public class SubmissionValidationPlan
 						return result;
 					}
 				}
-				if (!options.isWebinCLI)
-					flagValidation(FileType.FLATFILE);
 			}
 		}catch(Exception e){
 			throwValidationEngineException(FileType.FLATFILE.name(),e,fileName);
@@ -280,8 +255,6 @@ public class SubmissionValidationPlan
 	private ValidationResult validateAGP() throws ValidationEngineException
 	{
 		ValidationResult result = new ValidationResult();
-		if(options.processDir.isPresent()&&Files.exists(Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,agpFlagFileName))))
-			return result;
 		String fileName=null;
 		try
 		{
@@ -296,8 +269,6 @@ public class SubmissionValidationPlan
 						return result;
 					}
 				}
-				if (!options.isWebinCLI)
-					flagValidation(FileType.AGP);
 			}
 
 		} catch (Exception e) {
@@ -456,37 +427,6 @@ public class SubmissionValidationPlan
 			return;
 
 		AssemblySequenceInfo.writeObject(sharedInfo.sequenceCount,options.processDir.get(),AssemblySequenceInfo.sequencefileName);
-	}
-
-	private void flagValidation(FileType fileType) throws IOException
-	{
-		if(!options.processDir.isPresent())
-			return;
-
-		String fileName =null;
-		switch(fileType)
-		{
-		case FASTA:
-			fileName=fastaFlagFileName;
-			break;
-		case AGP:
-			fileName=agpFlagFileName;
-			break;
-		case FLATFILE:
-			fileName = flatfileFlagFileName;
-			break;
-		case CHROMOSOME_LIST:
-			fileName = chromosomelistFlagFileName;
-			break;
-		case MASTER:
-			fileName = masterFlagFileName;
-			break;
-		default:
-			break;
-		}
-		Path filePath= Paths.get(String.format("%s%s%s",options.processDir.get(),File.separator,fileName));
-		if( !Files.exists(filePath))
-    	Files.createFile(filePath);
 	}
 }
 
