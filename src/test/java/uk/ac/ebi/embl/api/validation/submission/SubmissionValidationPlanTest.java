@@ -525,9 +525,10 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest
 	@Test
 	public void testTSVSubmission() throws ValidationEngineException, FlatFileComparatorException, IOException {
 		SequenceToolsServices.init(new WebinSampleRetrievalService(
+			TemplateEntryProcessorTest.WEBIN_REST_URI,
+			TemplateEntryProcessorTest.BIOSAMPLES_URI,
 			TemplateEntryProcessorTest.getAuthTokenForTest(TemplateEntryProcessorTest.WEBIN_AUTH_JSON),
-			TemplateEntryProcessorTest.getAuthTokenForTest(TemplateEntryProcessorTest.BIOSAMPLES_WEBIN_AUTH_JSON),
-			true));
+			TemplateEntryProcessorTest.getAuthTokenForTest(TemplateEntryProcessorTest.BIOSAMPLES_WEBIN_AUTH_JSON)));
 		
 		// Test submission with taxId 9606 in ORGANISM_NAME
 		executeTSVSubmission("ERT000002-rRNA-with-taxid.tsv.gz");

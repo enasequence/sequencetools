@@ -115,8 +115,11 @@ public abstract class ValidationPlan {
 		 {
 			 eraproDAOUtils = new EraproDAOUtilsImpl(
 				 planProperty.eraproConnection.get(),
+				 planProperty.webinRestUri.get(),
 				 planProperty.webinUsername.get(),
 				 planProperty.webinPassword.get(),
+				 planProperty.webinAuthUri.get(),
+				 planProperty.biosamplesUri.get(),
 				 planProperty.biosamplesWebinUsername.get(),
 				 planProperty.biosamplesWebinPassword.get());
 		 }

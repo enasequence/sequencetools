@@ -45,9 +45,10 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
         if(options.context.get() == Context.sequence) {
             // Initialise SampleRetrievalService.
             SequenceToolsServices.init(new WebinSampleRetrievalService(
+                options.webinRestUri.get(),
+                options.biosamplesUri.get(),
                 options.webinAuthToken.get(),
-                options.biosamplesWebinAuthToken.get(),
-                options.webinCliTestMode));
+                options.biosamplesWebinAuthToken.get()));
         }
         
         ValidationResult validationResult = new SubmissionValidationPlan(options).execute();

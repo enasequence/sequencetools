@@ -583,8 +583,11 @@ public abstract class FileValidationCheck {
 			if (!getOptions().isWebinCLI) {
 				EraproDAOUtils eraProDao = new EraproDAOUtilsImpl(
 					options.eraproConnection.get(),
+					options.webinRestUri.get(),
 					options.webinUsername.get(),
 					options.webinPassword.get(),
+					options.webinAuthUri.get(),
+					options.biosamplesUri.get(),
 					options.biosamplesWebinUsername.get(),
 					options.biosamplesWebinPassword.get());
 

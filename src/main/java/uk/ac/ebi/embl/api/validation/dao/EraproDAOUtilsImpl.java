@@ -121,8 +121,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 
 	public EraproDAOUtilsImpl (
 		Connection connection,
+		String webinRestUri,
 		String webinUsername,
 		String webinPassword,
+		String webinAuthUri,
+		String biosamplesUri,
 		String biosamplesWebinUsername,
 		String biosamplesWebinPassword)
 	{
@@ -137,11 +140,13 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 
 		sampleService = new SampleService.Builder()
+			.setWebinRestUri(webinRestUri)
 			.setUserName(webinUsername)
 			.setPassword(webinPassword)
+			.setWebinAuthUri(webinAuthUri)
+			.setBiosamplesUri(biosamplesUri)
 			.setBiosamplesWebinUserName(biosamplesWebinUsername)
 			.setBiosamplesWebinPassword(biosamplesWebinPassword)
-			.setTest(false)
 			.build();
 	}
 

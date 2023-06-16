@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.template.TemplateEntryProcessorTest;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -40,8 +41,11 @@ public class EraproDAOUtilsImplTest {
         try (Connection conn = dataSource.getConnection()) {
             EraproDAOUtilsImpl eraproDAOUtils = new EraproDAOUtilsImpl(
                 conn,
+                TemplateEntryProcessorTest.WEBIN_REST_URI,
                 WEBIN_ACCOUNT_USERNAME,
                 WEBIN_ACCOUNT_PASSWORD,
+                TemplateEntryProcessorTest.WEBIN_AUTH_URI,
+                TemplateEntryProcessorTest.BIOSAMPLES_URI,
                 BIOSAMPLES_WEBIN_ACCOUNT_USERNAME,
                 BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD);
 

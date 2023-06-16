@@ -26,6 +26,10 @@ import static org.junit.Assert.*;
 
 public class TemplateEntryProcessorTest {
 
+    public static final String WEBIN_REST_URI = "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/";
+    public static final String WEBIN_AUTH_URI = "https://wwwdev.ebi.ac.uk/ena/submit/webin/auth/token";
+    public static final String BIOSAMPLES_URI = "https://wwwdev.ebi.ac.uk/biosamples/";
+
     public static final String WEBIN_ACCOUNT_USERNAME = System.getenv("webin-username");
     public static final String WEBIN_ACCOUNT_PASSWORD = System.getenv("webin-password");
 
@@ -56,7 +60,10 @@ public class TemplateEntryProcessorTest {
     public void setUp() throws Exception {
         templateEntryProcessor = getTemplateEntryProcessor();
         SequenceToolsServices.init(new WebinSampleRetrievalService(
-            getAuthTokenForTest(WEBIN_AUTH_JSON), getAuthTokenForTest(BIOSAMPLES_WEBIN_AUTH_JSON), true));
+            WEBIN_REST_URI,
+            BIOSAMPLES_URI,
+            getAuthTokenForTest(WEBIN_AUTH_JSON),
+            getAuthTokenForTest(BIOSAMPLES_WEBIN_AUTH_JSON)));
     }
     
     @Test

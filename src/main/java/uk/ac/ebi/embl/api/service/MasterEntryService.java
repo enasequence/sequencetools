@@ -44,8 +44,11 @@ public class MasterEntryService {
         } else {
             EraproDAOUtils utils = new EraproDAOUtilsImpl(
                 options.eraproConnection.get(),
+                options.webinRestUri.get(),
                 options.webinUsername.get(),
                 options.webinPassword.get(),
+                options.webinAuthUri.get(),
+                options.biosamplesUri.get(),
                 options.biosamplesWebinUsername.get(),
                 options.biosamplesWebinPassword.get());
             masterEntry = getMasterEntryFromSubmittedXml(options, utils);

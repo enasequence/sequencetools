@@ -28,12 +28,15 @@ public class SubmissionOptions
 	public  Optional<String> processDir = Optional.empty();
 	public  Optional<File> reportFile = Optional.empty();
 	public  Optional<Boolean> ignoreError = Optional.empty();
+	public  Optional<String> webinRestUri = Optional.empty();
 	public  Optional<String> webinAuthToken = Optional.empty();
 	public  Optional<String> webinUsername = Optional.empty();
 	public  Optional<String> webinPassword = Optional.empty();
 
 	public  Optional<ServiceConfig> serviceConfig = Optional.empty();
 
+	public  Optional<String> webinAuthUri = Optional.empty();
+	public  Optional<String> biosamplesUri = Optional.empty();
 	public  Optional<String> biosamplesWebinAuthToken = Optional.empty();
 	public  Optional<String> biosamplesWebinUsername = Optional.empty();
 	public  Optional<String> biosamplesWebinPassword = Optional.empty();
@@ -146,12 +149,16 @@ public class SubmissionOptions
 		property.taxonClient.set(new TaxonomyClient());
 		property.isRemote.set(isWebinCLI);
 
-		if(webinUsername.isPresent() && webinPassword.isPresent()) {
+		if(webinRestUri.isPresent() && webinUsername.isPresent() && webinPassword.isPresent()) {
+			property.webinRestUri.set(webinRestUri.get());
 			property.webinUsername.set(webinUsername.get());
 			property.webinPassword.set(webinPassword.get());
 		}
 
-		if(biosamplesWebinUsername.isPresent() && biosamplesWebinPassword.isPresent()) {
+		if(webinAuthUri.isPresent() && biosamplesUri.isPresent() &&
+			biosamplesWebinUsername.isPresent() && biosamplesWebinPassword.isPresent()) {
+			property.webinAuthUri.set(webinAuthUri.get());
+			property.biosamplesUri.set(biosamplesUri.get());
 			property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
 			property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
 		}
