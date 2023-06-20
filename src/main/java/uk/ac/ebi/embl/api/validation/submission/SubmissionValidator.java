@@ -158,7 +158,17 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             options.webinAuthToken = Optional.of(manifest.getWebinAuthToken());
             options.biosamplesWebinAuthToken = Optional.of(manifest.getWebinAuthToken());
         }
+
+        if (manifest.getWebinRestUri() != null) {
+            options.webinRestUri = Optional.of(manifest.getWebinRestUri());
+        }
+
+        if (manifest.getBiosamplesUri() != null) {
+            options.biosamplesUri = Optional.of(manifest.getBiosamplesUri());
+        }
+
         options.webinCliTestMode = manifest.getWebinCliTestMode();
+
         return options;
     }
 
