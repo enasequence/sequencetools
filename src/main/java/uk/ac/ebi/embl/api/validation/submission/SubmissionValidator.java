@@ -167,8 +167,6 @@ public class SubmissionValidator implements Validator<Manifest,ValidationRespons
             options.biosamplesUri = Optional.of(manifest.getBiosamplesUri());
         }
 
-        options.webinCliTestMode = manifest.getWebinCliTestMode();
-
         return options;
     }
 

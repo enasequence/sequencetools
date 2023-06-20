@@ -43,7 +43,6 @@ public class SubmissionOptions
 
 	private EmblEntryValidationPlanProperty property =null;
 
-	public  boolean webinCliTestMode = false;
 	public  boolean isDevMode = false;
 	public  boolean isFixMode = true;
 	public  boolean isFixCds = true;
