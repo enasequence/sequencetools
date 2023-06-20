@@ -1,5 +1,6 @@
 package uk.ac.ebi.embl.api.validation.submission;
 
+import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -8,15 +9,20 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -156,6 +162,65 @@ public class SubmissionValidatorTest {
                     break;
                 case UNLOCALISED_LIST:
                     assertEquals(f.getReportFile().getAbsolutePath(), new File(unlocalised+".report").getAbsolutePath());
+                    break;
+            }
+        }
+    }
+
+    @Test
+    public void testMapSequenceManifestToSubmissionOptions() throws ValidationEngineException {
+        String flatFile = "/home/abc/flatFile.fl";
+        String tabFile = "/home/abc/tabFile.tsv";
+
+        Manifest manifest = new SequenceManifest();
+        manifest.setName("test_manifest");
+        manifest.setAddress("wellcome genome campus");
+        manifest.setAuthors("Senthil.V");
+        manifest.setReportFile(new File("/home/reports/other_reports.report"));
+        manifest.setProcessDir(new File("/home/process"));
+        manifest.setWebinRestUri("https://wwwdev.ebi.ac.uk/ena/submit/drop-box/");
+        manifest.setBiosamplesUri("https://wwwdev.ebi.ac.uk/biosamples/");
+
+        SubmissionFiles<SequenceManifest.FileType> submissionFiles = new SubmissionFiles<>();
+        submissionFiles.add(new SubmissionFile( SequenceManifest.FileType.FLATFILE, new File(flatFile),new File(flatFile+".report")));
+        submissionFiles.add(new SubmissionFile( SequenceManifest.FileType.TAB, new File(tabFile),  new File(tabFile+".report")));
+        manifest.setFiles(submissionFiles);
+
+        Sample sample = new Sample();
+        sample.setBioSampleId("SAM1234");
+        sample.setOrganism("Homo sapiens");
+        sample.setTaxId(9606);
+        manifest.setSample(sample);
+
+        Study study = new Study();
+        study.setBioProjectId("PRJ1234");
+        study.setLocusTags(Collections.singletonList("SPLJ"));
+        manifest.setStudy(study);
+
+        SubmissionOptions options = new SubmissionValidator().mapManifestToSubmissionOptions(manifest);
+        AssemblyInfoEntry infoEntry = options.assemblyInfoEntry.get();
+        assertEquals("test_manifest", infoEntry.getName());
+        assertEquals("PRJ1234",infoEntry.getStudyId());
+        assertEquals("wellcome genome campus", infoEntry.getAddress());
+        assertEquals("Senthil.V", infoEntry.getAuthors());
+        assertEquals("SAM1234", infoEntry.getBiosampleId());
+        assertEquals("SPLJ", options.locusTagPrefixes.get().get(0));
+        assertEquals(Context.sequence, options.context.get());
+        assertEquals(2, options.submissionFiles.get().getFiles().size());
+        assertEquals(new File("/home/reports").getAbsolutePath(), options.reportDir.get());
+        assertEquals(new File("/home/process").getAbsolutePath(), options.processDir.get());
+        SourceFeature source = options.source.get();
+        assertEquals("9606",source.getSingleQualifier(Qualifier.DB_XREF_QUALIFIER_NAME).getValue());
+        assertEquals("Homo sapiens", source.getScientificName());
+        assertEquals(manifest.getWebinRestUri(), options.webinRestUri.get());
+        assertEquals(manifest.getBiosamplesUri(), options.biosamplesUri.get());
+        for(uk.ac.ebi.embl.api.validation.submission.SubmissionFile f : options.submissionFiles.get().getFiles()){
+            switch(f.getFileType()) {
+                case FLATFILE:
+                    assertEquals(f.getReportFile().getAbsolutePath(), new File(flatFile+".report").getAbsolutePath());
+                    break;
+                case TSV:
+                    assertEquals(f.getReportFile().getAbsolutePath(), new File(tabFile+".report").getAbsolutePath());
                     break;
             }
         }

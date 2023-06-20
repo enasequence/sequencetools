@@ -225,7 +225,6 @@ public class TemplateEntryProcessorTest {
     
     private SubmissionOptions getOptions(){
         SubmissionOptions options=new SubmissionOptions();
-        options.webinCliTestMode=true;
         options.webinAuthToken = Optional.of(getAuthTokenForTest(WEBIN_AUTH_JSON));
         return options;
     }
