@@ -32,7 +32,7 @@ public class WebinSampleRetrievalService implements SampleRetrievalService {
 
     private SampleService getSampleService(){
         return new SampleService.Builder()
-            .setWebinRestUri(webinRestUri)
+            .setWebinRestV1Uri(webinRestUri)
             .setAuthToken(webinAuthToken)
             .setBiosamplesUri(biosamplesUri)
             .setBiosamplesWebinAuthToken(webinAuthToken)

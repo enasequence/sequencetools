@@ -140,7 +140,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils
 		}
 
 		sampleService = new SampleService.Builder()
-			.setWebinRestUri(webinRestUri)
+			.setWebinRestV1Uri(webinRestUri)
 			.setUserName(webinUsername)
 			.setPassword(webinPassword)
 			.setWebinAuthUri(webinAuthUri)
