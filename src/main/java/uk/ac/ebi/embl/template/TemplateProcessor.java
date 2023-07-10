@@ -1,6 +1,7 @@
 package uk.ac.ebi.embl.template;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
@@ -9,7 +10,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 
 public class TemplateProcessor {
-    private static final Logger LOGGER = Logger.getLogger(TemplateProcessor.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TemplateProcessor.class);
     private int maxProcessingSize = -1;//default - process all
     private TemplateInfo templateInfo;
     private TemplateEntryProcessor entryProcessor;

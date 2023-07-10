@@ -1,6 +1,8 @@
 package uk.ac.ebi.embl.template;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.Map;
 public class FastaSpreadsheetConverter {
     public static final String FASTA_HEADER_TOKEN = ">";
     public static final String COMMENT_TOKEN = "#";
-    private static final Logger LOGGER = Logger.getLogger(FastaSpreadsheetConverter.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(FastaSpreadsheetConverter.class);
     /**
      * denotes whether we are in the mode of converting a fasta to a spreadsheet
      */

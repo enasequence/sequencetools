@@ -1,6 +1,7 @@
 package uk.ac.ebi.embl.template;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
@@ -14,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class TemplateLoader {
-    private static final Logger LOGGER = Logger.getLogger(TemplateLoader.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TemplateLoader.class);
 
     public static String TEMPLATE_ORDERS_FILE = "/con_vocab/template_orders.csv";
 

@@ -1,9 +1,10 @@
 package uk.ac.ebi.embl.template;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TokenMapConverter {
-    private static final Logger LOGGER = Logger.getLogger(TemplateLoader.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TemplateLoader.class);
 
     public static String templateVariablesToString(TemplateVariables variables) {
         StringBuilder builder = new StringBuilder();

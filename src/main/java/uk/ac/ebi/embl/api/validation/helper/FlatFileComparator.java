@@ -8,11 +8,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlatFileComparator
 {
-	private Logger log = Logger.getRootLogger();			
+	private static Logger log = LoggerFactory.getLogger(FlatFileComparator.class);
 	
 	private final FlatFileComparatorOptions options;
 	private int lineContext = 5;	
