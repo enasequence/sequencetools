@@ -9,7 +9,7 @@ archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
 
-ext.version_base = '2.17.2'
+ext.version_base = '2.17.3'
 
 
 version = version_base
@@ -82,7 +82,7 @@ repositories {
 
 dependencies {
     // Keep these two dependencies 'compile' so they can be used inside projects that import sequencetools.
-    compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.7.3' )
+    compile( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.7.4' )
     compile(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.2')
 
     implementation('org.slf4j:slf4j-api:1.7.28')
