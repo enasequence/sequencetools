@@ -46,7 +46,12 @@ public class CCWriter extends FlatFileWriter {
 		setForceLineBreak(true);
 		setOptimalLineLength(CC_OPTIMAL_LINE_LENGTH);
 		for (String line : entry.getComment().getText().split("\n")) {
-			writeBlock(writer, EmblPadding.CC_PADDING, line);
+			if (line.trim().isEmpty()) {
+				writeLine(writer, EmblPadding.CC_PADDING, "");
+			}
+			else {
+				writeBlock(writer, EmblPadding.CC_PADDING, line);
+			}
 		}
 		return true;
 	}
