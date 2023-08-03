@@ -155,6 +155,21 @@ public class FlatFileMatcher {
 		return date;
 	}
 
+	/** Returns the day given a string in format dd-MMM-yyyy.
+	 *  Return null if the string is not a valid date. 
+	 */
+	public Date getValidDay(int group) {
+		String value = matcher.group(group);
+		if (value == null) {
+			return null;
+		}
+		Date date = FlatFileDateUtils.getDay(value);
+		if (date == null) {
+			return null;
+		}
+		return date;
+	}
+
     /** Returns the year given a string in format yyyy.
      */			
 	public Date getYear(int group) {

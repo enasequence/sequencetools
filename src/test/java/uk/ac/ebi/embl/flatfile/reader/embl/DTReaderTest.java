@@ -49,4 +49,18 @@ public class DTReaderTest extends EmblReaderTest {
 		assertEquals(new Integer(67), entry.getLastUpdatedRelease());
 		assertEquals(new Integer(2), entry.getVersion());
 	}
+
+	public void testRead_FullFormat_withoutReleaseAndVersion() throws IOException {
+		initLineReader(
+				"DT   28-JAN-1993 (Created)\n" +
+						"DT   11-MAY-2001 (Last updated)"
+		);
+		ValidationResult result = (new DTReader(lineReader)).read(entry);
+		assertEquals(0, result.count(Severity.ERROR));
+		assertEquals(FlatFileDateUtils.getDay("28-JAN-1993"), entry.getFirstPublic());
+		assertNull(entry.getFirstPublicRelease());
+		assertEquals(FlatFileDateUtils.getDay("11-MAY-2001"), entry.getLastUpdated());
+		assertNull(entry.getLastUpdatedRelease());
+		assertNull(entry.getVersion());
+	}
 }

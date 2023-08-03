@@ -43,11 +43,30 @@ public class DTReader extends MultiLineBlockReader {
 				"(\\d+)?" + // entry version
 		        ".*$");
 
+	/**
+	 * Pattern for getting date from shorter DT format
+	 * example:
+	 * 	 DT   30-MAY-2019 (Created)
+	 * 	 DT   30-MAY-2019 (Last updated) 
+	 */
+	private static final Pattern SHORT_PATTERN = Pattern.compile(
+					"^\\s*" + 
+					"([\\w-]+)" +        // First public date
+					"\\s*\\(.*\\)\\s*" +
+					"([\\w-]+)" +        // last updated date
+					"\\s*\\(.*\\)\\s" +
+					"*$");
+
 	private static int GROUP_FIRST_PUBLIC_DATE = 1;
 	private static int GROUP_FIRST_PUBLIC_RELEASE = 2;
 	private static int GROUP_LAST_UPDATED_DATE = 3;
 	private static int GROUP_LAST_UPDATED_RELEASE = 4;
 	private static int GROUP_ENTRY_VERSION = 5;
+
+	/** These group values are for format without revision and version
+	*/
+	private static int SHORT_FORMAT_GROUP_FIRST_PUBLIC_DATE = 1;
+	private static int SHORT_FORMAT_GROUP_LAST_UPDATED_DATE = 2;
 
 	@Override
 	public String getTag() {
@@ -61,10 +80,26 @@ public class DTReader extends MultiLineBlockReader {
 			error("FF.1", getTag());
 			return;
 		}
-		entry.setFirstPublic(matcher.getDay(GROUP_FIRST_PUBLIC_DATE));
+		entry.setFirstPublic(matcher.getValidDay(GROUP_FIRST_PUBLIC_DATE));
 		entry.setFirstPublicRelease(matcher.getInteger(GROUP_FIRST_PUBLIC_RELEASE));
-		entry.setLastUpdated(matcher.getDay(GROUP_LAST_UPDATED_DATE));
+		entry.setLastUpdated(matcher.getValidDay(GROUP_LAST_UPDATED_DATE));
 		entry.setLastUpdatedRelease(matcher.getInteger(GROUP_LAST_UPDATED_RELEASE));
 		entry.setVersion(matcher.getInteger(GROUP_ENTRY_VERSION));
-	}	
+		if(entry.getFirstPublic()==null || entry.getLastUpdated() == null){
+			readShortFormatDate(block);
+		}
+	}
+
+	protected void readShortFormatDate(String block) {
+		FlatFileMatcher matcher = new FlatFileMatcher(this, SHORT_PATTERN);
+		if(!matcher.match(block)) {
+			error("FF.1", getTag());
+			return;
+		}
+		entry.setFirstPublic(matcher.getDay(SHORT_FORMAT_GROUP_FIRST_PUBLIC_DATE));
+		entry.setLastUpdated(matcher.getDay(SHORT_FORMAT_GROUP_LAST_UPDATED_DATE));
+		entry.setFirstPublicRelease(null);
+		entry.setLastUpdatedRelease(null);
+		entry.setVersion(null);
+	}
 }
