@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +61,7 @@ public class FeatureQualifiersRequiredCheckTest {
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("misc_feature");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("FeatureQualifiersRequiredCheck", Severity.ERROR));
   }
 

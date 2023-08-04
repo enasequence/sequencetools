@@ -27,32 +27,32 @@ public class LocationFactoryTest {
   @Test
   public void testCreateLocalRange() {
     LocalRange location = factory.createLocalRange(1L, 3L);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(3), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(3), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
   @Test
   public void testCreateLocalRange_Complement() {
     LocalRange location = factory.createLocalRange(3L, 1L, true);
-    assertEquals(new Long(3), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(3), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
   @Test
   public void testCreateLocalBase() {
     LocalBase location = factory.createLocalBase(2L);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(2), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(2), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
   @Test
   public void testCreateLocalBetween() {
     LocalBetween location = factory.createLocalBetween(3L, 4L);
-    assertEquals(new Long(3), location.getBeginPosition());
-    assertEquals(new Long(4), location.getEndPosition());
+    assertEquals(Long.valueOf(3), location.getBeginPosition());
+    assertEquals(Long.valueOf(4), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -61,8 +61,8 @@ public class LocationFactoryTest {
     RemoteRange location = factory.createRemoteRange("B0001", 2, 1L, 3L);
     assertEquals("B0001", location.getAccession());
     assertEquals(Integer.valueOf(2), location.getVersion());
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(3), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(3), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -71,8 +71,8 @@ public class LocationFactoryTest {
     RemoteRange location = factory.createRemoteRange("B0001", 2, 1L, 3L, true);
     assertEquals("B0001", location.getAccession());
     assertEquals(Integer.valueOf(2), location.getVersion());
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(3), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(3), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -81,8 +81,8 @@ public class LocationFactoryTest {
     RemoteBase location = factory.createRemoteBase("B0001", 2, 2L);
     assertEquals("B0001", location.getAccession());
     assertEquals(Integer.valueOf(2), location.getVersion());
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(2), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(2), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -91,8 +91,8 @@ public class LocationFactoryTest {
     RemoteBetween location = factory.createRemoteBetween("B0001", 2, 3L, 4L);
     assertEquals("B0001", location.getAccession());
     assertEquals(Integer.valueOf(2), location.getVersion());
-    assertEquals(new Long(3), location.getBeginPosition());
-    assertEquals(new Long(4), location.getEndPosition());
+    assertEquals(Long.valueOf(3), location.getBeginPosition());
+    assertEquals(Long.valueOf(4), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 

@@ -23,7 +23,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
   FileType fileType;
   private int firstLineNumber;
   private int lastLineNumber;
-  private ConcatenateType concatenateType;
+  private final ConcatenateType concatenateType;
 
   public MultiLineBlockReader(LineReader lineReader, ConcatenateType concatenateType) {
     super(lineReader);
@@ -59,7 +59,7 @@ public abstract class MultiLineBlockReader extends BlockReader {
      * whitespace.
      */
     CONCATENATE_BREAK
-  };
+  }
 
   protected void readLines() throws IOException {
     StringBuilder block = new StringBuilder();

@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class AssemblyInfoReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     AssemblyInfoReader reader = new AssemblyInfoReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("EmptyFileCheck").size());
   }
 
@@ -59,7 +58,7 @@ public class AssemblyInfoReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     AssemblyInfoReader reader = new AssemblyInfoReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("invalidfieldValue").size());
   }
 
@@ -75,10 +74,10 @@ public class AssemblyInfoReaderTest {
     assertEquals("fAstCal1.2", entry.getName());
     assertEquals("45", entry.getCoverage());
     assertEquals("assembly", entry.getProgram());
-    assertEquals(null, entry.getPlatform());
+    assertNull(entry.getPlatform());
     assertEquals(Integer.valueOf(0), entry.getMinGapLength());
     assertEquals("genomic DNA", entry.getMoleculeType());
-    assertEquals(null, entry.getSampleId());
+    assertNull(entry.getSampleId());
     assertEquals("PRJEB24325", entry.getStudyId());
   }
 }

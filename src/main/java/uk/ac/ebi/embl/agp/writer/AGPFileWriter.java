@@ -16,8 +16,8 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class AGPFileWriter {
-  private Entry entry;
-  private Writer writer;
+  private final Entry entry;
+  private final Writer writer;
 
   public AGPFileWriter(Entry entry, Writer writer) {
     this.entry = entry;

@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the thesis lines. */
 public class GenbankThesisWriter extends FlatFileWriter {
 
-  private Thesis thesis;
+  private final Thesis thesis;
 
   public GenbankThesisWriter(Entry entry, Thesis thesis, WrapType wrapType) {
     super(entry, wrapType);

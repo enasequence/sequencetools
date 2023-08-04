@@ -110,7 +110,7 @@ public class SegmentFactory {
     } catch (ValidationEngineException ex) {
       StringBuilder locationString = new StringBuilder();
       LocationToStringCoverter.renderLocation(locationString, remoteBase, false, false);
-      throw new IOException("Invalid Remote Base: " + locationString.toString(), ex);
+      throw new IOException("Invalid Remote Base: " + locationString, ex);
     }
     return new Segment(remoteBase, subSequence);
   }
@@ -131,7 +131,7 @@ public class SegmentFactory {
     } catch (ValidationEngineException ex) {
       StringBuilder locationString = new StringBuilder();
       LocationToStringCoverter.renderLocation(locationString, remoteRange, false, false);
-      throw new IOException("Invalid Remote Range: " + locationString.toString(), ex);
+      throw new IOException("Invalid Remote Range: " + locationString, ex);
     }
     return new Segment(remoteRange, subSequence);
   }

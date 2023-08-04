@@ -10,10 +10,7 @@
  */
 package uk.ac.ebi.embl.api.entry.sequence;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -124,27 +121,27 @@ public class SequenceAccessionTest {
 
   @Test
   public void testEqualsObject() {
-    assertTrue(new SequenceAccession("B001", 3).equals(new SequenceAccession("B001", 3)));
+    assertEquals(new SequenceAccession("B001", 3), new SequenceAccession("B001", 3));
   }
 
   @Test
   public void testEqualsObject_DiffAccession() {
-    assertFalse(new SequenceAccession("A001", 3).equals(new SequenceAccession("B001", 3)));
+    assertNotEquals(new SequenceAccession("A001", 3), new SequenceAccession("B001", 3));
   }
 
   @Test
   public void testEqualsObject_DiffVersion() {
-    assertFalse(new SequenceAccession("B001", 1).equals(new SequenceAccession("B001", 3)));
+    assertNotEquals(new SequenceAccession("B001", 1), new SequenceAccession("B001", 3));
   }
 
   @Test
   public void testEqualsObject_Diff() {
-    assertFalse(new SequenceAccession("A001", 1).equals(new SequenceAccession("B001", 3)));
+    assertNotEquals(new SequenceAccession("A001", 1), new SequenceAccession("B001", 3));
   }
 
   @Test
   public void testEqualsObject_WrongObject() {
-    assertFalse(new SequenceAccession("B001", 3).equals(new String()));
+    assertNotEquals("", new SequenceAccession("B001", 3));
   }
 
   @Test

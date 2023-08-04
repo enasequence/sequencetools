@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,12 +63,12 @@ public class DuplicateFeatureCheckTest {
   public void testCheckSimpleDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     Feature feature = featureFactory.createFeature("featureName");
     feature.setLocations(locationJoin);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l)); // same location
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L)); // same location
     Feature feature2 = featureFactory.createFeature("featureName"); // same name
     feature2.setLocations(locationJoin2);
 
@@ -77,7 +76,7 @@ public class DuplicateFeatureCheckTest {
     entry.addFeature(feature2);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
@@ -87,17 +86,17 @@ public class DuplicateFeatureCheckTest {
   public void testCheckMultipleDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     Feature feature = featureFactory.createFeature("featureName");
     feature.setLocations(locationJoin);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l)); // same location
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L)); // same location
     Feature feature2 = featureFactory.createFeature("featureName"); // same name
     feature2.setLocations(locationJoin2);
 
     Join<Location> locationJoin3 = new Join<Location>();
-    locationJoin3.addLocation(locationFactory.createLocalRange(1l, 10l)); // same location
+    locationJoin3.addLocation(locationFactory.createLocalRange(1L, 10L)); // same location
     Feature feature3 = featureFactory.createFeature("featureName"); // same name
     feature3.setLocations(locationJoin3);
 
@@ -106,7 +105,7 @@ public class DuplicateFeatureCheckTest {
     entry.addFeature(feature3);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         2,
         validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
@@ -116,12 +115,12 @@ public class DuplicateFeatureCheckTest {
   public void testCheckSimpleNonDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     Feature feature = featureFactory.createFeature("featureName");
     feature.setLocations(locationJoin);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l)); // same location
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L)); // same location
     Feature feature2 = featureFactory.createFeature("featureName2"); // different name
     feature2.setLocations(locationJoin2);
 
@@ -136,14 +135,14 @@ public class DuplicateFeatureCheckTest {
   public void testCheckJoinDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(15l, 25l, true));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(15L, 25L, true));
     Feature feature = featureFactory.createFeature("featureName");
     feature.setLocations(locationJoin);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin2.addLocation(locationFactory.createLocalRange(15l, 25l, true));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin2.addLocation(locationFactory.createLocalRange(15L, 25L, true));
     Feature feature2 = featureFactory.createFeature("featureName");
     feature2.setLocations(locationJoin2);
 
@@ -151,7 +150,7 @@ public class DuplicateFeatureCheckTest {
     entry.addFeature(feature2);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(DuplicateFeatureCheck.DUPLICATE_FEATURE_LOCATIONS, Severity.ERROR));
@@ -161,15 +160,15 @@ public class DuplicateFeatureCheckTest {
   public void testCheckJoinNonDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(15l, 25l, true));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(15L, 25L, true));
     Feature feature = featureFactory.createFeature("featureName");
     feature.setLocations(locationJoin);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
     // this one is not complement - so not a duplication
-    locationJoin2.addLocation(locationFactory.createLocalRange(15l, 25l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(15L, 25L));
     Feature feature2 = featureFactory.createFeature("featureName");
     feature2.setLocations(locationJoin2);
 
@@ -185,14 +184,14 @@ public class DuplicateFeatureCheckTest {
     ProteinIdQualifier proteinQualifier1 = qualifierFactory.createProteinIdQualifier("CAA00031.1");
     ProteinIdQualifier proteinQualifier2 = qualifierFactory.createProteinIdQualifier("CAA00033.1");
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     Feature feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     feature.setLocations(locationJoin);
     feature.addQualifier(
         qualifierFactory.createQualifier(Qualifier.CODON_START_QUALIFIER_NAME, "5"));
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
     Feature feature2 = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     feature2.setLocations(locationJoin2);
     feature2.addQualifier(
@@ -210,14 +209,14 @@ public class DuplicateFeatureCheckTest {
   public void testCheckSourceDuplication1() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature = featureFactory.createSourceFeature();
     feature.setLocations(locationJoin);
     feature.addQualifier(
         qualifierFactory.createQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "value"));
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature2 = featureFactory.createSourceFeature();
     feature2.setLocations(locationJoin2);
     feature2.addQualifier(
@@ -227,7 +226,7 @@ public class DuplicateFeatureCheckTest {
     entry.addFeature(feature2);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(
@@ -238,13 +237,13 @@ public class DuplicateFeatureCheckTest {
   public void testCheckSourceDuplication2() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature = featureFactory.createSourceFeature();
     feature.setLocations(locationJoin);
     feature.setTransgenic(true);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature2 = featureFactory.createSourceFeature();
     feature2.setLocations(locationJoin2);
     feature2.setTransgenic(false);
@@ -262,13 +261,13 @@ public class DuplicateFeatureCheckTest {
   public void testCheckSourceNoDuplication() {
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature = featureFactory.createSourceFeature();
     feature.setLocations(locationJoin);
     feature.setTransgenic(true);
 
     Join<Location> locationJoin2 = new Join<Location>();
-    locationJoin2.addLocation(locationFactory.createLocalRange(1l, 10l));
+    locationJoin2.addLocation(locationFactory.createLocalRange(1L, 10L));
     SourceFeature feature2 = featureFactory.createSourceFeature();
     feature2.setLocations(locationJoin2);
     feature2.setTransgenic(true);

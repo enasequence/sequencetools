@@ -31,8 +31,8 @@ public class FeaturesWriter extends FlatFileWriter {
     this.sortQualifiers = sortQualifiers;
   }
 
-  private boolean sortFeatures;
-  private boolean sortQualifiers;
+  private final boolean sortFeatures;
+  private final boolean sortQualifiers;
 
   public boolean write(Writer writer) throws IOException {
     Vector<Feature> features = new Vector<Feature>(entry.getFeatures());

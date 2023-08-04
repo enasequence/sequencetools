@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -50,7 +51,7 @@ public class HoldDateCheckTest {
     Date pastDate = calendar.getTime();
     entry.setHoldDate(pastDate);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid()); // i.e. there were failures
+    assertFalse(validationResult.isValid()); // i.e. there were failures
   }
 
   @Test

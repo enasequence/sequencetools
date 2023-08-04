@@ -20,7 +20,7 @@ public class ChecksAndFixFilter {
   private static List<Class<? extends EmblEntryValidationCheck<?>>> checks;
   private static List<Class<? extends EmblEntryValidationCheck<?>>> fix;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     new ChecksAndFixFilter().filterChecksAndFix(ValidationScope.NCBI);
     checks.forEach(System.out::println);
     System.out.println("==================================================================");
@@ -42,6 +42,7 @@ public class ChecksAndFixFilter {
           for (ValidationScope scope : excludeScopeAnnotation.validationScope()) {
             if (scope.equals(valScope)) {
               isInScope = false;
+              break;
             }
           }
         }

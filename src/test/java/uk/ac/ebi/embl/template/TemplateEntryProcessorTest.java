@@ -325,9 +325,8 @@ public class TemplateEntryProcessorTest {
   private String getMolTypeFromTemplateForTest(TemplateInfo templateInfo) throws Exception {
     String template = templateInfo.getTemplateString();
     String molType = "";
-    if (template.toString().contains(MOL_TYPE)) {
-      String start =
-          template.toString().substring(template.toString().indexOf(MOL_TYPE) + MOL_TYPE.length());
+    if (template.contains(MOL_TYPE)) {
+      String start = template.substring(template.indexOf(MOL_TYPE) + MOL_TYPE.length());
       if (start.contains("\"")) {
         start = start.substring(start.indexOf("\"") + 1);
         if (start.contains("\"")) molType = start.substring(0, start.indexOf("\""));

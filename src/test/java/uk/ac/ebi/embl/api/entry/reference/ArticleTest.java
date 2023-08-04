@@ -57,55 +57,55 @@ public class ArticleTest {
 
   @Test
   public void testEquals() {
-    assertTrue(article.equals(article));
-    assertTrue(article.equals(new Article()));
+    assertEquals(article, article);
+    assertEquals(article, new Article());
     Article article2 = new Article();
     article.setTitle("title");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setTitle("title");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setConsortium("consortium");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setConsortium("consortium");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setFirstPage("1");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setFirstPage("1");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setLastPage("2");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setLastPage("2");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setIssue("issue");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setIssue("issue");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setVolume("volume");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setVolume("volume");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     article.setJournal("journal");
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setJournal("journal");
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
     Date date = new Date();
     article.setYear(date);
-    assertFalse(article.equals(article2));
+    assertNotEquals(article, article2);
     article2.setYear(date);
-    assertTrue(article.equals(article2));
+    assertEquals(article, article2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(article.equals(new String()));
+    assertNotEquals("", article);
   }
 
   @Test
@@ -116,50 +116,50 @@ public class ArticleTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(article.compareTo(article) == 0);
-    assertTrue(article.compareTo(new Article()) == 0);
+    assertEquals(0, article.compareTo(article));
+    assertEquals(0, article.compareTo(new Article()));
     Article article2 = new Article();
     article.setTitle("title");
     // null < not null
     assertTrue(article.compareTo(article2) > 0);
     article2.setTitle("title");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setConsortium("consortium");
     assertTrue(article.compareTo(article2) > 0);
     article2.setConsortium("consortium");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(article.compareTo(article2) > 0);
     article2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(article.compareTo(article2) > 0);
     article2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setFirstPage("1");
     assertTrue(article.compareTo(article2) > 0);
     article2.setFirstPage("1");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setLastPage("2");
     assertTrue(article.compareTo(article2) > 0);
     article2.setLastPage("2");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setIssue("issue");
     assertTrue(article.compareTo(article2) > 0);
     article2.setIssue("issue");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setVolume("volume");
     assertTrue(article.compareTo(article2) > 0);
     article2.setVolume("volume");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     article.setJournal("journal");
     assertTrue(article.compareTo(article2) > 0);
     article2.setJournal("journal");
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
     Date date = new Date();
     article.setYear(date);
     assertTrue(article.compareTo(article2) > 0);
     article2.setYear(date);
-    assertTrue(article.compareTo(article2) == 0);
+    assertEquals(0, article.compareTo(article2));
   }
 }

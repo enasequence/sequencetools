@@ -49,10 +49,10 @@ public class TemplateEntryProcessor {
 
   private StringBuilder template;
   private TemplateInfo templateInfo;
-  private ValidationPlan validationPlan;
+  private final ValidationPlan validationPlan;
   private Connection connEra;
   private String molType;
-  private HashMap<String, Sample> sampleCache = new HashMap<String, Sample>();
+  private final HashMap<String, Sample> sampleCache = new HashMap<String, Sample>();
 
   public TemplateEntryProcessor(Connection connEra) {
     this(ValidationScope.EMBL_TEMPLATE);
@@ -248,7 +248,7 @@ public class TemplateEntryProcessor {
     for (String tokenName : templateVariables.getTokenNames()) {
       String tokenValue = templateVariables.getTokenValue(tokenName);
       if (tokenValue == null || tokenValue.isEmpty()) continue;
-      if (tokenName.toUpperCase().equals(TemplateProcessorConstants.ORGANELLE_TOKEN)) {
+      if (tokenName.equalsIgnoreCase(TemplateProcessorConstants.ORGANELLE_TOKEN)) {
         template =
             new StringBuilder(
                 template
@@ -360,7 +360,7 @@ public class TemplateEntryProcessor {
       TOKEN_FOUND = true;
     }
     if (!builder.toString().isEmpty())
-      templateVariables.addToken("PP_NOTES", "sequence contains " + builder.toString());
+      templateVariables.addToken("PP_NOTES", "sequence contains " + builder);
   }
 
   public void replacePPGene(TemplateVariables templateVariables) {

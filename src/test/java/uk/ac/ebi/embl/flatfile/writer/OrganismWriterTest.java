@@ -25,7 +25,7 @@ public class OrganismWriterTest extends EmblWriterTest {
 
   public void testWrite_Taxon() throws IOException, JSONException {
     FeatureFactory featureFactory = new FeatureFactory();
-    SourceFeature sourceFeature = (SourceFeature) featureFactory.createSourceFeature();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
     JSONObject taxonJasonObject =
         new JSONObject(
             "{"
@@ -56,8 +56,8 @@ public class OrganismWriterTest extends EmblWriterTest {
 
   public void testWrite_TwoTaxons() throws IOException, JSONException {
     FeatureFactory featureFactory = new FeatureFactory();
-    SourceFeature sourceFeature = (SourceFeature) featureFactory.createSourceFeature();
-    SourceFeature sourceFeature2 = (SourceFeature) featureFactory.createSourceFeature();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
+    SourceFeature sourceFeature2 = featureFactory.createSourceFeature();
     TaxonFactory taxonFactory = new TaxonFactory();
     JSONObject taxonJasonObject =
         new JSONObject(
@@ -102,7 +102,7 @@ public class OrganismWriterTest extends EmblWriterTest {
 
   public void testWrite_NoTaxon() throws IOException {
     FeatureFactory featureFactory = new FeatureFactory();
-    SourceFeature sourceFeature = (SourceFeature) featureFactory.createSourceFeature();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
     sourceFeature.setScientificName("Felis catus");
     entry.addFeature(sourceFeature);
     StringWriter writer = new StringWriter();

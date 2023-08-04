@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateSectionInfo {
-  private String name;
-  private List<TemplateTokenInfo> depends;
+  private final String name;
+  private final List<TemplateTokenInfo> depends;
 
   public TemplateSectionInfo() {
     this("", new ArrayList<TemplateTokenInfo>());

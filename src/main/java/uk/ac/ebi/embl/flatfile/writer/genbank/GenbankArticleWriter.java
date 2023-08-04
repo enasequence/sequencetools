@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the journal article lines. */
 public class GenbankArticleWriter extends FlatFileWriter {
 
-  private Article article;
+  private final Article article;
 
   public GenbankArticleWriter(Entry entry, Article article, WrapType wrapType) {
     super(entry, wrapType);

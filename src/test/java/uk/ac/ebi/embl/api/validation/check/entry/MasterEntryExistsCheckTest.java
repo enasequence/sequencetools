@@ -13,8 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -76,7 +75,7 @@ public class MasterEntryExistsCheckTest {
     expect(entryDAOUtils.isEntryExists(property.analysis_id.get())).andReturn(false);
     replay(entryDAOUtils);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("MasterEntryExistsCheck_1", Severity.ERROR));
   }
 

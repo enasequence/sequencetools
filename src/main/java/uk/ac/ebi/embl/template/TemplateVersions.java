@@ -13,7 +13,7 @@ package uk.ac.ebi.embl.template;
 import java.util.*;
 
 public class TemplateVersions {
-  private Map<Integer, TemplateInfo> versions;
+  private final Map<Integer, TemplateInfo> versions;
 
   public TemplateVersions() {
     this.versions = new TreeMap();

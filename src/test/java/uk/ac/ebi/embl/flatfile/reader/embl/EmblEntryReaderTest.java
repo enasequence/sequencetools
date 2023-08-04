@@ -1266,6 +1266,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
       String messageString = message.getMessage();
       if (messageString.equals(matchString)) {
         foundMessage = true;
+        break;
       }
     }
     return foundMessage;

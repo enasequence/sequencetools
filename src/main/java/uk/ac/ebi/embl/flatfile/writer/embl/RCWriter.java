@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RC lines. */
 public class RCWriter extends FlatFileWriter {
 
-  private Reference reference;
+  private final Reference reference;
 
   public RCWriter(Entry entry, Reference reference, WrapType wrapType) {
     super(entry, wrapType);

@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -54,7 +55,7 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
     options.context = Optional.of(Context.genome);
     options.init();
     FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
-    assertTrue(!check.check(file).isValid());
+    assertFalse(check.check(file).isValid());
   }
 
   @Test

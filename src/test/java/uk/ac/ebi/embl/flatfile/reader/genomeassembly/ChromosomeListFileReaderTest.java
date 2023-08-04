@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class ChromosomeListFileReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("EmptyFileCheck").size());
   }
 
@@ -58,7 +57,7 @@ public class ChromosomeListFileReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("FileFormatCheck").size());
   }
 
@@ -72,7 +71,7 @@ public class ChromosomeListFileReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("ChromosomeListChromosomeNameDuplicationCheck").size());
   }
 
@@ -100,7 +99,7 @@ public class ChromosomeListFileReaderTest {
     if (url != null) fileName = url.getPath().replaceAll("%20", " ");
     ChromosomeListFileReader reader = new ChromosomeListFileReader(new File(fileName));
     ValidationResult parseResult = reader.read();
-    assertTrue(!parseResult.isValid());
+    assertFalse(parseResult.isValid());
     assertEquals(1, parseResult.getMessages("InvalidNoOfFields").size());
   }
 }

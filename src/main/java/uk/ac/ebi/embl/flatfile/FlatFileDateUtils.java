@@ -19,9 +19,10 @@ import java.util.Locale;
 
 public abstract class FlatFileDateUtils {
 
-  private static DateTimeFormatter DAY_FORMATTER;
+  private static final DateTimeFormatter DAY_FORMATTER;
 
-  private static DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy", Locale.UK);
+  private static final DateTimeFormatter YEAR_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy", Locale.UK);
 
   static {
     DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();

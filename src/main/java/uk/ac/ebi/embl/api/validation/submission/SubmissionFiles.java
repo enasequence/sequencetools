@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SubmissionFiles {
 
-  private List<SubmissionFile> files = new ArrayList<>();
+  private final List<SubmissionFile> files = new ArrayList<>();
 
   public void addFile(SubmissionFile file) {
     files.add(file);

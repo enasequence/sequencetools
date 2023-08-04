@@ -10,11 +10,7 @@
  */
 package uk.ac.ebi.embl.api.entry.location;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +23,8 @@ public class RemoteRangeTest {
   @Test
   public void testRange() {
     Range Range = new RemoteRange("x", 1, 2L, 3L);
-    assertEquals(new Long(2), Range.getBeginPosition());
-    assertEquals(new Long(3), Range.getEndPosition());
+    assertEquals(Long.valueOf(2), Range.getBeginPosition());
+    assertEquals(Long.valueOf(3), Range.getEndPosition());
     assertEquals(2, Range.getLength());
     assertFalse(Range.isComplement());
   }
@@ -65,8 +61,8 @@ public class RemoteRangeTest {
     assertNull(range.getEndPosition());
     range.setBeginPosition(2L);
     range.setEndPosition(3L);
-    assertEquals(new Long(2), range.getBeginPosition());
-    assertEquals(new Long(3), range.getEndPosition());
+    assertEquals(Long.valueOf(2), range.getBeginPosition());
+    assertEquals(Long.valueOf(3), range.getEndPosition());
     assertEquals(2, range.getLength());
   }
 
@@ -84,22 +80,22 @@ public class RemoteRangeTest {
   @Test
   public void testEquals() {
     Range location1 = new RemoteRange("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location1));
+    assertEquals(location1, location1);
     Range location2 = new RemoteRange("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location2));
-    assertTrue(location2.equals(location1));
+    assertEquals(location1, location2);
+    assertEquals(location2, location1);
     Range location3 = new RemoteRange("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location3));
-    assertTrue(location3.equals(location1));
-    assertFalse(location1.equals(new RemoteRange("y", 1, 2L, 3L)));
-    assertFalse(location1.equals(new RemoteRange("x", 2, 2L, 3L)));
-    assertFalse(location1.equals(new RemoteRange("x", 1, 3L, 3L)));
-    assertFalse(location1.equals(new RemoteRange("x", 1, 2L, 4L)));
-    assertFalse(location1.equals(new RemoteRange("x", 1, 2L, 3L, true)));
+    assertEquals(location1, location3);
+    assertEquals(location3, location1);
+    assertNotEquals(location1, new RemoteRange("y", 1, 2L, 3L));
+    assertNotEquals(location1, new RemoteRange("x", 2, 2L, 3L));
+    assertNotEquals(location1, new RemoteRange("x", 1, 3L, 3L));
+    assertNotEquals(location1, new RemoteRange("x", 1, 2L, 4L));
+    assertNotEquals(location1, new RemoteRange("x", 1, 2L, 3L, true));
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new RemoteRange("x", 1, 1L, 2L).equals(new String()));
+    assertNotEquals("", new RemoteRange("x", 1, 1L, 2L));
   }
 }

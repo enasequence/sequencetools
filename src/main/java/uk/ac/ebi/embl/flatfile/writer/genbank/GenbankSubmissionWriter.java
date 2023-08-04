@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the submission lines. */
 public class GenbankSubmissionWriter extends FlatFileWriter {
 
-  private Submission submission;
+  private final Submission submission;
 
   public GenbankSubmissionWriter(Entry entry, Submission submission, WrapType wrapType) {
     super(entry, wrapType);

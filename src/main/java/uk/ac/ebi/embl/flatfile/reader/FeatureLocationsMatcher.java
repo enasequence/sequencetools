@@ -28,7 +28,7 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
     this.isIgnoreLocationParseError = ignoreParseError;
   }
 
-  private FlatFileLineReader reader;
+  private final FlatFileLineReader reader;
   private static final Pattern localBasePattern = Pattern.compile("(\\d+)");
   private static final Pattern simpleLocationPattern = Pattern.compile("(\\d+)(..)(\\d+)");
 

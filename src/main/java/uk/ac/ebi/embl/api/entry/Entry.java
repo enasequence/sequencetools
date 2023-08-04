@@ -38,7 +38,7 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
     KILLED(6),
     TEMPORARY_SUPPRESSED(7),
     TEMPORARY_KILLED(8);
-    private int statusId;
+    private final int statusId;
 
     Status(int statusId) {
       this.statusId = statusId;
@@ -100,11 +100,11 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
   private boolean deleteEntry;
   private long idLineSequenceLength;
   private List<Text> secondaryAccessions;
-  private List<Text> keywords;
-  private List<Text> projectAccessions;
-  private List<Feature> features;
-  private List<Reference> references;
-  private List<XRef> xRefs;
+  private final List<Text> keywords;
+  private final List<Text> projectAccessions;
+  private final List<Feature> features;
+  private final List<Reference> references;
+  private final List<XRef> xRefs;
   private final List<Text> contigAccessions;
   private final List<Text> scaffoldAccessions;
   private String contigDataclass;
@@ -136,12 +136,12 @@ public class Entry implements HasOrigin, Serializable, Comparable<Entry> {
     this.isNonExpandedCON = false;
     this.sequenceCoverage =
         Stream.of(
-                new AbstractMap.SimpleEntry<>("BP", 0l),
-                new AbstractMap.SimpleEntry<>("A", 0l),
-                new AbstractMap.SimpleEntry<>("C", 0l),
-                new AbstractMap.SimpleEntry<>("G", 0l),
-                new AbstractMap.SimpleEntry<>("T", 0l),
-                new AbstractMap.SimpleEntry<>("other", 0l))
+                new AbstractMap.SimpleEntry<>("BP", 0L),
+                new AbstractMap.SimpleEntry<>("A", 0L),
+                new AbstractMap.SimpleEntry<>("C", 0L),
+                new AbstractMap.SimpleEntry<>("G", 0L),
+                new AbstractMap.SimpleEntry<>("T", 0L),
+                new AbstractMap.SimpleEntry<>("other", 0L))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 

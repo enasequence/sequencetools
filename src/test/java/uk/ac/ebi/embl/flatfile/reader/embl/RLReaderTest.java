@@ -200,7 +200,7 @@ public class RLReaderTest extends EmblReaderTest {
     assertEquals("A", patent.getPatentType());
     assertEquals(Integer.valueOf(3), patent.getSequenceNumber());
     assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
-    assertTrue(patent.getApplicants().size() == 2);
+    assertEquals(2, patent.getApplicants().size());
     assertEquals("BAYER AG", patent.getApplicants().get(0));
     assertEquals("GOOGLE AG", patent.getApplicants().get(1));
   }
@@ -302,7 +302,7 @@ public class RLReaderTest extends EmblReaderTest {
     assertEquals(
         "Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",
         submission.getSubmitterAddress());
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
   }
 
   public void testRead_SubmissionWithoutPublication() throws IOException {
@@ -367,7 +367,7 @@ public class RLReaderTest extends EmblReaderTest {
     assertEquals(0, result.count(Severity.ERROR));
     assertNotNull(reference.getPublication());
     assertTrue(reference.getPublication() instanceof Unpublished);
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
   }
 
   public void testRead_UnpublishedWithoutPublication() throws IOException {
@@ -395,7 +395,7 @@ public class RLReaderTest extends EmblReaderTest {
     assertEquals(0, result.count(Severity.ERROR));
     assertNotNull(reference.getPublication());
     assertTrue(reference.getPublication() instanceof ElectronicReference);
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
     assertEquals("dah dah", ((ElectronicReference) reference.getPublication()).getText());
   }
 

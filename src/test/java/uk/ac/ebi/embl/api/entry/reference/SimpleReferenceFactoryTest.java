@@ -42,8 +42,8 @@ public class SimpleReferenceFactoryTest {
   @Test
   public void testCreateRange() {
     LocalRange result = factory.createRange(1L, 3L);
-    assertEquals(new Long(1), result.getBeginPosition());
-    assertEquals(new Long(3), result.getEndPosition());
+    assertEquals(Long.valueOf(1), result.getBeginPosition());
+    assertEquals(Long.valueOf(3), result.getEndPosition());
     assertFalse(result.isComplement());
   }
 

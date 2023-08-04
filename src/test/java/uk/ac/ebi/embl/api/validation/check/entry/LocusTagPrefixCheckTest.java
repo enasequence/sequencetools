@@ -13,8 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -86,7 +85,7 @@ public class LocusTagPrefixCheckTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     HashSet<String> projectLocusTagPrefixes = new HashSet<String>();
     projectLocusTagPrefixes.add("BC03BB108");
     projectLocusTagPrefixes.add("BC03BB107");
@@ -96,7 +95,7 @@ public class LocusTagPrefixCheckTest {
     check.setEntryDAOUtils(entryDAOUtils);
     ValidationResult result = check.check(entry);
     assertTrue(result.isValid());
-    assertTrue(result.getMessages().size() == 0);
+    assertEquals(0, result.getMessages().size());
   }
 
   @Test
@@ -105,14 +104,14 @@ public class LocusTagPrefixCheckTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     HashSet<String> projectLocusTagPrefixes = new HashSet<String>();
     projectLocusTagPrefixes.add("BC03");
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(projectLocusTagPrefixes);
     replay(entryDAOUtils);
     check.setEntryDAOUtils(entryDAOUtils);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(LocusTagPrefixCheck.MESSAGE_ID_INVALID_PREFIX, Severity.ERROR));
   }
 
@@ -123,12 +122,12 @@ public class LocusTagPrefixCheckTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
     replay(entryDAOUtils);
     check.setEntryDAOUtils(entryDAOUtils);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(LocusTagPrefixCheck.MESSAGE_ID_INVALID_PREFIX, Severity.ERROR));
   }
 
@@ -138,7 +137,7 @@ public class LocusTagPrefixCheckTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "SAMN02436291_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     entry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
     replay(entryDAOUtils);
@@ -152,13 +151,13 @@ public class LocusTagPrefixCheckTest {
   public void testCheck_assemblyvalidLocusTagPrefix()
       throws SQLException, ValidationEngineException {
     Entry masterEntry = entryFactory.createEntry();
-    masterEntry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    masterEntry.getProjectAccessions().add(new Text("PRJNA19959"));
     masterEntry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     property.analysis_id.set("ERZ00001");
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     HashSet<String> projectLocusTagPrefixes = new HashSet<String>();
     projectLocusTagPrefixes.add("BC03BB108");
     expect(eraProDAOUtils.getLocusTags("PRJNA19959")).andReturn(projectLocusTagPrefixes);
@@ -168,20 +167,20 @@ public class LocusTagPrefixCheckTest {
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
     assertTrue(result.isValid());
-    assertTrue(result.getMessages().size() == 0);
+    assertEquals(0, result.getMessages().size());
   }
 
   @Test
   public void testCheck_assemblyinValidLocusTagPrefix()
       throws SQLException, ValidationEngineException {
     Entry masterEntry = entryFactory.createEntry();
-    masterEntry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    masterEntry.getProjectAccessions().add(new Text("PRJNA19959"));
     masterEntry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     property.analysis_id.set("ERZ00001");
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     HashSet<String> projectLocusTagPrefixes = new HashSet<String>();
     projectLocusTagPrefixes.add("BC03");
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(projectLocusTagPrefixes);
@@ -189,7 +188,7 @@ public class LocusTagPrefixCheckTest {
     check.setEntryDAOUtils(entryDAOUtils);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(LocusTagPrefixCheck.MESSAGE_ID_INVALID_PREFIX, Severity.ERROR));
   }
 
@@ -197,19 +196,19 @@ public class LocusTagPrefixCheckTest {
   public void testCheck_assemblynotRegisteredLocusTagPrefix()
       throws SQLException, ValidationEngineException {
     Entry masterEntry = entryFactory.createEntry();
-    masterEntry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    masterEntry.getProjectAccessions().add(new Text("PRJNA19959"));
     masterEntry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     property.analysis_id.set("ERZ00001");
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "BC03BB108_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
     replay(entryDAOUtils);
     check.setEntryDAOUtils(entryDAOUtils);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(LocusTagPrefixCheck.MESSAGE_ID_INVALID_PREFIX, Severity.ERROR));
   }
 
@@ -217,13 +216,13 @@ public class LocusTagPrefixCheckTest {
   public void testCheck_assemblysampleIDLocusTagPrefix()
       throws SQLException, ValidationEngineException {
     Entry masterEntry = entryFactory.createEntry();
-    masterEntry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    masterEntry.getProjectAccessions().add(new Text("PRJNA19959"));
     masterEntry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     property.analysis_id.set("ERZ00001");
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "SAMN02436291_2133");
     entry.addFeature(feature);
-    entry.getProjectAccessions().add(new Text(new String("PRJNA19959")));
+    entry.getProjectAccessions().add(new Text("PRJNA19959"));
     entry.getXRefs().add(new XRef("BioSample", "SAMN02436291"));
     expect(entryDAOUtils.getProjectLocutagPrefix("PRJNA19959")).andReturn(new HashSet<String>());
     replay(entryDAOUtils);

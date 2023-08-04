@@ -22,6 +22,6 @@ public class OXReaderTest extends EmblReaderTest {
     reader.getCache().setScientificName("Trifolium repens");
     ValidationResult result = reader.read(entry);
     assertEquals(0, result.count(Severity.ERROR));
-    assertEquals(new Long(1423), reader.getCache().getTaxId("Trifolium repens"));
+    assertEquals(Long.valueOf(1423), reader.getCache().getTaxId("Trifolium repens"));
   }
 }

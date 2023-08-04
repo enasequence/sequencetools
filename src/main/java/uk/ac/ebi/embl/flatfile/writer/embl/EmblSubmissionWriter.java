@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RL submission lines. */
 public class EmblSubmissionWriter extends FlatFileWriter {
 
-  private Submission submission;
+  private final Submission submission;
   private String header = EmblPadding.RL_PADDING;
 
   public EmblSubmissionWriter(Entry entry, Submission submission, WrapType wrapType) {

@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 import org.junit.Before;
@@ -95,33 +94,33 @@ public class GapFeatureLocationsCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location1 = new Order<Location>();
-    location1.addLocation(locationFactory.createLocalRange(13l, 18l));
+    location1.addLocation(locationFactory.createLocalRange(13L, 18L));
     feature1.setLocations(location1);
 
     Feature feature2 = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location2 = new Order<Location>();
-    location2.addLocation(locationFactory.createLocalRange(15l, 20l));
+    location2.addLocation(locationFactory.createLocalRange(15L, 20L));
     feature2.setLocations(location2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(2, result.count(GapFeatureLocationsCheck.MESSAGE_ID, Severity.ERROR));
     Feature feature3 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location3 = new Order<Location>();
-    location3.addLocation(locationFactory.createLocalRange(13l, 18l));
+    location3.addLocation(locationFactory.createLocalRange(13L, 18L));
     feature3.setLocations(location3);
 
     Feature feature4 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location4 = new Order<Location>();
-    location4.addLocation(locationFactory.createLocalRange(15l, 20l));
+    location4.addLocation(locationFactory.createLocalRange(15L, 20L));
     feature4.setLocations(location4);
     entry.addFeature(feature4);
     entry.addFeature(feature4);
 
     ValidationResult result1 = check.check(entry);
-    assertTrue(!result1.isValid());
+    assertFalse(result1.isValid());
     assertEquals(
         4,
         result1.count(
@@ -134,7 +133,7 @@ public class GapFeatureLocationsCheckTest {
 
     Feature feature = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location = new Order<Location>();
-    location.addLocation(locationFactory.createLocalRange(14l, 20l));
+    location.addLocation(locationFactory.createLocalRange(14L, 20L));
     feature.setLocations(location);
 
     entry.addFeature(feature);
@@ -144,7 +143,7 @@ public class GapFeatureLocationsCheckTest {
     assertEquals(0, result.getMessages().size());
     Feature feature1 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location1 = new Order<Location>();
-    location1.addLocation(locationFactory.createLocalRange(14l, 20l));
+    location1.addLocation(locationFactory.createLocalRange(14L, 20L));
     feature1.setLocations(location);
 
     entry.addFeature(feature1);

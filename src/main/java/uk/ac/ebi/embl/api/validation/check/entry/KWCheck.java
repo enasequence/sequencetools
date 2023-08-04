@@ -212,9 +212,7 @@ public class KWCheck extends EntryValidationCheck {
               + " "
               + descriptionKeywords[(descriptionKeywords.length) - 1];
       deKeyword = trimLeft(deKeyword, ' ');
-      if (deKeyword.equals(keyword)) {
-        return true;
-      }
+      return deKeyword.equals(keyword);
     }
 
     return false;
@@ -226,7 +224,7 @@ public class KWCheck extends EntryValidationCheck {
       return false;
     }
     for (Text textKeyword : keywords) {
-      String stringKeyword = textKeyword.getText().toString();
+      String stringKeyword = textKeyword.getText();
       if (stringKeyword.equalsIgnoreCase(keyword)) {
         return true;
       }
@@ -311,8 +309,8 @@ public class KWCheck extends EntryValidationCheck {
         || Entry.STD_DATACLASS.equals(dataclass)
         || Entry.TSA_DATACLASS.equals(dataclass)) {
 
-      boolean hasTPADescription = description.substring(0, 5).equals("TPA: ");
-      boolean hasTSADescription = description.substring(0, 5).equals("TSA: ");
+      boolean hasTPADescription = description.startsWith("TPA: ");
+      boolean hasTSADescription = description.startsWith("TSA: ");
 
       boolean hasTPAKeywords = hasTPAKeywords(entry);
       boolean hasTSAKeywords = hasTSAKeywords(entry);

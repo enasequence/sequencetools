@@ -28,7 +28,7 @@ public enum Context {
 
   List<FileType> fileTypes;
 
-  private Context(FileType... fileTypes) {
+  Context(FileType... fileTypes) {
     this.fileTypes = Arrays.asList(fileTypes);
   }
 

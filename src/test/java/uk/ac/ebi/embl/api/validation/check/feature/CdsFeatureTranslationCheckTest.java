@@ -11,8 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.feature;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -70,7 +69,7 @@ public class CdsFeatureTranslationCheckTest {
     entry.addFeature(cdsFeature);
     check.setEntry(entry);
     ValidationResult validationResult = check.check(cdsFeature);
-    assertTrue(!validationResult.isValid()); // i.e. there were failures
+    assertFalse(validationResult.isValid()); // i.e. there were failures
   }
 
   @Test
@@ -98,7 +97,7 @@ public class CdsFeatureTranslationCheckTest {
     ValidationResult validationResult = check.check(cdsFeature);
     assertEquals(1, validationResult.count("Translator-19", Severity.ERROR));
     assertEquals(1, validationResult.count(Severity.ERROR));
-    assertTrue(!validationResult.isValid());
-    assertTrue(cdsFeature.getTranslation() == null);
+    assertFalse(validationResult.isValid());
+    assertNull(cdsFeature.getTranslation());
   }
 }

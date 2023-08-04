@@ -23,7 +23,7 @@ public class ObsoleteFeatureFix extends FeatureValidationCheck {
 
   private static final String FEATURE_REPLACED_ID = "ObsoleteFeatureFix";
 
-  private QualifierFactory qualifierFactory;
+  private final QualifierFactory qualifierFactory;
 
   public ObsoleteFeatureFix() {
     this.qualifierFactory = new QualifierFactory();

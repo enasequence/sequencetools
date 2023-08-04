@@ -29,7 +29,7 @@ public class OrganismWriter extends FlatFileWriter {
     setWrapChar(WrapChar.WRAP_CHAR_SPACE);
   }
 
-  private SourceFeature sourceFeature;
+  private final SourceFeature sourceFeature;
 
   public boolean write(Writer writer) throws IOException {
     String header = GenbankPadding.ORGANISM_PADDING;

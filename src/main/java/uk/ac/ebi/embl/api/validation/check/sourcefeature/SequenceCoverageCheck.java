@@ -136,7 +136,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
       lastLocationPositions = firstLocation;
     } else {
       // check further locations
-      for (; locationIter.hasNext(); ) {
+      while (locationIter.hasNext()) {
         location = locationIter.next();
         lastLocationPositions = checkLocation(location);
 

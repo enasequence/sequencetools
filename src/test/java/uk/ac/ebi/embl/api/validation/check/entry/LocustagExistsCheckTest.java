@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -64,7 +63,7 @@ public class LocustagExistsCheckTest {
     Feature feature = new FeatureFactory().createFeature("feature");
     entry.addFeature(feature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("LocustagExistsCheck_1", Severity.ERROR));
   }
 

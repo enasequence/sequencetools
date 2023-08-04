@@ -18,8 +18,8 @@ public class ASWriterTest extends EmblWriterTest {
 
   public void testWrite_Assembly() throws IOException {
     EntryFactory entryFactory = new EntryFactory();
-    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665l, 19090l, true, 1l, 426l));
-    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665l, 98790l, true, 6l, 546l));
+    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665L, 19090L, true, 1L, 426L));
+    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665L, 98790L, true, 6L, 546L));
     StringWriter writer = new StringWriter();
     assertTrue(new ASWriter(entry).write(writer));
     // System.out.print(writer.toString());

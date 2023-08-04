@@ -124,8 +124,8 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertTrue(reference.getPublication() instanceof Article);
     Article article = (Article) reference.getPublication();
     assertEquals("J. Biol. Chem. ( 48_V )", article.getJournal());
-    assertEquals(null, article.getIssue());
-    assertEquals(null, article.getVolume());
+    assertNull(article.getIssue());
+    assertNull(article.getVolume());
     assertEquals("322X81", article.getFirstPage());
     assertEquals("32Y287", article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("1998"), article.getYear());
@@ -160,9 +160,9 @@ public class JournalReaderTest extends GenbankReaderTest {
     Article article = (Article) reference.getPublication();
     assertEquals("G3 (Bethesda)", article.getJournal());
     assertEquals("0-0", article.getVolume());
-    assertEquals(null, article.getIssue());
-    assertEquals(null, article.getFirstPage());
-    assertEquals(null, article.getLastPage());
+    assertNull(article.getIssue());
+    assertNull(article.getFirstPage());
+    assertNull(article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2018"), article.getYear());
   }
 
@@ -177,9 +177,9 @@ public class JournalReaderTest extends GenbankReaderTest {
     Article article = (Article) reference.getPublication();
     assertEquals("Infect. Genet. Evol.", article.getJournal());
     assertEquals("VOL4", article.getVolume());
-    assertEquals(null, article.getIssue());
+    assertNull(article.getIssue());
     assertEquals("34", article.getFirstPage());
-    assertEquals(null, article.getLastPage());
+    assertNull(article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2017"), article.getYear());
   }
 
@@ -194,7 +194,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     Article article = (Article) reference.getPublication();
     assertEquals("Infect. Genet. Evol.", article.getJournal());
     assertEquals("VOL4", article.getVolume());
-    assertEquals(null, article.getIssue());
+    assertNull(article.getIssue());
     assertEquals("34", article.getFirstPage());
     assertEquals("100", article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2017"), article.getYear());
@@ -210,8 +210,8 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertTrue(reference.getPublication() instanceof Article);
     Article article = (Article) reference.getPublication();
     assertEquals("Infect. Genet. Evol. ( (VOL4) )", article.getJournal());
-    assertEquals(null, article.getVolume());
-    assertEquals(null, article.getIssue());
+    assertNull(article.getVolume());
+    assertNull(article.getIssue());
     assertEquals("34", article.getFirstPage());
     assertEquals("100", article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2017"), article.getYear());
@@ -243,8 +243,8 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals("Magallat Albasrat Liabhat Nahlat Altamr", article.getJournal());
     assertEquals("15", article.getVolume());
     assertEquals("1-2", article.getIssue());
-    assertEquals(null, article.getFirstPage());
-    assertEquals(null, article.getLastPage());
+    assertNull(article.getFirstPage());
+    assertNull(article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2016"), article.getYear());
   }
 
@@ -259,9 +259,9 @@ public class JournalReaderTest extends GenbankReaderTest {
     Article article = (Article) reference.getPublication();
     assertEquals("Biosci Microbiota Food Health", article.getJournal());
     assertEquals("16-027", article.getVolume());
-    assertEquals(null, article.getIssue());
-    assertEquals(null, article.getFirstPage());
-    assertEquals(null, article.getLastPage());
+    assertNull(article.getIssue());
+    assertNull(article.getFirstPage());
+    assertNull(article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2017"), article.getYear());
   }
 
@@ -276,9 +276,9 @@ public class JournalReaderTest extends GenbankReaderTest {
     Article article = (Article) reference.getPublication();
     assertEquals("Magallat Albasrat Liabhat Nahlat", article.getJournal());
     assertEquals("Altamr", article.getVolume());
-    assertEquals(null, article.getIssue());
+    assertNull(article.getIssue());
     assertEquals("Germany", article.getFirstPage());
-    assertEquals(null, article.getLastPage());
+    assertNull(article.getLastPage());
     assertEquals(FlatFileDateUtils.getYear("2016"), article.getYear());
   }
 
@@ -421,7 +421,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals("A", patent.getPatentType());
     assertEquals(Integer.valueOf(3), patent.getSequenceNumber());
     assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
-    assertTrue(patent.getApplicants().size() == 2);
+    assertEquals(2, patent.getApplicants().size());
     assertEquals("BAYER AG", patent.getApplicants().get(0));
     assertEquals("GOOGLE AG", patent.getApplicants().get(1));
   }
@@ -442,7 +442,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals("A", patent.getPatentType());
     assertEquals(Integer.valueOf(3), patent.getSequenceNumber());
     assertEquals(FlatFileDateUtils.getDay("10-SEP-1998"), patent.getDay());
-    assertTrue(patent.getApplicants().size() == 2);
+    assertEquals(2, patent.getApplicants().size());
     assertEquals("BAYER AG", patent.getApplicants().get(0));
     assertEquals("GOOGLE AG", patent.getApplicants().get(1));
   }
@@ -460,7 +460,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertNull(patent.getPatentType());
     assertNull(patent.getSequenceNumber());
     assertNull(patent.getDay());
-    assertTrue(patent.getApplicants().size() == 0);
+    assertEquals(0, patent.getApplicants().size());
   }
 
   public void testRead_PatentNoPatentOffice() throws IOException {
@@ -521,7 +521,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals("A", patent.getPatentType());
     assertEquals(Integer.valueOf(1), patent.getSequenceNumber());
     assertEquals(FlatFileDateUtils.getDay("24-OCT-2000"), patent.getDay());
-    assertTrue(patent.getApplicants().size() == 0);
+    assertEquals(0, patent.getApplicants().size());
   }
 
   public void testRead_Thesis() throws IOException {
@@ -581,7 +581,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals(
         "Great Drosophila Genome Center, Lawrence Berkeley Laboratory, MS 64-121, Berkeley, CA 94720, USA",
         submission.getSubmitterAddress());
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
   }
 
   public void testRead_SubmissionWithoutPublication() throws IOException {
@@ -685,7 +685,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals(0, result.count(Severity.ERROR));
     assertNotNull(reference.getPublication());
     assertTrue(reference.getPublication() instanceof Unpublished);
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
   }
 
   public void testRead_UnpublishedWithoutPublication() throws IOException {
@@ -713,7 +713,7 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals(0, result.count(Severity.ERROR));
     assertNotNull(reference.getPublication());
     assertTrue(reference.getPublication() instanceof ElectronicReference);
-    assertTrue(publication.equals(reference.getPublication()));
+    assertEquals(publication, reference.getPublication());
     assertEquals("dah dah", ((ElectronicReference) reference.getPublication()).getText());
   }
 

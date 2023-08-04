@@ -25,8 +25,8 @@ public class SubmissionMatcher extends FlatFileMatcher {
       Pattern.compile(
           "^\\s*Submitted\\s*\\(\\s*([\\w-]+)?\\s*\\)(?:\\s*to\\s*the\\s*(?:(?:\\w+/\\w+/\\w+\\s*databases)|(?:INSDC)){0,1}\\.)?(.*)?$");
 
-  private static int GROUP_SUBMISSION_DATE = 1;
-  private static int GROUP_SUBMITTER_ADDRESS = 2;
+  private static final int GROUP_SUBMISSION_DATE = 1;
+  private static final int GROUP_SUBMITTER_ADDRESS = 2;
 
   public Submission getSubmission(Publication publication) {
     Submission submission = null;

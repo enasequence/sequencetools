@@ -79,7 +79,7 @@ public class SequenceLengthCheckTest {
         "Sequence length must not be shorter than 100 bps for the entry \"null\".",
         messages.iterator().next().getMessage());
     assertEquals(
-        "Sequence does not fall under the accepted categories (ancient DNA, non-coding-RNA, microsatellites or complete exons) and therefore can not be accepted for submission into ENA's EMBL-Bank.Exceptions require the submitter to demonstrate that a peer-reviewed journal has accepted a manuscript by the submitter, confirming the relevance of the short sequences to the scientific community. Please contact us if you can demonstrate this requirement or if your sequence belongs to the \'ancient DNA\' or \'complete exon\' category.",
+        "Sequence does not fall under the accepted categories (ancient DNA, non-coding-RNA, microsatellites or complete exons) and therefore can not be accepted for submission into ENA's EMBL-Bank.Exceptions require the submitter to demonstrate that a peer-reviewed journal has accepted a manuscript by the submitter, confirming the relevance of the short sequences to the scientific community. Please contact us if you can demonstrate this requirement or if your sequence belongs to the 'ancient DNA' or 'complete exon' category.",
         messages.iterator().next().getCuratorMessage());
   }
 

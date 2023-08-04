@@ -104,7 +104,7 @@ public class DEGeneratorTest extends TestCase {
     Entry entry = entryReader.getEntry();
 
     ValidationResult validationResult = DEGenerator.writeDE(entry);
-    assertTrue(validationResult.count() == 0);
+    assertEquals(0, validationResult.count());
     String deLine = entry.getDescription().getText();
 
     assertTrue(deLine.startsWith("TPA"));
@@ -377,7 +377,7 @@ public class DEGeneratorTest extends TestCase {
     Feature feature = featureFactory.createFeature(Feature.MISC_FEATURE_NAME);
     feature.addQualifier(Qualifier.NOTE_QUALIFIER_NAME, "bacon");
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(1l, 10l);
+    LocalRange range = locationFactory.createLocalRange(1L, 10L);
     join.addLocation(range);
     feature.setLocations(join);
     entry.addFeature(feature);
@@ -400,7 +400,7 @@ public class DEGeneratorTest extends TestCase {
     feature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "bacon");
     entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "thingy");
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(1l, 10l);
+    LocalRange range = locationFactory.createLocalRange(1L, 10L);
     join.addLocation(range);
     join.setLeftPartial(true);
     feature.setLocations(join);
@@ -424,7 +424,7 @@ public class DEGeneratorTest extends TestCase {
     feature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "bacon");
     entry.getPrimarySourceFeature().addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "thingy");
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(1l, 10l);
+    LocalRange range = locationFactory.createLocalRange(1L, 10L);
     join.addLocation(range);
     join.setLeftPartial(true);
     feature.setLocations(join);
@@ -451,7 +451,7 @@ public class DEGeneratorTest extends TestCase {
     Entry entry = entryReader.getEntry();
 
     ValidationResult validationResult = DEGenerator.writeDE(entry);
-    assertTrue(validationResult.count() == 0);
+    assertEquals(0, validationResult.count());
     String deLine = entry.getDescription().getText();
 
     assertEquals("Halobacterium salinarum R1 complete sequence, strain DSM 671 = R1", deLine);
@@ -468,7 +468,7 @@ public class DEGeneratorTest extends TestCase {
     Entry entry = entryReader.getEntry();
 
     ValidationResult validationResult = DEGenerator.writeDE(entry);
-    assertTrue(validationResult.count() == 0);
+    assertEquals(0, validationResult.count());
     String deLine = entry.getDescription().getText();
 
     assertEquals(

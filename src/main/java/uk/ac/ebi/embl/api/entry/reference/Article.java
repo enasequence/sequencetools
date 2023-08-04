@@ -132,7 +132,7 @@ public class Article extends Publication implements Comparable<Article> {
   }
 
   public int compareTo(Article o) {
-    final Article other = (Article) o;
+    final Article other = o;
     final CompareToBuilder builder = new CompareToBuilder();
     builder.appendSuper(super.compareTo(other));
     builder.append(this.firstPage, other.firstPage);

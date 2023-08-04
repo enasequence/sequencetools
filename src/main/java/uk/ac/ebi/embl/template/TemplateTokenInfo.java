@@ -11,12 +11,12 @@
 package uk.ac.ebi.embl.template;
 
 public class TemplateTokenInfo {
-  private String name;
-  private TemplateTokenType type;
-  private boolean mandatory;
+  private final String name;
+  private final TemplateTokenType type;
+  private final boolean mandatory;
   private boolean variableOnly;
   private String displayName;
-  private String description;
+  private final String description;
   private String tip;
   private int order;
   private int groupOrder;

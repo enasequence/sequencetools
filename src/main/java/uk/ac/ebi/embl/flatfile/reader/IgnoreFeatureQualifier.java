@@ -66,7 +66,7 @@ public class IgnoreFeatureQualifier {
         // Qualifier is a candidate for being ignored.
         if (ignoreQualifier.ignoreMissingValueTerms) {
           // Ignore qualifier if the qualifier value matches one of missing value terms.
-          return ignoreQualifier.MISSING_VALUE_TERMS.contains(qualifierValue);
+          return MISSING_VALUE_TERMS.contains(qualifierValue);
         } else {
           // Ignore qualifier regardless of its value.
           return true;

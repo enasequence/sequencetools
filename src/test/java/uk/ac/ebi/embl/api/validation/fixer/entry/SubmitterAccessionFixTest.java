@@ -45,7 +45,7 @@ public class SubmitterAccessionFixTest {
         }
       };
 
-  private static Map<String, String> fixMapFastaFileReader =
+  private static final Map<String, String> fixMapFastaFileReader =
       new HashMap<String, String>() {
         {
           // submitterAccession, fixedSubmitterAccession
@@ -59,7 +59,7 @@ public class SubmitterAccessionFixTest {
         }
       };
 
-  private static Map<String, String> fixMapEmblEntryReader =
+  private static final Map<String, String> fixMapEmblEntryReader =
       new HashMap<String, String>() {
         {
           // submitterAccession, fixedSubmitterAccession
@@ -73,7 +73,7 @@ public class SubmitterAccessionFixTest {
         }
       };
 
-  private static Map<String, String> fixMapAGPReader =
+  private static final Map<String, String> fixMapAGPReader =
       new HashMap<String, String>() {
         {
           // submitterAccession, fixedSubmitterAccession
@@ -128,7 +128,7 @@ public class SubmitterAccessionFixTest {
 
   @Test
   public void testFixString() {
-    assertEquals(null, SubmitterAccessionFix.fix(""));
+    assertNull(SubmitterAccessionFix.fix(""));
     fixMap.forEach(
         (submitterName, fixedSubmitterName) ->
             assertEquals(fixedSubmitterName, SubmitterAccessionFix.fix(submitterName)));

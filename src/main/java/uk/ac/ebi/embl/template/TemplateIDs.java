@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.template;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TemplateIDs {
@@ -59,9 +60,9 @@ public class TemplateIDs {
       Arrays.asList("28", "51", "52", "60", "57", "47", "31");
   public static final List<String> LARGE_SCALE_DATA_CHECKLISTS =
       Arrays.asList("3", "55", "24", TSA_UNANNOTATED_TEMPLATE_ID, TSA_ANNOTATED_TEMPLATE_ID);
-  public static final List<String> BARCODE_COMPLIANT_TEMPLATE_IDs = Arrays.asList("33");
-  public static final List<String> MIMARKS_COMPLIANT_TEMPLATE_IDs = Arrays.asList("11");
-  public static final List<String> MIENS_TEMPLATE_IDs = Arrays.asList("11");
+  public static final List<String> BARCODE_COMPLIANT_TEMPLATE_IDs = Collections.singletonList("33");
+  public static final List<String> MIMARKS_COMPLIANT_TEMPLATE_IDs = Collections.singletonList("11");
+  public static final List<String> MIENS_TEMPLATE_IDs = Collections.singletonList("11");
   public static final List<String> NEW_TEMPLATE_IDS =
       Arrays.asList(
           "31",

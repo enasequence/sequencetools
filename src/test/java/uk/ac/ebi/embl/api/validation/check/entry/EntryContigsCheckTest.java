@@ -175,7 +175,7 @@ public class EntryContigsCheckTest {
     assemblyGapFeature.addQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME, "11");
     entry.addFeature(assemblyGapFeature);
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(53l, 63l));
+    order.addLocation(locationFactory.createLocalRange(53L, 63L));
     assemblyGapFeature.setLocations(order);
     expect(entryDAOUtils.isEntryExists("A00001.1")).andReturn(true);
     expect(entryDAOUtils.isEntryExists("A00002.1")).andReturn(true);
@@ -199,7 +199,7 @@ public class EntryContigsCheckTest {
     assemblyGapFeature.addQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME, "11");
     entry.addFeature(assemblyGapFeature);
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(12l, 22l));
+    order.addLocation(locationFactory.createLocalRange(12L, 22L));
     assemblyGapFeature.setLocations(order);
     expect(entryDAOUtils.isEntryExists("A00001.1")).andReturn(true);
     expect(entryDAOUtils.isEntryExists("A00002.1")).andReturn(true);

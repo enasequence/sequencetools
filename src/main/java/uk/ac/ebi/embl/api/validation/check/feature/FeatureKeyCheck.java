@@ -31,7 +31,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 @ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class FeatureKeyCheck extends FeatureValidationCheck {
 
-  private HashMap<String, FeatureKeyInfo> keysMap = new HashMap<String, FeatureKeyInfo>();
+  private final HashMap<String, FeatureKeyInfo> keysMap = new HashMap<String, FeatureKeyInfo>();
 
   private static final String KEY_NOT_FOUND_ID = "FeatureKeyCheck-1";
   private static final String MANDATORY_QUALIFIER_ABSENT = "FeatureKeyCheck-2";
@@ -182,8 +182,8 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
   }
 
   class FeatureKeyInfo {
-    private String key;
-    private List<FeatureQualifierInfo> qualifierInfos = new ArrayList<FeatureQualifierInfo>();
+    private final String key;
+    private final List<FeatureQualifierInfo> qualifierInfos = new ArrayList<FeatureQualifierInfo>();
 
     FeatureKeyInfo(String key) {
       this.key = key;
@@ -203,11 +203,11 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
   }
 
   class FeatureQualifierInfo {
-    private String key;
-    private String qual;
-    private String mandatory;
-    private String single;
-    private String recomended;
+    private final String key;
+    private final String qual;
+    private final String mandatory;
+    private final String single;
+    private final String recomended;
 
     FeatureQualifierInfo(
         String key, String qual, String mandatory, String single, String recomended) {

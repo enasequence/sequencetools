@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -46,8 +45,8 @@ public class GenomeUtilsTest {
     sequenceInfo.put("contig1", new AssemblySequenceInfo(100, 0, "contig1"));
     sequenceInfo.put("contig2", new AssemblySequenceInfo(150, 0, "contig2"));
     sequenceInfo.put("contig3", new AssemblySequenceInfo(200, 0, "contig3"));
-    assertTrue(
-        GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 100 + 150 + 200);
+    assertEquals(
+        100 + 150 + 200, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 
   @Test
@@ -56,7 +55,7 @@ public class GenomeUtilsTest {
     Set<String> agpPlacedComponents = new HashSet<>();
 
     sequenceInfo.put("chr1", new AssemblySequenceInfo(100, 2, "chr1"));
-    assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 100);
+    assertEquals(100, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 
   @Test
@@ -80,7 +79,8 @@ public class GenomeUtilsTest {
     addComponent(agpPlacedComponents, "contig2");
     addComponent(agpPlacedComponents, "contig3");
 
-    assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 200);
+    assertEquals(
+        250 + 200, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 
   @Test
@@ -108,8 +108,8 @@ public class GenomeUtilsTest {
     addComponent(agpPlacedComponents, "contig3");
     addComponent(agpPlacedComponents, "scaffold2");
 
-    assertTrue(
-        GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 200 + 300);
+    assertEquals(
+        250 + 200 + 300, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 
   @Test
@@ -140,7 +140,8 @@ public class GenomeUtilsTest {
     addComponent(agpPlacedComponents, "contig4");
     addComponent(agpPlacedComponents, "scaffold2");
 
-    assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 250 + 250);
+    assertEquals(
+        250 + 250, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 
   @Test
@@ -165,6 +166,6 @@ public class GenomeUtilsTest {
     addComponent(agpPlacedComponents, "contig3");
     addComponent(agpPlacedComponents, "contig4");
 
-    assertTrue(GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents) == 600);
+    assertEquals(600, (long) GenomeUtils.calculateGenomeSize(sequenceInfo, agpPlacedComponents));
   }
 }

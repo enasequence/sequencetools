@@ -39,7 +39,7 @@ public class ProjectReader extends MultiLineBlockReader {
               + // project id
               ".*$");
 
-  private static int GROUP_PROJCT_ID = 1;
+  private static final int GROUP_PROJCT_ID = 1;
 
   @Override
   protected void read(String block) {

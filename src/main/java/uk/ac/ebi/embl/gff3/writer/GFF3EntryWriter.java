@@ -31,9 +31,9 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 /** Writes features in GFF3 format for AnnotationSketch. */
 public class GFF3EntryWriter {
 
-  private Entry entry;
-  private Long windowBeginPosition;
-  private Long windowEndPosition;
+  private final Entry entry;
+  private final Long windowBeginPosition;
+  private final Long windowEndPosition;
   private EnumSet<GFF3Show> show;
   private HashMap<String, GFF3Gene> locusTagGeneMap;
   private HashMap<String, GFF3Gene> geneNameGeneMap;

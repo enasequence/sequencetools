@@ -23,7 +23,7 @@ public class ElectronicReferenceMatcher extends FlatFileMatcher {
 
   private static final Pattern PATTERN = Pattern.compile("^\\s*\\(\\s*er\\s*\\)\\s*(.+)?$");
 
-  private static int GROUP_TEXT = 1;
+  private static final int GROUP_TEXT = 1;
 
   public ElectronicReference getElectronicReference(Publication publication) {
     ElectronicReference electronicReference = null;

@@ -32,11 +32,7 @@ public class SectionExtractor {
       boolean stripCurrentSection = false;
       for (TemplateTokenInfo dependentToken : dependsList) {
 
-        boolean variablesDoesNotContain = false;
-
-        if (variablesDoesNotContainToken(variables, dependentToken)) {
-          variablesDoesNotContain = true;
-        }
+        boolean variablesDoesNotContain = variablesDoesNotContainToken(variables, dependentToken);
 
         if (variablesDoesNotContain) {
           stripCurrentSection = true;
@@ -90,18 +86,20 @@ public class SectionExtractor {
   }
 
   static String encloseSectionStartToken(TemplateSectionInfo currentSectionInfo) {
-    StringBuilder builder = new StringBuilder(TemplateProcessorConstants.SECTION_DELIMITER);
-    builder.append(currentSectionInfo.getName());
-    builder.append(TemplateProcessorConstants.SECTION_CLOSE_DELIMITER);
-    return builder.toString();
+    String builder =
+        TemplateProcessorConstants.SECTION_DELIMITER
+            + currentSectionInfo.getName()
+            + TemplateProcessorConstants.SECTION_CLOSE_DELIMITER;
+    return builder;
   }
 
   static String encloseSectionEndToken(TemplateSectionInfo currentSectionInfo) {
-    StringBuilder builder = new StringBuilder(TemplateProcessorConstants.SECTION_DELIMITER);
-    builder.append("/");
-    builder.append(currentSectionInfo.getName());
-    builder.append(TemplateProcessorConstants.SECTION_CLOSE_DELIMITER);
+    String builder =
+        TemplateProcessorConstants.SECTION_DELIMITER
+            + "/"
+            + currentSectionInfo.getName()
+            + TemplateProcessorConstants.SECTION_CLOSE_DELIMITER;
 
-    return builder.toString();
+    return builder;
   }
 }

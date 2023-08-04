@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -87,7 +86,7 @@ public class FeatureKeyCheckTest {
     feature = featureFactory.createFeature("operon");
     feature.addQualifier("gene", "gene name");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     System.out.println(
         ((ValidationMessage) ((ArrayList) validationResult.getMessages("FeatureKeyCheck-2")).get(0))
             .getCuratorMessage());
@@ -101,7 +100,7 @@ public class FeatureKeyCheckTest {
     feature.addQualifier("gene", "gene name");
     feature.addQualifier("operon", "");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     System.out.println(
         ((ValidationMessage) ((ArrayList) validationResult.getMessages("FeatureKeyCheck-7")).get(0))
             .getCuratorMessage());
@@ -134,7 +133,7 @@ public class FeatureKeyCheckTest {
     feature.addQualifier("gene");
     feature.addQualifier("gene");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("FeatureKeyCheck-3", Severity.ERROR));
   }
 

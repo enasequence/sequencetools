@@ -117,8 +117,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils {
     PreparedStatement ps = null;
     try {
       ps = connection.prepareStatement(sql);
-      if (ps.executeQuery(sql).next()) return true;
-      return false;
+      return ps.executeQuery(sql).next();
 
     } finally {
       DbUtils.closeQuietly(ps);
@@ -134,11 +133,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils {
       ps.setString(1, accession);
       ps.setString(2, accession);
       rs = ps.executeQuery();
-      if (rs.next()) {
-        return true;
-      }
-
-      return false;
+      return rs.next();
     } finally {
       DbUtils.closeQuietly(rs);
       DbUtils.closeQuietly(ps);
@@ -178,10 +173,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils {
       ps.setString(1, project);
       ps.setString(2, project);
       rs = ps.executeQuery();
-      if (rs.next()) {
-        return true;
-      }
-      return false;
+      return rs.next();
     } finally {
       DbUtils.closeQuietly(rs);
       DbUtils.closeQuietly(ps);
@@ -286,10 +278,7 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils {
       ps.setString(1, analysisId);
       ps.setString(2, chromosomeName);
       ResultSet rs = ps.executeQuery();
-      if (!rs.next()) {
-        return false;
-      }
-      return true;
+      return rs.next();
     }
   }
 

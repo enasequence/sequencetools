@@ -31,19 +31,25 @@ public class PrimaryReaderTest extends GenbankReaderTest {
     assertEquals(0, result2.count(Severity.ERROR));
     assertEquals(0, result3.count(Severity.ERROR));
     assertEquals(2, entry.getAssemblies().size());
-    assertEquals(new Long(1), entry.getAssemblies().get(0).getSecondarySpan().getBeginPosition());
-    assertEquals(new Long(426), entry.getAssemblies().get(0).getSecondarySpan().getEndPosition());
+    assertEquals(
+        Long.valueOf(1), entry.getAssemblies().get(0).getSecondarySpan().getBeginPosition());
+    assertEquals(
+        Long.valueOf(426), entry.getAssemblies().get(0).getSecondarySpan().getEndPosition());
     assertEquals("AC004528", entry.getAssemblies().get(0).getPrimarySpan().getAccession());
     assertEquals(Integer.valueOf(1), entry.getAssemblies().get(0).getPrimarySpan().getVersion());
-    assertEquals(new Long(18665), entry.getAssemblies().get(0).getPrimarySpan().getBeginPosition());
-    assertEquals(new Long(19090), entry.getAssemblies().get(0).getPrimarySpan().getEndPosition());
+    assertEquals(
+        Long.valueOf(18665), entry.getAssemblies().get(0).getPrimarySpan().getBeginPosition());
+    assertEquals(
+        Long.valueOf(19090), entry.getAssemblies().get(0).getPrimarySpan().getEndPosition());
     assertFalse(entry.getAssemblies().get(0).getPrimarySpan().isComplement());
-    assertEquals(new Long(427), entry.getAssemblies().get(1).getSecondarySpan().getBeginPosition());
-    assertEquals(new Long(526), entry.getAssemblies().get(1).getSecondarySpan().getEndPosition());
+    assertEquals(
+        Long.valueOf(427), entry.getAssemblies().get(1).getSecondarySpan().getBeginPosition());
+    assertEquals(
+        Long.valueOf(526), entry.getAssemblies().get(1).getSecondarySpan().getEndPosition());
     assertEquals("AC001234", entry.getAssemblies().get(1).getPrimarySpan().getAccession());
     assertEquals(Integer.valueOf(2), entry.getAssemblies().get(1).getPrimarySpan().getVersion());
-    assertEquals(new Long(1), entry.getAssemblies().get(1).getPrimarySpan().getBeginPosition());
-    assertEquals(new Long(100), entry.getAssemblies().get(1).getPrimarySpan().getEndPosition());
+    assertEquals(Long.valueOf(1), entry.getAssemblies().get(1).getPrimarySpan().getBeginPosition());
+    assertEquals(Long.valueOf(100), entry.getAssemblies().get(1).getPrimarySpan().getEndPosition());
     assertTrue(entry.getAssemblies().get(1).getPrimarySpan().isComplement());
   }
 

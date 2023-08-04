@@ -76,7 +76,7 @@ public class ElectronicReference extends Publication implements Comparable<Elect
   }
 
   public int compareTo(ElectronicReference o) {
-    final ElectronicReference other = (ElectronicReference) o;
+    final ElectronicReference other = o;
     final CompareToBuilder builder = new CompareToBuilder();
     builder.appendSuper(super.compareTo(other));
     builder.append(this.text, other.text);

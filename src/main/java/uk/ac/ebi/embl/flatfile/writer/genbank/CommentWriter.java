@@ -12,8 +12,6 @@ package uk.ac.ebi.embl.flatfile.writer.genbank;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.flatfile.GenbankPadding;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
@@ -29,7 +27,7 @@ public class CommentWriter extends FlatFileWriter {
     if (entry.getComment() == null || isBlankString(entry.getComment().getText())) {
       return false;
     }
-    List<String> comments = Arrays.asList(entry.getComment().getText().split("\n"));
+    String[] comments = entry.getComment().getText().split("\n");
 
     boolean isFirstLine = true;
     for (String line : comments) {

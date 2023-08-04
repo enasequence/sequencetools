@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the patent lines. */
 public class GenbankPatentWriter extends FlatFileWriter {
 
-  private Patent patent;
+  private final Patent patent;
 
   public GenbankPatentWriter(Entry entry, Patent patent, WrapType wrapType) {
     super(entry, wrapType);

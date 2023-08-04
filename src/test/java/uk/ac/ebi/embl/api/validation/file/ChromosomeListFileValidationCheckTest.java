@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +74,7 @@ public class ChromosomeListFileValidationCheckTest extends SubmissionValidationT
             "invalid_chromosome_list.txt", SubmissionFile.FileType.CHROMOSOME_LIST);
     ChromosomeListFileValidationCheck check =
         new ChromosomeListFileValidationCheck(options, sharedInfo);
-    assertTrue(!check.check(file).isValid());
-    assertTrue(check.getMessageStats().get("InvalidNoOfFields") != null);
+    assertFalse(check.check(file).isValid());
+    assertNotNull(check.getMessageStats().get("InvalidNoOfFields"));
   }
 }

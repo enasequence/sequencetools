@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 @ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class FeatureQualifiersRequiredCheck extends FeatureValidationCheck {
 
-  private List<String> featuresList = new ArrayList<>();
+  private final List<String> featuresList = new ArrayList<>();
 
   private static final String QUALIFIERS_REQUIRED_ID_1 = "FeatureQualifiersRequiredCheck";
 

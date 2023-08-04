@@ -10,11 +10,7 @@
  */
 package uk.ac.ebi.embl.api.entry.location;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +23,8 @@ public class RemoteBetweenTest {
   @Test
   public void testBetween() {
     Between Between = new RemoteBetween("x", 1, 2L, 3L);
-    assertEquals(new Long(2), Between.getBeginPosition());
-    assertEquals(new Long(3), Between.getEndPosition());
+    assertEquals(Long.valueOf(2), Between.getBeginPosition());
+    assertEquals(Long.valueOf(3), Between.getEndPosition());
     assertEquals(0, Between.getLength());
     assertFalse(Between.isComplement());
   }
@@ -65,8 +61,8 @@ public class RemoteBetweenTest {
     assertNull(between.getEndPosition());
     between.setBeginPosition(2L);
     between.setEndPosition(3L);
-    assertEquals(new Long(2), between.getBeginPosition());
-    assertEquals(new Long(3), between.getEndPosition());
+    assertEquals(Long.valueOf(2), between.getBeginPosition());
+    assertEquals(Long.valueOf(3), between.getEndPosition());
     assertEquals(0, between.getLength());
   }
 
@@ -84,22 +80,22 @@ public class RemoteBetweenTest {
   @Test
   public void testEquals() {
     Between location1 = new RemoteBetween("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location1));
+    assertEquals(location1, location1);
     Between location2 = new RemoteBetween("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location2));
-    assertTrue(location2.equals(location1));
+    assertEquals(location1, location2);
+    assertEquals(location2, location1);
     Between location3 = new RemoteBetween("x", 1, 2L, 3L);
-    assertTrue(location1.equals(location3));
-    assertTrue(location3.equals(location1));
-    assertFalse(location1.equals(new RemoteBetween("y", 1, 2L, 3L)));
-    assertFalse(location1.equals(new RemoteBetween("x", 2, 2L, 3L)));
-    assertFalse(location1.equals(new RemoteBetween("x", 1, 3L, 3L)));
-    assertFalse(location1.equals(new RemoteBetween("x", 1, 2L, 4L)));
-    assertFalse(location1.equals(new RemoteBetween("x", 1, 2L, 3L, true)));
+    assertEquals(location1, location3);
+    assertEquals(location3, location1);
+    assertNotEquals(location1, new RemoteBetween("y", 1, 2L, 3L));
+    assertNotEquals(location1, new RemoteBetween("x", 2, 2L, 3L));
+    assertNotEquals(location1, new RemoteBetween("x", 1, 3L, 3L));
+    assertNotEquals(location1, new RemoteBetween("x", 1, 2L, 4L));
+    assertNotEquals(location1, new RemoteBetween("x", 1, 2L, 3L, true));
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new RemoteBetween("x", 1, 1L, 2L).equals(new String()));
+    assertNotEquals("", new RemoteBetween("x", 1, 1L, 2L));
   }
 }

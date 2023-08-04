@@ -31,8 +31,8 @@ public class Publication implements HasOrigin, Serializable {
   private String id;
   private String title;
   private String consortium;
-  private List<Person> authors;
-  private List<XRef> xRefs;
+  private final List<Person> authors;
+  private final List<XRef> xRefs;
 
   public Publication() {
     this.authors = new ArrayList<Person>();

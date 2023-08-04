@@ -23,7 +23,7 @@ public class OCWriterTest extends EmblWriterTest {
 
   public void testWrite_Classification() throws IOException, JSONException {
     FeatureFactory featureFactory = new FeatureFactory();
-    SourceFeature sourceFeature = (SourceFeature) featureFactory.createSourceFeature();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
     TaxonFactory taxonFactory = new TaxonFactory();
     JSONObject taxonJasonObject =
         new JSONObject(
@@ -53,7 +53,7 @@ public class OCWriterTest extends EmblWriterTest {
 
   public void testWrite_NoClassification() throws IOException {
     FeatureFactory featureFactory = new FeatureFactory();
-    SourceFeature sourceFeature = (SourceFeature) featureFactory.createSourceFeature();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
     sourceFeature.setTaxon(null);
     entry.addFeature(sourceFeature);
     StringWriter writer = new StringWriter();

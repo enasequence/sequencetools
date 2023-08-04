@@ -17,10 +17,9 @@ public class StringBuilderUtils {
   public static final Pattern tokenPattern = Pattern.compile(tokenRegex);
 
   public static String encloseToken(String token) {
-    return new StringBuilder(TemplateProcessorConstants.TOKEN_DELIMITER)
-        .append(token)
-        .append(TemplateProcessorConstants.TOKEN_CLOSE_DELIMITER)
-        .toString();
+    return TemplateProcessorConstants.TOKEN_DELIMITER
+        + token
+        + TemplateProcessorConstants.TOKEN_CLOSE_DELIMITER;
   }
 
   static boolean doesBuilderContain(String tokenName, StringBuilder stringBuilder) {

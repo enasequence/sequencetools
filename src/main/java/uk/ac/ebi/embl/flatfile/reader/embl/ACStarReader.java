@@ -26,8 +26,8 @@ public class ACStarReader extends SingleLineBlockReader {
 
   private static final Pattern PATTERN = Pattern.compile("^\\s*(_*[^\\s]+)\\s*(\\d+)?$");
 
-  private static int GROUP_SUBMITTER_ACCESSION = 1;
-  private static int GROUP_SUBMITTER_WGS_VERSION = 2;
+  private static final int GROUP_SUBMITTER_ACCESSION = 1;
+  private static final int GROUP_SUBMITTER_WGS_VERSION = 2;
 
   @Override
   public String getTag() {

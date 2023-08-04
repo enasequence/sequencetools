@@ -106,7 +106,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
     sourceFeature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "Akio Tani");
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(result.getMessages().size() == 0);
+    assertEquals(0, result.getMessages().size());
   }
 
   @Test

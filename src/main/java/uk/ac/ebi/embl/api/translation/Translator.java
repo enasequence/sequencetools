@@ -27,7 +27,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
  * abbreviations.
  */
 public class Translator extends AbstractTranslator {
-  private Map<Integer, TranslationException> translationExceptionMap = new HashMap<>();
+  private final Map<Integer, TranslationException> translationExceptionMap = new HashMap<>();
   private int codonStart = 1;
   private boolean nonTranslating = false; // feature has /pseudo
   private boolean exception = false;
@@ -50,7 +50,7 @@ public class Translator extends AbstractTranslator {
   private boolean fixDeleteTrailingBasesAfterStopCodon =
       false; // Delete trailing bases after stop codon
 
-  private Set<String> fixes;
+  private final Set<String> fixes;
 
   public Translator() {
     fixes = new HashSet<>();
@@ -241,7 +241,7 @@ public class Translator extends AbstractTranslator {
           new String(
               Arrays.copyOfRange(sequence, sequence.length - trailingBases, sequence.length)));
     } else {
-      translationResult.setTrailingBases(new String());
+      translationResult.setTrailingBases("");
     }
   }
 
@@ -489,10 +489,8 @@ public class Translator extends AbstractTranslator {
         }
         --i;
       }
-      boolean conceptualTranslation = true;
-      if (!validateInternalStopCodons(internalStopCodons, translationResult)) {
-        conceptualTranslation = false;
-      }
+      boolean conceptualTranslation =
+          validateInternalStopCodons(internalStopCodons, translationResult);
       if (!validateStartCodon(translationResult)) {
         conceptualTranslation = false;
       }

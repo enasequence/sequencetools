@@ -54,7 +54,7 @@ public class FeatureLocationCheckTest {
     Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     Order<Location> intronFeatureLocation = new Order<Location>();
     LocationFactory locationFactory = new LocationFactory();
-    intronFeatureLocation.addLocation(locationFactory.createLocalRange(120l, 108l));
+    intronFeatureLocation.addLocation(locationFactory.createLocalRange(120L, 108L));
     intronFeature.setLocations(intronFeatureLocation);
     ValidationResult intronResult = check.check(intronFeature);
     assertEquals(1, intronResult.count("FeatureLocationCheck-3", Severity.ERROR));

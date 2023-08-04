@@ -19,7 +19,7 @@ public class ValidationException extends Exception {
 
   private static final long serialVersionUID = -3183534639462274123L;
 
-  private ValidationMessage<Origin> validationMessage;
+  private final ValidationMessage<Origin> validationMessage;
 
   public ValidationException(ValidationMessage<Origin> validationMessage) {
     this.validationMessage = validationMessage;

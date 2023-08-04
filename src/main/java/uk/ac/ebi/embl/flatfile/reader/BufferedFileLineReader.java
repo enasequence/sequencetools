@@ -24,14 +24,14 @@ public class BufferedFileLineReader implements ILineReader {
   // For efficiency reasons, we define a byte buffer instead of char buffer.
   // The variables buf_end, buf_pos, and real_pos are used to record the
   // effective positions on the buffer:
-  private byte buffer[];
+  private final byte[] buffer;
   private int buf_end = 0;
   private int buf_pos = 0;
   private long real_pos = 0;
 
-  private RandomAccessFile raf;
+  private final RandomAccessFile raf;
 
-  private String name;
+  private final String name;
 
   /**
    * Constructor creates a new RandomAccessFile and buffer.

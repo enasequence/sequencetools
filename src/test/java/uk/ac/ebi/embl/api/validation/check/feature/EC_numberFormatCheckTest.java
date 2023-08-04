@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -56,7 +55,7 @@ public class EC_numberFormatCheckTest {
 
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.i");
     ValidationResult result = check.check(feature);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EC_numberFormatCheck", Severity.ERROR));
   }
 
@@ -65,7 +64,7 @@ public class EC_numberFormatCheckTest {
 
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "-.6.9.9");
     ValidationResult result = check.check(feature);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EC_numberFormatCheck", Severity.ERROR));
   }
 

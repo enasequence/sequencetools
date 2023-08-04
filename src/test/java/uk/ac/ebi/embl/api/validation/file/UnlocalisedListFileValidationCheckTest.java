@@ -10,7 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -56,7 +56,7 @@ public class UnlocalisedListFileValidationCheckTest extends SubmissionValidation
             "invalid_unlocalised_list.txt", SubmissionFile.FileType.UNLOCALISED_LIST);
     UnlocalisedListFileValidationCheck check =
         new UnlocalisedListFileValidationCheck(options, sharedInfo);
-    assertTrue(!check.check(file).isValid());
-    assertTrue(check.getMessageStats().get("InvalidNoOfFields") != null);
+    assertFalse(check.check(file).isValid());
+    assertNotNull(check.getMessageStats().get("InvalidNoOfFields"));
   }
 }

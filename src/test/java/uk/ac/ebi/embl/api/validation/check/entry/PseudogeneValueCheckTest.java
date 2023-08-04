@@ -53,7 +53,7 @@ public class PseudogeneValueCheckTest {
     entry.addFeature(feature1);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(
         1, result.count(PseudogeneValueCheck.PSEUDOGENE_INVALID_VALUE_CHECK, Severity.ERROR));
   }
@@ -66,7 +66,7 @@ public class PseudogeneValueCheckTest {
     entry.addFeature(feature1);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(
         1, result.count(PseudogeneValueCheck.PSEUDOGENE_INVALID_VALUE_CHECK, Severity.ERROR));
   }
@@ -79,7 +79,7 @@ public class PseudogeneValueCheckTest {
     entry.addFeature(feature1);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(
         1, result.count(PseudogeneValueCheck.PSEUDOGENE_INVALID_VALUE_CHECK, Severity.ERROR));
   }

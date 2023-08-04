@@ -222,10 +222,10 @@ public class TranslationTableDescriptor {
             "---M-------*-------M---------------M---------------M------------"));
   }
 
-  private int number;
-  private String name;
-  private String aminoAcids;
-  private String startCodons;
+  private final int number;
+  private final String name;
+  private final String aminoAcids;
+  private final String startCodons;
 
   private TranslationTableDescriptor(
       int number, String name, String aminoAcids, String startCodons) {

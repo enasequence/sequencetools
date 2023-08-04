@@ -385,7 +385,7 @@ public abstract class FileValidationCheck {
       entry.getSequence().setVersion(1);
       Order<Location> order = new Order<Location>();
       order.addLocation(
-          new LocationFactory().createLocalRange(1l, entry.getSequence().getLength()));
+          new LocationFactory().createLocalRange(1L, entry.getSequence().getLength()));
       entry.getPrimarySourceFeature().setLocations(order);
       if (entry.getSubmitterAccession() != null) {
         entry.setDescription(
@@ -542,7 +542,7 @@ public abstract class FileValidationCheck {
       LocationFactory locationFactory = new LocationFactory();
       if (entry.getSequence() != null) {
         featureLocation.addLocation(
-            locationFactory.createLocalRange(1l, entry.getSequence().getLength()));
+            locationFactory.createLocalRange(1L, entry.getSequence().getLength()));
         entry.getSequence().setMoleculeType(sharedInfo.masterEntry.getSequence().getMoleculeType());
       }
       SourceFeature sourceFeature = featureFactory.createSourceFeature();

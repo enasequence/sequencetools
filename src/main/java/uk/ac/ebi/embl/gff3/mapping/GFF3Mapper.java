@@ -31,13 +31,13 @@ import uk.ac.ebi.embl.api.gff3.GFF3RecordSet;
 
 public class GFF3Mapper {
   private Entry entry;
-  private EntryFactory entryFactory = new EntryFactory();
-  private FeatureFactory featureFactory = new FeatureFactory();
+  private final EntryFactory entryFactory = new EntryFactory();
+  private final FeatureFactory featureFactory = new FeatureFactory();
   private Feature feature;
   QualifierFactory qualifierFactory = new QualifierFactory();
   private Qualifier qualifier;
-  private LocationFactory locationFactory = new LocationFactory();
-  private List<Entry> entryList = new ArrayList<Entry>();
+  private final LocationFactory locationFactory = new LocationFactory();
+  private final List<Entry> entryList = new ArrayList<Entry>();
   String resourceBundle = "uk.ac.ebi.embl.gff3.mapping.gffMapper";
 
   public List<Entry> mapGFF3ToEntry(GFF3RecordSet records) throws IOException {
@@ -87,7 +87,7 @@ public class GFF3Mapper {
 
       // GFF3 Feature Mapping
       if (featureQualifiers.containsKey(featureType)) {
-        feature = featureFactory.createFeature(featureQualifiers.getString(featureType).toString());
+        feature = featureFactory.createFeature(featureQualifiers.getString(featureType));
         feature.setLocations(compoundJoin);
         feature.addQualifiers(qualifierList);
         isFeature = true;

@@ -84,8 +84,7 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan {
           NoSuchMethodException {
     for (Class<? extends GenomeAssemblyValidationCheck<?>> validationCheck : checks) {
       EmblEntryValidationCheck<?> check =
-          (EmblEntryValidationCheck<?>)
-              validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
+          validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
       if (check instanceof GenomeAssemblyValidationCheck) {
         execute(check, entry);
       }

@@ -25,7 +25,7 @@ public class ContigLocationsMatcher extends FlatFileMatcher {
     this.reader = reader;
   }
 
-  private FlatFileLineReader reader;
+  private final FlatFileLineReader reader;
 
   private static final Pattern PATTERN = Pattern.compile("\\s*join\\s*\\(?(.*)");
 

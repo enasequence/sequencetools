@@ -10,11 +10,7 @@
  */
 package uk.ac.ebi.embl.api.entry;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,22 +59,22 @@ public class AssemblyTest {
     Assembly assembly2 =
         new Assembly(factory.createRemoteRange("x", 1, 1L, 3L), factory.createLocalRange(2L, 4L));
 
-    assertTrue(assembly1.equals(assembly1));
-    assertTrue(assembly1.equals(assembly2));
-    assertTrue(assembly2.equals(assembly1));
+    assertEquals(assembly1, assembly1);
+    assertEquals(assembly1, assembly2);
+    assertEquals(assembly2, assembly1);
 
     Assembly assembly3 =
         new Assembly(factory.createRemoteRange("y", 1, 1L, 3L), factory.createLocalRange(2L, 4L));
-    assertFalse(assembly1.equals(assembly3));
+    assertNotEquals(assembly1, assembly3);
 
     Assembly assembly4 =
         new Assembly(factory.createRemoteRange("x", 1, 1L, 3L), factory.createLocalRange(3L, 4L));
-    assertFalse(assembly1.equals(assembly4));
+    assertNotEquals(assembly1, assembly4);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new Assembly(null, null).equals(new String()));
+    assertNotEquals("", new Assembly(null, null));
   }
 
   @Test

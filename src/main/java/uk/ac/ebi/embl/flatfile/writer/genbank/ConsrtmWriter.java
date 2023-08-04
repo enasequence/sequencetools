@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the CONSRTM lines. */
 public class ConsrtmWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public ConsrtmWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

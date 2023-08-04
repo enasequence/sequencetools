@@ -67,9 +67,9 @@ public class ReferenceUtilsTest extends GenbankReaderTest {
         lineReader.getCache().getReference().getLocations().getLocations().get(0);
     LocalRange location2 =
         lineReader.getCache().getReference().getLocations().getLocations().get(1);
-    assertEquals(new Long(1), location1.getBeginPosition());
-    assertEquals(new Long(34), location1.getEndPosition());
-    assertEquals(new Long(54), location2.getBeginPosition());
-    assertEquals(new Long(222), location2.getEndPosition());
+    assertEquals(Long.valueOf(1), location1.getBeginPosition());
+    assertEquals(Long.valueOf(34), location1.getEndPosition());
+    assertEquals(Long.valueOf(54), location2.getBeginPosition());
+    assertEquals(Long.valueOf(222), location2.getEndPosition());
   }
 }

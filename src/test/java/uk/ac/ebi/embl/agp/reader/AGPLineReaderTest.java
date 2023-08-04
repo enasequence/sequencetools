@@ -91,8 +91,8 @@ public class AGPLineReaderTest extends AGPReaderTest {
     assertTrue(lineReader.isCurrentLine());
     assertEquals(" 1 330 1 W IWGSC_CSS_6DL_contig_209593 1 330 -", lineReader.getCurrentLine());
     assertFalse(lineReader.isNextLine());
-    assertEquals(null, lineReader.getNextLine());
-    assertEquals(null, lineReader.getNextTag());
+    assertNull(lineReader.getNextLine());
+    assertNull(lineReader.getNextTag());
     assertEquals("IWGSC_CSS_6DL_scaff_3330717", lineReader.getActiveTag());
     assertEquals("IWGSC_CSS_6DL_scaff_3330717", lineReader.getCurrentTag());
     assertFalse(lineReader.isNextTag());

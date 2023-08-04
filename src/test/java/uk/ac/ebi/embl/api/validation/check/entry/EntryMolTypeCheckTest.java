@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -72,7 +71,7 @@ public class EntryMolTypeCheckTest {
   public void testCheck_BadMolType() {
     entry.getSequence().setMoleculeType("david");
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("EntryMolTypeCheck", Severity.ERROR));
   }
 
@@ -87,7 +86,7 @@ public class EntryMolTypeCheckTest {
   public void testCheck_Message() {
     entry.getSequence().setMoleculeType("david");
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("EntryMolTypeCheck", Severity.ERROR));
     assertEquals(
         "The mol_type value \"david\" is not permitted.",

@@ -45,39 +45,39 @@ public class SubmissionTest {
 
   @Test
   public void testEquals() {
-    assertTrue(submission.equals(submission));
-    assertTrue(submission.equals(new Submission()));
+    assertEquals(submission, submission);
+    assertEquals(submission, new Submission());
     Submission submission2 = new Submission();
     submission.setTitle("title");
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.setTitle("title");
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
     submission.setConsortium("consortium");
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.setConsortium("consortium");
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
     submission.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
     submission.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
     submission.setSubmitterAddress("submitterAddress");
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.setSubmitterAddress("submitterAddress");
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
     submission.setDay(new Date());
-    assertFalse(submission.equals(submission2));
+    assertNotEquals(submission, submission2);
     submission2.setDay(new Date());
-    assertTrue(submission.equals(submission2));
+    assertEquals(submission, submission2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(submission.equals(new String()));
-    assertFalse(submission.equals(null));
+    assertNotEquals("", submission);
+    assertNotEquals(null, submission);
   }
 
   @Test
@@ -88,33 +88,33 @@ public class SubmissionTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(submission.compareTo(submission) == 0);
-    assertTrue(submission.compareTo(new Submission()) == 0);
+    assertEquals(0, submission.compareTo(submission));
+    assertEquals(0, submission.compareTo(new Submission()));
     Submission submission2 = new Submission();
     submission.setTitle("title");
     // null < not null
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.setTitle("title");
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
     submission.setConsortium("consortium");
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.setConsortium("consortium");
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
     submission.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
     submission.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
     submission.setSubmitterAddress("submitterAddress");
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.setSubmitterAddress("submitterAddress");
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
     submission.setDay(new Date());
     assertTrue(submission.compareTo(submission2) > 0);
     submission2.setDay(new Date());
-    assertTrue(submission.compareTo(submission2) == 0);
+    assertEquals(0, submission.compareTo(submission2));
   }
 }

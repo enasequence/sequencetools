@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DataSet {
 
-  private List<DataRow> dataRows;
+  private final List<DataRow> dataRows;
 
   public DataSet() {
     this.dataRows = new ArrayList<DataRow>();

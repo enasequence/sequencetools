@@ -47,22 +47,22 @@ public class QualifierTest {
   @Test
   public void testEquals() {
     Qualifier qual1 = new Qualifier("x", "1");
-    assertTrue(qual1.equals(qual1));
+    assertEquals(qual1, qual1);
 
     Qualifier qual2 = new Qualifier("x", "1");
-    assertTrue(qual1.equals(qual2));
-    assertTrue(qual2.equals(qual1));
+    assertEquals(qual1, qual2);
+    assertEquals(qual2, qual1);
 
-    assertFalse(qual1.equals(new Qualifier(null)));
-    assertFalse(qual1.equals(new Qualifier("x")));
-    assertFalse(qual1.equals(new Qualifier("X", "1")));
-    assertFalse(qual1.equals(new Qualifier("y", "1")));
-    assertFalse(qual1.equals(new Qualifier("x", "2")));
+    assertNotEquals(qual1, new Qualifier(null));
+    assertNotEquals(qual1, new Qualifier("x"));
+    assertNotEquals(qual1, new Qualifier("X", "1"));
+    assertNotEquals(qual1, new Qualifier("y", "1"));
+    assertNotEquals(qual1, new Qualifier("x", "2"));
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new Qualifier(null).equals(new String()));
+    assertNotEquals("", new Qualifier(null));
   }
 
   @Test

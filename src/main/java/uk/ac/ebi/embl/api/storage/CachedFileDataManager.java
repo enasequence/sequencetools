@@ -17,8 +17,8 @@ import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 
 public class CachedFileDataManager implements DataManager {
 
-  private Map<String, DataSet> dataSetCache;
-  private TSVReader reader = new TSVReader();
+  private final Map<String, DataSet> dataSetCache;
+  private final TSVReader reader = new TSVReader();
 
   public CachedFileDataManager() {
     this.dataSetCache = new HashMap<String, DataSet>();

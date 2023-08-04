@@ -36,8 +36,8 @@ public class ThesisMatcher extends FlatFileMatcher {
               + "(.+)?$" // institute
           );
 
-  private static int GROUP_YEAR = 1;
-  private static int GROUP_INSTITUTE = 2;
+  private static final int GROUP_YEAR = 1;
+  private static final int GROUP_INSTITUTE = 2;
 
   public Thesis getThesis(Publication publication) {
     Thesis thesis = null;

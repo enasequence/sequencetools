@@ -36,8 +36,8 @@ public class COReaderTest extends EmblReaderTest {
     RemoteRange remoteRange = (RemoteRange) contigs.get(0);
     assertEquals("AL358912", remoteRange.getAccession());
     assertEquals(Integer.valueOf(1), remoteRange.getVersion());
-    assertEquals(new Long(1), remoteRange.getBeginPosition());
-    assertEquals(new Long(39187), remoteRange.getEndPosition());
+    assertEquals(Long.valueOf(1), remoteRange.getBeginPosition());
+    assertEquals(Long.valueOf(39187), remoteRange.getEndPosition());
     Gap gap = (Gap) contigs.get(1);
     assertTrue(gap.isUnknownLength());
     gap = (Gap) contigs.get(2);
@@ -47,8 +47,8 @@ public class COReaderTest extends EmblReaderTest {
     assertTrue(remoteRange.isComplement());
     assertEquals("AAOX01000077", remoteRange.getAccession());
     assertEquals(Integer.valueOf(1), remoteRange.getVersion());
-    assertEquals(new Long(1), remoteRange.getBeginPosition());
-    assertEquals(new Long(2879), remoteRange.getEndPosition());
+    assertEquals(Long.valueOf(1), remoteRange.getBeginPosition());
+    assertEquals(Long.valueOf(2879), remoteRange.getEndPosition());
   }
 
   public void testRead_Origin() throws IOException {

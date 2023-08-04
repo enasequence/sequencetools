@@ -15,8 +15,8 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class WebinSampleRetrievalService implements SampleRetrievalService {
 
-  private String webinRestUri;
-  private String biosamplesUri;
+  private final String webinRestUri;
+  private final String biosamplesUri;
   private final String webinAuthToken;
   private final String biosamplesWebinAuthToken;
 

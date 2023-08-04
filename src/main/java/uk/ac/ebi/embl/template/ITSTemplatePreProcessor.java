@@ -71,7 +71,7 @@ public class ITSTemplatePreProcessor implements TemplatePreProcessor {
       allTokensFalse = false;
     }
     if (!builder.toString().isEmpty())
-      variablesMap.addToken("PP_NOTES", "sequence contains " + builder.toString());
+      variablesMap.addToken("PP_NOTES", "sequence contains " + builder);
     /** Add error if none of the ITS tokens are selected */
     if (allTokensFalse) {
       ValidationMessage<Origin> message =

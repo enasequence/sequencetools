@@ -47,7 +47,7 @@ public class CdsTranslator {
   private Severity severity = null;
   private boolean acceptTranslation = false;
   private Translator translator;
-  private EmblEntryValidationPlanProperty planProperty;
+  private final EmblEntryValidationPlanProperty planProperty;
 
   public CdsTranslator(EmblEntryValidationPlanProperty planProperty) {
     this.planProperty = planProperty;

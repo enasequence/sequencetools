@@ -32,8 +32,8 @@ public class EmblArticleIssueMatcher extends FlatFileMatcher {
               "(\\s*\\([^\\(\\)]+\\)\\s*)?" // issue
           );
 
-  private static int GROUP_JOURNAL_VOLUME = 1;
-  private static int GROUP_ISSUE = 2;
+  private static final int GROUP_JOURNAL_VOLUME = 1;
+  private static final int GROUP_ISSUE = 2;
 
   public String getJournal() {
     // Assume that the last token is the volume. This is not

@@ -19,11 +19,11 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
  * use File | Settings | File Templates.
  */
 public interface CompoundLocationQualifier {
-  public boolean setLocations(CompoundLocation<Location> location) throws ValidationException;
+  boolean setLocations(CompoundLocation<Location> location) throws ValidationException;
 
-  public CompoundLocation<Location> getLocations() throws ValidationException;
+  CompoundLocation<Location> getLocations() throws ValidationException;
 
-  public String getName();
+  String getName();
 
-  public String getValue();
+  String getValue();
 }

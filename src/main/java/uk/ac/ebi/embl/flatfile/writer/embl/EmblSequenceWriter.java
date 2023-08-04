@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 /** Flat file writer for the sequence lines. */
 public class EmblSequenceWriter extends FlatFileWriter {
 
-  private Sequence sequence;
+  private final Sequence sequence;
 
   private long crc;
 

@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the thesis lines. */
 public class EmblThesisWriter extends FlatFileWriter {
 
-  private Thesis thesis;
+  private final Thesis thesis;
   private String header = EmblPadding.RL_PADDING;
 
   public EmblThesisWriter(Entry entry, Thesis thesis, WrapType wrapType) {

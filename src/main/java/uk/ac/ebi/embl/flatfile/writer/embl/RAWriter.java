@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RA lines. */
 public class RAWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public RAWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

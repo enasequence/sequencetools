@@ -10,13 +10,9 @@
  */
 package uk.ac.ebi.embl.api.entry.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
@@ -154,7 +150,7 @@ public class FeatureTest {
   public void testAddQualifiers() {
     QualifierFactory factory = new QualifierFactory();
     Qualifier qual = factory.createQualifier("q", "1");
-    assertTrue(feature.addQualifiers(Arrays.asList(qual)));
+    assertTrue(feature.addQualifiers(Collections.singletonList(qual)));
     assertEquals(qual, feature.getQualifiers().get(0));
   }
 
@@ -201,7 +197,7 @@ public class FeatureTest {
   @Test
   public void testAddXRefs() {
     XRef xRef = new EntryFactory().createXRef("db", "pa", "sa");
-    assertTrue(feature.addXRefs(Arrays.asList(xRef)));
+    assertTrue(feature.addXRefs(Collections.singletonList(xRef)));
     assertEquals(xRef, feature.getXRefs().get(0));
   }
 
@@ -235,61 +231,61 @@ public class FeatureTest {
 
   @Test
   public void testEquals() {
-    assertTrue(feature.equals(feature));
+    assertEquals(feature, feature);
 
     Feature feature1 = new Feature("x", true);
     Feature feature2 = new Feature("x", true);
-    assertTrue(feature1.equals(feature2));
-    assertTrue(feature2.equals(feature1));
+    assertEquals(feature1, feature2);
+    assertEquals(feature2, feature1);
 
-    assertFalse(feature1.equals(new Feature("y", true)));
-    assertFalse(feature1.equals(new Feature("x", false)));
+    assertNotEquals(feature1, new Feature("y", true));
+    assertNotEquals(feature1, new Feature("x", false));
 
     // qualifiers
     QualifierFactory factory = new QualifierFactory();
     feature1.addQualifier(factory.createQualifier("q"));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature2.addQualifier(factory.createQualifier("q"));
-    assertTrue(feature1.equals(feature2));
+    assertEquals(feature1, feature2);
 
     feature2.addQualifier(factory.createQualifier("q", "1"));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature1.addQualifier(factory.createQualifier("q", "1"));
-    assertTrue(feature1.equals(feature2));
+    assertEquals(feature1, feature2);
 
     // xrefs
     EntryFactory entryFactory = new EntryFactory();
     feature1.addXRef(entryFactory.createXRef("a", "b", "c"));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature2.addXRef(entryFactory.createXRef("a", "b", "c"));
-    assertTrue(feature1.equals(feature2));
+    assertEquals(feature1, feature2);
 
     feature2.addXRef(entryFactory.createXRef("x", "y", "z"));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature1.addXRef(entryFactory.createXRef("x", "y", "z"));
-    assertTrue(feature1.equals(feature2));
+    assertEquals(feature1, feature2);
 
     // locations
     LocationFactory locationFactory = new LocationFactory();
     feature1.getLocations().addLocation(locationFactory.createLocalBase(1L));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature2.getLocations().addLocation(locationFactory.createLocalBase(2L));
-    assertFalse(feature1.equals(feature2));
+    assertNotEquals(feature1, feature2);
 
     feature2.getLocations().getLocations().get(0).setBeginPosition(1L);
     feature2.getLocations().addLocation(locationFactory.createLocalBase(2L));
     feature1.getLocations().addLocation(locationFactory.createLocalBase(2L));
-    assertTrue(feature1.equals(feature2));
+    assertEquals(feature1, feature2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(feature.equals(new String()));
+    assertNotEquals("", feature);
   }
 
   @Test

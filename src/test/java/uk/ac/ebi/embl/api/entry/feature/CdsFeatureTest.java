@@ -30,8 +30,8 @@ public class CdsFeatureTest {
   private Entry entry;
   private CdsFeature cdsFeature;
   private SourceFeature sourceFeature;
-  private EntryFactory entryFactory = new EntryFactory();
-  private FeatureFactory featureFactory = new FeatureFactory();
+  private final EntryFactory entryFactory = new EntryFactory();
+  private final FeatureFactory featureFactory = new FeatureFactory();
 
   @Before
   public void setUp() throws Exception {

@@ -15,7 +15,7 @@ import java.util.Iterator;
 public class StringBuilderLineIterator implements Iterator<String> {
   private static final String newline = "\n";
 
-  private StringBuilder builder;
+  private final StringBuilder builder;
   private boolean hasNext;
   private int currentLocation;
   private int extractToIndex;

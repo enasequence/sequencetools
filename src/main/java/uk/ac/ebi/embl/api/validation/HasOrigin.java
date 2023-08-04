@@ -12,7 +12,7 @@ package uk.ac.ebi.embl.api.validation;
 
 public interface HasOrigin {
 
-  public Origin getOrigin();
+  Origin getOrigin();
 
-  public void setOrigin(Origin origin);
+  void setOrigin(Origin origin);
 }

@@ -20,7 +20,7 @@ public class RemoteBase extends Base implements RemoteLocation, Serializable {
 
   private static final long serialVersionUID = 8009304708321195033L;
 
-  private SequenceAccession sequenceAccession;
+  private final SequenceAccession sequenceAccession;
 
   protected RemoteBase(String accession, Integer version, Long position, boolean complement) {
     super(position, complement);

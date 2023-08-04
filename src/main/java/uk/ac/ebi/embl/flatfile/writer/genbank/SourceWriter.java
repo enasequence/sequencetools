@@ -29,7 +29,7 @@ public class SourceWriter extends FlatFileWriter {
     setWrapChar(WrapChar.WRAP_CHAR_SPACE);
   }
 
-  private SourceFeature sourceFeature;
+  private final SourceFeature sourceFeature;
 
   public boolean write(Writer writer) throws IOException {
     Taxon taxon = sourceFeature.getTaxon();

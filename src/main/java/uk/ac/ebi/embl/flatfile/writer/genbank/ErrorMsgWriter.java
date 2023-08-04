@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the ERROR_MSG lines. */
 public class ErrorMsgWriter extends FlatFileWriter {
 
-  private List<String> errorMsgs;
+  private final List<String> errorMsgs;
 
   public ErrorMsgWriter(Entry entry, WrapType wrapType, List<String> errorMsgList) {
     super(entry, wrapType);

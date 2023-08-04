@@ -26,7 +26,7 @@ public class PubmedReader extends SingleLineBlockReader {
 
   private static final Pattern PATTERN = Pattern.compile("^\\s*(\\d+)\\s*$");
 
-  private static int GROUP_PUBMED = 1;
+  private static final int GROUP_PUBMED = 1;
 
   @Override
   public String getTag() {

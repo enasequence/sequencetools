@@ -71,7 +71,8 @@ public class ReferencePositionFixTest {
   public void testCheck_RPgreaterThanSequence() {
     ReferenceFactory referenceFactory = new ReferenceFactory();
     Reference reference = referenceFactory.createReference();
-    LocalRange location = (new LocationFactory()).createLocalRange(new Long(1), new Long(300));
+    LocalRange location =
+        (new LocationFactory()).createLocalRange(Long.valueOf(1), Long.valueOf(300));
     reference.getLocations().addLocation(location);
     entry.addReference(reference);
     ValidationResult validationResult = check.check(entry);
@@ -82,7 +83,8 @@ public class ReferencePositionFixTest {
   public void testCheck_RPlessThanOne() {
     ReferenceFactory referenceFactory = new ReferenceFactory();
     Reference reference = referenceFactory.createReference();
-    LocalRange location = (new LocationFactory()).createLocalRange(new Long(0), new Long(10));
+    LocalRange location =
+        (new LocationFactory()).createLocalRange(Long.valueOf(0), Long.valueOf(10));
     reference.getLocations().addLocation(location);
     entry.addReference(reference);
     ValidationResult validationResult = check.check(entry);
@@ -93,7 +95,8 @@ public class ReferencePositionFixTest {
   public void testCheck_RPoutOfRange() {
     ReferenceFactory referenceFactory = new ReferenceFactory();
     Reference reference = referenceFactory.createReference();
-    LocalRange location = (new LocationFactory()).createLocalRange(new Long(0), new Long(400));
+    LocalRange location =
+        (new LocationFactory()).createLocalRange(Long.valueOf(0), Long.valueOf(400));
     reference.getLocations().addLocation(location);
     entry.addReference(reference);
     ValidationResult validationResult = check.check(entry);
@@ -104,7 +107,8 @@ public class ReferencePositionFixTest {
   public void testCheck_RPinRange() {
     ReferenceFactory referenceFactory = new ReferenceFactory();
     Reference reference = referenceFactory.createReference();
-    LocalRange location = (new LocationFactory()).createLocalRange(new Long(1), new Long(10));
+    LocalRange location =
+        (new LocationFactory()).createLocalRange(Long.valueOf(1), Long.valueOf(10));
     reference.getLocations().addLocation(location);
     entry.addReference(reference);
     ValidationResult validationResult = check.check(entry);

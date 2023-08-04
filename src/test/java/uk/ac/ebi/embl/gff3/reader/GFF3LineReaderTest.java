@@ -25,17 +25,17 @@ public class GFF3LineReaderTest extends GFF3ReaderTest {
         "SJC_S000020\texonhunter\tdavid\t476254\t477153\t123.34\t+\t0\tID=Sjp_0006480;Name=Sjp_0006480;Alias=Sjc_0006480");
     ValidationResult validationResult = new GFF3LineReader(lineReader).read(entry);
     assertTrue(validationResult.isValid());
-    assertTrue(entry.getRecords().size() == 1);
-    assertTrue(entry.getRecords().get(0).getSequenceID().equals("SJC_S000020"));
-    assertTrue(entry.getRecords().get(0).getSource().equals("exonhunter"));
-    assertTrue(entry.getRecords().get(0).getType().equals("david"));
-    assertTrue(entry.getRecords().get(0).getStart() == 476254);
-    assertTrue(entry.getRecords().get(0).getEnd() == 477153);
-    assertTrue(entry.getRecords().get(0).getPhase() == 0);
-    assertTrue(entry.getRecords().get(0).getScore() == 123.34);
-    assertTrue(entry.getRecords().get(0).getStrand() == 1);
-    assertTrue(entry.getRecords().get(0).getAttributes().size() == 3);
-    assertTrue(entry.getRecords().get(0).getAttributes().get("ID").equals("Sjp_0006480"));
+    assertEquals(1, entry.getRecords().size());
+    assertEquals("SJC_S000020", entry.getRecords().get(0).getSequenceID());
+    assertEquals("exonhunter", entry.getRecords().get(0).getSource());
+    assertEquals("david", entry.getRecords().get(0).getType());
+    assertEquals(476254, entry.getRecords().get(0).getStart());
+    assertEquals(477153, entry.getRecords().get(0).getEnd());
+    assertEquals(0, entry.getRecords().get(0).getPhase());
+    assertEquals(123.34, entry.getRecords().get(0).getScore());
+    assertEquals(1, entry.getRecords().get(0).getStrand());
+    assertEquals(3, entry.getRecords().get(0).getAttributes().size());
+    assertEquals("Sjp_0006480", entry.getRecords().get(0).getAttributes().get("ID"));
   }
 
   public void testWrongColumnNumber() throws IOException {
@@ -66,7 +66,7 @@ public class GFF3LineReaderTest extends GFF3ReaderTest {
     initLineReader(
         "SJC_S000020\texonhunter\tdavid\tnot a number\tnot a number\tnot a number\t+\tnot a number\tID=Sjp_0006480;Name=Sjp_0006480;Alias=Sjc_0006480");
     ValidationResult validationResult = new GFF3LineReader(lineReader).read(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("GFF.3", Severity.ERROR));
     assertEquals(1, validationResult.count("GFF.4", Severity.ERROR));
     assertEquals(1, validationResult.count("GFF.5", Severity.ERROR));
@@ -77,7 +77,7 @@ public class GFF3LineReaderTest extends GFF3ReaderTest {
     initLineReader(
         "SJC_S000020\texonhunter\tdavid\t476254\t477153\t123.34\tBAD_STRAND\t0\tID=Sjp_0006480;Name=Sjp_0006480;Alias=Sjc_0006480");
     ValidationResult validationResult = new GFF3LineReader(lineReader).read(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("GFF.6", Severity.ERROR));
   }
 
@@ -85,7 +85,7 @@ public class GFF3LineReaderTest extends GFF3ReaderTest {
     initLineReader(
         "SJC_S000020\texonhunter\tCDS\t476254\t477153\t123.34\t+\t.\tID=Sjp_0006480;Name=Sjp_0006480;Alias=Sjc_0006480");
     ValidationResult validationResult = new GFF3LineReader(lineReader).read(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("GFF.9", Severity.ERROR));
   }
 }

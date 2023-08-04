@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.reference.Person;
 /** Flat file writer for the book editor lines. */
 public class BookEditorWriter extends FlatFileWriter {
 
-  private Book book;
+  private final Book book;
 
   public BookEditorWriter(
       Entry entry, Book book, WrapType wrapType, String firstLineHeader, String header) {
@@ -30,8 +30,8 @@ public class BookEditorWriter extends FlatFileWriter {
     this.header = header;
   }
 
-  private String firstLineHeader;
-  private String header;
+  private final String firstLineHeader;
+  private final String header;
 
   public boolean write(Writer writer) throws IOException {
     StringBuilder block = new StringBuilder();

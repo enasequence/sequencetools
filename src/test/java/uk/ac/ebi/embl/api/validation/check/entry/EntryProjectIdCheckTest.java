@@ -13,8 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -108,7 +107,7 @@ public class EntryProjectIdCheckTest {
     expect(taxonomyClient.isChildOf("Bacteria", "Viruses")).andReturn(Boolean.FALSE);
     replay(taxonomyClient);
     ValidationResult result = check1.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test
@@ -139,7 +138,7 @@ public class EntryProjectIdCheckTest {
     Feature source = new FeatureFactory().createFeature(Feature.SOURCE_FEATURE_NAME);
     entry.addFeature(source);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck2", Severity.ERROR));
   }
 
@@ -201,7 +200,7 @@ public class EntryProjectIdCheckTest {
     // sequence.setLength(100);
     entry.setSequence(sequence);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck3", Severity.ERROR));
   }
 
@@ -214,7 +213,7 @@ public class EntryProjectIdCheckTest {
     entry.setDescription(new Text("  Clostridium phage phiSM101, complete genome."));
     entry.addKeyword(new Text("complete genome"));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck4", Severity.ERROR));
   }
 
@@ -226,7 +225,7 @@ public class EntryProjectIdCheckTest {
     entry.setSequence(sequence);
     entry.addKeyword(new Text("complete genome"));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck4", Severity.ERROR));
   }
 
@@ -239,7 +238,7 @@ public class EntryProjectIdCheckTest {
     entry.setDescription(new Text("completegenome"));
     entry.addKeyword(new Text("complete genome"));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck4", Severity.ERROR));
   }
 
@@ -251,7 +250,7 @@ public class EntryProjectIdCheckTest {
     // sequence.setLength(100);
     entry.setSequence(sequence);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck5", Severity.ERROR));
   }
 
@@ -274,7 +273,7 @@ public class EntryProjectIdCheckTest {
     entry.setSequence(sequence);
     entry.addFeature(feature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("EntryProjectIdCheck7", Severity.ERROR));
   }
 

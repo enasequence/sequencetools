@@ -12,7 +12,7 @@ package uk.ac.ebi.embl.api.entry.reference;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class PatentTest {
 
   @Test(expected = UnsupportedOperationException.class)
   public void testGetApplicants_UnmodifiableList() {
-    patent.getApplicants().add(new String());
+    patent.getApplicants().add("");
   }
 
   @Test
@@ -67,7 +67,7 @@ public class PatentTest {
 
   @Test
   public void testAddApplicants() {
-    assertTrue(patent.addApplicants(Arrays.asList("applicant")));
+    assertTrue(patent.addApplicants(Collections.singletonList("applicant")));
     assertEquals("applicant", patent.getApplicants().get(0));
   }
 
@@ -98,55 +98,55 @@ public class PatentTest {
 
   @Test
   public void testEquals() {
-    assertTrue(patent.equals(patent));
-    assertTrue(patent.equals(new Patent()));
+    assertEquals(patent, patent);
+    assertEquals(patent, new Patent());
     Patent patent2 = new Patent();
     patent.setTitle("title");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setTitle("title");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.setConsortium("consortium");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setConsortium("consortium");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     Date date = new Date();
     patent.setPatentOffice("patentOffice");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setPatentOffice("patentOffice");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.setPatentNumber("patentNumber");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setPatentNumber("patentNumber");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.setPatentType("patentType");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setPatentType("patentType");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.setSequenceNumber(1);
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setSequenceNumber(1);
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.setDay(date);
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.setDay(date);
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
     patent.addApplicant("applicant");
-    assertFalse(patent.equals(patent2));
+    assertNotEquals(patent, patent2);
     patent2.addApplicant("applicant");
-    assertTrue(patent.equals(patent2));
+    assertEquals(patent, patent2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(patent.equals(new String()));
+    assertNotEquals("", patent);
   }
 
   @Test
@@ -156,50 +156,50 @@ public class PatentTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(patent.compareTo(patent) == 0);
-    assertTrue(patent.compareTo(new Patent()) == 0);
+    assertEquals(0, patent.compareTo(patent));
+    assertEquals(0, patent.compareTo(new Patent()));
     Patent patent2 = new Patent();
     patent.setTitle("title");
     // null < not null
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setTitle("title");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.setConsortium("consortium");
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setConsortium("consortium");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     Date date = new Date();
     patent.setPatentOffice("patentOffice");
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setPatentOffice("patentOffice");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.setPatentNumber("patentNumber");
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setPatentNumber("patentNumber");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.setPatentType("patentType");
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setPatentType("patentType");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.setSequenceNumber(1);
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setSequenceNumber(1);
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.setDay(date);
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.setDay(date);
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
     patent.addApplicant("applicant");
     assertTrue(patent.compareTo(patent2) > 0);
     patent2.addApplicant("applicant");
-    assertTrue(patent.compareTo(patent2) == 0);
+    assertEquals(0, patent.compareTo(patent2));
   }
 }

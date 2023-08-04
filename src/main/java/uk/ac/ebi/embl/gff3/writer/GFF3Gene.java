@@ -14,8 +14,8 @@ public class GFF3Gene {
 
   private Long beginPosition;
   private Long endPosition;
-  private String geneName;
-  private String locusTag;
+  private final String geneName;
+  private final String locusTag;
 
   public GFF3Gene(Long beginPosition, Long endPosition, String geneName, String locusTag) {
     this.beginPosition = beginPosition;

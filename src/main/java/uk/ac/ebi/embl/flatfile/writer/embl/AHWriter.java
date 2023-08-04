@@ -46,12 +46,10 @@ public class AHWriter extends FlatFileWriter {
                     + "s%-"
                     + AssemblyWriter.PRIMARY_SPAN_COLUMN_WIDTH
                     + "s%s",
-                new Object[] {
-                  LOCAL_SPAN_HEADER,
-                  PRIMARY_IDENTIFIER_HEADER,
-                  PRIMARY_SPAN_HEADER,
-                  COMPLEMENT_HEADER
-                })
+                LOCAL_SPAN_HEADER,
+                PRIMARY_IDENTIFIER_HEADER,
+                PRIMARY_SPAN_HEADER,
+                COMPLEMENT_HEADER)
             .toString();
     writer.write(line);
     writer.write("\n");

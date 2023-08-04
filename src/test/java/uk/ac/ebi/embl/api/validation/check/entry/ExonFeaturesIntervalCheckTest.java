@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -76,7 +77,7 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withSingleExonFeatureRemoteLocation() {
     Feature feature = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    RemoteRange location = locationFactory.createRemoteRange("A00001", 1, 10l, 20l);
+    RemoteRange location = locationFactory.createRemoteRange("A00001", 1, 10L, 20L);
     CompoundLocation<Location> join = new Join<Location>();
     join.addLocation(location);
     feature.setLocations(join);
@@ -88,12 +89,12 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withExonFeaturesnotAdjacent() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location2 = locationFactory.createLocalRange(30l, 33l);
+    LocalRange location2 = locationFactory.createLocalRange(30L, 33L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -106,13 +107,13 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withExonFeaturesnotAdjacentwithPartialLocation() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     feature1.getLocations().setRightPartial(true);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location2 = locationFactory.createLocalRange(30l, 33l);
+    LocalRange location2 = locationFactory.createLocalRange(30L, 33L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -126,13 +127,13 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withExonFeaturesnotAdjacentwithRemoteLocation() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    RemoteRange location1 = locationFactory.createRemoteRange("A00001", 1, 10l, 20l);
+    RemoteRange location1 = locationFactory.createRemoteRange("A00001", 1, 10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    RemoteRange location2 = locationFactory.createRemoteRange("A00001", 1, 24l, 26l);
+    RemoteRange location2 = locationFactory.createRemoteRange("A00001", 1, 24L, 26L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -145,19 +146,19 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withExonFeaturesAdjacent() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test
@@ -166,7 +167,7 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
@@ -174,7 +175,7 @@ public class ExonFeaturesIntervalCheckTest {
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
 
     feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -190,7 +191,7 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
@@ -198,14 +199,14 @@ public class ExonFeaturesIntervalCheckTest {
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
 
     feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gett"));
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test // invalid
@@ -214,7 +215,7 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
@@ -222,14 +223,14 @@ public class ExonFeaturesIntervalCheckTest {
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
     feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test // invalid
@@ -238,7 +239,7 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
@@ -246,14 +247,14 @@ public class ExonFeaturesIntervalCheckTest {
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
 
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test // valid
@@ -262,7 +263,7 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "ghg"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
@@ -270,7 +271,7 @@ public class ExonFeaturesIntervalCheckTest {
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
     feature2.addQualifier(qualFact.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "abcd"));
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -286,14 +287,14 @@ public class ExonFeaturesIntervalCheckTest {
 
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature1.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "ghg"));
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
 
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     feature2.addQualifier(qualFact.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "gett"));
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -306,13 +307,13 @@ public class ExonFeaturesIntervalCheckTest {
   @Test
   public void testCheck_withExonFeaturesAdjacentwithPartialLocation() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location1 = locationFactory.createLocalRange(10l, 20l);
+    LocalRange location1 = locationFactory.createLocalRange(10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     feature1.getLocations().setRightPartial(true);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    LocalRange location2 = locationFactory.createLocalRange(21l, 23l);
+    LocalRange location2 = locationFactory.createLocalRange(21L, 23L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);
@@ -320,19 +321,19 @@ public class ExonFeaturesIntervalCheckTest {
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
   }
 
   @Test
   public void testCheck_withExonFeaturesAdjacentwithRemoteLocation() {
     Feature feature1 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    RemoteRange location1 = locationFactory.createRemoteRange("A00001", 1, 10l, 20l);
+    RemoteRange location1 = locationFactory.createRemoteRange("A00001", 1, 10L, 20L);
     CompoundLocation<Location> join1 = new Join<Location>();
     join1.addLocation(location1);
     feature1.setLocations(join1);
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
-    RemoteRange location2 = locationFactory.createRemoteRange("A00001", 1, 24l, 26l);
+    RemoteRange location2 = locationFactory.createRemoteRange("A00001", 1, 24L, 26L);
     CompoundLocation<Location> join2 = new Join<Location>();
     join2.addLocation(location2);
     feature2.setLocations(join2);

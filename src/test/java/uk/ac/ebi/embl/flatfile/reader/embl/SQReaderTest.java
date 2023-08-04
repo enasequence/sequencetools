@@ -32,11 +32,11 @@ public class SQReaderTest extends EmblReaderTest {
     initLineReader("SQ   Sequence 315242 BP; 87432 A; 72431 C; 71123 G; 84256 T; 0 other;");
     ValidationResult result = (new SQReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));
-    assertEquals(entry.getSequenceCoverage().get("BP").longValue(), 315242l);
-    assertEquals(entry.getSequenceCoverage().get("A").longValue(), 87432l);
-    assertEquals(entry.getSequenceCoverage().get("C").longValue(), 72431l);
-    assertEquals(entry.getSequenceCoverage().get("G").longValue(), 71123l);
-    assertEquals(entry.getSequenceCoverage().get("T").longValue(), 84256l);
-    assertEquals(entry.getSequenceCoverage().get("other").longValue(), 0l);
+    assertEquals(entry.getSequenceCoverage().get("BP").longValue(), 315242L);
+    assertEquals(entry.getSequenceCoverage().get("A").longValue(), 87432L);
+    assertEquals(entry.getSequenceCoverage().get("C").longValue(), 72431L);
+    assertEquals(entry.getSequenceCoverage().get("G").longValue(), 71123L);
+    assertEquals(entry.getSequenceCoverage().get("T").longValue(), 84256L);
+    assertEquals(entry.getSequenceCoverage().get("other").longValue(), 0L);
   }
 }

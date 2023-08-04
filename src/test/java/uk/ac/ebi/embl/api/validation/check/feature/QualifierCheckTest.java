@@ -171,7 +171,7 @@ public class QualifierCheckTest {
   public void testCheck_NoMandatoryFeatureValue() {
     feature.setSingleQualifier("collection_date");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   @Test
@@ -212,8 +212,8 @@ public class QualifierCheckTest {
     feature.setSingleQualifier("collection_date");
     feature.setSingleQualifierValue("collection_date", "david");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
-    assertTrue(validationResult.getMessages("QualifierCheck-3").size() == 1);
+    assertFalse(validationResult.isValid());
+    assertEquals(1, validationResult.getMessages("QualifierCheck-3").size());
   }
 
   @Test
@@ -221,10 +221,10 @@ public class QualifierCheckTest {
     feature.setSingleQualifier("collection_date");
     feature.setSingleQualifierValue("collection_date", "21-Bod-1952");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     Collection<ValidationMessage<Origin>> messages =
         validationResult.getMessages("QualifierCheck-4");
-    assertTrue(messages.size() == 1);
+    assertEquals(1, messages.size());
   }
 
   @Test
@@ -240,18 +240,18 @@ public class QualifierCheckTest {
     feature.setSingleQualifier("collection_date");
     feature.setSingleQualifierValue("collection_date", "21-OCT-1952"); // upper-case month group
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     Collection<ValidationMessage<Origin>> messages =
         validationResult.getMessages("QualifierCheck-4");
-    assertTrue(messages.size() == 1);
+    assertEquals(1, messages.size());
   }
 
   @Test
   public void testCheck_mandatoryQualifier() {
     feature.setSingleQualifier("collection_date");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
-    assertTrue(validationResult.getMessages("QualifierCheck-2").size() == 1);
+    assertFalse(validationResult.isValid());
+    assertEquals(1, validationResult.getMessages("QualifierCheck-2").size());
   }
 
   @Test
@@ -267,8 +267,8 @@ public class QualifierCheckTest {
     feature.setSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME);
     feature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "453534.54656 N 6.13 E");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
-    assertTrue(validationResult.getMessages("QualifierCheck-7").size() == 1);
+    assertFalse(validationResult.isValid());
+    assertEquals(1, validationResult.getMessages("QualifierCheck-7").size());
   }
 
   @Test
@@ -277,8 +277,8 @@ public class QualifierCheckTest {
     feature.setSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME);
     feature.setSingleQualifierValue(Qualifier.LAT_LON_QUALIFIER_NAME, "6.13 N 453534.54656 E");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
-    assertTrue(validationResult.getMessages("QualifierCheck-8").size() == 1);
+    assertFalse(validationResult.isValid());
+    assertEquals(1, validationResult.getMessages("QualifierCheck-8").size());
   }
 
   @Test
@@ -305,8 +305,8 @@ public class QualifierCheckTest {
     feature.setSingleQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME);
     feature.setSingleQualifierValue(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "CBI84061.0");
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
-    assertTrue(validationResult.getMessages("QualifierCheck-9").size() == 1);
+    assertFalse(validationResult.isValid());
+    assertEquals(1, validationResult.getMessages("QualifierCheck-9").size());
   }
 
   @Test
@@ -331,7 +331,7 @@ public class QualifierCheckTest {
     assertFalse(validationResult.isValid());
     Collection<ValidationMessage<Origin>> messages =
         validationResult.getMessages("QualifierCheck-4");
-    assertTrue(messages.size() == 1);
+    assertEquals(1, messages.size());
   }
 
   @Test

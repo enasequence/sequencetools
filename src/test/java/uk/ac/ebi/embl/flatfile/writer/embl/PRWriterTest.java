@@ -13,12 +13,13 @@ package uk.ac.ebi.embl.flatfile.writer.embl;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import uk.ac.ebi.embl.api.entry.Text;
 
 public class PRWriterTest extends EmblWriterTest {
 
   public void testWrite_OneProject() throws IOException {
-    entry.addProjectAccessions(Arrays.asList(new Text("17285")));
+    entry.addProjectAccessions(Collections.singletonList(new Text("17285")));
     StringWriter writer = new StringWriter();
     assertTrue(new PRWriter(entry, wrapType).write(writer));
     // System.out.print(writer.toString());

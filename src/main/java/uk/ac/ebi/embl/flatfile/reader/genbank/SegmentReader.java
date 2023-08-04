@@ -28,6 +28,6 @@ public class SegmentReader extends SingleLineBlockReader {
 
   @Override
   protected void read(String block) {
-    return; // ignore line
+    // ignore line
   }
 }

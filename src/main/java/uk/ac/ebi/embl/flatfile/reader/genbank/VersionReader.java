@@ -34,9 +34,9 @@ public class VersionReader extends SingleLineBlockReader {
               + // sequence version
               "(\\s+GI\\:\\d+)?.*$");
 
-  private static int GROUP_PRIMARY_ACCESSION = 1;
-  private static int GROUP_SEQUENCE_VERSION = 2;
-  private static int GROUP_GI_ACCESSION = 3;
+  private static final int GROUP_PRIMARY_ACCESSION = 1;
+  private static final int GROUP_SEQUENCE_VERSION = 2;
+  private static final int GROUP_GI_ACCESSION = 3;
 
   @Override
   public String getTag() {

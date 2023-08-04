@@ -61,11 +61,11 @@ public class GeneAssociatedwithFeatureFixTest {
   public void testCheck_NoGenes() {
     Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Order<Location> cdsFeatureLocation = new Order<Location>();
-    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     cdsFeature.setLocations(cdsFeatureLocation);
     Feature tRNAFeature = featureFactory.createFeature(Feature.tRNA_FEATURE_NAME);
     Order<Location> tRNAFeatureLocation = new Order<Location>();
-    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     cdsFeature.setLocations(tRNAFeatureLocation);
     entry.addFeature(cdsFeature);
     entry.addFeature(tRNAFeature);
@@ -78,7 +78,7 @@ public class GeneAssociatedwithFeatureFixTest {
   public void testCheck_NogeneAssociatedFeatures() {
     Feature geneFeature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
     Order<Location> geneFeatureLocation = new Order<Location>();
-    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     geneFeature.setLocations(geneFeatureLocation);
     entry.addFeature(geneFeature);
     ValidationResult result = check.check(entry);
@@ -91,17 +91,17 @@ public class GeneAssociatedwithFeatureFixTest {
 
     Feature geneFeature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
     Order<Location> geneFeatureLocation = new Order<Location>();
-    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     geneFeature.setLocations(geneFeatureLocation);
     entry.addFeature(geneFeature);
     Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Order<Location> cdsFeatureLocation = new Order<Location>();
-    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10l, 114l));
+    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(10L, 114L));
     cdsFeature.setLocations(cdsFeatureLocation);
     entry.addFeature(cdsFeature);
     Feature tRNAFeature = featureFactory.createFeature(Feature.tRNA_FEATURE_NAME);
     Order<Location> tRNAFeatureLocation = new Order<Location>();
-    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(10l, 114l));
+    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(10L, 114L));
     tRNAFeature.setLocations(tRNAFeatureLocation);
     entry.addFeature(tRNAFeature);
     ValidationResult result = check.check(entry);
@@ -114,17 +114,17 @@ public class GeneAssociatedwithFeatureFixTest {
 
     Feature geneFeature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
     Order<Location> geneFeatureLocation = new Order<Location>();
-    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     geneFeature.setLocations(geneFeatureLocation);
     entry.addFeature(geneFeature);
     Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Order<Location> cdsFeatureLocation = new Order<Location>();
-    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    cdsFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     cdsFeature.setLocations(cdsFeatureLocation);
     entry.addFeature(cdsFeature);
     Feature tRNAFeature = featureFactory.createFeature(Feature.tRNA_FEATURE_NAME);
     Order<Location> tRNAFeatureLocation = new Order<Location>();
-    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     tRNAFeature.setLocations(tRNAFeatureLocation);
     entry.addFeature(tRNAFeature);
     ValidationResult result = check.check(entry);
@@ -138,12 +138,12 @@ public class GeneAssociatedwithFeatureFixTest {
 
     Feature geneFeature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
     Order<Location> geneFeatureLocation = new Order<Location>();
-    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    geneFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     geneFeature.setLocations(geneFeatureLocation);
     entry.addFeature(geneFeature);
     Feature tRNAFeature = featureFactory.createFeature(Feature.tRNA_FEATURE_NAME);
     Order<Location> tRNAFeatureLocation = new Order<Location>();
-    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 114l));
+    tRNAFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 114L));
     tRNAFeature.setLocations(tRNAFeatureLocation);
     entry.addFeature(tRNAFeature);
     ValidationResult result = check.check(entry);

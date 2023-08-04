@@ -10,11 +10,7 @@
  */
 package uk.ac.ebi.embl.api.entry.location;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +23,8 @@ public class RemoteBaseTest {
   @Test
   public void testBase() {
     Base base = new RemoteBase("x", 1, 2L);
-    assertEquals(new Long(2), base.getBeginPosition());
-    assertEquals(new Long(2), base.getEndPosition());
+    assertEquals(Long.valueOf(2), base.getBeginPosition());
+    assertEquals(Long.valueOf(2), base.getEndPosition());
     assertEquals(1, base.getLength());
     assertFalse(base.isComplement());
   }
@@ -64,8 +60,8 @@ public class RemoteBaseTest {
     assertNull(base.getBeginPosition());
     assertNull(base.getEndPosition());
     base.setBeginPosition(2L);
-    assertEquals(new Long(2), base.getBeginPosition());
-    assertEquals(new Long(2), base.getEndPosition());
+    assertEquals(Long.valueOf(2), base.getBeginPosition());
+    assertEquals(Long.valueOf(2), base.getEndPosition());
     assertEquals(1, base.getLength());
   }
 
@@ -75,8 +71,8 @@ public class RemoteBaseTest {
     assertNull(base.getBeginPosition());
     assertNull(base.getEndPosition());
     base.setEndPosition(2L);
-    assertEquals(new Long(2), base.getBeginPosition());
-    assertEquals(new Long(2), base.getEndPosition());
+    assertEquals(Long.valueOf(2), base.getBeginPosition());
+    assertEquals(Long.valueOf(2), base.getEndPosition());
     assertEquals(1, base.getLength());
   }
 
@@ -87,8 +83,8 @@ public class RemoteBaseTest {
     assertNull(base.getEndPosition());
     base.setBeginPosition(2L);
     base.setEndPosition(2L);
-    assertEquals(new Long(2), base.getBeginPosition());
-    assertEquals(new Long(2), base.getEndPosition());
+    assertEquals(Long.valueOf(2), base.getBeginPosition());
+    assertEquals(Long.valueOf(2), base.getEndPosition());
     assertEquals(1, base.getLength());
   }
 
@@ -106,21 +102,21 @@ public class RemoteBaseTest {
   @Test
   public void testEquals() {
     Base location1 = new RemoteBase("x", 1, 2L);
-    assertTrue(location1.equals(location1));
+    assertEquals(location1, location1);
     Base location2 = new RemoteBase("x", 1, 2L);
-    assertTrue(location1.equals(location2));
-    assertTrue(location2.equals(location1));
+    assertEquals(location1, location2);
+    assertEquals(location2, location1);
     Base location3 = new RemoteBase("x", 1, 2L);
-    assertTrue(location1.equals(location3));
-    assertTrue(location3.equals(location1));
-    assertFalse(location1.equals(new RemoteBase("y", 1, 2L)));
-    assertFalse(location1.equals(new RemoteBase("x", 2, 2L)));
-    assertFalse(location1.equals(new RemoteBase("x", 1, 4L)));
-    assertFalse(location1.equals(new RemoteBase("x", 1, 2L, true)));
+    assertEquals(location1, location3);
+    assertEquals(location3, location1);
+    assertNotEquals(location1, new RemoteBase("y", 1, 2L));
+    assertNotEquals(location1, new RemoteBase("x", 2, 2L));
+    assertNotEquals(location1, new RemoteBase("x", 1, 4L));
+    assertNotEquals(location1, new RemoteBase("x", 1, 2L, true));
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new RemoteBase("x", 1, 2L).equals(new String()));
+    assertNotEquals("", new RemoteBase("x", 1, 2L));
   }
 }

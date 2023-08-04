@@ -23,7 +23,7 @@ public class OrganelleDETemplatePreProcessor implements TemplatePreProcessor {
   public static final String ORGANELLE_TOKEN = "ORGANELLE";
   protected static final String MISSING_ORGANELLE_TOKEN_MESSAGE = "missing organelle token";
   protected static final String INVALID_ORGANELLE_TOKEN_MESSAGE = "invalid organelle token";
-  private Map<String, String> tokenMap = new HashMap<String, String>();
+  private final Map<String, String> tokenMap = new HashMap<String, String>();
 
   public OrganelleDETemplatePreProcessor() {
     super();

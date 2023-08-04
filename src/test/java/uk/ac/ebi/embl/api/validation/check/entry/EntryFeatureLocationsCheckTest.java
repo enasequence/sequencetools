@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,9 +39,9 @@ public class EntryFeatureLocationsCheckTest {
     entry = entryFactory.createEntry();
 
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(15l, 25l));
-    locationJoin.addLocation(locationFactory.createLocalRange(30l, 40l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(15L, 25L));
+    locationJoin.addLocation(locationFactory.createLocalRange(30L, 40L));
     Feature feature = featureFactory.createFeature("1");
     feature.setLocations(locationJoin);
 
@@ -74,9 +73,9 @@ public class EntryFeatureLocationsCheckTest {
 
   @Test
   public void testCheckLocationTooLong() {
-    entry.getFeatures().get(0).getLocations().getLocations().get(2).setEndPosition(150l);
+    entry.getFeatures().get(0).getLocations().getLocations().get(2).setEndPosition(150L);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("EntryFeatureLocationCheck", Severity.ERROR));
   }
 

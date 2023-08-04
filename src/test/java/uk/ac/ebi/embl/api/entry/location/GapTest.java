@@ -22,19 +22,19 @@ public class GapTest {
 
   @Test
   public void testGap() {
-    new Gap(0l, false);
+    new Gap(0L, false);
   }
 
   @Test
   public void testGapLong() {
-    new Gap(10l, false);
+    new Gap(10L, false);
   }
 
   @Test
   public void testGetLength() {
-    assertEquals(Gap.DEFAULT_UNKNOWN_LENGTH, new Gap(0l, true).getLength());
-    assertEquals(10, new Gap(10l, false).getLength());
-    assertEquals(Gap.DEFAULT_UNKNOWN_LENGTH, new Gap(-10l, true).getLength());
+    assertEquals(Gap.DEFAULT_UNKNOWN_LENGTH, new Gap(0L, true).getLength());
+    assertEquals(10, new Gap(10L, false).getLength());
+    assertEquals(Gap.DEFAULT_UNKNOWN_LENGTH, new Gap(-10L, true).getLength());
   }
 
   @Test
@@ -42,60 +42,60 @@ public class GapTest {
     String _100N =
         "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
             + "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN";
-    assertEquals(_100N, new Gap(0l, true).getSequence());
-    assertEquals(_100N, new Gap(-10l, true).getSequence());
+    assertEquals(_100N, new Gap(0L, true).getSequence());
+    assertEquals(_100N, new Gap(-10L, true).getSequence());
     assertEquals("", new Gap(0, false).getSequence());
-    assertEquals("NNNNN", new Gap(5l, false).getSequence());
-    assertEquals(_100N, new Gap(100l, false).getSequence());
+    assertEquals("NNNNN", new Gap(5L, false).getSequence());
+    assertEquals(_100N, new Gap(100L, false).getSequence());
   }
 
   @Test
   public void testIsUnknownLength() {
-    assertTrue(new Gap(0l, true).isUnknownLength());
-    assertTrue(new Gap(-1l, true).isUnknownLength());
-    assertTrue(new Gap(10l, true).isUnknownLength());
+    assertTrue(new Gap(0L, true).isUnknownLength());
+    assertTrue(new Gap(-1L, true).isUnknownLength());
+    assertTrue(new Gap(10L, true).isUnknownLength());
 
-    assertFalse(new Gap(5l, false).isUnknownLength());
-    assertFalse(new Gap(100l, false).isUnknownLength());
+    assertFalse(new Gap(5L, false).isUnknownLength());
+    assertFalse(new Gap(100L, false).isUnknownLength());
   }
 
   @Test
   public void testSetUnknownLength() {
-    Gap gap = new Gap(0l, true);
+    Gap gap = new Gap(0L, true);
     assertTrue(gap.isUnknownLength());
     assertEquals(Gap.DEFAULT_UNKNOWN_LENGTH, gap.getLength());
 
-    gap = new Gap(10l, false);
+    gap = new Gap(10L, false);
     assertFalse(gap.isUnknownLength());
     assertEquals(10, gap.getLength());
   }
 
   @Test
   public void testHashCode() {
-    new Gap(0l, true).hashCode();
-    new Gap(10l, false).hashCode();
+    new Gap(0L, true).hashCode();
+    new Gap(10L, false).hashCode();
   }
 
   @Test
   public void testEquals() {
-    Gap gap = new Gap(0l, true);
-    assertTrue(gap.equals(gap));
-    assertTrue(gap.equals(new Gap(0l, true)));
-    assertTrue(gap.equals(new Gap(-1l, true)));
-    assertTrue(new Gap(10l, false).equals(new Gap(10l, false)));
+    Gap gap = new Gap(0L, true);
+    assertEquals(gap, gap);
+    assertEquals(gap, new Gap(0L, true));
+    assertEquals(gap, new Gap(-1L, true));
+    assertEquals(new Gap(10L, false), new Gap(10L, false));
 
-    assertFalse(gap.equals(new Gap(10l, false)));
-    assertFalse(new Gap(1l, false).equals(new Gap(10l, false)));
+    assertNotEquals(gap, new Gap(10L, false));
+    assertNotEquals(new Gap(1L, false), new Gap(10L, false));
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new Gap(0l, true).equals(new String()));
+    assertNotEquals("", new Gap(0L, true));
   }
 
   @Test
   public void testToString() {
-    new Gap(0l, true).toString();
-    new Gap(10l, false).toString();
+    new Gap(0L, true).toString();
+    new Gap(10L, false).toString();
   }
 }

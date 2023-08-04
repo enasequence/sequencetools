@@ -44,27 +44,27 @@ public class ReferenceTest {
 
   @Test
   public void testEquals() {
-    assertTrue(reference.equals(reference));
-    assertTrue(reference.equals(new Reference()));
+    assertEquals(reference, reference);
+    assertEquals(reference, new Reference());
     Reference reference2 = new Reference();
     reference.setReferenceNumber(1);
-    assertFalse(reference.equals(reference2));
+    assertNotEquals(reference, reference2);
     reference2.setReferenceNumber(1);
-    assertTrue(reference.equals(reference2));
+    assertEquals(reference, reference2);
     reference.setComment("comment");
-    assertFalse(reference.equals(reference2));
+    assertNotEquals(reference, reference2);
     reference2.setComment("comment");
-    assertTrue(reference.equals(reference2));
+    assertEquals(reference, reference2);
     Publication publication = new Publication();
     reference.setPublication(publication);
-    assertFalse(reference.equals(reference2));
+    assertNotEquals(reference, reference2);
     reference2.setPublication(publication);
-    assertTrue(reference.equals(reference2));
+    assertEquals(reference, reference2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(new Reference(null, null).equals(new String()));
+    assertNotEquals("", new Reference(null, null));
   }
 
   @Test
@@ -75,21 +75,21 @@ public class ReferenceTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(reference.compareTo(reference) == 0);
-    assertTrue(reference.compareTo(new Reference()) == 0);
+    assertEquals(0, reference.compareTo(reference));
+    assertEquals(0, reference.compareTo(new Reference()));
     Reference reference2 = new Reference();
     reference.setReferenceNumber(1);
     assertTrue(reference.compareTo(reference2) > 0);
     reference2.setReferenceNumber(1);
-    assertTrue(reference.compareTo(reference2) == 0);
+    assertEquals(0, reference.compareTo(reference2));
     reference.setComment("comment");
     assertTrue(reference.compareTo(reference2) > 0);
     reference2.setComment("comment");
-    assertTrue(reference.compareTo(reference2) == 0);
+    assertEquals(0, reference.compareTo(reference2));
     Publication publication = new Publication();
     reference.setPublication(publication);
     assertTrue(reference.compareTo(reference2) > 0);
     reference2.setPublication(publication);
-    assertTrue(reference.compareTo(reference2) == 0);
+    assertEquals(0, reference.compareTo(reference2));
   }
 }

@@ -34,16 +34,16 @@ public class TranslationTable {
   public static final Integer PLASTID_TRANSLATION_TABLE = 11;
 
   /** Translation table number. */
-  private Integer number;
+  private final Integer number;
 
   /** Translation table name. */
-  private String name;
+  private final String name;
 
   /** Start codon translations. */
-  private Map<String, Character> startCodonMap;
+  private final Map<String, Character> startCodonMap;
 
   /** Non-start codon translations. */
-  private Map<String, Character> otherCodonMap;
+  private final Map<String, Character> otherCodonMap;
 
   /**
    * Returns the translation table number.

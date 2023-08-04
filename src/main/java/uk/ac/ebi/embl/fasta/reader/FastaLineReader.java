@@ -29,11 +29,7 @@ public class FastaLineReader extends LineReader {
 
   @Override
   protected boolean isTag(String line) {
-    if (line.startsWith(FASTA_TAG)) {
-      return true;
-    }
-
-    return false;
+    return line.startsWith(FASTA_TAG);
   }
 
   @Override

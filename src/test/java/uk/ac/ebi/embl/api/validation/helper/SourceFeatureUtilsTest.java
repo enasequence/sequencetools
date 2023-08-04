@@ -49,7 +49,7 @@ public class SourceFeatureUtilsTest {
         source.getSingleQualifier(Qualifier.ORGANISM_QUALIFIER_NAME).getValue());
     assertEquals("GISAID123", source.getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME).getValue());
     Taxon taxon = source.getTaxon();
-    assertEquals(new Long(2697049), taxon.getTaxId());
+    assertEquals(Long.valueOf(2697049), taxon.getTaxId());
     assertEquals("Severe acute respiratory syndrome coronavirus 2", taxon.getScientificName());
   }
 

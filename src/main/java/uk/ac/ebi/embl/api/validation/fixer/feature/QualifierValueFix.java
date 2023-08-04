@@ -43,7 +43,7 @@ public class QualifierValueFix extends FeatureValidationCheck {
         String qName = qual.getName();
         String qValue = qual.getValue();
         if (qValue != null && qValue.contains("\"")) {
-          qValue = qValue.replaceAll("\"", "\'");
+          qValue = qValue.replaceAll("\"", "'");
           qual.setValue(qValue);
           reportMessage(Severity.FIX, feature.getOrigin(), QualifierValueFix_ID_3, qName);
         }

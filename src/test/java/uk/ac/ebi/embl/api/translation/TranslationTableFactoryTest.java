@@ -21,7 +21,7 @@ public class TranslationTableFactoryTest {
   @Before
   public void setUp() throws Exception {}
 
-  private TranslationTableFactory factory = new TranslationTableFactory();
+  private final TranslationTableFactory factory = new TranslationTableFactory();
 
   private void testTranslationTable(Integer number) {
     assertNotNull(factory.createTranslationTable(number));

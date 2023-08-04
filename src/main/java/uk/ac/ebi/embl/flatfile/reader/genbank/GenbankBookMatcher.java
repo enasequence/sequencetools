@@ -48,10 +48,10 @@ public class GenbankBookMatcher extends FlatFileMatcher {
               "\\s*\\)\\s*"
               + ".*$");
 
-  private static int GROUP_EDITORS = 1;
-  private static int GROUP_BOOK_TITLE_PAGE = 2;
-  private static int GROUP_PUBLISHER = 3;
-  private static int GROUP_YEAR = 4;
+  private static final int GROUP_EDITORS = 1;
+  private static final int GROUP_BOOK_TITLE_PAGE = 2;
+  private static final int GROUP_PUBLISHER = 3;
+  private static final int GROUP_YEAR = 4;
 
   public Book getBook(Publication publication) {
     Book book = null;
@@ -76,10 +76,10 @@ public class GenbankBookMatcher extends FlatFileMatcher {
     } else {
       String firstPage = "0";
       String lastPage = "0";
-      String arr[] = bookTitle.split(":");
+      String[] arr = bookTitle.split(":");
       if (arr.length == 2) {
         if (arr[1].contains("-")) {
-          String pageRange[] = arr[1].split("-");
+          String[] pageRange = arr[1].split("-");
           String fp = pageRange[0].trim();
           if (pageRange.length == 2) {
             if (StringUtils.isNumeric(fp) && StringUtils.isNumeric(pageRange[1].trim())) {
@@ -93,7 +93,7 @@ public class GenbankBookMatcher extends FlatFileMatcher {
           }
         } else {
           if (StringUtils.isNumeric(arr[1].trim())) {
-            firstPage = String.valueOf(arr[1].trim());
+            firstPage = arr[1].trim();
             bookTitle = arr[0].trim();
           }
         }

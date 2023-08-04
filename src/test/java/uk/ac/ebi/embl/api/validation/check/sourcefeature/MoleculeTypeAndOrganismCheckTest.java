@@ -95,10 +95,10 @@ public class MoleculeTypeAndOrganismCheckTest {
     expect(
             taxonomyClient.isChildOfAny(
                 "Deltavirus",
-                new String[] {
-                  "Deltavirus", "Retro-transcribing viruses",
-                  "ssRNA viruses", "dsRNA viruses"
-                }))
+                "Deltavirus",
+                "Retro-transcribing viruses",
+                "ssRNA viruses",
+                "dsRNA viruses"))
         .andReturn(Boolean.TRUE);
     replay(taxonomyClient);
 

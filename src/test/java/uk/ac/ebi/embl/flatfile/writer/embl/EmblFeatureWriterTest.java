@@ -25,7 +25,7 @@ public class EmblFeatureWriterTest extends EmblWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createCdsFeature();
     LocationFactory locationFactory = new LocationFactory();
-    feature.getLocations().addLocation(locationFactory.createLocalRange(3514l, 4041l, false));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(3514L, 4041L, false));
     QualifierFactory qualifierFactory = new QualifierFactory();
     feature.addQualifier(qualifierFactory.createQualifier("product", "hypothetical protein"));
     feature.addQualifier(qualifierFactory.createQualifier("note", "ORF 5"));

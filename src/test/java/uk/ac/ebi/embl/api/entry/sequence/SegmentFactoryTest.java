@@ -32,7 +32,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public class SegmentFactoryTest implements Sequences {
 
-  private SegmentFactory segmentFactory = new SegmentFactory();
+  private final SegmentFactory segmentFactory = new SegmentFactory();
 
   @Before
   public void setUp() throws Exception {}

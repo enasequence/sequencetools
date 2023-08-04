@@ -19,5 +19,5 @@ public enum TemplateTokenType {
   TEXT_AREA_FIELD,
   BOOLEAN_FIELD,
   start_location,
-  end_location;
+  end_location
 }

@@ -18,11 +18,11 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
  * use File | Settings | File Templates.
  */
 public interface LocationQualifier {
-  public boolean setLocation(Location location) throws ValidationException;
+  boolean setLocation(Location location) throws ValidationException;
 
-  public Location getLocation() throws ValidationException;
+  Location getLocation() throws ValidationException;
 
-  public String getName();
+  String getName();
 
-  public String getValue();
+  String getValue();
 }

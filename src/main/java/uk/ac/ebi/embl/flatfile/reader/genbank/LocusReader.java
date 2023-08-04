@@ -48,11 +48,11 @@ public class LocusReader extends SingleLineBlockReader {
               "$");
 
   // private static int GROUP_LOCUS_NAME = 1;
-  private static int GROUP_SEQUENCE_LENGTH = 2;
+  private static final int GROUP_SEQUENCE_LENGTH = 2;
   // private static int GROUP_MOLECULE_TYPE = 3;
-  private static int GROUP_TOPOLOGY = 4;
-  private static int GROUP_DIVISION = 5;
-  private static int GROUP_DATE = 6;
+  private static final int GROUP_TOPOLOGY = 4;
+  private static final int GROUP_DIVISION = 5;
+  private static final int GROUP_DATE = 6;
 
   @Override
   public String getTag() {

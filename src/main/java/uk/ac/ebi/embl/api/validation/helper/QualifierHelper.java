@@ -250,11 +250,11 @@ public class QualifierHelper {
   }
 
   public static class QualifierInfo {
-    private String name;
-    private String regex;
-    private String curatorComments;
-    private boolean noValue;
-    private boolean newField;
+    private final String name;
+    private final String regex;
+    private final String curatorComments;
+    private final boolean noValue;
+    private final boolean newField;
     private List<RegexGroupInfo> regexGroupInfos = new ArrayList<>();
 
     private QualifierInfo(
@@ -300,8 +300,8 @@ public class QualifierHelper {
   }
 
   public static class RegexGroupInfo {
-    private int groupNumber;
-    private List<String> values;
+    private final int groupNumber;
+    private final List<String> values;
     private boolean nonMatch = false; // default
     private boolean caseInseneitive = false; // default
 

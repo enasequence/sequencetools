@@ -113,22 +113,22 @@ public class SequenceTest {
   @SuppressWarnings("deprecation")
   @Test
   public void testEquals() {
-    assertTrue(new Sequence().equals(new Sequence()));
+    assertEquals(new Sequence(), new Sequence());
 
     Sequence seq1 = sequenceFactory.createSequenceByte("aaaa".getBytes());
     seq1.setMoleculeType("DNA");
     seq1.setTopology(Topology.LINEAR);
-    assertTrue(seq1.equals(seq1));
+    assertEquals(seq1, seq1);
 
     Sequence seq2 = sequenceFactory.createSequenceByte("aaaa".getBytes());
     seq2.setMoleculeType("DNA");
     seq2.setTopology(Topology.LINEAR);
 
-    assertTrue(seq1.equals(seq2));
-    assertTrue(seq2.equals(seq1));
+    assertEquals(seq1, seq2);
+    assertEquals(seq2, seq1);
 
     seq2.setSequence(ByteBuffer.wrap("aaa".getBytes()));
-    assertFalse(seq1.equals(seq2));
+    assertNotEquals(seq1, seq2);
     seq2.setSequence(ByteBuffer.wrap("aaaa".getBytes()));
 
     /*seq2.setLength(3);
@@ -136,22 +136,22 @@ public class SequenceTest {
     seq2.setLength(4);*/
 
     seq2.setMoleculeType("RNA");
-    assertFalse(seq1.equals(seq2));
+    assertNotEquals(seq1, seq2);
     seq2.setMoleculeType("DNA");
 
     seq2.setTopology(Topology.CIRCULAR);
-    assertFalse(seq1.equals(seq2));
+    assertNotEquals(seq1, seq2);
     seq2.setTopology(Topology.LINEAR);
 
     seq2.setVersion(1);
-    assertFalse(seq1.equals(seq2));
+    assertNotEquals(seq1, seq2);
     seq1.setVersion(1);
 
     seq2.setAccession("x");
-    assertFalse(seq1.equals(seq2));
+    assertNotEquals(seq1, seq2);
     seq1.setAccession("x");
 
-    assertTrue(seq1.equals(seq2));
+    assertEquals(seq1, seq2);
   }
 
   /*	@Test
@@ -201,7 +201,7 @@ public class SequenceTest {
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(sequenceFactory.createSequenceByte("aaaa".getBytes()).equals(new String()));
+    assertNotEquals("", sequenceFactory.createSequenceByte("aaaa".getBytes()));
     /*assertFalse(new Sequence(bytes, 4).equals(
     new String()));*/
   }
@@ -219,28 +219,28 @@ public class SequenceTest {
     AgpRow validComponentrow2 = new AgpRow();
     AgpRow validGaprow1 = new AgpRow();
     validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    validComponentrow1.setObject_beg(1l);
-    validComponentrow1.setObject_end(330l);
+    validComponentrow1.setObject_beg(1L);
+    validComponentrow1.setObject_end(330L);
     validComponentrow1.setPart_number(1);
     validComponentrow1.setComponent_type_id("W");
-    validComponentrow1.setComponent_beg(1l);
-    validComponentrow1.setComponent_end(330l);
+    validComponentrow1.setComponent_beg(1L);
+    validComponentrow1.setComponent_end(330L);
     validComponentrow1.setComponent_id("IWGSC_CSS_6DL_contig_209591");
     validComponentrow1.setOrientation("+");
     validGaprow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
     validGaprow1.setObject_beg(331);
-    validGaprow1.setObject_end(354l);
+    validGaprow1.setObject_end(354L);
     validGaprow1.setPart_number(2);
     validGaprow1.setComponent_type_id("N");
-    validGaprow1.setGap_length(24l);
+    validGaprow1.setGap_length(24L);
     validGaprow1.setGap_type("scaffold");
     validComponentrow2.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    validComponentrow2.setObject_beg(1l);
-    validComponentrow2.setObject_end(330l);
+    validComponentrow2.setObject_beg(1L);
+    validComponentrow2.setObject_end(330L);
     validComponentrow2.setPart_number(1);
     validComponentrow2.setComponent_type_id("W");
-    validComponentrow2.setComponent_beg(1l);
-    validComponentrow2.setComponent_end(330l);
+    validComponentrow2.setComponent_beg(1L);
+    validComponentrow2.setComponent_end(330L);
     validComponentrow2.setComponent_id("IWGSC_CSS_6DL_contig_209591");
     validComponentrow2.setOrientation("+");
     Sequence sequence = new SequenceFactory().createSequence();

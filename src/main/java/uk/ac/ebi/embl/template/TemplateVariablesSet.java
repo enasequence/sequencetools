@@ -17,7 +17,7 @@ import java.util.TreeMap;
 
 public class TemplateVariablesSet {
   private static final long serialVersionUID = 1L;
-  private Map<Integer, TemplateVariables> variables;
+  private final Map<Integer, TemplateVariables> variables;
 
   public TemplateVariablesSet() {
     this.variables = new TreeMap<Integer, TemplateVariables>();

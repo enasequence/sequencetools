@@ -36,7 +36,7 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
       ValidationScope.NCBI_MASTER
     })
 public class ReferenceCheck extends EntryValidationCheck {
-  private static String SUBMITTER_REFERENCECHECK = "ReferenceCheck_1";
+  private static final String SUBMITTER_REFERENCECHECK = "ReferenceCheck_1";
 
   public ValidationResult check(Entry entry) {
     result = new ValidationResult();
@@ -49,6 +49,7 @@ public class ReferenceCheck extends EntryValidationCheck {
       Publication pub = ref.getPublication();
       if (pub instanceof Submission) {
         isSubmission = true;
+        break;
       }
     }
     if (!isSubmission) reportError(entry.getOrigin(), SUBMITTER_REFERENCECHECK);

@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the organism lines. */
 public class EmblOrganismWriter extends FlatFileWriter {
 
-  private SourceFeature sourceFeature;
+  private final SourceFeature sourceFeature;
 
   public EmblOrganismWriter(Entry entry, SourceFeature sourceFeature, WrapType wrapType) {
     super(entry, wrapType);

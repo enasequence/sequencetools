@@ -12,7 +12,7 @@ package uk.ac.ebi.embl.api.entry.reference;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
@@ -61,7 +61,7 @@ public class PublicationTest {
   @Test
   public void testAddAuthors() {
     Person person = new Person("X");
-    assertTrue(publication.addAuthors(Arrays.asList(person)));
+    assertTrue(publication.addAuthors(Collections.singletonList(person)));
     assertEquals(person, publication.getAuthors().get(0));
   }
 
@@ -107,7 +107,7 @@ public class PublicationTest {
   @Test
   public void testAddXRefs() {
     XRef xRef = new EntryFactory().createXRef("db", "pa", "sa");
-    assertTrue(publication.addXRefs(Arrays.asList(xRef)));
+    assertTrue(publication.addXRefs(Collections.singletonList(xRef)));
     assertEquals(xRef, publication.getXRefs().get(0));
   }
 
@@ -141,30 +141,30 @@ public class PublicationTest {
 
   @Test
   public void testEquals() {
-    assertTrue(publication.equals(publication));
-    assertTrue(publication.equals(new Publication()));
+    assertEquals(publication, publication);
+    assertEquals(publication, new Publication());
     Publication publication2 = new Publication();
     publication.setTitle("title");
-    assertFalse(publication.equals(publication2));
+    assertNotEquals(publication, publication2);
     publication2.setTitle("title");
-    assertTrue(publication.equals(publication2));
+    assertEquals(publication, publication2);
     publication.setConsortium("consortium");
-    assertFalse(publication.equals(publication2));
+    assertNotEquals(publication, publication2);
     publication2.setConsortium("consortium");
-    assertTrue(publication.equals(publication2));
+    assertEquals(publication, publication2);
     publication.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(publication.equals(publication2));
+    assertNotEquals(publication, publication2);
     publication2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(publication.equals(publication2));
+    assertEquals(publication, publication2);
     publication.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(publication.equals(publication2));
+    assertNotEquals(publication, publication2);
     publication2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(publication.equals(publication2));
+    assertEquals(publication, publication2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(publication.equals(new String()));
+    assertNotEquals("", publication);
   }
 
   @Test
@@ -174,25 +174,25 @@ public class PublicationTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(publication.compareTo(publication) == 0);
-    assertTrue(publication.compareTo(new Publication()) == 0);
+    assertEquals(0, publication.compareTo(publication));
+    assertEquals(0, publication.compareTo(new Publication()));
     Publication publication2 = new Publication();
     // null < not null
     publication.setTitle("title");
     assertTrue(publication.compareTo(publication2) > 0);
     publication2.setTitle("title");
-    assertTrue(publication.compareTo(publication2) == 0);
+    assertEquals(0, publication.compareTo(publication2));
     publication.setConsortium("consortium");
     assertTrue(publication.compareTo(publication2) > 0);
     publication2.setConsortium("consortium");
-    assertTrue(publication.compareTo(publication2) == 0);
+    assertEquals(0, publication.compareTo(publication2));
     publication.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(publication.compareTo(publication2) > 0);
     publication2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(publication.compareTo(publication2) == 0);
+    assertEquals(0, publication.compareTo(publication2));
     publication.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(publication.compareTo(publication2) > 0);
     publication2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(publication.compareTo(publication2) == 0);
+    assertEquals(0, publication.compareTo(publication2));
   }
 }

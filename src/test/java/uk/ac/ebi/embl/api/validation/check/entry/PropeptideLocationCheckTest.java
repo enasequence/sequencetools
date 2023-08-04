@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +68,7 @@ public class PropeptideLocationCheckTest {
     feature.setLocations(join);
     entry.addFeature(feature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("PropeptideLocationCheck1", Severity.ERROR));
   }
 
@@ -101,7 +100,7 @@ public class PropeptideLocationCheckTest {
     cds_feature.setLocations(cdsJoin);
     entry.addFeature(cds_feature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("PropeptideLocationCheck2", Severity.ERROR));
   }
 
@@ -139,7 +138,7 @@ public class PropeptideLocationCheckTest {
     cds_feature.setLocations(cdsJoin);
     entry.addFeature(cds_feature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("PropeptideLocationCheck3", Severity.ERROR));
   }
 

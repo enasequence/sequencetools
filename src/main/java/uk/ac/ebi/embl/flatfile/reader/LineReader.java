@@ -47,7 +47,7 @@ public abstract class LineReader {
     return this;
   }
 
-  private LineReaderCache cache = new LineReaderCache();
+  private final LineReaderCache cache = new LineReaderCache();
 
   private LineReaderWrapper reader;
 

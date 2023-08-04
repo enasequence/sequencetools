@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 
 public class TemplateLoader {
-  private static Logger LOGGER = LoggerFactory.getLogger(TemplateLoader.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TemplateLoader.class);
 
   public static String TEMPLATE_ORDERS_FILE = "/con_vocab/template_orders.csv";
 

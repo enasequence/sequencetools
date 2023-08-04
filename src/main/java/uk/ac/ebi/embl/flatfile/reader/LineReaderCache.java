@@ -28,7 +28,7 @@ public class LineReaderCache {
   private HashMap<String, String> commonName;
   private HashMap<String, String> lineage;
   private HashMap<String, Long> taxId;
-  private HashMap<String, Integer> tagCounts = new HashMap<String, Integer>();
+  private final HashMap<String, Integer> tagCounts = new HashMap<String, Integer>();
 
   public void resetReferenceCache() {
     ReferenceFactory referenceFactory = new ReferenceFactory();

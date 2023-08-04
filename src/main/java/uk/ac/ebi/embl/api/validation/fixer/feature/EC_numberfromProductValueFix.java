@@ -38,13 +38,14 @@ public class EC_numberfromProductValueFix extends FeatureValidationCheck {
   private static final String REMOVED_ECNUMBER_VALUE_FROM_PRODUCT =
       "EC_numberfromProductValueFix_4";
 
-  private static String ecRegex =
+  private static final String ecRegex =
       "[\\d-]{1,3}\\.(?:(\\d{0,3}\\-{0,1}\\.)){2}n{0,1}\\d{0,3}\\-{0,1}";
-  private static Pattern ecPattern = Pattern.compile(ecRegex);
-  private static String productEcNumberSplitRegex =
+  private static final Pattern ecPattern = Pattern.compile(ecRegex);
+  private static final String productEcNumberSplitRegex =
       "\\[?\\(?(?:EC|ec)?:?=?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1})(?:\\s*,\\s*"
           + "(?:EC|ec)?:?=?)?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1}){0,}(?:\\]?\\)?)";
-  private static Pattern productEcNumberSplitPattern = Pattern.compile(productEcNumberSplitRegex);
+  private static final Pattern productEcNumberSplitPattern =
+      Pattern.compile(productEcNumberSplitRegex);
 
   public ValidationResult check(Feature feature) {
     result = new ValidationResult();

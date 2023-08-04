@@ -52,18 +52,18 @@ public class ReferencePositionFix extends EntryValidationCheck {
         long beginPosition = location.getBeginPosition();
         long endPosition = location.getEndPosition();
         if (beginPosition < 1) {
-          location.setBeginPosition(new Long(1));
+          location.setBeginPosition(Long.valueOf(1));
           fixed = true;
 
         } else if (beginPosition > sequenceLength) {
-          location.setBeginPosition(new Long(sequenceLength));
+          location.setBeginPosition(Long.valueOf(sequenceLength));
           fixed = true;
         }
         if (endPosition < 1) {
-          location.setEndPosition((new Long(1)));
+          location.setEndPosition((Long.valueOf(1)));
           fixed = true;
         } else if (endPosition > sequenceLength) {
-          location.setEndPosition(new Long(sequenceLength));
+          location.setEndPosition(Long.valueOf(sequenceLength));
           fixed = true;
         }
         if (fixed)

@@ -79,7 +79,7 @@ public class AGPValidationCheck extends EntryValidationCheck {
     }
 
     Integer prevPartNumber = 0;
-    Long prevEnd = -1l;
+    Long prevEnd = -1L;
 
     for (AgpRow agpRow : entry.getSequence().getAgpRows()) {
       String objectName = agpRow.getObject();
@@ -245,7 +245,7 @@ public class AGPValidationCheck extends EntryValidationCheck {
               agpRow.getComponent_id());
         } else {
 
-          long sequenceLength = 0l;
+          long sequenceLength = 0L;
           if (getEmblEntryValidationPlanProperty().isRemote.get()) {
             if (getEmblEntryValidationPlanProperty().assemblySequenceInfo.get().size() == 0) {
               throw new ValidationEngineException(
@@ -296,9 +296,9 @@ public class AGPValidationCheck extends EntryValidationCheck {
 
     if (agpRow.isGap()) {
       if (agpRow.hasLinkage()) {
-        if (!agpRow.getGap_type().toLowerCase().equals("contamination")
-            && !agpRow.getGap_type().toLowerCase().equals("scaffold")
-            && !agpRow.getGap_type().toLowerCase().equals("repeat")) {
+        if (!agpRow.getGap_type().equalsIgnoreCase("contamination")
+            && !agpRow.getGap_type().equalsIgnoreCase("scaffold")
+            && !agpRow.getGap_type().equalsIgnoreCase("repeat")) {
           reportError(agpRow.getOrigin(), MESSAGE_KEY_INVALID_LINKAGE_ERROR, agpRow.getGap_type());
         }
       }

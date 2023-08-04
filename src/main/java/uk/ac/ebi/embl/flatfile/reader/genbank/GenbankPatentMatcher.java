@@ -32,13 +32,13 @@ public class GenbankPatentMatcher extends FlatFileMatcher {
           "(?:^\\s*(?:(?:Patent\\s*number)|(?:Patent)|(?:Pre-Grant\\s*Patent))\\s*\\:?\\s*([a-zA-Z]{2})?\\s*([a-zA-Z0-9]+)?\\s*-([a-zA-Z0-9]+)?\\s*(?:/|\\s*)(\\d+)?\\s*(?:,|\\s)\\s*([\\w-]+)?\\s*(?:(?:\\.|;)\\s*(.+))?$)|"
               + "(?:^\\s*(?:(?:Patent\\s*number)|(?:Patent)|(?:Pre-Grant\\s*Patent))\\s*\\:?\\s*(.*)$)");
 
-  private static int GROUP_1_PATENT_OFFICE = 1;
-  private static int GROUP_1_PATENT_NUMBER = 2;
-  private static int GROUP_1_PATENT_TYPE = 3;
-  private static int GROUP_1_SEQUENCE_NUMBER = 4;
-  private static int GROUP_1_DAY = 5;
-  private static int GROUP_1_APPLICANTS = 6;
-  private static int GROUP_2_PATENT = 7;
+  private static final int GROUP_1_PATENT_OFFICE = 1;
+  private static final int GROUP_1_PATENT_NUMBER = 2;
+  private static final int GROUP_1_PATENT_TYPE = 3;
+  private static final int GROUP_1_SEQUENCE_NUMBER = 4;
+  private static final int GROUP_1_DAY = 5;
+  private static final int GROUP_1_APPLICANTS = 6;
+  private static final int GROUP_2_PATENT = 7;
 
   public Patent getPatent(Publication publication) {
     Patent patent = null;

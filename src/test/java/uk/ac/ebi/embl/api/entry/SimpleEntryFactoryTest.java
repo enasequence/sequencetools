@@ -60,10 +60,10 @@ public class SimpleEntryFactoryTest {
     assertNotNull(result.getSecondarySpan());
     assertEquals("B001", result.getPrimarySpan().getAccession());
     assertEquals(Integer.valueOf(2), result.getPrimarySpan().getVersion());
-    assertEquals(new Long(1), result.getPrimarySpan().getBeginPosition());
-    assertEquals(new Long(2), result.getPrimarySpan().getEndPosition());
-    assertEquals(new Long(3), result.getSecondarySpan().getBeginPosition());
-    assertEquals(new Long(4), result.getSecondarySpan().getEndPosition());
+    assertEquals(Long.valueOf(1), result.getPrimarySpan().getBeginPosition());
+    assertEquals(Long.valueOf(2), result.getPrimarySpan().getEndPosition());
+    assertEquals(Long.valueOf(3), result.getSecondarySpan().getBeginPosition());
+    assertEquals(Long.valueOf(4), result.getSecondarySpan().getEndPosition());
   }
 
   @Test

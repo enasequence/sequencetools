@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.flatfile.EmblPadding;
 /** Flat file writer for the database cross-reference qualifiers on the FT lines. */
 public class XRefQualifierWriter extends FlatFileWriter {
 
-  private XRef xref;
+  private final XRef xref;
 
   public XRefQualifierWriter(Entry entry, XRef xref) {
     super(entry);

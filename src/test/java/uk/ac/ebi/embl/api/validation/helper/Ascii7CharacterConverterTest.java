@@ -26,7 +26,6 @@ public class Ascii7CharacterConverterTest {
     assertEquals("This is a funny String", converter.convert("Tĥïŝ ĩš â fůňnŷ Šťŕĭńġ"));
     assertEquals("M?kki B", converter.convert("Mύkki B"));
     assertEquals("???", converter.convert("���"));
-    ;
     assertEquals("ou est ton esprit d'aventure", converter.convert("où est ton esprit d'aventure"));
     assertEquals(
         "Wer sieht die Stabe vorubergehen?",

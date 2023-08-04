@@ -40,7 +40,7 @@ public class AGPFileReader extends FlatFileEntryReader {
   protected int currentEntryLine = 1;
   private static final int NUMBER_OF_COLUMNS = 9;
   private static final int NO_LINKAGE_GAP_NUMBER_OF_COLUMNS = 8;
-  private String[] linkageArray = {"YES", "NO"};
+  private final String[] linkageArray = {"YES", "NO"};
   private static final int OBJECT = 0;
   private static final int OBJECT_BEG = 1;
   private static final int OBJECT_END = 2;
@@ -54,7 +54,7 @@ public class AGPFileReader extends FlatFileEntryReader {
   private static final int LINKAGE = 7;
   private static final int ORIENTATION = 8;
   private static final int LINKAGEEVIDENCE = 8;
-  private static final Long UNKNOWN_GAP_LENGTH = 100l;
+  private static final Long UNKNOWN_GAP_LENGTH = 100L;
   private boolean hasNonSingletonAgp = false;
 
   protected int nextEntryLine = currentEntryLine;
@@ -132,7 +132,7 @@ public class AGPFileReader extends FlatFileEntryReader {
       } else if (!StringUtils.isNumeric(fields[OBJECT_END])) {
         error("InvalidObjectEndCheck");
       } else {
-        agpRow.setObject_end(new Long(fields[OBJECT_END]));
+        agpRow.setObject_end(Long.valueOf(fields[OBJECT_END]));
       }
 
       // PART_NUMBER
@@ -167,7 +167,7 @@ public class AGPFileReader extends FlatFileEntryReader {
           } else if (!StringUtils.isNumeric(fields[GAP_LENGTH])) {
             error("InvalidGapLengthCheck");
           } else {
-            agpRow.setGap_length(new Long(fields[GAP_LENGTH]));
+            agpRow.setGap_length(Long.valueOf(fields[GAP_LENGTH]));
           }
         }
 
@@ -223,7 +223,7 @@ public class AGPFileReader extends FlatFileEntryReader {
         } else if (!StringUtils.isNumeric(fields[COMPONENT_BEG])) {
           error("InvalidComponentBegCheck");
         } else {
-          agpRow.setComponent_beg(new Long(fields[COMPONENT_BEG]));
+          agpRow.setComponent_beg(Long.valueOf(fields[COMPONENT_BEG]));
         }
 
         // COMPONENT_END
@@ -233,7 +233,7 @@ public class AGPFileReader extends FlatFileEntryReader {
         } else if (!StringUtils.isNumeric(fields[COMPONENT_END])) {
           error("InvalidComponentEndCheck");
         } else {
-          agpRow.setComponent_end(new Long(fields[COMPONENT_END]));
+          agpRow.setComponent_end(Long.valueOf(fields[COMPONENT_END]));
         }
 
         // ORIENTATION

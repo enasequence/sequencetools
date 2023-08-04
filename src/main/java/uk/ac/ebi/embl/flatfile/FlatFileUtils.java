@@ -125,7 +125,7 @@ public abstract class FlatFileUtils {
    */
   public static Vector<String> split(String string, String regex) {
     Vector<String> strings = new Vector<String>();
-    for (String value : string.split(new String(regex))) {
+    for (String value : string.split(regex)) {
       value = value.trim();
       if (!value.equals("")) {
         strings.add(shrink(value));
@@ -151,7 +151,7 @@ public abstract class FlatFileUtils {
       return null;
     }
     string = string.trim();
-    Pattern pattern = Pattern.compile("\\" + String.valueOf(c) + "{2,}");
+    Pattern pattern = Pattern.compile("\\" + c + "{2,}");
     return pattern.matcher(string).replaceAll(String.valueOf(c));
   }
 

@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +79,7 @@ public class OperonFeatureCheckTest {
     feature.addQualifier(Qualifier.OPERON_QUALIFIER_NAME);
     entry.addFeature(feature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("OperonFeatureCheck_1", Severity.ERROR));
   }
 
@@ -93,7 +92,7 @@ public class OperonFeatureCheckTest {
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(2, result.count("OperonFeatureCheck_1", Severity.ERROR));
   }
 
@@ -106,7 +105,7 @@ public class OperonFeatureCheckTest {
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("OperonFeatureCheck_2", Severity.ERROR));
   }
 }

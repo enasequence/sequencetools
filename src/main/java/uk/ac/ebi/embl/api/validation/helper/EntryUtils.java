@@ -11,7 +11,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +69,7 @@ public class EntryUtils {
 
     String topology;
 
-    private Topology(String topology) {
+    Topology(String topology) {
       this.topology = topology;
     }
 
@@ -119,10 +119,7 @@ public class EntryUtils {
   }
 
   public static boolean isValidEntry_name(String entry_name) {
-    if (entry_name.split(" ").length > 1) {
-      return false;
-    }
-    return true;
+    return entry_name.split(" ").length <= 1;
   }
 
   public static String concat(String delimiter, String... params) {
@@ -148,9 +145,12 @@ public class EntryUtils {
         || non_asciiString.isEmpty()) return non_asciiString;
     String encodedString =
         Normalizer.normalize(
-            new String(non_asciiString.getBytes(), Charset.forName("UTF-8")), Normalizer.Form.NFKD);
+            new String(non_asciiString.getBytes(), StandardCharsets.UTF_8), Normalizer.Form.NFKD);
     String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
-    String asciiString = new String(encodedString.replaceAll(regex, "").getBytes("ascii"), "ascii");
+    String asciiString =
+        new String(
+            encodedString.replaceAll(regex, "").getBytes(StandardCharsets.US_ASCII),
+            StandardCharsets.US_ASCII);
     return asciiString;
   }
 
@@ -176,8 +176,7 @@ public class EntryUtils {
         Feature assembly_gapFeature =
             featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
         Order<Location> locations = new Order<Location>();
-        LocalRange location =
-            locationFactory.createLocalRange((long) object_begin, (long) object_end);
+        LocalRange location = locationFactory.createLocalRange(object_begin, object_end);
         locations.addLocation(location);
         locations.setSimpleLocation(true);
         assembly_gapFeature.setLocations(locations);
@@ -208,7 +207,7 @@ public class EntryUtils {
           estimated_lengthQualifier.setValue("unknown");
           components.add(locationFactory.createUnknownGap(agpRow.getGap_length()));
         } else {
-          estimated_lengthQualifier.setValue(new String(new Long(gap_length).toString()));
+          estimated_lengthQualifier.setValue(gap_length.toString());
           components.add(locationFactory.createGap(agpRow.getGap_length()));
         }
         assembly_gapFeature.addQualifier(estimated_lengthQualifier);
@@ -220,15 +219,13 @@ public class EntryUtils {
           String accession = accessionWithVersion[0];
           Integer version = Integer.valueOf(accessionWithVersion[1]);
           Location remoteLocation =
-              locationFactory.createRemoteRange(
-                  accession, version, (long) component_begin, (long) component_end);
+              locationFactory.createRemoteRange(accession, version, component_begin, component_end);
           if (orientation == "-" || orientation == "minus") remoteLocation.setComplement(true);
           components.add(remoteLocation);
         } else {
 
           Location remoteLocation =
-              locationFactory.createRemoteRange(
-                  componentId, 0, (long) component_begin, (long) component_end);
+              locationFactory.createRemoteRange(componentId, 0, component_begin, component_end);
           if (orientation == "-" || orientation == "minus") remoteLocation.setComplement(true);
           components.add(remoteLocation);
         }

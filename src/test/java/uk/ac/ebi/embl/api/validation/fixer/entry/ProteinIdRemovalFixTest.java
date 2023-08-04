@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -55,14 +54,14 @@ public class ProteinIdRemovalFixTest {
   @Test
   public void testCheck_noEntry() throws ValidationEngineException {
     ValidationResult validationResult = check.check(null);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
   @Test
   public void testCheck_noFeatures() throws ValidationEngineException {
     ValidationResult validationResult = check.check(entryFactory.createEntry());
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
@@ -70,7 +69,7 @@ public class ProteinIdRemovalFixTest {
   public void testCheck_noAnalysisIDandAssemblyLevel() throws ValidationEngineException {
     entry.addFeature(cdsFeature);
     ValidationResult validationResult = check.check(entryFactory.createEntry());
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
@@ -83,7 +82,7 @@ public class ProteinIdRemovalFixTest {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
@@ -97,7 +96,7 @@ public class ProteinIdRemovalFixTest {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+    assertEquals(1, validationResult.getMessages(Severity.FIX).size());
     assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
@@ -111,7 +110,7 @@ public class ProteinIdRemovalFixTest {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+    assertEquals(1, validationResult.getMessages(Severity.FIX).size());
     assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
@@ -125,7 +124,7 @@ public class ProteinIdRemovalFixTest {
     check.setEmblEntryValidationPlanProperty(property);
     check.setEntryDAOUtils(entryDAOUtils);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+    assertEquals(1, validationResult.getMessages(Severity.FIX).size());
     assertEquals(1, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 }

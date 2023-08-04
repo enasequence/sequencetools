@@ -113,13 +113,11 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
               }
               trans.setLeftPartial(true);
               TranslationResult translatorResult = new TranslationResult();
-              boolean flocationComplement = false;
-              if (feature.getLocations().isComplement()) {
-                flocationComplement = true;
-              }
+              boolean flocationComplement = feature.getLocations().isComplement();
               for (Location flocation : feature.getLocations().getLocations()) {
                 if (flocation.isComplement()) {
                   flocationComplement = true;
+                  break;
                 }
               }
 

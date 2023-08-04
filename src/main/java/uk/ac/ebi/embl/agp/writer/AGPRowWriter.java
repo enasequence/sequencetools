@@ -16,9 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 
 public class AGPRowWriter {
-  private AgpRow agpRow;
-  private Writer writer;
-  private String agpRowString = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s";
+  private final AgpRow agpRow;
+  private final Writer writer;
+  private final String agpRowString = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s";
 
   public AGPRowWriter(AgpRow agpRow, Writer writer) {
     this.agpRow = agpRow;

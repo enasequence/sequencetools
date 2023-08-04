@@ -11,8 +11,8 @@
 package uk.ac.ebi.embl.template;
 
 public class CSVLine {
-  private Integer lineNumber;
-  private TemplateVariables entryTokenMap;
+  private final Integer lineNumber;
+  private final TemplateVariables entryTokenMap;
 
   public CSVLine(Integer lineNumber, TemplateVariables entryTokenMap) {
     this.lineNumber = lineNumber;

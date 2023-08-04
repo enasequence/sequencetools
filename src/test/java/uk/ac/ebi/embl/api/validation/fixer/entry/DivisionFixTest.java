@@ -92,9 +92,9 @@ public class DivisionFixTest {
     entry.addFeature(sourceFeature);
     assertNull(entry.getDivision());
     ValidationResult result = divisionFix.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
-    assertTrue(entry.getDivision().equals("TGN"));
+    assertEquals("TGN", entry.getDivision());
   }
 
   @Test
@@ -105,9 +105,9 @@ public class DivisionFixTest {
     entry.addFeature(sourceFeature);
     assertNull(entry.getDivision());
     ValidationResult result = divisionFix.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
-    assertTrue(entry.getDivision().equals("ENV"));
+    assertEquals("ENV", entry.getDivision());
   }
 
   @Test
@@ -117,9 +117,9 @@ public class DivisionFixTest {
     entry.addFeature(sourceFeature);
     assertNull(entry.getDivision());
     ValidationResult result = divisionFix.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
-    assertTrue(entry.getDivision().equals("INV"));
+    assertEquals("INV", entry.getDivision());
   }
 
   @Test
@@ -130,9 +130,9 @@ public class DivisionFixTest {
     entry.addFeature(sourceFeature);
     assertNull(entry.getDivision());
     ValidationResult result = divisionFix.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DivisionFix_1", Severity.FIX));
-    assertTrue(entry.getDivision().equals("MAM"));
+    assertEquals("MAM", entry.getDivision());
   }
 
   @Test
@@ -145,9 +145,9 @@ public class DivisionFixTest {
     entry.addFeature(sourceFeature);
     assertNull(entry.getDivision());
     ValidationResult result = divisionFix.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DivisionFix_2", Severity.FIX)); // Set division to XXX
-    assertTrue(entry.getDivision().equals("XXX"));
+    assertEquals("XXX", entry.getDivision());
   }
 
   @Test
@@ -157,7 +157,7 @@ public class DivisionFixTest {
     divisionFix.setEmblEntryValidationPlanProperty(getProperty(ValidationScope.NCBI));
     entry.setDivision("PHG");
     assertTrue(divisionFix.check(entry).isValid());
-    assertTrue(entry.getDivision().equals("PHG"));
+    assertEquals("PHG", entry.getDivision());
   }
 
   @Test
@@ -170,7 +170,7 @@ public class DivisionFixTest {
         getProperty(ValidationScope.ASSEMBLY_CHROMOSOME));
     entry.setDivision("PHG");
     assertTrue(divisionFix.check(entry).isValid());
-    assertTrue(entry.getDivision().equals("INV"));
+    assertEquals("INV", entry.getDivision());
   }
 
   private EmblEntryValidationPlanProperty getProperty(ValidationScope validationScope) {

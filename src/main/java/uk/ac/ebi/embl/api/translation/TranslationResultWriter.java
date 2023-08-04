@@ -24,7 +24,7 @@ public class TranslationResultWriter {
     this.expectedTranslation = expectedTranslation;
   }
 
-  private TranslationResult result;
+  private final TranslationResult result;
   private String expectedTranslation;
 
   private final int CODONS_PER_BLOCK = 15;

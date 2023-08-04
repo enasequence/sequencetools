@@ -85,7 +85,7 @@ public class MoleculeTypeAndQualifierFixTest {
     feature.addQualifier(qualifierFactory.createQualifier(Qualifier.GERMLINE_QUALIFIER_NAME));
     entry.addFeature(feature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 1);
+    assertEquals(1, validationResult.getMessages(Severity.FIX).size());
     assertEquals(
         1, validationResult.getMessages("MoleculeTypeAndQualifierFix", Severity.FIX).size());
   }
@@ -97,7 +97,7 @@ public class MoleculeTypeAndQualifierFixTest {
     entry.getSequence().setMoleculeType("genomic DNA");
     entry.addFeature(feature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(
         0, validationResult.getMessages("MoleculeTypeAndQualifierFix", Severity.FIX).size());
   }
@@ -109,7 +109,7 @@ public class MoleculeTypeAndQualifierFixTest {
     entry.getSequence().setMoleculeType("genomic DNA");
     entry.addFeature(feature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(validationResult.getMessages(Severity.FIX).size() == 0);
+    assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(
         0, validationResult.getMessages("MoleculeTypeAndQualifierFix", Severity.FIX).size());
   }

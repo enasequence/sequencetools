@@ -27,7 +27,5 @@ public class OGReader extends SingleLineBlockReader {
   }
 
   @Override
-  protected void read(String block) {
-    return;
-  }
+  protected void read(String block) {}
 }

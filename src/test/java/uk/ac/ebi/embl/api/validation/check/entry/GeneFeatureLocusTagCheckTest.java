@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +80,7 @@ public class GeneFeatureLocusTagCheckTest {
     entry.addFeature(feature2);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(GeneFeatureLocusTagCheck.MESSAGE_ID, Severity.ERROR));
   }
 

@@ -45,39 +45,39 @@ public class ThesisTest {
 
   @Test
   public void testEquals() {
-    assertTrue(thesis.equals(thesis));
-    assertTrue(thesis.equals(new Thesis()));
+    assertEquals(thesis, thesis);
+    assertEquals(thesis, new Thesis());
     Thesis thesis2 = new Thesis();
     thesis.setTitle("title");
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.setTitle("title");
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
     thesis.setConsortium("consortium");
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.setConsortium("consortium");
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
     thesis.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
     thesis.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
     thesis.setInstitute("institute");
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.setInstitute("institute");
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
     thesis.setYear(new Date());
-    assertFalse(thesis.equals(thesis2));
+    assertNotEquals(thesis, thesis2);
     thesis2.setYear(new Date());
-    assertTrue(thesis.equals(thesis2));
+    assertEquals(thesis, thesis2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(thesis.equals(new String()));
-    assertFalse(thesis.equals(null));
+    assertNotEquals("", thesis);
+    assertNotEquals(null, thesis);
   }
 
   @Test
@@ -88,33 +88,33 @@ public class ThesisTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(thesis.compareTo(thesis) == 0);
-    assertTrue(thesis.compareTo(new Thesis()) == 0);
+    assertEquals(0, thesis.compareTo(thesis));
+    assertEquals(0, thesis.compareTo(new Thesis()));
     Thesis thesis2 = new Thesis();
     thesis.setTitle("title");
     // null < not null
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.setTitle("title");
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
     thesis.setConsortium("consortium");
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.setConsortium("consortium");
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
     thesis.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
     thesis.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
     thesis.setInstitute("institute");
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.setInstitute("institute");
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
     thesis.setYear(new Date());
     assertTrue(thesis.compareTo(thesis2) > 0);
     thesis2.setYear(new Date());
-    assertTrue(thesis.compareTo(thesis2) == 0);
+    assertEquals(0, thesis.compareTo(thesis2));
   }
 }

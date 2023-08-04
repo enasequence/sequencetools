@@ -99,8 +99,7 @@ public class FeatureWriter extends FlatFileWriter {
       }
       Long taxId = ((SourceFeature) feature).getTaxId();
       if (taxId != null && taxId > -1 /* do not show negative taxIds */) {
-        Qualifier qualifier =
-            (new QualifierFactory()).createQualifier("db_xref", "taxon:" + taxId.toString());
+        Qualifier qualifier = (new QualifierFactory()).createQualifier("db_xref", "taxon:" + taxId);
         qualifiers.add(qualifier);
       }
     }

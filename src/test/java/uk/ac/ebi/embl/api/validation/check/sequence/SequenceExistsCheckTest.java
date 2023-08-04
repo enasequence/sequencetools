@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sequence;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -53,14 +54,14 @@ public class SequenceExistsCheckTest {
 
   @Test
   public void testCheck_NoSequence() {
-    assertTrue(!check.check(entry).isValid());
+    assertFalse(check.check(entry).isValid());
   }
 
   @Test
   public void testCheck_scope() throws SQLException {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
-    assertTrue(!check.check(entry).isValid());
+    assertFalse(check.check(entry).isValid());
   }
 
   @Test
@@ -68,11 +69,11 @@ public class SequenceExistsCheckTest {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     Collection<Location> locations = new ArrayList<Location>();
-    locations.add(locationFactory.createLocalRange(5l, 10l));
+    locations.add(locationFactory.createLocalRange(5L, 10L));
     SequenceFactory sequenceFactory = new SequenceFactory();
     Sequence sequence = sequenceFactory.createSequence();
     entry.setSequence(sequence);
     entry.getSequence().addContigs(locations);
-    assertTrue(!check.check(entry).isValid());
+    assertFalse(check.check(entry).isValid());
   }
 }

@@ -48,7 +48,7 @@ public class ObsoleteFeatureFixTest {
     Feature feature = featureFactory.createFeature("scRNA");
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("ObsoleteFeatureFix", Severity.FIX));
-    assertTrue(feature.getName().equals("ncRNA"));
+    assertEquals("ncRNA", feature.getName());
     assertTrue(SequenceEntryUtils.isQualifierAvailable("ncRNA_class", feature));
     assertTrue(
         SequenceEntryUtils.isQualifierWithValueAvailable(

@@ -26,8 +26,8 @@ public class RPReaderTest extends EmblReaderTest {
     assertEquals(1, lineReader.getCache().getReference().getLocations().getLocations().size());
     LocalRange location1 =
         lineReader.getCache().getReference().getLocations().getLocations().get(0);
-    assertEquals(new Long(1), location1.getBeginPosition());
-    assertEquals(new Long(34), location1.getEndPosition());
+    assertEquals(Long.valueOf(1), location1.getBeginPosition());
+    assertEquals(Long.valueOf(34), location1.getEndPosition());
   }
 
   public void testRead_ReferenceNumber2() throws IOException {
@@ -40,10 +40,10 @@ public class RPReaderTest extends EmblReaderTest {
         lineReader.getCache().getReference().getLocations().getLocations().get(0);
     LocalRange location2 =
         lineReader.getCache().getReference().getLocations().getLocations().get(1);
-    assertEquals(new Long(1), location1.getBeginPosition());
-    assertEquals(new Long(34), location1.getEndPosition());
-    assertEquals(new Long(34), location2.getBeginPosition());
-    assertEquals(new Long(44), location2.getEndPosition());
+    assertEquals(Long.valueOf(1), location1.getBeginPosition());
+    assertEquals(Long.valueOf(34), location1.getEndPosition());
+    assertEquals(Long.valueOf(34), location2.getBeginPosition());
+    assertEquals(Long.valueOf(44), location2.getEndPosition());
   }
 
   public void testRead_Origin() throws IOException {

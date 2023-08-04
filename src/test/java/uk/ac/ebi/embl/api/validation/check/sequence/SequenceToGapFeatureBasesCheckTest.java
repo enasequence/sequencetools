@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sequence;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -105,7 +104,7 @@ public class SequenceToGapFeatureBasesCheckTest {
             "aaannnnnnnnnnnnnnnnnnnnnnnnaaa".getBytes())); // 8 n's = error
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
   }
 
@@ -118,7 +117,7 @@ public class SequenceToGapFeatureBasesCheckTest {
                 .getBytes())); // 2 lots of n stretches
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.WARNING));
   }
@@ -128,12 +127,12 @@ public class SequenceToGapFeatureBasesCheckTest {
 
     Feature feature = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location = new Order<Location>();
-    location.addLocation(locationFactory.createLocalRange(1l, 5l));
+    location.addLocation(locationFactory.createLocalRange(1L, 5L));
     feature.setLocations(location);
 
     Feature feature1 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location1 = new Order<Location>();
-    location1.addLocation(locationFactory.createLocalRange(4l, 10l));
+    location1.addLocation(locationFactory.createLocalRange(4L, 10L));
     feature1.setLocations(location1);
 
     entry.addFeature(feature);
@@ -142,7 +141,7 @@ public class SequenceToGapFeatureBasesCheckTest {
         sequenceFactory.createSequenceByte("aaannnnnnnnnnnnnnnnnnnnnnnaaaaaaa".getBytes()));
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
   }
 
@@ -151,11 +150,11 @@ public class SequenceToGapFeatureBasesCheckTest {
 
     Feature feature = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location = new Order<Location>();
-    location.addLocation(locationFactory.createLocalRange(4l, 11l));
+    location.addLocation(locationFactory.createLocalRange(4L, 11L));
     feature.setLocations(location);
     Feature feature1 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location1 = new Order<Location>();
-    location1.addLocation(locationFactory.createLocalRange(4l, 11l));
+    location1.addLocation(locationFactory.createLocalRange(4L, 11L));
     feature1.setLocations(location1);
 
     entry.addFeature(feature1);
@@ -174,13 +173,13 @@ public class SequenceToGapFeatureBasesCheckTest {
 
     Feature feature = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location = new Order<Location>();
-    location.addLocation(locationFactory.createLocalRange(4l, 11l));
+    location.addLocation(locationFactory.createLocalRange(4L, 11L));
     feature.setLocations(location);
     entry.addFeature(feature);
 
     Feature feature2 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location2 = new Order<Location>();
-    location2.addLocation(locationFactory.createLocalRange(16l, 20l));
+    location2.addLocation(locationFactory.createLocalRange(16L, 20L));
     feature2.setLocations(location2);
     entry.addFeature(feature2);
 
@@ -207,7 +206,7 @@ public class SequenceToGapFeatureBasesCheckTest {
     entry.setDataClass(Entry.WGS_DATACLASS);
     entry.setSequence(sequenceFactory.createSequenceByte("aaannnnnnnnnnnaaa".getBytes()));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
   }
 
@@ -216,13 +215,13 @@ public class SequenceToGapFeatureBasesCheckTest {
     entry.setDataClass(Entry.CON_DATACLASS);
     Feature feature = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);
     Order<Location> location = new Order<Location>();
-    location.addLocation(locationFactory.createLocalRange(4l, 24l));
+    location.addLocation(locationFactory.createLocalRange(4L, 24L));
     feature.setLocations(location);
     entry.addFeature(feature);
 
     Feature feature2 = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> location2 = new Order<Location>();
-    location2.addLocation(locationFactory.createLocalRange(29l, 33l));
+    location2.addLocation(locationFactory.createLocalRange(29L, 33L));
     feature2.setLocations(location2);
     entry.addFeature(feature2);
 
@@ -242,7 +241,7 @@ public class SequenceToGapFeatureBasesCheckTest {
     entry.setSequence(
         sequenceFactory.createSequenceByte("aaannnnnnnnnnnnnnnnnnnnnaaaannnnnaaa".getBytes()));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
     assertEquals(5, SequenceToGapFeatureBasesCheck.ERROR_THRESHOLD);
   }
@@ -256,7 +255,7 @@ public class SequenceToGapFeatureBasesCheckTest {
     entry.setSequence(
         sequenceFactory.createSequenceByte("aaannnnnnnnnnnnnnnnnnnnnaaaannnnnaaa".getBytes()));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_ID, Severity.ERROR));
     assertEquals(5, SequenceToGapFeatureBasesCheck.ERROR_THRESHOLD);
   }
@@ -267,7 +266,7 @@ public class SequenceToGapFeatureBasesCheckTest {
     entry.setSequence(sequenceFactory.createSequenceByte("nnnnnnnnnnnnnnnnnnnn".getBytes()));
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(
         1, result.count(SequenceToGapFeatureBasesCheck.MESSAGE_SEQ_WITH_MORE_N, Severity.ERROR));
   }

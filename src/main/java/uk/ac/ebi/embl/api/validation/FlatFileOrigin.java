@@ -18,8 +18,8 @@ public class FlatFileOrigin implements Origin {
   private static final long serialVersionUID = -581987225251503899L;
 
   private String fileId; // the name of the text file or some other file id
-  private int firstLineNumber;
-  private int lastLineNumber;
+  private final int firstLineNumber;
+  private final int lastLineNumber;
 
   public FlatFileOrigin(String fileId, int lineNumber) {
     this.fileId = fileId;

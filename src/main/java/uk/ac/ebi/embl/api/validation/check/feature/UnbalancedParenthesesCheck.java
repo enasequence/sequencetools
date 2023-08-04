@@ -110,9 +110,7 @@ public class UnbalancedParenthesesCheck extends FeatureValidationCheck {
 
       // *****check for unmatched left parenthesis still on stack*****
 
-      if (stringStack1.empty() == false
-          || stringStack2.empty() == false
-          || stringStack3.empty() == false) {
+      if (!stringStack1.empty() || !stringStack2.empty() || !stringStack3.empty()) {
 
         reportWarning(
             qualifier.getOrigin(),

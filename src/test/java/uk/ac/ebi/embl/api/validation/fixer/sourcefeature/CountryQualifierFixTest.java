@@ -60,14 +60,14 @@ public class CountryQualifierFixTest {
 
   @Test
   public void testCheck_noQualifiers() {
-    assertTrue(check.check(featureFactory.createFeature("source")).getMessages().size() == 0);
+    assertEquals(0, check.check(featureFactory.createFeature("source")).getMessages().size());
   }
 
   @Test
   public void testCheckNoCountryQualifier() {
     Feature feature = featureFactory.createFeature("source");
     feature.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME);
-    assertTrue(check.check(feature).getMessages().size() == 0);
+    assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test

@@ -19,8 +19,8 @@ import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 public class TemplateProcessor {
-  private static Logger LOGGER = LoggerFactory.getLogger(TemplateProcessor.class);
-  private int maxProcessingSize = -1; // default - process all
+  private static final Logger LOGGER = LoggerFactory.getLogger(TemplateProcessor.class);
+  private final int maxProcessingSize = -1; // default - process all
   private TemplateInfo templateInfo;
   private TemplateEntryProcessor entryProcessor;
   private static final String MOL_TYPE = "/mol_type";
@@ -35,9 +35,8 @@ public class TemplateProcessor {
   private String getMolTypeFromTemplate() throws Exception {
     String template = templateInfo.getTemplateString();
     String molType = "";
-    if (template.toString().contains(MOL_TYPE)) {
-      String start =
-          template.toString().substring(template.toString().indexOf(MOL_TYPE) + MOL_TYPE.length());
+    if (template.contains(MOL_TYPE)) {
+      String start = template.substring(template.indexOf(MOL_TYPE) + MOL_TYPE.length());
       if (start.contains("\"")) {
         start = start.substring(start.indexOf("\"") + 1);
         if (start.contains("\"")) molType = start.substring(0, start.indexOf("\""));

@@ -78,11 +78,8 @@ public class FeaturewithRemoteLocationCheck extends EntryValidationCheck {
             + (remoteLocation.getVersion() != null ? "." + remoteLocation.getVersion() : "");
     Long seqLength = getEntryDAOUtils().getSequenceLength(accession);
 
-    if (location.getBeginPosition() < 0
-        || location.getBeginPosition() > seqLength
-        || location.getEndPosition() > seqLength) {
-      return false;
-    }
-    return true;
+    return location.getBeginPosition() >= 0
+        && location.getBeginPosition() <= seqLength
+        && location.getEndPosition() <= seqLength;
   }
 }

@@ -86,14 +86,12 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
       FeatureReader.isWebinCli = true;
       validate();
     } catch (ValidationEngineException vee) {
-      switch (vee.getErrorType()) {
-        case VALIDATION_ERROR:
-          response.setStatus(ValidationResponse.status.VALIDATION_ERROR);
-          break;
-        default:
-          new DefaultSubmissionReporter(new HashSet<>(Collections.singletonList(Severity.ERROR)))
-              .writeToFile(manifest.getReportFile(), Severity.ERROR, vee.getMessage());
-          throw new RuntimeException(vee);
+      if (vee.getErrorType() == ValidationEngineException.ReportErrorType.VALIDATION_ERROR) {
+        response.setStatus(ValidationResponse.status.VALIDATION_ERROR);
+      } else {
+        new DefaultSubmissionReporter(new HashSet<>(Collections.singletonList(Severity.ERROR)))
+            .writeToFile(manifest.getReportFile(), Severity.ERROR, vee.getMessage());
+        throw new RuntimeException(vee);
       }
     }
     return response;

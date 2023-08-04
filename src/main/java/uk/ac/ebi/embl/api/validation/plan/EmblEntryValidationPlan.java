@@ -83,13 +83,12 @@ public class EmblEntryValidationPlan extends ValidationPlan {
           NoSuchMethodException {
     for (Class<? extends EmblEntryValidationCheck<?>> validationCheck : checks) {
       EmblEntryValidationCheck<?> check =
-          (EmblEntryValidationCheck<?>)
-              validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
+          validationCheck.getConstructor((Class[]) null).newInstance((Object[]) null);
       if (check instanceof SequenceValidationCheck) {
         execute(check, entry.getSequence());
       }
       if (check instanceof EntryValidationCheck) {
-        execute((EntryValidationCheck) check, entry);
+        execute(check, entry);
       }
       if (check instanceof FeatureValidationCheck) {
         for (Feature feature : entry.getFeatures()) {
@@ -102,7 +101,7 @@ public class EmblEntryValidationPlan extends ValidationPlan {
           if (check instanceof ChromosomeSourceQualifierCheck) {
             ((ChromosomeSourceQualifierCheck) check).setEntry(entry);
           }
-          execute((FeatureValidationCheck) check, feature);
+          execute(check, feature);
         }
       }
     }

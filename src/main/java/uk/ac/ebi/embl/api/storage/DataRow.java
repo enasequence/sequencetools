@@ -17,7 +17,7 @@ public class DataRow {
 
   public static final String ARRAY_SEPARATOR = ",";
 
-  private Object[] values;
+  private final Object[] values;
 
   /** used in the tsv files to represent comma characters - are replaced upon parsing */
   private static final String COMMA_TOKEN = "{COM}";

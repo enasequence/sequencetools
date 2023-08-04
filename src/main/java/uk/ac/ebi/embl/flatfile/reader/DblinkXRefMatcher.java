@@ -30,8 +30,8 @@ public class DblinkXRefMatcher extends FlatFileMatcher {
               + "([^:]+)" // ACCESSION
               + "\\s*)$");
 
-  private static int GROUP_DATABASE = 2;
-  private static int GROUP_ACCESSION = 4;
+  private static final int GROUP_DATABASE = 2;
+  private static final int GROUP_ACCESSION = 4;
 
   public boolean match(String string) {
     boolean matches = super.match(string);

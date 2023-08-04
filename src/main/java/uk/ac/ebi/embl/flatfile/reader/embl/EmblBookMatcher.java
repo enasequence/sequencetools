@@ -53,12 +53,12 @@ public class EmblBookMatcher extends FlatFileMatcher {
               "\\s*\\)\\s*"
               + ".*$");
 
-  private static int GROUP_EDITORS = 1;
-  private static int GROUP_BOOK_TITLE = 2;
-  private static int GROUP_FIRST_PAGE = 3;
-  private static int GROUP_LAST_PAGE = 4;
-  private static int GROUP_PUBLISHER = 5;
-  private static int GROUP_YEAR = 6;
+  private static final int GROUP_EDITORS = 1;
+  private static final int GROUP_BOOK_TITLE = 2;
+  private static final int GROUP_FIRST_PAGE = 3;
+  private static final int GROUP_LAST_PAGE = 4;
+  private static final int GROUP_PUBLISHER = 5;
+  private static final int GROUP_YEAR = 6;
 
   public Book getBook(Publication publication) {
     Book book = null;
@@ -92,7 +92,7 @@ public class EmblBookMatcher extends FlatFileMatcher {
     String lastPage = getString(GROUP_LAST_PAGE);
     if (lastPage == null) {
       error("RL.18");
-    } else {;
+    } else {
       book.setLastPage(lastPage);
     }
     String publisher = getString(GROUP_PUBLISHER);

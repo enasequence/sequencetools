@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,9 +42,9 @@ public class TranslExceptQualifierCheckTest {
     check = new TranslExceptQualifierCheck();
     feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(15l, 25l));
-    locationJoin.addLocation(locationFactory.createLocalRange(30l, 40l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(15L, 25L));
+    locationJoin.addLocation(locationFactory.createLocalRange(30L, 40L));
     feature.setLocations(locationJoin);
     qualifier = qualifierFactory.createQualifier(Qualifier.TRANSL_EXCEPT_QUALIFIER_NAME);
   }
@@ -68,7 +67,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:219444..219446,aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_1", Severity.ERROR));
   }
 
@@ -77,7 +76,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:219444..219448,aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_4", Severity.ERROR));
   }
 
@@ -86,7 +85,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:219445..219444,aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_2", Severity.ERROR));
   }
 
@@ -95,7 +94,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:0..2,aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_3", Severity.ERROR));
   }
 
@@ -104,7 +103,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:0..2,aa:Hi)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_5", Severity.ERROR));
   }
 
@@ -121,7 +120,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:complement(219444..219446),aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_1", Severity.ERROR));
   }
 
@@ -130,7 +129,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:join(219444..219444,219445..219446),aa:His)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_1", Severity.ERROR));
   }
 
@@ -148,7 +147,7 @@ public class TranslExceptQualifierCheckTest {
     qualifier.setValue("(pos:25..27,aa:HIC)");
     feature.addQualifier(qualifier);
     ValidationResult validationResult = check.check(feature);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("TranslExceptQualifierCheck_5", Severity.ERROR));
   }
 }

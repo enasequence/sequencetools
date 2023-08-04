@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the AUTHORS lines. */
 public class AuthorsWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public AuthorsWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

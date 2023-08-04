@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the patent lines. */
 public class EmblPatentWriter extends FlatFileWriter {
 
-  private Patent patent;
+  private final Patent patent;
   private String header = EmblPadding.RL_PADDING;
 
   public EmblPatentWriter(Entry entry, Patent patent, WrapType wrapType) {

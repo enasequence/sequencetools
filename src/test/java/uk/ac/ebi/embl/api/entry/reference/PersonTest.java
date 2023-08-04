@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class PersonTest {
 
-  private Person person = new Person(null);
+  private final Person person = new Person(null);
 
   @Before
   public void setUp() throws Exception {}
@@ -41,23 +41,23 @@ public class PersonTest {
 
   @Test
   public void testEquals() {
-    assertTrue(person.equals(person));
-    assertTrue(person.equals(new Person()));
+    assertEquals(person, person);
+    assertEquals(person, new Person());
     Person person2 = new Person();
     person.setFirstName("firstname");
-    assertFalse(person.equals(person2));
+    assertNotEquals(person, person2);
     person2.setFirstName("firstname");
-    assertTrue(person.equals(person2));
+    assertEquals(person, person2);
     person.setSurname("surname");
-    assertFalse(person.equals(person2));
+    assertNotEquals(person, person2);
     person2.setSurname("surname");
-    assertTrue(person.equals(person2));
+    assertEquals(person, person2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(person.equals(null));
-    assertFalse(person.equals(new String()));
+    assertNotEquals(null, person);
+    assertNotEquals("", person);
   }
 
   @Test
@@ -68,16 +68,16 @@ public class PersonTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(person.compareTo(person) == 0);
-    assertTrue(person.compareTo(new Person()) == 0);
+    assertEquals(0, person.compareTo(person));
+    assertEquals(0, person.compareTo(new Person()));
     Person person2 = new Person();
     person.setFirstName("firstname");
     assertTrue(person.compareTo(person2) > 0);
     person2.setFirstName("firstname");
-    assertTrue(person.compareTo(person2) == 0);
+    assertEquals(0, person.compareTo(person2));
     person.setSurname("surname");
     assertTrue(person.compareTo(person2) > 0);
     person2.setSurname("surname");
-    assertTrue(person.compareTo(person2) == 0);
+    assertEquals(0, person.compareTo(person2));
   }
 }

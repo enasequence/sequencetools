@@ -67,9 +67,11 @@ public class DefaultSubmissionReporterTest {
     Path reportFile = createTempFile();
 
     reporter.writeToFile(
-        reportFile.toFile(), reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+        reportFile.toFile(),
+        DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
     reporter.writeToFile(
-        reportFile.toFile(), reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+        reportFile.toFile(),
+        DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     List<String> lines = Files.readAllLines(reportFile);
     Assert.assertEquals(2, lines.size());
@@ -83,9 +85,11 @@ public class DefaultSubmissionReporterTest {
     reportFile = createTempFile();
 
     reporter.writeToFile(
-        reportFile.toFile(), reporter.createValidationMessage(Severity.ERROR, "MESSAGE1", origin));
+        reportFile.toFile(),
+        DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1", origin));
     reporter.writeToFile(
-        reportFile.toFile(), reporter.createValidationMessage(Severity.INFO, "MESSAGE2", origin));
+        reportFile.toFile(),
+        DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2", origin));
 
     lines = Files.readAllLines(reportFile);
     Assert.assertEquals(2, lines.size());
@@ -101,8 +105,8 @@ public class DefaultSubmissionReporterTest {
     Path reportFile = createTempFile();
 
     ValidationResult result = new ValidationResult();
-    result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     reporter.writeToFile(reportFile.toFile(), result);
 
@@ -118,8 +122,8 @@ public class DefaultSubmissionReporterTest {
     reportFile = createTempFile();
 
     result = new ValidationResult();
-    result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     reporter.writeToFile(reportFile.toFile(), result, "ORIGIN2");
 
@@ -139,8 +143,8 @@ public class DefaultSubmissionReporterTest {
     ValidationResult planResult = new ValidationResult();
     ValidationResult result1 = new ValidationResult();
     ValidationResult result2 = new ValidationResult();
-    result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result1.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result2.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
     planResult.append(result1);
     planResult.append(result2);
 
@@ -160,8 +164,8 @@ public class DefaultSubmissionReporterTest {
     planResult = new ValidationResult();
     result1 = new ValidationResult();
     result2 = new ValidationResult();
-    result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result1.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result2.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
     planResult.append(result1);
     planResult.append(result2);
 
@@ -210,8 +214,10 @@ public class DefaultSubmissionReporterTest {
 
     Path reportFile = createTempFile();
 
-    reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    reporter.writeToFile(reportFile, reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    reporter.writeToFile(
+        reportFile, DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    reporter.writeToFile(
+        reportFile, DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     List<String> lines = Files.readAllLines(reportFile);
     Assert.assertEquals(2, lines.size());
@@ -225,9 +231,11 @@ public class DefaultSubmissionReporterTest {
     reportFile = createTempFile();
 
     reporter.writeToFile(
-        reportFile, reporter.createValidationMessage(Severity.ERROR, "MESSAGE1", origin));
+        reportFile,
+        DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1", origin));
     reporter.writeToFile(
-        reportFile, reporter.createValidationMessage(Severity.INFO, "MESSAGE2", origin));
+        reportFile,
+        DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2", origin));
 
     lines = Files.readAllLines(reportFile);
     Assert.assertEquals(2, lines.size());
@@ -243,8 +251,8 @@ public class DefaultSubmissionReporterTest {
     Path reportFile = createTempFile();
 
     ValidationResult result = new ValidationResult();
-    result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     reporter.writeToFile(reportFile, result);
 
@@ -260,8 +268,8 @@ public class DefaultSubmissionReporterTest {
     reportFile = createTempFile();
 
     result = new ValidationResult();
-    result.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
 
     reporter.writeToFile(reportFile, result, "ORIGIN2");
 
@@ -281,8 +289,8 @@ public class DefaultSubmissionReporterTest {
     ValidationResult planResult = new ValidationResult();
     ValidationResult result1 = new ValidationResult();
     ValidationResult result2 = new ValidationResult();
-    result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result1.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result2.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
     planResult.append(result1);
     planResult.append(result2);
 
@@ -302,8 +310,8 @@ public class DefaultSubmissionReporterTest {
     planResult = new ValidationResult();
     result1 = new ValidationResult();
     result2 = new ValidationResult();
-    result1.append(reporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
-    result2.append(reporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
+    result1.append(DefaultSubmissionReporter.createValidationMessage(Severity.ERROR, "MESSAGE1"));
+    result2.append(DefaultSubmissionReporter.createValidationMessage(Severity.INFO, "MESSAGE2"));
     planResult.append(result1);
     planResult.append(result2);
 

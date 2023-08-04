@@ -42,7 +42,7 @@ public class NonContoAGPFix extends EntryValidationCheck {
             SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
         assemblyGapFeatures = getSortedAssemblyGapFeatures(assemblyGapFeatures);
 
-        Long prevGapEnd = 0l;
+        Long prevGapEnd = 0L;
         int componentOrder = 1;
         String contig_type = Utils.getComponentTypeId(entry);
         long seqLength = entry.getSequence().getLength();

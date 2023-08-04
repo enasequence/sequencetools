@@ -28,43 +28,54 @@ public class TemplateFactory {
   private TemplateSet templateSet;
 
   static {
-    preProcessors.put(TemplateIDs.ITS_TEMPLATE_ID, Arrays.asList(ITS_TEMPLATE_PRE_PROCESSOR));
+    preProcessors.put(
+        TemplateIDs.ITS_TEMPLATE_ID, Collections.singletonList(ITS_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
         TemplateIDs.PHYLO_MARKER_TEMPLATE_ID,
         Arrays.asList(PHYLO_MARKER_TEMPLATE_PRE_PROCESSOR, ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
 
     preProcessors.put(
         TemplateIDs.SINGLE_CDS_MRNA_TEMPLATE_ID,
-        Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
         TemplateIDs.SINGLE_CDS_GENOMIC_DNA_TEMPLATE_ID,
-        Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.NCRNA_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.NCRNA_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.MOBILE_ELEMENT_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.MOBILE_ELEMENT_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
         TemplateIDs.MULTI_GENE_MARKER_TEMPLATE_ID,
-        Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.MULTI_EXON_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.MULTI_EXON_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.RIBOSOMAL_RNA_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.RIBOSOMAL_RNA_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.SATELLITE_DNA_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.SATELLITE_DNA_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.PROMOTER_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.PROMOTER_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.IGS_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.IGS_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.GENE_INTRON_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.GENE_INTRON_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.ISR_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.ISR_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
         TemplateIDs.TSA_UNANNOTATED_TEMPLATE_ID,
-        Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
     preProcessors.put(
-        TemplateIDs.TSA_ANNOTATED_TEMPLATE_ID, Arrays.asList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
+        TemplateIDs.TSA_ANNOTATED_TEMPLATE_ID,
+        Collections.singletonList(ORGANELLE_DE_TEMPLATE_PRE_PROCESSOR));
   }
   /*
       @Autowired

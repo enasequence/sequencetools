@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -61,7 +60,7 @@ public class HostQualifierCheckTest {
   public void testCheck_hostWithCommonName() {
     source.addQualifier(Qualifier.HOST_QUALIFIER_NAME, "Cofan woodlizard");
     ValidationResult result = check.check(source);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("HostQualifierCheck_1", Severity.ERROR));
   }
 

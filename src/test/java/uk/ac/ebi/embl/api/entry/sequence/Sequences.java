@@ -13,9 +13,9 @@ package uk.ac.ebi.embl.api.entry.sequence;
 /** @author simonk */
 public interface Sequences {
 
-  final String SEQ1 = "aaat";
+  String SEQ1 = "aaat";
 
-  final String SEQ2 =
+  String SEQ2 =
       "acaatggcacatgaaatattgattgctgaagcagaggcatttctaaaaaatgttgctcct"
           + "gagaccaggacagcaataatttcagcaataacaggagggaaatcagcctgcaaatcagca"
           + "gctaaactgattaagaatgaacatcttcccctaatgtctggagaagccaccacaatgcac"
@@ -36,7 +36,7 @@ public interface Sequences {
           + "aaagatattgccctctttagggagagacttgacctgggagaaggtgcccctgacgaaacc"
           + "gacaactcaccaattcctttttccaatgatggtatttttgaaatttaattaccttg";
 
-  final String SEQ3 =
+  String SEQ3 =
       "atggcacatgaaatattgattgctgaagcagaggcatttctaaaaaatgttgctcctgag"
           + "accaggacagcaataatttcagcaataacaggagggaaatcagcctgcaaatcagcagct"
           + "aaactgattaagaatgaacatcttcccctaatgtctggagaagccaccacaatgcacatc"
@@ -51,7 +51,7 @@ public interface Sequences {
           + "cacttggaaaaagcaataaaaggagttgaaggcagagttggagagatgggacgaatggca"
           + "atgaaatga";
 
-  final String SEQ4 =
+  String SEQ4 =
       "atggctggtggtttgtcccaactcgttgcgtatggcgcacaagacgtgtacctgaccggt"
           + "aacccccagattaccttcttcaagactgtataccgccgctacaccaacttcgccattgaa"
           + "tcaatccaacaaacgatcaatggcagcgttggttttggcaacaaagtgagcacccagatc"
@@ -82,7 +82,7 @@ public interface Sequences {
           + "aaggagggtagaatcgaaaaattacaacgtccttcgcataatgagtggaatgggaggctt"
           + "ggcttatgccaactga";
 
-  final String SEQ5 =
+  String SEQ5 =
       "atggctggtggtttgtcccaactcgttgcgtatggcgcacaagacgtgtacctgaccggt"
           + "aacccccagattaccttcttcaagactgtataccgccgctacaccaacttcgccattgaa"
           + "tcaatccaacaaacgatcaatggcagcgttggttttggcaacaaagtgagcacccagatc"
@@ -106,7 +106,7 @@ public interface Sequences {
           + "gaaactgtgactgccaacaccgccactctcctaactgccctcaacatctacgctaaaaat"
           + "tacaacgtccttcgcataatgagtggaatgggaggcttggcttatgccaactga";
 
-  final String SEQ6 =
+  String SEQ6 =
       "atgggctcaagaatatctcccgccatggcagatggtagatcctcaagtatgtaggggaag"
           + "aaaagcgttcggtcgagatgtatgtggatatcatctcgtgaaagcccgttgccgttccac"
           + "agcatttatgaaaatgctacgcagacgctagtgaaatctcttgattttgcaacactgtca"
@@ -121,7 +121,7 @@ public interface Sequences {
           + "gtggattacaaccagagaatcctggacaacagttacacagataccatgactaaattccaa"
           + "agggtgactcggtaa";
 
-  final String SEQ7 =
+  String SEQ7 =
       "atgggctcaagaatatctcccgccatggcagatggtagatcctttaccaattatgtgtcc"
           + "agcggtctgtataacaactatctcgaaggtaaattcaaaacccccgaagattctgattac"
           + "cgcgcattcctccaaaagaacgcgagggaggttgaaaaaactgtcaacgctctcactgta"
@@ -129,7 +129,7 @@ public interface Sequences {
           + "gccaagttgactgccgctcctgtggattacaaccagagaatcctggacaacagttacaca"
           + "gataccatgactaaattccaaagggtgactcggtaa";
 
-  final String SEQ8 =
+  String SEQ8 =
       "acacaaagtcctgggcaaaagaaaagcaaaataaccaactatagattagccaaaaccttt"
           + "ttgtttaaacagttagtaatttataagttttaatttataagtttaaatttataagtttta"
           + "attcataacttaagatttaaaatttataatttataacatactaattaatcttaagtatat"
@@ -199,7 +199,7 @@ public interface Sequences {
           + "atcctcataaatgaaacaaataagcaagtataaaacaaaggtcttccttgactttaagaa"
           + "atgtgtttgttttacaaatatgcccagactttgtgt";
 
-  final String SEQ9 =
+  String SEQ9 =
       "atggggttgcttgtgatcacatttgctctagctttgctagagctatccgaaaccaagtct"
           + "ctgtacacacaagttatctaccatgatgaaggtgataggatcacttcatcatttagctgc"
           + "aattattatgactgtaatgaaggaatttctatttgctccagagccaggtatacttctgga"
@@ -243,7 +243,7 @@ public interface Sequences {
           + "atagtctctgcaagtgttgtaatcatgtatgtctctagaattctcattgggaaagtaaac"
           + "aataaataa";
 
-  final String SEQ10 =
+  String SEQ10 =
       "gaattcaaattatcgcttttcgcaccgtgtagtttgtgatgcatcccttccccagtacct"
           + "tatcagcacggagtcgaaaggccgtacctccgggatacaccttagaaatgcggttgaaat"
           + "aactgaagcttcggcctcattgggtatactgcgaaacaccaattcttcaaccgctacatc"
@@ -268,7 +268,7 @@ public interface Sequences {
           + "catgcaaccgtacacgcccatggcaactttcggagtcgcagtgtaagagacacggggtaa"
           + "tacgaattttgaattttgggagtatctgtcaagtatattcaactcttgaataaccacgac";
 
-  final String SEQ11 =
+  String SEQ11 =
       "atgggcgtgtacggttgcatgcacttcgcctatgcgaacggattagtgagaagtcacatt"
           + "tcgggttcgatatccggcggggctatgacgcccattgccgtggatttatggaatgttatg"
           + "tatggactgctggaaaaaatttaccctggtaaggtcgacggagtcgacaactcggtcgcc"
@@ -292,7 +292,7 @@ public interface Sequences {
           + "cctttcgactccgtgctgataaggtactggggaagggatgcatcacaaactacacggtgc"
           + "gaaaagcgataa";
 
-  final String SEQ12 =
+  String SEQ12 =
       "gcctcggcctcctgtatatataaaaaaaagggaaggtagggaggagctggctaaaactgg"
           + "atggctgccagccaagcatgagctcatacctagggagccaaccagctggcagccagaggg"
           + "agccctggctgcatgccactggcagttatagtgaaacccctcccatagtccttaatcaca"
@@ -380,7 +380,7 @@ public interface Sequences {
           + "aaaaacaagggaatttccctggcctcctaaaaagcctccacgcccttactacttctgagt"
           + "aagcttggaggcggaggcg";
 
-  final String SEQ13 =
+  String SEQ13 =
       "atggacaaagtgctgaatagggaggaatccatggagctcatggatttattaggccttgat"
           + "agatctgcatggggaaacattcctgtcatgagaaaagcttatctgaaaaaatgcaaagaa"
           + "cttcaccctgataaaggtggggacgaagacaaaatgaagagaatgaattttttatataaa"
@@ -417,5 +417,5 @@ public interface Sequences {
           + "ggtgcagacacacaggaacactgcacttatcacatctgtaaaggctttcaatgtttcaaa"
           + "aaaccaaaaacccctcccccaaaataa";
 
-  final String SEQ14 = "acgtttggaccttgg";
+  String SEQ14 = "acgtttggaccttgg";
 }

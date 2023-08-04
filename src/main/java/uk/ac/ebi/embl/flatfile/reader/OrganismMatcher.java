@@ -20,8 +20,8 @@ public class OrganismMatcher extends FlatFileMatcher {
 
   private static final Pattern PATTERN = Pattern.compile("^\\s*([^\\(]+)(?:\\((.+)\\))?\\s*$");
 
-  private static int GROUP_SCIENTIFIC_NAME = 1;
-  private static int GROUP_COMMON_NAME = 2;
+  private static final int GROUP_SCIENTIFIC_NAME = 1;
+  private static final int GROUP_COMMON_NAME = 2;
 
   public String getScientificName() {
     return getString(GROUP_SCIENTIFIC_NAME);

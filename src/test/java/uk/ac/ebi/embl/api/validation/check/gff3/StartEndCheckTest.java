@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.gff3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class StartEndCheckTest {
     record.setEnd(1);
     entry.addRecord(record);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count("StartEndCheck", Severity.ERROR));
   }
 

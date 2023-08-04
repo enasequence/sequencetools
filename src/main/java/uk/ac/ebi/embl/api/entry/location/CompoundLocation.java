@@ -21,7 +21,7 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
 
   private static final long serialVersionUID = -4629919604475171150L;
 
-  private List<E> locations;
+  private final List<E> locations;
 
   private boolean leftPartial;
   private boolean rightPartial;

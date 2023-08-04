@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -156,14 +155,14 @@ public class KWCheckTest {
     entry.setDataClass("MGA");
     entry.addKeyword(new Text("TPA"));
     entry.addKeyword(new Text("Third Party Annotation"));
-    assertTrue(!check.check(entry).isValid());
+    assertFalse(check.check(entry).isValid());
   }
 
   @Test
   public void testCheck_WGSwithoutKeywords() {
     entry.setDataClass("WGS");
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("KWCheck_4", Severity.ERROR));
   }
 
@@ -180,7 +179,7 @@ public class KWCheckTest {
     entry.setDataClass("WGS");
     entry.addKeyword(new Text("TPX"));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("KWCheck_4", Severity.ERROR));
   }
 
@@ -189,7 +188,7 @@ public class KWCheckTest {
     entry.setDataClass("TSA");
     entry.setDescription(new Text("TPA: Bos taurus contig xy, transcriptiome shotgun assembly."));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("KWCheck_6", Severity.ERROR));
   }
 

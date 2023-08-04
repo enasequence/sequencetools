@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the journal article lines. */
 public class EmblArticleWriter extends FlatFileWriter {
 
-  private Article article;
+  private final Article article;
   private String header = EmblPadding.RL_PADDING;
 
   public EmblArticleWriter(Entry entry, Article article, WrapType wrapType) {

@@ -56,9 +56,9 @@ public class FeatureLengthCheckTest {
     Feature exonFeature = featureFactory.createFeature(Feature.EXON_FEATURE_NAME);
     Order<Location> intronFeatureLocation = new Order<Location>();
     LocationFactory locationFactory = new LocationFactory();
-    intronFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 108l));
+    intronFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 108L));
     Order<Location> exonFeatureLocation = new Order<Location>();
-    exonFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 113l));
+    exonFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 113L));
     intronFeature.setLocations(intronFeatureLocation);
     exonFeature.setLocations(exonFeatureLocation);
     ValidationResult intronResult = check.check(intronFeature);
@@ -84,9 +84,9 @@ public class FeatureLengthCheckTest {
     Feature exonFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     Order<Location> intronFeatureLocation = new Order<Location>();
     LocationFactory locationFactory = new LocationFactory();
-    intronFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
+    intronFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 117L));
     Order<Location> exonFeatureLocation = new Order<Location>();
-    exonFeatureLocation.addLocation(locationFactory.createLocalRange(100l, 117l));
+    exonFeatureLocation.addLocation(locationFactory.createLocalRange(100L, 117L));
     intronFeature.setLocations(intronFeatureLocation);
     exonFeature.setLocations(exonFeatureLocation);
     ValidationResult intronResult = check.check(intronFeature);

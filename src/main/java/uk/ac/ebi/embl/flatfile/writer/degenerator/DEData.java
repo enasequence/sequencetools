@@ -32,15 +32,15 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
  */
 public class DEData {
 
-  private Entry entry;
+  private final Entry entry;
 
   private boolean isTPA;
-  private List<Feature> cdsFeatures;
-  private List<Feature> geneFeatures;
+  private final List<Feature> cdsFeatures;
+  private final List<Feature> geneFeatures;
   private String mol_type;
   private String chromosome;
   private String segment;
-  private boolean circular;
+  private final boolean circular;
   private boolean hasSequenceLengthrRna;
   private Feature sequenceLengthrRna;
 
@@ -51,6 +51,7 @@ public class DEData {
     for (Text text : entry.getKeywords()) {
       if (text.getText().equals("Third Party Annotation")) {
         this.isTPA = true;
+        break;
       }
     }
 
@@ -181,9 +182,7 @@ public class DEData {
       CompoundLocation<Location> compoundLocation = feature.getLocations();
       if (compoundLocation.getLocations().size() == 1) {
         Location location = compoundLocation.getLocations().get(0);
-        if (location.getBeginPosition() == 1 && location.getEndPosition() == seqLength) {
-          return true;
-        }
+        return location.getBeginPosition() == 1 && location.getEndPosition() == seqLength;
       }
     }
     return false;

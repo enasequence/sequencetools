@@ -117,13 +117,13 @@ public class SequenceEntryUtilsTest {
   public void testIsFeatureWithin() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order2.addLocation(locationFactory.createLocalRange(5L, 10L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -136,13 +136,13 @@ public class SequenceEntryUtilsTest {
   public void testIsFeatureWithin2() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(5l, 9l));
+    order2.addLocation(locationFactory.createLocalRange(5L, 9L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -155,13 +155,13 @@ public class SequenceEntryUtilsTest {
   public void testIsFeatureWithin3() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(4l, 10l));
+    order.addLocation(locationFactory.createLocalRange(4L, 10L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order2.addLocation(locationFactory.createLocalRange(5L, 10L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -174,17 +174,17 @@ public class SequenceEntryUtilsTest {
   public void testIsFeatureWithin4() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(4l, 10l));
-    order.addLocation(locationFactory.createLocalRange(15l, 21l));
-    order.addLocation(locationFactory.createLocalRange(22l, 29l));
+    order.addLocation(locationFactory.createLocalRange(4L, 10L));
+    order.addLocation(locationFactory.createLocalRange(15L, 21L));
+    order.addLocation(locationFactory.createLocalRange(22L, 29L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(3l, 10l));
-    order2.addLocation(locationFactory.createLocalRange(15l, 21l));
-    order2.addLocation(locationFactory.createLocalRange(22l, 30l));
+    order2.addLocation(locationFactory.createLocalRange(3L, 10L));
+    order2.addLocation(locationFactory.createLocalRange(15L, 21L));
+    order2.addLocation(locationFactory.createLocalRange(22L, 30L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -198,13 +198,13 @@ public class SequenceEntryUtilsTest {
   public void testDoLocationsOverlap1() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(10l, 20l));
+    order.addLocation(locationFactory.createLocalRange(10L, 20L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(5l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(5L, 11L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -218,13 +218,13 @@ public class SequenceEntryUtilsTest {
   public void testDoLocationsOverlap2() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(10l, 20l));
+    order.addLocation(locationFactory.createLocalRange(10L, 20L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(21l, 25l));
+    order2.addLocation(locationFactory.createLocalRange(21L, 25L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -238,14 +238,14 @@ public class SequenceEntryUtilsTest {
   public void testDoLocationsOverlap3() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(10l, 20l));
+    order.addLocation(locationFactory.createLocalRange(10L, 20L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
     order2.addLocation(
-        locationFactory.createLocalRange(10l, 20l, true)); // is complement so no overlap
+        locationFactory.createLocalRange(10L, 20L, true)); // is complement so no overlap
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -262,16 +262,16 @@ public class SequenceEntryUtilsTest {
   public void testDoLocationsOverlap4() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(1l, 10l));
-    order.addLocation(locationFactory.createLocalRange(20l, 30l));
-    order.addLocation(locationFactory.createLocalRange(40l, 50l));
+    order.addLocation(locationFactory.createLocalRange(1L, 10L));
+    order.addLocation(locationFactory.createLocalRange(20L, 30L));
+    order.addLocation(locationFactory.createLocalRange(40L, 50L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(11l, 19l));
-    order2.addLocation(locationFactory.createLocalRange(31l, 39l));
+    order2.addLocation(locationFactory.createLocalRange(11L, 19L));
+    order2.addLocation(locationFactory.createLocalRange(31L, 39L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -288,16 +288,16 @@ public class SequenceEntryUtilsTest {
   public void testDoLocationsOverlap5() {
     Feature innerFeature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(1l, 10l));
-    order.addLocation(locationFactory.createLocalRange(20l, 30l));
-    order.addLocation(locationFactory.createLocalRange(40l, 50l));
+    order.addLocation(locationFactory.createLocalRange(1L, 10L));
+    order.addLocation(locationFactory.createLocalRange(20L, 30L));
+    order.addLocation(locationFactory.createLocalRange(40L, 50L));
     order.setComplement(false);
     innerFeature.setLocations(order);
 
     Feature outerFeature = featureFactory.createFeature("feature");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(11l, 20l)); // overlaps
-    order2.addLocation(locationFactory.createLocalRange(31l, 39l));
+    order2.addLocation(locationFactory.createLocalRange(11L, 20L)); // overlaps
+    order2.addLocation(locationFactory.createLocalRange(31L, 39L));
     order2.setComplement(false);
     outerFeature.setLocations(order2);
 
@@ -311,8 +311,8 @@ public class SequenceEntryUtilsTest {
     long sequenceLength = 100;
     Feature feature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, sequenceLength));
-    order.addLocation(locationFactory.createLocalRange(1l, 4l));
+    order.addLocation(locationFactory.createLocalRange(5L, sequenceLength));
+    order.addLocation(locationFactory.createLocalRange(1L, 4L));
     feature.setLocations(order);
 
     assertTrue(SequenceEntryUtils.isCircularBoundary(feature.getLocations(), sequenceLength));
@@ -323,7 +323,7 @@ public class SequenceEntryUtilsTest {
     long sequenceLength = 100;
     Feature feature = featureFactory.createFeature("feature");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, sequenceLength));
+    order.addLocation(locationFactory.createLocalRange(5L, sequenceLength));
     feature.setLocations(order);
 
     assertFalse(SequenceEntryUtils.isCircularBoundary(feature.getLocations(), sequenceLength));

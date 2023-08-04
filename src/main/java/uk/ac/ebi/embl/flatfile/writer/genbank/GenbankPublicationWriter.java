@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the publication lines. */
 public class GenbankPublicationWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public GenbankPublicationWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

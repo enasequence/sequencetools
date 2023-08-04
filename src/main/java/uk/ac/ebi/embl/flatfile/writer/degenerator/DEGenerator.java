@@ -16,6 +16,7 @@ import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
 import static uk.ac.ebi.embl.api.validation.Severity.WARNING;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -83,8 +84,7 @@ public class DEGenerator {
       String organelleQual = getQualifier(ORGANELLE_QUALIFIER_NAME, primarySource).getValue();
       if (organelleQual.indexOf(":") != -1) {
         // strip stuff before the ":"
-        organelleQual =
-            organelleQual.substring((organelleQual.indexOf(":") + 1), organelleQual.length());
+        organelleQual = organelleQual.substring((organelleQual.indexOf(":") + 1));
       }
       organelleQual = organelleQual.replace("mitochondrion", "mitochondrial");
       organelle = organelle.concat(organelleQual).concat(" ");
@@ -223,7 +223,8 @@ public class DEGenerator {
       }
 
       String uniquifierString =
-          DEData.getUniquifierString(Arrays.asList(ISOLATE_QUALIFIER_NAME), primarySource);
+          DEData.getUniquifierString(
+              Collections.singletonList(ISOLATE_QUALIFIER_NAME), primarySource);
       body = body.concat(uniquifierString);
 
       /** 3.7) normal coding genomic DNA (>1 CDS) */
@@ -238,7 +239,8 @@ public class DEGenerator {
       body = StringUtils.removeEnd(body, ", ");
 
       String uniquifierString =
-          DEData.getUniquifierString(Arrays.asList(ISOLATE_QUALIFIER_NAME), primarySource);
+          DEData.getUniquifierString(
+              Collections.singletonList(ISOLATE_QUALIFIER_NAME), primarySource);
       body = body.concat(uniquifierString);
 
     } else {

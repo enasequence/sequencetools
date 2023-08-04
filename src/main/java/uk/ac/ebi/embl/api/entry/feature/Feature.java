@@ -68,8 +68,8 @@ public class Feature implements HasOrigin, Serializable, Comparable<Feature> {
   private String id;
   private String name;
   private CompoundLocation<Location> locations;
-  private List<Qualifier> qualifiers;
-  private List<XRef> xRefs;
+  private final List<Qualifier> qualifiers;
+  private final List<XRef> xRefs;
 
   protected Feature(String featureName) {
     this.name = featureName;

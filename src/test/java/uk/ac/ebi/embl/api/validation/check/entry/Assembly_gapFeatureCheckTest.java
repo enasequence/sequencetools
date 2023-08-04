@@ -70,11 +70,11 @@ public class Assembly_gapFeatureCheckTest {
     // contig locations
     location1 = new Order<Location>();
     location2 = new Order<Location>();
-    location1.addLocation(locationFactory.createLocalRange(13l, 18l));
+    location1.addLocation(locationFactory.createLocalRange(13L, 18L));
     location2.addLocation(locationFactory.createRemoteRange("B13063", 1, 200L, 350L));
     // feature locations
     featureLocation = new Order<Location>();
-    featureLocation.addLocation(locationFactory.createLocalBetween(1l, 10l)); // not a range
+    featureLocation.addLocation(locationFactory.createLocalBetween(1L, 10L)); // not a range
     // sequence
     sequence = sequenceFactory.createSequence();
     entry.setSequence(sequence);
@@ -114,7 +114,7 @@ public class Assembly_gapFeatureCheckTest {
     entry.getSequence().addContigs(location1.getLocations());
     entry.getSequence().addContigs(location2.getLocations());
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(
@@ -141,7 +141,7 @@ public class Assembly_gapFeatureCheckTest {
     geneFeature.addQualifier(gap_typeQualifier1);
     entry.addFeature(geneFeature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(Assembly_gapFeatureCheck.NO_ASSEMBLY_GAP_MESSAGE, Severity.ERROR));
@@ -155,7 +155,7 @@ public class Assembly_gapFeatureCheckTest {
     entry.addFeature(assembly_gapFeature1);
     entry.addFeature(gapFeature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1, validationResult.count(Assembly_gapFeatureCheck.GAP_FEATURE_MESSAGE, Severity.ERROR));
   }
@@ -185,7 +185,7 @@ public class Assembly_gapFeatureCheckTest {
     entry.getSequence().addContigs(location1.getLocations());
     entry.getSequence().addContigs(location2.getLocations());
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(
@@ -202,7 +202,7 @@ public class Assembly_gapFeatureCheckTest {
     entry.getSequence().addContigs(location1.getLocations());
     entry.getSequence().addContigs(location2.getLocations());
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(
@@ -275,7 +275,7 @@ public class Assembly_gapFeatureCheckTest {
     entry.getSequence().addContigs(location1.getLocations());
     entry.getSequence().addContigs(location2.getLocations());
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(Assembly_gapFeatureCheck.INVALID_LOCATION_MESSAGE, Severity.ERROR));
@@ -313,7 +313,7 @@ public class Assembly_gapFeatureCheckTest {
     assembly_gapFeature1.setLocations(featureLocation);
     entry.addFeature(assembly_gapFeature1);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(

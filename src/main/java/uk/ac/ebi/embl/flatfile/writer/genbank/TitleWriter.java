@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the TITLE lines. */
 public class TitleWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public TitleWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

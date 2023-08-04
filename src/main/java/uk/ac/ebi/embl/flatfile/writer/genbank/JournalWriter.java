@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the JOURNAL lines. */
 public class JournalWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public JournalWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

@@ -224,9 +224,6 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
             .get()
             .getTaxonsByScientificName(scientificName);
 
-    if (taxons != null && taxons.size() > 1) {
-      return false;
-    }
-    return true;
+    return taxons == null || taxons.size() <= 1;
   }
 }

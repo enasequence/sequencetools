@@ -105,12 +105,9 @@ public class ObsoleteFeaturetoNewFeatureFixTest {
     assertEquals(
         "attenuator", feature.getSingleQualifierValue(Qualifier.REGULATORY_CLASS_QUALIFIER_NAME));
     assertEquals(4, feature.getQualifiers().size());
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("allele")));
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("bound_moiety")));
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("citation")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("allele")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("bound_moiety")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("citation")));
   }
 
   @Test
@@ -124,11 +121,8 @@ public class ObsoleteFeaturetoNewFeatureFixTest {
     assertEquals(Feature.REPEAT_REGION, feature.getName());
     assertEquals("long_terminal_repeat", feature.getSingleQualifierValue("rtp_type"));
     assertEquals(4, feature.getQualifiers().size());
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("allele")));
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("bound_moiety")));
-    assertEquals(
-        true, feature.getQualifiers().contains(qualifierFactory.createQualifier("citation")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("allele")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("bound_moiety")));
+    assertTrue(feature.getQualifiers().contains(qualifierFactory.createQualifier("citation")));
   }
 }

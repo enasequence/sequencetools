@@ -150,7 +150,7 @@ public class SequenceAccessionRangeSplitter {
     for (String range : rangesStr.split(rangesSeparator)) {
       range = range.trim();
       if (StringUtils.isNotBlank(range)) {
-        String accessions[] = range.split(accessionsSeparator);
+        String[] accessions = range.split(accessionsSeparator);
         if (accessions.length == 1) {
           cnt++;
         } else if (accessions.length == 2) {

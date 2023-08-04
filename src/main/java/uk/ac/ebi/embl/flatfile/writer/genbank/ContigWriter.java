@@ -30,7 +30,7 @@ public class ContigWriter extends FlatFileWriter {
   }
 
   public boolean write(Writer writer) throws IOException {
-    List<Location> contigs = ((Entry) entry).getSequence().getContigs();
+    List<Location> contigs = entry.getSequence().getContigs();
     if (contigs == null || contigs.size() == 0) {
       return false;
     }

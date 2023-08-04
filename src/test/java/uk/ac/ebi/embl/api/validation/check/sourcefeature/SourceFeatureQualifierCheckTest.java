@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -255,7 +254,7 @@ public class SourceFeatureQualifierCheckTest {
     entry.addFeature(feature);
     entry.addFeature(sourceFeature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
     assertEquals(1, validationResult.count("EnvSampleRequiredForMetagenome", Severity.ERROR));
   }
@@ -280,7 +279,7 @@ public class SourceFeatureQualifierCheckTest {
     entry.addFeature(feature);
     entry.addFeature(sourceFeature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
     assertEquals(1, validationResult.count("InvalidMetagenomeSource", Severity.ERROR));
   }
@@ -309,7 +308,7 @@ public class SourceFeatureQualifierCheckTest {
     entry.addFeature(feature);
     entry.addFeature(sourceFeature);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.getMessages(Severity.ERROR).size());
     assertEquals(1, validationResult.count("MorethanOneMetagenome", Severity.ERROR));
   }

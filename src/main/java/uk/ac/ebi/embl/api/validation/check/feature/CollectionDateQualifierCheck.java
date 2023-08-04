@@ -173,11 +173,8 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck {
       }
     } else {
       ParseDateResult dateResult = parseDate(value);
-      if (dateResult == null) {
-        return false; // invalid date format
-      }
+      return dateResult != null; // invalid date format
     }
-    return true;
   }
 
   static class FutureDateException extends Exception {}

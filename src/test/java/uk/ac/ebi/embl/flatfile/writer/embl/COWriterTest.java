@@ -20,14 +20,14 @@ public class COWriterTest extends EmblWriterTest {
   public void testWrite_Contigs() throws IOException {
     LocationFactory locationFactory = new LocationFactory();
     entry.setSequence(new SequenceFactory().createSequence());
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    entry.getSequence().addContig(locationFactory.createUnknownGap(100l));
-    entry.getSequence().addContig(locationFactory.createGap(100l));
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    entry.getSequence().addContig(locationFactory.createUnknownGap(100L));
+    entry.getSequence().addContig(locationFactory.createGap(100L));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    entry.getSequence().addContig(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
     StringWriter writer = new StringWriter();
     assertTrue(new COWriter(entry, wrapType).write(writer));
     // System.out.println(writer.toString());

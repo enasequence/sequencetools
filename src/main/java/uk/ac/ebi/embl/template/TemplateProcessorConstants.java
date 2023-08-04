@@ -63,7 +63,7 @@ public class TemplateProcessorConstants {
     SEDIMENT_235("23S"),
     SEDIMENT_26S("26S"),
     SEDIMENT_28S("28S");
-    private String sediment;
+    private final String sediment;
 
     SedimentE(String sediment) {
       this.sediment = sediment;
@@ -84,7 +84,7 @@ public class TemplateProcessorConstants {
     RPB2("RNA polymerase II large subunit 2"),
     GAPDH("Glyceraldehyde 3-phosphate dehydrogenase"),
     H3("Histone H3");
-    private String marker;
+    private final String marker;
 
     MarkerE(String marker) {
       this.marker = marker;
@@ -103,6 +103,6 @@ public class TemplateProcessorConstants {
 
   enum moloculeTypeE {
     VMOLTYPE,
-    NCRMOLTYPE;
+    NCRMOLTYPE
   }
 }

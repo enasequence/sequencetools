@@ -23,7 +23,7 @@ public class SequenceReader extends FlatFileLineReader {
 
   private static final int MAX_SEQUENCE_LENGTH = Integer.MAX_VALUE - 100;
   private static final byte SUBSTITUTION = 26;
-  private ByteBuffer sequence = ByteBuffer.allocate((int) 4096);
+  private ByteBuffer sequence = ByteBuffer.allocate(4096);
 
   public SequenceReader(LineReader lineReader) {
     super(lineReader);
@@ -87,8 +87,8 @@ public class SequenceReader extends FlatFileLineReader {
         .setOrigin(new FlatFileOrigin(lineReader.getFileId(), firstLineNumber, lastLineNumber));
   }
 
-  private static byte dna_tr[] = new byte[256];
-  private static byte prn_tr[] = new byte[256];
+  private static final byte[] dna_tr = new byte[256];
+  private static final byte[] prn_tr = new byte[256];
 
   static {
     // DNA

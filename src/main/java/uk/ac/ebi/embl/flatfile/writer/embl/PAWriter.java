@@ -24,7 +24,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
  */
 public class PAWriter extends FlatFileWriter {
 
-  private String accession;
+  private final String accession;
 
   public PAWriter(Entry entry, WrapType wrapType) {
     super(entry, wrapType);

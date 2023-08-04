@@ -30,7 +30,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RG lines. */
 public class RLWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public RLWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

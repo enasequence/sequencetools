@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.entry.reference.ElectronicReference;
 /** Flat file writer for the electronic reference lines. */
 public class ElectronicReferenceWriter extends FlatFileWriter {
 
-  private ElectronicReference electronicReference;
+  private final ElectronicReference electronicReference;
 
   public ElectronicReferenceWriter(
       Entry entry, ElectronicReference electronicReference, WrapType wrapType, String header) {
@@ -38,8 +38,8 @@ public class ElectronicReferenceWriter extends FlatFileWriter {
     this.header = header;
   }
 
-  private String firstLineHeader;
-  private String header;
+  private final String firstLineHeader;
+  private final String header;
 
   public boolean write(Writer writer) throws IOException {
     StringBuilder block = new StringBuilder();

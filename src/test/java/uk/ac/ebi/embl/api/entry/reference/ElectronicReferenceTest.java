@@ -39,34 +39,34 @@ public class ElectronicReferenceTest {
 
   @Test
   public void testEquals() {
-    assertTrue(electronicReference.equals(electronicReference));
-    assertTrue(electronicReference.equals(new ElectronicReference()));
+    assertEquals(electronicReference, electronicReference);
+    assertEquals(electronicReference, new ElectronicReference());
     ElectronicReference electronicReference2 = new ElectronicReference();
     electronicReference.setTitle("title");
-    assertFalse(electronicReference.equals(electronicReference2));
+    assertNotEquals(electronicReference, electronicReference2);
     electronicReference2.setTitle("title");
-    assertTrue(electronicReference.equals(electronicReference2));
+    assertEquals(electronicReference, electronicReference2);
     electronicReference.setConsortium("consortium");
-    assertFalse(electronicReference.equals(electronicReference2));
+    assertNotEquals(electronicReference, electronicReference2);
     electronicReference2.setConsortium("consortium");
-    assertTrue(electronicReference.equals(electronicReference2));
+    assertEquals(electronicReference, electronicReference2);
     electronicReference.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(electronicReference.equals(electronicReference2));
+    assertNotEquals(electronicReference, electronicReference2);
     electronicReference2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(electronicReference.equals(electronicReference2));
+    assertEquals(electronicReference, electronicReference2);
     electronicReference.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(electronicReference.equals(electronicReference2));
+    assertNotEquals(electronicReference, electronicReference2);
     electronicReference2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(electronicReference.equals(electronicReference2));
+    assertEquals(electronicReference, electronicReference2);
     electronicReference.setText("text");
-    assertFalse(electronicReference.equals(electronicReference2));
+    assertNotEquals(electronicReference, electronicReference2);
     electronicReference2.setText("text");
-    assertTrue(electronicReference.equals(electronicReference2));
+    assertEquals(electronicReference, electronicReference2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(electronicReference.equals(new String()));
+    assertNotEquals("", electronicReference);
   }
 
   @Test
@@ -77,29 +77,29 @@ public class ElectronicReferenceTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(electronicReference.compareTo(electronicReference) == 0);
-    assertTrue(electronicReference.compareTo(new ElectronicReference()) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference));
+    assertEquals(0, electronicReference.compareTo(new ElectronicReference()));
     ElectronicReference electronicReference2 = new ElectronicReference();
     electronicReference.setTitle("title");
     // null < not null
     assertTrue(electronicReference.compareTo(electronicReference2) > 0);
     electronicReference2.setTitle("title");
-    assertTrue(electronicReference.compareTo(electronicReference2) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference2));
     electronicReference.setConsortium("consortium");
     assertTrue(electronicReference.compareTo(electronicReference2) > 0);
     electronicReference2.setConsortium("consortium");
-    assertTrue(electronicReference.compareTo(electronicReference2) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference2));
     electronicReference.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(electronicReference.compareTo(electronicReference2) > 0);
     electronicReference2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(electronicReference.compareTo(electronicReference2) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference2));
     electronicReference.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(electronicReference.compareTo(electronicReference2) > 0);
     electronicReference2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(electronicReference.compareTo(electronicReference2) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference2));
     electronicReference.setText("text");
     assertTrue(electronicReference.compareTo(electronicReference2) > 0);
     electronicReference2.setText("text");
-    assertTrue(electronicReference.compareTo(electronicReference2) == 0);
+    assertEquals(0, electronicReference.compareTo(electronicReference2));
   }
 }

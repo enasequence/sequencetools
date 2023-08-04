@@ -27,7 +27,7 @@ public enum ValidationScope {
   ASSEMBLY_CHROMOSOME(Group.ASSEMBLY),
   ASSEMBLY_TRANSCRIPTOME(Group.ASSEMBLY);
 
-  private Group group;
+  private final Group group;
 
   ValidationScope(Group group) {
     this.group = group;

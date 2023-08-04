@@ -93,21 +93,21 @@ public class Isolation_sourceQualifierFixTest {
   @Test
   public void testCheck_noQualifiers() {
 
-    assertTrue(check.check(featureFactory.createFeature("feature")).getMessages().size() == 0);
+    assertEquals(0, check.check(featureFactory.createFeature("feature")).getMessages().size());
   }
 
   @Test
   public void testCheck_noIsolationQualifier() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.ANTICODON_QUALIFIER_NAME);
-    assertTrue(check.check(feature).getMessages().size() == 0);
+    assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
   public void testCheck_isolationQualifierwithValidValue() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "stem tissue");
-    assertTrue(check.check(feature).getMessages().size() == 0);
+    assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
@@ -115,7 +115,7 @@ public class Isolation_sourceQualifierFixTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "Japan:Okayama, Kurashiki");
     ValidationResult result = check.check(feature);
-    assertTrue(result.getMessages().size() == 1);
+    assertEquals(1, result.getMessages().size());
     assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
     assertEquals(0, feature.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size());
     assertEquals(1, result.count("Isolation_sourceQualifierFix_1", Severity.FIX));
@@ -126,7 +126,7 @@ public class Isolation_sourceQualifierFixTest {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, "13.59 S 75.3 W");
     ValidationResult result = check.check(feature);
-    assertTrue(result.getMessages().size() == 1);
+    assertEquals(1, result.getMessages().size());
     assertEquals(1, feature.getQualifiers(Qualifier.LAT_LON_QUALIFIER_NAME).size());
     assertEquals(0, feature.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size());
     assertEquals(1, result.count("Isolation_sourceQualifierFix_2", Severity.FIX));

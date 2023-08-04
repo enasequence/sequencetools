@@ -32,31 +32,31 @@ public class UnpublishedTest {
 
   @Test
   public void testEquals() {
-    assertTrue(unpublished.equals(unpublished));
-    assertTrue(unpublished.equals(new Unpublished()));
+    assertEquals(unpublished, unpublished);
+    assertEquals(unpublished, new Unpublished());
     Unpublished unpublished2 = new Unpublished();
     unpublished.setTitle("title");
-    assertFalse(unpublished.equals(unpublished2));
+    assertNotEquals(unpublished, unpublished2);
     unpublished2.setTitle("title");
-    assertTrue(unpublished.equals(unpublished2));
+    assertEquals(unpublished, unpublished2);
     unpublished.setConsortium("consortium");
-    assertFalse(unpublished.equals(unpublished2));
+    assertNotEquals(unpublished, unpublished2);
     unpublished2.setConsortium("consortium");
-    assertTrue(unpublished.equals(unpublished2));
+    assertEquals(unpublished, unpublished2);
     unpublished.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(unpublished.equals(unpublished2));
+    assertNotEquals(unpublished, unpublished2);
     unpublished2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(unpublished.equals(unpublished2));
+    assertEquals(unpublished, unpublished2);
     unpublished.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(unpublished.equals(unpublished2));
+    assertNotEquals(unpublished, unpublished2);
     unpublished2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(unpublished.equals(unpublished2));
+    assertEquals(unpublished, unpublished2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(unpublished.equals(new String()));
-    assertFalse(unpublished.equals(null));
+    assertNotEquals("", unpublished);
+    assertNotEquals(null, unpublished);
   }
 
   @Test
@@ -67,25 +67,25 @@ public class UnpublishedTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(unpublished.compareTo(unpublished) == 0);
-    assertTrue(unpublished.compareTo(new Unpublished()) == 0);
+    assertEquals(0, unpublished.compareTo(unpublished));
+    assertEquals(0, unpublished.compareTo(new Unpublished()));
     Unpublished unpublished2 = new Unpublished();
     unpublished.setTitle("title");
     // null < not null
     assertTrue(unpublished.compareTo(unpublished2) > 0);
     unpublished2.setTitle("title");
-    assertTrue(unpublished.compareTo(unpublished2) == 0);
+    assertEquals(0, unpublished.compareTo(unpublished2));
     unpublished.setConsortium("consortium");
     assertTrue(unpublished.compareTo(unpublished2) > 0);
     unpublished2.setConsortium("consortium");
-    assertTrue(unpublished.compareTo(unpublished2) == 0);
+    assertEquals(0, unpublished.compareTo(unpublished2));
     unpublished.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(unpublished.compareTo(unpublished2) > 0);
     unpublished2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(unpublished.compareTo(unpublished2) == 0);
+    assertEquals(0, unpublished.compareTo(unpublished2));
     unpublished.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(unpublished.compareTo(unpublished2) > 0);
     unpublished2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(unpublished.compareTo(unpublished2) == 0);
+    assertEquals(0, unpublished.compareTo(unpublished2));
   }
 }

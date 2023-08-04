@@ -24,7 +24,7 @@ public class SubmissionFile {
     UNLOCALISED_LIST,
     MASTER,
     ANNOTATION_ONLY_FLATFILE
-  };
+  }
 
   private final FileType fileType;
   private final File file;
@@ -70,7 +70,7 @@ public class SubmissionFile {
 
   public File getReportFile() {
     return reportFile;
-  };
+  }
 
   public boolean createReportFile() {
     return reportFile != null;

@@ -33,20 +33,20 @@ public class XRefTest {
     XRef x4 = new XRef("db", "x", "sa");
     XRef x5 = new XRef("db", "pa", "x");
 
-    assertTrue(x1.equals(x1));
-    assertTrue(x1.equals(x2));
-    assertTrue(x2.equals(x1));
+    assertEquals(x1, x1);
+    assertEquals(x1, x2);
+    assertEquals(x2, x1);
 
-    assertFalse(x1.equals(x3));
-    assertFalse(x3.equals(x1));
+    assertNotEquals(x1, x3);
+    assertNotEquals(x3, x1);
 
-    assertFalse(x1.equals(x4));
-    assertFalse(x1.equals(x5));
+    assertNotEquals(x1, x4);
+    assertNotEquals(x1, x5);
 
     x2.setDatabase("x");
     x2.setPrimaryAccession("x");
     x2.setSecondaryAccession("x");
-    assertFalse(x1.equals(x2));
+    assertNotEquals(x1, x2);
   }
 
   @Test

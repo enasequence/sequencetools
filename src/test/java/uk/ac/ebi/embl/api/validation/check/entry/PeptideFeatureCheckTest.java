@@ -11,8 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -54,9 +53,9 @@ public class PeptideFeatureCheckTest {
     entry = entryFactory.createEntry();
     cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Join<Location> join = new Join<Location>();
-    join.addLocation(locationFactory.createLocalRange(5647l, 5804l));
-    join.addLocation(locationFactory.createLocalRange(7506l, 7653l));
-    join.addLocation(locationFactory.createLocalRange(7947l, 8183l));
+    join.addLocation(locationFactory.createLocalRange(5647L, 5804L));
+    join.addLocation(locationFactory.createLocalRange(7506L, 7653L));
+    join.addLocation(locationFactory.createLocalRange(7947L, 8183L));
     cdsFeature.setLocations(join);
     cdsFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
     cdsFeature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "LOCUS_IGF-II");
@@ -92,7 +91,7 @@ public class PeptideFeatureCheckTest {
 
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5718l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5718L);
     range.setComplement(
         true); // this puts it on the other strand to the cds - so should not be considered
     join.addLocation(range);
@@ -116,10 +115,10 @@ public class PeptideFeatureCheckTest {
     Join<Location> join = new Join<Location>();
     LocalRange range =
         locationFactory.createLocalRange(
-            5647l, 5718l,
+            5647L, 5718L,
             true); // this puts it on the other strand to the cds - so should not be considered
     join.addLocation(range);
-    LocalRange range2 = locationFactory.createLocalRange(5700l, 5730l, false);
+    LocalRange range2 = locationFactory.createLocalRange(5700L, 5730L, false);
     join.addLocation(range2);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "LOCUS_IGF-II");
@@ -141,7 +140,7 @@ public class PeptideFeatureCheckTest {
     Join<Location> join = new Join<Location>();
     LocalRange range =
         locationFactory.createLocalRange(
-            4000l, 5646l); // finishes just before the cds feature starts
+            4000L, 5646L); // finishes just before the cds feature starts
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -165,7 +164,7 @@ public class PeptideFeatureCheckTest {
     cdsFeature.setPseudo(true);
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5718l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5718L);
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -173,7 +172,7 @@ public class PeptideFeatureCheckTest {
     entry.addFeature(peptideFeature);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   /**
@@ -186,7 +185,7 @@ public class PeptideFeatureCheckTest {
 
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5718l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5718L);
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -207,7 +206,7 @@ public class PeptideFeatureCheckTest {
 
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5641l, 5718l);
+    LocalRange range = locationFactory.createLocalRange(5641L, 5718L);
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -215,7 +214,7 @@ public class PeptideFeatureCheckTest {
     entry.addFeature(peptideFeature);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(
         1,
         validationResult.count(PeptideFeatureCheck.PEPTIDE_NOT_SUBSTRING_MESSAGE, Severity.ERROR));
@@ -231,7 +230,7 @@ public class PeptideFeatureCheckTest {
 
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5717l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5717L);
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -239,7 +238,7 @@ public class PeptideFeatureCheckTest {
     entry.addFeature(peptideFeature);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count(PeptideFeatureCheck.NON_MOD_3_MESSAGE, Severity.ERROR));
   }
 
@@ -257,7 +256,7 @@ public class PeptideFeatureCheckTest {
     cdsFeature.setStartCodon(1);
     Feature peptideFeature = featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5717l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5717L);
     join.addLocation(range);
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
@@ -265,7 +264,7 @@ public class PeptideFeatureCheckTest {
     entry.addFeature(peptideFeature);
 
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
     assertEquals(1, validationResult.count(PeptideFeatureCheck.NON_MOD_3_MESSAGE, Severity.ERROR));
   }
 
@@ -287,7 +286,7 @@ public class PeptideFeatureCheckTest {
         (PeptideFeature) featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     peptideFeature.setStartCodon(2);
     Join<Location> join = new Join<Location>();
-    LocalRange range = locationFactory.createLocalRange(5647l, 5717l);
+    LocalRange range = locationFactory.createLocalRange(5647L, 5717L);
     join.addLocation(range);
     join.setLeftPartial(true); // as does not have a start codon
     peptideFeature.setLocations(join);
@@ -314,7 +313,7 @@ public class PeptideFeatureCheckTest {
     PeptideFeature peptideFeature =
         (PeptideFeature) featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();
-    join.addLocation(locationFactory.createLocalRange(8177l, 8183l));
+    join.addLocation(locationFactory.createLocalRange(8177L, 8183L));
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
 

@@ -16,12 +16,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TemplateXMLHandler extends DefaultHandler {
-  private MutableTemplateInfo template;
+  private final MutableTemplateInfo template;
   /**
    * keep a local copy of the tokens despite their being stored in the template - speeds up access
    * where needed here
    */
-  private Map<String, TemplateTokenInfo> tokens = new HashMap<String, TemplateTokenInfo>();
+  private final Map<String, TemplateTokenInfo> tokens = new HashMap<String, TemplateTokenInfo>();
 
   String currentString;
 
@@ -107,7 +107,7 @@ public class TemplateXMLHandler extends DefaultHandler {
       String name = attributes.getValue("name");
       String depends = attributes.getValue("mandatory");
 
-      List<String> dependsList = Arrays.asList(depends.split(","));
+      String[] dependsList = depends.split(",");
       List<TemplateTokenInfo> dependsTokens = new ArrayList<TemplateTokenInfo>();
       for (String tokenName : dependsList) {
         TemplateTokenInfo tokenInfo = tokens.get(tokenName);
@@ -128,10 +128,8 @@ public class TemplateXMLHandler extends DefaultHandler {
         description = null;
       }
 
-      boolean mandatory = true; // default
-      if (mandatoryAttribute != null && mandatoryAttribute.equals("false")) {
-        mandatory = false;
-      }
+      boolean mandatory =
+          mandatoryAttribute == null || !mandatoryAttribute.equals("false"); // default
 
       List<String> containsStrings = Arrays.asList(contains.split(","));
       template.groupInfo.add(
@@ -146,7 +144,7 @@ public class TemplateXMLHandler extends DefaultHandler {
     }
   }
 
-  public void characters(char ch[], int start, int length) throws SAXException {
+  public void characters(char[] ch, int start, int length) throws SAXException {
     StringBuffer buffer = new StringBuffer();
     for (int i = start; i < start + length; i++) {
       buffer.append(ch[i]);

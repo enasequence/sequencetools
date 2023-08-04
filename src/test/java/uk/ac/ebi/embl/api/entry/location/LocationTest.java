@@ -28,14 +28,14 @@ public class LocationTest {
     assertFalse(location1.isComplement());
 
     Range location2 = new LocalRange(1L, 3L);
-    assertEquals(new Long(1), location2.getBeginPosition());
-    assertEquals(new Long(3), location2.getEndPosition());
+    assertEquals(Long.valueOf(1), location2.getBeginPosition());
+    assertEquals(Long.valueOf(3), location2.getEndPosition());
     assertEquals(3L, location2.getLength());
     assertFalse(location2.isComplement());
 
     Range location3 = new LocalRange(1L, 3L, true);
-    assertEquals(new Long(1), location3.getBeginPosition());
-    assertEquals(new Long(3), location3.getEndPosition());
+    assertEquals(Long.valueOf(1), location3.getBeginPosition());
+    assertEquals(Long.valueOf(3), location3.getEndPosition());
     assertEquals(3L, location3.getLength());
     assertTrue(location3.isComplement());
   }
@@ -49,14 +49,14 @@ public class LocationTest {
     assertFalse(location1.isComplement());
 
     Base location2 = new LocalBase(1L);
-    assertEquals(new Long(1), location2.getBeginPosition());
-    assertEquals(new Long(1), location2.getEndPosition());
+    assertEquals(Long.valueOf(1), location2.getBeginPosition());
+    assertEquals(Long.valueOf(1), location2.getEndPosition());
     assertEquals(1, location2.getLength());
     assertFalse(location2.isComplement());
 
     Base location3 = new LocalBase(1L, true);
-    assertEquals(new Long(1), location3.getBeginPosition());
-    assertEquals(new Long(1), location3.getEndPosition());
+    assertEquals(Long.valueOf(1), location3.getBeginPosition());
+    assertEquals(Long.valueOf(1), location3.getEndPosition());
     assertEquals(1, location3.getLength());
     assertTrue(location3.isComplement());
   }
@@ -70,14 +70,14 @@ public class LocationTest {
     assertFalse(location1.isComplement());
 
     Between location2 = new LocalBetween(1L, 2L);
-    assertEquals(new Long(1), location2.getBeginPosition());
-    assertEquals(new Long(2), location2.getEndPosition());
+    assertEquals(Long.valueOf(1), location2.getBeginPosition());
+    assertEquals(Long.valueOf(2), location2.getEndPosition());
     assertEquals(0, location2.getLength());
     assertFalse(location2.isComplement());
 
     Between location3 = new LocalBetween(1L, 2L, true);
-    assertEquals(new Long(1), location3.getBeginPosition());
-    assertEquals(new Long(2), location3.getEndPosition());
+    assertEquals(Long.valueOf(1), location3.getBeginPosition());
+    assertEquals(Long.valueOf(2), location3.getEndPosition());
     assertEquals(0, location3.getLength());
     assertTrue(location3.isComplement());
   }

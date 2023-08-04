@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entries;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import org.junit.Test;
@@ -58,7 +57,7 @@ public class NonUniqueSubmitterAccessionCheckTest {
     entryList.add(entry1);
     entryList.add(entry2);
     ValidationResult result = check.check(entryList);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("NonUniqueSubmitterAccessionCheck", Severity.ERROR));
   }
 

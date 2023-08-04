@@ -26,7 +26,7 @@ public class ChromosomeEntry extends GCSEntry {
   private String accession;
   private Sequence.Topology topology;
 
-  private List<Qualifier> chromosomeQualifeirs = new ArrayList<>();
+  private final List<Qualifier> chromosomeQualifeirs = new ArrayList<>();
 
   public String getAccession() {
     return accession;

@@ -45,10 +45,10 @@ public class EmblArticleMatcher extends FlatFileMatcher {
               + // year
               ".*$");
 
-  private static int GROUP_JOURNAL_VOLUME_ISSUE = 1;
-  private static int GROUP_FIRST_PAGE = 2;
-  private static int GROUP_LAST_PAGE = 3;
-  private static int GROUP_YEAR = 4;
+  private static final int GROUP_JOURNAL_VOLUME_ISSUE = 1;
+  private static final int GROUP_FIRST_PAGE = 2;
+  private static final int GROUP_LAST_PAGE = 3;
+  private static final int GROUP_YEAR = 4;
 
   public Article getArticle(Publication publication) {
     Article article = null;
@@ -76,12 +76,11 @@ public class EmblArticleMatcher extends FlatFileMatcher {
         article.setJournal(journal_volume.substring(0, journal_volume.lastIndexOf(' ')));
       } else if (journal_volume_issue.matches(".*\\d$")) {
         article.setVolume(
-            journal_volume_issue.substring(
-                journal_volume_issue.lastIndexOf(' ') + 1, journal_volume_issue.length()));
+            journal_volume_issue.substring(journal_volume_issue.lastIndexOf(' ') + 1));
         article.setJournal(
             journal_volume_issue.substring(0, journal_volume_issue.lastIndexOf(' ')));
       } else {
-        article.setJournal(journal_volume_issue.substring(0, journal_volume_issue.length()));
+        article.setJournal(journal_volume_issue);
       }
     }
     String firstPage = FlatFileUtils.shrink(getString(GROUP_FIRST_PAGE));

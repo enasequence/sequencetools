@@ -177,7 +177,7 @@ public class AccessionMatcher {
       if (accnPrefix == null) {
         accnPrefix = getPrefix(getNewSeqPrimaryAccMatcher(primaryAccession), 1);
       }
-      if (accnPrefix == null && dataClass.toUpperCase().equals(Entry.CON_DATACLASS)) {
+      if (accnPrefix == null && dataClass.equalsIgnoreCase(Entry.CON_DATACLASS)) {
         Accession accn = getSplittedAccession(primaryAccession);
         if (accn != null && StringUtils.isNotBlank(accn.s)) {
           return accn.prefix;

@@ -20,7 +20,7 @@ public class RemoteBetween extends Between implements RemoteLocation, Serializab
 
   private static final long serialVersionUID = 2229472598658838314L;
 
-  private SequenceAccession sequenceAccession;
+  private final SequenceAccession sequenceAccession;
 
   protected RemoteBetween(
       String accession, Integer version, Long beginPosition, Long endPosition, boolean complement) {

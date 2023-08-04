@@ -10,14 +10,11 @@
  */
 package uk.ac.ebi.embl.api.entry.location;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -71,7 +68,7 @@ public class CompoundLocationTest {
   @Test
   public void testAddLocations() {
     Base base = new LocalBase(2L);
-    assertTrue(location.addLocations(Arrays.asList(base)));
+    assertTrue(location.addLocations(Collections.singletonList(base)));
     assertEquals(base, location.getLocations().get(0));
   }
 
@@ -142,17 +139,17 @@ public class CompoundLocationTest {
     LocationFactory locationFactory = new LocationFactory();
     LocalRange localRange = locationFactory.createLocalRange(5L, 35L);
     feature.getLocations().addLocation(localRange);
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(5L));
-    assertEquals(new Long(31L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(5L));
+    assertEquals(Long.valueOf(31L), feature.getLocations().getRelativePosition(35L));
     localRange.setComplement(true);
-    assertEquals(new Long(31L), feature.getLocations().getRelativePosition(5L));
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(31L), feature.getLocations().getRelativePosition(5L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(35L));
     feature.getLocations().setComplement(true);
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(5L));
-    assertEquals(new Long(31L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(5L));
+    assertEquals(Long.valueOf(31L), feature.getLocations().getRelativePosition(35L));
     // test outside range
-    assertEquals(null, feature.getLocations().getRelativePosition(55L));
-    assertEquals(null, feature.getLocations().getRelativePosition(2L));
+    assertNull(feature.getLocations().getRelativePosition(55L));
+    assertNull(feature.getLocations().getRelativePosition(2L));
   }
 
   @Test
@@ -164,25 +161,25 @@ public class CompoundLocationTest {
     feature.getLocations().addLocation(localRange1);
     LocalRange localRange2 = locationFactory.createLocalRange(101L, 135L);
     feature.getLocations().addLocation(localRange2);
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(1L));
-    assertEquals(new Long(35L), feature.getLocations().getRelativePosition(35L));
-    assertEquals(new Long(36L), feature.getLocations().getRelativePosition(101L));
-    assertEquals(new Long(70L), feature.getLocations().getRelativePosition(135L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(1L));
+    assertEquals(Long.valueOf(35L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(36L), feature.getLocations().getRelativePosition(101L));
+    assertEquals(Long.valueOf(70L), feature.getLocations().getRelativePosition(135L));
     localRange1.setComplement(true);
-    assertEquals(new Long(35L), feature.getLocations().getRelativePosition(1L));
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(35L));
-    assertEquals(new Long(36L), feature.getLocations().getRelativePosition(101L));
-    assertEquals(new Long(70L), feature.getLocations().getRelativePosition(135L));
+    assertEquals(Long.valueOf(35L), feature.getLocations().getRelativePosition(1L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(36L), feature.getLocations().getRelativePosition(101L));
+    assertEquals(Long.valueOf(70L), feature.getLocations().getRelativePosition(135L));
     localRange2.setComplement(true);
-    assertEquals(new Long(35L), feature.getLocations().getRelativePosition(1L));
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(35L));
-    assertEquals(new Long(70L), feature.getLocations().getRelativePosition(101L));
-    assertEquals(new Long(36L), feature.getLocations().getRelativePosition(135L));
+    assertEquals(Long.valueOf(35L), feature.getLocations().getRelativePosition(1L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(70L), feature.getLocations().getRelativePosition(101L));
+    assertEquals(Long.valueOf(36L), feature.getLocations().getRelativePosition(135L));
     feature.getLocations().setComplement(true);
-    assertEquals(new Long(36L), feature.getLocations().getRelativePosition(1L));
-    assertEquals(new Long(70L), feature.getLocations().getRelativePosition(35L));
-    assertEquals(new Long(1L), feature.getLocations().getRelativePosition(101L));
-    assertEquals(new Long(35L), feature.getLocations().getRelativePosition(135L));
+    assertEquals(Long.valueOf(36L), feature.getLocations().getRelativePosition(1L));
+    assertEquals(Long.valueOf(70L), feature.getLocations().getRelativePosition(35L));
+    assertEquals(Long.valueOf(1L), feature.getLocations().getRelativePosition(101L));
+    assertEquals(Long.valueOf(35L), feature.getLocations().getRelativePosition(135L));
   }
 
   @Test
@@ -194,10 +191,10 @@ public class CompoundLocationTest {
     feature.getLocations().addLocation(localRange1);
     LocalRange localRange2 = locationFactory.createLocalRange(101L, 135L);
     feature.getLocations().addLocation(localRange2);
-    assertEquals(new Long(1), feature.getLocations().getRelativeBeginPosition(localRange1));
-    assertEquals(new Long(35), feature.getLocations().getRelativeEndPosition(localRange1));
-    assertEquals(new Long(36), feature.getLocations().getRelativeBeginPosition(localRange2));
-    assertEquals(new Long(70), feature.getLocations().getRelativeEndPosition(localRange2));
+    assertEquals(Long.valueOf(1), feature.getLocations().getRelativeBeginPosition(localRange1));
+    assertEquals(Long.valueOf(35), feature.getLocations().getRelativeEndPosition(localRange1));
+    assertEquals(Long.valueOf(36), feature.getLocations().getRelativeBeginPosition(localRange2));
+    assertEquals(Long.valueOf(70), feature.getLocations().getRelativeEndPosition(localRange2));
   }
 
   @Test

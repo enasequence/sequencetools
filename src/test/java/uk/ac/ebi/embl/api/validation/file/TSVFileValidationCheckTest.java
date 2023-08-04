@@ -36,11 +36,11 @@ public class TSVFileValidationCheckTest {
   private SubmissionOptions options;
   private FileValidationCheck fileValidationCheck;
   private SubmissionFile submissionFile;
-  private Path sequenceFixedFilePath =
+  private final Path sequenceFixedFilePath =
       Paths.get(
           System.getProperty("user.dir")
               + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt");
-  private String reportsPath =
+  private final String reportsPath =
       System.getProperty("user.dir")
           + "/src/test/resources/uk/ac/ebi/embl/api/validation/file/template";
   private static final String[] allTemplatesA = {

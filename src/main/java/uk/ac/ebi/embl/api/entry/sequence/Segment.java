@@ -19,10 +19,10 @@ public class Segment extends AbstractSequence implements Serializable {
 
   private static final long serialVersionUID = 8220089867381825543L;
 
-  private AbstractLocation location;
-  private byte[] sequenceByte;
+  private final AbstractLocation location;
+  private final byte[] sequenceByte;
 
-  private long length;
+  private final long length;
 
   protected Segment(AbstractLocation location, byte[] sequence) {
     this.location = location;

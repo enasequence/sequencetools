@@ -57,16 +57,16 @@ public class DTReader extends MultiLineBlockReader {
               "\\s*\\(.*\\)\\s"
               + "*$");
 
-  private static int GROUP_FIRST_PUBLIC_DATE = 1;
-  private static int GROUP_FIRST_PUBLIC_RELEASE = 2;
-  private static int GROUP_LAST_UPDATED_DATE = 3;
-  private static int GROUP_LAST_UPDATED_RELEASE = 4;
-  private static int GROUP_ENTRY_VERSION = 5;
+  private static final int GROUP_FIRST_PUBLIC_DATE = 1;
+  private static final int GROUP_FIRST_PUBLIC_RELEASE = 2;
+  private static final int GROUP_LAST_UPDATED_DATE = 3;
+  private static final int GROUP_LAST_UPDATED_RELEASE = 4;
+  private static final int GROUP_ENTRY_VERSION = 5;
 
   /** These group values are for format without revision and version */
-  private static int SHORT_FORMAT_GROUP_FIRST_PUBLIC_DATE = 1;
+  private static final int SHORT_FORMAT_GROUP_FIRST_PUBLIC_DATE = 1;
 
-  private static int SHORT_FORMAT_GROUP_LAST_UPDATED_DATE = 2;
+  private static final int SHORT_FORMAT_GROUP_LAST_UPDATED_DATE = 2;
 
   @Override
   public String getTag() {

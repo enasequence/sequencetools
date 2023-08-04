@@ -36,8 +36,8 @@ public class FeatureLocationWriter extends FlatFileWriter {
     wrapChar = WrapChar.WRAP_CHAR_COMMA;
   }
 
-  private String featureHeader;
-  private String qualifierHeader;
+  private final String featureHeader;
+  private final String qualifierHeader;
 
   public boolean write(Writer writer) throws IOException {
     if (feature == null) {

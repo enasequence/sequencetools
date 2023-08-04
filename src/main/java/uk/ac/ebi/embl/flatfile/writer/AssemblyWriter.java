@@ -25,7 +25,7 @@ public class AssemblyWriter extends FlatFileWriter {
   public static int PRIMARY_IDENTIFIER_COLUMN_WIDTH = 19;
   public static int PRIMARY_SPAN_COLUMN_WIDTH = 20;
 
-  private String header;
+  private final String header;
 
   public AssemblyWriter(Entry entry, String header) {
     super(entry);
@@ -70,9 +70,10 @@ public class AssemblyWriter extends FlatFileWriter {
                       + "s%-"
                       + PRIMARY_SPAN_COLUMN_WIDTH
                       + "s%s",
-                  new Object[] {
-                    locanSpanString, primaryIdentifierString, primarySpanString, complementString
-                  })
+                  locanSpanString,
+                  primaryIdentifierString,
+                  primarySpanString,
+                  complementString)
               .toString();
       writer.write(FlatFileUtils.trimRight(line));
       writer.write("\n");

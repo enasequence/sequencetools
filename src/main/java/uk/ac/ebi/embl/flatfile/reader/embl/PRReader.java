@@ -24,7 +24,7 @@ public class PRReader extends MultiLineBlockReader {
       Pattern.compile(
           "^\\s*Project\\s*:\\s*((PRJ[E,D,N][A-Z]){0,1}([0-9]\\d*))\\s*$",
           Pattern.CASE_INSENSITIVE);
-  private static int GROUP_PROJCT_ID = 1;
+  private static final int GROUP_PROJCT_ID = 1;
 
   public PRReader(LineReader lineReader) {
     super(lineReader, ConcatenateType.CONCATENATE_SPACE);

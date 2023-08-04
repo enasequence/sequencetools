@@ -64,7 +64,7 @@ public class SubmitterAccessionCheckTest {
           || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
           || validationScope == ValidationScope.ASSEMBLY_CONTIG
           || validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
-        assertTrue(!result.isValid());
+        assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_1", Severity.ERROR));
       } else {
         assertTrue("Validation scope: " + validationScope.name(), result.isValid());
@@ -98,7 +98,7 @@ public class SubmitterAccessionCheckTest {
           || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
           || validationScope == ValidationScope.ASSEMBLY_CONTIG
           || validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME) {
-        assertTrue(!result.isValid());
+        assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_2", Severity.ERROR));
       } else {
         assertTrue(result.isValid());

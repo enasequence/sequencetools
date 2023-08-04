@@ -21,7 +21,7 @@ public class GFF3RecordSet {
 
   public static final String CDS_TYPE = "CDS";
 
-  private List<GFF3Record> records = new ArrayList<GFF3Record>();
+  private final List<GFF3Record> records = new ArrayList<GFF3Record>();
 
   public GFF3RecordSet() {}
 

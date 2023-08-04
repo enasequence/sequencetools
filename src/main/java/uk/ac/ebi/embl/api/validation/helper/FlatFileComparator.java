@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FlatFileComparator {
-  private static Logger log = LoggerFactory.getLogger(FlatFileComparator.class);
+  private static final Logger log = LoggerFactory.getLogger(FlatFileComparator.class);
 
   private final FlatFileComparatorOptions options;
   private int lineContext = 5;
@@ -101,10 +101,9 @@ public class FlatFileComparator {
         if (null == expectedLine && null == actualLine) {
           return true;
         } else if (null == expectedLine && null != actualLine) {
-          System.err.println(
-              String.format(
-                  "Expected flat file: %s terminates before the actual flat file: [%s]",
-                  expectedFileName, actualFileName));
+          System.err.printf(
+              "Expected flat file: %s terminates before the actual flat file: [%s]%n",
+              expectedFileName, actualFileName);
           report(
               expectedFileName,
               actualFileName,
@@ -114,10 +113,9 @@ public class FlatFileComparator {
               actualLineFuture);
           return false;
         } else if (null != expectedLine && null == actualLine) {
-          System.err.println(
-              String.format(
-                  "Expected flat file: %s terminates after the actual flat file: [%s]",
-                  expectedFileName, actualFileName));
+          System.err.printf(
+              "Expected flat file: %s terminates after the actual flat file: [%s]%n",
+              expectedFileName, actualFileName);
           report(
               expectedFileName,
               actualFileName,
@@ -192,10 +190,9 @@ public class FlatFileComparator {
       LinkedList<Line> actualLineHistory,
       LinkedList<Line> expectedLineFuture,
       LinkedList<Line> actualLineFuture) {
-    System.err.println(
-        String.format(
-            "Difference between the expected file: [%s] and the actual file: [%s]",
-            expectedFileName, actualFileName));
+    System.err.printf(
+        "Difference between the expected file: [%s] and the actual file: [%s]%n",
+        expectedFileName, actualFileName);
     System.err.println("---------------------------------------------------------------------");
     System.err.println("| Expected                                                          |");
     System.err.println("---------------------------------------------------------------------");

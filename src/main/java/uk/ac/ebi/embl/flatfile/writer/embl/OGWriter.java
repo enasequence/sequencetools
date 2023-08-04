@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
  */
 public class OGWriter extends FlatFileWriter {
 
-  private SourceFeature sourceFeature;
+  private final SourceFeature sourceFeature;
 
   /**
    * @param entry

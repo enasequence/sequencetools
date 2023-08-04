@@ -34,9 +34,9 @@ public class XRefMatcher extends FlatFileMatcher {
               + // secondary accession
               "\\s*.?\\s*$");
 
-  private static int GROUP_DATABASE = 1;
-  private static int GROUP_PRIMARY_ACCESSION = 2;
-  private static int GROUP_SECONDARY_ACCESSION = 4;
+  private static final int GROUP_DATABASE = 1;
+  private static final int GROUP_PRIMARY_ACCESSION = 2;
+  private static final int GROUP_SECONDARY_ACCESSION = 4;
 
   public boolean match(String string) {
     boolean matches = super.match(string);

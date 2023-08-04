@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RX lines. */
 public class RXWriter extends FlatFileWriter {
 
-  private Publication publication;
+  private final Publication publication;
 
   public RXWriter(Entry entry, Publication publication, WrapType wrapType) {
     super(entry, wrapType);

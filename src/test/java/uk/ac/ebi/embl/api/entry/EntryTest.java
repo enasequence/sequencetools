@@ -10,12 +10,9 @@
  */
 package uk.ac.ebi.embl.api.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -45,7 +42,7 @@ public class EntryTest {
 
   @Test
   public void testAddSecondaryAccessions() {
-    assertTrue(entry.addSecondaryAccessions(Arrays.asList(new Text("accession"))));
+    assertTrue(entry.addSecondaryAccessions(Collections.singletonList(new Text("accession"))));
     assertEquals("accession", entry.getSecondaryAccessions().get(0).getText());
   }
 
@@ -82,7 +79,7 @@ public class EntryTest {
 
   @Test
   public void testAddKeywords() {
-    assertTrue(entry.addKeywords(Arrays.asList(new Text("keyword"))));
+    assertTrue(entry.addKeywords(Collections.singletonList(new Text("keyword"))));
     assertEquals("keyword", entry.getKeywords().get(0).getText());
   }
 
@@ -119,7 +116,7 @@ public class EntryTest {
 
   @Test
   public void testAddProjectAccessions() {
-    assertTrue(entry.addProjectAccessions(Arrays.asList(new Text("accession"))));
+    assertTrue(entry.addProjectAccessions(Collections.singletonList(new Text("accession"))));
     assertEquals("accession", entry.getProjectAccessions().get(0).getText());
   }
 
@@ -158,7 +155,7 @@ public class EntryTest {
   @Test
   public void testAddFeatures() {
     Feature feature = new FeatureFactory().createFeature("x", false);
-    assertTrue(entry.addFeatures(Arrays.asList(feature)));
+    assertTrue(entry.addFeatures(Collections.singletonList(feature)));
     assertEquals(feature, entry.getFeatures().get(0));
   }
 
@@ -201,7 +198,7 @@ public class EntryTest {
   public void testAddReferences() {
     Reference reference =
         new ReferenceFactory().createReference(new ReferenceFactory().createArticle("t", "j"), 1);
-    assertTrue(entry.addReferences(Arrays.asList(reference)));
+    assertTrue(entry.addReferences(Collections.singletonList(reference)));
     assertEquals(reference, entry.getReferences().get(0));
   }
 
@@ -243,7 +240,7 @@ public class EntryTest {
   @Test
   public void testAddXRefs() {
     XRef xRef = new XRef("db", "pa", "sa");
-    assertTrue(entry.addXRefs(Arrays.asList(xRef)));
+    assertTrue(entry.addXRefs(Collections.singletonList(xRef)));
     assertEquals(xRef, entry.getXRefs().get(0));
   }
 
@@ -290,7 +287,7 @@ public class EntryTest {
   @Test
   public void testAddAssemblies() {
     Assembly assembly = new EntryFactory().createAssembly("x", 1, 1L, 3L, false, 2L, 4L);
-    assertTrue(entry.addAssemblies(Arrays.asList(assembly)));
+    assertTrue(entry.addAssemblies(Collections.singletonList(assembly)));
     assertEquals(assembly, entry.getAssemblies().get(0));
   }
 
@@ -332,17 +329,17 @@ public class EntryTest {
     e2.setDescription(new Text("A"));
     e3.setDescription(new Text("B"));
 
-    assertTrue(e1.equals(e1));
-    assertTrue(e1.equals(e2));
-    assertTrue(e2.equals(e1));
+    assertEquals(e1, e1);
+    assertEquals(e1, e2);
+    assertEquals(e2, e1);
 
-    assertFalse(e1.equals(e3));
-    assertFalse(e3.equals(e1));
+    assertNotEquals(e1, e3);
+    assertNotEquals(e3, e1);
   }
 
   @Test
   public void testEqualsObject_WrongObject() {
-    assertFalse(new Entry().equals(new String()));
+    assertNotEquals("", new Entry());
   }
 
   /*	@Test

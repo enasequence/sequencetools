@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,8 +44,8 @@ public class ChromosomeListFileReader extends GCSEntryReader {
   private static final int CHROMOSOME_NAME_COLUMN = 1;
   private static final int CHROMOSOME_TYPE_COLUMN = 2;
   private static final int CHROMOSOME_LOCATION_COLUMN = 3;
-  private Set<String> chromosomeNames = new HashSet<String>();
-  private Set<String> objectNames = new HashSet<String>();
+  private final Set<String> chromosomeNames = new HashSet<String>();
+  private final Set<String> objectNames = new HashSet<String>();
   List<ChromosomeEntry> chromosomeEntries = new ArrayList<ChromosomeEntry>();
 
   public ChromosomeListFileReader(File file) {
@@ -54,7 +53,7 @@ public class ChromosomeListFileReader extends GCSEntryReader {
   }
 
   @Override
-  public ValidationResult read() throws FileNotFoundException, IOException {
+  public ValidationResult read() throws IOException {
 
     if (file != null && file.length() == 0) {
       error(1, EMPTY_FILE_ERROR);

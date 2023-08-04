@@ -26,8 +26,9 @@ public class ChromosomeListChromosomeNameCheck
   private final String MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR = "ChromosomeListNameRegexCheck";
   private final String MESSAGE_KEY_INVALID_CHROMOSOME_NAME_ERROR = "ChromosomeListNameInvalidCheck";
 
-  private Pattern ChromosomeNamePattern = Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
-  private String[] chromosomeNamesToRejectArray =
+  private final Pattern ChromosomeNamePattern =
+      Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
+  private final String[] chromosomeNamesToRejectArray =
       new String[] {"Un", "chrUn", "random", "rnd", "unknown"};
 
   public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {

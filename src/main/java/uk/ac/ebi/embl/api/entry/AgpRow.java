@@ -177,7 +177,7 @@ public class AgpRow implements Serializable {
   }
 
   public boolean hasLinkage() {
-    if (getLinkage() != null) return getLinkage().toUpperCase().equals("YES");
+    if (getLinkage() != null) return getLinkage().equalsIgnoreCase("YES");
     return false;
   }
 
@@ -209,18 +209,13 @@ public class AgpRow implements Serializable {
         || component_type_id == null) return false;
 
     if (isGap()) {
-      if (gap_length == null || gap_type == null) {
-        return false;
-      }
+      return gap_length != null && gap_type != null;
     } else {
-      if (component_id == null
-          || component_beg == null
-          || component_end == null
-          || orientation == null) {
-        return false;
-      }
+      return component_id != null
+          && component_beg != null
+          && component_end != null
+          && orientation != null;
     }
-    return true;
   }
 
   @Override

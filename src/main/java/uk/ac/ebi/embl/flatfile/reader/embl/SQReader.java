@@ -45,6 +45,5 @@ public class SQReader extends SingleLineBlockReader {
         // fail silently
       }
     }
-    return;
   }
 }

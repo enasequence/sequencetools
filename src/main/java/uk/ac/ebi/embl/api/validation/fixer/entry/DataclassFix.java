@@ -11,7 +11,7 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
@@ -32,13 +32,13 @@ public class DataclassFix extends EntryValidationCheck {
   private static final String KEYWORD_FIX_ID = "DataclassFix_2";
 
   public enum DataclassKeywords {
-    WGS(Arrays.asList(new Text(Entry.WGS_DATACLASS))),
-    EST(Arrays.asList(new Text(Entry.EST_DATACLASS))),
-    GSS(Arrays.asList(new Text(Entry.GSS_DATACLASS))),
-    HTC(Arrays.asList(new Text(Entry.HTC_DATACLASS))),
-    STS(Arrays.asList(new Text(Entry.STS_DATACLASS))),
-    TSA(Arrays.asList(new Text(Entry.TSA_DATACLASS))),
-    TLS(Arrays.asList(new Text(Entry.TLS_DATACLASS)));
+    WGS(Collections.singletonList(new Text(Entry.WGS_DATACLASS))),
+    EST(Collections.singletonList(new Text(Entry.EST_DATACLASS))),
+    GSS(Collections.singletonList(new Text(Entry.GSS_DATACLASS))),
+    HTC(Collections.singletonList(new Text(Entry.HTC_DATACLASS))),
+    STS(Collections.singletonList(new Text(Entry.STS_DATACLASS))),
+    TSA(Collections.singletonList(new Text(Entry.TSA_DATACLASS))),
+    TLS(Collections.singletonList(new Text(Entry.TLS_DATACLASS)));
 
     List<Text> keyword;
 

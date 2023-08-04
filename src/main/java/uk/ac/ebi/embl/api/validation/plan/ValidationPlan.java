@@ -32,7 +32,7 @@ public abstract class ValidationPlan {
   protected ValidationResult validationResult;
   protected ValidationScope validationScope;
   private boolean devMode = false;
-  private FileType fileType = null;
+  private final FileType fileType = null;
   private boolean remote = false;
   protected EmblEntryValidationPlanProperty planProperty;
   protected EntryDAOUtils entryDAOUtils;

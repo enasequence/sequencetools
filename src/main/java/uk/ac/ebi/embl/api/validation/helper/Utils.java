@@ -694,7 +694,7 @@ public class Utils {
           	}
 
           }*/
-          if (qualifier.getName().equals(qualifier.RPT_UNIT_RANGE_QUALIFIER_NAME)) {
+          if (qualifier.getName().equals(Qualifier.RPT_UNIT_RANGE_QUALIFIER_NAME)) {
 
             Rpt_Unit_RangeQualifier rptUnitRangequalifier =
                 new Rpt_Unit_RangeQualifier(qualifier.getValue());
@@ -702,7 +702,7 @@ public class Utils {
               validationMessages.add(
                   shiftLocationQualifier(rptUnitRangequalifier, deletedBeginNs, feature));
             }
-          } else if (qualifier.getName().equals(qualifier.TAG_PEPTIDE_QUALIFIER_NAME)) {
+          } else if (qualifier.getName().equals(Qualifier.TAG_PEPTIDE_QUALIFIER_NAME)) {
 
             Tag_PeptideQualifier tagPeptidequalifier =
                 new Tag_PeptideQualifier(qualifier.getValue());
@@ -752,7 +752,7 @@ public class Utils {
    */
   public static Vector<String> split(String string, String regex) {
     Vector<String> strings = new Vector<String>();
-    for (String value : string.split(new String(regex))) {
+    for (String value : string.split(regex)) {
       value = value.trim();
       if (!value.equals("")) {
         strings.add(shrink(value));
@@ -768,7 +768,7 @@ public class Utils {
     String comment = entry.getComment().getText();
     String[] tempComment = new String[3];
     int start = comment.indexOf("##");
-    String CheckListString = comment.substring(start + 2, comment.length());
+    String CheckListString = comment.substring(start + 2);
     String[] commentChecklists = CheckListString.split("##");
 
     HashMap<String, HashMap<String, String>> ckeckListMap =

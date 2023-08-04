@@ -98,8 +98,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -124,8 +124,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -149,8 +149,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -175,8 +175,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -201,8 +201,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertEquals("A00001", ((RemoteBase) location).getAccession());
     assertNull(((RemoteBase) location).getVersion());
     assertFalse(location.isComplement());
@@ -229,8 +229,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
-    assertEquals(new Long(156), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(156), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertEquals("A00001", ((RemoteBase) location).getAccession());
     assertEquals(Integer.valueOf(13), ((RemoteBase) location).getVersion());
     assertFalse(location.isComplement());
@@ -256,8 +256,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -282,8 +282,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -307,8 +307,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -332,8 +332,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -358,8 +358,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -384,8 +384,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -413,8 +413,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertTrue(location instanceof RemoteRange);
     assertEquals("A0001", ((RemoteRange) location).getAccession());
     assertNull(((RemoteRange) location).getVersion());
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -442,8 +442,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertTrue(location instanceof RemoteRange);
     assertEquals("A0001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(1), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -467,8 +467,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -493,8 +493,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -518,8 +518,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -543,8 +543,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -569,8 +569,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(4), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(4), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -595,8 +595,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
-    assertEquals(new Long(155), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(155), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -624,8 +624,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertTrue(location instanceof RemoteBetween);
     assertEquals("A0001", ((RemoteBetween) location).getAccession());
     assertNull(((RemoteBetween) location).getVersion());
-    assertEquals(new Long(155), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(155), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -653,8 +653,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertTrue(location instanceof RemoteBetween);
     assertEquals("A0001", ((RemoteBetween) location).getAccession());
     assertEquals(Integer.valueOf(1), ((RemoteBetween) location).getVersion());
-    assertEquals(new Long(155), location.getBeginPosition());
-    assertEquals(new Long(156), location.getEndPosition());
+    assertEquals(Long.valueOf(155), location.getBeginPosition());
+    assertEquals(Long.valueOf(156), location.getEndPosition());
     assertTrue(location.isComplement());
   }
 
@@ -681,25 +681,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -726,25 +726,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -771,25 +771,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -816,25 +816,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -861,25 +861,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -906,25 +906,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -951,25 +951,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 
@@ -996,25 +996,25 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
-    assertEquals(new Long(1), location.getBeginPosition());
-    assertEquals(new Long(1), location.getEndPosition());
+    assertEquals(Long.valueOf(1), location.getBeginPosition());
+    assertEquals(Long.valueOf(1), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(1);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(2), location.getBeginPosition());
-    assertEquals(new Long(34), location.getEndPosition());
+    assertEquals(Long.valueOf(2), location.getBeginPosition());
+    assertEquals(Long.valueOf(34), location.getEndPosition());
     assertFalse(location.isComplement());
     location = locations.getLocations().get(2);
     assertTrue(location instanceof LocalRange);
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertTrue(location.isComplement());
     location = locations.getLocations().get(3);
     assertTrue(location instanceof RemoteRange);
     assertEquals("A00001", ((RemoteRange) location).getAccession());
     assertEquals(Integer.valueOf(5), ((RemoteRange) location).getVersion());
-    assertEquals(new Long(34), location.getBeginPosition());
-    assertEquals(new Long(45), location.getEndPosition());
+    assertEquals(Long.valueOf(34), location.getBeginPosition());
+    assertEquals(Long.valueOf(45), location.getEndPosition());
     assertFalse(location.isComplement());
   }
 

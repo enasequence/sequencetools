@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class FastaSpreadsheetConverter {
   public static final String FASTA_HEADER_TOKEN = ">";
   public static final String COMMENT_TOKEN = "#";
-  private static Logger LOGGER = LoggerFactory.getLogger(FastaSpreadsheetConverter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(FastaSpreadsheetConverter.class);
   /** denotes whether we are in the mode of converting a fasta to a spreadsheet */
   private boolean convertFastaMode;
   /** all the tokens being used */
@@ -165,8 +165,8 @@ public class FastaSpreadsheetConverter {
 
   public class FastaReaderResult {
 
-    private Integer totalEntryCount;
-    private TemplateVariablesSet importedVariables;
+    private final Integer totalEntryCount;
+    private final TemplateVariablesSet importedVariables;
 
     public FastaReaderResult(Integer totalEntryCount, TemplateVariablesSet importedVariables) {
 

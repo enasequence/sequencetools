@@ -44,7 +44,7 @@ public class EmblLineReader extends LineReader {
   private static final int TAG_GROUP = 1;
 
   // TODO: move to ThreadLocal
-  private Matcher m = TAG.matcher("");
+  private final Matcher m = TAG.matcher("");
 
   // Allow EmblLineReader to be used without being initialised by EntryReader.
   private Function<String, Boolean> isValidTag = (tag) -> EntryReader.isValidTag(tag);

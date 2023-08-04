@@ -83,7 +83,6 @@ public class QualifierAndRequiredQualifierinEntryCheckTest {
     Feature feature2 = featureFactory.createFeature("feature2");
     feature1.setSingleQualifier("satelite");
     feature2.setSingleQualifier("PCR_primers");
-    ;
     entry.addFeature(feature1);
     entry.addFeature(feature2);
     assertTrue(check.check(entry).isValid());
@@ -95,7 +94,6 @@ public class QualifierAndRequiredQualifierinEntryCheckTest {
     Feature feature2 = featureFactory.createFeature("feature2");
     feature1.setSingleQualifier("PCR_primers");
     feature2.setSingleQualifier("map");
-    ;
     feature1.setSingleQualifier("satellite");
     entry.addFeature(feature1);
     entry.addFeature(feature2);

@@ -35,13 +35,13 @@ public class ValidationMessage<T extends Origin> implements Serializable {
   private Severity severity;
 
   /** Message key (from message bundle) */
-  private String messageKey;
+  private final String messageKey;
 
   /** Message parameters */
-  private Object[] params;
+  private final Object[] params;
 
   /** Validation origin - where validation problem occurred */
-  private List<T> origins;
+  private final List<T> origins;
 
   /** The message to which the messageKey resolves */
   private String message;

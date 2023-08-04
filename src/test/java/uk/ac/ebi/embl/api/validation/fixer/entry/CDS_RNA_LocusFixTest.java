@@ -76,7 +76,7 @@ public class CDS_RNA_LocusFixTest {
   public void testCheck_NoGenes() {
     Feature feature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     feature.setLocations(order);
     entry.addFeature(feature);
     ValidationResult validationResult = check.check(entry);
@@ -87,11 +87,11 @@ public class CDS_RNA_LocusFixTest {
   public void testCheck_GenesNoOverlap() {
     Feature cdsFeature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     cdsFeature.setLocations(order);
     Feature geneFeature = featureFactory.createFeature("gene");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(15l, 20l));
+    order2.addLocation(locationFactory.createLocalRange(15L, 20L));
     geneFeature.setLocations(order2);
 
     entry.addFeature(cdsFeature);
@@ -109,13 +109,13 @@ public class CDS_RNA_LocusFixTest {
      */
     cdsFeature.addQualifier(qualifierFactory.createQualifier("locus_tag"));
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     cdsFeature.setLocations(order);
 
     Feature geneFeature = featureFactory.createFeature("gene");
     geneFeature.addQualifier(qualifierFactory.createQualifier("locus_tag"));
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(4l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(4L, 11L));
     geneFeature.setLocations(order2);
 
     entry.addFeature(cdsFeature);
@@ -128,12 +128,12 @@ public class CDS_RNA_LocusFixTest {
   public void testCheck_GeneOverlapNothingInGene() { // i.e. gene has nothing to pass in
     Feature cdsFeature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     cdsFeature.setLocations(order);
 
     Feature geneFeature = featureFactory.createFeature("gene");
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(4l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(4L, 11L));
     geneFeature.setLocations(order2);
 
     entry.addFeature(cdsFeature);
@@ -146,14 +146,14 @@ public class CDS_RNA_LocusFixTest {
   public void testCheck_GeneOverlapInGene() {
     Feature cdsFeature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, 10l));
+    order.addLocation(locationFactory.createLocalRange(5L, 10L));
     cdsFeature.setLocations(order);
 
     Feature geneFeature = featureFactory.createFeature("gene");
     geneFeature.addQualifier(qualifierFactory.createQualifier("locus_tag"));
     geneFeature.addQualifier(qualifierFactory.createQualifier("gene_synonym"));
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(4l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(4L, 11L));
     geneFeature.setLocations(order2);
 
     entry.addFeature(cdsFeature);
@@ -178,15 +178,15 @@ public class CDS_RNA_LocusFixTest {
 
     Feature cdsFeature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, sequenceLength));
-    order.addLocation(locationFactory.createLocalRange(1l, 3l));
+    order.addLocation(locationFactory.createLocalRange(5L, sequenceLength));
+    order.addLocation(locationFactory.createLocalRange(1L, 3L));
     cdsFeature.setLocations(order);
 
     Feature geneFeature = featureFactory.createFeature("gene");
     geneFeature.addQualifier(qualifierFactory.createQualifier("locus_tag"));
     geneFeature.addQualifier(qualifierFactory.createQualifier("gene_synonym"));
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(4l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(4L, 11L));
     geneFeature.setLocations(order2);
 
     entry.addFeature(cdsFeature);
@@ -207,8 +207,8 @@ public class CDS_RNA_LocusFixTest {
 
     Feature cdsFeature = featureFactory.createFeature("CDS");
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(5l, sequenceLength));
-    order.addLocation(locationFactory.createLocalRange(1l, 3l));
+    order.addLocation(locationFactory.createLocalRange(5L, sequenceLength));
+    order.addLocation(locationFactory.createLocalRange(1L, 3L));
     order.setComplement(false);
     cdsFeature.setLocations(order);
 
@@ -216,7 +216,7 @@ public class CDS_RNA_LocusFixTest {
     geneFeature.addQualifier(qualifierFactory.createQualifier("locus_tag"));
     geneFeature.addQualifier(qualifierFactory.createQualifier("gene_synonym"));
     Order<Location> order2 = new Order<Location>();
-    order2.addLocation(locationFactory.createLocalRange(4l, 11l));
+    order2.addLocation(locationFactory.createLocalRange(4L, 11L));
     order2.setComplement(true);
     geneFeature.setLocations(order2);
 

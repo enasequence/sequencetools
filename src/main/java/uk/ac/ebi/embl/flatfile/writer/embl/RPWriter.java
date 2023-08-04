@@ -25,7 +25,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the RP lines. */
 public class RPWriter extends FlatFileWriter {
 
-  private Reference reference;
+  private final Reference reference;
 
   public RPWriter(Entry entry, Reference reference, WrapType wrapType) {
     super(entry, wrapType);

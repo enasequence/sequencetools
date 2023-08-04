@@ -53,7 +53,7 @@ public class EmblEntryReader extends EntryReader {
     NCR_FORMAT,
     ASSEMBLY_FILE_FORMAT,
     REDUCED_FILE_FORMAT
-  };
+  }
 
   // TODO: delete!
   public EmblEntryReader(BufferedReader reader) {

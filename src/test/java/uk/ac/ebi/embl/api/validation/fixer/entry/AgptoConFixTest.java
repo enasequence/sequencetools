@@ -11,8 +11,7 @@
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -79,20 +78,20 @@ public class AgptoConFixTest {
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
     Componentrow.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    Componentrow.setObject_beg(1l);
-    Componentrow.setObject_end(330l);
+    Componentrow.setObject_beg(1L);
+    Componentrow.setObject_end(330L);
     Componentrow.setPart_number(1);
     Componentrow.setComponent_type_id("W");
-    Componentrow.setComponent_beg(1l);
-    Componentrow.setComponent_end(330l);
+    Componentrow.setComponent_beg(1L);
+    Componentrow.setComponent_end(330L);
     Componentrow.setOrientation("+");
     Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
     gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
     gaprow.setObject_beg(331);
-    gaprow.setObject_end(354l);
+    gaprow.setObject_end(354L);
     gaprow.setPart_number(2);
     gaprow.setComponent_type_id("N");
-    gaprow.setGap_length(24l);
+    gaprow.setGap_length(24L);
     gaprow.setGap_type("scaffold");
     gaprow.setLinkageevidence(linkageEvidences);
     HashMap<String, AssemblySequenceInfo> assemblyseqinfo =
@@ -121,22 +120,22 @@ public class AgptoConFixTest {
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
     Componentrow.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    Componentrow.setObject_beg(1l);
-    Componentrow.setObject_end(330l);
+    Componentrow.setObject_beg(1L);
+    Componentrow.setObject_end(330L);
     Componentrow.setPart_number(1);
     Componentrow.setComponent_type_id("W");
-    Componentrow.setComponent_beg(1l);
-    Componentrow.setComponent_end(330l);
+    Componentrow.setComponent_beg(1L);
+    Componentrow.setComponent_end(330L);
     Componentrow.setComponent_acc("CDRE01000271.1");
     Componentrow.setOrientation("+");
     Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
 
     gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
     gaprow.setObject_beg(331);
-    gaprow.setObject_end(354l);
+    gaprow.setObject_end(354L);
     gaprow.setPart_number(2);
     gaprow.setComponent_type_id("N");
-    gaprow.setGap_length(24l);
+    gaprow.setGap_length(24L);
     gaprow.setGap_type("scaffold");
     gaprow.setLinkage("YES");
     gaprow.setLinkageevidence(linkageEvidences);
@@ -157,11 +156,11 @@ public class AgptoConFixTest {
 
     // contig1
     assertTrue(entry.getSequence().getContigs().get(0) instanceof RemoteLocation);
-    assertTrue(!entry.getSequence().getContigs().get(0).isComplement());
+    assertFalse(entry.getSequence().getContigs().get(0).isComplement());
     Long actualBeginPosition1 = entry.getSequence().getContigs().get(0).getBeginPosition();
-    Long expectedBeginPosition1 = 1l;
+    Long expectedBeginPosition1 = 1L;
     Long actualEndPosition1 = entry.getSequence().getContigs().get(0).getEndPosition();
-    Long expectedEndPosition1 = 330l;
+    Long expectedEndPosition1 = 330L;
     RemoteLocation remoteLocation = (RemoteLocation) entry.getSequence().getContigs().get(0);
     String actualAccessionwithVersion =
         remoteLocation.getAccession() + "." + remoteLocation.getVersion();
@@ -177,9 +176,9 @@ public class AgptoConFixTest {
         SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
     assertEquals(1, assemblyGap_features.size());
     Long beginPosition = assemblyGap_features.get(0).getLocations().getMinPosition();
-    Long expectedBegin = 331l;
+    Long expectedBegin = 331L;
     Long endPosition = assemblyGap_features.get(0).getLocations().getMaxPosition();
-    Long expectedEnd = 354l;
+    Long expectedEnd = 354L;
     String actualGapType =
         assemblyGap_features.get(0).getSingleQualifierValue(Qualifier.GAP_TYPE_QUALIFIER_NAME);
     String expectedGapType = "within scaffold";
@@ -209,22 +208,22 @@ public class AgptoConFixTest {
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
     Componentrow.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    Componentrow.setObject_beg(1l);
-    Componentrow.setObject_end(330l);
+    Componentrow.setObject_beg(1L);
+    Componentrow.setObject_end(330L);
     Componentrow.setPart_number(1);
     Componentrow.setComponent_type_id("W");
-    Componentrow.setComponent_beg(1l);
-    Componentrow.setComponent_end(330l);
+    Componentrow.setComponent_beg(1L);
+    Componentrow.setComponent_end(330L);
     Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
     Componentrow.setComponent_acc("CDRE01000271.1");
     Componentrow.setOrientation("-");
 
     gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
     gaprow.setObject_beg(331);
-    gaprow.setObject_end(354l);
+    gaprow.setObject_end(354L);
     gaprow.setPart_number(2);
     gaprow.setComponent_type_id("N");
-    gaprow.setGap_length(24l);
+    gaprow.setGap_length(24L);
     gaprow.setGap_type("scaffold");
     gaprow.setLinkage("YES");
     gaprow.setLinkageevidence(linkageEvidences);
@@ -246,9 +245,9 @@ public class AgptoConFixTest {
     assertTrue(entry.getSequence().getContigs().get(0) instanceof RemoteLocation);
     assertTrue(entry.getSequence().getContigs().get(0).isComplement());
     Long actualBeginPosition1 = entry.getSequence().getContigs().get(0).getBeginPosition();
-    Long expectedBeginPosition1 = 1l;
+    Long expectedBeginPosition1 = 1L;
     Long actualEndPosition1 = entry.getSequence().getContigs().get(0).getEndPosition();
-    Long expectedEndPosition1 = 330l;
+    Long expectedEndPosition1 = 330L;
     RemoteLocation remoteLocation = (RemoteLocation) entry.getSequence().getContigs().get(0);
     String actualAccessionwithVersion =
         remoteLocation.getAccession() + "." + remoteLocation.getVersion();
@@ -264,9 +263,9 @@ public class AgptoConFixTest {
         SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
     assertEquals(1, assemblyGap_features.size());
     Long beginPosition = assemblyGap_features.get(0).getLocations().getMinPosition();
-    Long expectedBegin = 331l;
+    Long expectedBegin = 331L;
     Long endPosition = assemblyGap_features.get(0).getLocations().getMaxPosition();
-    Long expectedEnd = 354l;
+    Long expectedEnd = 354L;
     String actualGapType =
         assemblyGap_features.get(0).getSingleQualifierValue(Qualifier.GAP_TYPE_QUALIFIER_NAME);
     String expectedGapType = "within scaffold";
@@ -295,22 +294,22 @@ public class AgptoConFixTest {
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
     Componentrow.setObject("IWGSC_CSS_6DL_scaff_3330716");
-    Componentrow.setObject_beg(1l);
-    Componentrow.setObject_end(330l);
+    Componentrow.setObject_beg(1L);
+    Componentrow.setObject_end(330L);
     Componentrow.setPart_number(1);
     Componentrow.setComponent_type_id("W");
-    Componentrow.setComponent_beg(1l);
-    Componentrow.setComponent_end(330l);
+    Componentrow.setComponent_beg(1L);
+    Componentrow.setComponent_end(330L);
     Componentrow.setComponent_id("IWGSC_CSS_6DL_scaff_3330715");
     Componentrow.setComponent_acc("CDRE01000271.1");
     Componentrow.setOrientation("-");
 
     gaprow.setObject("IWGSC_CSS_6DL_scaff_3330716");
     gaprow.setObject_beg(331);
-    gaprow.setObject_end(354l);
+    gaprow.setObject_end(354L);
     gaprow.setPart_number(2);
     gaprow.setComponent_type_id("N");
-    gaprow.setGap_length(24l);
+    gaprow.setGap_length(24L);
     gaprow.setGap_type("scaffold");
     HashMap<String, AssemblySequenceInfo> assemblyseqinfo =
         new HashMap<String, AssemblySequenceInfo>();
@@ -330,9 +329,9 @@ public class AgptoConFixTest {
     assertTrue(entry.getSequence().getContigs().get(0) instanceof RemoteLocation);
     assertTrue(entry.getSequence().getContigs().get(0).isComplement());
     Long actualBeginPosition1 = entry.getSequence().getContigs().get(0).getBeginPosition();
-    Long expectedBeginPosition1 = 1l;
+    Long expectedBeginPosition1 = 1L;
     Long actualEndPosition1 = entry.getSequence().getContigs().get(0).getEndPosition();
-    Long expectedEndPosition1 = 330l;
+    Long expectedEndPosition1 = 330L;
     RemoteLocation remoteLocation = (RemoteLocation) entry.getSequence().getContigs().get(0);
     String actualAccessionwithVersion =
         remoteLocation.getAccession() + "." + remoteLocation.getVersion();
@@ -348,9 +347,9 @@ public class AgptoConFixTest {
         SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
     assertEquals(1, assemblyGap_features.size());
     Long beginPosition = assemblyGap_features.get(0).getLocations().getMinPosition();
-    Long expectedBegin = 331l;
+    Long expectedBegin = 331L;
     Long endPosition = assemblyGap_features.get(0).getLocations().getMaxPosition();
-    Long expectedEnd = 354l;
+    Long expectedEnd = 354L;
     String actualGapType =
         assemblyGap_features.get(0).getSingleQualifierValue(Qualifier.GAP_TYPE_QUALIFIER_NAME);
     String expectedGapType = "within scaffold";

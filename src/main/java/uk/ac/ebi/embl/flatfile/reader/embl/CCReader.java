@@ -38,12 +38,8 @@ public class CCReader extends MultiLineBlockReader {
     if (entry.getComment().getText() != null) {
       // Concatenate multiple comment blocks together and
       // separate them using an empty line.
-      StringBuilder commentBuilder = new StringBuilder();
-      commentBuilder.append(entry.getComment().getText());
-      commentBuilder.append("\n");
-      commentBuilder.append("\n");
-      commentBuilder.append(block);
-      comment = commentBuilder.toString();
+      String commentBuilder = entry.getComment().getText() + "\n" + "\n" + block;
+      comment = commentBuilder;
     }
     entry.setComment(new Text(comment, getOrigin()));
   }

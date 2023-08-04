@@ -14,7 +14,7 @@ import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
 
 public interface HasTaxon {
 
-  public Taxon getTaxon();
+  Taxon getTaxon();
 
-  public void setTaxon(Taxon taxon);
+  void setTaxon(Taxon taxon);
 }

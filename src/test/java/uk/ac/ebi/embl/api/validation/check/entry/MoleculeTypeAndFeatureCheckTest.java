@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import org.junit.After;
@@ -120,13 +119,13 @@ public class MoleculeTypeAndFeatureCheckTest {
     entry.getSequence().setMoleculeType(Sequence.MRNA_MOLTYPE);
     Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     CompoundLocation<Location> join = new Join<Location>();
-    join.addLocation(new LocationFactory().createLocalRange(1l, 3l));
-    join.addLocation(new LocationFactory().createLocalRange(4l, 5l));
+    join.addLocation(new LocationFactory().createLocalRange(1L, 3L));
+    join.addLocation(new LocationFactory().createLocalRange(4L, 5L));
     cdsFeature.setLocations(join);
     entry.addFeature(cdsFeature);
 
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("MoleculeTypeAndFeatureCheck-2", Severity.ERROR));
 
     cdsFeature.addQualifier(Qualifier.EXCEPTION_QUALIFIER_NAME);
@@ -139,13 +138,13 @@ public class MoleculeTypeAndFeatureCheckTest {
     entry.getSequence().setMoleculeType(Sequence.MRNA_MOLTYPE);
     Feature cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     CompoundLocation<Location> order = new Order<Location>();
-    order.addLocation(new LocationFactory().createLocalRange(1l, 3l));
-    order.addLocation(new LocationFactory().createLocalRange(4l, 5l));
+    order.addLocation(new LocationFactory().createLocalRange(1L, 3L));
+    order.addLocation(new LocationFactory().createLocalRange(4L, 5L));
     cdsFeature.setLocations(order);
     cdsFeature.getLocations().setComplement(true);
     entry.addFeature(cdsFeature);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("MoleculeTypeAndFeatureCheck-3", Severity.ERROR));
   }
 }

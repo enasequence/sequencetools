@@ -53,7 +53,7 @@ public class EraproDAOUtilsImplTest {
               BIOSAMPLES_WEBIN_ACCOUNT_PASSWORD);
 
       SourceFeature sourceFeature = eraproDAOUtils.getSourceFeature("ERS6455303");
-      Assert.assertEquals(new Long(9606), sourceFeature.getTaxId());
+      Assert.assertEquals(Long.valueOf(9606), sourceFeature.getTaxId());
       Assert.assertEquals("Homo sapiens", sourceFeature.getScientificName());
 
       // This ID represents a sample which is private and does not contain full information on
@@ -62,11 +62,11 @@ public class EraproDAOUtilsImplTest {
       // then it
       // will be retrieved from ENA instead.
       sourceFeature = eraproDAOUtils.getSourceFeature("ERS7118926");
-      Assert.assertEquals(new Long(9606), sourceFeature.getTaxId());
+      Assert.assertEquals(Long.valueOf(9606), sourceFeature.getTaxId());
       Assert.assertEquals("Homo sapiens", sourceFeature.getScientificName());
 
       sourceFeature = eraproDAOUtils.getSourceFeature("ERS14884990");
-      Assert.assertEquals(new Long(498747), sourceFeature.getTaxId());
+      Assert.assertEquals(Long.valueOf(498747), sourceFeature.getTaxId());
       Assert.assertEquals(
           "uncultured Dehalococcoidia bacterium", sourceFeature.getScientificName());
       Assert.assertEquals(

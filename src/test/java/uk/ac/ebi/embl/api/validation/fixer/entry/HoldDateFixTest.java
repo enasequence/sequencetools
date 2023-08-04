@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -60,7 +61,7 @@ public class HoldDateFixTest {
     Date pastDate = calendar.getTime();
     entry.setHoldDate(pastDate);
     ValidationResult validationResult = check.check(entry);
-    assertTrue(!validationResult.getMessages(Severity.FIX).isEmpty());
+    assertFalse(validationResult.getMessages(Severity.FIX).isEmpty());
   }
 
   @Test

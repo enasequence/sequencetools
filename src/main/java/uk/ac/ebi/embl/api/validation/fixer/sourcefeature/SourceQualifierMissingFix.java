@@ -68,7 +68,7 @@ public class SourceQualifierMissingFix extends EntryValidationCheck {
     // ENA-4467: Commented since ORGANISM_NAME substituting will update taxId.
     /*if(NumberUtils.isNumber(scientificName))
     {
-    	Taxon taxon=getEmblEntryValidationPlanProperty().taxonomyClient.get().getTaxonById(new Long(scientificName));
+    	Taxon taxon=getEmblEntryValidationPlanProperty().taxonomyClient.get().getTaxonById(Long.valueOf(scientificName));
     	entry.getPrimarySourceFeature().setScientificName(taxon.getScientificName());
     	entry.getPrimarySourceFeature().setTaxId(taxon.getTaxId());
     }*/

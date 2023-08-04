@@ -96,7 +96,7 @@ public class CodonTranslator {
     ambiguousAminoAcidMap.put(unAmbiguousAminoAcid, ambiguousAminoAcid);
   }
 
-  private Map<String, Character> codonExceptionMap = new HashMap<String, Character>();
+  private final Map<String, Character> codonExceptionMap = new HashMap<String, Character>();
 
   public void addCodonException(String codon, Character aminoAcid) {
     codonExceptionMap.put(codon, aminoAcid);
@@ -130,9 +130,7 @@ public class CodonTranslator {
       } else if (aminoAcid != newAminoAcid) {
         Character ambiguousAminoAcid = ambiguousAminoAcidMap.get(aminoAcid);
         Character ambiguousNewAminoAcid = ambiguousAminoAcidMap.get(newAminoAcid);
-        if (ambiguousAminoAcid != null
-            && ambiguousNewAminoAcid != null
-            && ambiguousAminoAcid.equals(ambiguousNewAminoAcid)) {
+        if (ambiguousAminoAcid != null && ambiguousAminoAcid.equals(ambiguousNewAminoAcid)) {
           aminoAcid = ambiguousAminoAcid;
         } else {
           aminoAcid = 'X';

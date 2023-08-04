@@ -105,8 +105,7 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Bacteria", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.FALSE);
+    expect(taxonClient.isChildOfAny("Bacteria", "Viruses", "Viroids")).andReturn(Boolean.FALSE);
     expect(taxonClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
     expect(taxonClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
     replay(taxonClient);
@@ -122,8 +121,7 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Deltavirus", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.TRUE);
+    expect(taxonClient.isChildOfAny("Deltavirus", "Viruses", "Viroids")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.FALSE);
     expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.FALSE);
     replay(taxonClient);
@@ -138,8 +136,7 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Bacteria")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Bacteria", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.FALSE);
+    expect(taxonClient.isChildOfAny("Bacteria", "Viruses", "Viroids")).andReturn(Boolean.FALSE);
     expect(taxonClient.isChildOf("Bacteria", "Bacteria")).andReturn(Boolean.FALSE);
     expect(taxonClient.isChildOf("Bacteria", "Archaea")).andReturn(Boolean.FALSE);
     replay(taxonClient);
@@ -162,15 +159,14 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Deltavirus", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.TRUE);
+    expect(taxonClient.isChildOfAny("Deltavirus", "Viruses", "Viroids")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
     replay(taxonClient);
     property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size() == 0);
+    assertEquals(0, result.getMessages("OrganismAndPermittedQualifierCheck2").size());
     assertTrue(result.isValid());
   }
 
@@ -184,15 +180,14 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Deltavirus", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.TRUE);
+    expect(taxonClient.isChildOfAny("Deltavirus", "Viruses", "Viroids")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
     replay(taxonClient);
     property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size() == 0);
+    assertEquals(0, result.getMessages("OrganismAndPermittedQualifierCheck2").size());
     assertTrue(result.isValid());
   }
 
@@ -206,15 +201,14 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Deltavirus", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.TRUE);
+    expect(taxonClient.isChildOfAny("Deltavirus", "Viruses", "Viroids")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
     replay(taxonClient);
     property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size() == 1);
+    assertEquals(1, result.getMessages("OrganismAndPermittedQualifierCheck2").size());
     assertTrue(result.isValid());
   }
 
@@ -229,15 +223,14 @@ public class OrganismAndPermittedQualifierCheckTest {
     entry.addFeature(source);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
     expect(taxonClient.isOrganismValid("Deltavirus")).andReturn(Boolean.TRUE);
-    expect(taxonClient.isChildOfAny("Deltavirus", new String[] {"Viruses", "Viroids"}))
-        .andReturn(Boolean.TRUE);
+    expect(taxonClient.isChildOfAny("Deltavirus", "Viruses", "Viroids")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Bacteria")).andReturn(Boolean.TRUE);
     expect(taxonClient.isChildOf("Deltavirus", "Archaea")).andReturn(Boolean.TRUE);
     replay(taxonClient);
     property.validationScope.set(ValidationScope.EMBL_TEMPLATE);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
-    assertTrue(result.getMessages("OrganismAndPermittedQualifierCheck2").size() == 1);
+    assertEquals(1, result.getMessages("OrganismAndPermittedQualifierCheck2").size());
     assertTrue(result.isValid());
   }
 }

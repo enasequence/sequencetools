@@ -16,7 +16,7 @@ public enum Severity {
   INFO(1),
   FIX(0);
 
-  private Integer level;
+  private final Integer level;
 
   Severity(Integer level) {
     this.level = level;

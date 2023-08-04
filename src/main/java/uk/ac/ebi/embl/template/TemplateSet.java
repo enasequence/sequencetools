@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class TemplateSet {
-  private HashMap<String, TemplateVersions> templates = new HashMap<String, TemplateVersions>();
+  private final HashMap<String, TemplateVersions> templates =
+      new HashMap<String, TemplateVersions>();
 
   public TemplateSet() {}
 

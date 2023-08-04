@@ -29,7 +29,7 @@ public class Patent extends Publication implements Comparable<Patent> {
   private String patentType;
   private Integer sequenceNumber;
   private Date day;
-  private List<String> applicants;
+  private final List<String> applicants;
 
   protected Patent() {
     this.applicants = new ArrayList<String>();

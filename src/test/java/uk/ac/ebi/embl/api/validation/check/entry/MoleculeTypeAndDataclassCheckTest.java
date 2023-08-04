@@ -54,7 +54,7 @@ public class MoleculeTypeAndDataclassCheckTest {
 
   @Test
   public void testCheck_NoMoleculeType() {
-    entry.setDataClass(entry.STD_DATACLASS);
+    entry.setDataClass(Entry.STD_DATACLASS);
     entry.getSequence().setMoleculeType(null);
     assertTrue(check.check(entry).isValid());
   }
@@ -68,14 +68,14 @@ public class MoleculeTypeAndDataclassCheckTest {
   @Test
   public void testCheck_Valid() {
     entry.getSequence().setMoleculeType("rRNA");
-    entry.setDataClass(entry.EST_DATACLASS);
+    entry.setDataClass(Entry.EST_DATACLASS);
     assertTrue(check.check(entry).isValid());
   }
 
   @Test
   public void testCheck_WrongDataclass1() {
 
-    entry.setDataClass(entry.EST_DATACLASS);
+    entry.setDataClass(Entry.EST_DATACLASS);
     entry.getSequence().setMoleculeType("genomic DNA");
     ValidationResult result = check.check(entry);
     assertEquals(1, result.count("MoleculeTypeAndDataclassCheck-1", Severity.ERROR));
@@ -84,14 +84,14 @@ public class MoleculeTypeAndDataclassCheckTest {
   @Test
   public void testCheck_WrongDataclass2() {
     entry.getSequence().setMoleculeType("other DNA");
-    entry.setDataClass(entry.GSS_DATACLASS);
+    entry.setDataClass(Entry.GSS_DATACLASS);
     ValidationResult result = check.check(entry);
     assertEquals(1, result.count("MoleculeTypeAndDataclassCheck-2", Severity.WARNING));
   }
 
   @Test
   public void testCheck_differentDataclass() {
-    entry.setDataClass(entry.STD_DATACLASS);
+    entry.setDataClass(Entry.STD_DATACLASS);
     entry.getSequence().setMoleculeType("rRNA");
     assertTrue(check.check(entry).isValid());
   }

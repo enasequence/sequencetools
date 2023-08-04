@@ -24,7 +24,7 @@ public enum AssemblyType {
   String value;
   String fixedValue;
 
-  private AssemblyType(String value) {
+  AssemblyType(String value) {
     this.value = value;
   }
 

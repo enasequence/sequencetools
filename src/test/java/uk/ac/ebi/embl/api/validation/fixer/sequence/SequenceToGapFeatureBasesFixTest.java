@@ -138,10 +138,14 @@ public class SequenceToGapFeatureBasesFixTest {
         new ArrayList<Feature>(SequenceEntryUtils.getFeatures(Feature.GAP_FEATURE_NAME, entry));
     assertEquals(2, gapFeatures.size());
     Collections.sort(gapFeatures);
-    assertTrue(gapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition() == 4);
-    assertTrue(gapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition() == 11);
-    assertTrue(gapFeatures.get(1).getLocations().getLocations().get(0).getBeginPosition() == 20);
-    assertTrue(gapFeatures.get(1).getLocations().getLocations().get(0).getEndPosition() == 27);
+    assertEquals(
+        4, (long) gapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
+    assertEquals(
+        11, (long) gapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
+    assertEquals(
+        20, (long) gapFeatures.get(1).getLocations().getLocations().get(0).getBeginPosition());
+    assertEquals(
+        27, (long) gapFeatures.get(1).getLocations().getLocations().get(0).getEndPosition());
     assertEquals(2, result.count(SequenceToGapFeatureBasesFix.GAP_MESSAGE_ID, Severity.FIX));
     assertEquals(1, result.count(SequenceToGapFeatureBasesFix.COUNT_MESSAGE_ID, Severity.FIX));
   }
@@ -179,8 +183,10 @@ public class SequenceToGapFeatureBasesFixTest {
     List<Feature> gapFeatures =
         new ArrayList<Feature>(SequenceEntryUtils.getFeatures(Feature.GAP_FEATURE_NAME, entry));
     assertEquals(1, gapFeatures.size());
-    assertTrue(gapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition() == 20);
-    assertTrue(gapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition() == 30);
+    assertEquals(
+        20, (long) gapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
+    assertEquals(
+        30, (long) gapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
   }
 
   @Test
@@ -203,10 +209,12 @@ public class SequenceToGapFeatureBasesFixTest {
         new ArrayList<Feature>(
             SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry));
     assertEquals(1, assemblyGapFeatures.size());
-    assertTrue(
-        assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition() == 4);
-    assertTrue(
-        assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition() == 21);
+    assertEquals(
+        4,
+        (long) assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
+    assertEquals(
+        21,
+        (long) assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
   }
 
   @Test
@@ -228,10 +236,12 @@ public class SequenceToGapFeatureBasesFixTest {
         new ArrayList<Feature>(
             SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry));
     assertEquals(1, assemblyGapFeatures.size());
-    assertTrue(
-        assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition() == 4);
-    assertTrue(
-        assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition() == 11);
+    assertEquals(
+        4,
+        (long) assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
+    assertEquals(
+        11,
+        (long) assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
   }
 
   @Test
@@ -252,16 +262,16 @@ public class SequenceToGapFeatureBasesFixTest {
             SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry));
     assertEquals(2, assemblyGapFeatures.size());
     assertEquals(
-        new Long(1),
+        Long.valueOf(1),
         assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getBeginPosition());
     assertEquals(
-        new Long(5),
+        Long.valueOf(5),
         assemblyGapFeatures.get(0).getLocations().getLocations().get(0).getEndPosition());
     assertEquals(
-        new Long(94),
+        Long.valueOf(94),
         assemblyGapFeatures.get(1).getLocations().getLocations().get(0).getBeginPosition());
     assertEquals(
-        new Long(191),
+        Long.valueOf(191),
         assemblyGapFeatures.get(1).getLocations().getLocations().get(0).getEndPosition());
   }
 }

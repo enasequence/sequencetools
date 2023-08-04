@@ -31,8 +31,8 @@ public class FeatureLocationMatcherTest extends TestCase {
     LocalBase location = (LocalBase) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 467);
-    assertTrue(location.getEndPosition() == 467);
+    assertEquals(467, (long) location.getBeginPosition());
+    assertEquals(467, (long) location.getEndPosition());
   }
 
   public void testLocationMatcher_RemoteBase() {
@@ -40,10 +40,10 @@ public class FeatureLocationMatcherTest extends TestCase {
     RemoteBase location = (RemoteBase) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 467);
-    assertTrue(location.getEndPosition() == 467);
-    assertTrue(location.getAccession().equals("J00194"));
-    assertTrue(location.getVersion() == 1);
+    assertEquals(467, (long) location.getBeginPosition());
+    assertEquals(467, (long) location.getEndPosition());
+    assertEquals("J00194", location.getAccession());
+    assertEquals(1, (int) location.getVersion());
   }
 
   public void testLocationMatcher_LocalRange() {
@@ -51,8 +51,8 @@ public class FeatureLocationMatcherTest extends TestCase {
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
   }
 
   public void testLocationMatcher_RemoteRange() {
@@ -60,10 +60,10 @@ public class FeatureLocationMatcherTest extends TestCase {
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
-    assertTrue(location.getAccession().equals("J00194"));
-    assertTrue(location.getVersion() == 1);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
+    assertEquals("J00194", location.getAccession());
+    assertEquals(1, (int) location.getVersion());
   }
 
   public void testLocationMatcher_LeftPartialLocalRange() {
@@ -71,8 +71,8 @@ public class FeatureLocationMatcherTest extends TestCase {
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
     assertTrue(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
   }
 
   public void testLocationMatcher_LeftPartialRemoteRange() {
@@ -80,10 +80,10 @@ public class FeatureLocationMatcherTest extends TestCase {
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
     assertTrue(featureLocationMatcher.isLeftPartial());
     assertFalse(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
-    assertTrue(location.getAccession().equals("J00194"));
-    assertTrue(location.getVersion() == 1);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
+    assertEquals("J00194", location.getAccession());
+    assertEquals(1, (int) location.getVersion());
   }
 
   public void testLocationMatcher_RightPartialLocalRange() {
@@ -91,8 +91,8 @@ public class FeatureLocationMatcherTest extends TestCase {
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
   }
 
   public void testLocationMatcher_RightPartialRemoteRange() {
@@ -100,10 +100,10 @@ public class FeatureLocationMatcherTest extends TestCase {
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location.getBeginPosition() == 340);
-    assertTrue(location.getEndPosition() == 565);
-    assertTrue(location.getAccession().equals("J00194"));
-    assertTrue(location.getVersion() == 1);
+    assertEquals(340, (long) location.getBeginPosition());
+    assertEquals(565, (long) location.getEndPosition());
+    assertEquals("J00194", location.getAccession());
+    assertEquals(1, (int) location.getVersion());
   }
 
   /*
@@ -118,30 +118,30 @@ public class FeatureLocationMatcherTest extends TestCase {
     LocalBase location1 =
         (LocalBase) featureLocationMatcher.getLocation(); // NOTE read as local base
     assertTrue(featureLocationMatcher.isLeftPartial());
-    assertTrue(location1.getBeginPosition() == 50);
-    assertTrue(location1.getEndPosition() == 50);
+    assertEquals(50, (long) location1.getBeginPosition());
+    assertEquals(50, (long) location1.getEndPosition());
 
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match("<50..50");
     LocalRange location2 =
         (LocalRange) featureLocationMatcher.getLocation(); // NOTE read as remote base
     assertTrue(featureLocationMatcher.isLeftPartial());
-    assertTrue(location2.getBeginPosition() == 50);
-    assertTrue(location2.getEndPosition() == 50);
+    assertEquals(50, (long) location2.getBeginPosition());
+    assertEquals(50, (long) location2.getEndPosition());
 
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match(">50");
     LocalBase location3 = (LocalBase) featureLocationMatcher.getLocation();
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location3.getBeginPosition() == 50);
-    assertTrue(location3.getEndPosition() == 50);
+    assertEquals(50, (long) location3.getBeginPosition());
+    assertEquals(50, (long) location3.getEndPosition());
 
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match("50..>50");
     LocalRange location4 = (LocalRange) featureLocationMatcher.getLocation();
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location4.getBeginPosition() == 50);
-    assertTrue(location4.getEndPosition() == 50);
+    assertEquals(50, (long) location4.getBeginPosition());
+    assertEquals(50, (long) location4.getEndPosition());
 
     // remote cases
     featureLocationMatcher = new FeatureLocationMatcher(null);
@@ -149,18 +149,18 @@ public class FeatureLocationMatcherTest extends TestCase {
     RemoteBase location5 = (RemoteBase) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location5.getBeginPosition() == 340);
-    assertTrue(location5.getEndPosition() == 340);
-    assertTrue(location5.getAccession().equals("J00194"));
-    assertTrue(location5.getVersion() == 1);
+    assertEquals(340, (long) location5.getBeginPosition());
+    assertEquals(340, (long) location5.getEndPosition());
+    assertEquals("J00194", location5.getAccession());
+    assertEquals(1, (int) location5.getVersion());
 
     featureLocationMatcher.match("J00194.1:340..>340");
     RemoteRange location6 = (RemoteRange) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());
     assertTrue(featureLocationMatcher.isRightPartial());
-    assertTrue(location6.getBeginPosition() == 340);
-    assertTrue(location6.getEndPosition() == 340);
-    assertTrue(location6.getAccession().equals("J00194"));
-    assertTrue(location6.getVersion() == 1);
+    assertEquals(340, (long) location6.getBeginPosition());
+    assertEquals(340, (long) location6.getEndPosition());
+    assertEquals("J00194", location6.getAccession());
+    assertEquals(1, (int) location6.getVersion());
   }
 }

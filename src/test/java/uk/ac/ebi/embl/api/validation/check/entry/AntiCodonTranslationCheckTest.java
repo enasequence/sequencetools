@@ -11,8 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -75,8 +74,8 @@ public class AntiCodonTranslationCheckTest {
     source.addQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME, "mitochondrion");
     qualifier = qualifierFactory.createQualifier(Qualifier.ANTICODON_QUALIFIER_NAME);
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(new Long(2), new Long(10)));
-    locationJoin.addLocation(locationFactory.createLocalRange(new Long(12), new Long(30)));
+    locationJoin.addLocation(locationFactory.createLocalRange(Long.valueOf(2), Long.valueOf(10)));
+    locationJoin.addLocation(locationFactory.createLocalRange(Long.valueOf(12), Long.valueOf(30)));
     feature.setLocations(locationJoin);
     feature.getLocations().setComplement(false);
     qualifier.setValue("(pos:18..20,aa:Ile)");
@@ -124,7 +123,7 @@ public class AntiCodonTranslationCheckTest {
     feature.getLocations().getLocations().get(0).setComplement(true);
     feature.getLocations().getLocations().get(1).setComplement(true);
     ValidationResult result = check1.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("AntiCodonTranslationCheck_1", Severity.ERROR));
   }
 
@@ -133,7 +132,7 @@ public class AntiCodonTranslationCheckTest {
       throws ValidationEngineException {
     qualifier.setValue("(pos:4..6,aa:His)");
     ValidationResult result = check1.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("AntiCodonTranslationCheck_1", Severity.ERROR));
   }
 
@@ -149,7 +148,7 @@ public class AntiCodonTranslationCheckTest {
   public void testCheck_AnticodonTranslationwithinvalidSequence() throws ValidationEngineException {
     qualifier.setValue("(pos:18..20,aa:Ile,seq:gtt)");
     ValidationResult result = check1.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("AntiCodonTranslationCheck_2", Severity.ERROR));
   }
 
@@ -165,7 +164,7 @@ public class AntiCodonTranslationCheckTest {
       throws ValidationEngineException {
     qualifier.setValue("(pos:3..5,aa:SeC,seq:tca)");
     ValidationResult result = check1.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("AntiCodonTranslationCheck_1", Severity.ERROR));
     assertEquals(1, result.count("AntiCodonTranslationCheck_2", Severity.ERROR));
   }

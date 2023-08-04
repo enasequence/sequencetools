@@ -25,7 +25,7 @@ public class AminoAcid implements Serializable {
   }
 
   /** The JCBN amino acid name. */
-  private String name;
+  private final String name;
 
   /**
    * Returns the JCBN amino acid name.
@@ -37,7 +37,7 @@ public class AminoAcid implements Serializable {
   }
 
   /** The JCBN amino acid letter. */
-  private Character letter;
+  private final Character letter;
 
   /**
    * Returns the JCBN amino acid letter.
@@ -49,7 +49,7 @@ public class AminoAcid implements Serializable {
   }
 
   /** The JCBN amino acid abbreviation. */
-  private String abbreviation;
+  private final String abbreviation;
 
   /**
    * Returns the JCBN amino acid abbreviation.

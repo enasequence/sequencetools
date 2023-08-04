@@ -12,7 +12,7 @@ package uk.ac.ebi.embl.api.entry.reference;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class BookTest {
   @Test
   public void testAddEditors() {
     Person person = new Person("X");
-    assertTrue(book.addEditors(Arrays.asList(person)));
+    assertTrue(book.addEditors(Collections.singletonList(person)));
     assertEquals(person, book.getEditors().get(0));
   }
 
@@ -103,55 +103,55 @@ public class BookTest {
 
   @Test
   public void testEquals() {
-    assertTrue(book.equals(book));
-    assertTrue(book.equals(new Book()));
+    assertEquals(book, book);
+    assertEquals(book, new Book());
     Book book2 = new Book();
     book.setTitle("title");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setTitle("title");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.setConsortium("consortium");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setConsortium("consortium");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     Date date = new Date();
     book.setBookTitle("bookTitle");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setBookTitle("bookTitle");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.setFirstPage("1");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setFirstPage("1");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.setLastPage("2");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setLastPage("2");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.setPublisher("publisher");
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setPublisher("publisher");
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.setYear(date);
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.setYear(date);
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
     book.addEditor((new ReferenceFactory()).createPerson("surname", "firstName"));
-    assertFalse(book.equals(book2));
+    assertNotEquals(book, book2);
     book2.addEditor((new ReferenceFactory()).createPerson("surname", "firstName"));
-    assertTrue(book.equals(book2));
+    assertEquals(book, book2);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(book.equals(new String()));
+    assertNotEquals("", book);
   }
 
   @Test
@@ -163,50 +163,50 @@ public class BookTest {
 
   @Test
   public void testCompareTo() {
-    assertTrue(book.compareTo(book) == 0);
-    assertTrue(book.compareTo(new Book()) == 0);
+    assertEquals(0, book.compareTo(book));
+    assertEquals(0, book.compareTo(new Book()));
     Book book2 = new Book();
     book.setTitle("title");
     // null < not null
     assertTrue(book.compareTo(book2) > 0);
     book2.setTitle("title");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.setConsortium("consortium");
     assertTrue(book.compareTo(book2) > 0);
     book2.setConsortium("consortium");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
     assertTrue(book.compareTo(book2) > 0);
     book2.addAuthor((new ReferenceFactory()).createPerson("surname", "firstname"));
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.addXRef((new EntryFactory()).createXRef("database", "accession"));
     assertTrue(book.compareTo(book2) > 0);
     book2.addXRef((new EntryFactory()).createXRef("database", "accession"));
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     Date date = new Date();
     book.setBookTitle("bookTitle");
     assertTrue(book.compareTo(book2) > 0);
     book2.setBookTitle("bookTitle");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.setFirstPage("1");
     assertTrue(book.compareTo(book2) > 0);
     book2.setFirstPage("1");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.setLastPage("2");
     assertTrue(book.compareTo(book2) > 0);
     book2.setLastPage("2");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.setPublisher("publisher");
     assertTrue(book.compareTo(book2) > 0);
     book2.setPublisher("publisher");
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.setYear(date);
     assertTrue(book.compareTo(book2) > 0);
     book2.setYear(date);
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
     book.addEditor((new ReferenceFactory()).createPerson("surname", "firstName"));
     assertTrue(book.compareTo(book2) > 0);
     book2.addEditor((new ReferenceFactory()).createPerson("surname", "firstName"));
-    assertTrue(book.compareTo(book2) == 0);
+    assertEquals(0, book.compareTo(book2));
   }
 }

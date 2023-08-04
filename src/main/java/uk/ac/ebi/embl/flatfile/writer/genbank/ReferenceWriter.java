@@ -34,7 +34,7 @@ public class ReferenceWriter extends FlatFileWriter {
   public boolean write(Writer writer) throws IOException {
     StringBuilder block = new StringBuilder();
     if (reference.getReferenceNumber() != null) {
-      block.append(Integer.toString(reference.getReferenceNumber()));
+      block.append(reference.getReferenceNumber());
     }
     boolean isFirstLocation = true;
     for (Location location : reference.getLocations().getLocations()) {

@@ -62,32 +62,32 @@ public class FeatureLocationFixTest {
   @Test
   public void testCheck_Swap() {
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(10l, 1l));
+    order.addLocation(locationFactory.createLocalRange(10L, 1L));
     feature.setLocations(order);
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("FeatureLocationFix", Severity.FIX));
     Location fixedLocation = feature.getLocations().getLocations().get(0);
-    assertTrue(fixedLocation.getBeginPosition() == 1);
-    assertTrue(fixedLocation.getEndPosition() == 10);
+    assertEquals(1, (long) fixedLocation.getBeginPosition());
+    assertEquals(10, (long) fixedLocation.getEndPosition());
     assertTrue(fixedLocation.isComplement());
   }
 
   @Test
   public void testCheck_Swap2() {
     Order<Location> order = new Order<Location>();
-    order.addLocation(locationFactory.createLocalRange(10l, 1l));
-    order.addLocation(locationFactory.createLocalRange(20l, 11l));
+    order.addLocation(locationFactory.createLocalRange(10L, 1L));
+    order.addLocation(locationFactory.createLocalRange(20L, 11L));
     feature.setLocations(order);
     ValidationResult validationResult = check.check(feature);
     assertEquals(2, validationResult.count("FeatureLocationFix", Severity.FIX));
     Location fixedLocation = feature.getLocations().getLocations().get(0);
-    assertTrue(fixedLocation.getBeginPosition() == 1);
-    assertTrue(fixedLocation.getEndPosition() == 10);
+    assertEquals(1, (long) fixedLocation.getBeginPosition());
+    assertEquals(10, (long) fixedLocation.getEndPosition());
     assertTrue(fixedLocation.isComplement());
 
     Location fixedLocation2 = feature.getLocations().getLocations().get(1);
-    assertTrue(fixedLocation2.getBeginPosition() == 11);
-    assertTrue(fixedLocation2.getEndPosition() == 20);
+    assertEquals(11, (long) fixedLocation2.getBeginPosition());
+    assertEquals(20, (long) fixedLocation2.getEndPosition());
     assertTrue(fixedLocation2.isComplement());
   }
 }

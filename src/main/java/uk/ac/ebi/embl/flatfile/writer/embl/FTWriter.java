@@ -25,8 +25,8 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the feature table. */
 public class FTWriter extends FlatFileWriter {
 
-  private boolean sortFeatures;
-  private boolean sortQualifiers;
+  private final boolean sortFeatures;
+  private final boolean sortQualifiers;
   private boolean isReducedFlatfile;
 
   public FTWriter(Entry entry, boolean sortFeatures, boolean sortQualifiers, WrapType wrapType) {

@@ -418,10 +418,8 @@ public class SequenceEntryUtils {
             startFirstLocation,
             startSecondLocation)) {
 
-          if (doComplementsMatch(
-              location1IsComplement, location2IsComplement, endFirstLocation, endSecondLocation)) {
-            return true;
-          }
+          return doComplementsMatch(
+              location1IsComplement, location2IsComplement, endFirstLocation, endSecondLocation);
         }
       }
     }
@@ -485,24 +483,20 @@ public class SequenceEntryUtils {
     if (firstLocation.getBeginPosition() <= secondLocation.getBeginPosition()) {
       /** does the end of the first location overlap with the beginning of the second? */
       if ((firstLocation.getEndPosition() >= secondLocation.getBeginPosition())) {
-        if (doComplementsMatch(
+        return doComplementsMatch(
             firstLocationGlobalComplement,
             secondLocationGlobalComplement,
             firstLocation,
-            secondLocation)) {
-          return true;
-        }
+            secondLocation);
       }
     } else {
       /** does the end of the second location overlap with the beginning of the first? */
       if (secondLocation.getEndPosition() >= firstLocation.getBeginPosition()) {
-        if (doComplementsMatch(
+        return doComplementsMatch(
             firstLocationGlobalComplement,
             secondLocationGlobalComplement,
             firstLocation,
-            secondLocation)) {
-          return true;
-        }
+            secondLocation);
       }
     }
 

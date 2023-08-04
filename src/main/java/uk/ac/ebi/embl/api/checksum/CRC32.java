@@ -11,9 +11,9 @@
 package uk.ac.ebi.embl.api.checksum;
 
 public class CRC32 {
-  private static long polynomial = 0xEDB88320L;
+  private static final long polynomial = 0xEDB88320L;
   private static long crc = 0;
-  private static long[] values = new long[256];
+  private static final long[] values = new long[256];
   private static boolean init_done = false;
 
   /** Calculates a CRC value for a byte to be used by CRC calculation functions. */

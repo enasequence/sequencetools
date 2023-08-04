@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 /** Flat file writer for the qualifiers. */
 public class QualifierWriter extends FlatFileWriter {
 
-  private Qualifier qualifier;
+  private final Qualifier qualifier;
   private static final int NOTE_MAX_LINE_LENGTH = 200;
 
   public QualifierWriter(Entry entry, Qualifier qualifier, WrapType wrapType, String header) {
@@ -44,7 +44,7 @@ public class QualifierWriter extends FlatFileWriter {
     this.wrapOnly = wrapOnly;
   }
 
-  private String header;
+  private final String header;
   private boolean wrapOnly = false;
 
   public boolean write(Writer writer) throws IOException {

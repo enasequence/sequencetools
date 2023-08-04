@@ -18,7 +18,7 @@ public class TemplateVariables {
   private static final long serialVersionUID = 1L;
   private int sequenceNumber;
   private String sequenceName;
-  private Map<String, String> variables;
+  private final Map<String, String> variables;
 
   public TemplateVariables() {
     variables = new HashMap<String, String>();

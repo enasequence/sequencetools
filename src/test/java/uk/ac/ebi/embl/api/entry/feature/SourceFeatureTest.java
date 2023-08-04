@@ -65,14 +65,14 @@ public class SourceFeatureTest {
 
   @Test
   public void testEquals() {
-    assertTrue(feature.equals(feature));
-    assertTrue(feature.equals(new SourceFeature()));
-    assertFalse(feature.equals(new String()));
+    assertEquals(feature, feature);
+    assertEquals(feature, new SourceFeature());
+    assertNotEquals("", feature);
   }
 
   @Test
   public void testEquals_WrongObject() {
-    assertFalse(feature.equals(new String()));
+    assertNotEquals("", feature);
   }
 
   @Test

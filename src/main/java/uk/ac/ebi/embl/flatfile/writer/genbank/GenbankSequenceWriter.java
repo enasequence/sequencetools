@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
 /** Flat file writer for the sequence lines. */
 public class GenbankSequenceWriter extends FlatFileWriter {
 
-  private Sequence sequence;
+  private final Sequence sequence;
 
   public GenbankSequenceWriter(Entry entry, Sequence sequence) {
     super(entry);

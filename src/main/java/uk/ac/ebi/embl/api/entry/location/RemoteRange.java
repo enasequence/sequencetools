@@ -20,7 +20,7 @@ public class RemoteRange extends Range implements RemoteLocation, Serializable {
 
   private static final long serialVersionUID = 727472442874683537L;
 
-  private SequenceAccession sequenceAccession;
+  private final SequenceAccession sequenceAccession;
 
   protected RemoteRange(
       String accession, Integer version, Long beginPosition, Long endPosition, boolean complement) {

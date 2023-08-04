@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -53,8 +52,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest {
     options.reportDir = Optional.of(file.getFile().getParent());
     options.context = Optional.of(Context.genome);
     FastaFileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
-    assertTrue(!check.check(file).isValid());
-    assertTrue(check.getMessageStats().get("SQ.1") != null);
+    assertFalse(check.check(file).isValid());
+    assertNotNull(check.getMessageStats().get("SQ.1"));
   }
 
   @Test
@@ -108,7 +107,7 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest {
     sharedInfo.entryNames.addAll(Arrays.asList("1", "2", "3", "4", "5"));
     sharedInfo.unlocalisedEntryNames.addAll(Arrays.asList("1", "2", "3"));
     FileValidationCheck check = new FastaFileValidationCheck(options, sharedInfo);
-    check.validateUnlocalisedEntryNames(sharedInfo);
+    FileValidationCheck.validateUnlocalisedEntryNames(sharedInfo);
 
     sharedInfo = new FileValidationCheck.SharedInfo();
     sharedInfo.entryNames.addAll(Arrays.asList("1", "2", "3", "4", "5"));
@@ -118,11 +117,11 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest {
     Exception exception =
         assertThrows(
             ValidationEngineException.class,
-            () -> check1.validateUnlocalisedEntryNames(sharedInfo));
+            () -> FileValidationCheck.validateUnlocalisedEntryNames(sharedInfo));
 
     String expectedMessage =
         "No sequences found for the following unlocalised sequence object names: "
             + "Not-found-1,Not-found-2,Not-found-3";
-    assertTrue(exception.getMessage().equals(expectedMessage));
+    assertEquals(exception.getMessage(), expectedMessage);
   }
 }

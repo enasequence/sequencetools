@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -74,7 +73,7 @@ public class MasterEntrySourceCheckTest {
     source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "human");
     entry.addFeature(source);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("MasterEntrySourceCheck_1", Severity.ERROR));
   }
 
@@ -91,7 +90,7 @@ public class MasterEntrySourceCheckTest {
     source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "[Desulfotomaculus] guttoideum");
     entry.addFeature(source);
     ValidationResult result = check.check(entry);
-    assertTrue(!result.isValid());
+    assertFalse(result.isValid());
     assertEquals(1, result.count("MasterEntrySourceCheck_2", Severity.ERROR));
   }
 

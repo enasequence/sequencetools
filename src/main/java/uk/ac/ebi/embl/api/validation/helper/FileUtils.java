@@ -22,8 +22,7 @@ public class FileUtils {
   public static final String gff_filetoken = "##gff-version 3";
   public static final String fasta_filetoken = ">";
 
-  public static void copyFile(File src, File dst)
-      throws IOException, FileNotFoundException, SecurityException {
+  public static void copyFile(File src, File dst) throws IOException, SecurityException {
 
     InputStream in = new FileInputStream(src);
     OutputStream out = new FileOutputStream(dst);

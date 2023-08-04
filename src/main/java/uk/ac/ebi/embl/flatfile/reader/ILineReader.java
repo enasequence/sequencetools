@@ -26,5 +26,5 @@ public interface ILineReader {
    * @return a String containing the next line
    * @throws IOException
    */
-  public String readLine() throws IOException;
+  String readLine() throws IOException;
 }

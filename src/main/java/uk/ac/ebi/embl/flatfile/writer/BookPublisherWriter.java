@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;
 /** Flat file writer for the book publisher lines. */
 public class BookPublisherWriter extends FlatFileWriter {
 
-  private Book book;
+  private final Book book;
 
   public BookPublisherWriter(
       Entry entry, Book book, WrapType wrapType, String firstLineHeader, String header) {
@@ -30,8 +30,8 @@ public class BookPublisherWriter extends FlatFileWriter {
     this.firstLineHeader = firstLineHeader;
   }
 
-  private String firstLineHeader;
-  private String header;
+  private final String firstLineHeader;
+  private final String header;
 
   public boolean write(Writer writer) throws IOException {
     StringBuilder block = new StringBuilder();

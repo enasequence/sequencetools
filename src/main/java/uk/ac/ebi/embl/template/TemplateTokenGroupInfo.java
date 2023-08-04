@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateTokenGroupInfo {
-  private String name;
-  private List<String> containsString;
-  private String description;
+  private final String name;
+  private final List<String> containsString;
+  private final String description;
   private boolean mandatory;
   private int order;
   private boolean isSequenceGroup; // needed for sorting

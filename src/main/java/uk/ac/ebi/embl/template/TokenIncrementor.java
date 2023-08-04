@@ -31,8 +31,8 @@ public class TokenIncrementor {
       String tokenName = token.getName();
       String tokenValue = templateVariables.getTokenValue(tokenName);
       if (tokenValue == null) return;
-      String tokenDecrementName = new StringBuilder(tokenName).append("--").toString();
-      String tokenIncrementName = new StringBuilder(tokenName).append("++").toString();
+      String tokenDecrementName = tokenName + "--";
+      String tokenIncrementName = tokenName + "++";
       if (token.getType() == TemplateTokenType.start_location
           || token.getType() == TemplateTokenType.end_location) {
         String partialityToken = extractPartialLocationToken(tokenValue);

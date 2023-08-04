@@ -21,7 +21,7 @@ public class OXReader extends SingleLineBlockReader {
 
   private static final Pattern PATTERN = Pattern.compile("^\\s*NCBI_TaxID\\s*=\\s*(\\d+);?");
 
-  private static int GROUP_TAX_ID = 1;
+  private static final int GROUP_TAX_ID = 1;
 
   public OXReader(LineReader lineReader) {
     super(lineReader);

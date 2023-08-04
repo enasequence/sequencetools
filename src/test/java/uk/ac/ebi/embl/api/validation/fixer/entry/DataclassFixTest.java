@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -65,16 +64,15 @@ public class DataclassFixTest {
   public void testCheck_NoDataclasswithKeywords() throws ValidationEngineException {
     entry.addKeyword(new Text(Entry.WGS_DATACLASS));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DataclassFix_2", Severity.FIX));
   }
 
   @Test
   public void testCheck_dataclasswithNoKeywords() throws ValidationEngineException {
     entry.setDataClass(Entry.WGS_DATACLASS);
-    ;
     ValidationResult result = check.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DataclassFix_2", Severity.FIX));
   }
 
@@ -105,7 +103,7 @@ public class DataclassFixTest {
     entry.setDataClass(Entry.WGS_DATACLASS);
     entry.addKeyword(new Text(Entry.TSA_DATACLASS));
     ValidationResult result = check.check(entry);
-    assertTrue(!result.getMessages(Severity.FIX).isEmpty());
+    assertFalse(result.getMessages(Severity.FIX).isEmpty());
     assertEquals(1, result.count("DataclassFix_2", Severity.FIX));
   }
 }

@@ -50,9 +50,9 @@ public class IntronLengthWithinCDSCheckTest {
   @Test
   public void testCheck_Validintron() {
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(30l, 25l));
-    locationJoin.addLocation(locationFactory.createLocalRange(50l, 100l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(30L, 25L));
+    locationJoin.addLocation(locationFactory.createLocalRange(50L, 100L));
     feature.setLocations(locationJoin);
     ValidationResult validationResult = check.check(feature);
     assertTrue(validationResult.isValid());
@@ -63,9 +63,9 @@ public class IntronLengthWithinCDSCheckTest {
     Join<Location> locationJoin = new Join<Location>();
     EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(30l, 25l));
-    locationJoin.addLocation(locationFactory.createLocalRange(50l, 100l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(30L, 25L));
+    locationJoin.addLocation(locationFactory.createLocalRange(50L, 100L));
     feature.setLocations(locationJoin);
     ValidationResult validationResult = check.check(feature);
     assertTrue(validationResult.isValid());
@@ -74,8 +74,8 @@ public class IntronLengthWithinCDSCheckTest {
   @Test
   public void testCheck_InvalidIntronAssemblywithArtificialLocation() throws SQLException {
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
     EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
@@ -88,8 +88,8 @@ public class IntronLengthWithinCDSCheckTest {
   @Test
   public void testCheck_InvalidIntronAssemblywithRibosomalSlippage() throws SQLException {
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(19l, 25l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
     EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
@@ -102,8 +102,8 @@ public class IntronLengthWithinCDSCheckTest {
   @Test
   public void testCheck_intronwithNegetiveValue() throws SQLException {
     Join<Location> locationJoin = new Join<Location>();
-    locationJoin.addLocation(locationFactory.createLocalRange(1l, 10l));
-    locationJoin.addLocation(locationFactory.createLocalRange(9l, 25l));
+    locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
+    locationJoin.addLocation(locationFactory.createLocalRange(9L, 25L));
     EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);

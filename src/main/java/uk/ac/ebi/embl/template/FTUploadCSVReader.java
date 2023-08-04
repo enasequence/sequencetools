@@ -14,7 +14,7 @@ import java.io.*;
 
 public class FTUploadCSVReader {
   private String currentLine;
-  private BufferedReader lineReader;
+  private final BufferedReader lineReader;
 
   public FTUploadCSVReader(InputStream inputReader) throws IOException {
     lineReader = new BufferedReader(new InputStreamReader(inputReader));
@@ -48,8 +48,7 @@ public class FTUploadCSVReader {
         currentLine =
             currentLine.substring(
                 currentLine.indexOf(TemplateProcessorConstants.DELIMITER4)
-                    + TemplateProcessorConstants.DELIMITER4.length(),
-                currentLine.length());
+                    + TemplateProcessorConstants.DELIMITER4.length());
         return result;
       } else {
         currentEntryBuilder.append(currentLine);

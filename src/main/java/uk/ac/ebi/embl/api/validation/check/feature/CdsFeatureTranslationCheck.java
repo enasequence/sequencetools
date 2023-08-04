@@ -55,7 +55,7 @@ public class CdsFeatureTranslationCheck extends FeatureValidationCheck {
               translator.translate(cdsFeature, entry);
           // TODO: get markedForDeletion flag from translator, add a fixer message and delete the
           // current feature
-          TranslationResult translationResult = (TranslationResult) validationResult.getExtension();
+          TranslationResult translationResult = validationResult.getExtension();
 
           /** set the translation report on all messages */
           TranslationReportInfo translationInfo = new TranslationReportInfo();

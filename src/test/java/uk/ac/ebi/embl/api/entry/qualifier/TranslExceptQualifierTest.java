@@ -26,8 +26,8 @@ public class TranslExceptQualifierTest {
     TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213..215,aa:Phe)");
     assertEquals(qual.getAminoAcid().getAbbreviation(), "Phe");
     assertEquals(qual.getAminoAcid().getLetter(), new Character('F'));
-    assertEquals(qual.getLocations().getMinPosition(), new Long(213));
-    assertEquals(qual.getLocations().getMaxPosition(), new Long(215));
+    assertEquals(qual.getLocations().getMinPosition(), Long.valueOf(213));
+    assertEquals(qual.getLocations().getMaxPosition(), Long.valueOf(215));
   }
 
   @Test
@@ -35,14 +35,14 @@ public class TranslExceptQualifierTest {
     TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213,aa:TERM)");
     assertEquals(qual.getAminoAcid().getAbbreviation(), "TERM");
     assertEquals(qual.getAminoAcid().getLetter(), new Character('*'));
-    assertEquals(qual.getLocations().getMinPosition(), new Long(213));
-    assertEquals(qual.getLocations().getMaxPosition(), new Long(213));
+    assertEquals(qual.getLocations().getMinPosition(), Long.valueOf(213));
+    assertEquals(qual.getLocations().getMaxPosition(), Long.valueOf(213));
   }
 
   @Test(expected = ValidationException.class)
   public void testInvalidQualifier1() throws ValidationException {
     TranslExceptQualifier qual = new TranslExceptQualifier("os:213..215,aa:Phe)");
-    assertEquals(qual.getLocations().getMinPosition(), new Long(213));
+    assertEquals(qual.getLocations().getMinPosition(), Long.valueOf(213));
   }
 
   @Test(expected = ValidationException.class)

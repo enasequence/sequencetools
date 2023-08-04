@@ -68,13 +68,13 @@ public class IDReader extends SingleLineBlockReader {
               + // sequence length
               ".*$");
 
-  private static int GROUP_PRIMARY_ACCESSION = 1;
-  private static int GROUP_SEQUENCE_VERSION = 3;
-  private static int GROUP_TOPOLOGY = 4;
-  private static int GROUP_MOLECULE_TYPE = 5;
-  private static int GROUP_DATACLASS = 6;
-  private static int GROUP_DIVISION = 7;
-  private static int GROUP_SEQUENCE_LENGTH = 8;
+  private static final int GROUP_PRIMARY_ACCESSION = 1;
+  private static final int GROUP_SEQUENCE_VERSION = 3;
+  private static final int GROUP_TOPOLOGY = 4;
+  private static final int GROUP_MOLECULE_TYPE = 5;
+  private static final int GROUP_DATACLASS = 6;
+  private static final int GROUP_DIVISION = 7;
+  private static final int GROUP_SEQUENCE_LENGTH = 8;
 
   @Override
   public String getTag() {

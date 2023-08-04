@@ -88,7 +88,7 @@ public class AssemblyInfoReader extends GCSEntryReader {
               String tpa = numberOfColumns == 1 ? null : fields[1];
               if (isValidTPA(tpa))
                 assemblyInfoEntry.setTpa(
-                    "yes".equalsIgnoreCase(tpa) || "true".equalsIgnoreCase(tpa) ? true : false);
+                    "yes".equalsIgnoreCase(tpa) || "true".equalsIgnoreCase(tpa));
               else error(lineNumber, MESSAGE_KEY_INVALID_VALUE_ERROR, fields[0], tpa);
               break;
             case "ASSEMBLY_TYPE":
@@ -128,11 +128,9 @@ public class AssemblyInfoReader extends GCSEntryReader {
     }
 
     molType = StringUtils.deleteWhitespace(molType).toUpperCase();
-    if (!molType.equals("GENOMICDNA")
-        && !molType.equals("GENOMICRNA")
-        && !molType.equals("VIRALCRNA")) return false;
-
-    return true;
+    return molType.equals("GENOMICDNA")
+        || molType.equals("GENOMICRNA")
+        || molType.equals("VIRALCRNA");
   }
 
   public static boolean isValidTPA(String tpa) {
@@ -146,7 +144,6 @@ public class AssemblyInfoReader extends GCSEntryReader {
         || "false".equalsIgnoreCase(tpa)
         || "yes".equalsIgnoreCase(tpa)
         || "no".equalsIgnoreCase(tpa)) return true;
-    ;
 
     return false;
   }

@@ -93,10 +93,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
       noValueQualifiers.add(Qualifier.TRANSGENIC_QUALIFIER_NAME);
       noValueQualifiers.add(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
 
-      if (noValueQualifiers.contains(qualifier)) {
-        return true;
-      }
-      return false;
+      return noValueQualifiers.contains(qualifier);
     }
 
     public static boolean isNullValue(String qualifierValue) {
@@ -107,11 +104,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
       nullValueCV.add("restricted access");
       nullValueCV.add("missing");
       if (qualifierValue == null || qualifierValue.isEmpty()) return true;
-      if (nullValueCV.contains(qualifierValue.toLowerCase())) {
-        return true;
-      }
-
-      return false;
+      return nullValueCV.contains(qualifierValue.toLowerCase());
     }
   }
 
@@ -308,7 +301,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
     ResultSet differentStudyidSQLrs = null;
 
     try (PreparedStatement differentStudyidSQLstmt =
-        connection.prepareStatement(differentStudyidSQL); ) {
+        connection.prepareStatement(differentStudyidSQL)) {
       AssemblySubmissionInfo assemblySubmissionInfo = getAssemblySubmissionInfo(analysisId);
 
       if (assemblySubmissionInfo.getStudyId() == null) return analysisIdList;
@@ -391,7 +384,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
 
     ResultSet rs = null;
     AssemblySubmissionInfo assemblyInfo = new AssemblySubmissionInfo();
-    try (PreparedStatement stmt = connection.prepareStatement(sql); ) {
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
       stmt.setString(1, analysisId);
       rs = stmt.executeQuery();
@@ -420,10 +413,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
       ps.setString(1, project);
       ps.setString(2, project);
       rs = ps.executeQuery();
-      if (rs.next()) {
-        return true;
-      }
-      return false;
+      return rs.next();
     } finally {
       DbUtils.closeQuietly(rs);
       DbUtils.closeQuietly(ps);

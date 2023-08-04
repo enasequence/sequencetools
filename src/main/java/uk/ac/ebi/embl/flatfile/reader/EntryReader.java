@@ -28,7 +28,8 @@ public abstract class EntryReader extends FlatFileEntryReader {
     terminatingTags.add("//");
   }
 
-  private HashMap<String, FlatFileLineReader> reader = new HashMap<String, FlatFileLineReader>();
+  private final HashMap<String, FlatFileLineReader> reader =
+      new HashMap<String, FlatFileLineReader>();
 
   public static ThreadLocal<HashMap<String, Integer>> blockCounterHolder =
       new ThreadLocal<HashMap<String, Integer>>() {
@@ -53,7 +54,7 @@ public abstract class EntryReader extends FlatFileEntryReader {
   }
 
   // TODO: check!
-  private HashSet<String> terminatingTags = new HashSet<String>();
+  private final HashSet<String> terminatingTags = new HashSet<String>();
   private boolean terminatingAtSourceFeature = false;
 
   private boolean isEntry;

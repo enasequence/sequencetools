@@ -126,7 +126,7 @@ public class SourceFeature extends Feature implements HasTaxon, Serializable {
   public void setMasterLocation() {
     Order<Location> featureLocation = new Order<Location>();
     LocationFactory locationFactory = new LocationFactory();
-    featureLocation.addLocation(locationFactory.createLocalRange(1l, 1l));
+    featureLocation.addLocation(locationFactory.createLocalRange(1L, 1L));
     setLocations(featureLocation);
   }
 

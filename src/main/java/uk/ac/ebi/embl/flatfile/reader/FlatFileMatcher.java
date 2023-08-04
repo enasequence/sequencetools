@@ -22,9 +22,9 @@ public class FlatFileMatcher {
     this.pattern = pattern;
   }
 
-  private FlatFileLineReader reader;
+  private final FlatFileLineReader reader;
   private String locationString;
-  private Pattern pattern;
+  private final Pattern pattern;
   private Matcher matcher;
 
   public boolean match(String string) {
@@ -156,9 +156,6 @@ public class FlatFileMatcher {
       return null;
     }
     Date date = FlatFileDateUtils.getDay(value);
-    if (date == null) {
-      return null;
-    }
     return date;
   }
 

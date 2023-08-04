@@ -76,7 +76,7 @@ public class UtilsTest {
     feature2.setLocations(order2);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 2);
+    assertEquals(2, Utils.shiftLocation(entry, beginN, false).size());
   }
 
   @Test
@@ -91,7 +91,7 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 12, (long) 20));
     feature1.setLocations(order1);
     entry.addFeature(feature1);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 0);
+    assertEquals(0, Utils.shiftLocation(entry, beginN, false).size());
   }
 
   @Test
@@ -111,7 +111,7 @@ public class UtilsTest {
     feature1.setLocations(order1);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 0);
+    assertEquals(0, Utils.shiftLocation(entry, beginN, false).size());
   }
 
   @Test
@@ -131,7 +131,7 @@ public class UtilsTest {
     feature1.setLocations(order1);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 2);
+    assertEquals(2, Utils.shiftLocation(entry, beginN, false).size());
     // Collection<ValidationMessage> validationMessages=Utils.shiftLocation(entry, beginN);
 
   }
@@ -153,7 +153,7 @@ public class UtilsTest {
     feature1.setLocations(order1);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 2);
+    assertEquals(2, Utils.shiftLocation(entry, beginN, false).size());
     Collection<ValidationMessage> validationMessages = Utils.shiftLocation(entry, beginN, false);
   }
 
@@ -173,7 +173,7 @@ public class UtilsTest {
     feature1.setLocations(order1);
     entry.addFeature(feature1);
     entry.addFeature(feature2);
-    assertTrue(Utils.shiftLocation(entry, beginN, false).size() == 2);
+    assertEquals(2, Utils.shiftLocation(entry, beginN, false).size());
   }
 
   @Test
@@ -239,7 +239,7 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 1, (long) 900));
     reference.setLocations(order1);
     entry.addReference(reference);
-    assertEquals(null, Utils.shiftReferenceLocation(entry, newSequenceLength));
+    assertNull(Utils.shiftReferenceLocation(entry, newSequenceLength));
   }
 
   @Test
@@ -251,7 +251,7 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 1, (long) 900));
     reference.setLocations(order1);
     entry.addReference(reference);
-    assertTrue(Utils.shiftReferenceLocation(entry, newSequenceLength) != null);
+    assertNotNull(Utils.shiftReferenceLocation(entry, newSequenceLength));
   }
 
   // remove features test
@@ -267,7 +267,7 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 20, (long) 26));
     feature1.setLocations(order1);
     entry.addFeature(feature1);
-    assertTrue(Utils.shiftLocation(entry, beginN, removeall).size() == 1);
+    assertEquals(1, Utils.shiftLocation(entry, beginN, removeall).size());
   }
 
   // feature begin and end position equal test removeall true
@@ -283,7 +283,7 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 45, (long) 45));
     feature1.setLocations(order1);
     entry.addFeature(feature1);
-    assertTrue(Utils.shiftLocation(entry, beginN, removeall).size() == 0);
+    assertEquals(0, Utils.shiftLocation(entry, beginN, removeall).size());
   }
 
   // feature begin and end position equal test removeall false
@@ -299,13 +299,13 @@ public class UtilsTest {
     order1.addLocation(locationFactory.createLocalRange((long) 45, (long) 45));
     feature1.setLocations(order1);
     entry.addFeature(feature1);
-    assertTrue(Utils.shiftLocation(entry, beginN, removeall).size() == 1);
+    assertEquals(1, Utils.shiftLocation(entry, beginN, removeall).size());
   }
 
   @Test
   public void escapeASCIIHtmlEntities() {
     // null
-    Assert.assertEquals(null, Utils.escapeASCIIHtmlEntities(null));
+    assertNull(Utils.escapeASCIIHtmlEntities(null));
     // string with multiple spaces
     StringBuilder ip = new StringBuilder("   ");
     Assert.assertEquals("   ", Utils.escapeASCIIHtmlEntities(ip).toString());
@@ -313,7 +313,7 @@ public class UtilsTest {
     ip = new StringBuilder(" ");
     Assert.assertEquals(" ", Utils.escapeASCIIHtmlEntities(ip).toString());
     // empty string
-    ip = new StringBuilder("");
+    ip = new StringBuilder();
     Assert.assertEquals("", Utils.escapeASCIIHtmlEntities(ip).toString());
     // Valid html entity name &amp;
     ip = new StringBuilder("gene &amp; protein");

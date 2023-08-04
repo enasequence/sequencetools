@@ -138,7 +138,7 @@ public class SequenceBasesFix extends EntryValidationCheck {
       }
     }
 
-    int length = (int) (endPosition - beginPosition);
+    int length = endPosition - beginPosition;
     int offset = beginPosition;
     byte[] strippedSequence = new byte[length];
     System.arraycopy(sequenceObj.getSequenceByte(), offset, strippedSequence, 0, length);

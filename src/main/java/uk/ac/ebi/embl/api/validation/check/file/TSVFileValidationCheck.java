@@ -136,7 +136,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       return path.toFile();
     } catch (Exception e) {
       throw new ValidationEngineException(
-          "Method getTemplateFromResourceAndWriteToProcessDir: " + e.toString(), e);
+          "Method getTemplateFromResourceAndWriteToProcessDir: " + e, e);
     }
   }
 

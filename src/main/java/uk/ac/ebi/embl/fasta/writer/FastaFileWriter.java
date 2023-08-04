@@ -15,9 +15,9 @@ import java.io.Writer;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
-  private Entry entry;
-  private Writer writer;
-  private FastaHeaderFormat headerFormat;
+  private final Entry entry;
+  private final Writer writer;
+  private final FastaHeaderFormat headerFormat;
 
   public enum FastaHeaderFormat {
     DEFAULT_HEADER_FORMAT,

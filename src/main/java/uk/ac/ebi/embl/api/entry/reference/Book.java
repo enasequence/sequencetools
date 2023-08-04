@@ -29,7 +29,7 @@ public class Book extends Publication implements Comparable<Book> {
   private String lastPage;
   private String publisher;
   private Date year;
-  private List<Person> editors;
+  private final List<Person> editors;
 
   protected Book() {
     this.editors = new ArrayList<Person>();
@@ -158,7 +158,7 @@ public class Book extends Publication implements Comparable<Book> {
   }
 
   public int compareTo(Book o) {
-    final Book other = (Book) o;
+    final Book other = o;
     final CompareToBuilder builder = new CompareToBuilder();
     builder.appendSuper(super.compareTo(other));
     builder.append(this.bookTitle, other.bookTitle);

@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 @Description(" feature Qualifier\\\"{0}\\\" has been replaced with \\\"{1}\\\"")
 public class FeatureQualifierRenameFix extends FeatureValidationCheck {
 
-  private HashMap<String, String> featureQualifierMap = new HashMap<String, String>();
+  private final HashMap<String, String> featureQualifierMap = new HashMap<String, String>();
 
   private static final String FEATURE_QUALIFIER_RENAME_FIX_ID = "FeatureQualifierRenameFix";
 

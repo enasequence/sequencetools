@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the reference lines. */
 public class GenbankReferenceWriter extends FlatFileWriter {
 
-  private Reference reference;
+  private final Reference reference;
 
   public GenbankReferenceWriter(Entry entry, Reference reference, WrapType wrapType) {
     super(entry, wrapType);

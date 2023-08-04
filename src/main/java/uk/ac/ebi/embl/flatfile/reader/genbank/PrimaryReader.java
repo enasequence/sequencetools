@@ -50,13 +50,13 @@ public class PrimaryReader extends MultiLineBlockReader {
               + // complement
               "\\s*$");
 
-  private static int GROUP_SECONDARY_BEGIN_POSITION = 1;
-  private static int GROUP_SECONDARY_END_POSITION = 2;
-  private static int GROUP_ACCESSION = 3;
-  private static int GROUP_VERSION = 5;
-  private static int GROUP_PRIMARY_BEGIN_POSITION = 6;
-  private static int GROUP_PRIMARY_END_POSITION = 7;
-  private static int GROUP_COMPLEMENT = 8;
+  private static final int GROUP_SECONDARY_BEGIN_POSITION = 1;
+  private static final int GROUP_SECONDARY_END_POSITION = 2;
+  private static final int GROUP_ACCESSION = 3;
+  private static final int GROUP_VERSION = 5;
+  private static final int GROUP_PRIMARY_BEGIN_POSITION = 6;
+  private static final int GROUP_PRIMARY_END_POSITION = 7;
+  private static final int GROUP_COMPLEMENT = 8;
 
   @Override
   public String getTag() {

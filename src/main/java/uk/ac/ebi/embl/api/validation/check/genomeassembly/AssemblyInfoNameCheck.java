@@ -22,8 +22,8 @@ public class AssemblyInfoNameCheck extends GenomeAssemblyValidationCheck<Assembl
   private final String MESSAGE_KEY_INVALID_ASEMBLY_NAME_ERROR = "AssemblyInfoInvalidAssemblyName";
   private final String MESSAGE_KEY_INVALID_ASEMBLY_NAME_LENGTH_ERROR =
       "AssemblyInfoInvalidAssemblyNameLength";
-  private String assemblyNameRegex = "^[A-Za-z0-9 _\\-\\.#]*$";
-  private Pattern assemblyNamePattern = Pattern.compile(assemblyNameRegex);
+  private final String assemblyNameRegex = "^[A-Za-z0-9 _\\-\\.#]*$";
+  private final Pattern assemblyNamePattern = Pattern.compile(assemblyNameRegex);
 
   @Override
   public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {

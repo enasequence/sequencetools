@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.sequence;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -121,7 +120,7 @@ public class SequenceBasesFixTest {
     Collection<ValidationMessage<Origin>> messages =
         validationResult.getMessages("SequenceBasesFix_1", Severity.ERROR);
 
-    assertTrue(!messages.isEmpty());
+    assertFalse(messages.isEmpty());
     assertEquals(
         "Invalid Sequence, Sequence doesn't contain any bases after deleting the n characters at the begin and end of Sequence.",
         messages.iterator().next().getMessage());

@@ -29,13 +29,13 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     Feature feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(true);
     feature.getLocations().setRightPartial(true);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1l, 210l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -52,7 +52,7 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(true);
     feature.getLocations().setRightPartial(true);
-    LocalRange range = locationFactory.createLocalRange(1l, 6l);
+    LocalRange range = locationFactory.createLocalRange(1L, 6L);
     feature.getLocations().addLocation(range);
     entry.addFeature(feature);
     writer = new StringWriter();
@@ -69,13 +69,13 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     Feature feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1l, 210l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -94,15 +94,15 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     Feature feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(true);
     feature.getLocations().setRightPartial(true);
-    Range range = locationFactory.createLocalRange(1l, 210l);
+    Range range = locationFactory.createLocalRange(1L, 210L);
     range.setComplement(true);
     feature.getLocations().addLocation(range);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    range = locationFactory.createLocalRange(2077l, 2166l);
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    range = locationFactory.createLocalRange(2077L, 2166L);
     range.setComplement(true);
     feature.getLocations().addLocation(range);
     entry.addFeature(feature);
@@ -124,13 +124,13 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(true);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1l, 210l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -150,15 +150,15 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(true);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    Range range = locationFactory.createLocalRange(1l, 210l);
+    Range range = locationFactory.createLocalRange(1L, 210L);
     range.setComplement(true);
     feature.getLocations().addLocation(range);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -178,16 +178,16 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(true);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    Base base = locationFactory.createLocalBase(123l);
+    Base base = locationFactory.createLocalBase(123L);
     base.setComplement(true);
     feature.getLocations().addLocation(base);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(493l, 660l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
-    feature.getLocations().addLocation(locationFactory.createLocalBase(99999l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
+    feature.getLocations().addLocation(locationFactory.createLocalBase(99999L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -206,12 +206,12 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     Feature feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createLocalBetween(5493l, 54932l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+    feature.getLocations().addLocation(locationFactory.createLocalBetween(5493L, 54932L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -230,16 +230,16 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     Feature feature = featureFactory.createFeature("mRNA", false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createRemoteRange("A00001", 1, 1l, 210l));
-    feature.getLocations().addLocation(locationFactory.createRemoteBase("A00002", 4, 5493l));
+    feature.getLocations().addLocation(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
+    feature.getLocations().addLocation(locationFactory.createRemoteBase("A00002", 4, 5493L));
     feature
         .getLocations()
-        .addLocation(locationFactory.createRemoteBetween("A00002", 4, 5493l, 54932l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(752l, 970l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1058l, 1144l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1522l, 1627l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(1701l, 1936l));
-    feature.getLocations().addLocation(locationFactory.createLocalRange(2077l, 2166l));
+        .addLocation(locationFactory.createRemoteBetween("A00002", 4, 5493L, 54932L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1522L, 1627L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(1701L, 1936L));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(2077L, 2166L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -259,7 +259,7 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    Base base = locationFactory.createLocalBase(123l);
+    Base base = locationFactory.createLocalBase(123L);
     base.setComplement(false);
     feature.getLocations().addLocation(base);
     entry.addFeature(feature);
@@ -278,7 +278,7 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createLocalRange(123l, 333l));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(123L, 333L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(
@@ -295,7 +295,7 @@ public class EmblFeatureLocationWriterTest extends EmblWriterTest {
     feature.getLocations().setComplement(false);
     feature.getLocations().setLeftPartial(false);
     feature.getLocations().setRightPartial(false);
-    feature.getLocations().addLocation(locationFactory.createLocalBetween(123l, 124l));
+    feature.getLocations().addLocation(locationFactory.createLocalBetween(123L, 124L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
     new FeatureLocationWriter(

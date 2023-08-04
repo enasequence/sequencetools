@@ -47,7 +47,7 @@ public class LineReader {
 
   private int nextLineNumber = 0;
 
-  private LineReaderCache cache = new LineReaderCache();
+  private final LineReaderCache cache = new LineReaderCache();
 
   public String getFileId() {
     return fileId;

@@ -19,7 +19,7 @@ public class FlatFileComparatorOptions {
   private boolean ignoreDRLines = true;
   private boolean ignoreDbXrefLines = true;
 
-  private ArrayList<String> ignoreLine = new ArrayList<String>();
+  private final ArrayList<String> ignoreLine = new ArrayList<String>();
 
   public boolean isIgnoreLine(String line) {
     if (ignoreSTLines && line.startsWith("ST *")) return true;

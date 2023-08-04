@@ -20,7 +20,7 @@ public class TranslationTableTest {
   @Before
   public void setUp() throws Exception {}
 
-  private TranslationTableFactory factory = new TranslationTableFactory();
+  private final TranslationTableFactory factory = new TranslationTableFactory();
 
   @Test
   public void testGetNumber() {

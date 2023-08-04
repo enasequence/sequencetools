@@ -34,7 +34,7 @@ public class ValidationResult implements Serializable {
 
   private static Severity minSeverity = Severity.FIX;
 
-  private Collection<ValidationMessage<Origin>> messages;
+  private final Collection<ValidationMessage<Origin>> messages;
   private String reportMessage;
   private boolean writeCuratorMessage = true;
   private boolean writeReportMessage = false;

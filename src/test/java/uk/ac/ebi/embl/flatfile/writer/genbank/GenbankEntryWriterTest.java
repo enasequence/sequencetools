@@ -79,15 +79,15 @@ public class GenbankEntryWriterTest extends GenbankWriterTest {
     entry.addReference(reference);
 
     EntryFactory entryFactory = new EntryFactory();
-    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665l, 19090l, true, 1l, 426l));
-    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665l, 98790l, true, 6l, 546l));
-    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665l, 19090l, true, 1l, 426l));
-    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665l, 98790l, true, 6l, 546l));
+    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665L, 19090L, true, 1L, 426L));
+    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665L, 98790L, true, 6L, 546L));
+    entry.addAssembly(entryFactory.createAssembly("AC004528", 1, 18665L, 19090L, true, 1L, 426L));
+    entry.addAssembly(entryFactory.createAssembly("AC004529", 6, 45665L, 98790L, true, 6L, 546L));
 
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createCdsFeature();
     LocationFactory locationFactory = new LocationFactory();
-    feature.getLocations().addLocation(locationFactory.createLocalRange(3514l, 4041l, false));
+    feature.getLocations().addLocation(locationFactory.createLocalRange(3514L, 4041L, false));
     QualifierFactory qualifierFactory = new QualifierFactory();
     feature.addQualifier(qualifierFactory.createQualifier("product", "hypothetical protein"));
     feature.addQualifier(qualifierFactory.createQualifier("note", "ORF 5"));

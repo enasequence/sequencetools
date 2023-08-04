@@ -10,8 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -67,7 +66,7 @@ public class PCRPrimersQualifierCheckTest {
         "fwd_name: fwd_name:, fwd_seq:gacgtcgccggtgacggcaccaccac, rev_name:H1595(Cpn60)+M13(48R), rev_seq: cgacggtcgccgaagcccggggcctt");
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("PCRPrimersQualifierCheck_1", Severity.ERROR));
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   @Test
@@ -76,7 +75,7 @@ public class PCRPrimersQualifierCheckTest {
         "fwd_name: H1594(Cpn60)+M13(-40F), fwd_seq:gaxgtcgccggtgacggcaccaccac, rev_name:H1595(Cpn60)+M13(48R), rev_seq: cgacggtcgccgaagcccggggcctt");
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("PCRPrimersQualifierCheck_4", Severity.ERROR));
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   @Test
@@ -85,7 +84,7 @@ public class PCRPrimersQualifierCheckTest {
         "fwd_name: H1594(Cpn60)+M13(-40F), fwd_seq:gag<gtcgccggtgacggcaccaccac, rev_name:H1595(Cpn60)+M13(48R), rev_seq: cgacggtcgccgaagcccggggcctt");
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("PCRPrimersQualifierCheck_2", Severity.ERROR));
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   @Test
@@ -95,7 +94,7 @@ public class PCRPrimersQualifierCheckTest {
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("PCRPrimersQualifierCheck_2", Severity.ERROR));
     assertEquals(1, validationResult.count("PCRPrimersQualifierCheck_3", Severity.ERROR));
-    assertTrue(!validationResult.isValid());
+    assertFalse(validationResult.isValid());
   }
 
   @Test

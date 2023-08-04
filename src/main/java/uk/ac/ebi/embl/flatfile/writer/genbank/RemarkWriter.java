@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.flatfile.writer.WrapType;
 /** Flat file writer for the REMARK lines. */
 public class RemarkWriter extends FlatFileWriter {
 
-  private Reference reference;
+  private final Reference reference;
 
   public RemarkWriter(Entry entry, Reference reference, WrapType wrapType) {
     super(entry, wrapType);

@@ -14,8 +14,8 @@ import java.util.List;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 
 public class FlattenedMessageResult {
-  private List<ValidationMessage> flattenedMessages;
-  private List<ValidationMessage> unFlattenedMessages;
+  private final List<ValidationMessage> flattenedMessages;
+  private final List<ValidationMessage> unFlattenedMessages;
 
   public FlattenedMessageResult(
       List<ValidationMessage> flattenedMessages, List<ValidationMessage> unFlattenedMessages) {

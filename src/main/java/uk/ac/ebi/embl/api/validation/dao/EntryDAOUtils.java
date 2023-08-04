@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 
 public interface EntryDAOUtils {
-  public boolean isValueExists(String tableName, String constraintKey, String constraintValue)
+  boolean isValueExists(String tableName, String constraintKey, String constraintValue)
       throws SQLException;
 
   boolean isEntryExists(String accession) throws SQLException;
@@ -28,17 +28,17 @@ public interface EntryDAOUtils {
   ArrayList<Qualifier> getChromosomeQualifiers(
       String analysisId, String submitterAccession, SourceFeature source) throws SQLException;
 
-  public boolean isProjectValid(String project) throws SQLException;
+  boolean isProjectValid(String project) throws SQLException;
 
-  public HashSet<String> getProjectLocutagPrefix(String project) throws SQLException;
+  HashSet<String> getProjectLocutagPrefix(String project) throws SQLException;
 
-  public String isEcnumberValid(String ecNumber) throws SQLException;
+  String isEcnumberValid(String ecNumber) throws SQLException;
 
   Entry getEntryInfo(String primaryAcc) throws SQLException;
 
-  public String getDbcode(String prefix) throws SQLException;
+  String getDbcode(String prefix) throws SQLException;
 
-  public boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
+  boolean isChromosomeValid(String analysisId, String chromosomeName) throws SQLException;
 
   String getNewProteinId() throws SQLException;
 }

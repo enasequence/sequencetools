@@ -97,7 +97,6 @@ public class DivisionFix extends EntryValidationCheck {
 
   private String getDivisionByScientificName(SourceFeature primarySF) {
     String division = getDivisionFromCache(primarySF.getScientificName());
-    ;
     if (empty(division)) {
       List<Taxon> taxonList;
       if (!(taxonList =
@@ -128,14 +127,10 @@ public class DivisionFix extends EntryValidationCheck {
       return true;
     } else {
       // If division is NOT empty
-      if (getValidationScope().equals(ValidationScope.NCBI)
-          || getValidationScope().equals(ValidationScope.NCBI_MASTER)) {
-        // Do NOT set division for NCBI or NCBI_MASTER ValidationScope.
-        return false;
-      } else {
-        // Set division for non NCBI ValidationScope(s).
-        return true;
-      }
+      // Do NOT set division for NCBI or NCBI_MASTER ValidationScope.
+      // Set division for non NCBI ValidationScope(s).
+      return !getValidationScope().equals(ValidationScope.NCBI)
+          && !getValidationScope().equals(ValidationScope.NCBI_MASTER);
     }
   }
 

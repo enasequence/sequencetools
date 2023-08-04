@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class UnlocalisedListFileReader extends GCSEntryReader {
   }
 
   @Override
-  public ValidationResult read() throws FileNotFoundException, IOException {
+  public ValidationResult read() throws IOException {
     int lineNumber = 1;
 
     try (BufferedReader reader = CommonUtil.bufferedReaderFromFile(file)) {

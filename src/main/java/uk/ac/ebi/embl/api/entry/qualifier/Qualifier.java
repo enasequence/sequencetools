@@ -185,8 +185,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
   }
 
   public boolean isValue() {
-    if (value == null || value.trim().isEmpty()) return false;
-    else return true;
+    return value != null && !value.trim().isEmpty();
   }
 
   public void setValue(String value) {
