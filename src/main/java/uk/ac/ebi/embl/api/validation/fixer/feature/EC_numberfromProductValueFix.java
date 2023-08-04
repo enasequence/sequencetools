@@ -1,17 +1,12 @@
 /*
- * # Copyright 2012-2012 EMBL-EBI, Hinxton outstation
- *
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
- *
-# http://www.apache.org/licenses/LICENSE-2.0
- *
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
@@ -30,94 +25,110 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
-@Description("Added \"EC_number\" qualifier from \"Product\" Value {0}" + "\"product\" qualifier value {0} has been changed to {1}")
+@Description(
+    "Added \"EC_number\" qualifier from \"Product\" Value {0}"
+        + "\"product\" qualifier value {0} has been changed to {1}")
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
-public class EC_numberfromProductValueFix extends FeatureValidationCheck
-{
-	
-	private static final String PRODUCT_QUALIFIER_VALUE_CHANGED = "EC_numberfromProductValueFix_1";
-	private static final String ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT = "EC_numberfromProductValueFix_2";
-	private static final String REMOVED_ECNUMBER_QUAL_FROM_FEATURE = "EC_numberfromProductValueFix_3";
-	private static final String REMOVED_ECNUMBER_VALUE_FROM_PRODUCT = "EC_numberfromProductValueFix_4";
+public class EC_numberfromProductValueFix extends FeatureValidationCheck {
 
-	private static String ecRegex = "[\\d-]{1,3}\\.(?:(\\d{0,3}\\-{0,1}\\.)){2}n{0,1}\\d{0,3}\\-{0,1}";
-	private static Pattern ecPattern = Pattern.compile(ecRegex);
-	private static String productEcNumberSplitRegex = "\\[?\\(?(?:EC|ec)?:?=?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1})(?:\\s*,\\s*" +
-			"(?:EC|ec)?:?=?)?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1}){0,}(?:\\]?\\)?)";
-	private static Pattern productEcNumberSplitPattern = Pattern.compile(productEcNumberSplitRegex);
-	
-	public ValidationResult check(Feature feature)
-	{
-		result = new ValidationResult();
-		
-		if (feature == null)
-		{
-			return result;
-		}
-		List<Qualifier> productQualifiers = feature.getQualifiers(Qualifier.PRODUCT_QUALIFIER_NAME);
-		for (Qualifier productQualifier : productQualifiers)
-		{
-			String productValue = productQualifier.getValue();
-			boolean ecNumbersAllowed = true;
+  private static final String PRODUCT_QUALIFIER_VALUE_CHANGED = "EC_numberfromProductValueFix_1";
+  private static final String ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT =
+      "EC_numberfromProductValueFix_2";
+  private static final String REMOVED_ECNUMBER_QUAL_FROM_FEATURE = "EC_numberfromProductValueFix_3";
+  private static final String REMOVED_ECNUMBER_VALUE_FROM_PRODUCT =
+      "EC_numberfromProductValueFix_4";
 
-			if (productValue.toLowerCase().contains("hypothetical protein") || productValue.toLowerCase().contains("unknown")) {
-				ecNumbersAllowed = false;
-				ArrayList<Qualifier> ecNumberQualifiers = (ArrayList<Qualifier>) feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
-				for (Qualifier ecQualifier : ecNumberQualifiers) {
-					feature.removeQualifier(ecQualifier);
-					reportMessage(Severity.FIX, feature.getOrigin(), REMOVED_ECNUMBER_QUAL_FROM_FEATURE, feature.getName());
-				}
-			}
+  private static String ecRegex =
+      "[\\d-]{1,3}\\.(?:(\\d{0,3}\\-{0,1}\\.)){2}n{0,1}\\d{0,3}\\-{0,1}";
+  private static Pattern ecPattern = Pattern.compile(ecRegex);
+  private static String productEcNumberSplitRegex =
+      "\\[?\\(?(?:EC|ec)?:?=?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1})(?:\\s*,\\s*"
+          + "(?:EC|ec)?:?=?)?(?:(?:\\d{0,3}\\-{0,1}\\.){3}n{0,1}\\d{0,}\\-{0,1}){0,}(?:\\]?\\)?)";
+  private static Pattern productEcNumberSplitPattern = Pattern.compile(productEcNumberSplitRegex);
 
-			ImmutablePair<String,List<String>> productAndEcNumber = getEcNumberAndProduct(productValue);
-			//if derived product and existing product value are same, no ec_numbers found
-			if (productAndEcNumber.left.equals(productValue)) {
-				continue;
-			}
+  public ValidationResult check(Feature feature) {
+    result = new ValidationResult();
 
-			productQualifier.setValue(productAndEcNumber.left);
-			if (!ecNumbersAllowed) {
-				reportMessage(Severity.FIX, feature.getOrigin(), REMOVED_ECNUMBER_VALUE_FROM_PRODUCT);
-			}
-			reportMessage(Severity.FIX, feature.getOrigin(), PRODUCT_QUALIFIER_VALUE_CHANGED, productValue, productAndEcNumber.left);
+    if (feature == null) {
+      return result;
+    }
+    List<Qualifier> productQualifiers = feature.getQualifiers(Qualifier.PRODUCT_QUALIFIER_NAME);
+    for (Qualifier productQualifier : productQualifiers) {
+      String productValue = productQualifier.getValue();
+      boolean ecNumbersAllowed = true;
 
-			for (String ecNumber : productAndEcNumber.right) {
-				feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, ecNumber);
-				if (!SequenceEntryUtils.deleteDuplicatedQualfiier(feature, Qualifier.EC_NUMBER_QUALIFIER_NAME))
-					reportMessage(Severity.FIX, feature.getOrigin(), ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT, ecNumber, productValue);
-			}
+      if (productValue.toLowerCase().contains("hypothetical protein")
+          || productValue.toLowerCase().contains("unknown")) {
+        ecNumbersAllowed = false;
+        ArrayList<Qualifier> ecNumberQualifiers =
+            (ArrayList<Qualifier>) feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);
+        for (Qualifier ecQualifier : ecNumberQualifiers) {
+          feature.removeQualifier(ecQualifier);
+          reportMessage(
+              Severity.FIX,
+              feature.getOrigin(),
+              REMOVED_ECNUMBER_QUAL_FROM_FEATURE,
+              feature.getName());
+        }
+      }
 
-		}
-		return result;
-	}
+      ImmutablePair<String, List<String>> productAndEcNumber = getEcNumberAndProduct(productValue);
+      // if derived product and existing product value are same, no ec_numbers found
+      if (productAndEcNumber.left.equals(productValue)) {
+        continue;
+      }
 
-	ImmutablePair<String, List<String>> getEcNumberAndProduct(String product) {
-		String originalProduct = product;
-		List<String> ecNumbersL = new ArrayList<>();
-		Matcher matcher = productEcNumberSplitPattern.matcher(product);
-		String matched;
-		while (matcher.find()) {
-			matched = matcher.group();
-			product =  product.replaceAll(productEcNumberSplitRegex, "").trim();
+      productQualifier.setValue(productAndEcNumber.left);
+      if (!ecNumbersAllowed) {
+        reportMessage(Severity.FIX, feature.getOrigin(), REMOVED_ECNUMBER_VALUE_FROM_PRODUCT);
+      }
+      reportMessage(
+          Severity.FIX,
+          feature.getOrigin(),
+          PRODUCT_QUALIFIER_VALUE_CHANGED,
+          productValue,
+          productAndEcNumber.left);
 
-			if (matched != null) {
-				String[] ecs = matched.split(",");
-				for (String ec : ecs) {
-					Matcher ecMatcher = ecPattern.matcher(ec);
+      for (String ecNumber : productAndEcNumber.right) {
+        feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, ecNumber);
+        if (!SequenceEntryUtils.deleteDuplicatedQualfiier(
+            feature, Qualifier.EC_NUMBER_QUALIFIER_NAME))
+          reportMessage(
+              Severity.FIX,
+              feature.getOrigin(),
+              ADDED_ECNUMBER_QUAL_DERIVED_FROM_PRODUCT,
+              ecNumber,
+              productValue);
+      }
+    }
+    return result;
+  }
 
-					if (ecMatcher.find()) {
-						String grp = ecMatcher.group();
-						ecNumbersL.add(grp);
-					}
-				}
-			}
-		}
+  ImmutablePair<String, List<String>> getEcNumberAndProduct(String product) {
+    String originalProduct = product;
+    List<String> ecNumbersL = new ArrayList<>();
+    Matcher matcher = productEcNumberSplitPattern.matcher(product);
+    String matched;
+    while (matcher.find()) {
+      matched = matcher.group();
+      product = product.replaceAll(productEcNumberSplitRegex, "").trim();
 
-		if(ecNumbersL.isEmpty()) {
-			return new ImmutablePair<>(originalProduct, ecNumbersL);
-		}
-		return new ImmutablePair<>(product, ecNumbersL);
+      if (matched != null) {
+        String[] ecs = matched.split(",");
+        for (String ec : ecs) {
+          Matcher ecMatcher = ecPattern.matcher(ec);
 
-	}
-		
+          if (ecMatcher.find()) {
+            String grp = ecMatcher.group();
+            ecNumbersL.add(grp);
+          }
+        }
+      }
+    }
+
+    if (ecNumbersL.isEmpty()) {
+      return new ImmutablePair<>(originalProduct, ecNumbersL);
+    }
+    return new ImmutablePair<>(product, ecNumbersL);
+  }
 }

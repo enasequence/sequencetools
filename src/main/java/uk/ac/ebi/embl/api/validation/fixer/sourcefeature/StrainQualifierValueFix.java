@@ -1,18 +1,13 @@
-/*******************************************************************************
- * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -25,87 +20,92 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-@Description("strain qualifier value \"{0}\" has been changed to \"{1}\" " + "entry description \"{0}\" has been changed to \"{1}\"")
-@ExcludeScope(validationScope = { ValidationScope.NCBI })
-public class StrainQualifierValueFix extends EntryValidationCheck
-{
+@Description(
+    "strain qualifier value \"{0}\" has been changed to \"{1}\" "
+        + "entry description \"{0}\" has been changed to \"{1}\"")
+@ExcludeScope(validationScope = {ValidationScope.NCBI})
+public class StrainQualifierValueFix extends EntryValidationCheck {
 
-	private final static String STRAIN_MESSAGE_ID = "StrainQualifierValueandDescriptionFix_1";
-	
-	public ValidationResult check(Entry entry)
-	{
+  private static final String STRAIN_MESSAGE_ID = "StrainQualifierValueandDescriptionFix_1";
 
-		result = new ValidationResult();
+  public ValidationResult check(Entry entry) {
 
-		if (entry == null)
-		{
-			return result;
-		}
+    result = new ValidationResult();
 
-		if (entry.getPrimarySourceFeature() == null)
-		{
-			return result;
-		}
+    if (entry == null) {
+      return result;
+    }
 
-		SourceFeature source = entry.getPrimarySourceFeature();
+    if (entry.getPrimarySourceFeature() == null) {
+      return result;
+    }
 
-		Qualifier strainQualifier = source.getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME);
+    SourceFeature source = entry.getPrimarySourceFeature();
 
-		if (strainQualifier == null)
-			return result;
+    Qualifier strainQualifier = source.getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME);
 
-		String strainQualifierValue = strainQualifier.getValue();
-		if (strainQualifierValue.endsWith("(T)"))
-		{
-			strainQualifierValue = strainQualifierValue.substring(0, strainQualifierValue.length() - 3);
-		} else if (strainQualifierValue.endsWith("T"))
-		{
-			strainQualifierValue = strainQualifierValue.substring(0, strainQualifierValue.length() - 1);
-		}
-		boolean isOrganismFormal = getEmblEntryValidationPlanProperty().taxonClient.get().isOrganismFormal(source.getScientificName());
+    if (strainQualifier == null) return result;
 
-		if (!isOrganismFormal)
-		{
-			if (strainQualifierValue.contains("type strain: "))
-			{
-				strainQualifierValue = strainQualifierValue.replace("type strain: ", "");
-			}
-		} else if ((strainQualifier.getValue().endsWith("(T)") || strainQualifier.getValue().endsWith("T")) && !strainQualifier.getValue().startsWith("type strain:"))
-		{
-			strainQualifierValue = "type strain: " + strainQualifierValue;
-		}
+    String strainQualifierValue = strainQualifier.getValue();
+    if (strainQualifierValue.endsWith("(T)")) {
+      strainQualifierValue = strainQualifierValue.substring(0, strainQualifierValue.length() - 3);
+    } else if (strainQualifierValue.endsWith("T")) {
+      strainQualifierValue = strainQualifierValue.substring(0, strainQualifierValue.length() - 1);
+    }
+    boolean isOrganismFormal =
+        getEmblEntryValidationPlanProperty()
+            .taxonClient
+            .get()
+            .isOrganismFormal(source.getScientificName());
 
-		if (!strainQualifier.getValue().equals(strainQualifierValue))
-		{
-			reportMessage(Severity.FIX, entry.getOrigin(), STRAIN_MESSAGE_ID, strainQualifier.getValue(), strainQualifierValue);
-			entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME).setValue(strainQualifierValue);
-     	}
-		/*if (entry.getDescription() != null&&entry.getDescription().getText()!=null)
-		{
-			String descriptionValue = entry.getDescription().getText();
-			Matcher descriptionMatcher = pattern.matcher(descriptionValue);
-			String descriptionStrain = null;
+    if (!isOrganismFormal) {
+      if (strainQualifierValue.contains("type strain: ")) {
+        strainQualifierValue = strainQualifierValue.replace("type strain: ", "");
+      }
+    } else if ((strainQualifier.getValue().endsWith("(T)")
+            || strainQualifier.getValue().endsWith("T"))
+        && !strainQualifier.getValue().startsWith("type strain:")) {
+      strainQualifierValue = "type strain: " + strainQualifierValue;
+    }
 
-			if (descriptionMatcher.matches())
-			{
-				descriptionStrain = descriptionMatcher.group(2);
-			}
-			if (descriptionStrain != null)
-			{
-				if (strainQualifierValue.contains("type strain"))
-				{
-					descriptionValue = descriptionValue.replace(descriptionStrain, "," + strainQualifierValue.replace(":", "") + ",");
-				} else
-				{
-					descriptionValue = descriptionValue.replace(descriptionStrain, ", strain " + strainQualifierValue + " ,");
-				}
-			}
-			if (!entry.getDescription().getText().equals(descriptionValue))
-			{
-				reportMessage(Severity.FIX, entry.getOrigin(), DESCRIPTION_MESSAGE_ID, entry.getDescription().getText(), descriptionValue);
-				entry.setDescription(new Text(descriptionValue));
-			}
-		}*/
-		return result;
-	}
+    if (!strainQualifier.getValue().equals(strainQualifierValue)) {
+      reportMessage(
+          Severity.FIX,
+          entry.getOrigin(),
+          STRAIN_MESSAGE_ID,
+          strainQualifier.getValue(),
+          strainQualifierValue);
+      entry
+          .getPrimarySourceFeature()
+          .getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME)
+          .setValue(strainQualifierValue);
+    }
+    /*if (entry.getDescription() != null&&entry.getDescription().getText()!=null)
+    {
+    	String descriptionValue = entry.getDescription().getText();
+    	Matcher descriptionMatcher = pattern.matcher(descriptionValue);
+    	String descriptionStrain = null;
+
+    	if (descriptionMatcher.matches())
+    	{
+    		descriptionStrain = descriptionMatcher.group(2);
+    	}
+    	if (descriptionStrain != null)
+    	{
+    		if (strainQualifierValue.contains("type strain"))
+    		{
+    			descriptionValue = descriptionValue.replace(descriptionStrain, "," + strainQualifierValue.replace(":", "") + ",");
+    		} else
+    		{
+    			descriptionValue = descriptionValue.replace(descriptionStrain, ", strain " + strainQualifierValue + " ,");
+    		}
+    	}
+    	if (!entry.getDescription().getText().equals(descriptionValue))
+    	{
+    		reportMessage(Severity.FIX, entry.getOrigin(), DESCRIPTION_MESSAGE_ID, entry.getDescription().getText(), descriptionValue);
+    		entry.setDescription(new Text(descriptionValue));
+    	}
+    }*/
+    return result;
+  }
 }

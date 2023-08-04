@@ -1,5 +1,16 @@
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import java.util.function.Consumer;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -11,81 +22,85 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 import uk.ac.ebi.embl.api.validation.helper.Ascii7CharacterConverter;
 
-import java.util.function.Consumer;
-
 /**
  * Removes diacritics and replaces non-printable ASCII7 characters with ? from:
+ *
  * <ul>
- *     <li>comment</li>
- *     <li>description</li>
- *     <li>reference title</li>
- *     <li>reference author first name</li>
- *     <li>reference author surname</li>
- *     <li>feature qualifiers</li>
+ *   <li>comment
+ *   <li>description
+ *   <li>reference title
+ *   <li>reference author first name
+ *   <li>reference author surname
+ *   <li>feature qualifiers
  * </ul>
  */
 public class Ascii7CharacterFix extends EntryValidationCheck {
-    private static final String FIX_ID = "Ascii7CharacterFix_1";
+  private static final String FIX_ID = "Ascii7CharacterFix_1";
 
-    private final Ascii7CharacterConverter converter = new Ascii7CharacterConverter();
+  private final Ascii7CharacterConverter converter = new Ascii7CharacterConverter();
 
-    public ValidationResult check(Entry entry) {
-        result = new ValidationResult();
+  public ValidationResult check(Entry entry) {
+    result = new ValidationResult();
 
-        if (entry == null)
-            return result;
+    if (entry == null) return result;
 
-        if (entry.getComment() != null) {
-            fix(entry.getComment().getText(), entry.getComment().getOrigin(),
-                    fixedText -> entry.getComment().setText(fixedText));
-        }
-        if (entry.getDescription() != null) {
-            fix(entry.getDescription().getText(), entry.getDescription().getOrigin(),
-                    fixedText -> entry.getDescription().setText(fixedText));
-        }
-
-        for (Reference reference : entry.getReferences()) {
-            if (reference.getPublication() != null) {
-                String pubTitle = reference.getPublication().getTitle();
-                if (pubTitle != null) {
-                    fix(pubTitle, reference.getOrigin(),
-                            fixedPubTitle -> reference.getPublication().setTitle(fixedPubTitle));
-                }
-
-                if (reference.getPublication().getAuthors() != null) {
-                    for (Person author : reference.getPublication().getAuthors()) {
-                        String firstName = author.getFirstName();
-                        if (firstName != null) {
-                            fix(firstName, reference.getOrigin(),
-                                    fixedFirstName -> author.setFirstName(fixedFirstName));
-                        }
-
-                        String surname = author.getSurname();
-                        if (surname != null) {
-                            fix(surname, reference.getOrigin(),
-                                    fixedSurname -> author.setSurname(fixedSurname));
-                        }
-                    }
-                }
-            }
-        }
-        for (Feature feature : entry.getFeatures()) {
-            for (Qualifier qualifier : feature.getQualifiers()) {
-                String qualifierValue = qualifier.getValue();
-                if (qualifierValue != null) {
-                    fix(qualifierValue, qualifier.getOrigin(),
-                            fixedVal -> qualifier.setValue(fixedVal));
-                }
-            }
-        }
-        return result;
+    if (entry.getComment() != null) {
+      fix(
+          entry.getComment().getText(),
+          entry.getComment().getOrigin(),
+          fixedText -> entry.getComment().setText(fixedText));
+    }
+    if (entry.getDescription() != null) {
+      fix(
+          entry.getDescription().getText(),
+          entry.getDescription().getOrigin(),
+          fixedText -> entry.getDescription().setText(fixedText));
     }
 
-    private void fix(String str, Origin origin, Consumer<String> replaceStr) {
-        if (Ascii7CharacterConverter.doConvert(str)) {
-            String fixedStr = converter.convert(str);
-            reportMessage(Severity.FIX, origin, FIX_ID, str, fixedStr);
-            replaceStr.accept(fixedStr);
+    for (Reference reference : entry.getReferences()) {
+      if (reference.getPublication() != null) {
+        String pubTitle = reference.getPublication().getTitle();
+        if (pubTitle != null) {
+          fix(
+              pubTitle,
+              reference.getOrigin(),
+              fixedPubTitle -> reference.getPublication().setTitle(fixedPubTitle));
         }
+
+        if (reference.getPublication().getAuthors() != null) {
+          for (Person author : reference.getPublication().getAuthors()) {
+            String firstName = author.getFirstName();
+            if (firstName != null) {
+              fix(
+                  firstName,
+                  reference.getOrigin(),
+                  fixedFirstName -> author.setFirstName(fixedFirstName));
+            }
+
+            String surname = author.getSurname();
+            if (surname != null) {
+              fix(surname, reference.getOrigin(), fixedSurname -> author.setSurname(fixedSurname));
+            }
+          }
+        }
+      }
     }
+    for (Feature feature : entry.getFeatures()) {
+      for (Qualifier qualifier : feature.getQualifiers()) {
+        String qualifierValue = qualifier.getValue();
+        if (qualifierValue != null) {
+          fix(qualifierValue, qualifier.getOrigin(), fixedVal -> qualifier.setValue(fixedVal));
+        }
+      }
+    }
+    return result;
+  }
+
+  private void fix(String str, Origin origin, Consumer<String> replaceStr) {
+    if (Ascii7CharacterConverter.doConvert(str)) {
+      String fixedStr = converter.convert(str);
+      reportMessage(Severity.FIX, origin, FIX_ID, str, fixedStr);
+      replaceStr.accept(fixedStr);
+    }
+  }
 }

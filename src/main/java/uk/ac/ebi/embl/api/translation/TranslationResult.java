@@ -1,18 +1,13 @@
-/*******************************************************************************
- * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.translation;
 
 import java.io.Serializable;
@@ -20,127 +15,137 @@ import java.util.Vector;
 
 public class TranslationResult implements Serializable {
 
-	private static final long serialVersionUID = -3348570245845628623L;
+  private static final long serialVersionUID = -3348570245845628623L;
 
-    private boolean fixedLeftPartial = false;
-    private boolean fixedRightPartial = false;
-    private boolean fixedPseudo = false;
-    private boolean fixedDegenerateStartCodon = false;
+  private boolean fixedLeftPartial = false;
+  private boolean fixedRightPartial = false;
+  private boolean fixedPseudo = false;
+  private boolean fixedDegenerateStartCodon = false;
 
-    public boolean isFixedDegenerateStartCodon() {
-        return fixedDegenerateStartCodon;
-    }
+  public boolean isFixedDegenerateStartCodon() {
+    return fixedDegenerateStartCodon;
+  }
 
-    public void setFixedDegenerateStartCodon(boolean fixedDegenerateStartCodon) {
-        this.fixedDegenerateStartCodon = fixedDegenerateStartCodon;
-    }
+  public void setFixedDegenerateStartCodon(boolean fixedDegenerateStartCodon) {
+    this.fixedDegenerateStartCodon = fixedDegenerateStartCodon;
+  }
 
-    public boolean isFixedPseudo() {
-        return fixedPseudo;
-    }
+  public boolean isFixedPseudo() {
+    return fixedPseudo;
+  }
 
-    public void setFixedPseudo(boolean fixedPseudo) {
-        this.fixedPseudo = fixedPseudo;
-    }
-    protected void setFixedLeftPartial(boolean fixedLeftPartial) {
-        this.fixedLeftPartial = fixedLeftPartial;
-    }
-    public boolean isFixedLeftPartial() {
-        return fixedLeftPartial;
-    }
+  public void setFixedPseudo(boolean fixedPseudo) {
+    this.fixedPseudo = fixedPseudo;
+  }
 
-    protected void setFixedRightPartial(boolean fixedRightPartial) {
-        this.fixedRightPartial = fixedRightPartial;
-    }
-    public boolean isFixedRightPartial() {
-        return fixedRightPartial;
-    }
+  protected void setFixedLeftPartial(boolean fixedLeftPartial) {
+    this.fixedLeftPartial = fixedLeftPartial;
+  }
 
-    private Vector<Codon> codons;
-    protected void setCodons(Vector<Codon> codons) {
-        this.codons = codons;
-    }
-    public Vector<Codon> getCodons() {
-        return codons;
-    } 
+  public boolean isFixedLeftPartial() {
+    return fixedLeftPartial;
+  }
 
-    private String trailingBases;
-    protected void setTrailingBases(String trailingBases) {
-        this.trailingBases = trailingBases;
-    }
-    public String getTrailingBases() {
-        return trailingBases;
-    }
+  protected void setFixedRightPartial(boolean fixedRightPartial) {
+    this.fixedRightPartial = fixedRightPartial;
+  }
 
-    private int conceptualTranslationCodons = 0;
-    protected void setConceptualTranslationCodons(int conceptualTranslationCodons) {
-        this.conceptualTranslationCodons = conceptualTranslationCodons;
-    }
-    public int getConceptualTranslationCodons() {
-        return conceptualTranslationCodons;
-    }
+  public boolean isFixedRightPartial() {
+    return fixedRightPartial;
+  }
 
-    public String getSequence(){
-        if (codons == null) {
-            return "";
-        }
-        StringBuilder sequence = new StringBuilder();
-        for (Codon codon : codons) {
-            sequence.append(codon.getCodon());
-        }
-        sequence.append(trailingBases);
-        return sequence.toString();
-    }
-       
-    /** Returns the translation including stop codons
-     * and trailing bases.
-     * @return the translation including stop codons
-     * and trailing base
-     */
-    public String getTranslation() {
-        if (codons == null) {
-            return "";
-        }
-        StringBuilder translation = new StringBuilder();
-        for (Codon codon : codons) {
-            translation.append(codon.getAminoAcid());
-        }
-        return translation.toString();
-    }
+  private Vector<Codon> codons;
 
-    /** Returns the translation excluding stop codons
-     * and trailing bases.
-     * @return the translation excluding stop codons
-     * and trailing bases.
-     */    
-    public String getConceptualTranslation() {
-        if (codons == null) {
-            return "";
-        }        
-        StringBuilder translation = new StringBuilder();
-        for (int i = 0 ; i < conceptualTranslationCodons ; ++i) {
-            Codon codon = codons.get(i);
-            translation.append(codon.getAminoAcid());
-        }
-        return translation.toString();
-    }
+  protected void setCodons(Vector<Codon> codons) {
+    this.codons = codons;
+  }
 
-    private int translationLength;
+  public Vector<Codon> getCodons() {
+    return codons;
+  }
 
-    public void setTranslationLength(int length) {
-        this.translationLength = length;
-    }
+  private String trailingBases;
 
-    public int getTranslationLength() {
-        return translationLength;
-    }
+  protected void setTrailingBases(String trailingBases) {
+    this.trailingBases = trailingBases;
+  }
 
-    private int baseCount;
-    public void setTranslationBaseCount(int baseCount) {
-        this.baseCount = baseCount;
-    }
+  public String getTrailingBases() {
+    return trailingBases;
+  }
 
-    public int getBaseCount() {
-        return baseCount;
+  private int conceptualTranslationCodons = 0;
+
+  protected void setConceptualTranslationCodons(int conceptualTranslationCodons) {
+    this.conceptualTranslationCodons = conceptualTranslationCodons;
+  }
+
+  public int getConceptualTranslationCodons() {
+    return conceptualTranslationCodons;
+  }
+
+  public String getSequence() {
+    if (codons == null) {
+      return "";
     }
+    StringBuilder sequence = new StringBuilder();
+    for (Codon codon : codons) {
+      sequence.append(codon.getCodon());
+    }
+    sequence.append(trailingBases);
+    return sequence.toString();
+  }
+
+  /**
+   * Returns the translation including stop codons and trailing bases.
+   *
+   * @return the translation including stop codons and trailing base
+   */
+  public String getTranslation() {
+    if (codons == null) {
+      return "";
+    }
+    StringBuilder translation = new StringBuilder();
+    for (Codon codon : codons) {
+      translation.append(codon.getAminoAcid());
+    }
+    return translation.toString();
+  }
+
+  /**
+   * Returns the translation excluding stop codons and trailing bases.
+   *
+   * @return the translation excluding stop codons and trailing bases.
+   */
+  public String getConceptualTranslation() {
+    if (codons == null) {
+      return "";
+    }
+    StringBuilder translation = new StringBuilder();
+    for (int i = 0; i < conceptualTranslationCodons; ++i) {
+      Codon codon = codons.get(i);
+      translation.append(codon.getAminoAcid());
+    }
+    return translation.toString();
+  }
+
+  private int translationLength;
+
+  public void setTranslationLength(int length) {
+    this.translationLength = length;
+  }
+
+  public int getTranslationLength() {
+    return translationLength;
+  }
+
+  private int baseCount;
+
+  public void setTranslationBaseCount(int baseCount) {
+    this.baseCount = baseCount;
+  }
+
+  public int getBaseCount() {
+    return baseCount;
+  }
 }

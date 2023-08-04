@@ -1,120 +1,132 @@
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.template;
 
 public class TemplateTokenInfo {
-    private String name;
-    private TemplateTokenType type;
-    private boolean mandatory;
-    private boolean variableOnly;
-    private String displayName;
-    private String description;
-    private String tip;
-    private int order;
-    private int groupOrder;
+  private String name;
+  private TemplateTokenType type;
+  private boolean mandatory;
+  private boolean variableOnly;
+  private String displayName;
+  private String description;
+  private String tip;
+  private int order;
+  private int groupOrder;
 
-    /**
-     * the group to which this token belongs - if any
-     */
-    private TemplateTokenGroupInfo parentGroup;
+  /** the group to which this token belongs - if any */
+  private TemplateTokenGroupInfo parentGroup;
 
-    /**
-     * if the token is of type CV, this is the name of the cv group (used to populate values)
-     */
-    private String cvName;
+  /** if the token is of type CV, this is the name of the cv group (used to populate values) */
+  private String cvName;
 
-    /**
-     * yesno tokens have their value stored in the database as stings, these statics represent them.
-     */
-    public static final String NO_VALUE = "no";
-    public static final String YES_VALUE = "yes";
+  /**
+   * yesno tokens have their value stored in the database as stings, these statics represent them.
+   */
+  public static final String NO_VALUE = "no";
 
-    public TemplateTokenInfo() {
-        this("", TemplateTokenType.TAXON_FIELD, false, "", "", "");
-    }
+  public static final String YES_VALUE = "yes";
 
-    public TemplateTokenInfo(final String name, final TemplateTokenType type, final boolean mandatory, final String displayName, final String description, final String tip) {
-        this.name = name;
-        this.type = type;
-        this.mandatory = mandatory;
-        this.displayName = displayName;
-        this.description = description;
-        this.tip = tip;
-        if (displayName == null)
-            this.displayName = name;
-    }
+  public TemplateTokenInfo() {
+    this("", TemplateTokenType.TAXON_FIELD, false, "", "", "");
+  }
 
-    public String getCvName() {
-        return cvName;
-    }
+  public TemplateTokenInfo(
+      final String name,
+      final TemplateTokenType type,
+      final boolean mandatory,
+      final String displayName,
+      final String description,
+      final String tip) {
+    this.name = name;
+    this.type = type;
+    this.mandatory = mandatory;
+    this.displayName = displayName;
+    this.description = description;
+    this.tip = tip;
+    if (displayName == null) this.displayName = name;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getCvName() {
+    return cvName;
+  }
 
-    public String getDisplayName() {
-        return displayName;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public int getGroupOrder() {
-        return groupOrder;
-    }
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public int getGroupOrder() {
+    return groupOrder;
+  }
 
-    public Integer getOrder() {
-        return order;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public TemplateTokenGroupInfo getParentGroup() {
-        return parentGroup;
-    }
+  public Integer getOrder() {
+    return order;
+  }
 
-    public String getTip() {
-        return tip;
-    }
+  public TemplateTokenGroupInfo getParentGroup() {
+    return parentGroup;
+  }
 
-    public TemplateTokenType getType() {
-        return type;
-    }
+  public String getTip() {
+    return tip;
+  }
 
-    public boolean isHasDescription() {
-        return description != null;
-    }
+  public TemplateTokenType getType() {
+    return type;
+  }
 
-    public boolean isHasTip() {
-        return tip != null;
-    }
+  public boolean isHasDescription() {
+    return description != null;
+  }
 
-    public boolean isMandatory() {
-        return mandatory;
-    }
+  public boolean isHasTip() {
+    return tip != null;
+  }
 
-    public boolean isVariableOnly() {
-        return variableOnly;
-    }
+  public boolean isMandatory() {
+    return mandatory;
+  }
 
-    public void setCvName(final String cvName) {
-        this.cvName = cvName;
-    }
+  public boolean isVariableOnly() {
+    return variableOnly;
+  }
 
-    public void setGroupOrder(final int groupOrder) {
-        this.groupOrder = groupOrder;
-    }
+  public void setCvName(final String cvName) {
+    this.cvName = cvName;
+  }
 
-    public void setOrder(final int tokenOrder) {
-        order = tokenOrder;
-    }
+  public void setGroupOrder(final int groupOrder) {
+    this.groupOrder = groupOrder;
+  }
 
-    public void setParentGroup(final TemplateTokenGroupInfo parentGroup) {
-        this.parentGroup = parentGroup;
-    }
+  public void setOrder(final int tokenOrder) {
+    order = tokenOrder;
+  }
 
-    public void setTip(final String tip) {
-        this.tip = tip;
-    }
+  public void setParentGroup(final TemplateTokenGroupInfo parentGroup) {
+    this.parentGroup = parentGroup;
+  }
 
-    public void setVariableOnly(final boolean variableOnly) {
-        this.variableOnly = variableOnly;
-    }
+  public void setTip(final String tip) {
+    this.tip = tip;
+  }
+
+  public void setVariableOnly(final boolean variableOnly) {
+    this.variableOnly = variableOnly;
+  }
 }
