@@ -77,18 +77,18 @@ public class Lat_lonValueFixTest {
 
   @Test
   public void testLatLonValue() {
-    assertEquals(new Double("1"), Lat_lonValueFix.getLatLonValue("1"));
-    assertEquals(new Double("1.5"), Lat_lonValueFix.getLatLonValue("1.5"));
-    assertEquals(new Double("1.55"), Lat_lonValueFix.getLatLonValue("1.55"));
-    assertEquals(new Double("1.555"), Lat_lonValueFix.getLatLonValue("1.555"));
-    assertEquals(new Double("1.5555"), Lat_lonValueFix.getLatLonValue("1.5555"));
-    assertEquals(new Double("1.55555"), Lat_lonValueFix.getLatLonValue("1.55555"));
-    assertEquals(new Double("1.555555"), Lat_lonValueFix.getLatLonValue("1.555555"));
-    assertEquals(new Double("1.5555555"), Lat_lonValueFix.getLatLonValue("1.5555555"));
-    assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.55555555"));
+    assertEquals(Double.valueOf("1"), Lat_lonValueFix.getLatLonValue("1"));
+    assertEquals(Double.valueOf("1.5"), Lat_lonValueFix.getLatLonValue("1.5"));
+    assertEquals(Double.valueOf("1.55"), Lat_lonValueFix.getLatLonValue("1.55"));
+    assertEquals(Double.valueOf("1.555"), Lat_lonValueFix.getLatLonValue("1.555"));
+    assertEquals(Double.valueOf("1.5555"), Lat_lonValueFix.getLatLonValue("1.5555"));
+    assertEquals(Double.valueOf("1.55555"), Lat_lonValueFix.getLatLonValue("1.55555"));
+    assertEquals(Double.valueOf("1.555555"), Lat_lonValueFix.getLatLonValue("1.555555"));
+    assertEquals(Double.valueOf("1.5555555"), Lat_lonValueFix.getLatLonValue("1.5555555"));
+    assertEquals(Double.valueOf("1.55555555"), Lat_lonValueFix.getLatLonValue("1.55555555"));
     // Round down
-    assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555551"));
-    assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555555"));
-    assertEquals(new Double("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555559"));
+    assertEquals(Double.valueOf("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555551"));
+    assertEquals(Double.valueOf("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555555"));
+    assertEquals(Double.valueOf("1.55555555"), Lat_lonValueFix.getLatLonValue("1.555555559"));
   }
 }

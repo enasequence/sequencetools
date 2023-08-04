@@ -38,7 +38,7 @@ public abstract class ValidationPlan {
   protected EntryDAOUtils entryDAOUtils;
   protected EraproDAOUtils eraproDAOUtils;
 
-  public ValidationPlan(EmblEntryValidationPlanProperty property) {
+  protected ValidationPlan(EmblEntryValidationPlanProperty property) {
     this(property.validationScope.get(), property.isDevMode.get());
     this.planProperty = property;
     this.planProperty.taxonClient.set(new TaxonomyClient());
@@ -49,7 +49,7 @@ public abstract class ValidationPlan {
    * @param devMode - true if the validator is being run in development mode (remote tsv files for
    *     editing)
    */
-  public ValidationPlan(
+  protected ValidationPlan(
       ValidationScope validationScope,
       boolean devMode) { // DELETE this constructor if there are references
 

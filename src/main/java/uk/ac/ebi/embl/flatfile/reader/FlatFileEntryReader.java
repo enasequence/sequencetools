@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 /** Reader for flat file entries. */
 public abstract class FlatFileEntryReader implements FlatFileReader<Entry> {
 
-  public FlatFileEntryReader(LineReader lineReader) {
+  protected FlatFileEntryReader(LineReader lineReader) {
     this.lineReader = lineReader;
   }
 

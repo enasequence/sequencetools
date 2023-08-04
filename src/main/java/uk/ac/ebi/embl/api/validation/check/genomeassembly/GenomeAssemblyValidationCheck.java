@@ -32,7 +32,7 @@ public abstract class GenomeAssemblyValidationCheck<GCSEntry>
     return result;
   }
 
-  public GenomeAssemblyValidationCheck() {
+  protected GenomeAssemblyValidationCheck() {
     result = new ValidationResult();
   }
 

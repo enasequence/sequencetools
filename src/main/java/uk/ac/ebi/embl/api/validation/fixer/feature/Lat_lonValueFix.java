@@ -88,7 +88,7 @@ public class Lat_lonValueFix extends FeatureValidationCheck {
     // Use UK locale for dot decimal notation.
     DecimalFormat df = new DecimalFormat("#.########", DecimalFormatSymbols.getInstance(Locale.UK));
     df.setRoundingMode(RoundingMode.DOWN);
-    Double value = new Double(latLonValue);
+    Double value = Double.valueOf(latLonValue);
     value = Double.parseDouble(df.format(value));
     return value;
   }

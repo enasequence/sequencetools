@@ -55,23 +55,23 @@ public abstract class LineReader {
 
   private static final int LINE_LENGTH = 80 + System.getProperty("line.separator").length();
 
-  public LineReader() {}
+  protected LineReader() {}
 
-  public LineReader(BufferedReader reader) {
+  protected LineReader(BufferedReader reader) {
     this.reader = new LineReaderWrapper(reader);
   }
 
-  public LineReader(BufferedReader reader, String fileId) {
+  protected LineReader(BufferedReader reader, String fileId) {
     this.reader = new LineReaderWrapper(reader);
     this.fileId = fileId;
   }
 
-  public LineReader(RandomAccessFile raf, String fileId) {
+  protected LineReader(RandomAccessFile raf, String fileId) {
     this.fileId = fileId;
     this.reader = new LineReaderWrapper(raf);
   }
 
-  public LineReader(BufferedFileLineReader raf, String fileId) {
+  protected LineReader(BufferedFileLineReader raf, String fileId) {
     this.fileId = fileId;
     this.reader = new LineReaderWrapper(raf);
   }

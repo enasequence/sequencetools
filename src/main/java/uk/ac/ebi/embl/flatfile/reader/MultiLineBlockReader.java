@@ -25,12 +25,12 @@ public abstract class MultiLineBlockReader extends BlockReader {
   private int lastLineNumber;
   private final ConcatenateType concatenateType;
 
-  public MultiLineBlockReader(LineReader lineReader, ConcatenateType concatenateType) {
+  protected MultiLineBlockReader(LineReader lineReader, ConcatenateType concatenateType) {
     super(lineReader);
     this.concatenateType = concatenateType;
   }
 
-  public MultiLineBlockReader(
+  protected MultiLineBlockReader(
       LineReader lineReader, ConcatenateType concatenateType, FileType fileType) {
     super(lineReader);
     this.concatenateType = concatenateType;

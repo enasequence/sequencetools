@@ -47,7 +47,7 @@ public abstract class SubmissionValidationTest {
 
   protected FileValidationCheck.SharedInfo sharedInfo;
 
-  public SubmissionValidationTest() {
+  protected SubmissionValidationTest() {
     ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);

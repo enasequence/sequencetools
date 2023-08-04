@@ -21,7 +21,7 @@ public abstract class GCSEntryReader implements FlatFileReader<Object> {
   ValidationResult validationResult = new ValidationResult();
   File file = null;
 
-  public GCSEntryReader() {
+  protected GCSEntryReader() {
     ValidationMessageManager.addBundle(FlatFileValidations.GENOMEASSEMBLY_FLAT_FILE_BUNDLE);
   }
 

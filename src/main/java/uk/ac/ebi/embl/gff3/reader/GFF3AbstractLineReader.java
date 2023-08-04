@@ -24,7 +24,7 @@ public abstract class GFF3AbstractLineReader {
   ValidationResult validationResult;
   int lineNumber;
 
-  public GFF3AbstractLineReader(LineReader lineReader) {
+  protected GFF3AbstractLineReader(LineReader lineReader) {
     this.lineReader = lineReader;
   }
 

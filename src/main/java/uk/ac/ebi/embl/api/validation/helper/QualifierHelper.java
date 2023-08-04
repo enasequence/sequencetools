@@ -175,7 +175,7 @@ public class QualifierHelper {
   private static Double getLatLonVal(String s) {
     Double lon = null;
     if (s != null) {
-      lon = new Double(s);
+      lon = Double.valueOf(s);
       lon = Math.floor(lon * 10000 + 0.5) / 10000;
     }
     return lon;

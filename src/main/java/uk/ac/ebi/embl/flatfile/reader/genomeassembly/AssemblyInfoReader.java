@@ -140,12 +140,10 @@ public class AssemblyInfoReader extends GCSEntryReader {
     }
 
     tpa = StringUtils.deleteWhitespace(tpa).toUpperCase();
-    if ("true".equalsIgnoreCase(tpa)
+    return "true".equalsIgnoreCase(tpa)
         || "false".equalsIgnoreCase(tpa)
         || "yes".equalsIgnoreCase(tpa)
-        || "no".equalsIgnoreCase(tpa)) return true;
-
-    return false;
+        || "no".equalsIgnoreCase(tpa);
   }
 
   @Override

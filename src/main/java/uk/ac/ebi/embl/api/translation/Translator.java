@@ -393,7 +393,7 @@ public class Translator extends AbstractTranslator {
         // Invalid translation exception range.
         ValidationException.throwError("Translator-7");
       }
-      if (!(endPos == beginPos + 2)
+      if (endPos != beginPos + 2
           && !(endPos == beginPos + 1 && endPos == bases && aminoAcid.equals('*'))
           && !(endPos == beginPos && endPos == bases && aminoAcid.equals('*'))) {
         // Translation exception must span 3 bases or be a partial stop

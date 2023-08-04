@@ -84,7 +84,7 @@ public abstract class FileValidationCheck {
   public static final String scaffoldFileName = "scaffolds.reduced.tmp";
   public static final String chromosomeFileName = "chromosome.flatfile.tmp";
 
-  public FileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
+  protected FileValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
     this.options = options;
 
     this.sharedInfo = sharedInfo;

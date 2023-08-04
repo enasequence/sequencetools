@@ -28,8 +28,7 @@ public class ChromosomeListChromosomeNameCheck
 
   private final Pattern ChromosomeNamePattern =
       Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
-  private final String[] chromosomeNamesToRejectArray =
-      new String[] {"Un", "chrUn", "random", "rnd", "unknown"};
+  private final String[] chromosomeNamesToRejectArray = {"Un", "chrUn", "random", "rnd", "unknown"};
 
   public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {
     if (entry == null) return result;

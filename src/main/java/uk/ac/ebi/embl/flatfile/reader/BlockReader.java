@@ -13,7 +13,7 @@ package uk.ac.ebi.embl.flatfile.reader;
 /** Reader for flat file blocks. */
 public abstract class BlockReader extends FlatFileLineReader {
 
-  public BlockReader(LineReader lineReader) {
+  protected BlockReader(LineReader lineReader) {
     super(lineReader);
   }
 

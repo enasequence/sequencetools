@@ -17,7 +17,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 /** Flat file writer for the sequence entry. */
 public abstract class EntryWriter extends FlatFileWriter {
 
-  public EntryWriter(Entry entry) {
+  protected EntryWriter(Entry entry) {
     super(entry);
   }
 

@@ -15,10 +15,9 @@ import org.apache.commons.lang.StringUtils;
 public class ChromosomeNameFix {
 
   /** Words to remove from the chromosome name. */
-  static final String[] WORDS =
-      new String[] {
-        "chromosome", "chrom", "chrm", "chr", "linkage-group", "linkage group", "plasmid"
-      };
+  static final String[] WORDS = {
+    "chromosome", "chrom", "chrm", "chr", "linkage-group", "linkage group", "plasmid"
+  };
 
   /**
    * Remove and replace unwanted characters and words from the chromosome name.

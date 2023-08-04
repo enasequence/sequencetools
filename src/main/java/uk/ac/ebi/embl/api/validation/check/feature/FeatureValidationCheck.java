@@ -32,7 +32,7 @@ public abstract class FeatureValidationCheck implements EmblEntryValidationCheck
     return false;
   }
 
-  public FeatureValidationCheck() {}
+  protected FeatureValidationCheck() {}
 
   //	public String getEntryId() {
   //		return entryId;

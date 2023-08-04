@@ -45,11 +45,11 @@ public abstract class FlatFileWriter {
 
   private Integer maximumLineLength;
 
-  public FlatFileWriter(Entry entry) {
+  protected FlatFileWriter(Entry entry) {
     this.entry = entry;
   }
 
-  public FlatFileWriter(Entry entry, WrapType wrapType) {
+  protected FlatFileWriter(Entry entry, WrapType wrapType) {
     this.entry = entry;
     this.wrapType = wrapType;
   }

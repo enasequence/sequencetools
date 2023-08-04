@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 /** Reader for single line flat file blocks. */
 public abstract class SingleLineBlockReader extends BlockReader {
 
-  public SingleLineBlockReader(LineReader lineReader) {
+  protected SingleLineBlockReader(LineReader lineReader) {
     super(lineReader);
   }
 

@@ -25,7 +25,7 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
   private EntryDAOUtils entryDAOUtils;
   private EraproDAOUtils eraproDAOUtils;
 
-  public EntryValidationCheck() {
+  protected EntryValidationCheck() {
     result = new ValidationResult();
   }
 

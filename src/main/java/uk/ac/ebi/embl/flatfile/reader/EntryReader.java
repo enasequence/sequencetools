@@ -23,7 +23,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 
 public abstract class EntryReader extends FlatFileEntryReader {
 
-  public EntryReader(LineReader lineReader) {
+  protected EntryReader(LineReader lineReader) {
     super(lineReader);
     terminatingTags.add("//");
   }

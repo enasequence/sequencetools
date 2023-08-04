@@ -25,7 +25,7 @@ public abstract class GFF3ValidationCheck implements EmblEntryValidationCheck<GF
   private EntryDAOUtils entryDAOUtils;
   private EraproDAOUtils eraproDAOUtils;
 
-  public GFF3ValidationCheck() {}
+  protected GFF3ValidationCheck() {}
 
   public boolean isPopulated() {
     return isPopulated;

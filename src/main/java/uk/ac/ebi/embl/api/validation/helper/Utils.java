@@ -448,7 +448,7 @@ public class Utils {
       LocationFactory factory = new LocationFactory();
       if (qualifier.getLocation().getBeginPosition() >= deletedBeginNs) {
         newBeginLocation = qualifier.getLocation().getBeginPosition() - deletedBeginNs;
-        if (!(qualifier.getLocation().getEndPosition() == null)) {
+        if (qualifier.getLocation().getEndPosition() != null) {
           newEndLocation = qualifier.getLocation().getEndPosition() - deletedBeginNs;
           // if the new Qualifier Location is in between new
           // feature locations set the new locations to the

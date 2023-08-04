@@ -27,7 +27,7 @@ public abstract class SequenceValidationCheck implements EmblEntryValidationChec
 
   //	protected ValidationResult result;
 
-  public SequenceValidationCheck() {
+  protected SequenceValidationCheck() {
     //		result = new ValidationResult();
   }
 
