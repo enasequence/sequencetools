@@ -159,8 +159,7 @@ public abstract class FlatFileWriter {
 			
 			int writeLength = end;			
 			++lineNumber;
-			writeLine(writer, firstLineHeader, header, 
-					block.substring(0, writeLength), lineNumber);
+			writeLine(writer, getHeaderToWrite(firstLineHeader, header, lineNumber), block.substring(0, writeLength));
 
 			// Discard space character.
 			if (!(end > block.length() - 1)) {
@@ -176,7 +175,7 @@ public abstract class FlatFileWriter {
 
 		if (remainingLineLength > 0) {
 			++lineNumber;
-			writeLine(writer, firstLineHeader, header, block, lineNumber);
+			writeLine(writer, getHeaderToWrite(firstLineHeader, header, lineNumber), block);
 		}
 	}
 
@@ -191,16 +190,15 @@ public abstract class FlatFileWriter {
 		return optimalLineLength;
 	}
 
-	protected static void writeLine(Writer writer, String firstLineHeader,
-			String header, String line, int lineNumber) throws IOException {
-
-        if (firstLineHeader != null && lineNumber == 1) {
-			writer.write(firstLineHeader);
-		} else {
+	protected static void writeLine(Writer writer, String header, String line) throws IOException {
 			writer.write(header);
-		}	
 		writer.write(line);
 		writer.write("\n");
+	}
+
+
+	private static String getHeaderToWrite(String firstLineHeader, String header, int lineNumber) {
+		return lineNumber == 1 && firstLineHeader != null ? firstLineHeader : header;
 	}
 
 	/** Returns true if a string is either null or empty.

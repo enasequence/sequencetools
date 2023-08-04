@@ -27,6 +27,7 @@ public class CCWriterTest extends EmblWriterTest {
 				"-------------- Genome Center\n" +
 				"     Center: NIH Intramural Sequencing Center\n" +
 				"     Center code: NISC\n" +
+				"\n" +
 				"     Web site: http://www.nisc.nih.gov\n" +
 				"     Contact: nisc_zoo@nhgri.nih.gov\n" +
 				"All clones contained in this assembly were sequenced by the\nNIH Intramural Sequencing Center (NISC).  This multi-clone\nDNA sequence was assembled by NISC staff."));				
@@ -35,6 +36,7 @@ public class CCWriterTest extends EmblWriterTest {
 		assertEquals("CC   -------------- Genome Center\n" +
 				"CC        Center: NIH Intramural Sequencing Center\n" +
 				"CC        Center code: NISC\n" +
+				"CC   \n" +
 				"CC        Web site: http://www.nisc.nih.gov\n" +
 				"CC        Contact: nisc_zoo@nhgri.nih.gov\n" +
 				"CC   All clones contained in this assembly were sequenced by the\n" +
@@ -43,7 +45,7 @@ public class CCWriterTest extends EmblWriterTest {
 				writer.toString());
 	}
 
-	public void testWriteCommentSingleLengthyLineCantSplit() throws IOException {
+	public void testWriteCommentNoBreaksShorterThanOptimalLineLength() throws IOException {
 		entry.setComment(new Text(
 				"-------------- Genome Center\n" +
 						"     Center: NIH Intramural Sequencing Center\n" +
@@ -58,7 +60,7 @@ public class CCWriterTest extends EmblWriterTest {
 				writer.toString());
 	}
 
-	public void testWriteCommentLengthyLineSpaceBeforeMaxLength() throws IOException {
+	public void testWriteCommentWithBreaksShorterThanOptimalLineLength() throws IOException {
 		entry.setComment(new Text(
 				"-------------- Genome Center\n" +
 						"     Center: NIH Intramural Sequencing Center\n" +
@@ -73,7 +75,7 @@ public class CCWriterTest extends EmblWriterTest {
 						"(NISC).\n" ,
 				writer.toString());
 	}
-	public void testWriteCommentMultipleLengthyLine() throws IOException {
+	public void testWriteCommentNoBreaksLongerThanOptimalLineLength() throws IOException {
 		entry.setComment(new Text(
 				"-------------- Genome Center\n" +
 						"     Center: NIH Intramural Sequencing Center\n" +
@@ -96,7 +98,7 @@ public class CCWriterTest extends EmblWriterTest {
 	}
 
 
-	public void testWrite_NoComment() throws IOException {
+	public void testWriteNoComment() throws IOException {
 		entry.setComment(null);
 		StringWriter writer = new StringWriter();
 		assertFalse(new CCWriter(entry).write(writer));
