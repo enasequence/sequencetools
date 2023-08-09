@@ -70,7 +70,7 @@ public class EraproDAOUtilsImplTest {
       Assert.assertEquals(
           "uncultured Dehalococcoidia bacterium", sourceFeature.getScientificName());
       Assert.assertEquals(
-          "730a7d48-5078-4d70-a38b-47abe603ff41-asg-odAgeOroi1_bin.circ.25",
+          "730a7d48-5078-4d70-a38b-47abe603ff41",
           sourceFeature.getSingleQualifierValue(Qualifier.ISOLATE_QUALIFIER_NAME));
     }
   }
