@@ -1,57 +1,52 @@
-/*******************************************************************************
- * Copyright 2012 EMBL-EBI, Hinxton outstation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.entry.qualifier;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import uk.ac.ebi.embl.api.validation.ValidationException;
 
 public class CodonQualifier extends Qualifier implements Serializable {
-	
-	private static final long serialVersionUID = 4109642407792050362L;
 
-	private static final Pattern PATTERN = Pattern.compile(
-		"^\\s*(\\()\\s*(seq)\\s*(:)\\s*(\\\")([acgt]{3})(\\\")\\s*(,)\\s*(aa)\\s*(:)\\s*([^)\\s]+)\\s*(\\))\\s*$");
-	
-	protected CodonQualifier(String value) {
-		super(CODON_QUALIFIER_NAME, value);
-	}
+  private static final long serialVersionUID = 4109642407792050362L;
 
-    public String getCodon() throws ValidationException {
-    	if (getValue() == null) {
-    		return null;
-    	}
-        Matcher matcher = PATTERN.matcher(getValue());
-        if (!matcher.matches()){
-        	throwValueException();
-        }    	
-    	return matcher.group(5);
-    }	
-	
-    public AminoAcid getAminoAcid() throws ValidationException {
-    	if (getValue() == null) {
-    		return null;
-    	}
-        Matcher matcher = PATTERN.matcher(getValue());
-        if (!matcher.matches()){
-        	throwValueException();
-        }
-        AminoAcidFactory factory = new AminoAcidFactory();
-    	return factory.createAminoAcid(matcher.group(10));    	
-    }	
+  private static final Pattern PATTERN =
+      Pattern.compile(
+          "^\\s*(\\()\\s*(seq)\\s*(:)\\s*(\\\")([acgt]{3})(\\\")\\s*(,)\\s*(aa)\\s*(:)\\s*([^)\\s]+)\\s*(\\))\\s*$");
+
+  protected CodonQualifier(String value) {
+    super(CODON_QUALIFIER_NAME, value);
+  }
+
+  public String getCodon() throws ValidationException {
+    if (getValue() == null) {
+      return null;
+    }
+    Matcher matcher = PATTERN.matcher(getValue());
+    if (!matcher.matches()) {
+      throwValueException();
+    }
+    return matcher.group(5);
+  }
+
+  public AminoAcid getAminoAcid() throws ValidationException {
+    if (getValue() == null) {
+      return null;
+    }
+    Matcher matcher = PATTERN.matcher(getValue());
+    if (!matcher.matches()) {
+      throwValueException();
+    }
+    AminoAcidFactory factory = new AminoAcidFactory();
+    return factory.createAminoAcid(matcher.group(10));
+  }
 }

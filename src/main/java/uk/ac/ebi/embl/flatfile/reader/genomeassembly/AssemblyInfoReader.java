@@ -1,3 +1,13 @@
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 
 import java.io.BufferedReader;
@@ -8,169 +18,147 @@ import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.common.CommonUtil;
 
-public class AssemblyInfoReader extends GCSEntryReader
-{
-	private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
-	private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
-	private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
-	private static final String EMPTY_FILE_ERROR = "EmptyFileCheck";
+public class AssemblyInfoReader extends GCSEntryReader {
+  private final String MESSAGE_KEY_INVALID_FORMAT_ERROR = "invalidlineFormat";
+  private final String MESSAGE_KEY_INVALID_VALUE_ERROR = "invalidfieldValue";
+  private final String MESSAGE_KEY_INVALID_FIELD_ERROR = "invalidfieldName";
+  private static final String EMPTY_FILE_ERROR = "EmptyFileCheck";
 
+  AssemblyInfoEntry assemblyInfoEntry = null;
 
-	AssemblyInfoEntry assemblyInfoEntry = null;
-	public AssemblyInfoReader(File file)
-	{
-		super();
-		this.file=file;
-	}
-	@Override
-	public ValidationResult read() throws NumberFormatException, IOException
-	{
-		assemblyInfoEntry= new AssemblyInfoEntry();
-		int lineNumber = 1;
-		if(file!=null&&file.length()==0)
-		{
-			error(1, EMPTY_FILE_ERROR);
-			return validationResult;
-		}
-		try(BufferedReader reader = CommonUtil.bufferedReaderFromFile(file))
-		{
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				line = line.trim();
-				if (line.isEmpty()) // Skip empty lines
-				{
-					continue;
-				}
-				
-				String[] fields = line.trim().split("\\s+",2);
-				int numberOfColumns = fields.length;
-				if(numberOfColumns==1||numberOfColumns==2)
-				{
-					String field= StringUtils.deleteWhitespace(fields[0].toUpperCase());
-					field= field.replaceAll("_","").replaceAll("-","").replaceAll("\\.","");
-					switch(field)
-					{
-						case "NAME":
-					case "ASSEMBLYNAME":
-						assemblyInfoEntry.setName(numberOfColumns==1?null:fields[1]);
-						break;
-					case "COVERAGE":
-						assemblyInfoEntry.setCoverage(numberOfColumns==1?null:fields[1]);
-						break;
-					case "PROGRAM":
-						assemblyInfoEntry.setProgram(numberOfColumns==1?null:fields[1]);
-						break;
-					case "PLATFORM":
-						assemblyInfoEntry.setPlatform(numberOfColumns==1?null:fields[1]);
-						break;
-					case "MINGAPLENGTH":
-						String minGapLength=numberOfColumns==1?null:fields[1];
-						if(isInteger(minGapLength))
-						  assemblyInfoEntry.setMinGapLength(new Integer(minGapLength));
-						else
-						  error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],minGapLength);
-						break;
-					case "MOLECULETYPE":
-						String mol_type=numberOfColumns==1?null:fields[1];
-						if(isValidMoltype(mol_type))
-							assemblyInfoEntry.setMoleculeType(mol_type);
-						else
-						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],mol_type);
-						break;
-					case "SAMPLE":
-						 assemblyInfoEntry.setSampleId(numberOfColumns==1?null:fields[1]);
-						 break;
-					case "STUDY":
-					  	 assemblyInfoEntry.setStudyId(numberOfColumns==1?null:fields[1]);
-					  	 break;
-					case "TPA":
-						String tpa=numberOfColumns==1?null:fields[1];
-						if(isValidTPA(tpa))
-							assemblyInfoEntry.setTpa("yes".equalsIgnoreCase(tpa)||"true".equalsIgnoreCase(tpa)?true:false);
-						else
-						    error(lineNumber,MESSAGE_KEY_INVALID_VALUE_ERROR,fields[0],tpa);
-						break;
-					case "ASSEMBLY_TYPE" :
-						String assemblyType = fields[1];
-						assemblyInfoEntry.setAssemblyType(assemblyType);
-						break;
-					default :
-						error(lineNumber,MESSAGE_KEY_INVALID_FIELD_ERROR,line);
-						break;
-					}
-					
-				}
-				else
-				{
-					error(lineNumber,MESSAGE_KEY_INVALID_FORMAT_ERROR,line);
-				}
-				lineNumber++;
+  public AssemblyInfoReader(File file) {
+    super();
+    this.file = file;
+  }
 
-			}
-		}
-		return validationResult;
-	}
+  @Override
+  public ValidationResult read() throws NumberFormatException, IOException {
+    assemblyInfoEntry = new AssemblyInfoEntry();
+    int lineNumber = 1;
+    if (file != null && file.length() == 0) {
+      error(1, EMPTY_FILE_ERROR);
+      return validationResult;
+    }
+    try (BufferedReader reader = CommonUtil.bufferedReaderFromFile(file)) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        line = line.trim();
+        if (line.isEmpty()) // Skip empty lines
+        {
+          continue;
+        }
 
-	public static boolean isInteger(String s) {
-		if(s==null)
-			return false;
-	    try {
-	        Integer.parseInt(s); 
-	    } catch(NumberFormatException e) { 
-	        return false; 
-	    } catch(NullPointerException e) {
-	        return false;
-	    }
-	    return true;
-	}
+        String[] fields = line.trim().split("\\s+", 2);
+        int numberOfColumns = fields.length;
+        if (numberOfColumns == 1 || numberOfColumns == 2) {
+          String field = StringUtils.deleteWhitespace(fields[0].toUpperCase());
+          field = field.replaceAll("_", "").replaceAll("-", "").replaceAll("\\.", "");
+          switch (field) {
+            case "NAME":
+            case "ASSEMBLYNAME":
+              assemblyInfoEntry.setName(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "COVERAGE":
+              assemblyInfoEntry.setCoverage(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "PROGRAM":
+              assemblyInfoEntry.setProgram(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "PLATFORM":
+              assemblyInfoEntry.setPlatform(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "MINGAPLENGTH":
+              String minGapLength = numberOfColumns == 1 ? null : fields[1];
+              if (isInteger(minGapLength))
+                assemblyInfoEntry.setMinGapLength(Integer.valueOf(minGapLength));
+              else error(lineNumber, MESSAGE_KEY_INVALID_VALUE_ERROR, fields[0], minGapLength);
+              break;
+            case "MOLECULETYPE":
+              String mol_type = numberOfColumns == 1 ? null : fields[1];
+              if (isValidMoltype(mol_type)) assemblyInfoEntry.setMoleculeType(mol_type);
+              else error(lineNumber, MESSAGE_KEY_INVALID_VALUE_ERROR, fields[0], mol_type);
+              break;
+            case "SAMPLE":
+              assemblyInfoEntry.setSampleId(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "STUDY":
+              assemblyInfoEntry.setStudyId(numberOfColumns == 1 ? null : fields[1]);
+              break;
+            case "TPA":
+              String tpa = numberOfColumns == 1 ? null : fields[1];
+              if (isValidTPA(tpa))
+                assemblyInfoEntry.setTpa(
+                    "yes".equalsIgnoreCase(tpa) || "true".equalsIgnoreCase(tpa));
+              else error(lineNumber, MESSAGE_KEY_INVALID_VALUE_ERROR, fields[0], tpa);
+              break;
+            case "ASSEMBLY_TYPE":
+              String assemblyType = fields[1];
+              assemblyInfoEntry.setAssemblyType(assemblyType);
+              break;
+            default:
+              error(lineNumber, MESSAGE_KEY_INVALID_FIELD_ERROR, line);
+              break;
+          }
 
-	public static boolean isValidMoltype(String molType) {
-		
-		if (molType == null) {
-			return false;
-		}
+        } else {
+          error(lineNumber, MESSAGE_KEY_INVALID_FORMAT_ERROR, line);
+        }
+        lineNumber++;
+      }
+    }
+    return validationResult;
+  }
 
-		molType = StringUtils.deleteWhitespace(molType).toUpperCase();
-		if (!molType.equals("GENOMICDNA") && !molType.equals("GENOMICRNA") && !molType.equals("VIRALCRNA"))
-			return false;
+  public static boolean isInteger(String s) {
+    if (s == null) return false;
+    try {
+      Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return false;
+    } catch (NullPointerException e) {
+      return false;
+    }
+    return true;
+  }
 
-		return true;
+  public static boolean isValidMoltype(String molType) {
 
-	}
-	
-public static boolean isValidTPA(String tpa) {
-		
-		if (tpa == null) 
-		{
-			return false;
-		}
+    if (molType == null) {
+      return false;
+    }
 
-		tpa = StringUtils.deleteWhitespace(tpa).toUpperCase();
-		if ("true".equalsIgnoreCase(tpa)||"false".equalsIgnoreCase(tpa)||"yes".equalsIgnoreCase(tpa)||"no".equalsIgnoreCase(tpa))
-			return true;;
+    molType = StringUtils.deleteWhitespace(molType).toUpperCase();
+    return molType.equals("GENOMICDNA")
+        || molType.equals("GENOMICRNA")
+        || molType.equals("VIRALCRNA");
+  }
 
-		return false;
+  public static boolean isValidTPA(String tpa) {
 
-	}
+    if (tpa == null) {
+      return false;
+    }
 
-	@Override
-	public ValidationResult skip() throws IOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    tpa = StringUtils.deleteWhitespace(tpa).toUpperCase();
+    return "true".equalsIgnoreCase(tpa)
+        || "false".equalsIgnoreCase(tpa)
+        || "yes".equalsIgnoreCase(tpa)
+        || "no".equalsIgnoreCase(tpa);
+  }
 
-	@Override
-	public Object getEntry()
-	{
-		return assemblyInfoEntry;
-	}
+  @Override
+  public ValidationResult skip() throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-	@Override
-	public boolean isEntry()
-	{
-		return validationResult.isValid();
-	}
+  @Override
+  public Object getEntry() {
+    return assemblyInfoEntry;
+  }
 
+  @Override
+  public boolean isEntry() {
+    return validationResult.isValid();
+  }
 }

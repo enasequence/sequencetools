@@ -1,15 +1,24 @@
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.validation;
-
-import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
-import uk.ac.ebi.embl.api.storage.DataManager;
-import uk.ac.ebi.embl.api.storage.DataRow;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
+import uk.ac.ebi.embl.api.storage.CachedFileDataManager;
+import uk.ac.ebi.embl.api.storage.DataManager;
+import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.check.CheckFileManager;
 
 public class GlobalDataSets {
 
@@ -77,16 +86,14 @@ public class GlobalDataSets {
    * @param file
    * @param dataRows
    */
-  public synchronized static void addTestDataSet(GlobalDataSetFile file, DataRow... dataRows) {
+  public static synchronized void addTestDataSet(GlobalDataSetFile file, DataRow... dataRows) {
     DataSet dataSet = new DataSet();
     Stream.of(dataRows).forEach(dataSet::addRow);
     testDataSets.put(file, dataSet);
   }
 
-  /**
-   * For unit testing that needs to clear out changes made by other tests.
-   */
-  public synchronized static void resetTestDataSets() {
+  /** For unit testing that needs to clear out changes made by other tests. */
+  public static synchronized void resetTestDataSets() {
     testDataSets.clear();
   }
 }

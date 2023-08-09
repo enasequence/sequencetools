@@ -1,40 +1,50 @@
+/*
+ * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package uk.ac.ebi.embl.api.validation.dao.model;
 
 public class SubmissionContact {
-    private String consortium;
-    private String surname;
-    private String middleInitials;
-    private String firstName;
+  private String consortium;
+  private String surname;
+  private String middleInitials;
+  private String firstName;
 
-    public String getConsortium() {
-        return consortium;
-    }
+  public String getConsortium() {
+    return consortium;
+  }
 
-    public void setConsortium(String consortium) {
-        this.consortium = consortium;
-    }
+  public void setConsortium(String consortium) {
+    this.consortium = consortium;
+  }
 
-    public String getSurname() {
-        return surname;
-    }
+  public String getSurname() {
+    return surname;
+  }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
+  public void setSurname(String surname) {
+    this.surname = surname;
+  }
 
-    public String getMiddleInitials() {
-        return middleInitials;
-    }
+  public String getMiddleInitials() {
+    return middleInitials;
+  }
 
-    public void setMiddleInitials(String middleInitials) {
-        this.middleInitials = middleInitials;
-    }
+  public void setMiddleInitials(String middleInitials) {
+    this.middleInitials = middleInitials;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 }
