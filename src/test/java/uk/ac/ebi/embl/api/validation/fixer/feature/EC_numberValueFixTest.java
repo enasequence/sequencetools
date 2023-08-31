@@ -23,11 +23,14 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
+import java.util.Arrays;
+
 public class EC_numberValueFixTest {
 
   private Feature feature;
   private Qualifier qualifier;
   private EC_numberValueFix check;
+  private static final String[] INVALID_EC_NUMBER = {"-.-.-.-","-.-.-","-.-","-"};
 
   @Before
   public void setUp() {
@@ -64,5 +67,18 @@ public class EC_numberValueFixTest {
   public void testCheck_NoECnumberQualifier() {
     feature.removeQualifier(qualifier);
     assertTrue(check.check(feature).isValid());
+  }
+
+  @Test
+  public void testCheck_ECnumberwithInvalidValue() {
+
+    Arrays.asList(INVALID_EC_NUMBER).forEach( value -> {
+      Feature feature = new FeatureFactory().createFeature("feature");
+      Qualifier qualifier = new QualifierFactory().createQualifier("EC_number");
+      qualifier.setValue(value);
+      feature.addQualifier(qualifier);
+      ValidationResult validationResult = check.check(feature);
+      assertEquals(1, validationResult.count("Ec_numberEmptyValueFix", Severity.FIX));
+    });
   }
 }
