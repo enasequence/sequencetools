@@ -227,7 +227,7 @@ public class EmblEntryReader extends EntryReader {
       addSkipTagCounterHolder(new PRReader(lineReader));
       addSkipTagCounterHolder(new DEReader(lineReader));
       addSkipTagCounterHolder(new KWReader(lineReader));
-      addBlockReader(new DTReader(lineReader));
+      addSkipTagCounterHolder(new DTReader(lineReader));
       addBlockReader(new ACStarReader(lineReader));
       addSkipTagCounterHolder(new STStarReader(lineReader));
       addBlockReader(new COReader(lineReader));
