@@ -43,6 +43,7 @@ public class AssemblyInfoEntry extends GCSEntry {
   private String authors;
   private String address;
   private Date date;
+  private String distribute;
 
   public Date getDate() {
     return date;
@@ -282,5 +283,13 @@ public class AssemblyInfoEntry extends GCSEntry {
 
   public String getMoleculeType() {
     return moleculeType;
+  }
+
+  public String getDistribute() {
+    return distribute;
+  }
+
+  public void setDistribute(String distribute) {
+    this.distribute = distribute;
   }
 }
