@@ -47,8 +47,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class CountryQualifierFix extends FeatureValidationCheck {
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
-  private static final String SPECIAL_CHARS_AT_END = "[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$";
-  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN = Pattern.compile(SPECIAL_CHARS_AT_END);
+  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN = Pattern.compile( "[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
 
   private Set<String> getCountries() {
     Set<String> countries = new HashSet<>();
@@ -130,6 +129,6 @@ public class CountryQualifierFix extends FeatureValidationCheck {
   }
 
   public String removeSpecialCharactersAtEnd(String country) {
-    return country.replaceAll(SPECIAL_CHARS_AT_END, "");
+    return country.replaceAll(SPECIAL_CHARS_AT_END_PATTERN.pattern(), "");
   }
 }
