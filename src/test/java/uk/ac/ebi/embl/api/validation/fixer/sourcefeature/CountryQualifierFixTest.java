@@ -118,7 +118,7 @@ public class CountryQualifierFixTest {
   }
 
   @Test
-  public void testCheckCountryQualifierWithInvalidChar() {
+  public void testCheckCountryQualifierWithColonChar() {
     Feature feature = featureFactory.createFeature("source");
     feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan: ");
     feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan:");

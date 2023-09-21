@@ -47,7 +47,7 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class CountryQualifierFix extends FeatureValidationCheck {
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
-  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN =
+  private static final Pattern TRAILING_COLON_PATTERN =
       Pattern.compile("[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
 
   private Set<String> getCountries() {
@@ -81,13 +81,10 @@ public class CountryQualifierFix extends FeatureValidationCheck {
         if (countries.contains(countryQualifierValue.toLowerCase())) {
           continue;
         }
-        // Remove special characters at the end of the country and update the qualifier
-        if (SPECIAL_CHARS_AT_END_PATTERN.matcher(countryQualifier.getValue()).find()) {
-          source.removeQualifier(countryQualifier);
-          String country = removeSpecialCharactersAtEnd(countryQualifier.getValue());
-          countryQualifier =
-              qualifierFactory.createQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country);
-          source.addQualifier(countryQualifier);
+        // Remove trailing colon at the end of the country and update the qualifier
+        if (TRAILING_COLON_PATTERN.matcher(countryQualifier.getValue()).find()) {
+          String country = removeTrailingColon(countryQualifier.getValue());
+          countryQualifier.setValue(country);
 
           reportMessage(
               Severity.FIX,
@@ -130,7 +127,7 @@ public class CountryQualifierFix extends FeatureValidationCheck {
     return split.length > 0 ? split[0].trim().toLowerCase() : country.toLowerCase();
   }
 
-  public String removeSpecialCharactersAtEnd(String country) {
-    return country.replaceAll(SPECIAL_CHARS_AT_END_PATTERN.pattern(), "");
+  public String removeTrailingColon(String country) {
+    return country.replaceAll(TRAILING_COLON_PATTERN.pattern(), "");
   }
 }
