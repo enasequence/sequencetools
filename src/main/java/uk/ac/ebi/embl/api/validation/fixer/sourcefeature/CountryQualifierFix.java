@@ -47,7 +47,8 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 public class CountryQualifierFix extends FeatureValidationCheck {
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
-  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN = Pattern.compile( "[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
+  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN =
+      Pattern.compile("[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
 
   private Set<String> getCountries() {
     Set<String> countries = new HashSet<>();
@@ -84,38 +85,39 @@ public class CountryQualifierFix extends FeatureValidationCheck {
         if (SPECIAL_CHARS_AT_END_PATTERN.matcher(countryQualifier.getValue()).find()) {
           source.removeQualifier(countryQualifier);
           String country = removeSpecialCharactersAtEnd(countryQualifier.getValue());
-          countryQualifier = qualifierFactory.createQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country);
+          countryQualifier =
+              qualifierFactory.createQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country);
           source.addQualifier(countryQualifier);
 
           reportMessage(
-                  Severity.FIX,
-                  countryQualifier.getOrigin(),
-                  COUNTRY_QUALIFIER_VALUE_FIX_ID_2,
-                  Qualifier.COUNTRY_QUALIFIER_NAME,
-                  countryQualifier.getValue(),
-                  country);
+              Severity.FIX,
+              countryQualifier.getOrigin(),
+              COUNTRY_QUALIFIER_VALUE_FIX_ID_2,
+              Qualifier.COUNTRY_QUALIFIER_NAME,
+              countryQualifier.getValue(),
+              country);
         }
 
         if (!countries.contains(getCountry(countryQualifier.getValue()))) {
           source.removeQualifier(countryQualifier);
           if (SequenceEntryUtils.isQualifierAvailable(Qualifier.NOTE_QUALIFIER_NAME, source)) {
             source
-                    .getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME)
-                    .setValue(
-                            feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME)
-                                    + ";"
-                                    + countryQualifier.getValue());
+                .getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME)
+                .setValue(
+                    feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME)
+                        + ";"
+                        + countryQualifier.getValue());
           } else {
             source.addQualifier(
-                    qualifierFactory.createQualifier(
-                            Qualifier.NOTE_QUALIFIER_NAME, countryQualifier.getValue()));
+                qualifierFactory.createQualifier(
+                    Qualifier.NOTE_QUALIFIER_NAME, countryQualifier.getValue()));
           }
           reportMessage(
-                  Severity.FIX,
-                  countryQualifier.getOrigin(),
-                  COUNTRY_QUALIFIER_VALUE_FIX_ID_1,
-                  Qualifier.COUNTRY_QUALIFIER_NAME,
-                  countryQualifier.getValue());
+              Severity.FIX,
+              countryQualifier.getOrigin(),
+              COUNTRY_QUALIFIER_VALUE_FIX_ID_1,
+              Qualifier.COUNTRY_QUALIFIER_NAME,
+              countryQualifier.getValue());
         }
       }
     }
