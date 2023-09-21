@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -44,7 +45,10 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
       ValidationScope.INSDC
     })
 public class CountryQualifierFix extends FeatureValidationCheck {
-  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID = "CountryQualifierFix_1";
+  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
+  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
+  private static final Pattern TRAILING_COLON_PATTERN =
+      Pattern.compile("[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
 
   private Set<String> getCountries() {
     Set<String> countries = new HashSet<>();
@@ -77,7 +81,21 @@ public class CountryQualifierFix extends FeatureValidationCheck {
         if (countries.contains(countryQualifierValue.toLowerCase())) {
           continue;
         }
-        if (!countries.contains(getCountry(countryQualifierValue))) {
+        // Remove trailing colon at the end of the country and update the qualifier
+        if (TRAILING_COLON_PATTERN.matcher(countryQualifier.getValue()).find()) {
+          String country = removeTrailingColon(countryQualifier.getValue());
+          countryQualifier.setValue(country);
+
+          reportMessage(
+              Severity.FIX,
+              countryQualifier.getOrigin(),
+              COUNTRY_QUALIFIER_VALUE_FIX_ID_2,
+              Qualifier.COUNTRY_QUALIFIER_NAME,
+              countryQualifier.getValue(),
+              country);
+        }
+
+        if (!countries.contains(getCountry(countryQualifier.getValue()))) {
           source.removeQualifier(countryQualifier);
           if (SequenceEntryUtils.isQualifierAvailable(Qualifier.NOTE_QUALIFIER_NAME, source)) {
             source
@@ -85,23 +103,21 @@ public class CountryQualifierFix extends FeatureValidationCheck {
                 .setValue(
                     feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME)
                         + ";"
-                        + countryQualifierValue);
+                        + countryQualifier.getValue());
           } else {
             source.addQualifier(
                 qualifierFactory.createQualifier(
-                    Qualifier.NOTE_QUALIFIER_NAME, countryQualifierValue));
+                    Qualifier.NOTE_QUALIFIER_NAME, countryQualifier.getValue()));
           }
-
           reportMessage(
               Severity.FIX,
               countryQualifier.getOrigin(),
-              COUNTRY_QUALIFIER_VALUE_FIX_ID,
+              COUNTRY_QUALIFIER_VALUE_FIX_ID_1,
               Qualifier.COUNTRY_QUALIFIER_NAME,
               countryQualifier.getValue());
         }
       }
     }
-
     return result;
   }
 
@@ -109,5 +125,9 @@ public class CountryQualifierFix extends FeatureValidationCheck {
     if (country == null) return null;
     String[] split = country.split("[:,]");
     return split.length > 0 ? split[0].trim().toLowerCase() : country.toLowerCase();
+  }
+
+  public String removeTrailingColon(String country) {
+    return country.replaceAll(TRAILING_COLON_PATTERN.pattern(), "");
   }
 }

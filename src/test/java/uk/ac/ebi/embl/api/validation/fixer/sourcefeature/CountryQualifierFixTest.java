@@ -118,6 +118,20 @@ public class CountryQualifierFixTest {
   }
 
   @Test
+  public void testCheckCountryQualifierWithColonChar() {
+    Feature feature = featureFactory.createFeature("source");
+    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan: ");
+    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan:");
+
+    assertEquals(2, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    assertEquals(2, check.check(feature).getMessages().size());
+    assertEquals(
+        "Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(0).getValue());
+    assertEquals(
+        "Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(1).getValue());
+  }
+
+  @Test
   public void testCheckCountryQualifierInvalidWithNoteInFeature() {
     Feature feature = featureFactory.createFeature("source");
     feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Switz");

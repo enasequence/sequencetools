@@ -10,19 +10,18 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.feature;
 
+import java.util.Arrays;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 
-import java.util.Arrays;
-
 public class EC_numberValueFix extends FeatureValidationCheck {
 
   private static final String Ec_numberValueFix_ID = "Ec_numberValueFix";
   private static final String EcNumberEmptyValueFix = "Ec_numberEmptyValueFix";
-  private static final String[] INVALID_EC_NUMBER = {"-.-.-.-","-.-.-","-.-","-"};
+  private static final String[] INVALID_EC_NUMBER = {"-.-.-.-", "-.-.-", "-.-", "-"};
 
   public EC_numberValueFix() {}
 
@@ -38,8 +37,8 @@ public class EC_numberValueFix extends FeatureValidationCheck {
         feature.removeQualifier(ecqualifier);
         reportMessage(Severity.FIX, ecqualifier.getOrigin(), Ec_numberValueFix_ID);
       }
-      
-      if(Arrays.asList(INVALID_EC_NUMBER).contains(ecqualifier.getValue())){
+
+      if (Arrays.asList(INVALID_EC_NUMBER).contains(ecqualifier.getValue())) {
         feature.removeQualifier(ecqualifier);
         reportMessage(Severity.FIX, ecqualifier.getOrigin(), EcNumberEmptyValueFix);
       }
