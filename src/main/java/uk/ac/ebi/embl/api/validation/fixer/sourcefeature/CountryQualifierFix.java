@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -44,7 +45,10 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
       ValidationScope.INSDC
     })
 public class CountryQualifierFix extends FeatureValidationCheck {
-  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID = "CountryQualifierFix_1";
+  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
+  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
+  private static final String SPECIAL_CHARS_AT_END = "[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$";
+  private static final Pattern SPECIAL_CHARS_AT_END_PATTERN = Pattern.compile(SPECIAL_CHARS_AT_END);
 
   private Set<String> getCountries() {
     Set<String> countries = new HashSet<>();
@@ -77,31 +81,45 @@ public class CountryQualifierFix extends FeatureValidationCheck {
         if (countries.contains(countryQualifierValue.toLowerCase())) {
           continue;
         }
-        if (!countries.contains(getCountry(countryQualifierValue))) {
+        // Remove special characters at the end of the country and update the qualifier
+        if (SPECIAL_CHARS_AT_END_PATTERN.matcher(countryQualifier.getValue()).find()) {
+          source.removeQualifier(countryQualifier);
+          String country = removeSpecialCharactersAtEnd(countryQualifier.getValue());
+          countryQualifier = qualifierFactory.createQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, country);
+          source.addQualifier(countryQualifier);
+
+          reportMessage(
+                  Severity.FIX,
+                  countryQualifier.getOrigin(),
+                  COUNTRY_QUALIFIER_VALUE_FIX_ID_2,
+                  Qualifier.COUNTRY_QUALIFIER_NAME,
+                  countryQualifier.getValue(),
+                  country);
+        }
+
+        if (!countries.contains(getCountry(countryQualifier.getValue()))) {
           source.removeQualifier(countryQualifier);
           if (SequenceEntryUtils.isQualifierAvailable(Qualifier.NOTE_QUALIFIER_NAME, source)) {
             source
-                .getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME)
-                .setValue(
-                    feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME)
-                        + ";"
-                        + countryQualifierValue);
+                    .getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME)
+                    .setValue(
+                            feature.getSingleQualifierValue(Qualifier.NOTE_QUALIFIER_NAME)
+                                    + ";"
+                                    + countryQualifier.getValue());
           } else {
             source.addQualifier(
-                qualifierFactory.createQualifier(
-                    Qualifier.NOTE_QUALIFIER_NAME, countryQualifierValue));
+                    qualifierFactory.createQualifier(
+                            Qualifier.NOTE_QUALIFIER_NAME, countryQualifier.getValue()));
           }
-
           reportMessage(
-              Severity.FIX,
-              countryQualifier.getOrigin(),
-              COUNTRY_QUALIFIER_VALUE_FIX_ID,
-              Qualifier.COUNTRY_QUALIFIER_NAME,
-              countryQualifier.getValue());
+                  Severity.FIX,
+                  countryQualifier.getOrigin(),
+                  COUNTRY_QUALIFIER_VALUE_FIX_ID_1,
+                  Qualifier.COUNTRY_QUALIFIER_NAME,
+                  countryQualifier.getValue());
         }
       }
     }
-
     return result;
   }
 
@@ -109,5 +127,9 @@ public class CountryQualifierFix extends FeatureValidationCheck {
     if (country == null) return null;
     String[] split = country.split("[:,]");
     return split.length > 0 ? split[0].trim().toLowerCase() : country.toLowerCase();
+  }
+
+  public String removeSpecialCharactersAtEnd(String country) {
+    return country.replaceAll(SPECIAL_CHARS_AT_END, "");
   }
 }

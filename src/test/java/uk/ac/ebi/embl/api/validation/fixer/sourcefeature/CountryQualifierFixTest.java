@@ -118,12 +118,24 @@ public class CountryQualifierFixTest {
   }
 
   @Test
+  public void testCheckCountryQualifierWithInvalidChar() {
+    Feature feature = featureFactory.createFeature("source");
+    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan: ");
+    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan:");
+    
+    assertEquals(2, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    assertEquals(2, check.check(feature).getMessages().size());
+    assertEquals("Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(0).getValue());
+    assertEquals("Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(1).getValue());
+  }
+
+  @Test
   public void testCheckCountryQualifierInvalidWithNoteInFeature() {
     Feature feature = featureFactory.createFeature("source");
     feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Switz");
     QualifierFactory qualifierFactory = new QualifierFactory();
     Qualifier noteQualifier =
-        qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, "existing note");
+            qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, "existing note");
     feature.addQualifier(noteQualifier);
 
     assertEquals(1, feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).size());
@@ -131,8 +143,8 @@ public class CountryQualifierFixTest {
     // note has been added
     assertEquals(1, feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).size());
     assertEquals(
-        "existing note;Switz",
-        feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).get(0).getValue());
+            "existing note;Switz",
+            feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).get(0).getValue());
     assertEquals(1, result.getMessages().size());
     // Country has been removed
     assertEquals(1, result.count("CountryQualifierFix_1", Severity.FIX));
