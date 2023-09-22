@@ -19,6 +19,7 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
 @Description(
@@ -73,7 +74,11 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
         }
         if (location instanceof RemoteLocation) {
           if (getEntryDAOUtils() != null
-              && !getEntryDAOUtils().isEntryExists(((RemoteLocation) location).getAccession())) {
+              && !getEntryDAOUtils().isEntryExists(((RemoteLocation) location).getAccession())
+              && !ValidationScope.NCBI.equals(
+                  getEmblEntryValidationPlanProperty()
+                      .validationScope
+                      .get())) { 
             reportError(feature.getOrigin(), INVALID_REMOTELOCATION_ID, feature.getName());
           }
         }
