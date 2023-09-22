@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,19 +21,28 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
+import java.sql.SQLException;
 
 public class FeatureLocationCheckTest {
 
   private FeatureLocationCheck check;
+  private EntryDAOUtils entryDAOUtils;
+  private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     check = new FeatureLocationCheck();
+    property = new EmblEntryValidationPlanProperty();
+    check.setEntryDAOUtils(entryDAOUtils);
+    check.setEmblEntryValidationPlanProperty(property);
+
+    entryDAOUtils = createMock(EntryDAOUtils.class);
+    expect(entryDAOUtils.isEntryExists("M12561")).andReturn(true);
   }
 
   @Test
@@ -58,5 +68,31 @@ public class FeatureLocationCheckTest {
     intronFeature.setLocations(intronFeatureLocation);
     ValidationResult intronResult = check.check(intronFeature);
     assertEquals(1, intronResult.count("FeatureLocationCheck-3", Severity.ERROR));
+  }
+
+  @Test
+  public void testCheck_invalidRemoteLocationEMBLScope() throws ValidationEngineException, SQLException {
+    FeatureFactory featureFactory = new FeatureFactory();
+    Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
+    LocationFactory locationFactory = new LocationFactory();
+    Order<Location> intronFeatureLocation = new Order<Location>();
+    intronFeatureLocation.addLocation(locationFactory.createRemoteBase("M12561", 2, 2L));
+    intronFeature.setLocations(intronFeatureLocation);
+    ValidationResult intronResult = check.check(intronFeature);
+    assertEquals(1, intronResult.count("FeatureLocationCheck-5", Severity.ERROR));
+  }
+
+  @Test
+  public void testCheck_invalidRemoteLocationNCBIScope() throws ValidationEngineException, SQLException {
+    FeatureFactory featureFactory = new FeatureFactory();
+    Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
+    LocationFactory locationFactory = new LocationFactory();
+    Order<Location> intronFeatureLocation = new Order<Location>();
+    intronFeatureLocation.addLocation(locationFactory.createRemoteBase("M12561", 2, 2L));
+    intronFeature.setLocations(intronFeatureLocation);
+    property.validationScope.set(ValidationScope.NCBI);
+    check.setEmblEntryValidationPlanProperty(property);
+    ValidationResult intronResult = check.check(intronFeature);
+    assertEquals(0, intronResult.count());
   }
 }
