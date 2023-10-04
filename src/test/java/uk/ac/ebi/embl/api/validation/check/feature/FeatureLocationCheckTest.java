@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -38,10 +39,10 @@ public class FeatureLocationCheckTest {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     check = new FeatureLocationCheck();
     property = new EmblEntryValidationPlanProperty();
-    check.setEntryDAOUtils(entryDAOUtils);
     check.setEmblEntryValidationPlanProperty(property);
 
     entryDAOUtils = createMock(EntryDAOUtils.class);
+    check.setEntryDAOUtils(entryDAOUtils);
     expect(entryDAOUtils.isEntryExists("M12561")).andReturn(true);
   }
 
