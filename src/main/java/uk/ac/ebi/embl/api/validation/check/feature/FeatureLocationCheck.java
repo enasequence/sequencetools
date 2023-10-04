@@ -76,9 +76,7 @@ public class FeatureLocationCheck extends FeatureValidationCheck {
           if (getEntryDAOUtils() != null
               && !getEntryDAOUtils().isEntryExists(((RemoteLocation) location).getAccession())
               && !ValidationScope.NCBI.equals(
-                  getEmblEntryValidationPlanProperty()
-                      .validationScope
-                      .get())) { 
+                  getEmblEntryValidationPlanProperty().validationScope.get())) {
             reportError(feature.getOrigin(), INVALID_REMOTELOCATION_ID, feature.getName());
           }
         }

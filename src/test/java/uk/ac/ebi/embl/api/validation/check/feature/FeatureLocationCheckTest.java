@@ -14,9 +14,9 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -25,8 +25,6 @@ import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-
-import java.sql.SQLException;
 
 public class FeatureLocationCheckTest {
 
@@ -72,7 +70,8 @@ public class FeatureLocationCheckTest {
   }
 
   @Test
-  public void testCheck_invalidRemoteLocationEMBLScope() throws ValidationEngineException, SQLException {
+  public void testCheck_invalidRemoteLocationEMBLScope()
+      throws ValidationEngineException, SQLException {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     LocationFactory locationFactory = new LocationFactory();
@@ -84,7 +83,8 @@ public class FeatureLocationCheckTest {
   }
 
   @Test
-  public void testCheck_invalidRemoteLocationNCBIScope() throws ValidationEngineException, SQLException {
+  public void testCheck_invalidRemoteLocationNCBIScope()
+      throws ValidationEngineException, SQLException {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     LocationFactory locationFactory = new LocationFactory();
