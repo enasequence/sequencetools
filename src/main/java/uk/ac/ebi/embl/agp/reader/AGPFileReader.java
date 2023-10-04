@@ -55,8 +55,6 @@ public class AGPFileReader extends FlatFileEntryReader {
   private static final int ORIENTATION = 8;
   private static final int LINKAGEEVIDENCE = 8;
   private static final Long UNKNOWN_GAP_LENGTH = 100L;
-  private boolean hasNonSingletonAgp = false;
-
   protected int nextEntryLine = currentEntryLine;
 
   @Override
@@ -66,7 +64,6 @@ public class AGPFileReader extends FlatFileEntryReader {
 
   @Override
   public void readLines() throws IOException {
-    int noOfComponents = 0;
     isEntry = false;
     lineReader.readLine();
     if (!lineReader.isCurrentLine()) {
@@ -208,7 +205,6 @@ public class AGPFileReader extends FlatFileEntryReader {
           && !fields[COMPONENT_TYPE_ID].equals("W")) {
         error("InvalidComponentTypeCheck");
       } else {
-        noOfComponents++;
         if (fields[COMPONENT_ID] == null || fields[COMPONENT_ID].isEmpty()) {
           error("MissingComponentIDCheck");
         } else {
@@ -256,10 +252,7 @@ public class AGPFileReader extends FlatFileEntryReader {
           new FlatFileOrigin(getLineReader().getFileId(), lineReader.getCurrentLineNumber()));
       entry.getSequence().addAgpRow(agpRow);
 
-      if (noOfComponents > 1) hasNonSingletonAgp = true;
-
       if (!lineReader.isNextLine()) {
-        if (!hasNonSingletonAgp) error("SingletonsOnlyError");
         break;
       } else if (!lineReader.joinLine()) {
         break;
