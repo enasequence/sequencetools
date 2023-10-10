@@ -106,6 +106,10 @@ dependencies {
     testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
