@@ -1,23 +1,21 @@
 plugins {
-    id "com.diffplug.spotless" version "5.1.1"
-
     id 'java'
-    id 'idea'
-    id 'maven-publish'
     id 'java-library'
+    id 'maven-publish'
+    id "com.diffplug.spotless" version "5.1.1"
 }
 
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-ext.version_base = '2.18.6'
-
-version = version_base
+version = '2.18.8'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 spotless {
+    encoding 'UTF-8'
+    lineEndings 'UNIX'
     java {
         licenseHeader('''/*
  * Copyright 2018-2023 EMBL - European Bioinformatics Institute
@@ -36,26 +34,9 @@ spotless {
     }
 }
 
-configurations.all {
-	
-	if( !hasProperty( 'artifactoryUsername' ) )
-		project.ext.properties.artifactoryUsername = ''
-	else
-		project.ext.properties.artifactoryUsername = artifactoryUsername;
-		
-	if( !hasProperty( 'artifactoryPassword' ) )
-		project.ext.properties.artifactoryPassword = ''
-	else
-	 	project.ext.properties.artifactoryPassword = artifactoryPassword;
-
-	if( !hasProperty( 'gitlab_private_token' ) )
-		project.ext.properties.gitlab_private_token = ''
-	else
-		project.ext.properties.gitlab_private_token = gitlab_private_token;
-}
-
 repositories {
     mavenLocal()
+    mavenCentral()
     maven {
         url "https://gitlab.ebi.ac.uk/api/v4/groups/enasequence/-/packages/maven"
 
@@ -79,7 +60,6 @@ repositories {
             header(HttpHeaderAuthentication)
         }
     }
-    mavenCentral()
 }
 
 dependencies {
@@ -87,15 +67,18 @@ dependencies {
     api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.2')
 
     implementation 'org.slf4j:slf4j-api:1.7.28'
+
     implementation 'commons-collections:commons-collections:3.2.2'
     implementation 'commons-dbutils:commons-dbutils:1.5'
     implementation 'org.apache.commons:commons-lang3:3.0'
     implementation 'org.apache.commons:commons-compress:1.20'
-    implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
+
+    implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.10'
 
     testImplementation 'org.json:json:20131018'
     testImplementation "junit:junit:4.13.1"
     testImplementation 'org.easymock:easymock:4.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter:2.2.0.RELEASE'
     testImplementation 'org.springframework.boot:spring-boot-starter-jdbc:2.2.0.RELEASE'
     testImplementation ('org.springframework.boot:spring-boot-starter-test:2.2.0.RELEASE') {
@@ -108,26 +91,6 @@ dependencies {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
-            credentials(HttpHeaderCredentials) {
-                name = "Private-Token"
-                value = project.ext.properties.gitlab_private_token
-            }
-            authentication {
-                header( HttpHeaderAuthentication )
-            }
-        }       
-    }
 }
 
 test {
@@ -155,5 +118,25 @@ test {
         environment 'biosamples-webin-username', System.env.biosamples_webin_username
     } else {
         environment 'biosamples-webin-username', biosamplesWebinUsername
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
+            credentials(HttpHeaderCredentials) {
+                name = "Private-Token"
+                value = gitlab_private_token
+            }
+            authentication {
+                header( HttpHeaderAuthentication )
+            }
+        }       
     }
 }
