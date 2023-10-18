@@ -120,7 +120,7 @@ public class TemplateEntryProcessorTest {
 
     // Test with invalid taxid
     expectedException.expect(TaxonomyException.class);
-    expectedException.expectMessage("Invalid HTTP response code: 400");
+    expectedException.expectMessage("Error while calling the url: https://www.ebi.ac.uk/ena/taxonomy/rest/tax-id/960600000000");
     templateVariables = getTemplateVariables_ERT000002("960600000000");
     executeEntryProcessInvalidTaxId(
         "960600000000", templateInfo_ERT000002, molType_ERT000002, templateVariables);
@@ -168,7 +168,7 @@ public class TemplateEntryProcessorTest {
 
     // Test with invalid taxid
     expectedException.expect(TaxonomyException.class);
-    expectedException.expectMessage("Invalid HTTP response code: 400");
+    expectedException.expectMessage("Error while calling the url: https://www.ebi.ac.uk/ena/taxonomy/rest/tax-id/960600000000");
     templateVariables = getTemplateVariables_ERT000056("960600000000");
     executeEntryProcessInvalidTaxId(
         "960600000000", templateInfo_ERT000056, molType_ERT000056, templateVariables);
