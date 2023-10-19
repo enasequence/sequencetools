@@ -10,81 +10,117 @@
  */
 package uk.ac.ebi.embl.api.validation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public enum ValidationScope {
-  /** Putff (ENA) */
-  EMBL(Group.SEQUENCE),
-  /** Putff (NCBI) */
-  NCBI(Group.SEQUENCE),
-  /** Putff (NCBI master) */
-  NCBI_MASTER(Group.SEQUENCE),
-  /** Pipeline (Webin-CLI sequence scope) */
-  EMBL_TEMPLATE(Group.SEQUENCE),
-  /** Putff (patent protein) */
-  EPO_PEPTIDE(Group.SEQUENCE),
-  /** Putff (patent) */
-  EPO(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  INSDC(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  EGA(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  ARRAYEXPRESS(Group.SEQUENCE),
-  /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_MASTER(Group.ASSEMBLY),
-  /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_CONTIG(Group.ASSEMBLY),
-  /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_SCAFFOLD(Group.ASSEMBLY),
-  /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_CHROMOSOME(Group.ASSEMBLY),
-  /** Pipeline (Webin-CLI transcriptome scope) */
-  ASSEMBLY_TRANSCRIPTOME(Group.ASSEMBLY);
+    /**
+     * Putff (ENA)
+     */
+    EMBL(Group.PUTFF),
+    /**
+     * Putff (NCBI)
+     */
+    NCBI(Group.PUTFF, Group.NCBI),
+    /**
+     * Putff (NCBI master)
+     */
+    NCBI_MASTER(Group.PUTFF, Group.NCBI),
+    /**
+     * Pipeline (Webin-CLI sequence scope)
+     */
+    EMBL_TEMPLATE(Group.ASSEMBLY),
+    /**
+     * Putff (patent protein)
+     */
+    EPO_PEPTIDE(Group.EPO),
+    /**
+     * Putff (patent)
+     */
+    EPO(Group.EPO),
+    /**
+     * TODO: remove if not used
+     */
+    INSDC,
+    /**
+     * TODO: remove if not used
+     */
+    EGA,
+    /**
+     * TODO: remove if not used
+     */
+    ARRAYEXPRESS,
+    /**
+     * Pipeline (Webin-CLI genome scope)
+     */
+    ASSEMBLY_MASTER(Group.ASSEMBLY, Group.PIPELINE),
+    /**
+     * Pipeline (Webin-CLI genome scope)
+     */
+    ASSEMBLY_CONTIG(Group.ASSEMBLY, Group.PIPELINE),
+    /**
+     * Pipeline (Webin-CLI genome scope)
+     */
+    ASSEMBLY_SCAFFOLD(Group.ASSEMBLY, Group.PIPELINE),
+    /**
+     * Pipeline (Webin-CLI genome scope)
+     */
+    ASSEMBLY_CHROMOSOME(Group.ASSEMBLY, Group.PIPELINE),
+    /**
+     * Pipeline (Webin-CLI transcriptome scope)
+     */
+    ASSEMBLY_TRANSCRIPTOME(Group.PIPELINE);
 
-  private final Group group;
-
-  ValidationScope(Group group) {
-    this.group = group;
-  }
-
-  public boolean isInGroup(Group group) {
-    return this.group == group;
-  }
-
-  public Group group() {
-    return this.group;
-  }
-
-  public static ValidationScope get(String scope) {
-    if (scope == null) return ValidationScope.EMBL;
-    try {
-      return valueOf(scope.toUpperCase());
-    } catch (IllegalArgumentException x) {
-      return null;
+    
+    private final List<Group> groups;
+    
+    ValidationScope(Group... groups) {
+        this.groups = Arrays.asList(groups);
     }
-  }
 
-  public int getAssemblyLevel() {
-    switch (this) {
-      case ASSEMBLY_CHROMOSOME:
-        return 2;
-      case ASSEMBLY_CONTIG:
-        return 0;
-      case ASSEMBLY_SCAFFOLD:
-        return 1;
-      default:
-        return -1;
+    public boolean isInGroup(Group group) {
+        return this.groups.contains(group);
     }
-  }
 
-  public enum Group {
-    ASSEMBLY,
-    SEQUENCE
-  }
-
-  public static ValidationScope getScope(FileType fileType) {
-    if (fileType == FileType.GENBANK) {
-      return ValidationScope.NCBI;
+    public List<Group> groups() {
+        return this.groups;
     }
-    return ValidationScope.EMBL;
-  }
+
+    public static ValidationScope get(String scope) {
+        if (scope == null) return ValidationScope.EMBL;
+        try {
+            return valueOf(scope.toUpperCase());
+        } catch (IllegalArgumentException x) {
+            return null;
+        }
+    }
+
+    public int getAssemblyLevel() {
+        switch (this) {
+            case ASSEMBLY_CHROMOSOME:
+                return 2;
+            case ASSEMBLY_CONTIG:
+                return 0;
+            case ASSEMBLY_SCAFFOLD:
+                return 1;
+            default:
+                return -1;
+        }
+    }
+
+    public enum Group {
+        PIPELINE,
+        PUTFF,
+        ASSEMBLY,
+        NCBI,
+        EPO
+    }
+
+    public static ValidationScope getScope(FileType fileType) {
+        if (fileType == FileType.GENBANK) {
+            return ValidationScope.NCBI;
+        }
+        return ValidationScope.EMBL;
+    }
 }
