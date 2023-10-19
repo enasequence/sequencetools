@@ -11,20 +11,33 @@
 package uk.ac.ebi.embl.api.validation;
 
 public enum ValidationScope {
+  /** Putff (ENA) */
   EMBL(Group.SEQUENCE),
+  /** Putff (NCBI) */
   NCBI(Group.SEQUENCE),
+  /** Putff (NCBI master) */
   NCBI_MASTER(Group.SEQUENCE),
+  /** Pipeline (Webin-CLI sequence scope) */
   EMBL_TEMPLATE(Group.SEQUENCE),
+  /** Putff (patent protein) */
   EPO_PEPTIDE(Group.SEQUENCE),
+  /** Putff (patent) */
   EPO(Group.SEQUENCE),
+  /** TODO: remove if not used */
   INSDC(Group.SEQUENCE),
+  /** TODO: remove if not used */
   EGA(Group.SEQUENCE),
+  /** TODO: remove if not used */
   ARRAYEXPRESS(Group.SEQUENCE),
-  // Assembly GROUP
+  /** Pipeline (Webin-CLI genome scope) */
   ASSEMBLY_MASTER(Group.ASSEMBLY),
+  /** Pipeline (Webin-CLI genome scope) */
   ASSEMBLY_CONTIG(Group.ASSEMBLY),
+  /** Pipeline (Webin-CLI genome scope) */
   ASSEMBLY_SCAFFOLD(Group.ASSEMBLY),
+  /** Pipeline (Webin-CLI genome scope) */
   ASSEMBLY_CHROMOSOME(Group.ASSEMBLY),
+  /** Pipeline (Webin-CLI transcriptome scope) */
   ASSEMBLY_TRANSCRIPTOME(Group.ASSEMBLY);
 
   private final Group group;
