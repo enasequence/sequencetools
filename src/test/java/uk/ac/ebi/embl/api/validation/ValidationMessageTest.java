@@ -123,33 +123,13 @@ public class ValidationMessageTest {
       ValidationMessage.setDefaultMessageFormatter(mf);
     }
   }
-  
- /* @Test
-  public void testValidationScope(){
-    assertTrue(ValidationScope.isPipelineScope(ValidationScope.ASSEMBLY_MASTER));
-    assertTrue(ValidationScope.isPipelineScope(ValidationScope.ASSEMBLY_CONTIG));
-    assertTrue(ValidationScope.isPipelineScope(ValidationScope.ASSEMBLY_SCAFFOLD));
-    assertTrue(ValidationScope.isPipelineScope(ValidationScope.ASSEMBLY_CHROMOSOME));
-    assertTrue(ValidationScope.isPipelineScope(ValidationScope.ASSEMBLY_TRANSCRIPTOME));
-
-
-    assertTrue(ValidationScope.isPutffScope(ValidationScope.NCBI));
-    assertTrue(ValidationScope.isPutffScope(ValidationScope.NCBI_MASTER));
-    assertTrue(ValidationScope.isPutffScope(ValidationScope.EPO));
-    assertTrue(ValidationScope.isPutffScope(ValidationScope.EPO_PEPTIDE));
-    assertTrue(ValidationScope.isPutffScope(ValidationScope.EMBL));
-
-    assertTrue(ValidationScope.isNcbiScope(ValidationScope.NCBI));
-    assertTrue(ValidationScope.isNcbiScope(ValidationScope.NCBI_MASTER));
-  }*/
 
   @Test
-  public void testValidationScopeWithGroup(){
+  public void testValidationScopeWithGroup() {
     assertTrue(ValidationScope.NCBI.isInGroup(ValidationScope.Group.NCBI));
     assertTrue(ValidationScope.NCBI.isInGroup(ValidationScope.Group.PUTFF));
 
     assertTrue(ValidationScope.ASSEMBLY_MASTER.isInGroup(ValidationScope.Group.ASSEMBLY));
     assertTrue(ValidationScope.ASSEMBLY_MASTER.isInGroup(ValidationScope.Group.PIPELINE));
-    
   }
 }
