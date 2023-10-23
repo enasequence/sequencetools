@@ -106,4 +106,20 @@ public class ValidationPlanTest {
     assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.ASSEMBLY));
     assertFalse(plan.validationScope.isInGroup(ValidationScope.Group.PUTFF));
   }
+
+  @Test
+  public void testIsInValidationScopeNcbiGroup() {
+    ValidationPlan plan =
+            new ValidationPlan(ValidationScope.NCBI, false) {
+              @Override
+              public ValidationResult execute(Object target) {
+                return null;
+              }
+            };
+
+    assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.NCBI));
+    assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.PUTFF));
+    assertFalse(plan.validationScope.isInGroup(ValidationScope.Group.ASSEMBLY));
+    
+  }
 }
