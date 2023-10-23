@@ -24,7 +24,7 @@ public class ValidationPlanTest {
   @Before
   public void init() {
     ValidationPlan validationPlan =
-        new ValidationPlan(ValidationScope.EMBL, false) {
+        new ValidationPlan(ValidationScope.EMBL) {
           @Override
           public ValidationResult execute(Object target) {
             return null;

@@ -11,7 +11,6 @@
 package uk.ac.ebi.embl.api.validation.plan;
 
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.GroupIncludeScope;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
@@ -31,30 +30,23 @@ public abstract class ValidationPlan {
 
   protected ValidationResult validationResult;
   protected ValidationScope validationScope;
-  private boolean devMode = false;
-  private final FileType fileType = null;
   private boolean remote = false;
   protected EmblEntryValidationPlanProperty planProperty;
   protected EntryDAOUtils entryDAOUtils;
   protected EraproDAOUtils eraproDAOUtils;
 
   protected ValidationPlan(EmblEntryValidationPlanProperty property) {
-    this(property.validationScope.get(), property.isDevMode.get());
+    this(property.validationScope.get());
     this.planProperty = property;
     this.planProperty.taxonClient.set(new TaxonomyClient());
     this.remote = property.isRemote.get();
   }
   /**
    * @param validationScope - the validation scope
-   * @param devMode - true if the validator is being run in development mode (remote tsv files for
-   *     editing)
    */
   protected ValidationPlan(
-      ValidationScope validationScope,
-      boolean devMode) { // DELETE this constructor if there are references
-
+      ValidationScope validationScope) { // DELETE this constructor if there are referencess
     this.validationScope = validationScope;
-    this.devMode = devMode;
   }
 
   public void addMessageBundle(String bundleName) {
@@ -115,11 +107,10 @@ public abstract class ValidationPlan {
     } catch (Exception e) {
       throw new ValidationEngineException(e);
     }
-    // long start= System.currentTimeMillis();
+
     Class<? extends ValidationCheck> checkClass = check.getClass();
     ExcludeScope excludeScopeAnnotation = checkClass.getAnnotation(ExcludeScope.class);
     RemoteExclude remoteExclude = checkClass.getAnnotation(RemoteExclude.class);
-    Description descAnnotation = checkClass.getAnnotation(Description.class);
     GroupIncludeScope groupIncludeAnnotation = checkClass.getAnnotation(GroupIncludeScope.class);
 
     if (remoteExclude != null && remote) {
