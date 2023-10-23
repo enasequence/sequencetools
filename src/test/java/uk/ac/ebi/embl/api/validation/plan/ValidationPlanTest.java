@@ -87,16 +87,23 @@ public class ValidationPlanTest {
   }
 
   @Test
-  public void testIsInValidationScope_Many() {
-    assertTrue(
-        plan.isInValidationScope(
-            new ValidationScope[] {ValidationScope.EMBL, ValidationScope.INSDC}));
+  public void testIsInValidationScopePutffGroup() {
+    assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.PUTFF));
+    assertFalse(plan.validationScope.isInGroup(ValidationScope.Group.PIPELINE));
   }
 
   @Test
-  public void testIsInValidationScope_ManyWrong() {
-    assertFalse(
-        plan.isInValidationScope(
-            new ValidationScope[] {ValidationScope.EPO, ValidationScope.INSDC}));
+  public void testIsInValidationScopePipelineGroup() {
+    ValidationPlan plan =
+        new ValidationPlan(ValidationScope.ASSEMBLY_MASTER, false) {
+          @Override
+          public ValidationResult execute(Object target) {
+            return null;
+          }
+        };
+
+    assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.PIPELINE));
+    assertTrue(plan.validationScope.isInGroup(ValidationScope.Group.ASSEMBLY));
+    assertFalse(plan.validationScope.isInGroup(ValidationScope.Group.PUTFF));
   }
 }

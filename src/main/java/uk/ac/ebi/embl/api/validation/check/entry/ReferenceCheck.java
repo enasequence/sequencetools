@@ -30,9 +30,6 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
       ValidationScope.EMBL_TEMPLATE,
       ValidationScope.EPO_PEPTIDE,
       ValidationScope.NCBI,
-      ValidationScope.ARRAYEXPRESS,
-      ValidationScope.EGA,
-      ValidationScope.INSDC,
       ValidationScope.NCBI_MASTER
     })
 public class ReferenceCheck extends EntryValidationCheck {

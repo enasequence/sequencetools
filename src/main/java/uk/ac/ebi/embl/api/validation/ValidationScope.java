@@ -26,12 +26,6 @@ public enum ValidationScope {
   EPO_PEPTIDE(Group.EPO),
   /** Putff (patent) */
   EPO(Group.EPO),
-  /** TODO: remove if not used */
-  INSDC,
-  /** TODO: remove if not used */
-  EGA,
-  /** TODO: remove if not used */
-  ARRAYEXPRESS,
   /** Pipeline (Webin-CLI genome scope) */
   ASSEMBLY_MASTER(Group.ASSEMBLY, Group.PIPELINE),
   /** Pipeline (Webin-CLI genome scope) */
