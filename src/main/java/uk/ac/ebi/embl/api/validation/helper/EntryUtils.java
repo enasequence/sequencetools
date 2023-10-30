@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
@@ -32,6 +33,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class EntryUtils {
 
@@ -263,8 +265,21 @@ public class EntryUtils {
         != null;
   }
 
-  public static boolean isBinomialRequired(Entry entry, ValidationScope scope) {
-    // If the scope is GENOME and sample is NOT environmental.
-    return EntryUtils.isGenome(scope) && !EntryUtils.isEnvironmentalSample(entry);
+  public static boolean isBinomialRequired(Entry entry, EmblEntryValidationPlanProperty property) {
+    if (property.options.get() != null
+        && property.options.get().assemblyType.isPresent()
+        && excludeDistribution(property.options.get().assemblyType.get())) {
+      return false;
+    } else {
+      // If the scope is GENOME and sample is NOT environmental.
+      return EntryUtils.isGenome(property.validationScope.get())
+          && !EntryUtils.isEnvironmentalSample(entry);
+    }
+  }
+
+  public static boolean excludeDistribution(String assemblyType) {
+    return AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType)
+        || AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)
+        || AssemblyType.CLINICALISOLATEASSEMBLY.getValue().equalsIgnoreCase(assemblyType);
   }
 }

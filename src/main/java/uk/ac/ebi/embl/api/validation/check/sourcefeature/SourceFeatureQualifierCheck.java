@@ -83,8 +83,7 @@ public class SourceFeatureQualifierCheck extends EntryValidationCheck {
         reportError(entry.getOrigin(), NON_UNIQUE_ORGANISM_MESSAGE_ID, source.getScientificName());
       if (source != null && source.getScientificName() != null) {
         boolean binomialRequired =
-            EntryUtils.isBinomialRequired(
-                entry, getEmblEntryValidationPlanProperty().validationScope.get());
+            EntryUtils.isBinomialRequired(entry, getEmblEntryValidationPlanProperty());
         boolean isOrganismSubmittable =
             getEmblEntryValidationPlanProperty()
                 .taxonClient

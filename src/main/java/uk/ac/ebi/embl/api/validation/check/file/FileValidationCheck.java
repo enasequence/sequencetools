@@ -47,6 +47,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtilsImpl;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.ReferenceUtils;
 import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
@@ -751,15 +752,9 @@ public abstract class FileValidationCheck {
     return true;
   }
 
-  public static boolean excludeDistribution(String assemblyType) {
-    return AssemblyType.BINNEDMETAGENOME.getValue().equalsIgnoreCase(assemblyType)
-        || AssemblyType.PRIMARYMETAGENOME.getValue().equalsIgnoreCase(assemblyType)
-        || AssemblyType.CLINICALISOLATEASSEMBLY.getValue().equalsIgnoreCase(assemblyType);
-  }
-
   void writeEntryToFile(Entry entry, SubmissionFile submissionFile) throws IOException {
     if (!getOptions().forceReducedFlatfileCreation
-        && (getOptions().isWebinCLI || excludeDistribution(sharedInfo.assemblyType))) {
+        && (getOptions().isWebinCLI || EntryUtils.excludeDistribution(sharedInfo.assemblyType))) {
       return;
     }
     if (getOptions().getEntryValidationPlanProperty().validationScope.get()

@@ -158,7 +158,8 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
             "Invalid assembly name:" + manifest.getName(),
             ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
-      if (((GenomeManifest) manifest).getAssemblyType().equals(AssemblyType.COVID_19_OUTBREAK)
+      String assemblyType = ((GenomeManifest) manifest).getAssemblyType();
+      if (assemblyType.equals(AssemblyType.COVID_19_OUTBREAK)
           && !manifest.getSample().getTaxId().equals(COVID_19_OUTBREAK_TAX_ID)) {
         String msg =
             String.format(
@@ -168,6 +169,7 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         throw new ValidationEngineException(
             msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
+      options.assemblyType = Optional.of(assemblyType);
       options.context = Optional.of(Context.genome);
       options.submissionFiles =
           Optional.of(setGenomeOptions((GenomeManifest) manifest, assemblyInfo));

@@ -17,6 +17,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class EmblEntryValidationPlanProperty {
@@ -55,5 +56,8 @@ public class EmblEntryValidationPlanProperty {
   public final ValidationPlanProperty<String> biosamplesWebinUsername =
       new ValidationPlanProperty<>(null);
   public final ValidationPlanProperty<String> biosamplesWebinPassword =
+      new ValidationPlanProperty<>(null);
+
+  public final ValidationPlanProperty<SubmissionOptions> options =
       new ValidationPlanProperty<>(null);
 }

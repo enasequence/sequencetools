@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.check.file.*;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.report.DefaultSubmissionReporter;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
@@ -116,8 +117,7 @@ public class SubmissionValidationPlan {
                 getSequencecount(2),
                 assemblyType));
 
-        if (!options.isWebinCLI
-            && !FileValidationCheck.excludeDistribution(sharedInfo.assemblyType)) {
+        if (!options.isWebinCLI && !EntryUtils.excludeDistribution(sharedInfo.assemblyType)) {
           writeUnplacedList();
         }
       } else {

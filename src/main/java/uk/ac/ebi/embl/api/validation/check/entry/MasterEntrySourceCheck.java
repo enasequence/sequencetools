@@ -57,8 +57,7 @@ public class MasterEntrySourceCheck extends EntryValidationCheck {
 
     if (getEmblEntryValidationPlanProperty().taxonClient.get() != null) {
       boolean binomialRequired =
-          EntryUtils.isBinomialRequired(
-              entry, getEmblEntryValidationPlanProperty().validationScope.get());
+          EntryUtils.isBinomialRequired(entry, getEmblEntryValidationPlanProperty());
       boolean isOrganismSubmittable =
           getEmblEntryValidationPlanProperty()
               .taxonClient

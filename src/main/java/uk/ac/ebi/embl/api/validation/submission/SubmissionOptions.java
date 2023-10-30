@@ -49,6 +49,7 @@ public class SubmissionOptions {
   public Optional<String> biosamplesWebinAuthToken = Optional.empty();
   public Optional<String> biosamplesWebinUsername = Optional.empty();
   public Optional<String> biosamplesWebinPassword = Optional.empty();
+  public Optional<String> assemblyType = Optional.empty();
 
   private EmblEntryValidationPlanProperty property = null;
 
@@ -143,8 +144,6 @@ public class SubmissionOptions {
     property.isFixMode.set(isFixMode);
     property.isFixCds.set(isFixCds);
     if (locusTagPrefixes.isPresent()) property.locus_tag_prefixes.set(locusTagPrefixes.get());
-    if (enproConnection.isPresent()) property.enproConnection.set(enproConnection.get());
-    if (eraproConnection.isPresent()) property.eraproConnection.set(eraproConnection.get());
     if (analysisId.isPresent()) property.analysis_id.set(analysisId.get());
     if (assemblyInfoEntry.isPresent()) {
       Integer mgl =
@@ -173,7 +172,7 @@ public class SubmissionOptions {
       property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
       property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
     }
-
+    property.options.set(this);
     return property;
   }
 

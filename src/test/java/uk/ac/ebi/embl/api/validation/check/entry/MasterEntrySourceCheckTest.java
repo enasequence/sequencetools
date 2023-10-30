@@ -13,15 +13,19 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class MasterEntrySourceCheckTest {
@@ -109,5 +113,46 @@ public class MasterEntrySourceCheckTest {
     entry.addFeature(source);
     ValidationResult result = check.check(entry);
     assertTrue(result.isValid());
+  }
+
+  @Test
+  public void testCheck_validSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
+    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+    TaxonomyClient taxonClient = new TaxonomyClient();
+    property.taxonClient.set(taxonClient);
+    SubmissionOptions options = new SubmissionOptions();
+    options.assemblyType= Optional.of(AssemblyType.PRIMARYMETAGENOME.getValue());
+    property.options.set(options);
+    check.setEmblEntryValidationPlanProperty(property);
+    SourceFeature source = (new FeatureFactory()).createSourceFeature();
+    source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");
+    source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "rgd");
+    source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "ammonia-oxidizing enrichment culture");
+    // source.setTaxId(58134l);
+    entry.addFeature(source);
+    ValidationResult result = check.check(entry);
+    assertTrue(result.isValid());
+  }
+
+  @Test
+  public void testCheck_inValidSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
+    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+    TaxonomyClient taxonClient = new TaxonomyClient();
+    property.taxonClient.set(taxonClient);
+    SubmissionOptions options = new SubmissionOptions();
+    options.assemblyType= Optional.of(AssemblyType.COVID_19_OUTBREAK.getValue());
+    property.options.set(options);
+    check.setEmblEntryValidationPlanProperty(property);
+    SourceFeature source = (new FeatureFactory()).createSourceFeature();
+    source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");
+    source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "rgd");
+    source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "ammonia-oxidizing enrichment culture");
+    // source.setTaxId(58134l);
+    entry.addFeature(source);
+    ValidationResult result = check.check(entry);
+    assertFalse(result.isValid());
+    assertEquals(1, result.count("MasterEntrySourceCheck_2", Severity.ERROR));
   }
 }
