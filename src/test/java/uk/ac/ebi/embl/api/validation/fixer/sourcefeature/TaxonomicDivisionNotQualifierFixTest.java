@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -47,7 +48,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
     featureFactory = new FeatureFactory();
     entry = entryFactory.createEntry();
     sourceFeature = featureFactory.createSourceFeature();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     taxonomyClient = createMock(TaxonomyClient.class);
     property.taxonClient.set(taxonomyClient);
 

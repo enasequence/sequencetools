@@ -13,7 +13,10 @@ package uk.ac.ebi.embl.flatfile.reader;
 import java.io.IOException;
 import junit.framework.TestCase;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.entry.location.*;
+import uk.ac.ebi.embl.api.entry.location.LocalBase;
+import uk.ac.ebi.embl.api.entry.location.LocalRange;
+import uk.ac.ebi.embl.api.entry.location.RemoteBase;
+import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 
 public class FeatureLocationMatcherTest extends TestCase {
 

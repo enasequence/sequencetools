@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SequenceBasesFixTest {
@@ -35,7 +36,7 @@ public class SequenceBasesFixTest {
 
   @Before
   public void setUp() throws Exception {
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();

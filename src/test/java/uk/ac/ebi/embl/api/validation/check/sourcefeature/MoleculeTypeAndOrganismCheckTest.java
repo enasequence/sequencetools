@@ -11,7 +11,8 @@
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -42,7 +44,7 @@ public class MoleculeTypeAndOrganismCheckTest {
     EntryFactory entryFactory = new EntryFactory();
     SequenceFactory sequenceFactory = new SequenceFactory();
     FeatureFactory featureFactory = new FeatureFactory();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     entry = entryFactory.createEntry();
     source = featureFactory.createSourceFeature();
     entry.addFeature(source);

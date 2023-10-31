@@ -21,6 +21,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class AssemblyInfoNameCheckTest {
@@ -32,7 +33,7 @@ public class AssemblyInfoNameCheckTest {
   public void setUp() throws SQLException {
     check = new AssemblyInfoNameCheck();
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     planProperty.analysis_id.set("ERZ0001");
     check.setEmblEntryValidationPlanProperty(planProperty);
   }

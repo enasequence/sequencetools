@@ -10,7 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -24,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class FeatureLocationCheckTest {
@@ -36,7 +38,7 @@ public class FeatureLocationCheckTest {
   public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     check = new FeatureLocationCheck();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
 
     entryDAOUtils = createMock(EntryDAOUtils.class);

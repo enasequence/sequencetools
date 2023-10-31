@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 /**
@@ -38,7 +39,7 @@ public class FeatureKeyCheckTest {
   public void setUp() throws SQLException {
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("misc_feature");
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
 
     GlobalDataSets.addTestDataSet(
         GlobalDataSetFile.FEATURE_KEYS,

@@ -32,6 +32,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class NonContoAGPFixTest {
@@ -57,7 +58,7 @@ public class NonContoAGPFixTest {
     entry.setSequence(sequenceFactory.createSequence());
     check = new NonContoAGPFix();
     entryDAOUtils = createMock(EntryDAOUtils.class);
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     assemblyGapFeature = featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
     Order<Location> order = new Order<Location>();
     order.addLocation(locationFactory.createLocalRange(12L, 21L));

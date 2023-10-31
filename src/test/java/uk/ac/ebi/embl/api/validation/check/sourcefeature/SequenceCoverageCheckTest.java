@@ -10,7 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
@@ -27,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -43,7 +45,7 @@ public class SequenceCoverageCheckTest {
     featureFactory = new FeatureFactory();
     check = new SequenceCoverageCheck();
 
-    EmblEntryValidationPlanProperty planProperty = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     planProperty.taxonClient.set(new TaxonomyClient());
     check.setEmblEntryValidationPlanProperty(planProperty);
   }

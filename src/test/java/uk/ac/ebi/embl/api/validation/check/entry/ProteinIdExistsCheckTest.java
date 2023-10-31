@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class ProteinIdExistsCheckTest {
@@ -70,7 +71,7 @@ public class ProteinIdExistsCheckTest {
   public void testCheck_noNewproteinID() throws ValidationEngineException, SQLException {
 
     entry.addFeature(cdsFeature);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.analysis_id.set("ERZ00001");
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
@@ -84,7 +85,7 @@ public class ProteinIdExistsCheckTest {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.analysis_id.set("ERZ00001");
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
@@ -99,7 +100,7 @@ public class ProteinIdExistsCheckTest {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.analysis_id.set("ERZ00001");
     check.setEmblEntryValidationPlanProperty(property);
     check.setEntryDAOUtils(entryDAOUtils);

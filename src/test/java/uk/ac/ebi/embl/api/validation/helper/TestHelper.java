@@ -8,27 +8,15 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package uk.ac.ebi.embl.api.translation;
+package uk.ac.ebi.embl.api.validation.helper;
 
-import static org.junit.Assert.assertEquals;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
-import org.junit.Before;
-import org.junit.Test;
-
-public class TranslationTableTest {
-
-  @Before
-  public void setUp() throws Exception {}
-
-  private final TranslationTableFactory factory = new TranslationTableFactory();
-
-  @Test
-  public void testGetNumber() {
-    assertEquals(Integer.valueOf(1), factory.createTranslationTable(1).getNumber());
-  }
-
-  @Test
-  public void testGetName() {
-    assertEquals("The Standard Code", factory.createTranslationTable(1).getName());
+public class TestHelper {
+  public static EmblEntryValidationPlanProperty testEmblEntryValidationPlanProperty() {
+    EmblEntryValidationPlanProperty property =
+        new EmblEntryValidationPlanProperty(new SubmissionOptions());
+    return property;
   }
 }

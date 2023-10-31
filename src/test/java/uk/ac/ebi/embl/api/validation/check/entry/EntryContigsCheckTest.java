@@ -10,9 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -26,8 +24,12 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class EntryContigsCheckTest {
@@ -56,7 +58,7 @@ public class EntryContigsCheckTest {
     entry.getSequence().addContig(gap2);
     entry.getSequence().addContig(remoteRange3);
     check = new EntryContigsCheck();
-    EmblEntryValidationPlanProperty planProperty = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     entryDAOUtils = createMock(EntryDAOUtils.class);
     check.setEmblEntryValidationPlanProperty(planProperty);
   }

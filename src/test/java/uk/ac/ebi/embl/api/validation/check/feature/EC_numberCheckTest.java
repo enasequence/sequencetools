@@ -10,9 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
@@ -21,8 +19,12 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class EC_numberCheckTest {
@@ -38,7 +40,7 @@ public class EC_numberCheckTest {
     feature = featureFactory.createFeature("feature");
     check = new EC_numberCheck();
     entryDAOUtils = createMock(EntryDAOUtils.class);
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
   }
 

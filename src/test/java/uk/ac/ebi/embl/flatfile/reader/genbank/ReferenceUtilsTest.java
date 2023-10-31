@@ -13,11 +13,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 import java.io.IOException;
 import java.util.Collection;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
 
 public class ReferenceUtilsTest extends GenbankReaderTest {
 

@@ -29,7 +29,7 @@ public class AssemblyInfoProjectIdCheckTest {
   //		check = new AssemblyInfoValidationheck();
   //		ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
   //        EntryDAOUtils entryDAOUtils = createMock(EntryDAOUtils.class);
-  //		planProperty=new EmblEntryValidationPlanProperty();
+  //		planProperty=TestHelper.testEmblEntryValidationPlanProperty();
   //		planProperty.analysis_id.set("ERZ0001");
   //		check = new AssemblyInfoValidationheck();
   //		check.setEmblEntryValidationPlanProperty(planProperty);

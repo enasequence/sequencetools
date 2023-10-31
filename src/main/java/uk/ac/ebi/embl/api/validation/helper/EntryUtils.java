@@ -266,9 +266,9 @@ public class EntryUtils {
   }
 
   public static boolean isBinomialRequired(Entry entry, EmblEntryValidationPlanProperty property) {
-    if (property.options.get() != null
-        && property.options.get().assemblyType.isPresent()
-        && excludeDistribution(property.options.get().assemblyType.get())) {
+    if (property.options != null
+        && property.options.assemblyType != null
+        && excludeDistribution(property.options.assemblyType.getValue())) {
       return false;
     } else {
       // If the scope is GENOME and sample is NOT environmental.

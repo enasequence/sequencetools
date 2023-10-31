@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class HoldDateFixTest {
@@ -36,7 +37,7 @@ public class HoldDateFixTest {
   @Before
   public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();
     check = new HoldDateFix();

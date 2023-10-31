@@ -52,9 +52,9 @@ public class SequenceToGapFeatureBasesFix extends SequenceToGapFeatureBasesCheck
   protected void processMissingGapFeature(Entry entry, NRegion nRegion) {
     // this.entry = entry;
     // newGapFeatureCount=0;
-    if (getEmblEntryValidationPlanProperty().minGapLength.get() != 0) {
+    if (getEmblEntryValidationPlanProperty().options.minGapLength != 0) {
       ERROR_THRESHOLD =
-          getEmblEntryValidationPlanProperty().minGapLength.get() - 1; // >=minimum_gap_length
+          getEmblEntryValidationPlanProperty().options.minGapLength - 1; // >=minimum_gap_length
     } else {
       ERROR_THRESHOLD = Entry.DEFAULT_MIN_GAP_LENGTH;
     }

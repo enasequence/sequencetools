@@ -23,10 +23,14 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.entry.reference.*;
+import uk.ac.ebi.embl.api.entry.reference.Person;
+import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
+import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class Ascii7CharacterFixTest {
@@ -43,7 +47,7 @@ public class Ascii7CharacterFixTest {
   public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     fix.setEmblEntryValidationPlanProperty(property);
 
     EntryFactory entryFactory = new EntryFactory();

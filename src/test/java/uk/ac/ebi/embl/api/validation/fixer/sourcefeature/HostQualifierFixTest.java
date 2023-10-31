@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -35,7 +36,7 @@ public class HostQualifierFixTest {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     source = featureFactory.createSourceFeature();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.taxonClient.set(new TaxonomyClient());
     check = new HostQualifierFix();
     check.setEmblEntryValidationPlanProperty(property);

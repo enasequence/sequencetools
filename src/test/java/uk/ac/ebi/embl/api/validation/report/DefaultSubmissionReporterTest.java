@@ -10,7 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.report;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -18,7 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.DefaultOrigin;
+import uk.ac.ebi.embl.api.validation.Origin;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 
 public class DefaultSubmissionReporterTest {
 

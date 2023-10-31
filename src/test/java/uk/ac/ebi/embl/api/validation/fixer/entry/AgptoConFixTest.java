@@ -28,14 +28,9 @@ import uk.ac.ebi.embl.api.entry.location.Gap;
 import uk.ac.ebi.embl.api.entry.location.RemoteLocation;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.FileType;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class AgptoConFixTest {
@@ -56,7 +51,7 @@ public class AgptoConFixTest {
     entry.setSequence(sequenceFactory.createSequence());
     check = new AgptoConFix();
     entryDAOUtils = createMock(EntryDAOUtils.class);
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     linkageEvidences = new ArrayList<String>();
     linkageEvidences.add("paired-ends");
   }

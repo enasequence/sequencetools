@@ -22,7 +22,10 @@ import uk.ac.ebi.embl.api.entry.reference.Reference;
 import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
 import uk.ac.ebi.embl.api.entry.reference.Submission;
 import uk.ac.ebi.embl.api.entry.reference.Unpublished;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class ReferenceCheckTest {
@@ -36,7 +39,7 @@ public class ReferenceCheckTest {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     ReferenceFactory referenceFactory = new ReferenceFactory();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     reference1 = referenceFactory.createReference();
     reference2 = referenceFactory.createReference();
     Submission submission =

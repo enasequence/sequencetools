@@ -45,7 +45,7 @@ public class EmblEntryValidationPlan extends ValidationPlan {
       fixes.addAll(ValidationUnit.SOURCE_FEATURE_FIXES.getValidationUnit());
     } else {
       checks.addAll(ValidationUnit.SEQUENCE_ENTRY_CHECKS.getValidationUnit());
-      if (planProperty.isFixMode.get()) {
+      if (planProperty.options.isFixMode) {
         fixes.addAll(ValidationUnit.SEQUENCE_ENTRY_FIXES.getValidationUnit());
       }
     }

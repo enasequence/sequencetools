@@ -37,7 +37,8 @@ public class ScaffoldComponentCheck extends EntryValidationCheck {
     result = new ValidationResult();
 
     if (entry == null
-        || getEmblEntryValidationPlanProperty().ignore_errors.get()
+        || (getEmblEntryValidationPlanProperty().options.ignoreError.isPresent()
+            && getEmblEntryValidationPlanProperty().options.ignoreError.get())
         || entry.getSequence().getAgpRows() == null
         || entry.getSequence().getAgpRows().isEmpty()) {
       return result;

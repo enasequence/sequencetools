@@ -28,6 +28,7 @@ import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -48,7 +49,7 @@ public class SourceQualifierMissingFixTest {
     qualifierFactory = new QualifierFactory();
     featureFactory = new FeatureFactory();
     entry = entryFactory.createEntry();
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     planProperty.taxonClient.set(new TaxonomyClient());
     check = new SourceQualifierMissingFix();
     check.setEmblEntryValidationPlanProperty(planProperty);

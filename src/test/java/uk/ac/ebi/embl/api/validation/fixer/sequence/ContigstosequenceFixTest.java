@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class ContigstosequenceFixTest {
@@ -46,7 +47,7 @@ public class ContigstosequenceFixTest {
     locationFactory = new LocationFactory();
     entry = entryFactory.createEntry();
     entry.setSequence(sequenceFactory.createSequence());
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
     property.analysis_id.set("ERZ0001");
     check = new ContigstosequenceFix();

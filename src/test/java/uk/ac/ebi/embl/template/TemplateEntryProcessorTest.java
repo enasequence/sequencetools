@@ -15,7 +15,10 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -270,7 +273,7 @@ public class TemplateEntryProcessorTest {
 
   private TemplateEntryProcessor getTemplateEntryProcessor() {
     Connection con = null;
-    return new TemplateEntryProcessor(con);
+    return new TemplateEntryProcessor(new SubmissionOptions());
   }
 
   private TemplateVariables getTemplateVariables_ERT000002(String organismName) {

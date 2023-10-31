@@ -10,9 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +25,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.taxonomy.taxon.Taxon;
@@ -48,7 +47,7 @@ public class TaxonomicDivisionQualifierCheckTest {
     featureFactory = new FeatureFactory();
     entry = entryFactory.createEntry();
     sourceFeature = featureFactory.createSourceFeature();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     taxonomyClient = createMock(TaxonomyClient.class);
     property.taxonClient.set(taxonomyClient);
 

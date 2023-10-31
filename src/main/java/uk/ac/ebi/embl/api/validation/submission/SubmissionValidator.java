@@ -169,7 +169,7 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         throw new ValidationEngineException(
             msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
-      options.assemblyType = Optional.of(assemblyType);
+      options.assemblyType = AssemblyType.valueOf(assemblyType);
       options.context = Optional.of(Context.genome);
       options.submissionFiles =
           Optional.of(setGenomeOptions((GenomeManifest) manifest, assemblyInfo));

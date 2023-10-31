@@ -27,6 +27,7 @@ import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SequenceToGapFeatureBasesCheckTest {
@@ -47,7 +48,7 @@ public class SequenceToGapFeatureBasesCheckTest {
     qualifierFactory = new QualifierFactory();
     locationFactory = new LocationFactory();
     entry = entryFactory.createEntry();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check = new SequenceToGapFeatureBasesCheck();
     check.setEmblEntryValidationPlanProperty(property);
   }
@@ -234,8 +235,8 @@ public class SequenceToGapFeatureBasesCheckTest {
 
   @Test
   public void testCheck_WGS_with_min_gap_length() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
-    property.minGapLength.set(5);
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.options.minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setDataClass(Entry.WGS_DATACLASS);
     entry.setSequence(
@@ -248,8 +249,8 @@ public class SequenceToGapFeatureBasesCheckTest {
 
   @Test
   public void testCheck_non_WGS_with_min_gap_length() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
-    property.minGapLength.set(5);
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.options.minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setDataClass(Entry.STD_DATACLASS);
     entry.setSequence(

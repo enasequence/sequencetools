@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.template;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
@@ -27,9 +26,9 @@ public class TemplateProcessor {
 
   public TemplateProcessor() {}
 
-  public TemplateProcessor(TemplateInfo templateInfo, Connection connEra) {
+  public TemplateProcessor(TemplateInfo templateInfo, SubmissionOptions options) {
     this.templateInfo = templateInfo;
-    this.entryProcessor = new TemplateEntryProcessor(connEra);
+    this.entryProcessor = new TemplateEntryProcessor(options);
   }
 
   private String getMolTypeFromTemplate() throws Exception {

@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class GaptoAssemblyGapFeatureFixTest {
@@ -37,7 +38,7 @@ public class GaptoAssemblyGapFeatureFixTest {
     entryFactory = new EntryFactory();
     new SequenceFactory();
     featureFactory = new FeatureFactory();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check = new GaptoAssemblyGapFeatureFix();
     check.setEmblEntryValidationPlanProperty(property);

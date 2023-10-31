@@ -21,11 +21,8 @@ import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class AssemblyTopologyFixTest {
@@ -42,7 +39,7 @@ public class AssemblyTopologyFixTest {
     entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();
     check = new AssemblyTopologyFix();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
   }
 
   @Test
@@ -72,7 +69,7 @@ public class AssemblyTopologyFixTest {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.LINEAR);
     entry.setSequence(sequence);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
@@ -85,7 +82,7 @@ public class AssemblyTopologyFixTest {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.LINEAR);
     entry.setSequence(sequence);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
@@ -98,7 +95,7 @@ public class AssemblyTopologyFixTest {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.CIRCULAR);
     entry.setSequence(sequence);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
@@ -111,7 +108,7 @@ public class AssemblyTopologyFixTest {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.CIRCULAR);
     entry.setSequence(sequence);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_SCAFFOLD);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);

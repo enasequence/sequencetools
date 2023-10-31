@@ -26,11 +26,8 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SequenceToGapFeatureBasesFixTest {
@@ -51,9 +48,9 @@ public class SequenceToGapFeatureBasesFixTest {
     qualifierFactory = new QualifierFactory();
     locationFactory = new LocationFactory();
     entry = entryFactory.createEntry();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.EMBL);
-    property.minGapLength.set(7);
+    property.options.minGapLength = 7;
     check = new SequenceToGapFeatureBasesFix();
 
     check.setEmblEntryValidationPlanProperty(property);
@@ -167,8 +164,8 @@ public class SequenceToGapFeatureBasesFixTest {
   @Test
   public void testCheck_fixwithmin_gap_length() throws SQLException {
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
-    property.minGapLength.set(10);
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.options.minGapLength = 10;
     property.validationScope.set(ValidationScope.EMBL);
     check.setEmblEntryValidationPlanProperty(property);
     entry.setSequence(
@@ -192,7 +189,7 @@ public class SequenceToGapFeatureBasesFixTest {
   @Test
   public void testCheck_fix_assembly_scope() throws SQLException {
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     entry.setSequence(
@@ -220,9 +217,9 @@ public class SequenceToGapFeatureBasesFixTest {
   @Test
   public void testCheck_fix_assembly_flag() throws SQLException {
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
-    property.minGapLength.set(7);
+    property.options.minGapLength = 7;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setSequence(
         sequenceFactory.createSequenceByte("aaannnnnnnnaaaaaaa".getBytes())); // 2 lots of n
@@ -247,9 +244,9 @@ public class SequenceToGapFeatureBasesFixTest {
   @Test
   public void testCheck_fix_assembly_gaps() throws SQLException {
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
-    property.minGapLength.set(3);
+    property.options.minGapLength = 3;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setSequence(
         sequenceFactory.createSequenceByte(

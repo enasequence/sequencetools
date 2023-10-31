@@ -12,16 +12,7 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.io.IOException;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
-import uk.ac.ebi.embl.api.entry.reference.Article;
-import uk.ac.ebi.embl.api.entry.reference.Book;
-import uk.ac.ebi.embl.api.entry.reference.ElectronicReference;
-import uk.ac.ebi.embl.api.entry.reference.Patent;
-import uk.ac.ebi.embl.api.entry.reference.Publication;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
-import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.api.entry.reference.Submission;
-import uk.ac.ebi.embl.api.entry.reference.Thesis;
-import uk.ac.ebi.embl.api.entry.reference.Unpublished;
+import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.flatfile.FlatFileDateUtils;

@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.EntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;

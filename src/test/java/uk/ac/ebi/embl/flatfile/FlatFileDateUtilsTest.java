@@ -10,11 +10,12 @@
  */
 package uk.ac.ebi.embl.flatfile;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import org.junit.Test;
 
 public class FlatFileDateUtilsTest {

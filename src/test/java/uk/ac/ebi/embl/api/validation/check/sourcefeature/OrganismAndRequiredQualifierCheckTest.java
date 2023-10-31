@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -41,7 +42,7 @@ public class OrganismAndRequiredQualifierCheckTest {
     taxonomyClient = createMock(TaxonomyClient.class);
     DataRow dataRow = new DataRow("strain,environmental_sample", "Bacteria,Archaea", "ERROR");
 
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.taxonClient.set(taxonomyClient);
     GlobalDataSets.addTestDataSet(GlobalDataSetFile.ORGANISM_REQUIRED_QUALIFIER, dataRow);
     check = new OrganismAndRequiredQualifierCheck();

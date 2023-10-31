@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -47,7 +48,7 @@ public class CdsFeatureTranslationCheckTest {
     entry = entryFactory.createEntry();
     entry.setSequence(sequence);
     TaxonomyClient taxonClient = createMock(TaxonomyClient.class);
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.taxonClient.set(taxonClient);
     check = new CdsFeatureTranslationCheck();
     check.setEmblEntryValidationPlanProperty(property);

@@ -23,6 +23,7 @@ import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class IntronLengthWithinCDSCheckTest {
@@ -61,7 +62,7 @@ public class IntronLengthWithinCDSCheckTest {
   @Test
   public void testCheck_ValidintronAssembly() throws SQLException {
     Join<Location> locationJoin = new Join<Location>();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(30L, 25L));
@@ -76,7 +77,7 @@ public class IntronLengthWithinCDSCheckTest {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
     feature.addQualifier("artificial_location", "low-quality sequence region");
@@ -90,7 +91,7 @@ public class IntronLengthWithinCDSCheckTest {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
     feature.addQualifier("ribosomal_slippage", "low-quality sequence region");
@@ -104,7 +105,7 @@ public class IntronLengthWithinCDSCheckTest {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(9L, 25L));
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
     ValidationResult validationResult = check.check(feature);

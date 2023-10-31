@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class CollectionDateQualifierFixTest {
@@ -41,7 +42,7 @@ public class CollectionDateQualifierFixTest {
     feature = featureFactory.createFeature("feature");
     qualifier = qualifierFactory.createQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
     feature.addQualifier(qualifier);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.EMBL);
     check = new CollectionDateQualifierFix();
     check.setEmblEntryValidationPlanProperty(property);

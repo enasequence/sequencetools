@@ -26,6 +26,7 @@ import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SequenceExistsCheckTest {
@@ -42,7 +43,7 @@ public class SequenceExistsCheckTest {
     locationFactory = new LocationFactory();
     entry = entryFactory.createEntry();
     entry.setDataClass(Entry.STANDARD_DATACLASS);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     check = new SequenceExistsCheck();
     check.setEmblEntryValidationPlanProperty(property);
   }

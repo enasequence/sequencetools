@@ -23,12 +23,8 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class SequenceLengthCheckTest {
@@ -53,7 +49,7 @@ public class SequenceLengthCheckTest {
     feature2 = featureFactory.createFeature(Feature.REPEAT_REGION);
     feature2.addQualifier(Qualifier.SATELLITE_QUALIFIER_NAME, "microsatellite: DC130");
     entry.setDataClass(Entry.EST_DATACLASS);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     check = new SequenceLengthCheck();
     check.setEmblEntryValidationPlanProperty(property);
   }

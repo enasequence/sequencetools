@@ -18,6 +18,7 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class AssemblyInfoMinGapLengthCheckTest {
@@ -29,7 +30,7 @@ public class AssemblyInfoMinGapLengthCheckTest {
   public void setUp() throws SQLException {
     check = new AssemblyInfoMinGapLengthCheck();
     ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     planProperty.analysis_id.set("ERZ0001");
     check.setEmblEntryValidationPlanProperty(planProperty);
   }

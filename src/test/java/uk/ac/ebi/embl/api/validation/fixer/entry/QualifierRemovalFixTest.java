@@ -10,7 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;

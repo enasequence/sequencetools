@@ -33,6 +33,7 @@ import uk.ac.ebi.embl.api.validation.ExtendedResult;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -57,13 +58,14 @@ public class CdsTranslatorTest {
     sourceFeature = featureFactory.createSourceFeature();
     entry.addFeature(cdsFeature);
     entry.addFeature(sourceFeature);
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.options.isFixMode = false;
     property.taxonClient.set(createMock(TaxonomyClient.class));
     cdsTranslator = new CdsTranslator(property);
-    EmblEntryValidationPlanProperty fixingProperty = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty fixingProperty =
+        TestHelper.testEmblEntryValidationPlanProperty();
     fixingProperty.taxonClient.set(createMock(TaxonomyClient.class));
-    fixingProperty.isFixMode.set(true);
-    fixingProperty.isFixCds.set(true);
+    fixingProperty.options.isFixMode = true;
     fixingCdsTranslator = new CdsTranslator(fixingProperty);
   }
 

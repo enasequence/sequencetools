@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;

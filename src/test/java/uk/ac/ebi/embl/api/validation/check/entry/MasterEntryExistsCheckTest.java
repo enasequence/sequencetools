@@ -10,9 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
@@ -21,12 +19,9 @@ import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.XRef;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
 public class MasterEntryExistsCheckTest {
@@ -44,7 +39,7 @@ public class MasterEntryExistsCheckTest {
     entry = entryFactory.createEntry();
     entryDAOUtils = createMock(EntryDAOUtils.class);
     check = new MasterEntryExistsCheck();
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEntryDAOUtils(entryDAOUtils);
     check.setEmblEntryValidationPlanProperty(property);
   }
@@ -57,7 +52,7 @@ public class MasterEntryExistsCheckTest {
   @Test
   public void testCheck_noAnalysisId() throws ValidationEngineException, SQLException {
     entry.setDataClass(Entry.WGS_DATACLASS);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     ValidationResult result = check.check(entry);
@@ -68,7 +63,7 @@ public class MasterEntryExistsCheckTest {
   @Test
   public void testCheck_invalidAnalysisId() throws SQLException, ValidationEngineException {
     entry.setDataClass(Entry.STD_DATACLASS);
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
     property.analysis_id.set("ERZ0001");
     check.setEmblEntryValidationPlanProperty(property);
@@ -83,7 +78,7 @@ public class MasterEntryExistsCheckTest {
   public void testCheck_validAnalysisId() throws SQLException, ValidationEngineException {
     entry.setDataClass(Entry.STD_DATACLASS);
     entry.addXRef(new XRef("BioSample", "sdffg"));
-    property = new EmblEntryValidationPlanProperty();
+    property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
     property.analysis_id.set("ERZ0001");
     check.setEmblEntryValidationPlanProperty(property);

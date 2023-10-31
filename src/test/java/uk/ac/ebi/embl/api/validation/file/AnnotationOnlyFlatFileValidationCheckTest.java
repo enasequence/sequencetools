@@ -10,7 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -97,6 +98,7 @@ public class AnnotationOnlyFlatFileValidationCheckTest extends SubmissionValidat
             .make();
     options.submissionFiles = Optional.of(submissionFiles);
     options.context = Optional.of(Context.genome);
+    options.isFixMode = false;
     options.init();
     check = new AnnotationOnlyFlatfileValidationCheck(options, sharedInfo);
     sharedInfo.annotationDB = db;

@@ -57,9 +57,9 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
       options.setTemplateId(templateId);
       TemplateProcessor templateProcessor;
-      if (options.isWebinCLI) templateProcessor = new TemplateProcessor(templateInfo, null);
+      if (options.isWebinCLI) templateProcessor = new TemplateProcessor(templateInfo, options);
       else {
-        templateProcessor = new TemplateProcessor(templateInfo, options.eraproConnection.get());
+        templateProcessor = new TemplateProcessor(templateInfo, options);
         templateInfo.setAnalysisId(options.analysisId.get());
       }
       FileInputStream submittedDataFis = new FileInputStream(submittedDataFile);

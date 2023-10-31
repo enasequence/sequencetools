@@ -13,8 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -23,7 +21,11 @@ import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -53,7 +55,7 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_validSourcefeature() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
@@ -67,7 +69,7 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_InvalidSourcefeature() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
@@ -83,7 +85,7 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
@@ -100,7 +102,7 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_validSourcefeatureSubmittable() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
@@ -117,13 +119,11 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_validSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
-    SubmissionOptions options = new SubmissionOptions();
-    options.assemblyType= Optional.of(AssemblyType.PRIMARYMETAGENOME.getValue());
-    property.options.set(options);
+    property.options.assemblyType = AssemblyType.PRIMARYMETAGENOME;
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
     source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");
@@ -137,13 +137,12 @@ public class MasterEntrySourceCheckTest {
 
   @Test
   public void testCheck_inValidSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
     SubmissionOptions options = new SubmissionOptions();
-    options.assemblyType= Optional.of(AssemblyType.COVID_19_OUTBREAK.getValue());
-    property.options.set(options);
+    property.options.assemblyType = AssemblyType.COVID_19_OUTBREAK;
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
     source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");

@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 
 public class ChromosomeListChromosomeNameCheckTest {
   private ChromosomeListChromosomeNameCheck check;
@@ -30,7 +30,7 @@ public class ChromosomeListChromosomeNameCheckTest {
   public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
     check = new ChromosomeListChromosomeNameCheck();
-    check.setEmblEntryValidationPlanProperty(new EmblEntryValidationPlanProperty());
+    check.setEmblEntryValidationPlanProperty(TestHelper.testEmblEntryValidationPlanProperty());
   }
 
   @Test

@@ -17,11 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.validation.ExtendedResult;
-import uk.ac.ebi.embl.api.validation.Origin;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.*;
 
 public class TranslatorTest {
 

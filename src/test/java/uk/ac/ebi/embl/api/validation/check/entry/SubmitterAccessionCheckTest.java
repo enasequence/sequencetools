@@ -12,18 +12,20 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.junit.Assert.*;
 
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
 
 public class SubmitterAccessionCheckTest {
 
   private static TestValidationPlan testValidationPlan(ValidationScope validationScope) {
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(validationScope);
     return new TestValidationPlan(property);
   }
@@ -90,6 +92,7 @@ public class SubmitterAccessionCheckTest {
   public void testCheck_OverMaximumLengthSubmitterAccession() throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
+      validationPlan.getProperty().options.ignoreError = Optional.of(false);
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
@@ -114,7 +117,7 @@ public class SubmitterAccessionCheckTest {
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
-      validationPlan.getProperty().ignore_errors.set(true);
+      validationPlan.getProperty().options.ignoreError = Optional.of(true);
 
       ValidationResult result = validationPlan.execute(entry);
       if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -33,7 +34,6 @@ public class SubmissionOptions {
   public Optional<Connection> enproConnection = Optional.empty();
   public Optional<Connection> eraproConnection = Optional.empty();
   public Optional<String> reportDir = Optional.empty();
-  public Optional<Integer> minGapLength = Optional.empty();
   public Optional<String> processDir = Optional.empty();
   public Optional<File> reportFile = Optional.empty();
   public Optional<Boolean> ignoreError = Optional.empty();
@@ -49,7 +49,6 @@ public class SubmissionOptions {
   public Optional<String> biosamplesWebinAuthToken = Optional.empty();
   public Optional<String> biosamplesWebinUsername = Optional.empty();
   public Optional<String> biosamplesWebinPassword = Optional.empty();
-  public Optional<String> assemblyType = Optional.empty();
 
   private EmblEntryValidationPlanProperty property = null;
 
@@ -61,6 +60,8 @@ public class SubmissionOptions {
   public boolean forceReducedFlatfileCreation = false;
   private String projectId;
   private String templateId;
+  public int minGapLength = 0;
+  public AssemblyType assemblyType;
 
   public String getProjectId() {
     return projectId;
@@ -140,39 +141,30 @@ public class SubmissionOptions {
   public EmblEntryValidationPlanProperty getEntryValidationPlanProperty() {
     if (property != null) return property;
 
-    property = new EmblEntryValidationPlanProperty();
-    property.isFixMode.set(isFixMode);
-    property.isFixCds.set(isFixCds);
-    if (locusTagPrefixes.isPresent()) property.locus_tag_prefixes.set(locusTagPrefixes.get());
+    property = new EmblEntryValidationPlanProperty(this);
     if (analysisId.isPresent()) property.analysis_id.set(analysisId.get());
-    if (assemblyInfoEntry.isPresent()) {
-      Integer mgl =
-          minGapLength.isPresent() ? minGapLength.get() : assemblyInfoEntry.get().getMinGapLength();
-      if (mgl != null) property.minGapLength.set(mgl);
-    }
     if (Context.genome.equals(context.get())) {
       property.sequenceNumber.set(1);
     }
-    property.ignore_errors.set(ignoreErrors);
     property.taxonClient.set(new TaxonomyClient());
     property.isRemote.set(isWebinCLI);
 
     if (webinRestUri.isPresent() && webinUsername.isPresent() && webinPassword.isPresent()) {
-      property.webinRestUri.set(webinRestUri.get());
-      property.webinUsername.set(webinUsername.get());
-      property.webinPassword.set(webinPassword.get());
+      property.options.webinRestUri = Optional.of(webinRestUri.get());
+      property.options.webinUsername = Optional.of(webinUsername.get());
+      property.options.webinPassword = Optional.of(webinPassword.get());
     }
 
     if (webinAuthUri.isPresent()
         && biosamplesUri.isPresent()
         && biosamplesWebinUsername.isPresent()
         && biosamplesWebinPassword.isPresent()) {
-      property.webinAuthUri.set(webinAuthUri.get());
-      property.biosamplesUri.set(biosamplesUri.get());
-      property.biosamplesWebinUsername.set(biosamplesWebinUsername.get());
-      property.biosamplesWebinPassword.set(biosamplesWebinPassword.get());
+      property.options.webinAuthUri = Optional.of(webinAuthUri.get());
+      property.options.biosamplesUri = Optional.of(biosamplesUri.get());
+      property.options.biosamplesWebinUsername = Optional.of(biosamplesWebinUsername.get());
+      property.options.biosamplesWebinPassword = Optional.of(biosamplesWebinPassword.get());
     }
-    property.options.set(this);
+    property.options = this;
     return property;
   }
 

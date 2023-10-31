@@ -31,19 +31,19 @@ public class GenomeAssemblyValidationPlan extends ValidationPlan {
     switch (planProperty.fileType.get()) {
       case ASSEMBLYINFO:
         checks.addAll(GenomeAssemblyValidationUnit.ASSEMBLYINFO_CHECKS.getValidationUnit());
-        if (planProperty.isFixMode.get()) {
+        if (planProperty.options.isFixMode) {
           fixes.addAll(GenomeAssemblyValidationUnit.ASSEMBLYINFO_FIXES.getValidationUnit());
         }
 
         break;
       case CHROMOSOMELIST:
         checks.addAll(GenomeAssemblyValidationUnit.CHROMOSOME_LIST_CHECKS.getValidationUnit());
-        if (planProperty.isFixMode.get()) {}
+        if (planProperty.options.isFixMode) {}
 
         break;
       case UNLOCALISEDLIST:
         checks.addAll(GenomeAssemblyValidationUnit.UNLOCALISED_LIST_CHECKS.getValidationUnit());
-        if (planProperty.isFixMode.get()) {}
+        if (planProperty.options.isFixMode) {}
 
         break;
       default:

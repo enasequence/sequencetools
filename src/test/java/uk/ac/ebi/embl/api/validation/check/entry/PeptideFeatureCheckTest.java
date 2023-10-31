@@ -29,6 +29,7 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -48,8 +49,8 @@ public class PeptideFeatureCheckTest {
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
     locationFactory = new LocationFactory();
-    EmblEntryValidationPlanProperty property = new EmblEntryValidationPlanProperty();
-
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.options.isFixMode = false;
     entry = entryFactory.createEntry();
     cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Join<Location> join = new Join<Location>();

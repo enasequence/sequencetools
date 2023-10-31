@@ -35,6 +35,7 @@ import uk.ac.ebi.embl.api.validation.helper.Utils;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlan;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.flatfile.reader.EntryReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.FlatFileWriter;
@@ -51,21 +52,19 @@ public class TemplateEntryProcessor {
   private TemplateInfo templateInfo;
   private final ValidationPlan validationPlan;
   private Connection connEra;
+  private SubmissionOptions options;
   private String molType;
   private final HashMap<String, Sample> sampleCache = new HashMap<String, Sample>();
 
-  public TemplateEntryProcessor(Connection connEra) {
-    this(ValidationScope.EMBL_TEMPLATE);
-    this.connEra = connEra;
+  public TemplateEntryProcessor(SubmissionOptions options) {
+    this(ValidationScope.EMBL_TEMPLATE, options);
+    this.connEra = options.eraproConnection.isPresent() ? options.eraproConnection.get() : null;
   }
 
-  public TemplateEntryProcessor(ValidationScope validationScope) {
+  public TemplateEntryProcessor(ValidationScope validationScope, SubmissionOptions options) {
     EmblEntryValidationPlanProperty emblEntryValidationProperty =
-        new EmblEntryValidationPlanProperty();
+        new EmblEntryValidationPlanProperty(options);
     emblEntryValidationProperty.validationScope.set(validationScope);
-    emblEntryValidationProperty.isDevMode.set(false);
-    emblEntryValidationProperty.isFixMode.set(true);
-    emblEntryValidationProperty.minGapLength.set(0);
     validationPlan = new EmblEntryValidationPlan(emblEntryValidationProperty);
     validationPlan.addMessageBundle(TemplateProcessorConstants.TEMPLATE_MESSAGES_BUNDLE);
     validationPlan.addMessageBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);

@@ -10,7 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;

@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -36,7 +37,7 @@ public class LocustagExistsCheckTest {
   @Before
   public void setUp() throws SQLException {
     EntryFactory entryFactory = new EntryFactory();
-    planProperty = new EmblEntryValidationPlanProperty();
+    planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     planProperty.fileType.set(FileType.EMBL);
     planProperty.taxonClient.set(new TaxonomyClient());
     entry = entryFactory.createEntry();
