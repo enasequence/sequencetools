@@ -61,7 +61,9 @@ public class SubmissionOptions {
   private String projectId;
   private String templateId;
   public int minGapLength = 0;
-  public AssemblyType assemblyType;
+  
+  // Default AssemblyType is CLONEORISOLATE.
+  public AssemblyType assemblyType = AssemblyType.CLONEORISOLATE;
 
   public String getProjectId() {
     return projectId;
@@ -164,7 +166,6 @@ public class SubmissionOptions {
       property.options.biosamplesWebinUsername = Optional.of(biosamplesWebinUsername.get());
       property.options.biosamplesWebinPassword = Optional.of(biosamplesWebinPassword.get());
     }
-    property.options = this;
     return property;
   }
 

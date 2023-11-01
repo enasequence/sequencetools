@@ -151,28 +151,31 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
     if (manifest instanceof GenomeManifest) {
       if (!new AssemblyInfoNameCheck().isValidName(manifest.getName())) {
         reporter.writeToFile(
-            manifest.getReportFile(),
-            Severity.ERROR,
-            "Invalid assembly name:" + manifest.getName());
+                manifest.getReportFile(),
+                Severity.ERROR,
+                "Invalid assembly name:" + manifest.getName());
         throw new ValidationEngineException(
-            "Invalid assembly name:" + manifest.getName(),
-            ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+                "Invalid assembly name:" + manifest.getName(),
+                ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
-      String assemblyType = ((GenomeManifest) manifest).getAssemblyType();
-      if (assemblyType.equals(AssemblyType.COVID_19_OUTBREAK)
-          && !manifest.getSample().getTaxId().equals(COVID_19_OUTBREAK_TAX_ID)) {
+      String assemblyTypeFromManifest = ((GenomeManifest) manifest).getAssemblyType();
+      if (assemblyTypeFromManifest != null) {
+        options.assemblyType = AssemblyType.valueOf(assemblyTypeFromManifest);
+      }
+      if (options.assemblyType.equals(AssemblyType.COVID_19_OUTBREAK)
+              && !manifest.getSample().getTaxId().equals(COVID_19_OUTBREAK_TAX_ID)) {
         String msg =
-            String.format(
-                "Sample organism must be 'Severe acute respiratory syndrome coronavirus 2' (taxid %d) for %s genomes.",
-                COVID_19_OUTBREAK_TAX_ID, AssemblyType.COVID_19_OUTBREAK);
+                String.format(
+                        "Sample organism must be 'Severe acute respiratory syndrome coronavirus 2' (taxid %d) for %s genomes.",
+                        COVID_19_OUTBREAK_TAX_ID, AssemblyType.COVID_19_OUTBREAK);
         reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, msg);
         throw new ValidationEngineException(
-            msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+                msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
-      options.assemblyType = AssemblyType.valueOf(assemblyType);
+
       options.context = Optional.of(Context.genome);
       options.submissionFiles =
-          Optional.of(setGenomeOptions((GenomeManifest) manifest, assemblyInfo));
+              Optional.of(setGenomeOptions((GenomeManifest) manifest, assemblyInfo));
     } else if (manifest instanceof TranscriptomeManifest) {
       options.context = Optional.of(Context.transcriptome);
       options.submissionFiles =

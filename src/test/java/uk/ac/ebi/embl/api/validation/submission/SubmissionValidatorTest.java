@@ -65,7 +65,6 @@ public class SubmissionValidatorTest {
     study.setLocusTags(Collections.singletonList("SPLJ"));
     manifest.setStudy(study);
 
-    ((GenomeManifest) manifest).setAssemblyType("SEQUENCE_ASSEMBLY");
     ((GenomeManifest) manifest).setMoleculeType("genomic DNA");
     manifest.setAddress("wellcome genome campus");
     manifest.setAuthors("Senthil.V");
@@ -76,7 +75,6 @@ public class SubmissionValidatorTest {
     assertEquals("PRJ1234", infoEntry.getStudyId());
     assertEquals("wellcome genome campus", infoEntry.getAddress());
     assertEquals("Senthil.V", infoEntry.getAuthors());
-    assertEquals("SEQUENCE_ASSEMBLY", infoEntry.getAssemblyType());
     assertEquals("SAM1234", infoEntry.getBiosampleId());
     assertEquals("genomic DNA", infoEntry.getMoleculeType());
     assertEquals("SPLJ", options.locusTagPrefixes.get().get(0));
@@ -147,8 +145,7 @@ public class SubmissionValidatorTest {
     study.setBioProjectId("PRJ1234");
     study.setLocusTags(Collections.singletonList("SPLJ"));
     manifest.setStudy(study);
-
-    ((GenomeManifest) manifest).setAssemblyType("SEQUENCE_ASSEMBLY");
+    
     ((GenomeManifest) manifest).setMoleculeType("genomic DNA");
     manifest.setAddress("wellcome genome campus");
     manifest.setAuthors("Senthil.V");
@@ -159,7 +156,6 @@ public class SubmissionValidatorTest {
     assertEquals("PRJ1234", infoEntry.getStudyId());
     assertEquals("wellcome genome campus", infoEntry.getAddress());
     assertEquals("Senthil.V", infoEntry.getAuthors());
-    assertEquals("SEQUENCE_ASSEMBLY", infoEntry.getAssemblyType());
     assertEquals("SAM1234", infoEntry.getBiosampleId());
     assertEquals("genomic DNA", infoEntry.getMoleculeType());
     assertEquals("SPLJ", options.locusTagPrefixes.get().get(0));

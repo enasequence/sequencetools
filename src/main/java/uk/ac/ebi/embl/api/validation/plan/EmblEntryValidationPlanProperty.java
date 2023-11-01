@@ -21,7 +21,7 @@ import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 public class EmblEntryValidationPlanProperty {
   public final ValidationPlanProperty<ValidationScope> validationScope =
       new ValidationPlanProperty<>(ValidationScope.EMBL);
-    public final ValidationPlanProperty<Connection> enproConnection =
+  public final ValidationPlanProperty<Connection> enproConnection =
       new ValidationPlanProperty<>(null);
   public final ValidationPlanProperty<Connection> eraproConnection =
       new ValidationPlanProperty<>(null);
@@ -37,7 +37,7 @@ public class EmblEntryValidationPlanProperty {
   public final ValidationPlanProperty<Integer> sequenceNumber = new ValidationPlanProperty<>(0);
   public final ValidationPlanProperty<Boolean> ncbiCon = new ValidationPlanProperty<>(false);
   public final ValidationPlanProperty<Boolean> isSourceUpdate = new ValidationPlanProperty<>(false);
-  public SubmissionOptions options = null;
+  public final SubmissionOptions options;
 
   public EmblEntryValidationPlanProperty(SubmissionOptions options) {
     this.options = options;
