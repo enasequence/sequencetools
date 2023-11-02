@@ -144,6 +144,8 @@ public class SubmissionOptions {
     if (property != null) return property;
 
     property = new EmblEntryValidationPlanProperty(this);
+    if (enproConnection.isPresent()) property.enproConnection.set(enproConnection.get());
+    if (eraproConnection.isPresent()) property.eraproConnection.set(eraproConnection.get());
     if (analysisId.isPresent()) property.analysis_id.set(analysisId.get());
     if (Context.genome.equals(context.get())) {
       property.sequenceNumber.set(1);
