@@ -10,9 +10,6 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +17,7 @@ import java.util.List;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
@@ -30,6 +28,8 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
+
+import static org.junit.Assert.*;
 
 public class SubmissionValidatorTest {
   @Test
@@ -310,5 +310,15 @@ public class SubmissionValidatorTest {
       assertTrue(e.getMessage().contains("Invalid assembly name"));
       throw e;
     }
+  }
+
+  @Test
+  public void testGetAssemblyType() throws ValidationEngineException {
+    SubmissionValidator validator = new SubmissionValidator();
+    for (AssemblyType assemblyType : AssemblyType.values()) {
+      assertNotNull(validator.getAssemblyType(assemblyType.getValue()));
+    }
+
+    assertNull(validator.getAssemblyType("Invalid"));
   }
 }

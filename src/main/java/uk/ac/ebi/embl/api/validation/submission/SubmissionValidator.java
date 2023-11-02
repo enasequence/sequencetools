@@ -10,8 +10,11 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
+import java.awt.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -158,9 +161,9 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
                 "Invalid assembly name:" + manifest.getName(),
                 ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
-      String assemblyTypeFromManifest = ((GenomeManifest) manifest).getAssemblyType();
+      AssemblyType assemblyTypeFromManifest = getAssemblyType(((GenomeManifest) manifest).getAssemblyType());
       if (assemblyTypeFromManifest != null) {
-        options.assemblyType = AssemblyType.valueOf(assemblyTypeFromManifest);
+        options.assemblyType = assemblyTypeFromManifest;
       }
       if (options.assemblyType.equals(AssemblyType.COVID_19_OUTBREAK)
               && !manifest.getSample().getTaxId().equals(COVID_19_OUTBREAK_TAX_ID)) {
@@ -207,6 +210,21 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
       attributesMap.put(attribute.getName(), attribute.getValue());
     }
     return attributesMap;
+  }
+
+  public static AssemblyType getAssemblyType(String assemblyTypeStr) throws ValidationEngineException {
+    try {
+      if (assemblyTypeStr != null) {
+        for (AssemblyType assemblyType : AssemblyType.values()) {
+          if (assemblyType.getValue().equalsIgnoreCase(assemblyTypeStr)) {
+            return assemblyType;
+          }
+        }
+      }
+    }catch (IllegalArgumentException ex){
+      throw new ValidationEngineException("No AssemblyType found for type: "  + assemblyTypeStr);
+    }
+    return null;
   }
 
   private SubmissionFiles setGenomeOptions(
