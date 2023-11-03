@@ -61,7 +61,7 @@ public class SubmissionOptions {
   private String projectId;
   private String templateId;
   public int minGapLength = 0;
-  
+
   // Default AssemblyType is CLONEORISOLATE.
   public AssemblyType assemblyType = AssemblyType.CLONEORISOLATE;
 
@@ -154,19 +154,19 @@ public class SubmissionOptions {
     property.isRemote.set(isWebinCLI);
 
     if (webinRestUri.isPresent() && webinUsername.isPresent() && webinPassword.isPresent()) {
-      property.options.webinRestUri = Optional.of(webinRestUri.get());
-      property.options.webinUsername = Optional.of(webinUsername.get());
-      property.options.webinPassword = Optional.of(webinPassword.get());
+      property.getOptions().webinRestUri = Optional.of(webinRestUri.get());
+      property.getOptions().webinUsername = Optional.of(webinUsername.get());
+      property.getOptions().webinPassword = Optional.of(webinPassword.get());
     }
 
     if (webinAuthUri.isPresent()
         && biosamplesUri.isPresent()
         && biosamplesWebinUsername.isPresent()
         && biosamplesWebinPassword.isPresent()) {
-      property.options.webinAuthUri = Optional.of(webinAuthUri.get());
-      property.options.biosamplesUri = Optional.of(biosamplesUri.get());
-      property.options.biosamplesWebinUsername = Optional.of(biosamplesWebinUsername.get());
-      property.options.biosamplesWebinPassword = Optional.of(biosamplesWebinPassword.get());
+      property.getOptions().webinAuthUri = Optional.of(webinAuthUri.get());
+      property.getOptions().biosamplesUri = Optional.of(biosamplesUri.get());
+      property.getOptions().biosamplesWebinUsername = Optional.of(biosamplesWebinUsername.get());
+      property.getOptions().biosamplesWebinPassword = Optional.of(biosamplesWebinPassword.get());
     }
     return property;
   }

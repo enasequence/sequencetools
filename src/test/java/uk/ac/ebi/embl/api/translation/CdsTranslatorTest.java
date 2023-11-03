@@ -59,13 +59,13 @@ public class CdsTranslatorTest {
     entry.addFeature(cdsFeature);
     entry.addFeature(sourceFeature);
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
-    property.options.isFixMode = false;
+    property.getOptions().isFixMode = false;
     property.taxonClient.set(createMock(TaxonomyClient.class));
     cdsTranslator = new CdsTranslator(property);
     EmblEntryValidationPlanProperty fixingProperty =
         TestHelper.testEmblEntryValidationPlanProperty();
     fixingProperty.taxonClient.set(createMock(TaxonomyClient.class));
-    fixingProperty.options.isFixMode = true;
+    fixingProperty.getOptions().isFixMode = true;
     fixingCdsTranslator = new CdsTranslator(fixingProperty);
   }
 

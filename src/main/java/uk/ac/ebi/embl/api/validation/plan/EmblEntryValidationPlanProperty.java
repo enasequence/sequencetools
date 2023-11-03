@@ -37,9 +37,13 @@ public class EmblEntryValidationPlanProperty {
   public final ValidationPlanProperty<Integer> sequenceNumber = new ValidationPlanProperty<>(0);
   public final ValidationPlanProperty<Boolean> ncbiCon = new ValidationPlanProperty<>(false);
   public final ValidationPlanProperty<Boolean> isSourceUpdate = new ValidationPlanProperty<>(false);
-  public final SubmissionOptions options;
+  private final SubmissionOptions options;
 
   public EmblEntryValidationPlanProperty(SubmissionOptions options) {
     this.options = options;
+  }
+
+  public SubmissionOptions getOptions() {
+    return options;
   }
 }

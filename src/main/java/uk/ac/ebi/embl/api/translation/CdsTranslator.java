@@ -210,7 +210,7 @@ public class CdsTranslator {
   private void createTranslator(
       CdsFeature cds, Entry entry, ExtendedResult<TranslationResult> validationResult) {
     translator = new Translator();
-    if (planProperty.options.isFixMode) {
+    if (planProperty.getOptions().isFixMode) {
       // translator.setFixDegenarateStartCodon(true);//Not implemented
       translator.setFixNoStartCodonMake5Partial(true);
       translator.setFixCodonStartNotOneMake5Partial(true);

@@ -92,7 +92,7 @@ public class SubmitterAccessionCheckTest {
   public void testCheck_OverMaximumLengthSubmitterAccession() throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
-      validationPlan.getProperty().options.ignoreError = Optional.of(false);
+      validationPlan.getProperty().getOptions().ignoreError = Optional.of(false);
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
@@ -117,7 +117,7 @@ public class SubmitterAccessionCheckTest {
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
-      validationPlan.getProperty().options.ignoreError = Optional.of(true);
+      validationPlan.getProperty().getOptions().ignoreError = Optional.of(true);
 
       ValidationResult result = validationPlan.execute(entry);
       if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME

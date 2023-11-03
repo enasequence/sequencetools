@@ -10,6 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +30,6 @@ import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Study;
-
-import static org.junit.Assert.*;
 
 public class SubmissionValidatorTest {
   @Test
@@ -145,7 +145,7 @@ public class SubmissionValidatorTest {
     study.setBioProjectId("PRJ1234");
     study.setLocusTags(Collections.singletonList("SPLJ"));
     manifest.setStudy(study);
-    
+
     ((GenomeManifest) manifest).setMoleculeType("genomic DNA");
     manifest.setAddress("wellcome genome campus");
     manifest.setAuthors("Senthil.V");

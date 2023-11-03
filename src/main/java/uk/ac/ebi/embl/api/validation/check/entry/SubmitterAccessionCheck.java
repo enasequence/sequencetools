@@ -34,8 +34,8 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
       } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH
-          && getEmblEntryValidationPlanProperty().options.ignoreError.isPresent()
-          && !getEmblEntryValidationPlanProperty().options.ignoreError.get()) {
+          && getEmblEntryValidationPlanProperty().getOptions().ignoreError.isPresent()
+          && !getEmblEntryValidationPlanProperty().getOptions().ignoreError.get()) {
         reportError(
             entry.getOrigin(),
             SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,

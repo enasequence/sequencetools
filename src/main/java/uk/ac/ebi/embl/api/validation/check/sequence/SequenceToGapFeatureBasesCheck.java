@@ -159,8 +159,8 @@ public class SequenceToGapFeatureBasesCheck extends EntryValidationCheck {
 
   protected void processMissingGapFeature(Entry entry, NRegion nRegion) {
 
-    if (getEmblEntryValidationPlanProperty().options.minGapLength != 0) {
-      ERROR_THRESHOLD = getEmblEntryValidationPlanProperty().options.minGapLength;
+    if (getEmblEntryValidationPlanProperty().getOptions().minGapLength != 0) {
+      ERROR_THRESHOLD = getEmblEntryValidationPlanProperty().getOptions().minGapLength;
     } else {
       ERROR_THRESHOLD = Entry.DEFAULT_MIN_GAP_LENGTH;
     }

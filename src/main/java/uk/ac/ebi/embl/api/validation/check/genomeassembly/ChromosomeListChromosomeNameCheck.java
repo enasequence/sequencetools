@@ -47,8 +47,8 @@ public class ChromosomeListChromosomeNameCheck
           entry.getOrigin(), MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR, entry.getObjectName());
     }
     if (!(getEmblEntryValidationPlanProperty() != null
-            && getEmblEntryValidationPlanProperty().options.ignoreError.isPresent()
-            && getEmblEntryValidationPlanProperty().options.ignoreError.get())
+            && getEmblEntryValidationPlanProperty().getOptions().ignoreError.isPresent()
+            && getEmblEntryValidationPlanProperty().getOptions().ignoreError.get())
         && Arrays.stream(chromosomeNamesToRejectArray)
             .anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(), x))) {
       reportError(

@@ -236,7 +236,7 @@ public class SequenceToGapFeatureBasesCheckTest {
   @Test
   public void testCheck_WGS_with_min_gap_length() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
-    property.options.minGapLength = 5;
+    property.getOptions().minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setDataClass(Entry.WGS_DATACLASS);
     entry.setSequence(
@@ -250,7 +250,7 @@ public class SequenceToGapFeatureBasesCheckTest {
   @Test
   public void testCheck_non_WGS_with_min_gap_length() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
-    property.options.minGapLength = 5;
+    property.getOptions().minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);
     entry.setDataClass(Entry.STD_DATACLASS);
     entry.setSequence(

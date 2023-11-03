@@ -50,7 +50,7 @@ public class PeptideFeatureCheckTest {
     featureFactory = new FeatureFactory();
     locationFactory = new LocationFactory();
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
-    property.options.isFixMode = false;
+    property.getOptions().isFixMode = false;
     entry = entryFactory.createEntry();
     cdsFeature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Join<Location> join = new Join<Location>();

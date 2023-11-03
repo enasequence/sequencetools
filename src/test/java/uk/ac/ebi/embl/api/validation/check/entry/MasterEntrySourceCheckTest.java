@@ -123,7 +123,7 @@ public class MasterEntrySourceCheckTest {
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
-    property.options.assemblyType = AssemblyType.PRIMARYMETAGENOME;
+    property.getOptions().assemblyType = AssemblyType.PRIMARYMETAGENOME;
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
     source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");
@@ -142,7 +142,7 @@ public class MasterEntrySourceCheckTest {
     TaxonomyClient taxonClient = new TaxonomyClient();
     property.taxonClient.set(taxonClient);
     SubmissionOptions options = new SubmissionOptions();
-    property.options.assemblyType = AssemblyType.COVID_19_OUTBREAK;
+    property.getOptions().assemblyType = AssemblyType.COVID_19_OUTBREAK;
     check.setEmblEntryValidationPlanProperty(property);
     SourceFeature source = (new FeatureFactory()).createSourceFeature();
     source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");

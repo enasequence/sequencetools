@@ -92,13 +92,13 @@ public abstract class ValidationPlan {
         eraproDAOUtils =
             new EraproDAOUtilsImpl(
                 planProperty.eraproConnection.get(),
-                planProperty.options.webinRestUri.get(),
-                planProperty.options.webinUsername.get(),
-                planProperty.options.webinPassword.get(),
-                planProperty.options.webinAuthUri.get(),
-                planProperty.options.biosamplesUri.get(),
-                planProperty.options.biosamplesWebinUsername.get(),
-                planProperty.options.biosamplesWebinPassword.get());
+                planProperty.getOptions().webinRestUri.get(),
+                planProperty.getOptions().webinUsername.get(),
+                planProperty.getOptions().webinPassword.get(),
+                planProperty.getOptions().webinAuthUri.get(),
+                planProperty.getOptions().biosamplesUri.get(),
+                planProperty.getOptions().biosamplesWebinUsername.get(),
+                planProperty.getOptions().biosamplesWebinPassword.get());
       }
 
       check.setEraproDAOUtils(eraproDAOUtils);
