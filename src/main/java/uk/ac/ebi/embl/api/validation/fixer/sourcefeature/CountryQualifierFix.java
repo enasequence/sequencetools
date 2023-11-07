@@ -29,20 +29,17 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
 @Description("\"{0}\" qualifier value \"{1}\" is invalid, a note has been added.")
 @ExcludeScope(
     validationScope = {
-      ValidationScope.ARRAYEXPRESS,
       ValidationScope.ASSEMBLY_CHROMOSOME,
       ValidationScope.ASSEMBLY_CONTIG,
       ValidationScope.ASSEMBLY_MASTER,
       ValidationScope.NCBI_MASTER,
       ValidationScope.ASSEMBLY_SCAFFOLD,
       ValidationScope.ASSEMBLY_TRANSCRIPTOME,
-      ValidationScope.EGA,
       ValidationScope.EMBL,
       ValidationScope.EMBL,
       ValidationScope.EMBL_TEMPLATE,
       ValidationScope.EPO,
       ValidationScope.EPO_PEPTIDE,
-      ValidationScope.INSDC
     })
 public class CountryQualifierFix extends FeatureValidationCheck {
   private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";

@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -121,5 +122,14 @@ public class ValidationMessageTest {
     } finally {
       ValidationMessage.setDefaultMessageFormatter(mf);
     }
+  }
+
+  @Test
+  public void testValidationScopeWithGroup() {
+    assertTrue(ValidationScope.NCBI.isInGroup(ValidationScope.Group.NCBI));
+    assertTrue(ValidationScope.NCBI.isInGroup(ValidationScope.Group.PUTFF));
+
+    assertTrue(ValidationScope.ASSEMBLY_MASTER.isInGroup(ValidationScope.Group.ASSEMBLY));
+    assertTrue(ValidationScope.ASSEMBLY_MASTER.isInGroup(ValidationScope.Group.PIPELINE));
   }
 }
