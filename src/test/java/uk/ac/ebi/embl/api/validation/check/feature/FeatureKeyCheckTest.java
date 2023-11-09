@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +35,7 @@ public class FeatureKeyCheckTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("misc_feature");
     property = TestHelper.testEmblEntryValidationPlanProperty();
@@ -118,7 +117,7 @@ public class FeatureKeyCheckTest {
   }
 
   @Test
-  public void testCheck_NoRecomendedQualifier_intron() throws SQLException {
+  public void testCheck_NoRecomendedQualifier_intron() {
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     feature.addQualifier("gene", "ilvE");

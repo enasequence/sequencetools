@@ -40,7 +40,7 @@ public class EntryContigsCheckTest {
   private EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();

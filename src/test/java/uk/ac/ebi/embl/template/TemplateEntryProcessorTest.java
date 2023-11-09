@@ -75,7 +75,7 @@ public class TemplateEntryProcessorTest {
   @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     templateEntryProcessor = getTemplateEntryProcessor();
     SequenceToolsServices.init(
         new WebinSampleRetrievalService(
@@ -346,8 +346,7 @@ public class TemplateEntryProcessorTest {
   }
 
   private Sample getSampleForTest(
-      TemplateEntryProcessor templateEntryProcessor, TemplateVariables templateVariables)
-      throws Exception {
+      TemplateEntryProcessor templateEntryProcessor, TemplateVariables templateVariables) {
 
     return templateEntryProcessor.validateAndGetSample(templateVariables);
   }

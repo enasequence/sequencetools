@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -26,23 +25,23 @@ public class AssemblyInfoCoverageCheckTest {
   private AssemblyInfoCoverageCheck check;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     check = new AssemblyInfoCoverageCheck();
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoCoverage() throws ValidationEngineException {
+  public void testCheck_NoCoverage() {
     assemblyEntry = new AssemblyInfoEntry();
     assertTrue(check.check(assemblyEntry).isValid());
   }
 
   @Test
-  public void testCheck_invalidCoverage() throws ValidationEngineException {
+  public void testCheck_invalidCoverage() {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setCoverage("sdffgdfg");
     ValidationResult result = check.check(assemblyEntry);
@@ -50,7 +49,7 @@ public class AssemblyInfoCoverageCheckTest {
   }
 
   @Test
-  public void testCheck_validCoverage1() throws ValidationEngineException {
+  public void testCheck_validCoverage1() {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setCoverage("123.45x");
     ValidationResult result = check.check(assemblyEntry);
@@ -58,7 +57,7 @@ public class AssemblyInfoCoverageCheckTest {
   }
 
   @Test
-  public void testCheck_validCoverage2() throws ValidationEngineException {
+  public void testCheck_validCoverage2() {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setCoverage("546x");
     ValidationResult result = check.check(assemblyEntry);

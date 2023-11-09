@@ -29,12 +29,12 @@ public class ChromosomeListChromosomeLocationCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_inValidChromosomeLocation() throws ValidationEngineException {
+  public void testCheck_inValidChromosomeLocation() {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -46,7 +46,7 @@ public class ChromosomeListChromosomeLocationCheckTest {
   }
 
   @Test
-  public void testCheck_validChromosomeLocation() throws ValidationEngineException {
+  public void testCheck_validChromosomeLocation() {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");

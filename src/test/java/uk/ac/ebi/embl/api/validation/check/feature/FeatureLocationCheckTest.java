@@ -72,8 +72,7 @@ public class FeatureLocationCheckTest {
   }
 
   @Test
-  public void testCheck_invalidRemoteLocationEMBLScope()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_invalidRemoteLocationEMBLScope() throws ValidationEngineException {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     LocationFactory locationFactory = new LocationFactory();
@@ -85,8 +84,7 @@ public class FeatureLocationCheckTest {
   }
 
   @Test
-  public void testCheck_invalidRemoteLocationNCBIScope()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_invalidRemoteLocationNCBIScope() throws ValidationEngineException {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature intronFeature = featureFactory.createFeature(Feature.INTRON_FEATURE_NAME);
     LocationFactory locationFactory = new LocationFactory();

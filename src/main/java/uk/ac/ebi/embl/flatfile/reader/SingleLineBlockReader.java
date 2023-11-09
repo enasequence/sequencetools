@@ -10,7 +10,6 @@
  */
 package uk.ac.ebi.embl.flatfile.reader;
 
-import java.io.IOException;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
@@ -29,7 +28,7 @@ public abstract class SingleLineBlockReader extends BlockReader {
     else return new FlatFileOrigin(getLineReader().getFileId(), lineNumber);
   }
 
-  protected void readLines() throws IOException {
+  protected void readLines() {
     lineNumber = lineReader.getCurrentLineNumber();
     String line = lineReader.getCurrentShrinkedLine();
     if (line != null && line.length() > 0) {

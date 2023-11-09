@@ -28,7 +28,7 @@ public class FeatureTest {
   private Feature feature;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     feature = new Feature("feat", false);
   }
 

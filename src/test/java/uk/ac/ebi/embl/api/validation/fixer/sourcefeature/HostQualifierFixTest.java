@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
@@ -32,7 +31,7 @@ public class HostQualifierFixTest {
   private HostQualifierFix check;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     source = featureFactory.createSourceFeature();

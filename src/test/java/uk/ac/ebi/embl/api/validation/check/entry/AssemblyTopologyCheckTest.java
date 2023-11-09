@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -34,7 +33,7 @@ public class AssemblyTopologyCheckTest {
   SequenceFactory sequenceFactory = new SequenceFactory();
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();
@@ -43,18 +42,18 @@ public class AssemblyTopologyCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoSequence() throws ValidationEngineException {
+  public void testCheck_NoSequence() {
 
     assertTrue(check.check(entry).isValid());
   }
 
   @Test
-  public void testCheck_sequencewithnoTopology() throws ValidationEngineException, SQLException {
+  public void testCheck_sequencewithnoTopology() {
     Sequence sequence = sequenceFactory.createSequence();
     entry.setSequence(sequence);
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
@@ -64,8 +63,7 @@ public class AssemblyTopologyCheckTest {
   }
 
   @Test
-  public void testCheck_contigsequencewithLinearTopology()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_contigsequencewithLinearTopology() {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.LINEAR);
     entry.setSequence(sequence);
@@ -77,8 +75,7 @@ public class AssemblyTopologyCheckTest {
   }
 
   @Test
-  public void testCheck_NonContigsequencewithLinearTopology()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_NonContigsequencewithLinearTopology() {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.LINEAR);
     entry.setSequence(sequence);
@@ -90,8 +87,7 @@ public class AssemblyTopologyCheckTest {
   }
 
   @Test
-  public void testCheck_ContigsequencewithCircularTopology()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_ContigsequencewithCircularTopology() {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.CIRCULAR);
     entry.setSequence(sequence);
@@ -103,8 +99,7 @@ public class AssemblyTopologyCheckTest {
   }
 
   @Test
-  public void testCheck_NonContigsequencewithCircularTopology()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_NonContigsequencewithCircularTopology() {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setTopology(Topology.CIRCULAR);
     entry.setSequence(sequence);

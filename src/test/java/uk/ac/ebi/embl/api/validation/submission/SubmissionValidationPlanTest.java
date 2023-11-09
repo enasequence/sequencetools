@@ -175,7 +175,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
   @Test
   @Ignore
   public void testGenomeSubmissionWithFastawithValidChromosomeList()
-      throws ValidationEngineException, FlatFileComparatorException {
+      throws ValidationEngineException {
     // String rootPath = "genome"+ RESOURCE_FILE_SEPARATOR+ "sequenceless_chr" +
     // RESOURCE_FILE_SEPARATOR;
     options.context = Optional.of(Context.genome);
@@ -205,8 +205,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
 
   @Test
   public void testGenomeWithFlatfileAGP()
-      throws FlatFileComparatorException, ValidationEngineException, IOException,
-          InterruptedException {
+      throws FlatFileComparatorException, ValidationEngineException {
     String rootPath = "genome" + RESOURCE_FILE_SEPARATOR + "agp_flatfile" + RESOURCE_FILE_SEPARATOR;
     options.context = Optional.of(Context.genome);
     SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -276,7 +275,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
 
   @Test
   public void testGenomeWithFastaAGPUnlocalisedList()
-      throws FlatFileComparatorException, ValidationEngineException, IOException {
+      throws FlatFileComparatorException, ValidationEngineException {
     String rootPath =
         "genome" + RESOURCE_FILE_SEPARATOR + "agp_unlocalised" + RESOURCE_FILE_SEPARATOR;
 
@@ -479,8 +478,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testValidTranscriptomeFastaSubmission()
-      throws ValidationEngineException, FlatFileComparatorException {
+  public void testValidTranscriptomeFastaSubmission() throws ValidationEngineException {
     options.context = Optional.of(Context.transcriptome);
     SubmissionFiles submissionFiles = new SubmissionFiles();
     SubmissionFile subFile =
@@ -496,8 +494,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testValidTranscriptomeFlatFileSubmission()
-      throws ValidationEngineException, FlatFileComparatorException {
+  public void testValidTranscriptomeFlatFileSubmission() throws ValidationEngineException {
     options.context = Optional.of(Context.transcriptome);
     SubmissionFiles submissionFiles = new SubmissionFiles();
     submissionFiles.addFile(

@@ -11,7 +11,6 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -24,7 +23,7 @@ public class ChromosomeListChromosomeTypeCheck
   private final String MESSAGE_KEY_INVALID_CHROMOSOME_TYPE_ERROR =
       "ChromosomeListChromosomeTypeValidCheck";
 
-  public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {
+  public ValidationResult check(ChromosomeEntry entry) {
     if (entry == null) {
       return result;
     }

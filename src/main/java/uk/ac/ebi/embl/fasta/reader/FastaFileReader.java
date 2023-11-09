@@ -108,7 +108,7 @@ public class FastaFileReader extends FlatFileEntryReader {
   }
 
   @Override
-  protected void skipLines() throws IOException {
+  protected void skipLines() {
     // TODO Auto-generated method stub
   }
 }

@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class GaptoAssemblyGapFeatureFixTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     entryFactory = new EntryFactory();
     new SequenceFactory();
@@ -86,7 +85,7 @@ public class GaptoAssemblyGapFeatureFixTest {
   }
 
   @Test
-  public void testCheck_withNoAssemblyScope() throws SQLException {
+  public void testCheck_withNoAssemblyScope() {
     Entry entry = entryFactory.createEntry();
     Feature feature1 = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
     Feature feature2 = featureFactory.createFeature(Feature.GAP_FEATURE_NAME);

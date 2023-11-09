@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -29,7 +28,7 @@ public class AssemblyLevelEntryNameFixTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();
@@ -39,12 +38,12 @@ public class AssemblyLevelEntryNameFixTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoSeqNumber() throws ValidationEngineException, SQLException {
+  public void testCheck_NoSeqNumber() {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     check.check(entry);
@@ -52,7 +51,7 @@ public class AssemblyLevelEntryNameFixTest {
   }
 
   @Test
-  public void testCheck_noEntryName() throws SQLException, ValidationEngineException {
+  public void testCheck_noEntryName() {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     property.sequenceNumber.set(1);
     check.setEmblEntryValidationPlanProperty(property);
@@ -63,7 +62,7 @@ public class AssemblyLevelEntryNameFixTest {
   }
 
   @Test
-  public void testCheck_withEntryName() throws SQLException, ValidationEngineException {
+  public void testCheck_withEntryName() {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     entry.setSubmitterAccession("fgdfgd");

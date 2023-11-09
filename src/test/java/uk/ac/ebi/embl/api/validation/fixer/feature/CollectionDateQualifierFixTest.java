@@ -35,7 +35,7 @@ public class CollectionDateQualifierFixTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     QualifierFactory qualifierFactory = new QualifierFactory();
@@ -84,7 +84,7 @@ public class CollectionDateQualifierFixTest {
   }
 
   @Test
-  public void testNCBICollectionDateFormatDDMmmYY() throws Exception {
+  public void testNCBICollectionDateFormatDDMmmYY() {
     property.validationScope.set(ValidationScope.NCBI);
     check = new CollectionDateQualifierFix();
     check.setEmblEntryValidationPlanProperty(property);
@@ -98,7 +98,7 @@ public class CollectionDateQualifierFixTest {
   }
 
   @Test
-  public void testNCBICollectionDateFormatDMmmYY() throws Exception {
+  public void testNCBICollectionDateFormatDMmmYY() {
     property.validationScope.set(ValidationScope.NCBI);
     check = new CollectionDateQualifierFix();
     check.setEmblEntryValidationPlanProperty(property);
@@ -112,7 +112,7 @@ public class CollectionDateQualifierFixTest {
   }
 
   @Test
-  public void testEMBLCollectionDateFormatDDMmmYY() throws Exception {
+  public void testEMBLCollectionDateFormatDDMmmYY() {
     check = new CollectionDateQualifierFix();
     check.setEmblEntryValidationPlanProperty(property);
     qualifier.setValue("11-Oct-12");

@@ -35,7 +35,7 @@ public class SequenceBasesFixTest {
   public EmblEntryValidationPlanProperty planProperty;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     entryFactory = new EntryFactory();

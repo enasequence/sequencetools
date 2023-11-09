@@ -11,7 +11,6 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -32,7 +31,7 @@ public class AssemblyInfoPlatformCheck extends GenomeAssemblyValidationCheck<Ass
   public static final String MESSAGE_KEY_PLATFORM_ERROR = "AssemblyInfoPlatformMissingCheck";
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
+  public ValidationResult check(AssemblyInfoEntry entry) {
     if (entry == null) return result;
 
     if (entry.getPlatform() == null || entry.getPlatform().isEmpty()) {

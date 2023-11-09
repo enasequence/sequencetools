@@ -21,7 +21,7 @@ public class ElectronicReferenceTest {
   private ElectronicReference electronicReference;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     electronicReference = new ElectronicReference(null, null);
   }
 

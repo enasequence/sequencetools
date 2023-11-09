@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -37,7 +36,7 @@ public class ProteinIdExistsCheckTest {
   private EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryDAOUtils = createMock(EntryDAOUtils.class);
     entryFactory = new EntryFactory();
@@ -49,26 +48,26 @@ public class ProteinIdExistsCheckTest {
   }
 
   @Test
-  public void testCheck_noEntry() throws ValidationEngineException {
+  public void testCheck_noEntry() {
     ValidationResult validationResult = check.check(null);
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noFeatures() throws ValidationEngineException {
+  public void testCheck_noFeatures() {
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noAnalysisIDandAssemblyLevel() throws ValidationEngineException {
+  public void testCheck_noAnalysisIDandAssemblyLevel() {
     entry.addFeature(cdsFeature);
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noNewproteinID() throws ValidationEngineException, SQLException {
+  public void testCheck_noNewproteinID() {
 
     entry.addFeature(cdsFeature);
     property = TestHelper.testEmblEntryValidationPlanProperty();
@@ -81,7 +80,7 @@ public class ProteinIdExistsCheckTest {
   }
 
   @Test
-  public void testCheck_withNewproteinID() throws ValidationEngineException, SQLException {
+  public void testCheck_withNewproteinID() {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);
@@ -96,7 +95,7 @@ public class ProteinIdExistsCheckTest {
   }
 
   @Test
-  public void testCheck_nonAssemblyWithproteinID() throws ValidationEngineException, SQLException {
+  public void testCheck_nonAssemblyWithproteinID() {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);

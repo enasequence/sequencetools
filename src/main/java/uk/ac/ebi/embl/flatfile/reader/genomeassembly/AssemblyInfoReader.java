@@ -147,7 +147,7 @@ public class AssemblyInfoReader extends GCSEntryReader {
   }
 
   @Override
-  public ValidationResult skip() throws IOException {
+  public ValidationResult skip() {
     // TODO Auto-generated method stub
     return null;
   }

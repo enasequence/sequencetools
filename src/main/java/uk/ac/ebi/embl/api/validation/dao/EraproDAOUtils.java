@@ -37,7 +37,7 @@ public interface EraproDAOUtils {
 
   Set<String> getLocusTags(String projectId) throws SQLException;
 
-  SourceFeature getSourceFeature(String sampleId) throws Exception;
+  SourceFeature getSourceFeature(String sampleId);
 
   boolean isProjectValid(String text) throws SQLException;
 

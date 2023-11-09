@@ -37,7 +37,7 @@ public abstract class EmblReaderTest extends TestCase {
     entry.setSequence(sequence);
   }
 
-  protected void setBufferedReader(String string) throws IOException {
+  protected void setBufferedReader(String string) {
     bufferedReader = new BufferedReader(new StringReader(string));
   }
 

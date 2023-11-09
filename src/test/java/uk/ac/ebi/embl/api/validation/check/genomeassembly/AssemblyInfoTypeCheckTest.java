@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -26,23 +25,23 @@ public class AssemblyInfoTypeCheckTest {
   private AssemblyInfoTypeCheck check;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     check = new AssemblyInfoTypeCheck();
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoAssemblyType() throws ValidationEngineException {
+  public void testCheck_NoAssemblyType() {
     assemblyEntry = new AssemblyInfoEntry();
     assertTrue(check.check(assemblyEntry).isValid());
   }
 
   @Test
-  public void testCheck_invalidAssemblyType() throws ValidationEngineException {
+  public void testCheck_invalidAssemblyType() {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setAssemblyType("sdffgdfg");
     ValidationResult result = check.check(assemblyEntry);
@@ -50,7 +49,7 @@ public class AssemblyInfoTypeCheckTest {
   }
 
   @Test
-  public void testCheck_validAssemblytype() throws ValidationEngineException {
+  public void testCheck_validAssemblytype() {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setAssemblyType("clone or isolate");
     ValidationResult result = check.check(assemblyEntry);

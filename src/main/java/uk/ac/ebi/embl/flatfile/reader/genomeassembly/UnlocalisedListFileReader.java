@@ -65,7 +65,7 @@ public class UnlocalisedListFileReader extends GCSEntryReader {
   }
 
   @Override
-  public ValidationResult skip() throws IOException {
+  public ValidationResult skip() {
     return null;
   }
 

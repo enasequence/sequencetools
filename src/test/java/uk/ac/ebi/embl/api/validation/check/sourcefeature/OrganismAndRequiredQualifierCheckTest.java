@@ -14,7 +14,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +33,7 @@ public class OrganismAndRequiredQualifierCheckTest {
   private TaxonomyClient taxonomyClient;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     source = featureFactory.createSourceFeature();

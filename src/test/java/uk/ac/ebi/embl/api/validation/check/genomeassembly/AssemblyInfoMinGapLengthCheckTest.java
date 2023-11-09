@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -27,7 +26,7 @@ public class AssemblyInfoMinGapLengthCheckTest {
   private EmblEntryValidationPlanProperty planProperty;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     check = new AssemblyInfoMinGapLengthCheck();
     ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
     planProperty = TestHelper.testEmblEntryValidationPlanProperty();
@@ -36,7 +35,7 @@ public class AssemblyInfoMinGapLengthCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 }

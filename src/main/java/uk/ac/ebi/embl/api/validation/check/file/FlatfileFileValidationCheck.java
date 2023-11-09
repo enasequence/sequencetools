@@ -155,7 +155,7 @@ public class FlatfileFileValidationCheck extends FileValidationCheck {
   }
 
   @Override
-  public ValidationResult check() throws ValidationEngineException {
+  public ValidationResult check() {
     throw new UnsupportedOperationException();
   }
 

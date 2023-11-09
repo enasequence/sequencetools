@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -38,7 +37,7 @@ public class CdsFeatureTranslationCheckTest {
 
   @SuppressWarnings("deprecation")
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     EntryFactory entryFactory = new EntryFactory();
     SequenceFactory sequenceFactory = new SequenceFactory();
     featureFactory = new FeatureFactory();

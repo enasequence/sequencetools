@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -22,7 +21,7 @@ public class AssemblyInfoCoverageCheck extends GenomeAssemblyValidationCheck<Ass
   private final String MESSAGE_KEY_COVERAGE_ERROR = "AssemblyinfoCoverageCheck";
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
+  public ValidationResult check(AssemblyInfoEntry entry) {
     if (entry == null || entry.getCoverage() == null) return result;
     entry.setCoverage(StringUtils.removeEnd(entry.getCoverage().trim().toLowerCase(), "x"));
     if (!NumberUtils.isNumber(entry.getCoverage()))

@@ -22,7 +22,7 @@ public class SimpleReferenceFactoryTest {
   private ReferenceFactory factory;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     factory = new ReferenceFactory();
   }
 

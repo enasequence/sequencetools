@@ -22,7 +22,7 @@ public class ThesisTest {
   private Thesis thesis;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     thesis = new Thesis();
   }
 

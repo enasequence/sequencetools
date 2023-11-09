@@ -79,7 +79,7 @@ public class ReferenceUtils {
   }
 
   public Reference constructSubmitterReference(SubmitterReference submitterReference)
-      throws ValidationEngineException, UnsupportedEncodingException {
+      throws ValidationEngineException {
     Publication publication = new Publication();
     ReferenceFactory referenceFactory = new ReferenceFactory();
     Reference reference = referenceFactory.createReference();
@@ -134,28 +134,23 @@ public class ReferenceUtils {
     return reference;
   }
 
-  public String getAddressFromSubmissionAccount(SubmissionAccount subAccount)
-      throws ValidationEngineException {
+  public String getAddressFromSubmissionAccount(SubmissionAccount subAccount) {
     if (subAccount == null) {
       return null;
     }
-    try {
-      if (subAccount.isBroker()) {
-        return EntryUtils.concat(
-            ", ",
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getBrokerName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
-      } else {
-        return EntryUtils.concat(
-            ", ",
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCenterName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getLaboratoryName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
-      }
-    } catch (UnsupportedEncodingException e) {
-      throw new ValidationEngineException(e);
+    if (subAccount.isBroker()) {
+      return EntryUtils.concat(
+          ", ",
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getBrokerName()),
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
+    } else {
+      return EntryUtils.concat(
+          ", ",
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCenterName()),
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getLaboratoryName()),
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
+          EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
     }
   }
 

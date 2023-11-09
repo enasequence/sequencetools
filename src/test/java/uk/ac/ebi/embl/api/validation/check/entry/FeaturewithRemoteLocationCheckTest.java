@@ -40,7 +40,7 @@ public class FeaturewithRemoteLocationCheckTest {
   private LocationFactory locationFactory;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -135,7 +135,7 @@ public class FeaturewithRemoteLocationCheckTest {
 
   @Test
   public void testCheck_featurewithLocalLocationwithdbConnection()
-      throws SQLException, ValidationEngineException {
+      throws ValidationEngineException {
     property.enproConnection.set(createMock(Connection.class));
     LocalRange localRange1 = locationFactory.createLocalRange(10L, 20L);
     LocalRange localRange2 = locationFactory.createLocalRange(10L, 20L);

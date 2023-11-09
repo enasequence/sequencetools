@@ -29,19 +29,19 @@ public class AssemblyInfoAnalysisIdCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoAnalysisId() throws ValidationEngineException {
+  public void testCheck_NoAnalysisId() {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     ValidationResult result = check.check(entry);
     assertEquals(1, result.count("AssemblyInfoMissingAnalysisIDCheck", Severity.ERROR));
   }
 
   @Test
-  public void testCheck_InvalidAnalysisId() throws ValidationEngineException {
+  public void testCheck_InvalidAnalysisId() {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     entry.setAnalysisId("ERC090988");
     ValidationResult result = check.check(entry);

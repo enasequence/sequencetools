@@ -27,7 +27,7 @@ public class SegmentFactoryTest implements Sequences {
   private final SegmentFactory segmentFactory = new SegmentFactory();
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testCreateLocalBaseSegment() {
@@ -168,7 +168,7 @@ public class SegmentFactoryTest implements Sequences {
   }
 
   @Test
-  public void testCreateRemoteRange() throws IOException, ValidationEngineException {
+  public void testCreateRemoteRange() throws IOException {
     SequenceRetrievalService sequenceRetrievalService = createMock(SequenceRetrievalService.class);
     expect(sequenceRetrievalService.getSequence(EasyMock.isA(RemoteRange.class)))
         .andReturn(ByteBuffer.wrap("gaccttggacg".getBytes()));
@@ -181,7 +181,7 @@ public class SegmentFactoryTest implements Sequences {
   }
 
   @Test
-  public void testCreateRemoteBase() throws IOException, ValidationEngineException {
+  public void testCreateRemoteBase() throws IOException {
     SequenceRetrievalService sequenceRetrievalService = createMock(SequenceRetrievalService.class);
     expect(sequenceRetrievalService.getSequence(EasyMock.isA(RemoteBase.class)))
         .andReturn(ByteBuffer.wrap("g".getBytes()));
@@ -194,7 +194,7 @@ public class SegmentFactoryTest implements Sequences {
   }
 
   @Test
-  public void testCreateRemoteCompoundLocation() throws ValidationEngineException, IOException {
+  public void testCreateRemoteCompoundLocation() throws IOException {
     SequenceFactory sequenceFactory = new SequenceFactory();
     Sequence sequence = sequenceFactory.createSequenceByte(SEQ10.getBytes());
     LocationFactory locationFactory = new LocationFactory();

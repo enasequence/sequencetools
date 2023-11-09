@@ -148,17 +148,13 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
   @Override
   public Reference getSubmitterReference(String analysisId)
       throws SQLException, ValidationEngineException {
-    try {
-      SubmitterReference submitterReference = fetchSubmissionAccountAndAnalysisCreated(analysisId);
-      if (submitterReference != null) {
-        submitterReference.setSubmissionContacts(
-            fetchSubmissionContacts(submitterReference.getSubmissionAccountId()));
-        return new ReferenceUtils().constructSubmitterReference(submitterReference);
-      } else {
-        throw new ValidationEngineException("Could not retrieve submission account information");
-      }
-    } catch (UnsupportedEncodingException e) {
-      throw new ValidationEngineException(e);
+    SubmitterReference submitterReference = fetchSubmissionAccountAndAnalysisCreated(analysisId);
+    if (submitterReference != null) {
+      submitterReference.setSubmissionContacts(
+          fetchSubmissionContacts(submitterReference.getSubmissionAccountId()));
+      return new ReferenceUtils().constructSubmitterReference(submitterReference);
+    } else {
+      throw new ValidationEngineException("Could not retrieve submission account information");
     }
   }
 
@@ -421,7 +417,7 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
   }
 
   @Override
-  public SourceFeature getSourceFeature(String sampleId) throws Exception {
+  public SourceFeature getSourceFeature(String sampleId) {
     Sample sample = sampleService.getSample(sampleId);
 
     return new SourceFeatureUtils().constructSourceFeature(sample, new TaxonomyClient());

@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +67,7 @@ public class AgptoConFixTest {
   }
 
   @Test
-  public void testCheck_withnocomponentAccession() throws ValidationEngineException, SQLException {
+  public void testCheck_withnocomponentAccession() throws ValidationEngineException {
 
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
@@ -110,7 +109,7 @@ public class AgptoConFixTest {
   }
 
   @Test
-  public void testCheck_withComponentAccession() throws ValidationEngineException, SQLException {
+  public void testCheck_withComponentAccession() throws ValidationEngineException {
 
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
@@ -197,8 +196,7 @@ public class AgptoConFixTest {
   }
 
   @Test
-  public void testCheck_withComponentAccessionNegOrientation()
-      throws ValidationEngineException, SQLException {
+  public void testCheck_withComponentAccessionNegOrientation() throws ValidationEngineException {
 
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();
@@ -284,7 +282,7 @@ public class AgptoConFixTest {
   }
 
   @Test
-  public void testCheck_withNoLinkageEvidence() throws ValidationEngineException, SQLException {
+  public void testCheck_withNoLinkageEvidence() throws ValidationEngineException {
 
     AgpRow Componentrow = new AgpRow();
     AgpRow gaprow = new AgpRow();

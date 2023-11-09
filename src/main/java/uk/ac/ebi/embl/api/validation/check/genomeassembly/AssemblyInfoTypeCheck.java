@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import java.util.Arrays;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -22,7 +21,7 @@ public class AssemblyInfoTypeCheck extends GenomeAssemblyValidationCheck<Assembl
   private final String MESSAGE_KEY_ASSEMBLY_TYPE_ERROR = "AssemblyinfoAssemblyTypeCheck";
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
+  public ValidationResult check(AssemblyInfoEntry entry) {
 
     if (entry == null || entry.getAssemblyType() == null) return result;
     if (!Arrays.stream(AssemblyType.class.getEnumConstants())

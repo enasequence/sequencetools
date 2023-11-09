@@ -21,7 +21,7 @@ public class SourceFeatureTest {
   private SourceFeature feature;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     feature = new SourceFeature();
   }
 

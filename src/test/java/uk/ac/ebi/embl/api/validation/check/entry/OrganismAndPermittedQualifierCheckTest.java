@@ -14,7 +14,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +41,7 @@ public class OrganismAndPermittedQualifierCheckTest {
   EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -149,7 +148,7 @@ public class OrganismAndPermittedQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_withValidProduct() throws SQLException {
+  public void testCheck_withValidProduct() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.PRODUCT_QUALIFIER_NAME, "16S ribosomal RNA");
     entry.addFeature(feature);
@@ -170,7 +169,7 @@ public class OrganismAndPermittedQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_withValidGene() throws SQLException {
+  public void testCheck_withValidGene() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "rRNA");
     entry.addFeature(feature);
@@ -191,7 +190,7 @@ public class OrganismAndPermittedQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_withInValidProduct() throws SQLException {
+  public void testCheck_withInValidProduct() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.PRODUCT_QUALIFIER_NAME, "16S RNA");
     entry.addFeature(feature);
@@ -212,7 +211,7 @@ public class OrganismAndPermittedQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_withInValidProductandGene() throws SQLException {
+  public void testCheck_withInValidProductandGene() {
     Feature feature = featureFactory.createFeature("feature");
     feature.addQualifier(Qualifier.PRODUCT_QUALIFIER_NAME, "16S RNA");
     feature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "rNA");

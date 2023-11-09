@@ -31,12 +31,12 @@ public class ChromosomeListChromosomeTypeCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() throws ValidationEngineException {
+  public void testCheck_NoEntry() {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_noChromosomeType() throws ValidationEngineException {
+  public void testCheck_noChromosomeType() {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -46,7 +46,7 @@ public class ChromosomeListChromosomeTypeCheckTest {
   }
 
   @Test
-  public void testCheck_inValidChromosomeType() throws ValidationEngineException {
+  public void testCheck_inValidChromosomeType() {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -57,7 +57,7 @@ public class ChromosomeListChromosomeTypeCheckTest {
   }
 
   @Test
-  public void testCheck_validChromosomeType() throws ValidationEngineException {
+  public void testCheck_validChromosomeType() {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");

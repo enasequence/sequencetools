@@ -10,10 +10,9 @@
  */
 package uk.ac.ebi.embl.agp.writer;
 
-import java.io.IOException;
 import org.junit.Test;
 
 public class AGPRowWriterTest {
   @Test
-  public void testwrite_entry() throws IOException {}
+  public void testwrite_entry() {}
 }

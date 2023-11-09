@@ -52,7 +52,7 @@ public class CdsTranslatorTest {
   private boolean write = false;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     entry = entryFactory.createEntry();
     cdsFeature = featureFactory.createCdsFeature();
     sourceFeature = featureFactory.createSourceFeature();

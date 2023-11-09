@@ -21,7 +21,7 @@ public class SourceReaderTest extends GenbankReaderTest {
   Pattern htmlEntityRegexPattern =
       Pattern.compile("&(?:\\#(?:([0-9]+)|[Xx]([0-9A-Fa-f]+))|([A-Za-z0-9]+));?");
 
-  public void testReadWithoutCommonName() throws IOException {
+  public void testReadWithoutCommonName() {
 
     String blockString =
         "Feline panleukopenia virus gene for &quot; structural protein 1, complete cds, isolate: 483.";

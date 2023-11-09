@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 public class CodonQualifierTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testValidQualifier() throws ValidationException {

@@ -160,12 +160,8 @@ public class EmblReducedFlatFileWriterTest extends EmblWriterTest {
     }
   }
 
-  /**
-   * test for non-CON with contigs + features + sequence
-   *
-   * @throws IOException
-   */
-  public void testNonCONContigsFeaturesSequence() throws IOException {
+  /** test for non-CON with contigs + features + sequence */
+  public void testNonCONContigsFeaturesSequence() {
     entry.setDataClass("SET");
     addFeature();
     SequenceFactory sequenceFactory = new SequenceFactory();

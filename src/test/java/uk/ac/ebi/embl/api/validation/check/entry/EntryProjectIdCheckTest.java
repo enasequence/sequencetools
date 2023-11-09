@@ -45,7 +45,7 @@ public class EntryProjectIdCheckTest {
   EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     check = new EntryProjectIdCheck();
     taxonomyClient = createMock(TaxonomyClient.class);

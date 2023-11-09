@@ -20,7 +20,7 @@ public class ReferenceTest {
   private Reference reference;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     reference = new Reference(null, null);
   }
 

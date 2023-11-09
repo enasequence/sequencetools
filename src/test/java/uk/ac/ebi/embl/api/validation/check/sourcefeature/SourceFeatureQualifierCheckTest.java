@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -39,7 +38,7 @@ public class SourceFeatureQualifierCheckTest {
   private Feature feature;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();

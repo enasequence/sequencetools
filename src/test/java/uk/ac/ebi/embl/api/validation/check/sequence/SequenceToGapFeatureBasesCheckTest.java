@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.check.sequence;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -40,7 +39,7 @@ public class SequenceToGapFeatureBasesCheckTest {
   private SequenceFactory sequenceFactory;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();
@@ -234,7 +233,7 @@ public class SequenceToGapFeatureBasesCheckTest {
   }
 
   @Test
-  public void testCheck_WGS_with_min_gap_length() throws SQLException {
+  public void testCheck_WGS_with_min_gap_length() {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.getOptions().minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);
@@ -248,7 +247,7 @@ public class SequenceToGapFeatureBasesCheckTest {
   }
 
   @Test
-  public void testCheck_non_WGS_with_min_gap_length() throws SQLException {
+  public void testCheck_non_WGS_with_min_gap_length() {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.getOptions().minGapLength = 5;
     check.setEmblEntryValidationPlanProperty(property);

@@ -23,7 +23,7 @@ public class PatentTest {
   private Patent patent;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     patent = new Patent();
   }
 

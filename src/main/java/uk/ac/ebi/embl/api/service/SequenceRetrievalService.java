@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.service;
 import java.nio.ByteBuffer;
 import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 /** Retrieves sequences from the cram reference registry. */
 public interface SequenceRetrievalService {
@@ -22,12 +21,11 @@ public interface SequenceRetrievalService {
 
   boolean isSequenceAvailable(String md5, String sha1);
 
-  ByteBuffer getSequence(String objectId, long sequenceLength) throws ValidationEngineException;
+  ByteBuffer getSequence(String objectId, long sequenceLength);
 
-  ByteBuffer getSequence(String md5, String sha1, long sequenceLength)
-      throws ValidationEngineException;
+  ByteBuffer getSequence(String md5, String sha1, long sequenceLength);
 
-  ByteBuffer getSequence(RemoteRange remoteRange) throws ValidationEngineException;
+  ByteBuffer getSequence(RemoteRange remoteRange);
 
-  ByteBuffer getSequence(RemoteBase remoteBase) throws ValidationEngineException;
+  ByteBuffer getSequence(RemoteBase remoteBase);
 }

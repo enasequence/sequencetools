@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -44,7 +43,7 @@ public class Ascii7CharacterFixTest {
   private Person person;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();

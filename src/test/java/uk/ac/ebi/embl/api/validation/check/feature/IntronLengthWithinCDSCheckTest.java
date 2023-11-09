@@ -10,9 +10,9 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.sql.SQLException;
-import java.util.Optional;
+import static org.junit.Assert.*;
 
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -24,8 +24,6 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-
-import static org.junit.Assert.*;
 
 public class IntronLengthWithinCDSCheckTest {
 
@@ -61,7 +59,7 @@ public class IntronLengthWithinCDSCheckTest {
   }
 
   @Test
-  public void testCheck_InvalidIntron() throws SQLException {
+  public void testCheck_InvalidIntron() {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
@@ -74,7 +72,7 @@ public class IntronLengthWithinCDSCheckTest {
   }
 
   @Test
-  public void testCheck_InvalidIntronIgnoreError() throws SQLException {
+  public void testCheck_InvalidIntronIgnoreError() {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
@@ -87,9 +85,8 @@ public class IntronLengthWithinCDSCheckTest {
     assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1", Severity.ERROR));
   }
 
-
   @Test
-  public void testCheck_ValidintronAssembly() throws SQLException {
+  public void testCheck_ValidintronAssembly() {
     Join<Location> locationJoin = new Join<Location>();
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     check.setEmblEntryValidationPlanProperty(property);
@@ -102,7 +99,7 @@ public class IntronLengthWithinCDSCheckTest {
   }
 
   @Test
-  public void testCheck_InvalidIntronAssemblywithArtificialLocation() throws SQLException {
+  public void testCheck_InvalidIntronAssemblywithArtificialLocation() {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
@@ -116,7 +113,7 @@ public class IntronLengthWithinCDSCheckTest {
   }
 
   @Test
-  public void testCheck_InvalidIntronAssemblywithRibosomalSlippage() throws SQLException {
+  public void testCheck_InvalidIntronAssemblywithRibosomalSlippage() {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
@@ -130,7 +127,7 @@ public class IntronLengthWithinCDSCheckTest {
   }
 
   @Test
-  public void testCheck_intronwithNegetiveValue() throws SQLException {
+  public void testCheck_intronwithNegetiveValue() {
     Join<Location> locationJoin = new Join<Location>();
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(9L, 25L));
@@ -141,5 +138,4 @@ public class IntronLengthWithinCDSCheckTest {
     assertTrue(validationResult.isValid());
     assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1", Severity.ERROR));
   }
-
 }

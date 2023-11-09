@@ -249,8 +249,7 @@ public class Translator extends AbstractTranslator {
       Integer featureTranslationTable,
       TaxonomyClient taxonomyClient,
       Entry entry,
-      ValidationResult validationResult)
-      throws ValidationException {
+      ValidationResult validationResult) {
     Integer translationTable = null;
 
     SourceFeature sourceFeature = entry.getPrimarySourceFeature();

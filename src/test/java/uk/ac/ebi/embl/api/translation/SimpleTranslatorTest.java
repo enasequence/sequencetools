@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 public class SimpleTranslatorTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testValidTranslation1() throws ValidationException {

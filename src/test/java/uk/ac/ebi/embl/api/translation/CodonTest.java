@@ -19,7 +19,7 @@ import org.junit.Test;
 public class CodonTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testSetCodon() {

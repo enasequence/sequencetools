@@ -14,7 +14,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   private TaxonomyClient taxonomyClient;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -83,7 +82,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   }
 
   @Test
-  public void testCheck_NoDivision() throws SQLException {
+  public void testCheck_NoDivision() {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     sourceFeature.setScientificName("Homo sapiens");
@@ -96,7 +95,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   }
 
   @Test
-  public void testCheck_NoDivisionQualifier() throws SQLException {
+  public void testCheck_NoDivisionQualifier() {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     sourceFeature.setScientificName("Homo sapiens");
@@ -111,7 +110,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   }
 
   @Test
-  public void testCheck_DivisionNotQualifier() throws SQLException {
+  public void testCheck_DivisionNotQualifier() {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("HUM");
@@ -126,7 +125,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   }
 
   @Test
-  public void testCheck_DivisionInvalidQualifier() throws SQLException {
+  public void testCheck_DivisionInvalidQualifier() {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("HUM");
@@ -142,7 +141,7 @@ public class TaxonomicDivisionNotQualifierFixTest {
   }
 
   @Test
-  public void testCheck_DivisionValidQualifier() throws SQLException {
+  public void testCheck_DivisionValidQualifier() {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("HUM");

@@ -16,7 +16,7 @@ import org.junit.Test;
 public class OrderTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testOrder() {

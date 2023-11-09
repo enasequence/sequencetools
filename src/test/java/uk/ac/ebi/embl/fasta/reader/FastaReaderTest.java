@@ -37,11 +37,11 @@ public abstract class FastaReaderTest extends TestCase {
     entry.setSequence(sequence);
   }
 
-  protected void setLineReader(String string) throws IOException {
+  protected void setLineReader(String string) {
     lineReader = new FastaLineReader(new BufferedReader(new StringReader(string)));
   }
 
-  protected void setBufferedReader(String string) throws IOException {
+  protected void setBufferedReader(String string) {
     bufferedReader = new BufferedReader(new StringReader(string));
   }
 

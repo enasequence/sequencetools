@@ -78,9 +78,8 @@ public class BufferedFileLineReader implements ILineReader {
    * Returns the relative position in the file to the position in the buffer.
    *
    * @return
-   * @throws IOException
    */
-  public long getFilePointer() throws IOException {
+  public long getFilePointer() {
 
     return (real_pos - buf_end + buf_pos);
   }

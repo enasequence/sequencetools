@@ -13,7 +13,7 @@ package uk.ac.ebi.embl.template;
 import java.util.Map;
 
 public interface LoadStrategyI {
-  void loadTemplates() throws TemplateException;
+  void loadTemplates();
 
   Map<String, Integer> getOrders();
 

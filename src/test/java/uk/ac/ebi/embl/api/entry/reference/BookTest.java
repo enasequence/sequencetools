@@ -23,7 +23,7 @@ public class BookTest {
   private Book book;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     book = new Book();
   }
 

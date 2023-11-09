@@ -26,7 +26,7 @@ public class TPA_dataclass_FixTest {
   private TPA_dataclass_Fix check;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     entryFactory = new EntryFactory();
     check = new TPA_dataclass_Fix();

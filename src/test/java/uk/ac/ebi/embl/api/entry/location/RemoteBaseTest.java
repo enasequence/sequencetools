@@ -18,7 +18,7 @@ import org.junit.Test;
 public class RemoteBaseTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testBase() {

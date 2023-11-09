@@ -75,7 +75,7 @@ public class FlatFileOrigin implements Origin {
     }
   }
 
-  public void writeXmlOrigin(Writer writer) throws IOException {}
+  public void writeXmlOrigin(Writer writer) {}
 
   @Override
   public String getOriginText() {

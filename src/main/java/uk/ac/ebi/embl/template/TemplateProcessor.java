@@ -73,7 +73,7 @@ public class TemplateProcessor {
     if (entrynumber % 10000 == 0) LOGGER.info("variableKey = " + entrynumber);
   }
 
-  public String getTemplate(String templateId) throws Exception {
+  public String getTemplate(String templateId) {
     StringBuilder template = new StringBuilder();
     BufferedReader buffer =
         new BufferedReader(

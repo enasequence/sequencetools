@@ -13,7 +13,6 @@ package uk.ac.ebi.embl.api.validation.fixer.sequence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,7 @@ public class SequenceToGapFeatureBasesFixTest {
   private SequenceFactory sequenceFactory;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();
@@ -162,7 +161,7 @@ public class SequenceToGapFeatureBasesFixTest {
   }
 
   @Test
-  public void testCheck_fixwithmin_gap_length() throws SQLException {
+  public void testCheck_fixwithmin_gap_length() {
 
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.getOptions().minGapLength = 10;
@@ -187,7 +186,7 @@ public class SequenceToGapFeatureBasesFixTest {
   }
 
   @Test
-  public void testCheck_fix_assembly_scope() throws SQLException {
+  public void testCheck_fix_assembly_scope() {
 
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
@@ -215,7 +214,7 @@ public class SequenceToGapFeatureBasesFixTest {
   }
 
   @Test
-  public void testCheck_fix_assembly_flag() throws SQLException {
+  public void testCheck_fix_assembly_flag() {
 
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
@@ -242,7 +241,7 @@ public class SequenceToGapFeatureBasesFixTest {
   }
 
   @Test
-  public void testCheck_fix_assembly_gaps() throws SQLException {
+  public void testCheck_fix_assembly_gaps() {
 
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);

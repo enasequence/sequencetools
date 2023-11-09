@@ -21,8 +21,6 @@ import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
 import uk.ac.ebi.embl.api.service.SequenceToolsServices;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 public class SegmentFactory {
 
@@ -94,7 +92,7 @@ public class SegmentFactory {
     }
   }
 
-  public Segment createSegment(RemoteBase remoteBase) throws IOException {
+  public Segment createSegment(RemoteBase remoteBase) {
     if (remoteBase == null) {
       return null;
     }
@@ -104,18 +102,12 @@ public class SegmentFactory {
     }
 
     byte[] subSequence;
-    try {
-      // Includes reverse complementation.
-      subSequence = service.getSequence(remoteBase).array();
-    } catch (ValidationEngineException ex) {
-      StringBuilder locationString = new StringBuilder();
-      LocationToStringCoverter.renderLocation(locationString, remoteBase, false, false);
-      throw new IOException("Invalid Remote Base: " + locationString, ex);
-    }
+    // Includes reverse complementation.
+    subSequence = service.getSequence(remoteBase).array();
     return new Segment(remoteBase, subSequence);
   }
 
-  public Segment createSegment(RemoteRange remoteRange) throws IOException {
+  public Segment createSegment(RemoteRange remoteRange) {
     if (remoteRange == null) {
       return null;
     }
@@ -125,14 +117,8 @@ public class SegmentFactory {
     }
 
     byte[] subSequence;
-    try {
-      // Includes reverse complementation.
-      subSequence = service.getSequence(remoteRange).array();
-    } catch (ValidationEngineException ex) {
-      StringBuilder locationString = new StringBuilder();
-      LocationToStringCoverter.renderLocation(locationString, remoteRange, false, false);
-      throw new IOException("Invalid Remote Range: " + locationString, ex);
-    }
+    // Includes reverse complementation.
+    subSequence = service.getSequence(remoteRange).array();
     return new Segment(remoteRange, subSequence);
   }
 }

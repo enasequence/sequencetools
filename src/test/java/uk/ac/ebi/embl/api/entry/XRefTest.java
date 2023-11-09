@@ -18,7 +18,7 @@ import org.junit.Test;
 public class XRefTest {
 
   @Before
-  public void setUp() throws Exception {}
+  public void setUp() {}
 
   @Test
   public void testHashCode() {

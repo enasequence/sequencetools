@@ -21,7 +21,7 @@ public class SimpleEntryFactoryTest {
   private EntryFactory factory;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     factory = new EntryFactory();
   }
 
