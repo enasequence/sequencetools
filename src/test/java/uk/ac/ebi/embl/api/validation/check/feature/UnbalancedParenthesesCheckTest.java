@@ -33,7 +33,6 @@ public class UnbalancedParenthesesCheckTest {
     feature = featureFactory.createFeature("feature");
 
     check = new UnbalancedParenthesesCheck();
-    check.setPopulated();
   }
 
   @Test

@@ -48,10 +48,6 @@ public class EntryProjectIdCheck extends EntryValidationCheck {
   private static final String INVALID_PROJECT_MESSAGE = "EntryProjectIdCheck9";
   private static final String PROJECTID_KEYWORD = "complete genome";
 
-  public void setPopulated() {
-    super.setPopulated();
-  }
-
   public ValidationResult check(Entry entry) throws ValidationEngineException {
     KWCheck keywordLineCheck = new KWCheck();
 

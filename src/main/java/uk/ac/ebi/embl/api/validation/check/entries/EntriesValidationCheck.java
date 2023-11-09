@@ -10,7 +10,6 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entries;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.EmblEntryValidationCheck;
@@ -19,31 +18,14 @@ import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public class EntriesValidationCheck implements EmblEntryValidationCheck<ArrayList<Entry>> {
+public class EntriesValidationCheck extends EmblEntryValidationCheck<ArrayList<Entry>> {
   protected ValidationResult result;
-  private EmblEntryValidationPlanProperty property;
-  private EntryDAOUtils entryDAOUtils = null;
 
   @Override
   public ValidationResult check(ArrayList<Entry> object) {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public void setPopulated() {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public boolean isPopulated() {
-    // TODO Auto-generated method stub
-    return false;
   }
 
   /**
@@ -84,39 +66,5 @@ public class EntriesValidationCheck implements EmblEntryValidationCheck<ArrayLis
         EntryValidations.createMessage(origin, severity, messageKey, params);
     result.append(message);
     return message;
-  }
-
-  @Override
-  public void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property)
-      throws SQLException {
-    this.property = property;
-  }
-
-  @Override
-  public EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty() {
-    return property;
-  }
-
-  @Override
-  public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils) {
-    this.entryDAOUtils = entryDAOUtils;
-  }
-
-  @Override
-  public EntryDAOUtils getEntryDAOUtils() {
-    // TODO Auto-generated method stub
-    return entryDAOUtils;
-  }
-
-  @Override
-  public EraproDAOUtils getEraproDAOUtils() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void setEraproDAOUtils(EraproDAOUtils daoUtils) {
-    // TODO Auto-generated method stub
-
   }
 }

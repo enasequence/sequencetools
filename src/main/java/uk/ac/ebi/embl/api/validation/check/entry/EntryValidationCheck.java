@@ -10,20 +10,12 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import java.sql.SQLException;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public abstract class EntryValidationCheck implements EmblEntryValidationCheck<Entry> {
+public abstract class EntryValidationCheck extends EmblEntryValidationCheck<Entry> {
 
   protected ValidationResult result;
-  private boolean isPopulated;
-  private EmblEntryValidationPlanProperty property;
-  private EntryDAOUtils entryDAOUtils;
-  private EraproDAOUtils eraproDAOUtils;
 
   protected EntryValidationCheck() {
     result = new ValidationResult();
@@ -31,15 +23,6 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
 
   public void init() {
     // no implementation, override when needed
-  }
-
-  public boolean isPopulated() {
-    return isPopulated;
-  }
-
-  public void setPopulated() {
-    // override to do any processing of data post-population
-    isPopulated = true;
   }
 
   /**
@@ -80,38 +63,5 @@ public abstract class EntryValidationCheck implements EmblEntryValidationCheck<E
         EntryValidations.createMessage(origin, severity, messageKey, params);
     result.append(message);
     return message;
-  }
-
-  @Override
-  public void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property)
-      throws SQLException {
-    this.property = property;
-  }
-
-  @Override
-  public EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty() {
-    return property;
-  }
-
-  @Override
-  public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils) {
-    this.entryDAOUtils = entryDAOUtils;
-  }
-
-  @Override
-  public EntryDAOUtils getEntryDAOUtils() {
-    // TODO Auto-generated method stub
-    return entryDAOUtils;
-  }
-
-  @Override
-  public EraproDAOUtils getEraproDAOUtils() {
-    // TODO Auto-generated method stub
-    return eraproDAOUtils;
-  }
-
-  @Override
-  public void setEraproDAOUtils(EraproDAOUtils eraproDAOUtils) {
-    this.eraproDAOUtils = eraproDAOUtils;
   }
 }

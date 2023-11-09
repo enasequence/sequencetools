@@ -10,7 +10,6 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.FileType;
@@ -60,16 +59,13 @@ public class AgptoConFix extends EntryValidationCheck {
     }
 
     AGPValidationCheck check = new AGPValidationCheck();
-    try {
-      check.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
-      check.setEntryDAOUtils(getEntryDAOUtils());
-      if (!check.check(entry).isValid()) return result;
-      EntryUtils.convertAGPtofeatureNContigs(entry);
-      entry.setDataClass(Entry.CON_DATACLASS);
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new ValidationEngineException(e);
-    }
+
+    check.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
+    check.setEntryDAOUtils(getEntryDAOUtils());
+    if (!check.check(entry).isValid()) return result;
+    EntryUtils.convertAGPtofeatureNContigs(entry);
+    entry.setDataClass(Entry.CON_DATACLASS);
+
     return result;
   }
 }

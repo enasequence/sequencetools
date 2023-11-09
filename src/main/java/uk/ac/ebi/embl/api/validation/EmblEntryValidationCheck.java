@@ -10,4 +10,50 @@
  */
 package uk.ac.ebi.embl.api.validation;
 
-public interface EmblEntryValidationCheck<E> extends ValidationCheck<E> {}
+import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
+import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+
+public abstract class EmblEntryValidationCheck<E> implements ValidationCheck<E> {
+
+  protected EmblEntryValidationPlanProperty property;
+  private EntryDAOUtils entryDAOUtils;
+  private EraproDAOUtils eraproDAOUtils;
+
+  @Override
+  public final void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property) {
+    this.property = property;
+  }
+
+  @Override
+  public final EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty() {
+    return property;
+  }
+
+  public boolean isIgnoreError() {
+    return (property != null
+        && property.getOptions() != null
+        && property.getOptions().ignoreError.isPresent()
+        && property.getOptions().ignoreError.get());
+  }
+
+  @Override
+  public EntryDAOUtils getEntryDAOUtils() {
+    return entryDAOUtils;
+  }
+
+  @Override
+  public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils) {
+    this.entryDAOUtils = entryDAOUtils;
+  }
+
+  @Override
+  public EraproDAOUtils getEraproDAOUtils() {
+    return eraproDAOUtils;
+  }
+
+  @Override
+  public void setEraproDAOUtils(EraproDAOUtils eraproDAOUtils) {
+    this.eraproDAOUtils = eraproDAOUtils;
+  }
+}

@@ -41,7 +41,6 @@ public class FeatureQualifiersRequiredCheckTest {
         GlobalDataSetFile.FEATURE_REQUIRE_QUALIFIERS, new DataRow("misc_feature"));
 
     check = new FeatureQualifiersRequiredCheck();
-    check.setPopulated();
   }
 
   @After
