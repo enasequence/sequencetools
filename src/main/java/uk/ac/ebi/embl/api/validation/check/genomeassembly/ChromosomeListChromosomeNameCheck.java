@@ -46,9 +46,7 @@ public class ChromosomeListChromosomeNameCheck
       reportError(
           entry.getOrigin(), MESSAGE_KEY_CHROMOSOME_NAME_REGEX_ERROR, entry.getObjectName());
     }
-    if (!(getEmblEntryValidationPlanProperty() != null
-            && getEmblEntryValidationPlanProperty().getOptions().ignoreError.isPresent()
-            && getEmblEntryValidationPlanProperty().getOptions().ignoreError.get())
+    if (!isIgnoreError()
         && Arrays.stream(chromosomeNamesToRejectArray)
             .anyMatch(x -> StringUtils.containsIgnoreCase(entry.getChromosomeName(), x))) {
       reportError(

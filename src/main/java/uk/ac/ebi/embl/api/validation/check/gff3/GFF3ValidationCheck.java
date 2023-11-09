@@ -10,31 +10,14 @@
  */
 package uk.ac.ebi.embl.api.validation.check.gff3;
 
-import java.sql.SQLException;
 import uk.ac.ebi.embl.api.gff3.GFF3RecordSet;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public abstract class GFF3ValidationCheck implements EmblEntryValidationCheck<GFF3RecordSet> {
+public abstract class GFF3ValidationCheck extends EmblEntryValidationCheck<GFF3RecordSet> {
 
   protected ValidationResult result;
-  private boolean isPopulated;
-  private EmblEntryValidationPlanProperty property;
-  private EntryDAOUtils entryDAOUtils;
-  private EraproDAOUtils eraproDAOUtils;
 
   protected GFF3ValidationCheck() {}
-
-  public boolean isPopulated() {
-    return isPopulated;
-  }
-
-  public void setPopulated() {
-    // override to do any processing of data post-population
-    isPopulated = true;
-  }
 
   /**
    * Creates an error validation message for the feature and adds it to the validation result.
@@ -76,38 +59,5 @@ public abstract class GFF3ValidationCheck implements EmblEntryValidationCheck<GF
     //        System.out.println("message = " + message.getMessage());
     result.append(message);
     return message;
-  }
-
-  @Override
-  public void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property)
-      throws SQLException {
-    this.property = property;
-  }
-
-  @Override
-  public EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty() {
-    return property;
-  }
-
-  @Override
-  public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils) {
-    this.entryDAOUtils = entryDAOUtils;
-  }
-
-  @Override
-  public EntryDAOUtils getEntryDAOUtils() {
-    // TODO Auto-generated method stub
-    return entryDAOUtils;
-  }
-
-  @Override
-  public EraproDAOUtils getEraproDAOUtils() {
-    // TODO Auto-generated method stub
-    return eraproDAOUtils;
-  }
-
-  @Override
-  public void setEraproDAOUtils(EraproDAOUtils eraproDAOUtils) {
-    this.eraproDAOUtils = eraproDAOUtils;
   }
 }

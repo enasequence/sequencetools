@@ -28,10 +28,6 @@ public class WGSGapCheck extends EntryValidationCheck {
 
   public WGSGapCheck(DataSet valuesSet) {}
 
-  public void setPopulated() {
-    super.setPopulated();
-  }
-
   public ValidationResult check(Entry entry) {
 
     result = new ValidationResult();

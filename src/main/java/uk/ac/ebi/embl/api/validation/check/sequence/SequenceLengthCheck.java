@@ -10,7 +10,6 @@
  */
 package uk.ac.ebi.embl.api.validation.check.sequence;
 
-import java.sql.SQLException;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -47,11 +46,8 @@ public class SequenceLengthCheck extends EntryValidationCheck {
   public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
     SequenceExistsCheck sequenceExistsCheck = new SequenceExistsCheck();
-    try {
-      sequenceExistsCheck.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
-    } catch (SQLException e) {
-      throw new ValidationEngineException(e);
-    }
+    sequenceExistsCheck.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());
+
     if (entry == null) {
       return result;
     }

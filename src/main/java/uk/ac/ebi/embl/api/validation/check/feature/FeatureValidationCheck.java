@@ -10,46 +10,19 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.sql.SQLException;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
-import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
-import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 
-public abstract class FeatureValidationCheck implements EmblEntryValidationCheck<Feature> {
-
-  //	private String entryId;
+public abstract class FeatureValidationCheck extends EmblEntryValidationCheck<Feature> {
 
   protected ValidationResult result;
-  private boolean isPopulated;
-  private EmblEntryValidationPlanProperty property;
-  private EntryDAOUtils entryDAOUtils;
-  private EraproDAOUtils eraproDAOUtils;
 
   public boolean isValid(String value) {
     return false;
   }
 
   protected FeatureValidationCheck() {}
-
-  //	public String getEntryId() {
-  //		return entryId;
-  //	}
-
-  //	public void setEntryId(String entryId) {
-  //		this.entryId = entryId;
-  //	}
-
-  public boolean isPopulated() {
-    return isPopulated;
-  }
-
-  public void setPopulated() {
-    // override to do any processing of data post-population
-    isPopulated = true;
-  }
 
   /**
    * Creates an error validation message for the feature and adds it to the validation result.
@@ -135,38 +108,5 @@ public abstract class FeatureValidationCheck implements EmblEntryValidationCheck
     //        System.out.println("message = " + message.getMessage());
     result.append(message);
     return message;
-  }
-
-  @Override
-  public void setEmblEntryValidationPlanProperty(EmblEntryValidationPlanProperty property)
-      throws SQLException {
-    this.property = property;
-  }
-
-  @Override
-  public EmblEntryValidationPlanProperty getEmblEntryValidationPlanProperty() {
-    return property;
-  }
-
-  @Override
-  public void setEntryDAOUtils(EntryDAOUtils entryDAOUtils) {
-    this.entryDAOUtils = entryDAOUtils;
-  }
-
-  @Override
-  public EntryDAOUtils getEntryDAOUtils() {
-    // TODO Auto-generated method stub
-    return entryDAOUtils;
-  }
-
-  @Override
-  public EraproDAOUtils getEraproDAOUtils() {
-    // TODO Auto-generated method stub
-    return eraproDAOUtils;
-  }
-
-  @Override
-  public void setEraproDAOUtils(EraproDAOUtils eraproDAOUtils) {
-    this.eraproDAOUtils = eraproDAOUtils;
   }
 }

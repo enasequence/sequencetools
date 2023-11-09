@@ -16,10 +16,8 @@ import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
-import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
-@Description("Intron usually expected to be at least 10 nt long. Please check the accuracy.")
 @ExcludeScope(validationScope = {ValidationScope.NCBI, ValidationScope.NCBI_MASTER})
 public class IntronLengthWithinCDSCheck extends FeatureValidationCheck {
 
@@ -51,8 +49,9 @@ public class IntronLengthWithinCDSCheck extends FeatureValidationCheck {
 
         Long intron = location.getBeginPosition() - prevLocation.getEndPosition();
         if (intron >= 0 && intron < 10) {
-          if (hasArtificialLocation) return result;
-          else {
+          if (hasArtificialLocation) {
+            return result;
+          } else if (!isIgnoreError()) {
             ValidationMessage<Origin> message = reportError(cdsFeature.getOrigin(), MESSAGE_ID);
             message.setCuratorMessage(
                 "Intron usually expected to be at least 10 nt long. Please check accuracy and Use one of the following options for annotation: \n /artificial_location=\"heterogeneous population sequenced\" \n OR \n /artificial_location=\"low-quality sequence region\". \n Alternatively, use where appropriate: \n /pseudo, /pseudogene, /trans_splicing, /ribosomal_slippage");
