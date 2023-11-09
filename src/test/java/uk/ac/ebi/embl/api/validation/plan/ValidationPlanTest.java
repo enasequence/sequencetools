@@ -95,7 +95,7 @@ public class ValidationPlanTest {
   @Test
   public void testIsInValidationScopePipelineGroup() {
     ValidationPlan plan =
-        new ValidationPlan(ValidationScope.ASSEMBLY_MASTER, false) {
+        new ValidationPlan(ValidationScope.ASSEMBLY_MASTER) {
           @Override
           public ValidationResult execute(Object target) {
             return null;
@@ -110,7 +110,7 @@ public class ValidationPlanTest {
   @Test
   public void testIsInValidationScopeNcbiGroup() {
     ValidationPlan plan =
-            new ValidationPlan(ValidationScope.NCBI, false) {
+            new ValidationPlan(ValidationScope.NCBI) {
               @Override
               public ValidationResult execute(Object target) {
                 return null;
