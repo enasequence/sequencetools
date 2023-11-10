@@ -18,7 +18,6 @@ import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 
 @ExcludeScope(
     validationScope = {
-      ValidationScope.ARRAYEXPRESS,
       ValidationScope.ASSEMBLY_CHROMOSOME,
       ValidationScope.ASSEMBLY_CONTIG,
       ValidationScope.ASSEMBLY_MASTER,

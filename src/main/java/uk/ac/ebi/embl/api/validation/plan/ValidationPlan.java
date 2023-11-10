@@ -186,7 +186,7 @@ public abstract class ValidationPlan {
       if (groupScope == null) {
         continue;
       }
-      if (groupScope.equals(validationScope.group())) return true;
+      if (validationScope.groups().contains(groupScope)) return true;
     }
     return false;
   }

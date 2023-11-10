@@ -28,19 +28,16 @@ import uk.ac.ebi.embl.api.validation.helper.QualifierHelper;
         + "Feature qualifier \\\"{0}\\\" value \\\"{1}\\\" does not comply to the qualifier specifications. Refer to the feature documentation or ask a curator for guidance.\"")
 @ExcludeScope(
     validationScope = {
-      ValidationScope.ARRAYEXPRESS,
       ValidationScope.ASSEMBLY_CHROMOSOME,
       ValidationScope.ASSEMBLY_CONTIG,
       ValidationScope.ASSEMBLY_MASTER,
       ValidationScope.ASSEMBLY_SCAFFOLD,
       ValidationScope.ASSEMBLY_TRANSCRIPTOME,
-      ValidationScope.EGA,
       ValidationScope.EMBL,
       ValidationScope.EMBL,
       ValidationScope.EMBL_TEMPLATE,
       ValidationScope.EPO,
       ValidationScope.EPO_PEPTIDE,
-      ValidationScope.INSDC,
       ValidationScope.NCBI_MASTER
     })
 public class NCBIQualifierCheck extends FeatureValidationCheck {

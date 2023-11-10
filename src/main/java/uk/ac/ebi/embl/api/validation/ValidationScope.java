@@ -10,48 +10,45 @@
  */
 package uk.ac.ebi.embl.api.validation;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum ValidationScope {
   /** Putff (ENA) */
-  EMBL(Group.SEQUENCE),
+  EMBL(Group.PUTFF),
   /** Putff (NCBI) */
-  NCBI(Group.SEQUENCE),
+  NCBI(Group.PUTFF, Group.NCBI),
   /** Putff (NCBI master) */
-  NCBI_MASTER(Group.SEQUENCE),
+  NCBI_MASTER(Group.PUTFF, Group.NCBI),
   /** Pipeline (Webin-CLI sequence scope) */
-  EMBL_TEMPLATE(Group.SEQUENCE),
+  EMBL_TEMPLATE(Group.PIPELINE),
   /** Putff (patent protein) */
-  EPO_PEPTIDE(Group.SEQUENCE),
+  EPO_PEPTIDE(Group.EPO),
   /** Putff (patent) */
-  EPO(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  INSDC(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  EGA(Group.SEQUENCE),
-  /** TODO: remove if not used */
-  ARRAYEXPRESS(Group.SEQUENCE),
+  EPO(Group.EPO),
   /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_MASTER(Group.ASSEMBLY),
+  ASSEMBLY_MASTER(Group.ASSEMBLY, Group.PIPELINE),
   /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_CONTIG(Group.ASSEMBLY),
+  ASSEMBLY_CONTIG(Group.ASSEMBLY, Group.PIPELINE),
   /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_SCAFFOLD(Group.ASSEMBLY),
+  ASSEMBLY_SCAFFOLD(Group.ASSEMBLY, Group.PIPELINE),
   /** Pipeline (Webin-CLI genome scope) */
-  ASSEMBLY_CHROMOSOME(Group.ASSEMBLY),
+  ASSEMBLY_CHROMOSOME(Group.ASSEMBLY, Group.PIPELINE),
   /** Pipeline (Webin-CLI transcriptome scope) */
-  ASSEMBLY_TRANSCRIPTOME(Group.ASSEMBLY);
+  ASSEMBLY_TRANSCRIPTOME(Group.PIPELINE);
 
-  private final Group group;
+  private final List<Group> groups;
 
-  ValidationScope(Group group) {
-    this.group = group;
+  ValidationScope(Group... groups) {
+    this.groups = Arrays.asList(groups);
   }
 
   public boolean isInGroup(Group group) {
-    return this.group == group;
+    return this.groups.contains(group);
   }
 
-  public Group group() {
-    return this.group;
+  public List<Group> groups() {
+    return this.groups;
   }
 
   public static ValidationScope get(String scope) {
@@ -77,8 +74,11 @@ public enum ValidationScope {
   }
 
   public enum Group {
+    PIPELINE,
+    PUTFF,
     ASSEMBLY,
-    SEQUENCE
+    NCBI,
+    EPO
   }
 
   public static ValidationScope getScope(FileType fileType) {
