@@ -22,7 +22,7 @@ public class SubmissionTest {
   private Submission submission;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     submission = new Submission(null, null, null);
   }
 

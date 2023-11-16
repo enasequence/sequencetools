@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
@@ -26,19 +27,19 @@ public class ChromosomeListChromosomeNameCheckTest {
   private ChromosomeListChromosomeNameCheck check;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.GENOMEASSEMBLY_VALIDATION_BUNDLE);
     check = new ChromosomeListChromosomeNameCheck();
     check.setEmblEntryValidationPlanProperty(TestHelper.testEmblEntryValidationPlanProperty());
   }
 
   @Test
-  public void testCheck_NoEntry() {
+  public void testCheck_NoEntry() throws ValidationEngineException {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoChromsomeName() {
+  public void testCheck_NoChromsomeName() throws ValidationEngineException {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -47,7 +48,7 @@ public class ChromosomeListChromosomeNameCheckTest {
   }
 
   @Test
-  public void testCheck_inValidChromosome_name() {
+  public void testCheck_inValidChromosome_name() throws ValidationEngineException {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -57,7 +58,7 @@ public class ChromosomeListChromosomeNameCheckTest {
   }
 
   @Test
-  public void testCheck_inValidChromosome_name1() {
+  public void testCheck_inValidChromosome_name1() throws ValidationEngineException {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     entry.setObjectName("chrjkhjg");
@@ -67,7 +68,7 @@ public class ChromosomeListChromosomeNameCheckTest {
   }
 
   @Test
-  public void testRejectInvalidChromosomeName() {
+  public void testRejectInvalidChromosomeName() throws ValidationEngineException {
     for (String name : new String[] {"Un", "chrUn", "random", "rnd", "unknown"}) {
       ChromosomeEntry entry = new ChromosomeEntry();
       entry.setAnalysisId("ERZ00000");

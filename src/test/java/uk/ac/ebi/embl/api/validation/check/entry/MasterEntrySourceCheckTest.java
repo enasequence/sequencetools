@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -53,7 +54,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_validSourcefeature() {
+  public void testCheck_validSourcefeature() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     check.setEmblEntryValidationPlanProperty(property);
@@ -67,7 +68,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_InvalidSourcefeature() {
+  public void testCheck_InvalidSourcefeature() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     check.setEmblEntryValidationPlanProperty(property);
@@ -83,7 +84,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_validSourcefeaturenotSubmittable() {
+  public void testCheck_validSourcefeaturenotSubmittable() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
@@ -100,7 +101,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_validSourcefeatureSubmittable() {
+  public void testCheck_validSourcefeatureSubmittable() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
@@ -117,7 +118,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_validSourcefeatureSubmittableWithBinomialFalse() {
+  public void testCheck_validSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();
@@ -135,7 +136,7 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
-  public void testCheck_inValidSourcefeatureSubmittableWithBinomialFalse() {
+  public void testCheck_inValidSourcefeatureSubmittableWithBinomialFalse() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
     TaxonomyClient taxonClient = new TaxonomyClient();

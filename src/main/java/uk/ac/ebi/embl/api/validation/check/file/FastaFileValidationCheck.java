@@ -168,7 +168,7 @@ public class FastaFileValidationCheck extends FileValidationCheck {
   }
 
   @Override
-  public ValidationResult check() {
+  public ValidationResult check() throws ValidationEngineException {
     throw new UnsupportedOperationException();
   }
 }

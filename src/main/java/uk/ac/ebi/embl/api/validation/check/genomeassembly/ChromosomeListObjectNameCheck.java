@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -19,7 +20,7 @@ public class ChromosomeListObjectNameCheck extends GenomeAssemblyValidationCheck
   private final String MESSAGE_KEY_MISSING_OBJECT_NAME_ERROR =
       "ChromosomeListMissingObjectNameCheck";
 
-  public ValidationResult check(ChromosomeEntry entry) {
+  public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {
     if (entry == null) return result;
 
     if (entry.getObjectName() == null || entry.getObjectName().isEmpty()) {

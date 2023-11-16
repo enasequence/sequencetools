@@ -20,7 +20,7 @@ public class PersonTest {
   private final Person person = new Person(null);
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testPerson() {

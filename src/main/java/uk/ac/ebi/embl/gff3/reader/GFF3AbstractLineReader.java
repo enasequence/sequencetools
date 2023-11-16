@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.gff3.reader;
 
+import java.io.IOException;
 import uk.ac.ebi.embl.api.gff3.GFF3RecordSet;
 import uk.ac.ebi.embl.api.validation.FlatFileOrigin;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -34,7 +35,7 @@ public abstract class GFF3AbstractLineReader {
     return new FlatFileOrigin(getLineReader().getFileId(), lineNumber);
   }
 
-  public final ValidationResult read(GFF3RecordSet recordSet) {
+  public final ValidationResult read(GFF3RecordSet recordSet) throws IOException {
     this.recordSet = recordSet;
     validationResult = new ValidationResult();
     readLines();

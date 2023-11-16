@@ -115,7 +115,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
   }
 
   @Override
-  public ValidationResult check() {
+  public ValidationResult check() throws ValidationEngineException {
     throw new UnsupportedOperationException();
   }
 

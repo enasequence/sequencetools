@@ -24,7 +24,7 @@ public class SimpleFeatureFactoryTest {
   private FeatureFactory factory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     factory = new FeatureFactory();
   }
 

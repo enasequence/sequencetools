@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.sequence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class SequenceLengthCheckTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -54,17 +55,17 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() {
+  public void testCheck_NoEntry() throws ValidationEngineException {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoSequence() {
+  public void testCheck_NoSequence() throws ValidationEngineException {
     assertTrue(check.check(entry).isValid());
   }
 
   @Test
-  public void testCheck_sequenceLessthanMin1() {
+  public void testCheck_sequenceLessthanMin1() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcatctcgtgctgtttt".getBytes()));
     ValidationResult validationResult = check.check(entry);
     assertEquals(1, validationResult.getMessages().size());
@@ -79,7 +80,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceLessthanMin2() {
+  public void testCheck_sequenceLessthanMin2() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcatctcgtgctgtttt".getBytes()));
     entry.addFeature(feature1);
     ValidationResult validationResult = check.check(entry);
@@ -87,7 +88,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceLessthanMin3() {
+  public void testCheck_sequenceLessthanMin3() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcatctcgtgctgtttt".getBytes()));
     entry.addFeature(feature2);
     ValidationResult validationResult = check.check(entry);
@@ -95,7 +96,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceGreaterthanMin1() {
+  public void testCheck_sequenceGreaterthanMin1() throws ValidationEngineException {
     entry.setSequence(
         sequenceFactory.createSequenceByte(
             "attcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgtttt"
@@ -106,7 +107,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceGreaterthanMin2() {
+  public void testCheck_sequenceGreaterthanMin2() throws ValidationEngineException {
     entry.setSequence(
         sequenceFactory.createSequenceByte(
             "attcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgtttt"
@@ -117,7 +118,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceGreaterthanMin3() {
+  public void testCheck_sequenceGreaterthanMin3() throws ValidationEngineException {
     entry.setSequence(
         sequenceFactory.createSequenceByte(
             "attcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgttttattcttcatctcgtgctgtttt"
@@ -127,7 +128,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_sequenceLessThanMin_GSS_Dataclass() {
+  public void testCheck_sequenceLessThanMin_GSS_Dataclass() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcatctcgtgctgtttt".getBytes()));
     entry.setDataClass(Entry.GSS_DATACLASS);
     ValidationResult validationResult = check.check(entry);
@@ -135,7 +136,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_scope() {
+  public void testCheck_scope() throws ValidationEngineException {
     entry.setDataClass(Entry.PAT_DATACLASS);
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcatctcgtgctgtttt".getBytes()));
     ValidationResult validationResult = check.check(entry);
@@ -143,7 +144,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_dataclass_min() {
+  public void testCheck_dataclass_min() throws ValidationEngineException {
     entry.setDataClass(Entry.GSS_DATACLASS);
     entry.setSequence(sequenceFactory.createSequenceByte("attcttcat".getBytes()));
     ValidationResult validationResult = check.check(entry);
@@ -151,7 +152,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_dataclass_max() {
+  public void testCheck_dataclass_max() throws ValidationEngineException {
     entry.setDataClass(Entry.GSS_DATACLASS);
     entry.setSequence(
         sequenceFactory.createSequenceByte(
@@ -162,7 +163,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_dataclass_tsa_min() {
+  public void testCheck_dataclass_tsa_min() throws ValidationEngineException {
     entry.setDataClass(Entry.TSA_DATACLASS);
     entry.setSequence(
         sequenceFactory.createSequenceByte("attcttcaattcttcaattcttcaattcttcaattctt".getBytes()));
@@ -171,7 +172,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_dataclass_tsa_max() {
+  public void testCheck_dataclass_tsa_max() throws ValidationEngineException {
     entry.setDataClass(Entry.TSA_DATACLASS);
     entry.setSequence(
         sequenceFactory.createSequenceByte(
@@ -182,7 +183,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_LongNcRna_min() {
+  public void testCheck_LongNcRna_min() throws ValidationEngineException {
     feature1.addQualifier(Qualifier.NCRNA_CLASS_QUALIFIER_NAME, "lncRNA");
     entry.addFeature(feature1);
     entry.setSequence(
@@ -192,7 +193,7 @@ public class SequenceLengthCheckTest {
   }
 
   @Test
-  public void testCheck_LongNcRna_max() {
+  public void testCheck_LongNcRna_max() throws ValidationEngineException {
     feature1.addQualifier(Qualifier.NCRNA_CLASS_QUALIFIER_NAME, "lncRNA");
     entry.addFeature(feature1);
     entry.setSequence(

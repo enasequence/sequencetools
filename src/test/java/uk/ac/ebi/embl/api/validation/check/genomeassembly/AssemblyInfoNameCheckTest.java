@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -29,7 +30,7 @@ public class AssemblyInfoNameCheckTest {
   private EmblEntryValidationPlanProperty planProperty;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     check = new AssemblyInfoNameCheck();
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     planProperty = TestHelper.testEmblEntryValidationPlanProperty();
@@ -38,19 +39,19 @@ public class AssemblyInfoNameCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() {
+  public void testCheck_NoEntry() throws ValidationEngineException {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoName() {
+  public void testCheck_NoName() throws ValidationEngineException {
     assemblyEntry = new AssemblyInfoEntry();
     ValidationResult result = check.check(assemblyEntry);
     assertEquals(1, result.count("AssemblyInfoMissingNameCheck", Severity.ERROR));
   }
 
   @Test
-  public void testCheck_invalidNamePattern() {
+  public void testCheck_invalidNamePattern() throws ValidationEngineException {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setName("dfdfg878*dhfgh");
     ValidationResult result = check.check(assemblyEntry);
@@ -58,7 +59,7 @@ public class AssemblyInfoNameCheckTest {
   }
 
   @Test
-  public void testCheck_invalidNameLength() {
+  public void testCheck_invalidNameLength() throws ValidationEngineException {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setName(
         "dsfdfhfjhgkhjkdgsfsdfsfsfgdfhdghgjhfjdtsrrgdfhdgjhfjyyttkkykykykrthhdsdgghjgklwerrtytrtyuytutiyuiyuioio");
@@ -67,7 +68,7 @@ public class AssemblyInfoNameCheckTest {
   }
 
   @Test
-  public void testCheck_validName() {
+  public void testCheck_validName() throws ValidationEngineException {
     assemblyEntry = new AssemblyInfoEntry();
     assemblyEntry.setName("fdgfghhjhgj");
     assertTrue(check.check(assemblyEntry).isValid());

@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.file;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
@@ -31,7 +33,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 @Description("")
 public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   @Before
-  public void init() {
+  public void init() throws SQLException {
     options = new SubmissionOptions();
     options.source = Optional.of(getSource());
     options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
@@ -57,7 +59,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testTranscriptomFixedvalidFlatFile() throws ValidationEngineException {
+  public void testTranscriptomFixedvalidFlatFile()
+      throws ValidationEngineException, FlatFileComparatorException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.transcriptome);
@@ -77,7 +80,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testgenomeFixedvalidFlatFile() throws ValidationEngineException {
+  public void testgenomeFixedvalidFlatFile()
+      throws ValidationEngineException, FlatFileComparatorException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.genome);
@@ -97,7 +101,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testGenBankFixedValidFlatFile() throws ValidationEngineException {
+  public void testGenBankFixedValidFlatFile()
+      throws ValidationEngineException, FlatFileComparatorException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.genome);
@@ -116,7 +121,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testGenomeFlatFilePseudogeneQualWithSingleQuote() throws ValidationEngineException {
+  public void testGenomeFlatFilePseudogeneQualWithSingleQuote()
+      throws ValidationEngineException, FlatFileComparatorException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.genome);
@@ -136,7 +142,8 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testTemplateFixedvalidFlatFile() {
+  public void testTemplateFixedvalidFlatFile()
+      throws ValidationEngineException, FlatFileComparatorException {
     /*SubmissionFile file=initSubmissionFixedTestFile(".txt",SubmissionFile.FileType.FLATFILE);
     SubmissionFiles submissionFiles = new SubmissionFiles();
     submissionFiles.addFile(file);

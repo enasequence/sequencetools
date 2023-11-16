@@ -29,12 +29,12 @@ public class ChromosomeListObjectNameCheckTest {
   }
 
   @Test
-  public void testCheck_NoEntry() {
+  public void testCheck_NoEntry() throws ValidationEngineException {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoObjectName() {
+  public void testCheck_NoObjectName() throws ValidationEngineException {
     ChromosomeEntry entry = new ChromosomeEntry();
     entry.setAnalysisId("ERZ00000");
     ValidationResult result = check.check(entry);

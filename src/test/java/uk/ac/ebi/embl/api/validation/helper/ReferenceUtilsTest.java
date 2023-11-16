@@ -15,6 +15,7 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.*;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ReferenceUtilsTest {
 
   @Test
   public void testConstructReferenceWithoutConsortiumAndBroker()
-      throws ValidationEngineException, UnsupportedEncodingException {
+      throws ValidationEngineException, UnsupportedEncodingException, ParseException {
 
     List<SubmissionContact> submissionContactList = new ArrayList<>();
     SubmissionContact submissionContact = new SubmissionContact();
@@ -73,7 +74,7 @@ public class ReferenceUtilsTest {
 
   @Test
   public void testConstructReferenceMultipleSubmissionContactNonBroker()
-      throws ValidationEngineException, UnsupportedEncodingException {
+      throws ValidationEngineException, UnsupportedEncodingException, ParseException {
 
     List<SubmissionContact> submissionContactList = new ArrayList<>();
     SubmissionContact submissionContact = new SubmissionContact();
@@ -120,7 +121,7 @@ public class ReferenceUtilsTest {
 
   @Test
   public void testConstructReferenceWithConsortiumAndBroker()
-      throws UnsupportedEncodingException, ValidationEngineException {
+      throws UnsupportedEncodingException, ValidationEngineException, ParseException {
 
     List<SubmissionContact> submissionContactList = new ArrayList<>();
     SubmissionContact submissionContact = new SubmissionContact();
@@ -174,7 +175,7 @@ public class ReferenceUtilsTest {
 
   @Test
   public void testGetSubmitterReferenceFromManifestAddAuthorstoCosortium()
-      throws ValidationEngineException {
+      throws ValidationEngineException, NoSuchMethodException {
     String authors = "Vijay Senthil,Nathan S Vijay";
     String address = "Hinxton,Cambridge,UK";
     Date date = new Date();

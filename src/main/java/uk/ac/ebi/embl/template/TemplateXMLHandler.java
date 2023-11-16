@@ -34,7 +34,7 @@ public class TemplateXMLHandler extends DefaultHandler {
     return template;
   }
 
-  public void endElement(String uri, String localName, String qName) {
+  public void endElement(String uri, String localName, String qName) throws SAXException {
     if (qName.equalsIgnoreCase("name")) {
       template.name = currentString;
     } else if (qName.equals("description")) {
@@ -144,7 +144,7 @@ public class TemplateXMLHandler extends DefaultHandler {
     }
   }
 
-  public void characters(char[] ch, int start, int length) {
+  public void characters(char[] ch, int start, int length) throws SAXException {
     StringBuffer buffer = new StringBuffer();
     for (int i = start; i < start + length; i++) {
       buffer.append(ch[i]);

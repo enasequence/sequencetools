@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -23,6 +24,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessageManager;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtils;
@@ -39,7 +41,7 @@ public class MoltypeExistsCheckTest {
   private EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -50,25 +52,25 @@ public class MoltypeExistsCheckTest {
   }
 
   @Test
-  public void testCheck_noEntry() {
+  public void testCheck_noEntry() throws ValidationEngineException {
     ValidationResult validationResult = check.check(null);
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noFeatures() {
+  public void testCheck_noFeatures() throws ValidationEngineException {
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noSequence() {
+  public void testCheck_noSequence() throws ValidationEngineException {
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertTrue(validationResult.isValid());
   }
 
   @Test
-  public void testCheck_noMoltype() {
+  public void testCheck_noMoltype() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequence());
     SourceFeature source = featureFactory.createSourceFeature();
     entry.addFeature(source);
@@ -77,7 +79,7 @@ public class MoltypeExistsCheckTest {
   }
 
   @Test
-  public void testCheck_withSourceMoltype() {
+  public void testCheck_withSourceMoltype() throws ValidationEngineException {
     entry.setSequence(sequenceFactory.createSequence());
     SourceFeature source = featureFactory.createSourceFeature();
     source.addQualifier(Qualifier.MOL_TYPE_QUALIFIER_NAME, "genomeDNA");
@@ -87,7 +89,7 @@ public class MoltypeExistsCheckTest {
   }
 
   @Test
-  public void testCheck_withSequenceMoltype() {
+  public void testCheck_withSequenceMoltype() throws ValidationEngineException {
     Sequence sequence = sequenceFactory.createSequence();
     sequence.setMoleculeType("genomeDNA");
     entry.setSequence(sequence);

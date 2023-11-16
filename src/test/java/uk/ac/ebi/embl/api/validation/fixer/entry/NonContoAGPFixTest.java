@@ -14,6 +14,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -93,7 +94,7 @@ public class NonContoAGPFixTest {
   }
 
   @Test
-  public void testCheck_withoneAssemblyGapFeature() throws ValidationEngineException {
+  public void testCheck_withoneAssemblyGapFeature() throws ValidationEngineException, SQLException {
     entry.addFeature(assemblyGapFeature);
     check.check(entry);
     assertEquals(3, entry.getSequence().getAgpRows().size());
@@ -157,7 +158,8 @@ public class NonContoAGPFixTest {
   }
 
   @Test
-  public void testCheck_withMultipleAssemblyGapFeature() throws ValidationEngineException {
+  public void testCheck_withMultipleAssemblyGapFeature()
+      throws ValidationEngineException, SQLException {
     entry.addFeature(assemblyGapFeature);
     entry.addFeature(assemblyGapFeature1);
     entry

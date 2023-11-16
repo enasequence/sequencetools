@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -31,7 +32,7 @@ public class ScaffoldComponentCheck extends EntryValidationCheck {
 
   private static final String SCAFFOLD_WITH_ONE_COMPONENT = "ScaffoldWithOneComponentCheck";
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
 
     result = new ValidationResult();
 

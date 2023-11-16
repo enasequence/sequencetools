@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
  * use File | Settings | File Templates.
  */
 public interface CompoundLocationQualifier {
-  boolean setLocations(CompoundLocation<Location> location);
+  boolean setLocations(CompoundLocation<Location> location) throws ValidationException;
 
   CompoundLocation<Location> getLocations() throws ValidationException;
 

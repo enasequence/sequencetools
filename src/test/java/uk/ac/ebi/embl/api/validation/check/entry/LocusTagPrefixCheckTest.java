@@ -44,7 +44,7 @@ public class LocusTagPrefixCheckTest {
   private EntryFactory entryFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();

@@ -12,6 +12,8 @@ package uk.ac.ebi.embl.api.validation.file;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.Before;
@@ -20,6 +22,7 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
@@ -28,7 +31,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 @Description("")
 public class FastaFileValidationCheckTest extends SubmissionValidationTest {
   @Before
-  public void init() {
+  public void init() throws SQLException {
     options = new SubmissionOptions();
     options.source = Optional.of(getSource());
     options.assemblyInfoEntry = Optional.of(getAssemblyinfoEntry());
@@ -54,7 +57,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testTranscriptomFixedvalidFastaFile() throws ValidationEngineException {
+  public void testTranscriptomFixedvalidFastaFile()
+      throws ValidationEngineException, FlatFileComparatorException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.transcriptome);
@@ -72,7 +76,8 @@ public class FastaFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testgenomeFixedvalidFastaFile() throws ValidationEngineException {
+  public void testgenomeFixedvalidFastaFile()
+      throws ValidationEngineException, FlatFileComparatorException, IOException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.genome);

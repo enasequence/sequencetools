@@ -18,7 +18,7 @@ import org.junit.Test;
 public class LocalBaseTest {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testBase() {

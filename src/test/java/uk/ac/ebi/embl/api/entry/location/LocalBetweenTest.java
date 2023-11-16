@@ -18,7 +18,7 @@ import org.junit.Test;
 public class LocalBetweenTest {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testBetween() {

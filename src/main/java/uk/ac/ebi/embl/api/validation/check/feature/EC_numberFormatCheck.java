@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -24,7 +25,7 @@ public class EC_numberFormatCheck extends FeatureValidationCheck {
       Pattern.compile(
           "^\\d+\\.(((\\d+|-)\\.(\\d+|-)\\.(\\d+|-))|((\\d+)\\.(\\d+)\\.(\\d+|n([0-9]+)?)))$");
 
-  public ValidationResult check(Feature feature) {
+  public ValidationResult check(Feature feature) throws ValidationEngineException {
     result = new ValidationResult();
     if (feature == null) return result;
     List<Qualifier> ecQualifiers = feature.getQualifiers(Qualifier.EC_NUMBER_QUALIFIER_NAME);

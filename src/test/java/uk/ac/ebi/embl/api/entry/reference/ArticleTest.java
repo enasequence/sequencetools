@@ -22,7 +22,7 @@ public class ArticleTest {
   private Article article;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     article = new Article();
   }
 

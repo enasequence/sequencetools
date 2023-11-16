@@ -95,7 +95,7 @@ public class AssemblyInfoProjectIdCheckTest {
   //	}
 
   @Test
-  public void testMissingProjectID() {
+  public void testMissingProjectID() throws ValidationEngineException {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
     assertEquals(
@@ -105,7 +105,7 @@ public class AssemblyInfoProjectIdCheckTest {
   }
 
   @Test
-  public void testInvalidProjectID() {
+  public void testInvalidProjectID() throws ValidationEngineException {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     entry.setProjectId("PRJX9999");
     ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
@@ -116,7 +116,7 @@ public class AssemblyInfoProjectIdCheckTest {
   }
 
   @Test
-  public void testValidProjectID_2() {
+  public void testValidProjectID_2() throws ValidationEngineException {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     entry.setProjectId("PRJEB1234"); // EMBL
     ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);
@@ -124,7 +124,7 @@ public class AssemblyInfoProjectIdCheckTest {
   }
 
   @Test
-  public void testValidProjectID_1() {
+  public void testValidProjectID_1() throws ValidationEngineException {
     AssemblyInfoEntry entry = new AssemblyInfoEntry();
     entry.setProjectId("PRJDB1234"); // DDBJ
     ValidationResult result = new AssemblyInfoProjectIdCheck().check(entry);

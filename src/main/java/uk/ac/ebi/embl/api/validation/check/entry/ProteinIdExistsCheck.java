@@ -14,6 +14,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -27,7 +28,7 @@ public class ProteinIdExistsCheck extends EntryValidationCheck {
 
   public ProteinIdExistsCheck() {}
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
 
     if (entry == null || entry.getFeatures() == null || entry.getFeatures().size() == 0) {

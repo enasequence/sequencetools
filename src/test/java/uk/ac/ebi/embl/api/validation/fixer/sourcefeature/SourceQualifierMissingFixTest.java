@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.sourcefeature;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -41,7 +42,7 @@ public class SourceQualifierMissingFixTest {
   public EmblEntryValidationPlanProperty planProperty;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 
     entryFactory = new EntryFactory();

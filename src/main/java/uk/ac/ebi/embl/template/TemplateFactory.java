@@ -84,7 +84,7 @@ public class TemplateFactory {
           loadTemplates();
       }
   */
-  public void loadTemplates() {
+  public void loadTemplates() throws TemplateException {
     loadStrategyI.loadTemplates();
     this.templateSet = loadStrategyI.getTemplates();
     this.templateOrders = loadStrategyI.getOrders();
@@ -157,7 +157,7 @@ public class TemplateFactory {
     return latestTemplates;
   }
 
-  public boolean isNewTemplate(String templateId) {
+  public boolean isNewTemplate(String templateId) throws TemplateException {
     return TemplateIDs.NEW_TEMPLATE_IDS.contains(templateId);
   }
 

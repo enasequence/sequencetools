@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.gff3.mapping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class GFF3Mapper {
   private final List<Entry> entryList = new ArrayList<Entry>();
   String resourceBundle = "uk.ac.ebi.embl.gff3.mapping.gffMapper";
 
-  public List<Entry> mapGFF3ToEntry(GFF3RecordSet records) {
+  public List<Entry> mapGFF3ToEntry(GFF3RecordSet records) throws IOException {
 
     ResourceBundle featureQualifiers = ResourceBundle.getBundle(resourceBundle);
     String tempSeqid = null;

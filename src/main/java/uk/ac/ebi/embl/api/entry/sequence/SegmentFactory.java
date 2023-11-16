@@ -21,6 +21,8 @@ import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
 import uk.ac.ebi.embl.api.service.SequenceToolsServices;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
 
 public class SegmentFactory {
 
@@ -92,7 +94,7 @@ public class SegmentFactory {
     }
   }
 
-  public Segment createSegment(RemoteBase remoteBase) {
+  public Segment createSegment(RemoteBase remoteBase) throws IOException {
     if (remoteBase == null) {
       return null;
     }
@@ -102,12 +104,18 @@ public class SegmentFactory {
     }
 
     byte[] subSequence;
-    // Includes reverse complementation.
-    subSequence = service.getSequence(remoteBase).array();
+    try {
+      // Includes reverse complementation.
+      subSequence = service.getSequence(remoteBase).array();
+    } catch (ValidationEngineException ex) {
+      StringBuilder locationString = new StringBuilder();
+      LocationToStringCoverter.renderLocation(locationString, remoteBase, false, false);
+      throw new IOException("Invalid Remote Base: " + locationString, ex);
+    }
     return new Segment(remoteBase, subSequence);
   }
 
-  public Segment createSegment(RemoteRange remoteRange) {
+  public Segment createSegment(RemoteRange remoteRange) throws IOException {
     if (remoteRange == null) {
       return null;
     }
@@ -117,8 +125,14 @@ public class SegmentFactory {
     }
 
     byte[] subSequence;
-    // Includes reverse complementation.
-    subSequence = service.getSequence(remoteRange).array();
+    try {
+      // Includes reverse complementation.
+      subSequence = service.getSequence(remoteRange).array();
+    } catch (ValidationEngineException ex) {
+      StringBuilder locationString = new StringBuilder();
+      LocationToStringCoverter.renderLocation(locationString, remoteRange, false, false);
+      throw new IOException("Invalid Remote Range: " + locationString, ex);
+    }
     return new Segment(remoteRange, subSequence);
   }
 }

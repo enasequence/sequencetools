@@ -123,7 +123,7 @@ public class ChromosomeListFileReader extends GCSEntryReader {
   }
 
   @Override
-  public ValidationResult skip() {
+  public ValidationResult skip() throws IOException {
     // TODO Auto-generated method stub
     return null;
   }

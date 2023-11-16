@@ -104,7 +104,7 @@ public class TranslExceptQualifier extends Qualifier
   }
 
   @Override
-  public boolean setLocations(CompoundLocation<Location> location) {
+  public boolean setLocations(CompoundLocation<Location> location) throws ValidationException {
     // TODO Auto-generated method stub
     return false;
   }

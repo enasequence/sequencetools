@@ -21,7 +21,7 @@ public class UnpublishedTest {
   private Unpublished unpublished;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     unpublished = new Unpublished();
   }
 

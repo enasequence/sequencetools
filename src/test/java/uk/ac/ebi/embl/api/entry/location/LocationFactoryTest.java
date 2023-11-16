@@ -20,7 +20,7 @@ public class LocationFactoryTest {
   private LocationFactory factory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     factory = new LocationFactory();
   }
 

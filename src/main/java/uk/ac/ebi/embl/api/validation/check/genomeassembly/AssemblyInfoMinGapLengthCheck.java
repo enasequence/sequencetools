@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -23,7 +24,7 @@ public class AssemblyInfoMinGapLengthCheck
   public AssemblyInfoMinGapLengthCheck() {}
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) {
+  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
     if (entry == null) return result;
     return result;
   }

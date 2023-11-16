@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -34,7 +35,7 @@ public class ReferenceCheckTest {
   private Reference reference1, reference2;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     ReferenceFactory referenceFactory = new ReferenceFactory();

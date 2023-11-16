@@ -14,6 +14,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -34,7 +35,7 @@ public class ProteinIdRemovalFix extends EntryValidationCheck {
 
   public ProteinIdRemovalFix() {}
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
 
     if (entry == null || entry.getFeatures() == null || entry.getFeatures().size() == 0) {

@@ -33,7 +33,7 @@ public class MasterEntryExistsCheckTest {
   EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     entry = entryFactory.createEntry();
@@ -50,7 +50,7 @@ public class MasterEntryExistsCheckTest {
   }
 
   @Test
-  public void testCheck_noAnalysisId() throws ValidationEngineException {
+  public void testCheck_noAnalysisId() throws ValidationEngineException, SQLException {
     entry.setDataClass(Entry.WGS_DATACLASS);
     property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);

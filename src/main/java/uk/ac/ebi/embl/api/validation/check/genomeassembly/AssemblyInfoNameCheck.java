@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -25,7 +26,7 @@ public class AssemblyInfoNameCheck extends GenomeAssemblyValidationCheck<Assembl
   private final Pattern assemblyNamePattern = Pattern.compile(assemblyNameRegex);
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) {
+  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
 
     if (entry == null) return result;
     if (entry.getName() == null || entry.getName().isEmpty()) {

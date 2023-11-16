@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +38,7 @@ public class MasterEntryValidationCheckTest extends SubmissionValidationTest {
   @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Before
-  public void init() {
+  public void init() throws SQLException {
     options = new SubmissionOptions();
     options.isWebinCLI = true;
   }

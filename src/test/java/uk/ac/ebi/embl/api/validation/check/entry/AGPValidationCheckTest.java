@@ -14,6 +14,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,7 @@ public class AGPValidationCheckTest {
   List<String> linkageEvidences;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     planProperty = TestHelper.testEmblEntryValidationPlanProperty();
     EntryFactory entryFactory = new EntryFactory();
@@ -54,19 +55,19 @@ public class AGPValidationCheckTest {
   }
 
   @Test
-  public void testCheck_withNoagpRows() throws ValidationEngineException {
+  public void testCheck_withNoagpRows() throws ValidationEngineException, SQLException {
     check.setEmblEntryValidationPlanProperty(planProperty);
     assertTrue(check.check(entry).isValid());
   }
 
   @Test
-  public void testCheck_withNoDatabaseConnection() throws ValidationEngineException {
+  public void testCheck_withNoDatabaseConnection() throws ValidationEngineException, SQLException {
     check.setEmblEntryValidationPlanProperty(planProperty);
     assertTrue(check.check(entry).isValid());
   }
 
   @Test
-  public void testcheck_withvalidAGProws() throws ValidationEngineException {
+  public void testcheck_withvalidAGProws() throws SQLException, ValidationEngineException {
     AgpRow validComponentrow1 = new AgpRow();
     AgpRow validGaprow1 = new AgpRow();
     validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
@@ -102,7 +103,7 @@ public class AGPValidationCheckTest {
   }
 
   @Test
-  public void testcheck_emptyAgpRow() throws ValidationEngineException {
+  public void testcheck_emptyAgpRow() throws SQLException, ValidationEngineException {
     AgpRow inValidGaprow1 = new AgpRow();
     entry.getSequence().addAgpRow(inValidGaprow1);
     planProperty.validationScope.set(ValidationScope.ASSEMBLY_CHROMOSOME);
@@ -113,7 +114,7 @@ public class AGPValidationCheckTest {
   }
 
   @Test
-  public void testcheck_invalidAgpComponentRow() throws ValidationEngineException {
+  public void testcheck_invalidAgpComponentRow() throws SQLException, ValidationEngineException {
     AgpRow inValidComponentrow1 = new AgpRow();
     inValidComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
     inValidComponentrow1.setObject_beg(1);
@@ -143,7 +144,7 @@ public class AGPValidationCheckTest {
   }
 
   @Test
-  public void testcheck_invalidAgpGapRow() throws ValidationEngineException {
+  public void testcheck_invalidAgpGapRow() throws SQLException, ValidationEngineException {
     AgpRow validComponentrow1 = new AgpRow();
     AgpRow inValidGaprow1 = new AgpRow();
     validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
@@ -178,7 +179,7 @@ public class AGPValidationCheckTest {
 
   @Test
   public void testcheck_AGPRowwithinvalidObjectBeginandObjectEnd()
-      throws ValidationEngineException {
+      throws SQLException, ValidationEngineException {
     AgpRow validComponentrow1 = new AgpRow();
     AgpRow inValidGaprow1 = new AgpRow();
     validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");
@@ -209,7 +210,8 @@ public class AGPValidationCheckTest {
   }
 
   @Test
-  public void testcheck_AGPRowwithinvalidgapLength() throws ValidationEngineException {
+  public void testcheck_AGPRowwithinvalidgapLength()
+      throws SQLException, ValidationEngineException {
     AgpRow validComponentrow1 = new AgpRow();
     AgpRow inValidGaprow1 = new AgpRow();
     validComponentrow1.setObject("IWGSC_CSS_6DL_scaff_3330716");

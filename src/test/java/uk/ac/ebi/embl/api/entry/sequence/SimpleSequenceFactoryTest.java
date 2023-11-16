@@ -22,7 +22,7 @@ public class SimpleSequenceFactoryTest {
   private SequenceFactory factory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     factory = new SequenceFactory();
   }
 

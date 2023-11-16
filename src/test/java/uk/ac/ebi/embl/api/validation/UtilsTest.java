@@ -48,7 +48,7 @@ public class UtilsTest {
   private ReferenceFactory referenceFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();

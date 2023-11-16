@@ -50,7 +50,7 @@ public class DEGeneratorTest extends TestCase {
   Entry entry;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     this.entryFactory = new EntryFactory();
     this.featureFactory = new FeatureFactory();
     this.sequenceFactory = new SequenceFactory();
@@ -111,7 +111,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testOrgainsm1() {
+  public void testOrgainsm1() throws IOException {
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
         .get(0)
@@ -123,9 +123,13 @@ public class DEGeneratorTest extends TestCase {
     assertEquals("chicken", deLine);
   }
 
-  /** no proviral qualifier - despite endogenous retrovirus note */
+  /**
+   * no proviral qualifier - despite endogenous retrovirus note
+   *
+   * @throws IOException
+   */
   @Test
-  public void testOrgainsm2() {
+  public void testOrgainsm2() throws IOException {
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
         .get(0)
@@ -143,7 +147,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testOrgainsm3() {
+  public void testOrgainsm3() throws IOException {
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
         .get(0)
@@ -164,7 +168,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testOrganelle1() {
+  public void testOrganelle1() throws IOException {
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
         .get(0)
@@ -181,7 +185,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody1() {
+  public void testBody1() throws IOException {
     entry.setDataClass(Entry.EST_DATACLASS);
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
@@ -200,7 +204,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody2() {
+  public void testBody2() throws IOException {
     entry.getSequence().setMoleculeType(Sequence.GENOMIC_DNA_MOLTYPE);
     Feature cdsFeature = featureFactory.createCdsFeature();
     cdsFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "g1"));
@@ -213,9 +217,13 @@ public class DEGeneratorTest extends TestCase {
     assertEquals("g1 gene for p1", deLine);
   }
 
-  /** gene rather than cds */
+  /**
+   * gene rather than cds
+   *
+   * @throws IOException
+   */
   @Test
-  public void testBody3() {
+  public void testBody3() throws IOException {
     entry.getSequence().setMoleculeType(Sequence.GENOMIC_DNA_MOLTYPE);
     Feature geneFeature = featureFactory.createFeature(Feature.GENE_FEATURE_NAME);
     geneFeature.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "g1"));
@@ -229,7 +237,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody4() {
+  public void testBody4() throws IOException {
     entry.getSequence().setMoleculeType(Sequence.GENOMIC_DNA_MOLTYPE);
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
     features
@@ -255,7 +263,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody5() {
+  public void testBody5() throws IOException {
 
     entry.getSequence().setTopology(Sequence.Topology.CIRCULAR);
 
@@ -275,7 +283,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody5_2() {
+  public void testBody5_2() throws IOException {
 
     entry.getSequence().setTopology(Sequence.Topology.CIRCULAR);
 
@@ -294,7 +302,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody5_3() {
+  public void testBody5_3() throws IOException {
 
     entry.getSequence().setTopology(Sequence.Topology.CIRCULAR);
 
@@ -312,7 +320,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody6() {
+  public void testBody6() throws IOException {
 
     entry.getSequence().setMoleculeType(Sequence.MRNA_MOLTYPE);
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
@@ -338,7 +346,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody7() {
+  public void testBody7() throws IOException {
 
     entry.getSequence().setMoleculeType(Sequence.MRNA_MOLTYPE);
     List<Feature> features = SequenceEntryUtils.getFeatures(Feature.SOURCE_FEATURE_NAME, entry);
@@ -364,7 +372,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody8() {
+  public void testBody8() throws IOException {
 
     Feature feature = featureFactory.createFeature(Feature.MISC_FEATURE_NAME);
     feature.addQualifier(Qualifier.NOTE_QUALIFIER_NAME, "bacon");
@@ -385,7 +393,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody9() {
+  public void testBody9() throws IOException {
 
     entry.setDataClass(Entry.STANDARD_DATACLASS);
     Feature feature = featureFactory.createFeature(Feature.rRNA_FEATURE_NAME);
@@ -409,7 +417,7 @@ public class DEGeneratorTest extends TestCase {
   }
 
   @Test
-  public void testBody10() {
+  public void testBody10() throws IOException {
 
     entry.setDataClass(Entry.STANDARD_DATACLASS);
     Feature feature = featureFactory.createFeature(Feature.rRNA_FEATURE_NAME);

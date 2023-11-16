@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -36,7 +37,7 @@ public class ProteinIdRemovalFixTest {
   private EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryDAOUtils = createMock(EntryDAOUtils.class);
     entryFactory = new EntryFactory();
@@ -48,21 +49,21 @@ public class ProteinIdRemovalFixTest {
   }
 
   @Test
-  public void testCheck_noEntry() {
+  public void testCheck_noEntry() throws ValidationEngineException {
     ValidationResult validationResult = check.check(null);
     assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
   @Test
-  public void testCheck_noFeatures() {
+  public void testCheck_noFeatures() throws ValidationEngineException {
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertEquals(0, validationResult.getMessages(Severity.FIX).size());
     assertEquals(0, validationResult.getMessages("ProteinIdRemovalFix_1", Severity.FIX).size());
   }
 
   @Test
-  public void testCheck_noAnalysisIDandAssemblyLevel() {
+  public void testCheck_noAnalysisIDandAssemblyLevel() throws ValidationEngineException {
     entry.addFeature(cdsFeature);
     ValidationResult validationResult = check.check(entryFactory.createEntry());
     assertEquals(0, validationResult.getMessages(Severity.FIX).size());
@@ -70,7 +71,7 @@ public class ProteinIdRemovalFixTest {
   }
 
   @Test
-  public void testCheck_noNewproteinID() {
+  public void testCheck_noNewproteinID() throws ValidationEngineException, SQLException {
 
     entry.addFeature(cdsFeature);
     property = TestHelper.testEmblEntryValidationPlanProperty();
@@ -83,7 +84,7 @@ public class ProteinIdRemovalFixTest {
   }
 
   @Test
-  public void testCheck_withNewproteinID() {
+  public void testCheck_withNewproteinID() throws ValidationEngineException, SQLException {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);
@@ -97,7 +98,7 @@ public class ProteinIdRemovalFixTest {
   }
 
   @Test
-  public void testCheck_withUpdateproteinID() {
+  public void testCheck_withUpdateproteinID() throws ValidationEngineException, SQLException {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);
@@ -111,7 +112,7 @@ public class ProteinIdRemovalFixTest {
   }
 
   @Test
-  public void testCheck_nonAssemblyWithproteinID() {
+  public void testCheck_nonAssemblyWithproteinID() throws ValidationEngineException, SQLException {
 
     cdsFeature.addQualifier(Qualifier.PROTEIN_ID_QUALIFIER_NAME, "MCI00001");
     entry.addFeature(cdsFeature);

@@ -111,7 +111,7 @@ public class TranslatorTest {
   }
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testValidTranslationNonRightPartialOneTrailingBase1() throws ValidationException {

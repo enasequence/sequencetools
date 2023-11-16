@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.flatfile.reader;
 
+import java.io.IOException;
 import junit.framework.TestCase;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.location.LocalBase;
@@ -28,7 +29,7 @@ public class FeatureLocationMatcherTest extends TestCase {
   }
 
   @Test
-  public void testLocationMatcher_LocalBase() {
+  public void testLocationMatcher_LocalBase() throws IOException {
     featureLocationMatcher.match("467");
     LocalBase location = (LocalBase) featureLocationMatcher.getLocation();
     assertFalse(featureLocationMatcher.isLeftPartial());

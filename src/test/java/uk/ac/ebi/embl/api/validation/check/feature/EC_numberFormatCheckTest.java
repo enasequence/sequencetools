@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.feature;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -28,7 +29,7 @@ public class EC_numberFormatCheckTest {
   private EC_numberFormatCheck check;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("feature");
@@ -36,24 +37,24 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_NoFeature() {
+  public void testCheck_NoFeature() throws ValidationEngineException {
     assertTrue(check.check(null).isValid());
   }
 
   @Test
-  public void testCheck_NoQualifiers() {
+  public void testCheck_NoQualifiers() throws ValidationEngineException {
     assertTrue(check.check(feature).isValid());
   }
 
   @Test
-  public void testCheck_NoEcnumber() {
+  public void testCheck_NoEcnumber() throws ValidationEngineException {
     feature.setSingleQualifier("qual1");
     feature.setSingleQualifier("qual2");
     assertTrue(check.check(feature).isValid());
   }
 
   @Test
-  public void testCheck_invalidEcnumber() {
+  public void testCheck_invalidEcnumber() throws SQLException, ValidationEngineException {
 
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.i");
     ValidationResult result = check.check(feature);
@@ -62,7 +63,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_invalidEcnumber1() {
+  public void testCheck_invalidEcnumber1() throws ValidationEngineException {
 
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "-.6.9.9");
     ValidationResult result = check.check(feature);
@@ -71,7 +72,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_validEcnumber() {
+  public void testCheck_validEcnumber() throws SQLException, ValidationEngineException {
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.-");
     ValidationResult result = check.check(feature);
     assertTrue(result.isValid());
@@ -79,7 +80,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_validEcnumber1() {
+  public void testCheck_validEcnumber1() throws SQLException, ValidationEngineException {
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.n");
     ValidationResult result = check.check(feature);
     assertTrue(result.isValid());
@@ -87,7 +88,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_validEcnumber2() {
+  public void testCheck_validEcnumber2() throws SQLException, ValidationEngineException {
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.5");
     ValidationResult result = check.check(feature);
     assertTrue(result.isValid());
@@ -95,7 +96,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_validEcnumber3() {
+  public void testCheck_validEcnumber3() throws SQLException, ValidationEngineException {
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.-.-.-");
     ValidationResult result = check.check(feature);
     assertTrue(result.isValid());
@@ -103,7 +104,7 @@ public class EC_numberFormatCheckTest {
   }
 
   @Test
-  public void testCheck_validEcnumber4() {
+  public void testCheck_validEcnumber4() throws SQLException, ValidationEngineException {
     feature.addQualifier(Qualifier.EC_NUMBER_QUALIFIER_NAME, "3.6.1.n234");
     ValidationResult result = check.check(feature);
     assertTrue(result.isValid());

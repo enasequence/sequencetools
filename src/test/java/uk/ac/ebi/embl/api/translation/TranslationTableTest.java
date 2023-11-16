@@ -18,7 +18,7 @@ import org.junit.Test;
 public class TranslationTableTest {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   private final TranslationTableFactory factory = new TranslationTableFactory();
 

@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 public class AssemblyTest {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testAssembly() {

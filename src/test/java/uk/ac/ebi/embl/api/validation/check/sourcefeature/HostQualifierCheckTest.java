@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.sourcefeature;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
@@ -30,7 +31,7 @@ public class HostQualifierCheckTest {
   private EmblEntryValidationPlanProperty planProperty;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     check = new HostQualifierCheck();
     planProperty = TestHelper.testEmblEntryValidationPlanProperty();

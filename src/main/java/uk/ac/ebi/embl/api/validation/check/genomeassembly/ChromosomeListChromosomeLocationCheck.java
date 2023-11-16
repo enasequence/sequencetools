@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -20,7 +21,7 @@ public class ChromosomeListChromosomeLocationCheck
   private final String MESSAGE_KEY_INVALID_CHROMOSOME_LOCATION_ERROR =
       "ChromosomeListChromosomeLocationValidCheck";
 
-  public ValidationResult check(ChromosomeEntry entry) {
+  public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {
     if (entry == null) return result;
     if (null == entry.getChromosomeLocation()) return result;
 

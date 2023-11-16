@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.file;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import uk.ac.ebi.embl.api.validation.check.file.AGPFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FlatfileFileValidationCheck;
+import uk.ac.ebi.embl.api.validation.helper.FlatFileComparatorException;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
@@ -41,7 +43,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testGenomeSubmissionwithFlatfileAGP() throws ValidationEngineException {
+  public void testGenomeSubmissionwithFlatfileAGP()
+      throws FlatFileComparatorException, ValidationEngineException, IOException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     validateMaster(Context.genome);
@@ -74,7 +77,8 @@ public class AGPFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
-  public void testGenomeSubmissionwithFastafileAGP() throws ValidationEngineException {
+  public void testGenomeSubmissionwithFastafileAGP()
+      throws FlatFileComparatorException, ValidationEngineException {
     sharedInfo = new FileValidationCheck.SharedInfo();
 
     String agpFileName = "valid_fastaagp.txt";

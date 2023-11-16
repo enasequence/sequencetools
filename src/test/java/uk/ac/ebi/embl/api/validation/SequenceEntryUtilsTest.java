@@ -32,7 +32,7 @@ public class SequenceEntryUtilsTest {
   private LocationFactory locationFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();
     featureFactory = new FeatureFactory();

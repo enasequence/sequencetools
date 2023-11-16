@@ -14,6 +14,7 @@ import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.PSEUDO_QUALIFIER_NAME
 import static uk.ac.ebi.embl.api.validation.SequenceEntryUtils.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import uk.ac.ebi.embl.api.RepositoryException;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -91,7 +92,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
 
   private void checkTranslations(
       Entry entry, CdsFeature cdsFeature, List<PeptideFeature> relevantPeptideFeatures)
-      throws IOException {
+      throws IOException, SQLException {
     SegmentFactory segmentFactory = new SegmentFactory();
 
     if (!checkPseudoQualifier(cdsFeature, relevantPeptideFeatures)) {

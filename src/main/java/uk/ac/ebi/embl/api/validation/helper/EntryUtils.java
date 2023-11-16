@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.helper;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -139,7 +140,8 @@ public class EntryUtils {
     return concatString.toString();
   }
 
-  public static String convertNonAsciiStringtoAsciiString(String non_asciiString) {
+  public static String convertNonAsciiStringtoAsciiString(String non_asciiString)
+      throws UnsupportedEncodingException {
     if (StringUtils.isAsciiPrintable(non_asciiString)
         || non_asciiString == null
         || non_asciiString.isEmpty()) return non_asciiString;

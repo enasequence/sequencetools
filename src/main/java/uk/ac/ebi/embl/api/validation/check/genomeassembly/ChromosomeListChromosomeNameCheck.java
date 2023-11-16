@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 
@@ -29,7 +30,7 @@ public class ChromosomeListChromosomeNameCheck
       Pattern.compile("^([A-Za-z0-9]){1}([A-Za-z0-9_\\.]|-)*$");
   private final String[] chromosomeNamesToRejectArray = {"Un", "chrUn", "random", "rnd", "unknown"};
 
-  public ValidationResult check(ChromosomeEntry entry) {
+  public ValidationResult check(ChromosomeEntry entry) throws ValidationEngineException {
     if (entry == null) return result;
 
     if (null == entry.getChromosomeName()) {

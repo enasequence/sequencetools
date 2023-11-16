@@ -16,6 +16,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -42,7 +43,7 @@ public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
   }
 
   @Override
-  public ValidationResult check(Feature feature) {
+  public ValidationResult check(Feature feature) throws ValidationEngineException {
     result = new ValidationResult();
 
     if (feature == null) return result;

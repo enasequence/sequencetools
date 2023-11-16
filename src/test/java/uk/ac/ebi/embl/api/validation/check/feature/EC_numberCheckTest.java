@@ -34,7 +34,7 @@ public class EC_numberCheckTest {
   private EntryDAOUtils entryDAOUtils;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     FeatureFactory featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("feature");

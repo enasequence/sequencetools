@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import org.junit.Before;
@@ -34,7 +35,7 @@ public class HoldDateFixTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
     property = TestHelper.testEmblEntryValidationPlanProperty();
     entryFactory = new EntryFactory();
@@ -76,7 +77,7 @@ public class HoldDateFixTest {
   }
 
   @Test
-  public void testCheck_pastDate_non_assembly_scope() {
+  public void testCheck_pastDate_non_assembly_scope() throws SQLException {
     property.validationScope.set(ValidationScope.EMBL);
     check.setEmblEntryValidationPlanProperty(property);
     Calendar calendar = Calendar.getInstance();

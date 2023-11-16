@@ -69,7 +69,7 @@ public class MasterEntryValidationCheck extends FileValidationCheck {
   }
 
   @Override
-  public ValidationResult check(SubmissionFile file) {
+  public ValidationResult check(SubmissionFile file) throws ValidationEngineException {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException();
   }

@@ -14,6 +14,7 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class StrainQualifierValueFixTest {
   private TaxonomyClient taxonClient;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
 
     entryFactory = new EntryFactory();

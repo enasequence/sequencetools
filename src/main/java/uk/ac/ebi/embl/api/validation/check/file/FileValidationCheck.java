@@ -608,7 +608,8 @@ public abstract class FileValidationCheck {
     }
   }
 
-  protected void addTemplateHeader(Entry entry) throws SQLException, ValidationEngineException {
+  protected void addTemplateHeader(Entry entry)
+      throws UnsupportedEncodingException, SQLException, ValidationEngineException {
     entry.removeReferences();
     entry.removeProjectAccessions();
     entry.addProjectAccession(new Text(options.getProjectId()));

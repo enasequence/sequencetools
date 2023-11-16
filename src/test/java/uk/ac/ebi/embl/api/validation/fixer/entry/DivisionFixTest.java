@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -151,7 +152,8 @@ public class DivisionFixTest {
   }
 
   @Test
-  public void testCheck_entryWithNCBIValidationScope() throws ValidationEngineException {
+  public void testCheck_entryWithNCBIValidationScope()
+      throws ValidationEngineException, SQLException {
     Entry entry = entryFactory.createEntry();
     divisionFix.setEmblEntryValidationPlanProperty(getProperty(ValidationScope.NCBI));
     entry.setDivision("PHG");
@@ -160,7 +162,8 @@ public class DivisionFixTest {
   }
 
   @Test
-  public void testCheck_entryWithNonNCBIValidationScope() throws ValidationEngineException {
+  public void testCheck_entryWithNonNCBIValidationScope()
+      throws ValidationEngineException, SQLException {
     Entry entry = entryFactory.createEntry();
     sourceFeature.setTaxon(taxon);
     entry.addFeature(sourceFeature);

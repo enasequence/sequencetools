@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 public class TranslTableQualifierTest {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testValidQualifier() throws ValidationException {

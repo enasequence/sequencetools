@@ -33,7 +33,7 @@ public abstract class GenbankReaderTest extends TestCase {
     entry.setSequence(sequence);
   }
 
-  protected void setLineReader(String string, String fileId) {
+  protected void setLineReader(String string, String fileId) throws IOException {
     lineReader = new GenbankLineReader(new BufferedReader(new StringReader(string)), fileId);
   }
 

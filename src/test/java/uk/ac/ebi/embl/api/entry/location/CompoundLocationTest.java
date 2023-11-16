@@ -27,7 +27,7 @@ public class CompoundLocationTest {
 
   @SuppressWarnings({"unchecked", "serial"})
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     location = new CompoundLocation() {};
   }
 

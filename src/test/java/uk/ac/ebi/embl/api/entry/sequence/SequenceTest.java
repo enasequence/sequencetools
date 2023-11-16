@@ -24,7 +24,7 @@ public class SequenceTest {
   SequenceFactory sequenceFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
 
     sequenceFactory = new SequenceFactory();
   }

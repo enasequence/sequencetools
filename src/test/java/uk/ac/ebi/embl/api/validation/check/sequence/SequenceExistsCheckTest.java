@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.sequence;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class SequenceExistsCheckTest {
   private EmblEntryValidationPlanProperty property;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     locationFactory = new LocationFactory();
@@ -58,14 +59,14 @@ public class SequenceExistsCheckTest {
   }
 
   @Test
-  public void testCheck_scope() {
+  public void testCheck_scope() throws SQLException {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     assertFalse(check.check(entry).isValid());
   }
 
   @Test
-  public void testCheck_Coline() {
+  public void testCheck_Coline() throws SQLException {
     property.validationScope.set(ValidationScope.ASSEMBLY_CONTIG);
     check.setEmblEntryValidationPlanProperty(property);
     Collection<Location> locations = new ArrayList<Location>();

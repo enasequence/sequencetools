@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
@@ -32,7 +33,7 @@ public class DescriptionCheck extends EntryValidationCheck {
   private static final String INVALID_DE_LINE = "templateInvalidDescription";
 
   @Override
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
 
     if (entry == null) {
       return result;

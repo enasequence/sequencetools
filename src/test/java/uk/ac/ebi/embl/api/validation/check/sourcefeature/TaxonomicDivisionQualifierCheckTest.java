@@ -14,6 +14,7 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   private FeatureFactory featureFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     EntryFactory entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();
@@ -82,7 +83,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_NoDivisionInvalidQualifier() {
+  public void testCheck_NoDivisionInvalidQualifier() throws SQLException {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     sourceFeature.setScientificName("Homo sapiens");
@@ -100,7 +101,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_DivisionNoQualifier() {
+  public void testCheck_DivisionNoQualifier() throws SQLException {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("PLN");
@@ -116,7 +117,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_DivisionInvalidQualifier1() {
+  public void testCheck_DivisionInvalidQualifier1() throws SQLException {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("HUM");
@@ -134,7 +135,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_DivisionValidQualifier() {
+  public void testCheck_DivisionValidQualifier() throws SQLException {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("PLN");
@@ -151,7 +152,7 @@ public class TaxonomicDivisionQualifierCheckTest {
   }
 
   @Test
-  public void testCheck_DivisionInvalidQualifier2() {
+  public void testCheck_DivisionInvalidQualifier2() throws SQLException {
     TaxonFactory taxonFactory = new TaxonFactory();
     Taxon taxon = taxonFactory.createTaxon();
     taxon.setDivision("HUM");

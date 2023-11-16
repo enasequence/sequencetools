@@ -26,7 +26,7 @@ import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 public class EmblEntryRoundTripTest extends TestCase {
 
   @Before
-  public void setUp() {}
+  public void setUp() throws Exception {}
 
   @Test
   public void testFile1() throws IOException {

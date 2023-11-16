@@ -182,7 +182,8 @@ public class TemplateEntryProcessor {
   private boolean checkMandatoryFieldsArePresent(
       TemplateInfo templateInfo,
       TemplateVariables templateVariables,
-      TemplateProcessorResultSet templateProcessorResultSet) {
+      TemplateProcessorResultSet templateProcessorResultSet)
+      throws Exception {
     List<String> mandatoryFieldsList = templateInfo.getMandatoryFields();
     Map<String, String> fieldsMap = templateVariables.getVariables();
     String missingfields = "";
@@ -204,7 +205,8 @@ public class TemplateEntryProcessor {
   }
 
   private boolean checkSelectedHeadersHaveValuesAndAreSupported(
-      TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet) {
+      TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet)
+      throws Exception {
     Map<String, String> fieldsMap = templateVariables.getVariables();
     String missingValue = "";
     String unsupportedHeaders = "";
@@ -240,7 +242,7 @@ public class TemplateEntryProcessor {
     return true;
   }
 
-  private void replacePPOrganelleToken(TemplateVariables templateVariables) {
+  private void replacePPOrganelleToken(TemplateVariables templateVariables) throws Exception {
     if (!template.toString().contains(TemplateProcessorConstants.PP_ORGANELLE_TOKEN)) return;
     for (String tokenName : templateVariables.getTokenNames()) {
       String tokenValue = templateVariables.getTokenValue(tokenName);
@@ -261,7 +263,8 @@ public class TemplateEntryProcessor {
 
   /** This method replaces {ORGANISM_NAME} with valid scientificName. */
   private void replaceOrganismToken(
-      TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet) {
+      TemplateVariables templateVariables, TemplateProcessorResultSet templateProcessorResultSet)
+      throws Exception {
     if (!templateContainsOrganismToken()) return;
     TaxonomyClient taxonomyClient = new TaxonomyClient();
     String scientificName = "";
@@ -311,7 +314,7 @@ public class TemplateEntryProcessor {
     }
   }
 
-  private void replacePPNotes(TemplateVariables templateVariables) {
+  private void replacePPNotes(TemplateVariables templateVariables) throws Exception {
     if (!template.toString().contains(TemplateProcessorConstants.PP_NOTES_TOKEN)) return;
     ValidationResult validationResult = new ValidationResult();
     String token18s = templateVariables.getTokenValue("18S");
@@ -508,7 +511,7 @@ public class TemplateEntryProcessor {
    * entry's sourceFeature using the sample values.
    */
   private void updateSourceFeatureUsingOrganismFieldValue(
-      Entry entry, TemplateVariables templateVariables) {
+      Entry entry, TemplateVariables templateVariables) throws Exception {
 
     // Validate and get samples
     Sample sample = validateAndGetSample(templateVariables);
@@ -524,7 +527,7 @@ public class TemplateEntryProcessor {
    * Returns sample if one could be found using the ORGANISM_NAME field of the TSV file or NULL if
    * the ORGANISM_NAME was a scientific name or tax id.
    */
-  public Sample validateAndGetSample(TemplateVariables templateVariables) {
+  public Sample validateAndGetSample(TemplateVariables templateVariables) throws Exception {
 
     Map<String, String> tsvFieldMap = templateVariables.getVariables();
     Sample sample = null;
@@ -570,12 +573,13 @@ public class TemplateEntryProcessor {
     return sample;
   }
 
-  private SourceFeature updateSourceFeature(SourceFeature sourceFeature, Sample sampleEntity) {
+  private SourceFeature updateSourceFeature(SourceFeature sourceFeature, Sample sampleEntity)
+      throws Exception {
     return new SourceFeatureUtils()
         .updateSourceFeature(sourceFeature, sampleEntity, new TaxonomyClient());
   }
 
-  public SourceFeature createSourceFeature(Sample sample) {
+  public SourceFeature createSourceFeature(Sample sample) throws Exception {
     return new SourceFeatureUtils().constructSourceFeature(sample, new TaxonomyClient());
   }
 

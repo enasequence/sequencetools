@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.entry;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence.Topology;
 import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -24,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 public class AssemblyTopologyFix extends EntryValidationCheck {
   private final String MESSAGE_ID = "AssemblyTopologyFix_1";
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
 
     if (entry == null || entry.getSequence() == null) {

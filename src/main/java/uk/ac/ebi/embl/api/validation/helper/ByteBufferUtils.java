@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.helper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -237,14 +238,14 @@ public class ByteBufferUtils {
     final ByteBuffer copy = bytes.duplicate();
 
     return new InputStream() {
-      public int read() {
+      public int read() throws IOException {
         if (!copy.hasRemaining()) return -1;
 
         return copy.get() & 0xFF;
       }
 
       @Override
-      public int read(byte[] bytes, int off, int len) {
+      public int read(byte[] bytes, int off, int len) throws IOException {
         if (!copy.hasRemaining()) return -1;
 
         len = Math.min(len, copy.remaining());
@@ -253,7 +254,7 @@ public class ByteBufferUtils {
       }
 
       @Override
-      public int available() {
+      public int available() throws IOException {
         return copy.remaining();
       }
     };

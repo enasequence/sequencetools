@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.fixer.sequence;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class ContigstosequenceFixTest {
   private ArrayList<Location> contigs;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     sequenceFactory = new SequenceFactory();

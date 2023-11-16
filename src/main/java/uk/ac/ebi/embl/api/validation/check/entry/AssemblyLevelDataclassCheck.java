@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
@@ -28,7 +29,7 @@ public class AssemblyLevelDataclassCheck extends EntryValidationCheck {
   private static final String MESSAGE_ID = "assemblyLevelDataclassCheck_1";
   private static final String MESSAGE_ID_CHROMOSOME = "assemblyLevelDataclassCheck_2";
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
 
     if (entry == null) {

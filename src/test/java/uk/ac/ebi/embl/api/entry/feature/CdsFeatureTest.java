@@ -30,7 +30,7 @@ public class CdsFeatureTest {
   private final FeatureFactory featureFactory = new FeatureFactory();
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     entry = entryFactory.createEntry();
     cdsFeature = featureFactory.createCdsFeature();
     sourceFeature = featureFactory.createSourceFeature();

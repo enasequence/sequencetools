@@ -23,7 +23,7 @@ public class PublicationTest {
   private Publication publication;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     publication = new Publication();
   }
 

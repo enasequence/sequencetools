@@ -13,6 +13,7 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -43,7 +44,7 @@ public class PeptideFeatureCheckTest {
   private EntryFactory entryFactory;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     entryFactory = new EntryFactory();
     featureFactory = new FeatureFactory();

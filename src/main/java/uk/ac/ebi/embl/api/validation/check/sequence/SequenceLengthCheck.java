@@ -43,7 +43,7 @@ public class SequenceLengthCheck extends EntryValidationCheck {
   private static final String SEQUENCE_LENGTH_INCRNA_MESSAGE_ID = "SequenceLengthCheck5";
   private static final String SEQUENCE_LENGTH_MISMATCH_MESSAGE_ID = "SequenceLengthCheck6";
 
-  public ValidationResult check(Entry entry) {
+  public ValidationResult check(Entry entry) throws ValidationEngineException {
     result = new ValidationResult();
     SequenceExistsCheck sequenceExistsCheck = new SequenceExistsCheck();
     sequenceExistsCheck.setEmblEntryValidationPlanProperty(getEmblEntryValidationPlanProperty());

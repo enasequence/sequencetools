@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.genomeassembly;
 
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.RemoteExclude;
@@ -27,7 +28,7 @@ public class AssemblyInfoAnalysisIdCheck extends GenomeAssemblyValidationCheck<A
   public AssemblyInfoAnalysisIdCheck() {}
 
   @Override
-  public ValidationResult check(AssemblyInfoEntry entry) {
+  public ValidationResult check(AssemblyInfoEntry entry) throws ValidationEngineException {
     if (entry == null) return result;
 
     if (entry.getAnalysisId() == null || entry.getAnalysisId().isEmpty()) {

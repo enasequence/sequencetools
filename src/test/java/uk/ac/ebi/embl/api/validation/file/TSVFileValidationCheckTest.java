@@ -83,7 +83,7 @@ public class TSVFileValidationCheckTest {
   };
 
   @Before
-  public void init() {
+  public void init() throws Exception {
     try {
       if (Files.exists(sequenceFixedFilePath)) Files.delete(sequenceFixedFilePath);
       Files.createFile(sequenceFixedFilePath);
