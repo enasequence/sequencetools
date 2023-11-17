@@ -33,16 +33,17 @@ public class SubmitterAccessionFixTest {
 
   public static Map<String, String> fixMap =
       new HashMap<String, String>() {
-        {
-          // submitterAccession, fixedSubmitterAccession
-          put("test1", "test1");
-          put("  test1  ", "test1");
-          put("__test1__", "test1");
-          put("te____st1", "te_st1");
-          put("te    st1", "test1");
-          put("test1;", "test1");
-          put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
-        }
+          {
+              // submitterAccession, fixedSubmitterAccession
+              put("test1", "test1");
+              put("  test1  ", "test1");
+              put("__test1__", "test1");
+              put("te____st1", "te_st1");
+              put("te    st1", "test1");
+              put("test1;", "test1");
+              put("\\/;'\"test\\/;'\"1\\/;'\"", "test_1");
+              put("||test|test1||", "test_test1");
+          }
       };
 
   private static final Map<String, String> fixMapFastaFileReader =
