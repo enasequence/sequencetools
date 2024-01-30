@@ -44,14 +44,13 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
       try {
         boolean isComplement = false;
         CompoundLocation<Location> location = tQualifier.getLocations();
-        if(null != location) {
+        if (null != location) {
           for (Location slocation : location.getLocations()) {
             if (slocation.isComplement()) {
               isComplement = true;
               slocation.setComplement(false);
             }
           }
-
 
           location.setComplement(false);
           String locationString = LocationToStringCoverter.renderCompoundLocation(location);
