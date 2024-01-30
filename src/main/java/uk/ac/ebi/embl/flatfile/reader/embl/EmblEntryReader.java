@@ -18,7 +18,9 @@ import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.fixer.entry.SubmitterAccessionFix;
+import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.flatfile.EmblTag;
 import uk.ac.ebi.embl.flatfile.reader.*;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
@@ -44,6 +46,7 @@ public class EmblEntryReader extends EntryReader {
   private boolean isReducedFlatfile = false;
 
   private Format format = null;
+  private ValidationScope scope;
 
   public enum Format {
     EMBL_FORMAT,
@@ -58,10 +61,10 @@ public class EmblEntryReader extends EntryReader {
   // TODO: delete!
   public EmblEntryReader(BufferedReader reader) {
 
-    this(reader, Format.EMBL_FORMAT, null);
+    this(reader, Format.EMBL_FORMAT, null, ValidationScope.EMBL);
   }
 
-  public EmblEntryReader(BufferedReader reader, Format format, String fileId) {
+  public EmblEntryReader(BufferedReader reader, Format format, String fileId, ValidationScope scope) {
 
     super(new EmblLineReader(reader, fileId));
 
@@ -70,7 +73,7 @@ public class EmblEntryReader extends EntryReader {
   }
 
   public EmblEntryReader(
-      BufferedReader reader, Format format, String fileId, ReaderOptions readerOptions) {
+      BufferedReader reader, Format format, String fileId, ReaderOptions readerOptions,ValidationScope scope) {
     super(new EmblLineReader(reader, fileId).setReaderOptions(readerOptions));
 
     this.format = format;
@@ -79,10 +82,10 @@ public class EmblEntryReader extends EntryReader {
 
   public EmblEntryReader(RandomAccessFile raf) {
 
-    this(raf, Format.EMBL_FORMAT, null);
+    this(raf, Format.EMBL_FORMAT, null, ValidationScope.EMBL);
   }
 
-  public EmblEntryReader(RandomAccessFile raf, Format format, String fileId) {
+  public EmblEntryReader(RandomAccessFile raf, Format format, String fileId, ValidationScope scope) {
     super(new EmblLineReader(raf, fileId));
     addBlockReaders(format);
   }
@@ -221,6 +224,182 @@ public class EmblEntryReader extends EntryReader {
       addBlockReader(new RTReader(lineReader));
       addBlockReader(new RXReader(lineReader));
     } else if (format.equals(Format.ASSEMBLY_FILE_FORMAT)) {
+      // Allow submitter accession to be provided on the ID line.
+      addBlockReader(new IDReader(lineReader, true));
+      addSkipTagCounterHolder(new ACReader(lineReader));
+      addSkipTagCounterHolder(new PRReader(lineReader));
+      addSkipTagCounterHolder(new DEReader(lineReader));
+      addSkipTagCounterHolder(new KWReader(lineReader));
+      addSkipTagCounterHolder(new DTReader(lineReader));
+      addBlockReader(new ACStarReader(lineReader));
+      addSkipTagCounterHolder(new STStarReader(lineReader));
+      addBlockReader(new COReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new AHReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addSkipTagCounterHolder(new CCReader(lineReader));
+      addSkipTagCounterHolder(new DRReader(lineReader));
+      addSkipTagCounterHolder(new OSReader(lineReader));
+      addSkipTagCounterHolder(new OCReader(lineReader));
+      addSkipTagCounterHolder(new OGReader(lineReader));
+      addBlockReader(new ASReader(lineReader));
+      addSkipTagCounterHolder(new RAReader(lineReader));
+      addSkipTagCounterHolder(new RCReader(lineReader));
+      addSkipTagCounterHolder(new RGReader(lineReader));
+      addSkipTagCounterHolder(new RLReader(lineReader));
+      addSkipTagCounterHolder(new RNReader(lineReader));
+      addSkipTagCounterHolder(new RPReader(lineReader));
+      addSkipTagCounterHolder(new RTReader(lineReader));
+      addSkipTagCounterHolder(new RXReader(lineReader));
+      skipSourceFeature = true;
+    }
+
+    /**
+     * Have to add the line types separately as are not registered with the main hash of readers.
+     */
+    getBlockCounter().put(EmblTag.FT_TAG, 0);
+
+    if (!format.equals(Format.MASTER_FORMAT)) {
+      getBlockCounter().put(EmblTag.SQ_TAG, 0);
+    }
+  }
+
+
+  private void addBlockReadersByScope(ValidationScope scope) {
+    getBlockCounter().clear();
+    getSkipTagCounter().clear();
+    if(ValidationScope.isPipelineGroup(scope)){ // Abstract for Assembly / template/ transcriptome
+      
+    }else if(ValidationScope.isPutffGroup(scope)){ // Abstract for NCBI / EPO / ENA
+
+    } else if(ValidationScope.isAssemblyGroup(scope)){ // sub group of pipeline group
+      
+    }else if(ValidationScope.isNcbiGroup(scope)){ // sub of putff
+
+    }else if(ValidationScope.isEpoGroup(scope)){  // sub of putff
+
+    }
+    
+    if (format.equals(Format.REDUCED_FILE_FORMAT)) {  // Leave is as it is
+      isReducedFlatfile = true;
+      addBlockReader(new IDReader(lineReader));
+      addBlockReader(new COReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+    } else if (format.equals(Format.EMBL_FORMAT)) { // This will be used by putff no ncbi flag ENA and must split Template / transcriptome out of this from pipelines.
+      addBlockReader(new IDReader(lineReader));
+      addBlockReader(new ACReader(lineReader));
+      addBlockReader(new DEReader(lineReader));
+      addBlockReader(new KWReader(lineReader));
+      addBlockReader(new DTReader(lineReader));
+      addBlockReader(new PRReader(lineReader));
+      addBlockReader(new ACStarReader(lineReader));
+      addBlockReader(new STStarReader(lineReader));
+      addBlockReader(new COReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new AHReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addBlockReader(new CCReader(lineReader));
+      addBlockReader(new DRReader(lineReader));
+      addBlockReader(new OSReader(lineReader));
+      addBlockReader(new OCReader(lineReader));
+      addBlockReader(new OGReader(lineReader));
+      addBlockReader(new ASReader(lineReader));
+      addBlockReader(new RAReader(lineReader));
+      addBlockReader(new RCReader(lineReader));
+      addBlockReader(new RGReader(lineReader));
+      addBlockReader(new RLReader(lineReader));
+      addBlockReader(new RNReader(lineReader));
+      addBlockReader(new RPReader(lineReader));
+      addBlockReader(new RTReader(lineReader));
+      addBlockReader(new RXReader(lineReader));
+    } else if (format.equals(Format.MASTER_FORMAT)) {  // Leave is as it is
+      addBlockReader(new IDReader(lineReader));
+      addBlockReader(new ACReader(lineReader));
+      addBlockReader(new DEReader(lineReader));
+      addBlockReader(new KWReader(lineReader));
+      addBlockReader(new DTReader(lineReader));
+      addBlockReader(new PRReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addBlockReader(new CCReader(lineReader));
+      addBlockReader(new DRReader(lineReader));
+      addBlockReader(new OSReader(lineReader));
+      addBlockReader(new OCReader(lineReader));
+      addBlockReader(new OGReader(lineReader));
+      addBlockReader(new RAReader(lineReader));
+      addBlockReader(new RCReader(lineReader));
+      addBlockReader(new RGReader(lineReader));
+      addBlockReader(new RLReader(lineReader));
+      addBlockReader(new RNReader(lineReader));
+      addBlockReader(new RPReader(lineReader));
+      addBlockReader(new RTReader(lineReader));
+      addBlockReader(new RXReader(lineReader));
+      addBlockReader(new MasterWGSReader(lineReader));
+      addBlockReader(new MasterCONReader(lineReader));
+      addBlockReader(new MasterTSAReader(lineReader));
+      addBlockReader(new MasterTLSReader(lineReader));
+    } else if (format.equals(Format.CDS_FORMAT)) { //   Leave is as it is
+      addBlockReader(new IDReader(lineReader));
+      addBlockReader(new PAReader(lineReader));
+      addBlockReader(new DTReader(lineReader));
+      addBlockReader(new DEReader(lineReader));
+      addBlockReader(new KWReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addBlockReader(new DRReader(lineReader));
+      addBlockReader(new OSReader(lineReader));
+      addBlockReader(new OCReader(lineReader));
+      addBlockReader(new OGReader(lineReader));
+      addBlockReader(new OXReader(lineReader));
+      addBlockReader(new PRReader(lineReader));
+      addBlockReader(new RAReader(lineReader));
+      addBlockReader(new RCReader(lineReader));
+      addBlockReader(new RGReader(lineReader));
+      addBlockReader(new RLReader(lineReader));
+      addBlockReader(new RNReader(lineReader));
+      addBlockReader(new RPReader(lineReader));
+      addBlockReader(new RTReader(lineReader));
+      addBlockReader(new RXReader(lineReader));
+    } else if (format.equals(Format.EPO_FORMAT)) { //  Leave is as it is
+      addBlockReader(new IDReader(lineReader));
+      addBlockReader(new ACReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addBlockReader(new OSReader(lineReader));
+      addBlockReader(new RAReader(lineReader));
+      addBlockReader(new RLReader(lineReader));
+      addBlockReader(new RNReader(lineReader));
+      addBlockReader(new RTReader(lineReader));
+    } else if (format.equals(Format.NCR_FORMAT)) { // Leave is as it is
+      EXACTLY_ONCE_BLOCKS = Arrays.asList(EmblTag.ID_TAG, EmblTag.DE_TAG);
+      addBlockReader(new IDReader(lineReader, true));
+      addBlockReader(new PAReader(lineReader));
+      addBlockReader(new ACReader(lineReader));
+      addBlockReader(new DEReader(lineReader));
+      addBlockReader(new KWReader(lineReader));
+      addBlockReader(new DTReader(lineReader));
+      addBlockReader(new PRReader(lineReader));
+      addBlockReader(new ACStarReader(lineReader));
+      addBlockReader(new STStarReader(lineReader));
+      addBlockReader(new COReader(lineReader));
+      addBlockReader(new SQReader(lineReader));
+      addBlockReader(new AHReader(lineReader));
+      addBlockReader(new FHReader(lineReader));
+      addBlockReader(new CCReader(lineReader));
+      addBlockReader(new DRReader(lineReader));
+      addBlockReader(new OSReader(lineReader));
+      addBlockReader(new OCReader(lineReader));
+      addBlockReader(new OGReader(lineReader));
+      addBlockReader(new ASReader(lineReader));
+      addBlockReader(new RAReader(lineReader));
+      addBlockReader(new RCReader(lineReader));
+      addBlockReader(new RGReader(lineReader));
+      addBlockReader(new RLReader(lineReader));
+      addBlockReader(new RNReader(lineReader));
+      addBlockReader(new RPReader(lineReader));
+      addBlockReader(new RTReader(lineReader));
+      addBlockReader(new RXReader(lineReader));
+    } else if (format.equals(Format.ASSEMBLY_FILE_FORMAT)) { //  Leave is as it is
       // Allow submitter accession to be provided on the ID line.
       addBlockReader(new IDReader(lineReader, true));
       addSkipTagCounterHolder(new ACReader(lineReader));

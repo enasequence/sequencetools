@@ -87,4 +87,24 @@ public enum ValidationScope {
     }
     return ValidationScope.EMBL;
   }
+  
+  public static boolean isPipelineGroup(ValidationScope scope){
+    return scope.isInGroup(Group.PIPELINE);
+  }
+
+  public static boolean isPutffGroup(ValidationScope scope){
+    return scope.isInGroup(Group.PUTFF);
+  }
+
+  public static boolean isAssemblyGroup(ValidationScope scope){
+    return scope.isInGroup(Group.ASSEMBLY);
+  }
+
+  public static boolean isNcbiGroup(ValidationScope scope){
+    return scope.isInGroup(Group.NCBI);
+  }
+
+  public static boolean isEpoGroup(ValidationScope scope){
+    return scope.isInGroup(Group.EPO);
+  }
 }
