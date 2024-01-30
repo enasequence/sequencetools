@@ -51,15 +51,16 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
               slocation.setComplement(false);
             }
           }
-        }
 
-        location.setComplement(false);
-        String locationString = LocationToStringCoverter.renderCompoundLocation(location);
-        fixedValue.append(locationString);
-        fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
-        tQualifier.setValue(fixedValue.toString());
-        if (isComplement)
-          reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
+
+          location.setComplement(false);
+          String locationString = LocationToStringCoverter.renderCompoundLocation(location);
+          fixedValue.append(locationString);
+          fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
+          tQualifier.setValue(fixedValue.toString());
+          if (isComplement)
+            reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
+        }
       } catch (ValidationException e) {
 
       }
