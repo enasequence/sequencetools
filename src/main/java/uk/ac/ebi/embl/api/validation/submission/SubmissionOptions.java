@@ -36,7 +36,6 @@ public class SubmissionOptions {
   public Optional<String> reportDir = Optional.empty();
   public Optional<String> processDir = Optional.empty();
   public Optional<File> reportFile = Optional.empty();
-  public Optional<Boolean> ignoreError = Optional.empty();
   public Optional<String> webinRestUri = Optional.empty();
   public Optional<String> webinAuthToken = Optional.empty();
   public Optional<String> webinUsername = Optional.empty();
@@ -129,10 +128,7 @@ public class SubmissionOptions {
             "SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
       }
     }
-
-    if (!isWebinCLI && ignoreError.isPresent()) {
-      ignoreErrors = ignoreError.get();
-    }
+    
 
     if (!isWebinCLI && context.get() == Context.sequence && !serviceConfig.isPresent()) {
       throw new ValidationEngineException(

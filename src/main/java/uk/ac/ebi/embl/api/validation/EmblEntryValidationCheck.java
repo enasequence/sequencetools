@@ -33,8 +33,7 @@ public abstract class EmblEntryValidationCheck<E> implements ValidationCheck<E> 
   public boolean isIgnoreError() {
     return (property != null
         && property.getOptions() != null
-        && property.getOptions().ignoreError.isPresent()
-        && property.getOptions().ignoreError.get());
+        && property.getOptions().ignoreErrors);
   }
 
   @Override

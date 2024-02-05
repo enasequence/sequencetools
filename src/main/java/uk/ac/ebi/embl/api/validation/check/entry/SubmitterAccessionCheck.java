@@ -11,7 +11,9 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 
 public class SubmitterAccessionCheck extends EntryValidationCheck {
   private static final String SUBMITTER_ACCESSION_MISSING_MESSAGE_ID = "SubmitterAccessionCheck_1";
@@ -24,6 +26,7 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
       return result;
     }
     ValidationScope validationScope = getEmblEntryValidationPlanProperty().validationScope.get();
+    AssemblyType assemblyType = getEmblEntryValidationPlanProperty().getOptions().assemblyType;
     if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME
         || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
         || validationScope == ValidationScope.ASSEMBLY_CONTIG
@@ -33,7 +36,7 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
 
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
-      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH && !isIgnoreError()) {
+      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH && showError(assemblyType)) {
         reportError(
             entry.getOrigin(),
             SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
@@ -41,5 +44,10 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
       }
     }
     return result;
+  }
+  
+  // Show error only for assemblies that are not BINNEDMETAGENOME, PRIMARYMETAGENOME and CLINICALISOLATEASSEMBLY 
+  private boolean showError(AssemblyType assemblyType){
+    return !isIgnoreError() && !EntryUtils.excludeDistribution(assemblyType.getValue());
   }
 }

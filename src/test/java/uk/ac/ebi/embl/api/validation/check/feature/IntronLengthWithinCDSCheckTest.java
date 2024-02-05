@@ -79,7 +79,7 @@ public class IntronLengthWithinCDSCheckTest {
     locationJoin.addLocation(locationFactory.createLocalRange(1L, 10L));
     locationJoin.addLocation(locationFactory.createLocalRange(19L, 25L));
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
-    property.getOptions().ignoreError = Optional.of(true);
+    property.getOptions().ignoreErrors = true;
     check.setEmblEntryValidationPlanProperty(property);
     feature.setLocations(locationJoin);
     ValidationResult validationResult = check.check(feature);
