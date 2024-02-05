@@ -10,9 +10,9 @@
  */
 package uk.ac.ebi.embl.api.validation.check.feature;
 
-import java.sql.SQLException;
-import java.util.Optional;
+import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -24,8 +24,6 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
-
-import static org.junit.Assert.*;
 
 public class IntronLengthWithinCDSCheckTest {
 
@@ -87,7 +85,6 @@ public class IntronLengthWithinCDSCheckTest {
     assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1", Severity.ERROR));
   }
 
-
   @Test
   public void testCheck_ValidintronAssembly() throws SQLException {
     Join<Location> locationJoin = new Join<Location>();
@@ -141,5 +138,4 @@ public class IntronLengthWithinCDSCheckTest {
     assertTrue(validationResult.isValid());
     assertEquals(0, validationResult.count("IntronLengthWithinCDSCheck_1", Severity.ERROR));
   }
-
 }

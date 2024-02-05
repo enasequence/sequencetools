@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.junit.Assert.*;
 
-import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -63,7 +62,7 @@ public class SubmitterAccessionCheckTest {
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       ValidationResult result = validationPlan.execute(entry);
-      if(isValidScopeForThisTest(validationScope)) {
+      if (isValidScopeForThisTest(validationScope)) {
         assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_1", Severity.ERROR));
       } else {
@@ -90,12 +89,12 @@ public class SubmitterAccessionCheckTest {
   public void testCheck_OverMaximumLengthSubmitterAccession() throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
-      validationPlan.getProperty().getOptions().ignoreErrors =false;
+      validationPlan.getProperty().getOptions().ignoreErrors = false;
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
       ValidationResult result = validationPlan.execute(entry);
-      if(isValidScopeForThisTest(validationScope)) {
+      if (isValidScopeForThisTest(validationScope)) {
         assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_2", Severity.ERROR));
       } else {
@@ -104,7 +103,10 @@ public class SubmitterAccessionCheckTest {
     }
   }
 
-  /** Test that check doesn't fail if the submitter accession is over maximum length and ignoreErrors = true. */
+  /**
+   * Test that check doesn't fail if the submitter accession is over maximum length and ignoreErrors
+   * = true.
+   */
   @Test
   public void testCheck_OverMaximumLengthSubmitterAccessionAndIgnoreError() throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
@@ -117,41 +119,43 @@ public class SubmitterAccessionCheckTest {
       ValidationResult result = validationPlan.execute(entry);
       if (isValidScopeForThisTest(validationScope)) {
         assertTrue(result.isValid());
-      } 
+      }
     }
   }
 
-
-  /** Test that check doesn't fail if the submitter accession is over maximum length and 
-   * assembly type = AssemblyType.BINNEDMETAGENOME. */
+  /**
+   * Test that check doesn't fail if the submitter accession is over maximum length and assembly
+   * type = AssemblyType.BINNEDMETAGENOME.
+   */
   @Test
-  public void testCheck_OverMaximumLengthSubmitterAccessionAndNonDistributableAssembly() throws Exception {
+  public void testCheck_OverMaximumLengthSubmitterAccessionAndNonDistributableAssembly()
+      throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
       ValidationResult result = validationPlan.execute(entry);
-      
+
       // Test without AssemblyType.BINNEDMETAGENOME
-      if(isValidScopeForThisTest(validationScope)) {
+      if (isValidScopeForThisTest(validationScope)) {
         assertFalse(result.isValid());
       }
 
       // Test with AssemblyType.BINNEDMETAGENOME
       validationPlan.getProperty().getOptions().assemblyType = AssemblyType.BINNEDMETAGENOME;
       result = validationPlan.execute(entry);
-      if(isValidScopeForThisTest(validationScope)) {
+      if (isValidScopeForThisTest(validationScope)) {
         assertTrue(result.isValid());
       }
     }
   }
-  
-  private boolean isValidScopeForThisTest(ValidationScope validationScope){
+
+  private boolean isValidScopeForThisTest(ValidationScope validationScope) {
 
     return validationScope == ValidationScope.ASSEMBLY_CHROMOSOME
-            || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
-            || validationScope == ValidationScope.ASSEMBLY_CONTIG
-            || validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME;
+        || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
+        || validationScope == ValidationScope.ASSEMBLY_CONTIG
+        || validationScope == ValidationScope.ASSEMBLY_TRANSCRIPTOME;
   }
 }

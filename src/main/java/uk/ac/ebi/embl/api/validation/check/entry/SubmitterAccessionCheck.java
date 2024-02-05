@@ -36,7 +36,8 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
 
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
-      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH && showError(assemblyType)) {
+      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH
+          && showError(assemblyType)) {
         reportError(
             entry.getOrigin(),
             SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
@@ -45,9 +46,10 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
     }
     return result;
   }
-  
-  // Show error only for assemblies that are not BINNEDMETAGENOME, PRIMARYMETAGENOME and CLINICALISOLATEASSEMBLY 
-  private boolean showError(AssemblyType assemblyType){
+
+  // Show error only for assemblies that are not BINNEDMETAGENOME, PRIMARYMETAGENOME and
+  // CLINICALISOLATEASSEMBLY
+  private boolean showError(AssemblyType assemblyType) {
     return !isIgnoreError() && !EntryUtils.excludeDistribution(assemblyType.getValue());
   }
 }

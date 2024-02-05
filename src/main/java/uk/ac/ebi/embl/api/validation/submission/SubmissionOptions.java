@@ -128,7 +128,6 @@ public class SubmissionOptions {
             "SubmissionOptions:Database connections(ENAPRO,ERAPRO) must be given when validating submission internally");
       }
     }
-    
 
     if (!isWebinCLI && context.get() == Context.sequence && !serviceConfig.isPresent()) {
       throw new ValidationEngineException(
