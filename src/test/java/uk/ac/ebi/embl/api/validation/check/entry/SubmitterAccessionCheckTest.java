@@ -18,6 +18,7 @@ import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.plan.ValidationPlan;
@@ -62,7 +63,7 @@ public class SubmitterAccessionCheckTest {
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
       ValidationResult result = validationPlan.execute(entry);
-      if (isValidScopeForThisTest(validationScope)) {
+      if (validScopeForLengthCheck(validationScope)) {
         assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_1", Severity.ERROR));
       } else {
@@ -94,7 +95,7 @@ public class SubmitterAccessionCheckTest {
       Entry entry = entryFactory.createEntry();
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
       ValidationResult result = validationPlan.execute(entry);
-      if (isValidScopeForThisTest(validationScope)) {
+      if (validScopeForLengthCheck(validationScope)) {
         assertFalse(result.isValid());
         assertEquals(1, result.count("SubmitterAccessionCheck_2", Severity.ERROR));
       } else {
@@ -117,7 +118,7 @@ public class SubmitterAccessionCheckTest {
       validationPlan.getProperty().getOptions().ignoreErrors = true;
 
       ValidationResult result = validationPlan.execute(entry);
-      if (isValidScopeForThisTest(validationScope)) {
+      if (validScopeForLengthCheck(validationScope)) {
         assertTrue(result.isValid());
       }
     }
@@ -130,28 +131,32 @@ public class SubmitterAccessionCheckTest {
   @Test
   public void testCheck_OverMaximumLengthSubmitterAccessionAndNonDistributableAssembly()
       throws Exception {
+    EntryFactory entryFactory = new EntryFactory();
+    Entry entry = entryFactory.createEntry();
+    entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
+
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
-      EntryFactory entryFactory = new EntryFactory();
-      Entry entry = entryFactory.createEntry();
-      entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
-      ValidationResult result = validationPlan.execute(entry);
-
-      // Test without AssemblyType.BINNEDMETAGENOME
-      if (isValidScopeForThisTest(validationScope)) {
-        assertFalse(result.isValid());
-      }
-
-      // Test with AssemblyType.BINNEDMETAGENOME
-      validationPlan.getProperty().getOptions().assemblyType = AssemblyType.BINNEDMETAGENOME;
-      result = validationPlan.execute(entry);
-      if (isValidScopeForThisTest(validationScope)) {
-        assertTrue(result.isValid());
+      if (validationScope.group() == ValidationScope.Group.ASSEMBLY) {
+        for (AssemblyType assemblyType : AssemblyType.values()) {
+          validationPlan.getProperty().getOptions().assemblyType = assemblyType;
+          ValidationResult result = validationPlan.execute(entry);
+          if (EntryUtils.excludeDistribution(assemblyType.getValue())) {
+            assertTrue(result.isValid()); // No sequence name length validation
+          } else {
+            if (validScopeForLengthCheck(validationScope)) {
+              assertFalse(result.isValid());
+            }
+          }
+        }
+      } else {
+        ValidationResult result = validationPlan.execute(entry);
+        assertTrue(result.isValid()); // No sequence name length validation
       }
     }
   }
 
-  private boolean isValidScopeForThisTest(ValidationScope validationScope) {
+  private boolean validScopeForLengthCheck(ValidationScope validationScope) {
 
     return validationScope == ValidationScope.ASSEMBLY_CHROMOSOME
         || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
