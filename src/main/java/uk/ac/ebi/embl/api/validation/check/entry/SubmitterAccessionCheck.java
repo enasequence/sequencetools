@@ -41,16 +41,16 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
       } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH) {
-        if (!options.isWebinCLI) {
+        if (options.isWebinCLI && showError(assemblyType)) {
+          // throw error if WebinCli and showError
+          reportError(
+                  entry.getOrigin(),
+                  SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
+                  entry.getSubmitterAccession());
+        } else if (!options.isWebinCLI && !EntryUtils.excludeDistribution(assemblyType.getValue())) {
           // Truncate SubmitterAccession if context is NOT WebinCli.
           String truncatedAccession = truncateAndAddUniqueString(submitterAccession);
           entry.setSubmitterAccession(truncatedAccession);
-        } else if (showError(assemblyType)) {
-          // throw error if WebinCli and showError
-          reportError(
-              entry.getOrigin(),
-              SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
-              entry.getSubmitterAccession());
         }
       }
     }
