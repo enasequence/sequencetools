@@ -10,14 +10,17 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import org.apache.commons.lang.RandomStringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 public class SubmitterAccessionCheck extends EntryValidationCheck {
   private static final String SUBMITTER_ACCESSION_MISSING_MESSAGE_ID = "SubmitterAccessionCheck_1";
   private static final String SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID = "SubmitterAccessionCheck_2";
+  private static final int TRUNCATED_ACCESSION_LENGTH = 30;
   private static final int SUBMITTER_ACCESSION_MAX_LENGTH = 50;
 
   public ValidationResult check(Entry entry) {
@@ -25,8 +28,9 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
     if (entry == null) {
       return result;
     }
+    SubmissionOptions options = getEmblEntryValidationPlanProperty().getOptions();
     ValidationScope validationScope = getEmblEntryValidationPlanProperty().validationScope.get();
-    AssemblyType assemblyType = getEmblEntryValidationPlanProperty().getOptions().assemblyType;
+    AssemblyType assemblyType = options.assemblyType;
     if (validationScope == ValidationScope.ASSEMBLY_CHROMOSOME
         || validationScope == ValidationScope.ASSEMBLY_SCAFFOLD
         || validationScope == ValidationScope.ASSEMBLY_CONTIG
@@ -36,12 +40,18 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
 
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
-      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH
-          && showError(assemblyType)) {
-        reportError(
-            entry.getOrigin(),
-            SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
-            entry.getSubmitterAccession());
+      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH) {
+        if (!options.isWebinCLI) {
+          // Truncate SubmitterAccession if context is NOT WebinCli.
+          String truncatedAccession = truncateAndAddUniqueString(submitterAccession);
+          entry.setSubmitterAccession(truncatedAccession);
+        } else if (showError(assemblyType)) {
+          // throw error if WebinCli and showError
+          reportError(
+              entry.getOrigin(),
+              SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
+              entry.getSubmitterAccession());
+        }
       }
     }
     return result;
@@ -51,5 +61,17 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
   // CLINICALISOLATEASSEMBLY
   private boolean showError(AssemblyType assemblyType) {
     return !isIgnoreError() && !EntryUtils.excludeDistribution(assemblyType.getValue());
+  }
+
+  /**
+   * Truncates the given string to 30 characters and adds a unique string of 5 characters
+   *
+   * @param submitterAccession
+   * @return
+   */
+  public String truncateAndAddUniqueString(String submitterAccession) {
+    return submitterAccession.substring(0, TRUNCATED_ACCESSION_LENGTH)
+        + "-"
+        + RandomStringUtils.randomAlphanumeric(5).toUpperCase();
   }
 }

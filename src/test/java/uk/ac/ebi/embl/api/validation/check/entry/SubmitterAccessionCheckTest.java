@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.check.entry;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -91,8 +92,10 @@ public class SubmitterAccessionCheckTest {
     for (ValidationScope validationScope : ValidationScope.values()) {
       TestValidationPlan validationPlan = testValidationPlan(validationScope);
       validationPlan.getProperty().getOptions().ignoreErrors = false;
+      validationPlan.getProperty().getOptions().isWebinCLI = true;
       EntryFactory entryFactory = new EntryFactory();
       Entry entry = entryFactory.createEntry();
+
       entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
       ValidationResult result = validationPlan.execute(entry);
       if (validScopeForLengthCheck(validationScope)) {
@@ -140,6 +143,7 @@ public class SubmitterAccessionCheckTest {
       if (validationScope.group() == ValidationScope.Group.ASSEMBLY) {
         for (AssemblyType assemblyType : AssemblyType.values()) {
           validationPlan.getProperty().getOptions().assemblyType = assemblyType;
+          validationPlan.getProperty().getOptions().isWebinCLI = true;
           ValidationResult result = validationPlan.execute(entry);
           if (EntryUtils.excludeDistribution(assemblyType.getValue())) {
             assertTrue(result.isValid()); // No sequence name length validation
@@ -154,6 +158,36 @@ public class SubmitterAccessionCheckTest {
         assertTrue(result.isValid()); // No sequence name length validation
       }
     }
+  }
+
+  /** Test that check pass if the submitter accession 
+   * is over maximum length and NOT Webin-Cli submission. */
+  @Test
+  public void testCheck_OverMaximumLengthSubmitterAccessionNotWebinCli() throws Exception {
+    for (ValidationScope validationScope : ValidationScope.values()) {
+      TestValidationPlan validationPlan = testValidationPlan(validationScope);
+      validationPlan.getProperty().getOptions().ignoreErrors = false;
+      validationPlan.getProperty().getOptions().isWebinCLI = false;
+      EntryFactory entryFactory = new EntryFactory();
+      Entry entry = entryFactory.createEntry();
+
+      entry.setSubmitterAccession("012345678901234567890123456789012345678901234567891");
+      ValidationResult result = validationPlan.execute(entry);
+      if (validScopeForLengthCheck(validationScope)) {
+        assertTrue(entry.getSubmitterAccession().startsWith("012345678901234567890123456789-"));
+      }
+      assertTrue(result.isValid());
+    }
+  }
+
+  @Test
+  public void testCheck_truncateAndAddUniqueHash() {
+    SubmitterAccessionCheck check = new SubmitterAccessionCheck();
+    String truncatedString =
+        check.truncateAndAddUniqueString(
+            "DTU_2022_1015073_1_MG_IT_RO_200317_GSL_1_S36_L001_contig=k141.962799_flag");
+    assertEquals(truncatedString.length(), 36);
+    assertTrue(truncatedString.startsWith("DTU_2022_1015073_1_MG_IT_RO_20-"));
   }
 
   private boolean validScopeForLengthCheck(ValidationScope validationScope) {
