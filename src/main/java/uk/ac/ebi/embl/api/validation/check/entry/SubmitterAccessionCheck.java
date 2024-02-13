@@ -10,18 +10,20 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
-import org.apache.commons.lang.RandomStringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SubmitterAccessionCheck extends EntryValidationCheck {
   private static final String SUBMITTER_ACCESSION_MISSING_MESSAGE_ID = "SubmitterAccessionCheck_1";
   private static final String SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID = "SubmitterAccessionCheck_2";
   private static final int TRUNCATED_ACCESSION_LENGTH = 30;
   private static final int SUBMITTER_ACCESSION_MAX_LENGTH = 50;
+  private static final AtomicInteger uniqueAccessionIndex = new AtomicInteger(0);
 
   public ValidationResult check(Entry entry) {
     result = new ValidationResult();
@@ -40,14 +42,15 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
 
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
-      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH) {
+      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH && !EntryUtils.excludeDistribution(assemblyType.getValue())) {
+        // Handle assemblies that are distributed.
         if (options.isWebinCLI && showError(assemblyType)) {
           // throw error if WebinCli and showError
           reportError(
                   entry.getOrigin(),
                   SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
                   entry.getSubmitterAccession());
-        } else if (!options.isWebinCLI && !EntryUtils.excludeDistribution(assemblyType.getValue())) {
+        } else if (!options.isWebinCLI) {
           // Truncate SubmitterAccession if context is NOT WebinCli.
           String truncatedAccession = truncateAndAddUniqueString(submitterAccession);
           entry.setSubmitterAccession(truncatedAccession);
@@ -72,6 +75,6 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
   public String truncateAndAddUniqueString(String submitterAccession) {
     return submitterAccession.substring(0, TRUNCATED_ACCESSION_LENGTH)
         + "-"
-        + RandomStringUtils.randomAlphanumeric(5).toUpperCase();
+        + uniqueAccessionIndex.incrementAndGet();
   }
 }

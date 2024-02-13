@@ -186,7 +186,7 @@ public class SubmitterAccessionCheckTest {
     String truncatedString =
         check.truncateAndAddUniqueString(
             "DTU_2022_1015073_1_MG_IT_RO_200317_GSL_1_S36_L001_contig=k141.962799_flag");
-    assertEquals(truncatedString.length(), 36);
+    assertEquals(truncatedString.length(), 32);
     assertTrue(truncatedString.startsWith("DTU_2022_1015073_1_MG_IT_RO_20-"));
   }
 
