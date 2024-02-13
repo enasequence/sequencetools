@@ -10,13 +10,12 @@
  */
 package uk.ac.ebi.embl.api.validation.check.entry;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.helper.EntryUtils;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SubmitterAccessionCheck extends EntryValidationCheck {
   private static final String SUBMITTER_ACCESSION_MISSING_MESSAGE_ID = "SubmitterAccessionCheck_1";
@@ -42,14 +41,15 @@ public class SubmitterAccessionCheck extends EntryValidationCheck {
 
       if (submitterAccession == null || submitterAccession.isEmpty()) {
         reportError(entry.getOrigin(), SUBMITTER_ACCESSION_MISSING_MESSAGE_ID);
-      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH && !EntryUtils.excludeDistribution(assemblyType.getValue())) {
+      } else if (submitterAccession.length() > SUBMITTER_ACCESSION_MAX_LENGTH
+          && !EntryUtils.excludeDistribution(assemblyType.getValue())) {
         // Handle assemblies that are distributed.
         if (options.isWebinCLI && showError(assemblyType)) {
           // throw error if WebinCli and showError
           reportError(
-                  entry.getOrigin(),
-                  SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
-                  entry.getSubmitterAccession());
+              entry.getOrigin(),
+              SUBMITTER_ACCESSION_TOO_LONG_MESSAGE_ID,
+              entry.getSubmitterAccession());
         } else if (!options.isWebinCLI) {
           // Truncate SubmitterAccession if context is NOT WebinCli.
           String truncatedAccession = truncateAndAddUniqueString(submitterAccession);

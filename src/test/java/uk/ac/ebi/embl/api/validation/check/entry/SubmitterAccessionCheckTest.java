@@ -160,8 +160,10 @@ public class SubmitterAccessionCheckTest {
     }
   }
 
-  /** Test that check pass if the submitter accession 
-   * is over maximum length and NOT Webin-Cli submission. */
+  /**
+   * Test that check pass if the submitter accession is over maximum length and NOT Webin-Cli
+   * submission.
+   */
   @Test
   public void testCheck_OverMaximumLengthSubmitterAccessionNotWebinCli() throws Exception {
     for (ValidationScope validationScope : ValidationScope.values()) {
