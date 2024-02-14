@@ -65,7 +65,9 @@ public enum ValidationUnit {
       ExclusiveQualifierTransformToNoteQualifierFix.class,
       FeatureQualifierRenameFix.class,
       TaxonomicDivisionNotQualifierFix.class,
-      QualifierWithinQualifierFix.class,
+      // ENA-6041: Removing the fix as created issue in putff.
+      // This fix can be totally removed if there is no use of it
+      // QualifierWithinQualifierFix.class,
       Mol_typeFix.class,
       DescriptionCheck.class),
   SEQUENCE_ENTRY_CHECKS(
@@ -192,7 +194,9 @@ public enum ValidationUnit {
       ObsoleteFeatureFix.class, // exclude for master
       QualifierValueFix.class, // include for all
       EC_numberValueFix.class, // exclude for master
-      QualifierWithinQualifierFix.class, // include for all
+      // ENA-6041: Removing the fix as created issue in putff.
+      // This fix can be totally removed if there is no use of it
+      // QualifierWithinQualifierFix.class, // include for all
       Transl_exceptLocationFix.class, // exclude for master
       ProteinIdRemovalFix.class, // exclude for master
       LocusTagValueFix.class, // exclude for master

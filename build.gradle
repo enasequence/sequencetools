@@ -8,7 +8,7 @@ plugins {
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.19.3'
+version = '2.19.4'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -63,7 +63,9 @@ repositories {
 }
 
 dependencies {
-    api( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.7.7' )
+    api( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.7.8' ){
+        exclude group: 'org.springframework.boot'
+    }
     api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.10')
 
     implementation 'org.slf4j:slf4j-api:1.7.28'
