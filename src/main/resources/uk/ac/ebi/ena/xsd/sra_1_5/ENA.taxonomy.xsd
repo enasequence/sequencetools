@@ -102,6 +102,11 @@
 				<xs:documentation>The translation table for mitochondrial protein coding sequences.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="newTaxId" type="xs:integer" use="optional">
+			<xs:annotation>
+				<xs:documentation>The taxonomy identifier for the parent taxon.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 	<xs:complexType name="ParentTaxonType">
 		<xs:sequence minOccurs="0" maxOccurs="1">
