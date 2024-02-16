@@ -43,17 +43,17 @@ public class FeatureLocationWriter extends FlatFileWriter {
     if (feature == null) {
       return false;
     }
-    String block = "";
-    if (feature.getLocations() != null) {
-      CompoundLocation<Location> location = feature.getLocations();
-      block = renderCompoundLocation(location);
-    }
+    String locationString = getLocationString(feature.getLocations());
     writeBlock(
         writer,
         featureHeader + feature.getName() + getFeaturePadding(feature.getName()),
         qualifierHeader,
-        block);
+        locationString);
     return true;
+  }
+
+  public static String getLocationString(CompoundLocation<Location> location) {
+    return (location != null) ? renderCompoundLocation(location) : "";
   }
 
   public static String getFeaturePadding(String name) {

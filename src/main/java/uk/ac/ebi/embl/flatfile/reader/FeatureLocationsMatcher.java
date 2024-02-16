@@ -29,8 +29,8 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
   }
 
   private final FlatFileLineReader reader;
-  private static final Pattern localBasePattern = Pattern.compile("(\\d+)");
-  private static final Pattern simpleLocationPattern = Pattern.compile("(\\d+)(..)(\\d+)");
+  private static final Pattern BASE_PATTERN = Pattern.compile("(\\d+)");
+  private static final Pattern RANGE_PATTERN = Pattern.compile("(\\d+)(..)(\\d+)");
 
   private static final Pattern PATTERN =
       Pattern.compile("(?:(\\s*complement\\s*\\()?\\s*((?:join)|(?:order)))?\\s*\\(?(.*)");
@@ -40,14 +40,13 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
   private static final int GROUP_ELEMENTS = 3;
 
   public CompoundLocation<Location> getCompoundLocation() {
-    CompoundLocation<Location> compoundLocation = new Join<Location>();
-    boolean isComplement = isValue(GROUP_COMPLEMENT);
+    CompoundLocation<Location> compoundLocation = new Join<>();
     if (isValue(GROUP_OPERATOR)) {
       if (getString(GROUP_OPERATOR).equals("order")) {
-        compoundLocation = new Order<Location>();
+        compoundLocation = new Order<>();
       }
     }
-    if (isComplement) {
+    if (isValue(GROUP_COMPLEMENT)) {
       compoundLocation.setComplement(true);
     }
 
@@ -59,8 +58,8 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
     }
 
     if (elementCount == 1
-        && (simpleLocationPattern.matcher(element.get(0)).matches()
-            || localBasePattern.matcher(element.get(0)).matches())) {
+        && (RANGE_PATTERN.matcher(element.get(0)).matches()
+            || BASE_PATTERN.matcher(element.get(0)).matches())) {
       compoundLocation.setSimpleLocation(true);
     }
 
@@ -71,11 +70,11 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
         return null;
       }
       Location location = featureLocationMatcher.getLocation();
-      boolean isComp = location.isComplement();
+      boolean isComplement = location.isComplement();
       if (featureLocationMatcher.isLeftPartial()) {
-        if (!isComp && i == 0) {
+        if (!isComplement && i == 0) {
           compoundLocation.setLeftPartial(true);
-        } else if (isComp && i == elementCount - 1) {
+        } else if (isComplement && i == elementCount - 1) {
           compoundLocation.setRightPartial(true);
         } else if (!isIgnoreLocationParseError) {
           error("FT.8", element.get(i));
@@ -83,9 +82,9 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
         }
       }
       if (featureLocationMatcher.isRightPartial()) {
-        if (isComp && i == 0) {
+        if (isComplement && i == 0) {
           compoundLocation.setLeftPartial(true);
-        } else if (!isComp && i == elementCount - 1) {
+        } else if (!isComplement && i == elementCount - 1) {
           compoundLocation.setRightPartial(true);
         } else if (!isIgnoreLocationParseError) {
           error("FT.8", element.get(i));
@@ -94,22 +93,6 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
       }
       compoundLocation.addLocation(location);
     }
-
-    // COMMENTED THIS OUT - MOVED THIS LOGIC INTO THE TRANSLATOR "CONFIGURE_FROM_FEATURE" method -
-    // this is where it matters
-    /**
-     * Finally, look at the compound location complement status. If is complement, reverse the left
-     * and right partiallity as the whole thing is actually the other way round... This needs to be
-     * reversed when writing the flat files out again
-     */
-    /*
-            if (compoundLocation.isComplement() &&
-                    compoundLocation.isLeftPartial() != compoundLocation.isRightPartial()) {
-
-                compoundLocation.setLeftPartial(!compoundLocation.isLeftPartial());//reverse it
-                compoundLocation.setRightPartial(!compoundLocation.isRightPartial());//reverse it
-            }
-    */
 
     return compoundLocation;
   }

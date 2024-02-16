@@ -23,7 +23,6 @@ public class FlatFileMatcher {
   }
 
   private final FlatFileLineReader reader;
-  private String locationString;
   private final Pattern pattern;
   private Matcher matcher;
 

@@ -39,7 +39,9 @@ public class CompoundLocationTest {
     assertFalse(location1.isLeftPartial());
     assertFalse(location1.isRightPartial());
 
-    CompoundLocation location2 = new CompoundLocation(true, true) {};
+    CompoundLocation location2 = new CompoundLocation() {};
+    location2.setLeftPartial(true);
+    location2.setRightPartial(true);
     assertTrue(location2.getLocations().isEmpty());
     assertTrue(location2.isLeftPartial());
     assertTrue(location2.isRightPartial());

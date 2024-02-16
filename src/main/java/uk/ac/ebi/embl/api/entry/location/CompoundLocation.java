@@ -30,12 +30,6 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
     this.locations = new ArrayList<E>();
   }
 
-  protected CompoundLocation(boolean leftPartial, boolean rightPartial) {
-    this();
-    this.leftPartial = leftPartial;
-    this.rightPartial = rightPartial;
-  }
-
   /**
    * Returns the list of locations.
    *

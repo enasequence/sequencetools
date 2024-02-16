@@ -14,7 +14,8 @@ import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 
-public class FeatureLocationMatcher extends FlatFileMatcher {
+public class FeatureLocationMatcher extends FlatFileMatcher
+{
 
   public FeatureLocationMatcher(FlatFileLineReader reader) {
     super(reader, PATTERN);
