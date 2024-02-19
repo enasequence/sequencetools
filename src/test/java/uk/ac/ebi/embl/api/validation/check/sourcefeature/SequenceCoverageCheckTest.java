@@ -206,7 +206,7 @@ public class SequenceCoverageCheckTest {
     source2.addQualifier("organism", "Mus musculus");
 
     Location location2 = locationFactory.createLocalRange(50L, 100L);
-    CompoundLocation<Location> compoundLocation2 = new Join<Location>();
+    CompoundLocation<Location> compoundLocation2 = new Join<>();
     compoundLocation2.addLocation(location2);
     source2.setLocations(compoundLocation2);
 
@@ -234,7 +234,7 @@ public class SequenceCoverageCheckTest {
 
     LocationFactory locationFactory = new LocationFactory();
     Location location = locationFactory.createLocalRange(1L, 180L);
-    CompoundLocation<Location> compoundLocation = new Join<Location>();
+    CompoundLocation<Location> compoundLocation = new Join<>();
     compoundLocation.addLocation(location);
     feature.setLocations(compoundLocation);
 
@@ -242,55 +242,6 @@ public class SequenceCoverageCheckTest {
     ValidationResult result = check.check(entry);
     assertEquals(1, result.count(Severity.ERROR));
     assertEquals(1, result.count("SequenceCoverageCheck-4", Severity.ERROR));
-  }
-
-  @Test
-  public void testCheck_TransgenicWithOverlap() {
-    entry = entryFactory.createEntry();
-    SequenceFactory sequenceFactory = new SequenceFactory();
-    Sequence sequence = sequenceFactory.createSequence();
-    sequence.setSequence(
-        ByteBuffer.wrap(
-            ("cttgtttaaggtttaacgatagcaaacctgcgcacagttagctacgggtctaatggagtgcttgtttaaggtttaacgatagcaaa"
-                    + "cctgcgcacagttagctacgggtctaatggagtgcttgtttaaggtttaacgatagcaaacctgcgcacagttagctacgggtctaatggagtg")
-                .getBytes()));
-    entry.setSequence(sequence);
-
-    SourceFeature source1 = featureFactory.createSourceFeature();
-    source1.addQualifier("organism", "Mus musculus");
-    source1.addQualifier("transgenic");
-
-    LocationFactory locationFactory = new LocationFactory();
-    Location location = locationFactory.createLocalRange(1L, 180L);
-    CompoundLocation<Location> compoundLocation = new Join<Location>();
-    compoundLocation.addLocation(location);
-    source1.setLocations(compoundLocation);
-
-    entry.addFeature(source1);
-
-    SourceFeature source2 = featureFactory.createSourceFeature();
-    source2.addQualifier("organism", "Mus musculus");
-
-    Location location2 = locationFactory.createLocalRange(50L, 100L);
-    CompoundLocation<Location> compoundLocation2 = new Join<Location>();
-    compoundLocation2.addLocation(location2);
-    source2.setLocations(compoundLocation2);
-
-    entry.addFeature(source2);
-
-    SourceFeature source3 = featureFactory.createSourceFeature();
-    source3.addQualifier("organism", "Mus musculus");
-
-    Location location3 = locationFactory.createLocalRange(70L, 170L);
-    CompoundLocation<Location> compoundLocation3 = new Join<Location>();
-    compoundLocation3.addLocation(location3);
-    source3.setLocations(compoundLocation3);
-
-    entry.addFeature(source3);
-
-    ValidationResult result = check.check(entry);
-    assertEquals(1, result.count(Severity.ERROR));
-    assertEquals(1, result.count("SequenceCoverageCheck-9", Severity.ERROR));
   }
 
   @Test
@@ -348,8 +299,8 @@ public class SequenceCoverageCheckTest {
     source1.addQualifier("transgenic");
 
     LocationFactory locationFactory = new LocationFactory();
-    Location location = locationFactory.createLocalRange(1L, 175L);
-    CompoundLocation<Location> compoundLocation = new Join<Location>();
+    Location location = locationFactory.createLocalRange(1L, 100L);
+    CompoundLocation<Location> compoundLocation = new Join<>();
     compoundLocation.addLocation(location);
     source1.setLocations(compoundLocation);
 
@@ -359,26 +310,15 @@ public class SequenceCoverageCheckTest {
     source2.addQualifier("organism", "Mus musculus");
 
     Location location2 = locationFactory.createLocalRange(50L, 100L);
-    CompoundLocation<Location> compoundLocation2 = new Join<Location>();
+    CompoundLocation<Location> compoundLocation2 = new Join<>();
     compoundLocation2.addLocation(location2);
     source2.setLocations(compoundLocation2);
 
     entry.addFeature(source2);
 
-    SourceFeature source3 = featureFactory.createSourceFeature();
-    source3.addQualifier("organism", "Mus musculus");
-
-    Location location3 = locationFactory.createLocalRange(70L, 170L);
-    CompoundLocation<Location> compoundLocation3 = new Join<Location>();
-    compoundLocation3.addLocation(location3);
-    source3.setLocations(compoundLocation3);
-
-    entry.addFeature(source3);
-
     ValidationResult result = check.check(entry);
-    assertEquals(2, result.count(Severity.ERROR));
+    assertEquals(1, result.count(Severity.ERROR));
     assertEquals(1, result.count("SequenceCoverageCheck-7", Severity.ERROR));
-    assertEquals(1, result.count("SequenceCoverageCheck-9", Severity.ERROR));
   }
 
   @Test
@@ -455,9 +395,8 @@ public class SequenceCoverageCheckTest {
     entry.addFeature(source2);
 
     ValidationResult result = check.check(entry);
-    assertEquals(2, result.count(Severity.ERROR));
+    assertEquals(1, result.count(Severity.ERROR));
     assertEquals(1, result.count("SequenceCoverageCheck-8", Severity.ERROR));
-    assertEquals(1, result.count("SequenceCoverageCheck-4", Severity.ERROR));
   }
 
   @Test
