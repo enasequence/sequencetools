@@ -222,6 +222,18 @@ public class SequenceCoverageCheckTest {
     }
 
     @Test
+    public void testCheck_FocusWithMultipleSourceMultipleLocation() {
+        SourceFeature focusSource = addSource(
+                locationFactory.createLocalRange(1L, 20L),
+                locationFactory.createLocalRange(101L, 180L)
+        );
+        focusSource.addQualifier("focus");
+        addSource(locationFactory.createLocalRange(21L, 100L));
+        ValidationResult result = check.check(entry);
+        assertEquals(0, result.count(Severity.ERROR));
+    }
+
+    @Test
     public void testCheck_TransgenicAndFocus() {
         SourceFeature transgenicSource = addSource(
                 locationFactory.createLocalRange(1L, 180L));
