@@ -22,13 +22,6 @@ import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-/**
- * @author dlorenc
- * <p>It is an implementation of validation check. It checks the coverage of sequence by source
- * features' locations.
- */
-@Description(
-        "The sequence is not fully covered by source features. The source features exceed the total sequence length.")
 @ExcludeScope(validationScope = {ValidationScope.ASSEMBLY_MASTER, ValidationScope.NCBI_MASTER})
 public class SequenceCoverageCheck extends EntryValidationCheck {
 
@@ -145,7 +138,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
                 locations.addAll(source.getLocations().getLocations());
             }
         }
-        locations.sort(Comparator.comparing(Location::getBeginPosition));
+        locations.sort(Comparator.comparing(location -> minPosition(location)));
         return locations;
     }
 
@@ -212,7 +205,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
     }
 
     private boolean validateEndPositionWithinSequence(Location location, long sequenceLength, Origin firstSourceOrigin) {
-        if (maxPosition(location) > sequenceLength) {
+        if (maxPosition(location) < 1 || maxPosition(location) > sequenceLength) {
             reportError(firstSourceOrigin, MESSAGE_ID_INVALID_END_POSITION, maxPosition(location), sequenceLength);
             return false;
         }
