@@ -95,9 +95,6 @@ public class TemplateProcessorConstants {
     }
   }
 
-  public static final String TEMPLATE_MESSAGES_BUNDLE = "ValidationSequenceMessages";
-  public static final String GENERAL_MESSAGES_BUNDLE = "ValidationMessages";
-
   /** VERY LARGE TEMPLATE SUBMISSION THRESHOLD - MEANS WILL BE PROCESSED DIFFERENTLY */
   public static final int TEMPLATE_MEGA_ENTRY_SIZE = 1000;
 

@@ -29,8 +29,7 @@ public class ValidationMessageManager {
       "uk.ac.ebi.embl.api.validation.GFF3ValidationMessages";
   public static final String GENOMEASSEMBLY_VALIDATION_BUNDLE =
       "uk.ac.ebi.embl.api.validation.GenomeAssemblyValidationMessages";
-  public static final String GENOMEASSEMBLY_FIXER_BUNDLE =
-      "uk.ac.ebi.embl.api.validation.GenomeAssemblyFixerMessages";
+  public static final String TEMPLATE_PROCESSOR_BUNDLE = "uk.ac.ebi.embl.api.validation.TemplateProcessorMessages";
 
   private static final String NO_MESSAGE = "Missing message: ";
 
