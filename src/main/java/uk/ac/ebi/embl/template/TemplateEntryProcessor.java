@@ -51,14 +51,11 @@ public class TemplateEntryProcessor {
   private StringBuilder template;
   private TemplateInfo templateInfo;
   private final ValidationPlan validationPlan;
-  private Connection connEra;
-  private SubmissionOptions options;
   private String molType;
   private final HashMap<String, Sample> sampleCache = new HashMap<String, Sample>();
 
   public TemplateEntryProcessor(SubmissionOptions options) {
     this(ValidationScope.EMBL_TEMPLATE, options);
-    this.connEra = options.eraproConnection.isPresent() ? options.eraproConnection.get() : null;
   }
 
   public TemplateEntryProcessor(ValidationScope validationScope, SubmissionOptions options) {
@@ -66,13 +63,9 @@ public class TemplateEntryProcessor {
         new EmblEntryValidationPlanProperty(options);
     emblEntryValidationProperty.validationScope.set(validationScope);
     validationPlan = new EmblEntryValidationPlan(emblEntryValidationProperty);
-    validationPlan.addMessageBundle(TemplateProcessorConstants.TEMPLATE_MESSAGES_BUNDLE);
+    validationPlan.addMessageBundle(ValidationMessageManager.TEMPLATE_PROCESSOR_BUNDLE);
     validationPlan.addMessageBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     validationPlan.addMessageBundle(ValidationMessageManager.STANDARD_FIXER_BUNDLE);
-  }
-
-  public ValidationResult validateSequenceUploadEntry(Entry entry) throws Exception {
-    return validationPlan.execute(entry);
   }
 
   protected TemplateProcessorResultSet processEntry(
