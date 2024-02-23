@@ -718,12 +718,20 @@ public class JournalReaderTest extends GenbankReaderTest {
     assertEquals("dah dah", ((ElectronicReference) reference.getPublication()).getText());
   }
 
-  /*	public void testRead_FormatError() throws IOException {
-  	initLineReader(
-  			"  JOURNAL   Blah blah"
-
-  	);
-  	ValidationResult result = (new JournalReader(lineReader)).read(entry);
-  	assertEquals(1, result.count("FF.1", Severity.ERROR));
-  }*/
+  public void testGenBankArticleWithJournal() throws IOException {
+    initLineReader(
+            "  JOURNAL   ISME J In press\n");
+    Reference reference = lineReader.getCache().getReference();
+    ValidationResult result = (new JournalReader(lineReader)).read(entry);
+    assertEquals(0, result.count(Severity.ERROR));
+    assertNotNull(reference.getPublication());
+    assertTrue(reference.getPublication() instanceof Article);
+    Article article = (Article) reference.getPublication();
+    assertEquals("ISME", article.getJournal());
+    assertEquals("J", article.getVolume());
+    assertNull(article.getIssue());
+    assertNull(article.getFirstPage());
+    assertNull(article.getLastPage());
+    assertNull(article.getYear());
+  }
 }

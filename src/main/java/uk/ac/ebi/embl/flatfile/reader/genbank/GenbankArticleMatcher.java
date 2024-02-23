@@ -51,8 +51,6 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
     if (m.matches()) {
       article.setYear(getYear(2, m));
       block = m.group(1).trim();
-    } else {
-      return null;
     }
 
     m = FIRST_LAST_PAGE.matcher(block);
@@ -95,7 +93,7 @@ public class GenbankArticleMatcher extends FlatFileMatcher {
     if (StringUtils.isBlank(article.getJournal())) {
       article = getVolumeAndJournal(block, article);
     }
-
+    
     return article.getJournal() == null ? null : article;
   }
 
