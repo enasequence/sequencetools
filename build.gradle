@@ -2,13 +2,13 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id "com.diffplug.spotless" version "6.20.0"
+    id "com.diffplug.spotless" version "6.11.0"
 }
 
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.19.4'
+version = '2.19.7.SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
