@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -134,7 +134,7 @@ public class SequenceReader extends FlatFileLineReader {
   }
 
   private void compactDNASequence(byte[] seq) {
-    if (seq == null || seq.length == 0) {
+    if (seq == null) {
       return;
     }
     for (byte base : seq) {
@@ -148,7 +148,7 @@ public class SequenceReader extends FlatFileLineReader {
   }
 
   private void compactProteinSequence(byte[] seq) {
-    if (seq == null || seq.length == 0) {
+    if (seq == null) {
       return;
     }
     for (byte base : seq) {

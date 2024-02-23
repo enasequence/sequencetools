@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,8 +14,7 @@ import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 
-public class FeatureLocationMatcher extends FlatFileMatcher
-{
+public class FeatureLocationMatcher extends FlatFileMatcher {
 
   public FeatureLocationMatcher(FlatFileLineReader reader) {
     super(reader, PATTERN);

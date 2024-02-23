@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -719,8 +719,7 @@ public class JournalReaderTest extends GenbankReaderTest {
   }
 
   public void testGenBankArticleWithJournal() throws IOException {
-    initLineReader(
-            "  JOURNAL   ISME J In press\n");
+    initLineReader("  JOURNAL   ISME J In press\n");
     Reference reference = lineReader.getCache().getReference();
     ValidationResult result = (new JournalReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));

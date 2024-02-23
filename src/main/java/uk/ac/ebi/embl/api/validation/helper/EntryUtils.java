@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -127,17 +127,14 @@ public class EntryUtils {
   public static String concat(String delimiter, String... params) {
     StringBuffer concatString = new StringBuffer();
     int i = 0;
-    if (params.length != 0) {
-
       for (String param : params) {
-        i++;
-        if (param != null) {
-          concatString.append(param);
-          if (i != (params.length)) concatString.append(delimiter);
-        }
+          i++;
+          if (param != null) {
+              concatString.append(param);
+              if (i != (params.length)) concatString.append(delimiter);
+          }
       }
-    }
-    return concatString.toString();
+      return concatString.toString();
   }
 
   public static String convertNonAsciiStringtoAsciiString(String non_asciiString)

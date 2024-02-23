@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,7 +29,8 @@ public class ValidationMessageManager {
       "uk.ac.ebi.embl.api.validation.GFF3ValidationMessages";
   public static final String GENOMEASSEMBLY_VALIDATION_BUNDLE =
       "uk.ac.ebi.embl.api.validation.GenomeAssemblyValidationMessages";
-  public static final String TEMPLATE_PROCESSOR_BUNDLE = "uk.ac.ebi.embl.api.validation.TemplateProcessorMessages";
+  public static final String TEMPLATE_PROCESSOR_BUNDLE =
+      "uk.ac.ebi.embl.api.validation.TemplateProcessorMessages";
 
   private static final String NO_MESSAGE = "Missing message: ";
 

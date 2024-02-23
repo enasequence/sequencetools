@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 EMBL - European Bioinformatics Institute
+ * Copyright 2019-2024 EMBL - European Bioinformatics Institute
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
  * file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -316,9 +316,9 @@ public class SubmissionValidatorTest {
   public void testGetAssemblyType() throws ValidationEngineException {
     SubmissionValidator validator = new SubmissionValidator();
     for (AssemblyType assemblyType : AssemblyType.values()) {
-      assertNotNull(validator.getAssemblyType(assemblyType.getValue()));
+      assertNotNull(SubmissionValidator.getAssemblyType(assemblyType.getValue()));
     }
 
-    assertNull(validator.getAssemblyType("Invalid"));
+    assertNull(SubmissionValidator.getAssemblyType("Invalid"));
   }
 }
