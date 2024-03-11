@@ -174,7 +174,7 @@ public class SequenceCoverageCheck extends EntryValidationCheck {
       }
       validateNoOverlapBetweenLocations(prevLocation, location, firstSourceOrigin);
     }
-      return validateEndPositionIsSequenceLength(location, sequenceLength, firstSourceOrigin);
+    return validateEndPositionIsSequenceLength(location, sequenceLength, firstSourceOrigin);
   }
 
   private boolean validateStartPositionIsOne(Location location, Origin firstSourceOrigin) {

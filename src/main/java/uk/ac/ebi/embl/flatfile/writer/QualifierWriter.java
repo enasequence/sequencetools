@@ -19,7 +19,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 public class QualifierWriter extends FlatFileWriter {
 
   private final Qualifier qualifier;
-  private static final int NOTE_MAX_LINE_LENGTH = 200;
+  private static final int NOTE_MAX_LINE_LENGTH = 80;
 
   public QualifierWriter(Entry entry, Qualifier qualifier, WrapType wrapType, String header) {
     super(entry, wrapType);
@@ -34,6 +34,7 @@ public class QualifierWriter extends FlatFileWriter {
         setForceLineBreak(true);
       } else if (qualifier.getName().equals(Qualifier.NOTE_QUALIFIER_NAME)) {
         setMaximumLineLength(NOTE_MAX_LINE_LENGTH);
+        setForceLineBreak(true);
       }
     }
   }
