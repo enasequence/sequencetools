@@ -34,6 +34,7 @@ public class QualifierWriter extends FlatFileWriter {
         setForceLineBreak(true);
       } else if (qualifier.getName().equals(Qualifier.NOTE_QUALIFIER_NAME)) {
         setMaximumLineLength(NOTE_MAX_LINE_LENGTH);
+        setForceLineBreak(true);
       }
     }
   }
