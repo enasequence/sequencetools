@@ -85,23 +85,23 @@ public class FeatureLocationsMatcherTest extends TestCase {
 
     String location = "complement(2807037..>2807081)";
     assertEquals(location, test(location));
-      assertTrue(leftPartial(location));
-      assertFalse(rightPartial(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
 
     location = "complement(<2807037..2807081)";
     assertEquals(location, test(location));
-      assertFalse(leftPartial(location));
-      assertTrue(rightPartial(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
 
     location = "complement(join(2182966..2183014,2183124..>2183128))";
     assertEquals(location, test(location));
-      assertFalse(leftPartial(location));
-      assertTrue(rightPartial(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
 
     location = "complement(join(<2182966..2183014,2183124..2183128))";
     assertEquals(location, test(location));
-      assertTrue(leftPartial(location));
-      assertFalse(rightPartial(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
   }
 
   @Test

@@ -127,14 +127,14 @@ public class EntryUtils {
   public static String concat(String delimiter, String... params) {
     StringBuffer concatString = new StringBuffer();
     int i = 0;
-      for (String param : params) {
-          i++;
-          if (param != null) {
-              concatString.append(param);
-              if (i != (params.length)) concatString.append(delimiter);
-          }
+    for (String param : params) {
+      i++;
+      if (param != null) {
+        concatString.append(param);
+        if (i != (params.length)) concatString.append(delimiter);
       }
-      return concatString.toString();
+    }
+    return concatString.toString();
   }
 
   public static String convertNonAsciiStringtoAsciiString(String non_asciiString)
