@@ -100,8 +100,10 @@ public class GenbankQualifierWriterTest extends GenbankWriterTest {
             + "                     this is a note this is a note this is a note this is a\n"
             + "                     note this is a note this is a note this is a note this is\n"
             + "                     a note this is a note this is a note \"\n"
-            + "                     /note=\"thisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisanotethisisa\n"
-            + "                     notethisisanotethisisanote\"\n",
+            + "                     /note=\"thisisanotethisisanotethisisanotethisisanotethisisa\n"
+            + "                     notethisisanotethisisanotethisisanotethisisanotethisisanot\n"
+            + "                     ethisisanotethisisanotethisisanotethisisanotethisisanoteth\n"
+            + "                     isisanotethisisanotethisisanote\"\n",
         writer.toString());
   }
 
