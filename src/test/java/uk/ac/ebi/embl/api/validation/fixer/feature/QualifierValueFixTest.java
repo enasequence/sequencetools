@@ -20,6 +20,7 @@ import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.*;
 
 public class QualifierValueFixTest {
@@ -83,11 +84,19 @@ public class QualifierValueFixTest {
 
   @Test
   public void testCheck_qualifierValueFix() {
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "UK");
-    ValidationResult result = check.check(feature);
-    assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
-    assertEquals(
-        "United Kingdom", feature.getSingleQualifierValue(Qualifier.COUNTRY_QUALIFIER_NAME));
+
+    DataSet qualifierValuetoFixValue =
+        GlobalDataSets.getDataSet(GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE);
+    for (DataRow dataRow : qualifierValuetoFixValue.getRows()) {
+      String qualifier = dataRow.getString(0);
+      String regex = dataRow.getString(1);
+      String fixValue = dataRow.getString(2);
+      feature.removeAllQualifiers();
+      feature.addQualifier(qualifier, regex);
+      ValidationResult result = check.check(feature);
+      assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
+      assertEquals(fixValue, feature.getSingleQualifierValue(qualifier));
+    }
   }
 
   @Test
