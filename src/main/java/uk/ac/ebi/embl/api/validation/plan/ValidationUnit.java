@@ -60,6 +60,7 @@ public enum ValidationUnit {
       SourceQualifierFix.class,
       StrainQualifierValueFix.class,
       Lat_lonValueFix.class,
+      QualifierValueFix.class,
       CountryQualifierFix.class,
       MoleculeTypeAndQualifierFix.class,
       ExclusiveQualifierTransformToNoteQualifierFix.class,
@@ -175,7 +176,6 @@ public enum ValidationUnit {
       SourceQualifierFix.class,
       StrainQualifierValueFix.class, // include for all
       Lat_lonValueFix.class, // include for all
-      CountryQualifierFix.class, // include for all
       MoleculeTypeAndQualifierFix.class, // include for all
       CDS_RNA_LocusFix.class, // exclude for master
       GeneAssociatedwithFeatureFix.class, // exclude for master
@@ -193,6 +193,7 @@ public enum ValidationUnit {
       Linkage_evidenceFix.class, // exclude for master
       ObsoleteFeatureFix.class, // exclude for master
       QualifierValueFix.class, // include for all
+      CountryQualifierFix.class, // include for all
       EC_numberValueFix.class, // exclude for master
       // ENA-6041: Removing the fix as created issue in putff.
       // This fix can be totally removed if there is no use of it
