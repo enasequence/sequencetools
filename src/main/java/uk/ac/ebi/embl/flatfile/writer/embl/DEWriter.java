@@ -25,6 +25,7 @@ public class DEWriter extends FlatFileWriter {
   public DEWriter(Entry entry, WrapType wrapType) {
     super(entry, wrapType);
     setWrapChar(WrapChar.WRAP_CHAR_SPACE);
+    setForceLineBreak(true);
   }
 
   public boolean write(Writer writer) throws IOException {
