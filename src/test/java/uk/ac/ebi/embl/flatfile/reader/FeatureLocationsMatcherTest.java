@@ -105,6 +105,85 @@ public class FeatureLocationsMatcherTest extends TestCase {
   }
 
   @Test
+  public void testPartiality() {
+    /*
+    <2..3 → 5’ partial
+    2..>3 → 3’ partial
+    complement(<2..3) → 3’ partial
+    complement(2..>3) → 5’ partial
+    join(<2,4) → 5’ partial
+    join(2,>4) → 3’ partial
+    complement(join(<2,4)) → 3’ partial
+    complement(join(2,>4)) → 5’partial
+    join(complement(<2),4) → 3’ partial
+    join(2,complement(>4)) → 5’ partial
+    join(complement(<2),complement(4)) → 3’ partial
+    join(complement(2),complement(>4)) → 5’ partial
+     */
+
+    String location = "<2..3"; //  → 5’ partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+
+    location = "2..>3"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "complement(<2..3)"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "complement(2..>3)"; //  → 5’ partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+
+    location = "join(<2,4)"; //  → 5’ partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+
+    location = "join(2,>4)"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "complement(join(<2,4))"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "complement(join(2,>4))"; //  → 5’partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+
+    location = "join(complement(<2),4)"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "join(2,complement(>4))"; //  → 5’ partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+
+    location = "join(complement(<2),complement(4))"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(leftPartial(location));
+    assertTrue(rightPartial(location));
+
+    location = "join(complement(2),complement(>4))"; //  → 5’ partial
+    assertEquals(location, test(location));
+    assertTrue(leftPartial(location));
+    assertFalse(rightPartial(location));
+  }
+
+
+  @Test
   public void testRemoteLocation() {
     assertEquals("J00194.1:467", test("J00194.1:467"));
     assertEquals("J00194.1:340..565", test("J00194.1:340..565"));
