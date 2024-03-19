@@ -46,4 +46,20 @@ public class DEWriterTest extends EmblWriterTest {
     assertTrue(new DEWriter(entry, wrapType).write(writer));
     assertEquals("DE   .\n", writer.toString());
   }
+
+  public void testWrite_Long_Description() throws IOException {
+    entry.setDescription(
+        new Text(
+            "Styela plicata mitochondrion genomic DNA containing cox2-trnT-trnD-nad1-nad4l-trnG_1-cob_1-trnM_1-trnL1_1-cox1_2-cob_2a-trnL1_2-cob_2b-trnC-trnA-trnS2-trnM_2-trnL1_2-cox1_1-nad6-trnR-nad2-trnL2-nad5-nad3-trnN-trnW-trnV-trnY-cox3-trnI-trnS1-trnF-trnM_3-trnH-trnK-atp6-atp8-trnP-nad4-rrnS-rrnL-trnQ-trnG_2-trnE\n"
+                + "region"));
+    StringWriter writer = new StringWriter();
+    assertTrue(new DEWriter(entry, wrapType).write(writer));
+    assertEquals(
+        "DE   Styela plicata mitochondrion genomic DNA containing\n"
+            + "DE   cox2-trnT-trnD-nad1-nad4l-trnG_1-cob_1-trnM_1-trnL1_1-cox1_2-cob_2a-trnL1_2\n"
+            + "DE   -cob_2b-trnC-trnA-trnS2-trnM_2-trnL1_2-cox1_1-nad6-trnR-nad2-trnL2-nad5-nad\n"
+            + "DE   3-trnN-trnW-trnV-trnY-cox3-trnI-trnS1-trnF-trnM_3-trnH-trnK-atp6-atp8-trnP-\n"
+            + "DE   nad4-rrnS-rrnL-trnQ-trnG_2-trnE region\n",
+        writer.toString());
+  }
 }
