@@ -182,7 +182,6 @@ public class FeatureLocationsMatcherTest extends TestCase {
     assertFalse(rightPartial(location));
   }
 
-
   @Test
   public void testRemoteLocation() {
     assertEquals("J00194.1:467", test("J00194.1:467"));
