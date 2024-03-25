@@ -202,6 +202,6 @@ public class DEData {
 
   public static boolean isFeaturePartial(Feature feature) {
     return feature.getLocations() != null
-        && (feature.getLocations().isLeftPartial() || feature.getLocations().isRightPartial());
+        && (feature.getLocations().isFivePrime() || feature.getLocations().isThreePrime());
   }
 }

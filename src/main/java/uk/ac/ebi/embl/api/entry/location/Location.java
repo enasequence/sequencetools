@@ -20,6 +20,10 @@ public abstract class Location extends AbstractLocation implements Serializable 
   private Long beginPosition;
   private Long endPosition;
 
+  private boolean threePrime;
+
+  private boolean fivePrime;
+
   protected Location() {}
 
   protected Location(Long beginPosition, Long endPosition, boolean complement) {
@@ -79,6 +83,22 @@ public abstract class Location extends AbstractLocation implements Serializable 
       return null;
     }
     return endPosition.intValue();
+  }
+
+  public boolean isThreePrime() {
+    return threePrime;
+  }
+
+  public void setThreePrime(boolean threePrime) {
+    this.threePrime = threePrime;
+  }
+
+  public boolean isFivePrime() {
+    return fivePrime;
+  }
+
+  public void setFivePrime(boolean fivePrime) {
+    this.fivePrime = fivePrime;
   }
 
   // 6361..6539,6363..6649

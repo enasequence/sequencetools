@@ -87,9 +87,9 @@ public class LocationStringParser {
       Location location = getLocation(element.get(i));
       if (isLeftPartial()) {
         if (!location.isComplement() && i == 0) {
-          compoundLocation.setLeftPartial(true);
+          compoundLocation.setFivePrime(true);
         } else if (location.isComplement() && i == elementCount - 1) {
-          compoundLocation.setRightPartial(true);
+          compoundLocation.setThreePrime(true);
         } else {
           // Invalid location.
           if (!ignoreError) return null;
@@ -97,9 +97,9 @@ public class LocationStringParser {
       }
       if (isRightPartial()) {
         if (location.isComplement() && i == 0) {
-          compoundLocation.setLeftPartial(true);
+          compoundLocation.setFivePrime(true);
         } else if (!location.isComplement() && i == elementCount - 1) {
-          compoundLocation.setRightPartial(true);
+          compoundLocation.setThreePrime(true);
         } else {
           // Invalid location.
           if (!ignoreError) return null;

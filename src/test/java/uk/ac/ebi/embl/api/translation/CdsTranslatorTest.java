@@ -422,8 +422,8 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.setStartCodon(2);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 634L));
-    cdsFeature.getLocations().setLeftPartial(true);
-    cdsFeature.getLocations().setRightPartial(true);
+    cdsFeature.getLocations().setFivePrime(true);
+    cdsFeature.getLocations().setThreePrime(true);
     assertTrue(
         testValidTranslation(
             "RGFTSSNGQNWVQFLGGTYNVTDTQVFNLAYGGATIDSALVAPYM"
@@ -446,8 +446,8 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.setStartCodon(1);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(284L, 285L));
-    cdsFeature.getLocations().setLeftPartial(true);
-    cdsFeature.getLocations().setRightPartial(true);
+    cdsFeature.getLocations().setFivePrime(true);
+    cdsFeature.getLocations().setThreePrime(true);
     assertTrue(testValidTranslation("A"));
   }
 
@@ -468,8 +468,8 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.setStartCodon(3);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 453L));
-    cdsFeature.getLocations().setLeftPartial(true);
-    cdsFeature.getLocations().setRightPartial(true);
+    cdsFeature.getLocations().setFivePrime(true);
+    cdsFeature.getLocations().setThreePrime(true);
     assertTrue(
         testValidTranslation(
             "KFDGFRFDGVTSMMYLHHGIGTGFSGGYHEYFGPGVDEEAVVYLM"
@@ -495,8 +495,8 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.setStartCodon(1);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 534L));
-    cdsFeature.getLocations().setLeftPartial(true);
-    cdsFeature.getLocations().setRightPartial(true);
+    cdsFeature.getLocations().setFivePrime(true);
+    cdsFeature.getLocations().setThreePrime(true);
     assertTrue(
         testValidTranslation(
             "TRVLSAGAIMTPHILLLSGVGDGSLLSSLGIETIVDLPDVGQNLQ"
@@ -814,15 +814,15 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
     String translation = "F";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-18"));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNoStartCodonMake5Partial"));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertEquals("<1..6", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -835,14 +835,14 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().setComplement(true);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
     String translation = "F";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-18"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNoStartCodonMake5Partial"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertEquals("complement(1..>6)", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -855,18 +855,18 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
 
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
-    cdsFeature.getLocations().setRightPartial(true);
+    cdsFeature.getLocations().setThreePrime(true);
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-14"));
     assertEquals("1..>6", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixValidStopCodonRemove3Partial"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertEquals("1..6", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -878,17 +878,17 @@ public class CdsTranslatorTest {
     cdsFeature.setTranslationTable(11);
     cdsFeature.getLocations().setComplement(true);
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 6L, false));
-    cdsFeature.getLocations().setLeftPartial(true);
+    cdsFeature.getLocations().setFivePrime(true);
     String translation = "M";
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-14"));
     assertEquals("complement(<1..6)", renderCompoundLocation(cdsFeature.getLocations()));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixValidStopCodonRemove3Partial"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertEquals("complement(1..6)", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -903,16 +903,16 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 3L, false));
     write = true;
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-15"));
     assertEquals("1..3", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNoStopCodonMake3Partial"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertEquals("1..>3", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -927,16 +927,16 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 3L, false));
     write = true;
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-15"));
     assertEquals("complement(1..3)", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNoStopCodonMake3Partial"));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertEquals("complement(<1..3)", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -951,8 +951,8 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 9L, true));
     write = true;
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-13"));
     assertEquals("complement(1..9)", renderCompoundLocation(cdsFeature.getLocations()));
   }
@@ -968,8 +968,8 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 2L, false));
     write = true;
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-10"));
     assertEquals("1..2", renderCompoundLocation(cdsFeature.getLocations()));
   }
@@ -983,16 +983,16 @@ public class CdsTranslatorTest {
 
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(5L, 8L, false));
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-11"));
     assertEquals("5..8", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNonMultipleOfThreeMake3And5Partial"));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertEquals("<5..>8", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -1006,16 +1006,16 @@ public class CdsTranslatorTest {
 
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(5L, 8L, false));
     String translation = "M";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-11"));
     assertEquals("complement(5..8)", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixNonMultipleOfThreeMake3And5Partial"));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertEquals("complement(<5..>8)", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -1028,13 +1028,13 @@ public class CdsTranslatorTest {
 
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
     String translation = null;
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-17"));
     assertEquals("1..12", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
     assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseudo"));
     assertEquals(1, cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size());
@@ -1053,13 +1053,13 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 12L, false));
     write = true;
     String translation = null;
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-17"));
     assertEquals("complement(1..12)", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).isEmpty());
     assertTrue(testValidTranslationFixMode(translation, "fixInternalStopCodonMakePseudo"));
     assertEquals(1, cdsFeature.getQualifiers(Qualifier.PSEUDO_QUALIFIER_NAME).size());
@@ -1077,16 +1077,16 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 13L, false));
     write = true;
     String translation = "MSK";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-3"));
     assertEquals("1..13", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
-    assertTrue(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertTrue(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertEquals("<1..13", renderCompoundLocation(cdsFeature.getLocations()));
   }
 
@@ -1101,16 +1101,16 @@ public class CdsTranslatorTest {
     cdsFeature.getLocations().addLocation(locationFactory.createLocalRange(1L, 13L, false));
     write = true;
     String translation = "MSK";
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertFalse(testValidTranslation(translation, "Translator-3"));
     assertEquals("complement(1..13)", renderCompoundLocation(cdsFeature.getLocations()));
 
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertFalse(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertFalse(cdsFeature.getLocations().isThreePrime());
     assertTrue(testValidTranslationFixMode(translation, "fixCodonStartNotOneMake5Partial"));
-    assertFalse(cdsFeature.getLocations().isLeftPartial());
-    assertTrue(cdsFeature.getLocations().isRightPartial());
+    assertFalse(cdsFeature.getLocations().isFivePrime());
+    assertTrue(cdsFeature.getLocations().isThreePrime());
     assertEquals("complement(1..>13)", renderCompoundLocation(cdsFeature.getLocations()));
   }
 

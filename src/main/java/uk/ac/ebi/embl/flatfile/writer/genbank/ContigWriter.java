@@ -43,7 +43,7 @@ public class ContigWriter extends FlatFileWriter {
       } else {
         firstContig = false;
       }
-      FeatureLocationWriter.renderLocation(block, contig, false, false);
+      FeatureLocationWriter.renderLocation(block, contig);
     }
     block.append(")");
     writeBlock(
