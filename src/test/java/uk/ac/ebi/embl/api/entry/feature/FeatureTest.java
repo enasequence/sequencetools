@@ -41,16 +41,16 @@ public class FeatureTest {
     assertNotNull(feature.getLocations());
 
     Feature feat2 = new Feature("feat2", true);
-    feat2.getLocations().setLeftPartial(true);
-    feat2.getLocations().setRightPartial(true);
+    feat2.getLocations().setFivePrime(true);
+    feat2.getLocations().setThreePrime(true);
     feat2.getLocations().setComplement(true);
     assertEquals("feat2", feat2.getName());
     assertTrue(feat2.getLocations() instanceof Join<?>);
     assertTrue(feat2.getQualifiers().isEmpty());
     assertTrue(feat2.getXRefs().isEmpty());
     assertNotNull(feat2.getLocations());
-    assertTrue(feat2.getLocations().isLeftPartial());
-    assertTrue(feat2.getLocations().isRightPartial());
+    assertTrue(feat2.getLocations().isFivePrime());
+    assertTrue(feat2.getLocations().isThreePrime());
     assertTrue(feat2.getLocations().isComplement());
   }
 

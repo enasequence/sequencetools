@@ -73,9 +73,9 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
       boolean isComplement = location.isComplement();
       if (featureLocationMatcher.isLeftPartial()) {
         if (!isComplement && i == 0) {
-          compoundLocation.setLeftPartial(true);
+          compoundLocation.setFivePrime(true);
         } else if (isComplement && i == elementCount - 1) {
-          compoundLocation.setRightPartial(true);
+          compoundLocation.setThreePrime(true);
         } else if (!isIgnoreLocationParseError) {
           error("FT.8", element.get(i));
           return null;
@@ -83,9 +83,9 @@ public class FeatureLocationsMatcher extends FlatFileMatcher {
       }
       if (featureLocationMatcher.isRightPartial()) {
         if (isComplement && i == 0) {
-          compoundLocation.setLeftPartial(true);
+          compoundLocation.setFivePrime(true);
         } else if (!isComplement && i == elementCount - 1) {
-          compoundLocation.setRightPartial(true);
+          compoundLocation.setThreePrime(true);
         } else if (!isIgnoreLocationParseError) {
           error("FT.8", element.get(i));
           return null;

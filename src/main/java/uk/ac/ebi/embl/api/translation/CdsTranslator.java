@@ -140,17 +140,17 @@ public class CdsTranslator {
 
       if (translationResult.isFixedLeftPartial()) {
         if (!cds.getLocations().isComplement()) {
-          cds.getLocations().setLeftPartial(translator.isLeftPartial());
+          cds.getLocations().setFivePrime(translator.isLeftPartial());
         } else {
-          cds.getLocations().setRightPartial(translator.isLeftPartial());
+          cds.getLocations().setThreePrime(translator.isLeftPartial());
         }
       }
 
       if (translationResult.isFixedRightPartial()) {
         if (!cds.getLocations().isComplement()) {
-          cds.getLocations().setRightPartial(translator.isRightPartial());
+          cds.getLocations().setThreePrime(translator.isRightPartial());
         } else {
-          cds.getLocations().setLeftPartial(translator.isRightPartial());
+          cds.getLocations().setFivePrime(translator.isRightPartial());
         }
       }
 
@@ -439,11 +439,11 @@ public class CdsTranslator {
     // then the left and right partiality are reversed between CdsFeature
     // and Translator.
     if (compoundLocation.isComplement()) {
-      translator.setLeftPartial(compoundLocation.isRightPartial());
-      translator.setRightPartial(compoundLocation.isLeftPartial());
+      translator.setLeftPartial(compoundLocation.isThreePrime());
+      translator.setRightPartial(compoundLocation.isFivePrime());
     } else {
-      translator.setLeftPartial(compoundLocation.isLeftPartial());
-      translator.setRightPartial(compoundLocation.isRightPartial());
+      translator.setLeftPartial(compoundLocation.isFivePrime());
+      translator.setRightPartial(compoundLocation.isThreePrime());
     }
 
     // Set a pseudo translation.

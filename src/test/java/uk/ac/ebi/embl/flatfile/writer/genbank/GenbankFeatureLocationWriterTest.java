@@ -27,8 +27,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     LocationFactory locationFactory = new LocationFactory();
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(true);
-    feature.getLocations().setRightPartial(true);
+    feature.getLocations().setFivePrime(true);
+    feature.getLocations().setThreePrime(true);
     feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
@@ -54,8 +54,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     locationFactory = new LocationFactory();
     featureFactory = new FeatureFactory();
     feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(true);
-    feature.getLocations().setRightPartial(true);
+    feature.getLocations().setFivePrime(true);
+    feature.getLocations().setThreePrime(true);
     LocalRange range = locationFactory.createLocalRange(1L, 6L);
     feature.getLocations().addLocation(range);
     entry.addFeature(feature);
@@ -75,8 +75,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     LocationFactory locationFactory = new LocationFactory();
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
@@ -104,8 +104,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     LocationFactory locationFactory = new LocationFactory();
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(true);
-    feature.getLocations().setRightPartial(true);
+    feature.getLocations().setFivePrime(true);
+    feature.getLocations().setThreePrime(true);
     Range range = locationFactory.createLocalRange(1L, 210L);
     range.setComplement(true);
     feature.getLocations().addLocation(range);
@@ -138,8 +138,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(true);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createLocalRange(1L, 210L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(493L, 660L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
@@ -168,8 +168,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(true);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     Range range = locationFactory.createLocalRange(1L, 210L);
     range.setComplement(true);
     feature.getLocations().addLocation(range);
@@ -200,8 +200,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(true);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     Base base = locationFactory.createLocalBase(123L);
     base.setComplement(true);
     feature.getLocations().addLocation(base);
@@ -232,8 +232,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     LocationFactory locationFactory = new LocationFactory();
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createLocalBetween(5493L, 54932L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(752L, 970L));
     feature.getLocations().addLocation(locationFactory.createLocalRange(1058L, 1144L));
@@ -260,8 +260,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     LocationFactory locationFactory = new LocationFactory();
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createRemoteRange("A00001", 1, 1L, 210L));
     feature.getLocations().addLocation(locationFactory.createRemoteBase("A00002", 4, 5493L));
     feature
@@ -293,8 +293,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     Base base = locationFactory.createLocalBase(123L);
     base.setComplement(false);
     feature.getLocations().addLocation(base);
@@ -316,8 +316,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createLocalRange(123L, 333L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();
@@ -337,8 +337,8 @@ public class GenbankFeatureLocationWriterTest extends GenbankWriterTest {
     FeatureFactory featureFactory = new FeatureFactory();
     Feature feature = featureFactory.createFeature("mRNA", true);
     feature.getLocations().setComplement(false);
-    feature.getLocations().setLeftPartial(false);
-    feature.getLocations().setRightPartial(false);
+    feature.getLocations().setFivePrime(false);
+    feature.getLocations().setThreePrime(false);
     feature.getLocations().addLocation(locationFactory.createLocalBetween(123L, 124L));
     entry.addFeature(feature);
     StringWriter writer = new StringWriter();

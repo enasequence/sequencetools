@@ -23,8 +23,8 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
 
   private final List<E> locations;
 
-  private boolean leftPartial;
-  private boolean rightPartial;
+  private boolean fivePrime;
+  private boolean threePrime;
 
   protected CompoundLocation() {
     this.locations = new ArrayList<E>();
@@ -54,20 +54,20 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
     return this.locations.remove(location);
   }
 
-  public boolean isLeftPartial() {
-    return leftPartial;
+  public boolean isFivePrime() {
+    return fivePrime;
   }
 
-  public void setLeftPartial(boolean leftPartial) {
-    this.leftPartial = leftPartial;
+  public void setFivePrime(boolean fivePrime) {
+    this.fivePrime = fivePrime;
   }
 
-  public boolean isRightPartial() {
-    return rightPartial;
+  public boolean isThreePrime() {
+    return threePrime;
   }
 
-  public void setRightPartial(boolean rightPartial) {
-    this.rightPartial = rightPartial;
+  public void setThreePrime(boolean threePrime) {
+    this.threePrime = threePrime;
   }
 
   @Override

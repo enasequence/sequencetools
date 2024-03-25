@@ -36,22 +36,22 @@ public class SimpleFeatureFactoryTest {
     assertTrue(result.getLocations().getLocations().isEmpty());
     assertTrue(result.getLocations() instanceof Join<?>);
     assertFalse(result.getLocations().isComplement());
-    assertFalse(result.getLocations().isLeftPartial());
-    assertFalse(result.getLocations().isRightPartial());
+    assertFalse(result.getLocations().isFivePrime());
+    assertFalse(result.getLocations().isThreePrime());
   }
 
   @Test
   public void testCreateFeature_Locations() {
     Feature result = factory.createFeature("feat", false);
-    result.getLocations().setLeftPartial(true);
-    result.getLocations().setRightPartial(false);
+    result.getLocations().setFivePrime(true);
+    result.getLocations().setThreePrime(false);
     result.getLocations().setComplement(true);
     assertEquals("feat", result.getName());
     assertNotNull(result.getLocations());
     assertTrue(result.getLocations().getLocations().isEmpty());
     assertTrue(result.getLocations() instanceof Order<?>);
-    assertTrue(result.getLocations().isLeftPartial());
-    assertFalse(result.getLocations().isRightPartial());
+    assertTrue(result.getLocations().isFivePrime());
+    assertFalse(result.getLocations().isThreePrime());
     assertTrue(result.getLocations().isComplement());
   }
 
