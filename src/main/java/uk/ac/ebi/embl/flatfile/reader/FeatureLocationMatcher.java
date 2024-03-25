@@ -33,28 +33,28 @@ public class FeatureLocationMatcher extends FlatFileMatcher {
   private static final int GROUP_RIGHT_PARTIAL = 7;
   private static final int GROUP_END_POSITION = 8;
 
-  boolean leftPartial;
-  boolean rightPartial;
+  boolean fivePrime;
+  boolean threePrime;
 
   public Location getLocation() {
     Location location = null;
     boolean isComplement = isValue(GROUP_COMPLEMENT);
-    leftPartial = isValue(GROUP_LEFT_PARTIAL);
-    rightPartial = isValue(GROUP_RIGHT_PARTIAL);
+    fivePrime = isValue(GROUP_LEFT_PARTIAL);
+    threePrime = isValue(GROUP_RIGHT_PARTIAL);
     String accession = getString(GROUP_ACCESSION);
     Integer version = getInteger(GROUP_VERSION);
     LocationFactory locationFactory = new LocationFactory();
     String operator = getString(GROUP_OPERATOR);
     if (operator == null) {
       if (accession != null) {
-        if (rightPartial)
+        if (threePrime)
           location =
               locationFactory.createRemoteBase(accession, version, getLong(GROUP_END_POSITION));
         else
           location =
               locationFactory.createRemoteBase(accession, version, getLong(GROUP_BEGIN_POSITION));
       } else {
-        if (rightPartial) location = locationFactory.createLocalBase(getLong(GROUP_END_POSITION));
+        if (threePrime) location = locationFactory.createLocalBase(getLong(GROUP_END_POSITION));
         else location = locationFactory.createLocalBase(getLong(GROUP_BEGIN_POSITION));
       }
     } else if (operator.equals("..")) {
@@ -79,14 +79,28 @@ public class FeatureLocationMatcher extends FlatFileMatcher {
       }
     }
     location.setComplement(isComplement);
+    if (isComplement) {
+      if (fivePrime) {
+        location.setFivePrime(false);
+        location.setThreePrime(true);
+      }
+      if (threePrime) {
+        location.setFivePrime(true);
+        location.setThreePrime(false);
+      }
+    } else {
+      location.setFivePrime(fivePrime);
+      location.setThreePrime(threePrime);
+    }
+
     return location;
   }
 
-  public boolean isLeftPartial() {
-    return leftPartial;
+  public boolean isFivePrime() {
+    return fivePrime;
   }
 
-  public boolean isRightPartial() {
-    return rightPartial;
+  public boolean isThreePrime() {
+    return threePrime;
   }
 }

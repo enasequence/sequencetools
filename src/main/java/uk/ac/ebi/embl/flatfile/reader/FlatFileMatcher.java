@@ -114,6 +114,23 @@ public class FlatFileMatcher {
     return number;
   }
 
+  public Integer getInteger(String value) {
+    if (value == null) {
+      return null;
+    }
+    value = value.trim();
+    if (value.length() == 0) {
+      return null;
+    }
+    Integer number = null;
+    try {
+      number = Integer.parseInt(value);
+    } catch (NumberFormatException ex) {
+      error("FF.3");
+    }
+    return number;
+  }
+
   public Long getLong(int group) {
     String value = matcher.group(group);
     if (value == null) {
@@ -126,6 +143,23 @@ public class FlatFileMatcher {
     Long number = null;
     try {
       number = Long.parseLong(matcher.group(group));
+    } catch (NumberFormatException ex) {
+      error("FF.3");
+    }
+    return number;
+  }
+
+  public Long getLong(String value) {
+    if (value == null) {
+      return null;
+    }
+    value = value.trim();
+    if (value.length() == 0) {
+      return null;
+    }
+    Long number = null;
+    try {
+      number = Long.parseLong(value);
     } catch (NumberFormatException ex) {
       error("FF.3");
     }

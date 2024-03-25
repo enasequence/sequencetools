@@ -34,8 +34,8 @@ public class LocationToStringCoverter {
         }
       }
 
-      boolean leftPartial = compoundLocation.isLeftPartial();
-      boolean rightPartial = compoundLocation.isRightPartial();
+      boolean leftPartial = compoundLocation.isFivePrime();
+      boolean rightPartial = compoundLocation.isThreePrime();
 
       if (locations.size() == 1) {
         renderLocation(block, locations.get(0), leftPartial, rightPartial);

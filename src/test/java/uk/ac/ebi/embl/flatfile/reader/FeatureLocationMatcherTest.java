@@ -32,8 +32,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_LocalBase() throws IOException {
     featureLocationMatcher.match("467");
     LocalBase location = (LocalBase) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(467, (long) location.getBeginPosition());
     assertEquals(467, (long) location.getEndPosition());
   }
@@ -41,8 +41,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_RemoteBase() {
     featureLocationMatcher.match("J00194.1:467");
     RemoteBase location = (RemoteBase) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(467, (long) location.getBeginPosition());
     assertEquals(467, (long) location.getEndPosition());
     assertEquals("J00194", location.getAccession());
@@ -52,8 +52,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_LocalRange() {
     featureLocationMatcher.match("340..565");
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
   }
@@ -61,8 +61,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_RemoteRange() {
     featureLocationMatcher.match("J00194.1:340..565");
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
     assertEquals("J00194", location.getAccession());
@@ -72,8 +72,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_LeftPartialLocalRange() {
     featureLocationMatcher.match("<340..565");
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
-    assertTrue(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertTrue(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
   }
@@ -81,8 +81,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_LeftPartialRemoteRange() {
     featureLocationMatcher.match("J00194.1:<340..565");
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
-    assertTrue(featureLocationMatcher.isLeftPartial());
-    assertFalse(featureLocationMatcher.isRightPartial());
+    assertTrue(featureLocationMatcher.isFivePrime());
+    assertFalse(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
     assertEquals("J00194", location.getAccession());
@@ -92,8 +92,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_RightPartialLocalRange() {
     featureLocationMatcher.match("340..>565");
     LocalRange location = (LocalRange) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
   }
@@ -101,8 +101,8 @@ public class FeatureLocationMatcherTest extends TestCase {
   public void testLocationMatcher_RightPartialRemoteRange() {
     featureLocationMatcher.match("J00194.1:340..>565");
     RemoteRange location = (RemoteRange) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location.getBeginPosition());
     assertEquals(565, (long) location.getEndPosition());
     assertEquals("J00194", location.getAccession());
@@ -120,7 +120,7 @@ public class FeatureLocationMatcherTest extends TestCase {
     featureLocationMatcher.match("<50");
     LocalBase location1 =
         (LocalBase) featureLocationMatcher.getLocation(); // NOTE read as local base
-    assertTrue(featureLocationMatcher.isLeftPartial());
+    assertTrue(featureLocationMatcher.isFivePrime());
     assertEquals(50, (long) location1.getBeginPosition());
     assertEquals(50, (long) location1.getEndPosition());
 
@@ -128,21 +128,21 @@ public class FeatureLocationMatcherTest extends TestCase {
     featureLocationMatcher.match("<50..50");
     LocalRange location2 =
         (LocalRange) featureLocationMatcher.getLocation(); // NOTE read as remote base
-    assertTrue(featureLocationMatcher.isLeftPartial());
+    assertTrue(featureLocationMatcher.isFivePrime());
     assertEquals(50, (long) location2.getBeginPosition());
     assertEquals(50, (long) location2.getEndPosition());
 
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match(">50");
     LocalBase location3 = (LocalBase) featureLocationMatcher.getLocation();
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(50, (long) location3.getBeginPosition());
     assertEquals(50, (long) location3.getEndPosition());
 
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match("50..>50");
     LocalRange location4 = (LocalRange) featureLocationMatcher.getLocation();
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(50, (long) location4.getBeginPosition());
     assertEquals(50, (long) location4.getEndPosition());
 
@@ -150,8 +150,8 @@ public class FeatureLocationMatcherTest extends TestCase {
     featureLocationMatcher = new FeatureLocationMatcher(null);
     featureLocationMatcher.match("J00194.1:>340");
     RemoteBase location5 = (RemoteBase) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location5.getBeginPosition());
     assertEquals(340, (long) location5.getEndPosition());
     assertEquals("J00194", location5.getAccession());
@@ -159,8 +159,8 @@ public class FeatureLocationMatcherTest extends TestCase {
 
     featureLocationMatcher.match("J00194.1:340..>340");
     RemoteRange location6 = (RemoteRange) featureLocationMatcher.getLocation();
-    assertFalse(featureLocationMatcher.isLeftPartial());
-    assertTrue(featureLocationMatcher.isRightPartial());
+    assertFalse(featureLocationMatcher.isFivePrime());
+    assertTrue(featureLocationMatcher.isThreePrime());
     assertEquals(340, (long) location6.getBeginPosition());
     assertEquals(340, (long) location6.getEndPosition());
     assertEquals("J00194", location6.getAccession());

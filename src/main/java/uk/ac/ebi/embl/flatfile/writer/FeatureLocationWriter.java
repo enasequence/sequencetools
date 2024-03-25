@@ -81,24 +81,18 @@ public class FeatureLocationWriter extends FlatFileWriter {
         }
       }
 
-      boolean leftPartial = compoundLocation.isLeftPartial();
-      boolean rightPartial = compoundLocation.isRightPartial();
-
       if (locations.size() == 1) {
-        renderLocation(block, locations.get(0), leftPartial, rightPartial);
+        renderLocation(block, locations.get(0));
       } else { // need to be a bit clever regarding wheter to render left and right partial
         boolean firstLocation = true;
         Iterator<Location> iterator = locations.iterator();
         while (iterator.hasNext()) {
           Location location = iterator.next();
           if (firstLocation) {
-            renderLocation(block, location, leftPartial, false);
-          } else if (!iterator.hasNext()) { // last location
-            block.append(",");
-            renderLocation(block, location, false, rightPartial);
+            renderLocation(block, location);
           } else {
             block.append(",");
-            renderLocation(block, location, false, false);
+            renderLocation(block, location);
           }
           firstLocation = false;
         }
@@ -112,8 +106,7 @@ public class FeatureLocationWriter extends FlatFileWriter {
     return block.toString();
   }
 
-  public static void renderLocation(
-      StringBuilder block, Location location, boolean leftPartial, boolean rightPartial) {
+  public static void renderLocation(StringBuilder block, Location location) {
     boolean isComplement = location.isComplement();
     if (isComplement) {
       // Complement location.
@@ -131,16 +124,31 @@ public class FeatureLocationWriter extends FlatFileWriter {
     }
 
     if (location instanceof Base && location.getBeginPosition() != null) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrime(),
+          location.isThreePrime());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() == null) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrime(),
+          location.isThreePrime());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() != null
         && location.getBeginPosition().equals(location.getEndPosition())) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrime(),
+          location.isThreePrime());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() != null) {
@@ -149,16 +157,16 @@ public class FeatureLocationWriter extends FlatFileWriter {
           location.getBeginPosition(),
           location.getEndPosition(),
           isComplement,
-          leftPartial,
-          rightPartial);
+          location.isFivePrime(),
+          location.isThreePrime());
     } else if (location instanceof Between) {
       renderBetween(
           block,
           location.getBeginPosition(),
           location.getEndPosition(),
           isComplement,
-          leftPartial,
-          rightPartial);
+          location.isFivePrime(),
+          location.isThreePrime());
     } else if (location instanceof Gap) {
       renderGap(block, (Gap) location);
     }

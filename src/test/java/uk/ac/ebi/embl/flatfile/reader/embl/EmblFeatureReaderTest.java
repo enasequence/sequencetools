@@ -154,8 +154,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -179,15 +179,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
     assertEquals(Long.valueOf(156), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalSingleBaseLeftPartial() throws IOException {
@@ -205,8 +205,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -230,15 +230,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
     assertEquals(Long.valueOf(156), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteSingleBaseWithoutVersion() throws IOException {
@@ -257,8 +257,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
@@ -285,8 +285,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
@@ -312,8 +312,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -337,15 +337,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalRangeLeftPartial() throws IOException {
@@ -363,8 +363,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -388,8 +388,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -413,15 +413,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalRangeLeftPartial2() throws IOException {
@@ -439,15 +439,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteRangeWithoutVersion() throws IOException {
@@ -466,9 +466,9 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteRange);
@@ -476,7 +476,7 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertNull(((RemoteRange) location).getVersion());
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteRangeWithLeftPartial() throws IOException {
@@ -495,8 +495,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteRange);
@@ -523,9 +523,9 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteRange);
@@ -533,7 +533,7 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals(Integer.valueOf(1), ((RemoteRange) location).getVersion());
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetween() throws IOException {
@@ -551,8 +551,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -576,15 +576,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetweenLeftPartial() throws IOException {
@@ -602,8 +602,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -627,8 +627,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -652,15 +652,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetweenLeftPartial2() throws IOException {
@@ -678,15 +678,15 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteBetweenWithoutVersion() throws IOException {
@@ -705,9 +705,9 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBetween);
@@ -715,7 +715,7 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertNull(((RemoteBetween) location).getVersion());
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteBetweenWithVersion() throws IOException {
@@ -734,9 +734,9 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBetween);
@@ -744,7 +744,7 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals(Integer.valueOf(1), ((RemoteBetween) location).getVersion());
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_Join() throws IOException {
@@ -765,8 +765,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -810,8 +810,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertTrue(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -854,8 +854,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertTrue(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -896,8 +896,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -941,8 +941,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -986,8 +986,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -1031,8 +1031,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertTrue(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -1076,8 +1076,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrime());
+    assertFalse(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -1121,8 +1121,8 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrime());
+    assertTrue(locations.isThreePrime());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
