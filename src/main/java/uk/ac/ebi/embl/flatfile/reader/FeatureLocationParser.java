@@ -49,7 +49,7 @@ public class FeatureLocationParser {
       return null;
     } else {
       String complement = compoundLocationMatcher.group(1); // Group 1: (\s*complement\s*\()?
-      String operator = compoundLocationMatcher.group(2); // Group 2: (\s*((?:join)|(?:order)))?
+      String operator = compoundLocationMatcher.group(2); // Group 2: (\s*((?:join)|(?:order))?)?
       Vector<String> regions =
           FlatFileUtils.split(compoundLocationMatcher.group(3), ","); // Group 3: (.*)
 
