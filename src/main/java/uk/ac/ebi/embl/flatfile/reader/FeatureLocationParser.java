@@ -91,9 +91,11 @@ public class FeatureLocationParser {
               });
 
       if (locations.size() > 0) {
+        // Set partiality using first location
         setCompoundLocationPartiality(locations.get(0), compoundLocation);
       }
       if (locations.size() > 1) {
+        // Set partiality using last location
         setCompoundLocationPartiality(locations.get(locations.size() - 1), compoundLocation);
       }
 
