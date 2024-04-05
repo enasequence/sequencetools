@@ -86,7 +86,7 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
   }
 
   /**
-   * This is called only from CdsTranslator for setting partiality to compoundLocation
+   * Sets 5' partiality to the first location range
    * @param partiality
    */
   public void setFivePrimePartial(boolean partiality) {
@@ -103,7 +103,7 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
   }
 
   /**
-   * This is called only from CdsTranslator for setting partiality back to compoundLocation
+   * Sets 3' partiality to the last location range
    * @param partiality
    */
   public void setThreePrimePartial(boolean partiality) {
