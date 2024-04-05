@@ -118,7 +118,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     test.setFixDeleteTrailingBasesAfterStopCodon(true);
     assertTrue(
         test.testValidTranslation(
@@ -131,7 +131,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "atggctgacggcctcgacttcacaggcatgctgcgttcggccgggctccggatcactcgtccccggctggcggtactcaatgcggtgaaagagcatccgcacgccgagacggaccatgtcatccgggccgtgcgcgttcaattgcccgacgtctcccatcagacggtgtacgacgngctcaacgcgttgacggcggccggcttggtgcgccgcatccagcccaccggttcggtagcccgctacgagacccgtgtcaacgacaaccaccaccacgtcgtgtgcaggtcgtgtggtgcgatcgccgacgtcgattgcgcggtgggcgatgcaccgtgtctgaccgccgcagacgacaacggtttcgacatcgatgaagccgaggtcatctattgggccagtgccctgactgctcgcgatctccgagttcttgacgacagccccgtcgctcaccagatgaaagggaaagcaatgcccccgaataccc",
@@ -143,7 +143,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(
         test.testValidTranslation("atggctgaagccgaaacccatcctcctatcggtgaatc", "MAEAETHPPIGES"));
   }
@@ -153,7 +153,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(test.testValidTranslation("at", "M"));
   }
 
@@ -162,7 +162,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setNonTranslating(true);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(test.testValidTranslation("a", ""));
   }
 
@@ -171,7 +171,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setNonTranslating(true);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(test.testValidTranslation("at", ""));
   }
 
@@ -180,7 +180,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     test.addTranslationException(1, 3, 'M');
     assertTrue(test.testValidTranslation("nnn", "M"));
   }
@@ -467,7 +467,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(2);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     test.addTranslationException(53, null, '*');
     assertTrue(
         test.testValidTranslation(
@@ -480,7 +480,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(2);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     test.addTranslationException(53, null, '*');
     assertTrue(
         test.testValidTranslation(
@@ -565,7 +565,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "cctcataaacggagacgatattttcggatttgatgagactaagctgggaatatgcgtttctgggataggtctttccggctttgaagtatacgacctgcttagagagaagtacaacatacaagtggagcttgccgacgggagctatatactggccatagtcagtttgggcgataccaggagcgatatcgatgcacttgtagcggcacttgaagacataatagcgagtcattccggcgggaagcgccaaatagagcaaccaatactaataaatccctacgtagtaatatcgcccagagaggcgttctatagccccaaacggacagtaaggcttgaggacgcggaaggggaggtaagcggagaatcgcttatgctctacccgcacggtatcccaatatttgcaatcggtgagaggataacgcgcgatatgatagattacatcaaattcctaaaaaaacaaagcgcagtgcttgttgggaccgaggacccgggcatagagcatataaaaatattgggaatgtaa",
@@ -589,7 +589,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     test.setFixDegenarateStartCodon(true);
     test.addCodonException("tta", 'Q');
     test.addCodonException("act", 'Q');
@@ -601,7 +601,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "aatcactcctcaaccaggtgttgacccgattgaagcatctgctgcaattgcaggtgagtcttcaacagctacttggacagttgtgtggactgatttattaacagcttgtgacttatacagagcgaaagcatatcgagtagatccagttccaaacgttgcagatcaatattttgcttacatagcttacgatattgatttatttgaagaaggttccattgcgaatttaactgcttcgattattggtaacgtttttgggtttaaagctgttaaagctcttcgtctagaagatatgcgtatgccaatagcttacctaaaaactttccaaggtcctgcaactggattgattgtagaacgtgagcgtatggataagttcggtagacctttcttaggtgctacagttaaacctaaattaggtttatctggcaaaaactacggaagagttgtatacgaaggcctaaaaggcggtcttgatttccttaaagatgatgaaaatattaactcacaaccatttatgcgttggagagaaagatttttatattctatggaaggtgtaaataaagcatctgcttctgctggcgaaattaaaggtcattaccttaacgtgacagctgcgacaatggaagatatgtatgagagagccgaattctctaaagaggttggtagtatcatctgtatgattgaccttgttattggttatactgcgattcaaagtatggcaatctgggctcgcaaacatgacatgattttacatttacatagagcaggtaattcaacttactctcgtcaaaaaaatcatggtatgaacttccgagttatttgcaaatggatgcgtatggctggtgtcgaccatattcacgcaggtacagttgtaggtaaacttgaaggagatcctttaatgattaaaggattctacaatactttacttgaaagtgaaacagatattaacctacctcaaggtctgttnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnttgattacttaggtgatgatgtagttcttcagtttggtggtggtacaattggacatcctgatggtatccaagcaggtgcaactgctaacagagtagcattagagtccatggttatggcaagaaatgagggccgtaactatgtagcagaaggcccacaaatcttaagggacgctgctaaaacttgtgggcctctacaaacagctttagatttatggaaagacattagttttaactatacttccacagatacagctgacttcgttgagactccaacagcaaacatctag",
@@ -613,8 +613,8 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
-    test.setRightPartial(true);
+    test.setFivePrimePartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "ggagaattgctctgtcatcgaaggacacttgcagatactcttgatgttcaaaacgaggcccgaagatttccgagacctcagtttccccaaactcatcatgatcactgattacttgctgctcttccgggtctatgggctcgagagcctgaaggacctgttccccaacctcacggtcatccggggatcacgactgttctttaactacgcgctggtcatcttcgagatggttcacctcaaggaactcggcctctacaacctgatgaacatcacccggggttctgtccgcatcgagaagaacaatgagctctgttacttggccactatcgactggtcccgtatcctggattccgtggaggataataacatcgtgttgaacaaagatgacaacgaggagtgtggagacatctgtccgggtaccgcgaagggcaagaccaacagccccgccaccgtcatcaacgggcagtttgtcgaacgatgtaggactcatagtcactgccagaaag",
@@ -626,8 +626,8 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
-    test.setRightPartial(true);
+    test.setFivePrimePartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "agggctgaagctgccctcgaggacctggtctccaccattcgagtctgaagattctcagaagcacaaccagagtgagtatgaggattcggccggcgaatgctgctcctgtccaaagacagactctcagatcctgaaggagctggaggagtcctcgtttaggaagacgtttgaggattacctgcacaacgtggttttcgtccccag",
@@ -639,7 +639,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "agctttgaccagcgagacctggctcaagatgatgctgtgtggctggagcatggccctctggagtccagtagcccagctgtggtggtggcagcagcccgtataggtattggtcatgcaggggagtggacacagaagcccttgcgcttctatgtccagggcagcccatgggtcagtgtggtagacagagtggctgaacagatggatcagctagcaaacagcctgctctga",
@@ -651,8 +651,8 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setLeftPartial(true);
-    test.setRightPartial(true);
+    test.setFivePrimePartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "tgtgccacctgggattattataagaaactctttggcagtggaacaacacttgttgtcacagataaacaacttgatgc",
@@ -664,7 +664,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testValidTranslation(
             "gacgagatgctgcgcatgtaccacgcactgaaggaggcgctcagcatcatcggcaacatcaacacgaccaccgtcagcacgcccatgcccccgcccgtggacgactcctggctgcaggtgcagagcgtaccggccggacgcaggtcgcccacgtccagccccacgccgcagcgccgagcccccgccgtgcccccagcccggcccgggtcgcggggccctgctcctgggcctccgcctgctgggtccgccctggggggggcgccccccgtgccctccaggccgggggcttcccctgaccctttcggccctccccctcaggtgccctcgcgccccaaccgcgccccgcccggggtccccagccagccgatcgggtcaggcaagtccatcccgtcctga",
@@ -680,7 +680,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testInvalidTranslation(
             "gcgcgccgctgtagccgctgatcgtggaattattggtggttatggtctaggtgccccctacggtttagctggtggttacggtttggaagttccttacggcttggctggatacgctgactaccgctaccccgctggtgcatgcggtatcgatgcttacggtggtattggtgaaggtaacgttgctgtcgctggtgagctgcccgtagctggtaccactgctgtcgctggtcaagtacctatcatgggcgctgtgaaattcggtggtgatgtctgcgctgctggttccgtatccatcgctggcaagtgcgcttgcggctgcggtgattacggttacggctacggattaggtgctccctacctgtactaaa",
@@ -719,7 +719,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(
         test.testInvalidTranslation(
             "tgtgccacctgggattattataagaaactctttggcagtggaacaacacttgttgtcacagataaacaacttgatgc",
@@ -810,7 +810,7 @@ public class TranslatorTest {
   public void testInvalidTranslationShorterThanThree2() throws ValidationException {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("a", "Translator-1"));
   }
 
@@ -825,7 +825,7 @@ public class TranslatorTest {
   public void testInvalidTranslationShorterThanThree4() throws ValidationException {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("at", "Translator-1"));
   }
 
@@ -840,7 +840,7 @@ public class TranslatorTest {
   public void testInvalidTranslationShorterThanThree6() throws ValidationException {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("", "Translator-1"));
   }
 
@@ -865,8 +865,8 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(2);
-    test.setRightPartial(true);
-    test.setLeftPartial(true);
+    test.setThreePrimePartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("at", "Translator-4"));
   }
 
@@ -890,7 +890,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     test.setNonTranslating(true);
     test.addCodonException("gag", 'R');
     test.addTranslationException(7, 9, 'E');
@@ -902,7 +902,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(test.testInvalidTranslation("atggagcggcgaacgggtgagtag", "Translator-14"));
   }
 
@@ -911,7 +911,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     test.setNonTranslating(false);
     test.addCodonException("gag", 'R');
     test.addTranslationException(6, 8, 'E');
@@ -923,7 +923,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(1);
-    test.setRightPartial(true);
+    test.setThreePrimePartial(true);
     test.setNonTranslating(false);
     test.addCodonException("gag", 'R');
     test.addTranslationException(5, 7, 'E');
@@ -935,7 +935,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(11);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     test.addTranslationException(1, 3, 'E');
     assertTrue(test.testInvalidTranslation("atggagcggcgaacgggtgagtag", "Translator-4"));
   }
@@ -998,8 +998,8 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(3);
-    test.setLeftPartial(true);
-    test.setRightPartial(true);
+    test.setFivePrimePartial(true);
+    test.setThreePrimePartial(true);
     assertTrue(test.testInvalidTranslation("ata", "Translator-1"));
   }
 
@@ -1008,7 +1008,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(2);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("ttaga", "Translator-12"));
   }
 
@@ -1017,7 +1017,7 @@ public class TranslatorTest {
     TranslatorTester test = new TranslatorTester();
     test.setTranslationTable(1);
     test.setCodonStart(1);
-    test.setLeftPartial(true);
+    test.setFivePrimePartial(true);
     assertTrue(test.testInvalidTranslation("taga", "Translator-12"));
   }
 }

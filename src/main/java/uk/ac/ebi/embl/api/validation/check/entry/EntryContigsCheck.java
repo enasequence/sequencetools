@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description(
     "CO line/foreign entry \"{0}\" doesn't exist."
@@ -73,7 +73,7 @@ public class EntryContigsCheck extends EntryValidationCheck {
     for (Location location : entry.getSequence().getContigs()) {
       if (!(location instanceof RemoteLocation) && !(location instanceof Gap)) {
         StringBuilder locationString = new StringBuilder();
-        LocationToStringCoverter.renderLocation(locationString, location, false, false);
+        FeatureLocationWriter.renderLocationForcePartiality(locationString, location, false, false);
         reportError(location.getOrigin(), CONTIG_LOCATION_MESSAGE_ID_1, locationString);
       }
       if (!getEmblEntryValidationPlanProperty().ncbiCon.get()) {
@@ -97,7 +97,8 @@ public class EntryContigsCheck extends EntryValidationCheck {
                 || location.getEndPosition() > seqLength
                 || location.getEndPosition() < 0) {
               StringBuilder locationBlock = new StringBuilder();
-              LocationToStringCoverter.renderLocation(locationBlock, location, false, false);
+              FeatureLocationWriter.renderLocationForcePartiality(
+                  locationBlock, location, false, false);
               reportError(
                   location.getOrigin(), CONTIG_LOCATION_MESSAGE_ID, locationBlock, accession);
             }

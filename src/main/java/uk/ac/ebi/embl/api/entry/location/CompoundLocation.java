@@ -23,9 +23,6 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
 
   private final List<E> locations;
 
-  private boolean fivePrime;
-  private boolean threePrime;
-
   protected CompoundLocation() {
     this.locations = new ArrayList<E>();
   }
@@ -54,20 +51,72 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
     return this.locations.remove(location);
   }
 
-  public boolean isFivePrime() {
-    return fivePrime;
+  /**
+   * Return true if the first location in the compound location is 5'
+   *
+   * @return
+   */
+  public boolean isFivePrimePartial() {
+    if (getLocations().isEmpty()) {
+      return false;
+    }
+
+    // Check if the first location is 5'.
+    Location firstLocation = getLocations().get(0);
+    return isComplement()
+        ? firstLocation.isThreePrimePartial()
+        : firstLocation.isFivePrimePartial();
   }
 
-  public void setFivePrime(boolean fivePrime) {
-    this.fivePrime = fivePrime;
+  /**
+   * Return true if the last location in the compound location is 3'
+   *
+   * @return
+   */
+  public boolean isThreePrimePartial() {
+    if (getLocations().isEmpty()) {
+      return false;
+    }
+
+    // Check if the last location is 3'.
+    Location lastLocation = getLocations().get(getLocations().size() - 1);
+    return isComplement()
+        ? lastLocation.isFivePrimePartial()
+        : lastLocation.isThreePrimePartial();
   }
 
-  public boolean isThreePrime() {
-    return threePrime;
+  /**
+   * This is called only from CdsTranslator for setting partiality to compoundLocation
+   * @param partiality
+   */
+  public void setFivePrimePartial(boolean partiality) {
+    if (getLocations().isEmpty()) {
+      return;
+    }
+
+    Location firstLocation = getLocations().get(0);
+    if (isComplement()) {
+      firstLocation.setThreePrimePartial(partiality);
+    } else {
+      firstLocation.setFivePrimePartial(partiality);
+    }
   }
 
-  public void setThreePrime(boolean threePrime) {
-    this.threePrime = threePrime;
+  /**
+   * This is called only from CdsTranslator for setting partiality back to compoundLocation
+   * @param partiality
+   */
+  public void setThreePrimePartial(boolean partiality) {
+    if (getLocations().isEmpty()) {
+      return;
+    }
+
+    Location lastLocation = getLocations().get(getLocations().size() - 1);
+    if (isComplement()) {
+      lastLocation.setFivePrimePartial(partiality);
+    } else {
+      lastLocation.setThreePrimePartial(partiality);
+    }
   }
 
   @Override

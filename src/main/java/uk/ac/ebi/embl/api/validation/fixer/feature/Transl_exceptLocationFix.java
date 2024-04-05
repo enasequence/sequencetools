@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description("Invalid Location:Complement ignored in transl_except")
 public class Transl_exceptLocationFix extends FeatureValidationCheck {
@@ -52,7 +52,7 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
         }
 
         location.setComplement(false);
-        String locationString = LocationToStringCoverter.renderCompoundLocation(location);
+        String locationString = FeatureLocationWriter.renderCompoundLocation(location);
         fixedValue.append(locationString);
         fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
         tQualifier.setValue(fixedValue.toString());

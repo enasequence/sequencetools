@@ -282,14 +282,14 @@ public class PeptideFeatureCheckTest {
         (CdsFeature)
             SequenceEntryUtils.getFeatures(Feature.CDS_FEATURE_NAME, entry).iterator().next();
     cdsFeature.setStartCodon(2);
-    cdsFeature.getLocations().setFivePrime(true); // has to be if is start codon 2
+    cdsFeature.getLocations().setFivePrimePartial(true); // has to be if is start codon 2
     PeptideFeature peptideFeature =
         (PeptideFeature) featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     peptideFeature.setStartCodon(2);
     Join<Location> join = new Join<Location>();
     LocalRange range = locationFactory.createLocalRange(5647L, 5717L);
     join.addLocation(range);
-    join.setFivePrime(true); // as does not have a start codon
+    join.setFivePrimePartial(true); // as does not have a start codon
     peptideFeature.setLocations(join);
     peptideFeature.addQualifier(Qualifier.GENE_QUALIFIER_NAME, "IGF-II");
 
@@ -310,7 +310,7 @@ public class PeptideFeatureCheckTest {
     CdsFeature cdsFeature =
         (CdsFeature)
             SequenceEntryUtils.getFeatures(Feature.CDS_FEATURE_NAME, entry).iterator().next();
-    cdsFeature.getLocations().setThreePrime(true);
+    cdsFeature.getLocations().setThreePrimePartial(true);
     PeptideFeature peptideFeature =
         (PeptideFeature) featureFactory.createFeature(Feature.MAP_PEPTIDE_FEATURE_NAME, true);
     Join<Location> join = new Join<Location>();

@@ -136,7 +136,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
             /** ...if not, is the cds 5' or 3' partial?... */
 
             /** is 3' partial? */
-            if (cdsFeature.getLocations().isFivePrime()) {
+            if (cdsFeature.getLocations().isFivePrimePartial()) {
 
               Integer startCodon = cdsFeature.getStartCodon();
               /** ...if partial, is the start codon 2 or 3?... */
@@ -154,7 +154,7 @@ public class PeptideFeatureCheck extends EntryValidationCheck {
             }
 
             /** is 5' partial? */
-            if (cdsFeature.getLocations().isThreePrime()) {
+            if (cdsFeature.getLocations().isThreePrimePartial()) {
               /** does the peptide end location match the end of a partial cds? */
               Location cdsEnd = getEndFromLocations(cdsFeature.getLocations());
               Location peptideEnd = getEndFromLocations(peptideFeature.getLocations());

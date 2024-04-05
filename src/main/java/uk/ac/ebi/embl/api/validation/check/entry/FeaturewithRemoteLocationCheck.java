@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description(
     "Feature \"{0}\" has remote location,validator requires database connection to validate features having remote locations"
@@ -53,7 +53,8 @@ public class FeaturewithRemoteLocationCheck extends EntryValidationCheck {
             try {
               if (!validateRemoteLocation(location)) {
                 StringBuilder locationBlock = new StringBuilder();
-                LocationToStringCoverter.renderLocation(locationBlock, location, false, false);
+                FeatureLocationWriter.renderLocationForcePartiality(
+                    locationBlock, location, false, false);
                 reportError(
                     feature.getOrigin(),
                     INVALID_LOCATION_MESSAGE_ID,

@@ -27,7 +27,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description(
     "Sequence has been added to the anticodon value : \"{0}\""
@@ -58,7 +58,7 @@ public class AnticodonQualifierFix extends EntryValidationCheck {
 
       try {
         CompoundLocation<Location> location = qualifier.getLocations();
-        String pos = LocationToStringCoverter.renderCompoundLocation(location);
+        String pos = FeatureLocationWriter.renderCompoundLocation(location);
         String aminoAcid =
             qualifier.getAminoAcid() != null
                 ? qualifier.getAminoAcid().getAbbreviation()

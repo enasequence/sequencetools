@@ -111,7 +111,7 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
               } catch (ValidationException e) {
                 reportException(result, e, entry, cdsFeatures.get(0));
               }
-              trans.setLeftPartial(true);
+              trans.setFivePrimePartial(true);
               TranslationResult translatorResult = new TranslationResult();
               boolean flocationComplement = feature.getLocations().isComplement();
               for (Location flocation : feature.getLocations().getLocations()) {

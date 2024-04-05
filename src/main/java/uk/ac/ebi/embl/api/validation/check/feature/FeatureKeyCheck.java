@@ -175,7 +175,7 @@ public class FeatureKeyCheck extends FeatureValidationCheck {
   private void validateCdsFeature(CdsFeature cdsFeature) {
     CompoundLocation<Location> locations = cdsFeature.getLocations();
 
-    if (locations.isFivePrime()
+    if (locations.isFivePrimePartial()
         && !SequenceEntryUtils.isQualifierAvailable("codon_start", cdsFeature)) {
       reportWarning(cdsFeature.getOrigin(), CODON_START_QUALIFIER_MESSAGE);
     }

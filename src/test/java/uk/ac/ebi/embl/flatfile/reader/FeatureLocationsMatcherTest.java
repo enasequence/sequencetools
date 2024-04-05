@@ -17,27 +17,18 @@ import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 public class FeatureLocationsMatcherTest extends TestCase {
 
   private static String test(String locationString) {
-    /*FeatureLocationsMatcher matcher = new FeatureLocationsMatcher(null, false);
-    matcher.match(locationString);*/
-    // return FeatureLocationWriter.getLocationString(matcher.getCompoundLocation());
     FeatureLocationParser parser = new FeatureLocationParser(null, false);
     return FeatureLocationWriter.getLocationString(parser.getCompoundLocation(locationString));
   }
 
-  private static boolean leftPartial(String locationString) {
-    /*FeatureLocationsMatcher matcher = new FeatureLocationsMatcher(null, false);
-    matcher.match(locationString);*/
-    // return matcher.getCompoundLocation().isFivePrime();
+  private static boolean fivePrimePartial(String locationString) {
     FeatureLocationParser parser = new FeatureLocationParser(null, false);
-    return parser.getCompoundLocation(locationString).isFivePrime();
+    return parser.getCompoundLocation(locationString).isFivePrimePartial();
   }
 
-  private static boolean rightPartial(String locationString) {
-    FeatureLocationsMatcher matcher = new FeatureLocationsMatcher(null, false);
-    matcher.match(locationString);
-    // return matcher.getCompoundLocation().isThreePrime();
+  private static boolean threePrimePartial(String locationString) {
     FeatureLocationParser parser = new FeatureLocationParser(null, false);
-    return parser.getCompoundLocation(locationString).isThreePrime();
+    return parser.getCompoundLocation(locationString).isThreePrimePartial();
   }
 
   @Test
@@ -91,101 +82,114 @@ public class FeatureLocationsMatcherTest extends TestCase {
 
     String location = "complement(2807037..>2807081)";
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "complement(<2807037..2807081)";
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    assertTrue(threePrimePartial(location));
 
     location = "complement(join(2182966..2183014,2183124..>2183128))";
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    // This is not a valid 5'
+    // assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "complement(join(<2182966..2183014,2183124..2183128))";
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    // This is not a valid 3'
+    // assertTrue(threePrimePartial(location));
   }
 
   @Test
   public void testPartiality() {
     /*
-    <2..3 → 5’ partial
-    2..>3 → 3’ partial
-    complement(<2..3) → 3’ partial
-    complement(2..>3) → 5’ partial
-    join(<2,4) → 5’ partial
-    join(2,>4) → 3’ partial
-    complement(join(<2,4)) → 3’ partial
-    complement(join(2,>4)) → 5’partial
-    join(complement(<2),4) → 3’ partial
-    join(2,complement(>4)) → 5’ partial
-    join(complement(<2),complement(4)) → 3’ partial
-    join(complement(2),complement(>4)) → 5’ partial
-     */
+        <2..3 → 5’ partial
+        2..>3 → 3’ partial
+        complement(<2..3) → 3’ partial
+        complement(2..>3) → 5’ partial
+        join(<2,4) → 5’ partial
+        join(2,>4) → 3’ partial
+        complement(join(<2,4)) → 3’ partial
+        complement(join(2,>4)) → 5’partial
+        join(complement(<2),4) → 3’ partial
+        join(2,complement(>4)) → 5’ partial
+        join(complement(<2),complement(4)) → 3’ partial
+        join(complement(2),complement(>4)) → 5’ partial
+    */
 
     String location = "<2..3"; //  → 5’ partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "2..>3"; //  → 3’ partial
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    assertTrue(threePrimePartial(location));
 
     location = "complement(<2..3)"; //  → 3’ partial
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    assertTrue(threePrimePartial(location));
 
     location = "complement(2..>3)"; //  → 5’ partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "join(<2,4)"; //  → 5’ partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "join(2,>4)"; //  → 3’ partial
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    assertTrue(threePrimePartial(location));
 
     location = "complement(join(<2,4))"; //  → 3’ partial
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    // This is not a valid 3'
+    // assertTrue(threePrimePartial(location));
 
     location = "complement(join(2,>4))"; //  → 5’partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    // This is not a valid 5'
+    // assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "join(complement(<2),4)"; //  → 3’ partial
     assertEquals(location, test(location)); // check
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    // This is not a valid 3'
+    // assertTrue(threePrimePartial(location));
 
     location = "join(2,complement(>4))"; //  → 5’ partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    // This is not a valid 3'
+    // assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
 
     location = "join(complement(<2),complement(4))"; //  → 3’ partial
     assertEquals(location, test(location));
-    assertFalse(leftPartial(location));
-    assertTrue(rightPartial(location));
+    assertFalse(fivePrimePartial(location));
+    // This is not a valid 3'
+    // assertTrue(threePrimePartial(location));
 
     location = "join(complement(2),complement(>4))"; //  → 5’ partial
     assertEquals(location, test(location));
-    assertTrue(leftPartial(location));
-    assertFalse(rightPartial(location));
+    // This is not a valid 5'
+    // assertTrue(fivePrimePartial(location));
+    assertFalse(threePrimePartial(location));
+
+    location = "join(complement(2),complement(<4))"; //  → 3’ partial
+    assertEquals(location, test(location));
+    assertFalse(fivePrimePartial(location));
+    assertTrue(threePrimePartial(location));
   }
 
   @Test

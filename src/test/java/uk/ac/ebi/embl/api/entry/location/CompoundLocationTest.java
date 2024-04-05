@@ -36,15 +36,15 @@ public class CompoundLocationTest {
   public void testCompoundLocation() {
     CompoundLocation location1 = new CompoundLocation() {};
     assertTrue(location1.getLocations().isEmpty());
-    assertFalse(location1.isFivePrime());
-    assertFalse(location1.isThreePrime());
+    assertFalse(location1.isFivePrimePartial());
+    assertFalse(location1.isThreePrimePartial());
 
     CompoundLocation location2 = new CompoundLocation() {};
-    location2.setFivePrime(true);
-    location2.setThreePrime(true);
+    location2.setFivePrimePartial(true);
+    location2.setThreePrimePartial(true);
     assertTrue(location2.getLocations().isEmpty());
-    assertTrue(location2.isFivePrime());
-    assertTrue(location2.isThreePrime());
+    assertTrue(location2.isFivePrimePartial());
+    assertTrue(location2.isThreePrimePartial());
   }
 
   @Test

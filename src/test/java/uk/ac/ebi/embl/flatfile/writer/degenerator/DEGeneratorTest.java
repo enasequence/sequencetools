@@ -402,7 +402,7 @@ public class DEGeneratorTest extends TestCase {
     Join<Location> join = new Join<Location>();
     LocalRange range = locationFactory.createLocalRange(1L, 10L);
     join.addLocation(range);
-    join.setFivePrime(true);
+    join.setFivePrimePartial(true);
     feature.setLocations(join);
     entry.addFeature(feature);
 
@@ -426,7 +426,7 @@ public class DEGeneratorTest extends TestCase {
     Join<Location> join = new Join<Location>();
     LocalRange range = locationFactory.createLocalRange(1L, 10L);
     join.addLocation(range);
-    join.setFivePrime(true);
+    join.setFivePrimePartial(true);
     feature.setLocations(join);
     entry.addFeature(feature);
 
