@@ -96,7 +96,7 @@ public class FeatureLocationParser {
             }
           }
 
-          compoundLocation.addLocation(getLocation(region));
+          compoundLocation.addLocation(location);
           index++;
         }
       }
