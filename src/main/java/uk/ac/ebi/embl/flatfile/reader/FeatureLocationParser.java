@@ -165,20 +165,10 @@ public class FeatureLocationParser {
       location.setComplement(isComplement);
       location.setFivePrimePartial(isFivePrime);
       location.setThreePrimePartial(isThreePrime);
-      setLocationPartiality(location);
+      location.setLocationPartiality();
     }
 
     return location;
-  }
-
-  private void setLocationPartiality(Location location) {
-    if (location.isComplement()
-        && (location.isFivePrimePartial() || location.isThreePrimePartial())) {
-      // Swap 3 prime and 5 prime in case of complement
-      boolean tempFivePrime = location.isFivePrimePartial();
-      location.setFivePrimePartial(location.isThreePrimePartial());
-      location.setThreePrimePartial(tempFivePrime);
-    }
   }
 
   public boolean isValue(String value) {

@@ -61,11 +61,10 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
       return false;
     }
 
-    // Check if the first location is 5'.
-    Location firstLocation = getLocations().get(0);
+    // return true if the first location or last location is 5'.
     return isComplement()
-        ? firstLocation.isThreePrimePartial()
-        : firstLocation.isFivePrimePartial();
+        ? firstLocation().isThreePrimePartial() || lastLocation().isThreePrimePartial()
+        : firstLocation().isFivePrimePartial() || lastLocation().isFivePrimePartial();
   }
 
   /**
@@ -78,15 +77,15 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
       return false;
     }
 
-    // Check if the last location is 3'.
-    Location lastLocation = getLocations().get(getLocations().size() - 1);
+    // return true if first location or last location is 3'.
     return isComplement()
-        ? lastLocation.isFivePrimePartial()
-        : lastLocation.isThreePrimePartial();
+        ? firstLocation().isFivePrimePartial() || lastLocation().isFivePrimePartial()
+        : firstLocation().isThreePrimePartial() || lastLocation().isThreePrimePartial();
   }
 
   /**
    * Sets 5' partiality to the first location range
+   *
    * @param partiality
    */
   public void setFivePrimePartial(boolean partiality) {
@@ -94,16 +93,16 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
       return;
     }
 
-    Location firstLocation = getLocations().get(0);
     if (isComplement()) {
-      firstLocation.setThreePrimePartial(partiality);
+      firstLocation().setThreePrimePartial(partiality);
     } else {
-      firstLocation.setFivePrimePartial(partiality);
+      firstLocation().setFivePrimePartial(partiality);
     }
   }
 
   /**
    * Sets 3' partiality to the last location range
+   *
    * @param partiality
    */
   public void setThreePrimePartial(boolean partiality) {
@@ -111,12 +110,19 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
       return;
     }
 
-    Location lastLocation = getLocations().get(getLocations().size() - 1);
     if (isComplement()) {
-      lastLocation.setFivePrimePartial(partiality);
+      lastLocation().setFivePrimePartial(partiality);
     } else {
-      lastLocation.setThreePrimePartial(partiality);
+      lastLocation().setThreePrimePartial(partiality);
     }
+  }
+
+  public Location firstLocation() {
+    return getLocations().get(0);
+  }
+
+  public Location lastLocation() {
+    return getLocations().get(getLocations().size() - 1);
   }
 
   @Override
