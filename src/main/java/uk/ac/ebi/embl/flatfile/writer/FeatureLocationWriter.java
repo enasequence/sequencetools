@@ -73,7 +73,6 @@ public class FeatureLocationWriter extends FlatFileWriter {
       }
 
       if (locations.size() > 1) {
-
         if (compoundLocation instanceof Join<?>) {
           block.append("join(");
         } else if (compoundLocation instanceof Order<?>) {
@@ -81,21 +80,15 @@ public class FeatureLocationWriter extends FlatFileWriter {
         }
       }
 
-      if (locations.size() == 1) {
-        renderLocation(block, locations.get(0));
-      } else { // need to be a bit clever regarding wheter to render left and right partial
-        boolean firstLocation = true;
-        Iterator<Location> iterator = locations.iterator();
-        while (iterator.hasNext()) {
-          Location location = iterator.next();
-          if (firstLocation) {
-            renderLocation(block, location);
-          } else {
-            block.append(",");
-            renderLocation(block, location);
-          }
-          firstLocation = false;
+      for (int i = 0; i < locations.size(); i++) {
+        Location location = locations.get(i);
+        if (i > 0) {
+          block.append(",");
         }
+        renderLocation(block, location);
+      }
+
+      if (locations.size() > 1) {
         block.append(")");
       }
 

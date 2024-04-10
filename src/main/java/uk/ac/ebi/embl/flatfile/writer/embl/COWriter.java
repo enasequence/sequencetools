@@ -41,7 +41,7 @@ public class COWriter extends FlatFileWriter {
       } else {
         firstContig = false;
       }
-      FeatureLocationWriter.renderLocation(block, contig);
+      FeatureLocationWriter.renderLocationForcePartiality(block, contig, false,false);
     }
     block.append(")");
     writeBlock(writer, EmblPadding.CO_PADDING, block.toString());
