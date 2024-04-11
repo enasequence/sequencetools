@@ -10,7 +10,6 @@
  */
 package uk.ac.ebi.embl.flatfile.reader;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -18,7 +17,9 @@ import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 import java.util.EnumSet;
 
-public class FeatureLocationsMatcherTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class FeatureLocationsMatcherTest {
 
     public enum Partiality {
         COMPOUND_5_PARTIAL,
@@ -26,20 +27,10 @@ public class FeatureLocationsMatcherTest extends TestCase {
         FIRST_5_PARTIAL,
         FIRST_3_PARTIAL,
         LAST_5_PARTIAL,
-        LAST_3_PARTIAL;
+        LAST_3_PARTIAL
     }
 
-
-    private static CompoundLocation<Location> test(String expectedLocationString, String locationString) {
-        FeatureLocationParser parser = new FeatureLocationParser(null, false);
-        CompoundLocation<Location> location = parser.getCompoundLocation(locationString);
-        assertEquals(expectedLocationString, FeatureLocationWriter.getLocationString(location));
-        return location;
-    }
-
-    private static void test(String expectedLocationString, String locationString, EnumSet<Partiality>... partialityList) {
-        CompoundLocation<Location> location = test(expectedLocationString, locationString);
-
+    private static void testGettingPartiality(CompoundLocation<Location> location, EnumSet<Partiality>[] partialityList) {
         EnumSet<Partiality> partiality = EnumSet.noneOf(Partiality.class);
         for (EnumSet<Partiality> p : partialityList) {
             partiality.addAll(p);
@@ -93,6 +84,67 @@ public class FeatureLocationsMatcherTest extends TestCase {
             assertFalse("Not expecting last 3 prime partial", location.getLocations().get(location.getLocations().size() - 1).isThreePrimePartial());
         }
     }
+
+    private static void removePartiality(CompoundLocation<Location> location) {
+        for (Location l : location.getLocations()) {
+            l.setFivePrimePartial(false);
+            l.setThreePrimePartial(false);
+        }
+        for (Location l : location.getLocations()) {
+            assertFalse(l.isFivePrimePartial());
+            assertFalse(l.isThreePrimePartial());
+        }
+    }
+
+    private static void testSettingPartiality(CompoundLocation<Location> location) {
+        boolean isCompoundFivePartial = location.isFivePrimePartial();
+        boolean isCompoundThreePartial = location.isThreePrimePartial();
+        boolean isFirstFivePartial = location.getLocations().get(0).isFivePrimePartial();
+        boolean isFirstThreePartial = location.getLocations().get(0).isThreePrimePartial();
+        boolean isLastFivePartial = location.getLocations().get(location.getLocations().size() - 1).isFivePrimePartial();
+        boolean isLastThreePartial = location.getLocations().get(location.getLocations().size() - 1).isThreePrimePartial();
+
+        // Test compound location partiality
+        removePartiality(location);
+        location.setFivePrimePartial(isCompoundFivePartial);
+        location.setThreePrimePartial(isCompoundThreePartial);
+        assertEquals(location.isFivePrimePartial(), isCompoundFivePartial);
+        assertEquals(location.isThreePrimePartial(), isCompoundThreePartial);
+
+        // Test first and last location partiality
+        removePartiality(location);
+        location.getLocations().get(0).setFivePrimePartial(isFirstFivePartial);
+        location.getLocations().get(0).setThreePrimePartial(isFirstThreePartial);
+        location.getLocations().get(location.getLocations().size() - 1).setFivePrimePartial(isLastFivePartial);
+        location.getLocations().get(location.getLocations().size() - 1).setThreePrimePartial(isLastThreePartial);
+        assertEquals(location.getLocations().get(0).isFivePrimePartial(), isFirstFivePartial);
+        assertEquals(location.getLocations().get(0).isThreePrimePartial(), isFirstThreePartial);
+        assertEquals(location.getLocations().get(location.getLocations().size() - 1).isFivePrimePartial(), isLastFivePartial);
+        assertEquals(location.getLocations().get(location.getLocations().size() - 1).isThreePrimePartial(), isLastThreePartial);
+        assertEquals(location.isFivePrimePartial(), isCompoundFivePartial);
+        assertEquals(location.isThreePrimePartial(), isCompoundThreePartial);
+    }
+
+    /**
+     * Tests location string without partiality.
+     */
+    private static CompoundLocation<Location> test(String expectedLocationString, String locationString) {
+        FeatureLocationParser parser = new FeatureLocationParser(null, false);
+        CompoundLocation<Location> location = parser.getCompoundLocation(locationString);
+        assertEquals(expectedLocationString, FeatureLocationWriter.getLocationString(location));
+        return location;
+    }
+
+    /**
+     * Tests location string with partiality.
+     */
+    @SafeVarargs
+    private static void test(String expectedLocationString, String locationString, EnumSet<Partiality>... partialityList) {
+        CompoundLocation<Location> location = test(expectedLocationString, locationString);
+        testGettingPartiality(location, partialityList);
+        testSettingPartiality(location);
+    }
+
 
     @Test
     public void testLocation() {
