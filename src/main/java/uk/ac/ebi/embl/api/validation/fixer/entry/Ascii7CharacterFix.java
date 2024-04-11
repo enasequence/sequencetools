@@ -10,6 +10,8 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.function.Consumer;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -58,13 +60,22 @@ public class Ascii7CharacterFix extends EntryValidationCheck {
     }
 
     for (Reference reference : entry.getReferences()) {
-      if (reference.getPublication() != null) {
+      fixAsciiFieldValues(reference.getPublication(),reference.getOrigin());
+      /*if (reference.getPublication() != null) {
         String pubTitle = reference.getPublication().getTitle();
         if (pubTitle != null) {
           fix(
               pubTitle,
               reference.getOrigin(),
               fixedPubTitle -> reference.getPublication().setTitle(fixedPubTitle));
+        }
+
+        String pubConsortium = reference.getPublication().getConsortium();
+        if (pubConsortium != null) {
+          fix(
+                  pubConsortium,
+                  reference.getOrigin(),
+                  fixedPubConsortium-> reference.getPublication().setTitle(fixedPubConsortium));
         }
 
         if (reference.getPublication().getAuthors() != null) {
@@ -83,7 +94,7 @@ public class Ascii7CharacterFix extends EntryValidationCheck {
             }
           }
         }
-      }
+      }*/
     }
     for (Feature feature : entry.getFeatures()) {
       for (Qualifier qualifier : feature.getQualifiers()) {
@@ -101,6 +112,60 @@ public class Ascii7CharacterFix extends EntryValidationCheck {
       String fixedStr = converter.convert(str);
       reportMessage(Severity.FIX, origin, FIX_ID, str, fixedStr);
       replaceStr.accept(fixedStr);
+    }
+  }
+
+
+  public  void fixAsciiFieldValues(Object obj, Origin origin) {
+    // Base case: if obj is null, return
+    if (obj == null) {
+      return;
+    }
+
+    // Get class of the object
+    Class<?> clazz = obj.getClass();
+
+    while(clazz !=null) {
+
+      if (!clazz.getPackage().getName().startsWith("uk.ac.ebi.embl")) {
+        break;
+      }
+
+      // Iterate over fields
+      for (Field field : clazz.getDeclaredFields()) {
+        // Set accessible to true to access private fields
+        field.setAccessible(true);
+
+        try {
+          // Get the value of the field
+          Object fieldValue = field.get(obj);
+
+          // If the field is of type String, check Ascii7 fix
+          if (field.getType() == String.class) {
+            String value = (String) fieldValue;
+            if (value != null && Ascii7CharacterConverter.doConvert(value)) {
+                String fixedStr = converter.convert(value);
+                reportMessage(Severity.FIX, origin, FIX_ID, value, fixedStr);
+                field.set(obj, fixedStr); // Set the modified value back to the field
+            }
+          }else if (Collection.class.isAssignableFrom(field.getType())) {
+            // If the field is of type Collection then call fixAsciiFieldValues
+            Collection<?> collection = (Collection<?>) field.get(obj);
+            if (collection != null) {
+              for (Object element : collection) {
+                fixAsciiFieldValues(element,origin);
+              }
+            }
+          }
+          // If the field is an object, recursively modify its string fields
+          else if (fieldValue != null && fieldValue.getClass().isPrimitive()) {
+            fixAsciiFieldValues(fieldValue,origin);
+          }
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+      clazz = clazz.getSuperclass();
     }
   }
 }
