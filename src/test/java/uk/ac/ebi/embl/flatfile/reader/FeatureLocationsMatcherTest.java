@@ -94,21 +94,6 @@ public class FeatureLocationsMatcherTest extends TestCase {
         }
     }
 
-    private static String test(String locationString) {
-        FeatureLocationParser parser = new FeatureLocationParser(null, false);
-        return FeatureLocationWriter.getLocationString(parser.getCompoundLocation(locationString));
-    }
-
-    private static boolean fivePrimePartial(String locationString) {
-        FeatureLocationParser parser = new FeatureLocationParser(null, false);
-        return parser.getCompoundLocation(locationString).isFivePrimePartial();
-    }
-
-    private static boolean threePrimePartial(String locationString) {
-        FeatureLocationParser parser = new FeatureLocationParser(null, false);
-        return parser.getCompoundLocation(locationString).isThreePrimePartial();
-    }
-
     @Test
     public void testLocation() {
 
