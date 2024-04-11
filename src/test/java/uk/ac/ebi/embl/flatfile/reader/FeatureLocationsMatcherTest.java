@@ -12,186 +12,206 @@ package uk.ac.ebi.embl.flatfile.reader;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
+import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
+
+import java.util.EnumSet;
 
 public class FeatureLocationsMatcherTest extends TestCase {
 
-  private static String test(String locationString) {
-    FeatureLocationParser parser = new FeatureLocationParser(null, false);
-    return FeatureLocationWriter.getLocationString(parser.getCompoundLocation(locationString));
-  }
+    public enum Partiality {
+        COMPOUND_5_PARTIAL,
+        COMPOUND_3_PARTIAL,
+        FIRST_5_PARTIAL,
+        FIRST_3_PARTIAL,
+        LAST_5_PARTIAL,
+        LAST_3_PARTIAL;
+    }
 
-  private static boolean fivePrimePartial(String locationString) {
-    FeatureLocationParser parser = new FeatureLocationParser(null, false);
-    return parser.getCompoundLocation(locationString).isFivePrimePartial();
-  }
 
-  private static boolean threePrimePartial(String locationString) {
-    FeatureLocationParser parser = new FeatureLocationParser(null, false);
-    return parser.getCompoundLocation(locationString).isThreePrimePartial();
-  }
+    private static CompoundLocation<Location> test(String expectedLocationString, String locationString) {
+        FeatureLocationParser parser = new FeatureLocationParser(null, false);
+        CompoundLocation<Location> location = parser.getCompoundLocation(locationString);
+        assertEquals(expectedLocationString, FeatureLocationWriter.getLocationString(location));
+        return location;
+    }
 
-  @Test
-  public void testLocation() {
+    private static void test(String expectedLocationString, String locationString, EnumSet<Partiality>... partialityList) {
+        CompoundLocation<Location> location = test(expectedLocationString, locationString);
 
-    // The sequence is read from the 5' prime end (left) to the 3' prime end (right)
+        EnumSet<Partiality> partiality = EnumSet.noneOf(Partiality.class);
+        for (EnumSet<Partiality> p : partialityList) {
+            partiality.addAll(p);
+        }
 
-    assertEquals("467", test("467"));
-    assertEquals("467", test("467..467"));
-    assertEquals("467..468", test("467..468"));
-    assertEquals("467^468", test("467^468"));
+        if (partiality.contains(Partiality.COMPOUND_5_PARTIAL)) {
+            assertTrue("Expecting compound 5 prime partial", location.isFivePrimePartial());
+        } else {
+            assertFalse("Not expecting compound 5 prime partial", location.isFivePrimePartial());
+        }
+        if (partiality.contains(Partiality.COMPOUND_3_PARTIAL)) {
+            assertTrue("Expecting compound 3 prime partial", location.isThreePrimePartial());
+        } else {
+            assertFalse("Not expecting compound 3 prime partial", location.isThreePrimePartial());
+        }
 
-    assertEquals("<467", test("<467"));
-    assertEquals("<467", test("<467..467"));
-    assertEquals("<467..468", test("<467..468"));
-    assertEquals("<467^468", test("<467^468"));
+        if (location.getLocations().size() == 1) {
+            if (partiality.contains(Partiality.FIRST_5_PARTIAL) && !partiality.contains(Partiality.LAST_5_PARTIAL)) {
+                partiality.add(Partiality.LAST_5_PARTIAL);
+            }
+            if (partiality.contains(Partiality.FIRST_3_PARTIAL) && !partiality.contains(Partiality.LAST_3_PARTIAL)) {
+                partiality.add(Partiality.LAST_3_PARTIAL);
+            }
+            if (partiality.contains(Partiality.LAST_5_PARTIAL) && !partiality.contains(Partiality.FIRST_5_PARTIAL)) {
+                partiality.add(Partiality.FIRST_5_PARTIAL);
+            }
+            if (partiality.contains(Partiality.LAST_3_PARTIAL) && !partiality.contains(Partiality.FIRST_3_PARTIAL)) {
+                partiality.add(Partiality.FIRST_3_PARTIAL);
+            }
+        }
 
-    assertEquals(">467", test(">467"));
-    assertEquals(">467", test("467..>467"));
-    assertEquals("467..>468", test("467..>468"));
-    assertEquals("467^>468", test("467^>468"));
+        if (partiality.contains(Partiality.FIRST_5_PARTIAL)) {
+            assertTrue("Expecting first 5 prime partial", location.getLocations().get(0).isFivePrimePartial());
+        } else {
+            assertFalse("Not expecting first 3 prime partial", location.getLocations().get(0).isFivePrimePartial());
+        }
+        if (partiality.contains(Partiality.FIRST_3_PARTIAL)) {
+            assertTrue("Expecting first 3 prime partial", location.getLocations().get(0).isThreePrimePartial());
+        } else {
+            assertFalse("Not expecting first 3 prime partial", location.getLocations().get(0).isThreePrimePartial());
+        }
 
-    // Note that 3' prime end (right) partiality is lost.
-    assertEquals("<467", test("<>467"));
-    // Note that 3' prime end (right) partiality is lost.
-    assertEquals("<467", test("<467..>467"));
-    assertEquals("<467..>468", test("<467..>468"));
-    assertEquals("<467^>468", test("<467^>468"));
+        if (partiality.contains(Partiality.LAST_5_PARTIAL)) {
+            assertTrue("Expecting last 5 prime partial", location.getLocations().get(location.getLocations().size() - 1).isFivePrimePartial());
+        } else {
+            assertFalse("Not expecting last 5 prime partial", location.getLocations().get(location.getLocations().size() - 1).isFivePrimePartial());
+        }
+        if (partiality.contains(Partiality.LAST_3_PARTIAL)) {
+            assertTrue("Expecting last 3 prime partial", location.getLocations().get(location.getLocations().size() - 1).isThreePrimePartial());
+        } else {
+            assertFalse("Not expecting last 3 prime partial", location.getLocations().get(location.getLocations().size() - 1).isThreePrimePartial());
+        }
+    }
 
-    assertEquals("complement(467)", test("complement(467)"));
-    assertEquals("complement(467)", test("complement(467..467)"));
-    assertEquals("complement(467..468)", test("complement(467..468)"));
-    assertEquals("complement(467^468)", test("complement(467^468)"));
+    private static String test(String locationString) {
+        FeatureLocationParser parser = new FeatureLocationParser(null, false);
+        return FeatureLocationWriter.getLocationString(parser.getCompoundLocation(locationString));
+    }
 
-    assertEquals("complement(<467)", test("complement(<467)"));
-    assertEquals("complement(<467)", test("complement(<467..467)"));
-    assertEquals("complement(<467..468)", test("complement(<467..468)"));
-    assertEquals("complement(<467^468)", test("complement(<467^468)"));
+    private static boolean fivePrimePartial(String locationString) {
+        FeatureLocationParser parser = new FeatureLocationParser(null, false);
+        return parser.getCompoundLocation(locationString).isFivePrimePartial();
+    }
 
-    assertEquals("complement(>467)", test("complement(>467)"));
-    assertEquals("complement(>467)", test("complement(467..>467)"));
-    assertEquals("complement(467..>468)", test("complement(467..>468)"));
-    assertEquals("complement(467^>468)", test("complement(467^>468)"));
+    private static boolean threePrimePartial(String locationString) {
+        FeatureLocationParser parser = new FeatureLocationParser(null, false);
+        return parser.getCompoundLocation(locationString).isThreePrimePartial();
+    }
 
-    // Note that 3' prime end (right) partiality is lost.
-    assertEquals("complement(<467)", test("complement(<467)"));
-    // Note that 3' prime end (right) partiality is lost.
-    assertEquals("complement(<467)", test("complement(<467..>467)"));
-    assertEquals("complement(<467..>468)", test("complement(<467..>468)"));
-    assertEquals("complement(<467^>468)", test("complement(<467^>468"));
+    @Test
+    public void testLocation() {
 
-    String location = "complement(2807037..>2807081)";
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
+        // The sequence is read from the 5' prime end (left) to the 3' prime end (right)
 
-    location = "complement(<2807037..2807081)";
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
+        test("467", "467");
+        test("467", "467..467");
+        test("467..468", "467..468");
+        test("467^468", "467^468");
 
-    location = "complement(join(2182966..2183014,2183124..>2183128))";
-    assertEquals(location, test(location));
-    // This is not a valid 5'
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
+        test("complement(467)", "complement(467)");
+        test("complement(467)", "complement(467..467)");
+        test("complement(467..468)", "complement(467..468)");
+        test("complement(467^468)", "complement(467^468)");
+    }
 
-    location = "complement(join(<2182966..2183014,2183124..2183128))";
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
-  }
+    @Test
+    public void testPartiality() {
+        EnumSet<Partiality> compoundAndFirstFivePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_5_PARTIAL, Partiality.FIRST_5_PARTIAL);
+        EnumSet<Partiality> compoundAndLastThreePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_3_PARTIAL, Partiality.LAST_3_PARTIAL);
+        EnumSet<Partiality> compoundAndFirstThreePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_3_PARTIAL, Partiality.FIRST_3_PARTIAL);
+        EnumSet<Partiality> compoundAndLastFivePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_5_PARTIAL, Partiality.LAST_5_PARTIAL);
+        EnumSet<Partiality> compoundThreePrimePartialAndFirstFivePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_3_PARTIAL, Partiality.FIRST_5_PARTIAL);
+        EnumSet<Partiality> compoundFivePrimePartialAndFirstThreePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_5_PARTIAL, Partiality.FIRST_3_PARTIAL);
+        EnumSet<Partiality> compoundFivePrimePartialAndLastThreePrimePartial =
+                EnumSet.of(Partiality.COMPOUND_5_PARTIAL, Partiality.LAST_3_PARTIAL);
 
-  @Test
-  public void testPartiality() {
-    /*
-        <2..3 → 5’ partial
-        2..>3 → 3’ partial
-        complement(<2..3) → 3’ partial
-        complement(2..>3) → 5’ partial
-        join(<2,4) → 5’ partial
-        join(2,>4) → 3’ partial
-        complement(join(<2,4)) → 3’ partial
-        complement(join(2,>4)) → 5’partial
-        join(complement(<2),4) → 3’ partial
-        join(2,complement(>4)) → 5’ partial
-        join(complement(<2),complement(4)) → 3’ partial
-        join(complement(2),complement(>4)) → 5’ partial
-    */
+        test("<467", "<467", compoundAndFirstFivePrimePartial);
+        test("<467", "<467..467", compoundAndFirstFivePrimePartial);
+        test("<467..468", "<467..468", compoundAndFirstFivePrimePartial);
+        test("<467^468", "<467^468", compoundAndFirstFivePrimePartial);
+        test("join(<467,468)", "join(<467,468)", compoundAndFirstFivePrimePartial);
 
-    String location = "<2..3"; //  → 5’ partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
+        test(">467", ">467", compoundAndLastThreePrimePartial);
+        test(">467", "467..>467", compoundAndLastThreePrimePartial);
+        test("467..>468", "467..>468", compoundAndLastThreePrimePartial);
+        test("467^>468", "467^>468", compoundAndLastThreePrimePartial);
+        test("join(467,>468)", "join(467,>468)", compoundAndLastThreePrimePartial);
 
-    location = "2..>3"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
+        test("<467..>468", "<467..>468", compoundAndFirstFivePrimePartial, compoundAndLastThreePrimePartial);
+        test("<467^>468", "<467^>468", compoundAndFirstFivePrimePartial, compoundAndLastThreePrimePartial);
+        test("join(<467,>468)", "join(<467,>468)", compoundAndFirstFivePrimePartial, compoundAndLastThreePrimePartial);
 
-    location = "complement(<2..3)"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
+        test("complement(<467)", "complement(<467)", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(<467)", "complement(<467..467)", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(<467..468)", "complement(<467..468)", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(<467^468)", "complement(<467^468)", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(join(<467,468))", "complement(join(<467,468))", compoundThreePrimePartialAndFirstFivePrimePartial);
 
-    location = "complement(2..>3)"; //  → 5’ partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
+        test("complement(>467)", "complement(>467)", compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(>467)", "complement(467..>467)", compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(467..>468)", "complement(467..>468)", compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(467^>468)", "complement(467^>468)", compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(join(467,>468))", "complement(join(467,>468))", compoundFivePrimePartialAndLastThreePrimePartial);
 
-    location = "join(<2,4)"; //  → 5’ partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
+        test("complement(<467..>468)", "complement(<467..>468)",
+                compoundThreePrimePartialAndFirstFivePrimePartial, compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(<467^>468)", "complement(<467^>468",
+                compoundThreePrimePartialAndFirstFivePrimePartial, compoundFivePrimePartialAndFirstThreePrimePartial);
+        test("complement(join(<467,>468))", "complement(join(<467,>468))",
+                compoundThreePrimePartialAndFirstFivePrimePartial, compoundFivePrimePartialAndLastThreePrimePartial);
 
-    location = "join(2,>4)"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
+        test("<2..3", "<2..3", compoundAndFirstFivePrimePartial);
+        test("2..>3", "2..>3", compoundAndLastThreePrimePartial);
+        test("complement(<2..3)", "complement(<2..3)", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(2..>3)", "complement(2..>3)", compoundFivePrimePartialAndLastThreePrimePartial);
+        test("join(<2,4)", "join(<2,4)", compoundAndFirstFivePrimePartial);
+        test("join(2,>4)", "join(2,>4)", compoundAndLastThreePrimePartial);
+        test("complement(join(<2,4))", "complement(join(<2,4))", compoundThreePrimePartialAndFirstFivePrimePartial);
+        test("complement(join(2,>4))", "complement(join(2,>4))", compoundFivePrimePartialAndLastThreePrimePartial);
+        test("complement(join(<2,>4))", "complement(join(<2,>4))",
+                compoundThreePrimePartialAndFirstFivePrimePartial, compoundFivePrimePartialAndLastThreePrimePartial);
+        test("join(complement(<2),4)", "join(complement(<2),4)", compoundAndFirstThreePrimePartial);
+        test("join(complement(2),>4)", "join(complement(2),>4)", compoundAndLastThreePrimePartial);
+        test("join(2,complement(>4))", "join(2,complement(>4))", compoundAndLastFivePrimePartial);
+        test("join(complement(<2),complement(4))", "join(complement(<2),complement(4))", compoundAndFirstThreePrimePartial);
+        test("join(complement(2),complement(>4))", "join(complement(2),complement(>4))", compoundAndLastFivePrimePartial);
+        test("join(complement(<2),>4)", "join(complement(<2),>4)",
+                compoundAndFirstThreePrimePartial, compoundAndLastThreePrimePartial);
+        test("join(<2,complement(>4))", "join(<2,complement(>4))",
+                compoundAndFirstFivePrimePartial, compoundAndLastFivePrimePartial);
+        test("join(complement(<2),complement(>4))", "join(complement(<2),complement(>4))",
+                compoundAndFirstThreePrimePartial, compoundAndLastFivePrimePartial);
 
-    location = "complement(join(<2,4))"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
+        // For unknown reasons the 3' prime partiality is lost for a single base if 5' partiality is present.
+        test("<467", "<>467");
+        test("<467", "<467..>467");
+        test("complement(<467)", "complement(<467..>467)");
+    }
 
-    location = "complement(join(2,>4))"; //  → 5’partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
-
-    location = "join(complement(<2),4)"; //  → 3’ partial
-    assertEquals(location, test(location)); // check
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
-
-    location = "join(2,complement(>4))"; //  → 5’ partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
-
-    location = "join(complement(<2),complement(4))"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
-
-    location = "join(complement(2),complement(>4))"; //  → 5’ partial
-    assertEquals(location, test(location));
-    assertTrue(fivePrimePartial(location));
-    assertFalse(threePrimePartial(location));
-
-    location = "join(complement(2),complement(<4))"; //  → 3’ partial
-    assertEquals(location, test(location));
-    assertFalse(fivePrimePartial(location));
-    assertTrue(threePrimePartial(location));
-  }
-
-  @Test
-  public void testRemoteLocation() {
-    assertEquals("J00194.1:467", test("J00194.1:467"));
-    assertEquals("J00194.1:340..565", test("J00194.1:340..565"));
-    assertEquals("J00194.1:<340..565", test("J00194.1:<340..565"));
-    assertEquals("J00194.1:340..>565", test("J00194.1:340..>565"));
-    assertEquals("J00194.1:>340", test("J00194.1:>340"));
-    assertEquals("J00194.1:>340", test("J00194.1:340..>340"));
-  }
+    @Test
+    public void testRemoteLocation() {
+        test("J00194.1:467", "J00194.1:467");
+        test("J00194.1:340..565", "J00194.1:340..565");
+        test("J00194.1:<340..565", "J00194.1:<340..565");
+        test("J00194.1:340..>565", "J00194.1:340..>565");
+        test("J00194.1:>340", "J00194.1:>340");
+        test("J00194.1:>340", "J00194.1:340..>340");
+    }
 }
