@@ -122,15 +122,15 @@ public class FeatureLocationParser {
           isValue(individualLocationMatcher.group(1)); // Group 1: (\s*complement\s*\()?
       String accession = individualLocationMatcher.group(2); // Group 2: (\w+)
       String version = individualLocationMatcher.group(3); // Group 3: (\d+)
-      boolean isFivePrime = isValue(individualLocationMatcher.group(4)); // Group 4: (<)?
+      boolean isLessThan = isValue(individualLocationMatcher.group(4)); // Group 4: (<)?
       String beginingPosition = individualLocationMatcher.group(5); // Group 5: (\d+)?
       String operator = individualLocationMatcher.group(6); // Group 6: ((?:\.\.)?|(?:\^))
-      boolean isThreePrime = isValue(individualLocationMatcher.group(7)); // Group 7: (>)?
+      boolean isMoreThan = isValue(individualLocationMatcher.group(7)); // Group 7: (>)?
       String endPosition = individualLocationMatcher.group(8); // Group 8: (\d+)?
 
       if (!isValue(operator)) {
         if (isValue(accession)) {
-          if (isThreePrime)
+          if (isMoreThan)
             location =
                 locationFactory.createRemoteBase(
                     accession, getInteger(version), getLong(endPosition));
@@ -139,7 +139,7 @@ public class FeatureLocationParser {
                 locationFactory.createRemoteBase(
                     accession, getInteger(version), getLong(beginingPosition));
         } else {
-          if (isThreePrime) location = locationFactory.createLocalBase(getLong(endPosition));
+          if (isMoreThan) location = locationFactory.createLocalBase(getLong(endPosition));
           else location = locationFactory.createLocalBase(getLong(beginingPosition));
         }
       } else if (operator.equals("..")) {
@@ -163,7 +163,7 @@ public class FeatureLocationParser {
       }
 
       location.setComplement(isComplement);
-      setLocationPartiality(location,isFivePrime,isThreePrime);
+      setLocationPartiality(location,isLessThan,isMoreThan);
     }
 
     return location;
@@ -172,13 +172,13 @@ public class FeatureLocationParser {
   /**
    * Sets partiality of individual location range using its 5', 3' and complement.
    */
-  private void setLocationPartiality(Location location, boolean isFivePrime, boolean isThreePrime) {
+  private void setLocationPartiality(Location location, boolean isLessThan, boolean isMoreThan) {
     if (location.isComplement()) {
-      location.setFivePrimePartial(isThreePrime);
-      location.setThreePrimePartial(isFivePrime);
+      location.setFivePrimePartial(isMoreThan);
+      location.setThreePrimePartial(isLessThan);
     }else{
-      location.setFivePrimePartial(isFivePrime);
-      location.setThreePrimePartial(isThreePrime);
+      location.setFivePrimePartial(isLessThan);
+      location.setThreePrimePartial(isMoreThan);
     }
   }
 
