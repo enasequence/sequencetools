@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 
 public class FeatureTest {
 
@@ -41,6 +42,7 @@ public class FeatureTest {
     assertNotNull(feature.getLocations());
 
     Feature feat2 = new Feature("feat2", true);
+    feat2.setLocations(TestHelper.getTestCompoundLocation("1..2"));
     feat2.getLocations().setFivePrimePartial(true);
     feat2.getLocations().setThreePrimePartial(true);
     feat2.getLocations().setComplement(true);
@@ -53,6 +55,8 @@ public class FeatureTest {
     assertTrue(feat2.getLocations().isThreePrimePartial());
     assertTrue(feat2.getLocations().isComplement());
   }
+
+
 
   @Test
   public void testGetQualifierByName() {

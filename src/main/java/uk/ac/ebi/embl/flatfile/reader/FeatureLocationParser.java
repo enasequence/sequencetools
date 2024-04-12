@@ -117,7 +117,10 @@ public class FeatureLocationParser {
     LocationFactory locationFactory = new LocationFactory();
     Location location = null;
 
-    if (individualLocationMatcher.matches()) {
+    if (!individualLocationMatcher.matches()) {
+      error("FT.8",locationRange); // Invalid feature location.
+      return null;
+    }else{
       boolean isComplement =
           isValue(individualLocationMatcher.group(1)); // Group 1: (\s*complement\s*\()?
       String accession = individualLocationMatcher.group(2); // Group 2: (\w+)
@@ -163,20 +166,18 @@ public class FeatureLocationParser {
       }
 
       location.setComplement(isComplement);
-      setLocationPartiality(location,isLessThan,isMoreThan);
+      setLocationPartiality(location, isLessThan, isMoreThan);
     }
 
     return location;
   }
 
-  /**
-   * Sets partiality of individual location range using its 5', 3' and complement.
-   */
+  /** Sets partiality of individual location range using its 5', 3' and complement. */
   private void setLocationPartiality(Location location, boolean isLessThan, boolean isMoreThan) {
     if (location.isComplement()) {
       location.setFivePrimePartial(isMoreThan);
       location.setThreePrimePartial(isLessThan);
-    }else{
+    } else {
       location.setFivePrimePartial(isLessThan);
       location.setThreePrimePartial(isMoreThan);
     }

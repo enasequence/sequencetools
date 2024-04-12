@@ -10,13 +10,21 @@
  */
 package uk.ac.ebi.embl.api.validation.helper;
 
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
+import uk.ac.ebi.embl.api.entry.location.Location;
+import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.flatfile.reader.FeatureLocationParser;
 
 public class TestHelper {
   public static EmblEntryValidationPlanProperty testEmblEntryValidationPlanProperty() {
     EmblEntryValidationPlanProperty property =
         new EmblEntryValidationPlanProperty(new SubmissionOptions());
     return property;
+  }
+
+  public static CompoundLocation getTestCompoundLocation(String locationString){
+    return new FeatureLocationParser(null).getCompoundLocation(locationString);
   }
 }

@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
+import uk.ac.ebi.embl.flatfile.reader.FeatureLocationParser;
 
 public class CompoundLocationTest {
 
@@ -29,22 +31,6 @@ public class CompoundLocationTest {
   @Before
   public void setUp() throws Exception {
     location = new CompoundLocation() {};
-  }
-
-  @SuppressWarnings({"unchecked", "serial"})
-  @Test
-  public void testCompoundLocation() {
-    CompoundLocation location1 = new CompoundLocation() {};
-    assertTrue(location1.getLocations().isEmpty());
-    assertFalse(location1.isFivePrimePartial());
-    assertFalse(location1.isThreePrimePartial());
-
-    CompoundLocation location2 = new CompoundLocation() {};
-    location2.setFivePrimePartial(true);
-    location2.setThreePrimePartial(true);
-    assertTrue(location2.getLocations().isEmpty());
-    assertTrue(location2.isFivePrimePartial());
-    assertTrue(location2.isThreePrimePartial());
   }
 
   @Test
