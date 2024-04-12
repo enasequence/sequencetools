@@ -163,12 +163,23 @@ public class FeatureLocationParser {
       }
 
       location.setComplement(isComplement);
-      location.setFivePrimePartial(isFivePrime);
-      location.setThreePrimePartial(isThreePrime);
-      location.setLocationPartiality();
+      setLocationPartiality(location,isFivePrime,isThreePrime);
     }
 
     return location;
+  }
+
+  /**
+   * Sets partiality of individual location range using its 5', 3' and complement.
+   */
+  private void setLocationPartiality(Location location, boolean isFivePrime, boolean isThreePrime) {
+    if (location.isComplement()) {
+      location.setFivePrimePartial(isThreePrime);
+      location.setThreePrimePartial(isFivePrime);
+    }else{
+      location.setFivePrimePartial(isFivePrime);
+      location.setThreePrimePartial(isThreePrime);
+    }
   }
 
   public boolean isValue(String value) {
