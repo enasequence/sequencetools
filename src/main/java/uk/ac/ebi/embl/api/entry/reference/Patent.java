@@ -102,7 +102,7 @@ public class Patent extends Publication implements Comparable<Patent> {
   }
 
   public List<String> getApplicants() {
-    return Collections.unmodifiableList(this.applicants);
+    return this.applicants;
   }
 
   public boolean addApplicant(String applicant) {
