@@ -93,15 +93,6 @@ public abstract class Location extends AbstractLocation implements Serializable 
         && location.getEndPosition() >= getBeginPosition();
   }
 
-  public void setLocationPartiality() {
-    if (isComplement() && (isFivePrimePartial() || isThreePrimePartial())) {
-      // Swap 3 prime and 5 prime in case of complement
-      boolean tempFivePrime = isFivePrimePartial();
-      setFivePrimePartial(isThreePrimePartial());
-      setThreePrimePartial(tempFivePrime);
-    }
-  }
-
   public boolean isFivePrimePartial() {
     return fivePrimePartial;
   }
