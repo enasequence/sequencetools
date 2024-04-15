@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.entry.reference;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.builder.CompareToBuilder;
