@@ -26,7 +26,7 @@ public class Ascii7CharacterConverter {
    * @param str the input string in UTF8 format
    * @return the input string in ASCII7 format
    */
-  public String convert(String str) {
+  public static String convert(String str) {
     if (str == null) {
       return null;
     }

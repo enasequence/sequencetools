@@ -137,22 +137,6 @@ public class EntryUtils {
     return concatString.toString();
   }
 
-  public static String convertNonAsciiStringtoAsciiString(String non_asciiString)
-      throws UnsupportedEncodingException {
-    if (StringUtils.isAsciiPrintable(non_asciiString)
-        || non_asciiString == null
-        || non_asciiString.isEmpty()) return non_asciiString;
-    String encodedString =
-        Normalizer.normalize(
-            new String(non_asciiString.getBytes(), StandardCharsets.UTF_8), Normalizer.Form.NFKD);
-    String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
-    String asciiString =
-        new String(
-            encodedString.replaceAll(regex, "").getBytes(StandardCharsets.US_ASCII),
-            StandardCharsets.US_ASCII);
-    return asciiString;
-  }
-
   public static Entry convertAGPtofeatureNContigs(Entry entry) {
     FeatureFactory featureFactory = new FeatureFactory();
     QualifierFactory qualifierFactory = new QualifierFactory();

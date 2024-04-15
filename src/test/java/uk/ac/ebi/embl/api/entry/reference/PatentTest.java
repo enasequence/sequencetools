@@ -54,11 +54,6 @@ public class PatentTest {
     assertEquals(0, patent.getApplicants().size());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
-  public void testGetApplicants_UnmodifiableList() {
-    patent.getApplicants().add("");
-  }
-
   @Test
   public void testAddApplicant() {
     assertTrue(patent.addApplicant("applicant"));

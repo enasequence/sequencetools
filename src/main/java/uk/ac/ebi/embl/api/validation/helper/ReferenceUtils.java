@@ -100,14 +100,14 @@ public class ReferenceUtils {
                 EntryUtils.concat(
                     " ",
                     WordUtils.capitalizeFully(
-                        EntryUtils.convertNonAsciiStringtoAsciiString(
+                            Ascii7CharacterConverter.convert(
                             submissionContact.getSurname()),
                         '-',
                         ' '),
-                    EntryUtils.convertNonAsciiStringtoAsciiString(
+                        Ascii7CharacterConverter.convert(
                         submissionContact.getMiddleInitials())),
                 getFirstName(
-                    EntryUtils.convertNonAsciiStringtoAsciiString(
+                        Ascii7CharacterConverter.convert(
                         submissionContact.getFirstName())));
 
         publication.addAuthor(person);
@@ -143,18 +143,18 @@ public class ReferenceUtils {
       if (subAccount.isBroker()) {
         return EntryUtils.concat(
             ", ",
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getBrokerName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
+            Ascii7CharacterConverter.convert(subAccount.getBrokerName()),
+            Ascii7CharacterConverter.convert(subAccount.getAddress()),
+            Ascii7CharacterConverter.convert(subAccount.getCountry()));
       } else {
         return EntryUtils.concat(
             ", ",
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCenterName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getLaboratoryName()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getAddress()),
-            EntryUtils.convertNonAsciiStringtoAsciiString(subAccount.getCountry()));
+            Ascii7CharacterConverter.convert(subAccount.getCenterName()),
+            Ascii7CharacterConverter.convert(subAccount.getLaboratoryName()),
+            Ascii7CharacterConverter.convert(subAccount.getAddress()),
+            Ascii7CharacterConverter.convert(subAccount.getCountry()));
       }
-    } catch (UnsupportedEncodingException e) {
+    } catch (Exception e) {
       throw new ValidationEngineException(e);
     }
   }
