@@ -41,7 +41,9 @@ public abstract class ValidationPlan {
     this.planProperty.taxonClient.set(new TaxonomyClient());
     this.remote = property.isRemote.get();
   }
-  /** @param validationScope - the validation scope */
+  /**
+   * @param validationScope - the validation scope
+   */
   protected ValidationPlan(
       ValidationScope validationScope) { // DELETE this constructor if there are referencess
     this.validationScope = validationScope;

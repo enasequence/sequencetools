@@ -10,12 +10,16 @@
  */
 package uk.ac.ebi.embl.api.validation.fixer.entry;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
-import uk.ac.ebi.embl.api.entry.reference.Person;
-import uk.ac.ebi.embl.api.entry.reference.Reference;
+import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
@@ -28,9 +32,7 @@ import uk.ac.ebi.embl.api.validation.helper.Ascii7CharacterConverter;
  * <ul>
  *   <li>comment
  *   <li>description
- *   <li>reference title
- *   <li>reference author first name
- *   <li>reference author surname
+ *   <li>reference fields
  *   <li>feature qualifiers
  * </ul>
  */
@@ -58,30 +60,16 @@ public class Ascii7CharacterFix extends EntryValidationCheck {
     }
 
     for (Reference reference : entry.getReferences()) {
-      if (reference.getPublication() != null) {
-        String pubTitle = reference.getPublication().getTitle();
-        if (pubTitle != null) {
+      fix(reference.getPublication(), reference.getOrigin());
+      Publication publication = reference.getPublication();
+      if (publication != null && publication instanceof Patent) {
+        Patent patent = (Patent) publication;
+        for (int i = 0; i < patent.getApplicants().size(); i++) {
+          final int fixedIndex = i;
           fix(
-              pubTitle,
-              reference.getOrigin(),
-              fixedPubTitle -> reference.getPublication().setTitle(fixedPubTitle));
-        }
-
-        if (reference.getPublication().getAuthors() != null) {
-          for (Person author : reference.getPublication().getAuthors()) {
-            String firstName = author.getFirstName();
-            if (firstName != null) {
-              fix(
-                  firstName,
-                  reference.getOrigin(),
-                  fixedFirstName -> author.setFirstName(fixedFirstName));
-            }
-
-            String surname = author.getSurname();
-            if (surname != null) {
-              fix(surname, reference.getOrigin(), fixedSurname -> author.setSurname(fixedSurname));
-            }
-          }
+              patent.getApplicants().get(i),
+              patent.getOrigin(),
+              fixedVal -> patent.getApplicants().set(fixedIndex, fixedVal));
         }
       }
     }
@@ -101,6 +89,78 @@ public class Ascii7CharacterFix extends EntryValidationCheck {
       String fixedStr = converter.convert(str);
       reportMessage(Severity.FIX, origin, FIX_ID, str, fixedStr);
       replaceStr.accept(fixedStr);
+    }
+  }
+
+  private static final Set<Class<?>> fixClasses =
+      new HashSet<>(
+          Arrays.asList(
+              Publication.class,
+              Article.class,
+              Book.class,
+              ElectronicReference.class,
+              Patent.class,
+              Submission.class,
+              Thesis.class,
+              Unpublished.class,
+              Person.class));
+
+  /** Fix all the String members of Publication and related objects using java reflection. */
+  private void fix(Object obj, Origin origin) {
+    if (obj == null) {
+      return;
+    }
+
+    Class<?> objType = obj.getClass();
+    while (objType != null) {
+      if (!fixClasses.contains(objType)) {
+        // Stop if class is not in the list of classes to fix.
+        break;
+      }
+
+      // Iterate over fields
+      for (Field field : objType.getDeclaredFields()) {
+        // Allow changing private fields.
+        field.setAccessible(true);
+
+        try {
+          Class fieldType = field.getType();
+          Object fieldValue = field.get(obj);
+          if (fieldValue == null) {
+            continue;
+          }
+
+          if (fieldType == String.class) {
+            // Fix String if required.
+            String value = (String) fieldValue;
+            if (value != null && Ascii7CharacterConverter.doConvert(value)) {
+              // Fix String.
+              String fixedValue = converter.convert(value);
+              field.set(obj, fixedValue);
+              reportMessage(Severity.FIX, origin, FIX_ID, value, fixedValue);
+            }
+          } else if (fixClasses.contains(fieldType)) {
+            // Fix Strings in object if required.
+            fix(field, origin);
+          } else if (Collection.class.isAssignableFrom(fieldType)) {
+            Collection<?> collection = (Collection<?>) fieldValue;
+            if (collection != null) {
+              for (Object element : collection) {
+                Class elementType = element.getClass();
+                if (fixClasses.contains(elementType)) {
+                  // Fix Strings in object if required.
+                  fix(element, origin);
+                }
+              }
+            }
+            // Fixing of Strings in Collection is not supported.
+          }
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        }
+      }
+      // Fix Strings in parent class if required.
+      objType = objType.getSuperclass();
     }
   }
 }

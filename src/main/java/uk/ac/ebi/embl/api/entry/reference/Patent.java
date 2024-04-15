@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.api.entry.reference;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.builder.CompareToBuilder;
@@ -102,7 +101,7 @@ public class Patent extends Publication implements Comparable<Patent> {
   }
 
   public List<String> getApplicants() {
-    return Collections.unmodifiableList(this.applicants);
+    return this.applicants;
   }
 
   public boolean addApplicant(String applicant) {

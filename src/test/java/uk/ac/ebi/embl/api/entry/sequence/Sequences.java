@@ -10,7 +10,9 @@
  */
 package uk.ac.ebi.embl.api.entry.sequence;
 
-/** @author simonk */
+/**
+ * @author simonk
+ */
 public interface Sequences {
 
   String SEQ1 = "aaat";
