@@ -8,7 +8,7 @@ plugins {
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.19.10'
+version = '2.19.11'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
