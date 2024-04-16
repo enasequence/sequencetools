@@ -100,15 +100,9 @@ public class ReferenceUtils {
                 EntryUtils.concat(
                     " ",
                     WordUtils.capitalizeFully(
-                            Ascii7CharacterConverter.convert(
-                            submissionContact.getSurname()),
-                        '-',
-                        ' '),
-                        Ascii7CharacterConverter.convert(
-                        submissionContact.getMiddleInitials())),
-                getFirstName(
-                        Ascii7CharacterConverter.convert(
-                        submissionContact.getFirstName())));
+                        Ascii7CharacterConverter.convert(submissionContact.getSurname()), '-', ' '),
+                    Ascii7CharacterConverter.convert(submissionContact.getMiddleInitials())),
+                getFirstName(Ascii7CharacterConverter.convert(submissionContact.getFirstName())));
 
         publication.addAuthor(person);
         reference.setAuthorExists(true);
