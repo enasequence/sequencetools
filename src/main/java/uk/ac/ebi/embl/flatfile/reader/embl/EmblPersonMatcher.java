@@ -12,35 +12,14 @@ package uk.ac.ebi.embl.flatfile.reader.embl;
 
 import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.reference.Person;
-import uk.ac.ebi.embl.api.entry.reference.ReferenceFactory;
-import uk.ac.ebi.embl.flatfile.FlatFileUtils;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileLineReader;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileMatcher;
 
-public class EmblPersonMatcher extends FlatFileMatcher {
+public abstract class EmblPersonMatcher extends FlatFileMatcher {
 
-  public EmblPersonMatcher(FlatFileLineReader reader) {
+  public EmblPersonMatcher(FlatFileLineReader reader, Pattern PATTERN) {
     super(reader, PATTERN);
   }
 
-  public static final Pattern PATTERN =
-      Pattern.compile(
-          "^([^\\.]+)"
-              + // surname
-              "(\\s+[^\\s\\.]*\\s*\\..*)?$"); // first name
-
-  private static final int GROUP_SURNAME = 1;
-  private static final int GROUP_FIRST_NAME = 2;
-
-  public Person getPerson() {
-    String surname = getString(GROUP_SURNAME);
-    if (surname != null) {
-      surname = surname.trim();
-    }
-    String firstName = getString(GROUP_FIRST_NAME);
-    if (firstName != null) {
-      firstName = FlatFileUtils.shrink(firstName.trim(), '.');
-    }
-    return (new ReferenceFactory()).createPerson(surname, firstName);
-  }
+  public abstract Person getPerson();
 }

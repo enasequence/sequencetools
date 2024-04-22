@@ -70,11 +70,11 @@ public class EmblBookMatcher extends FlatFileMatcher {
     }
     String editors = getString(GROUP_EDITORS);
     for (String editor : FlatFileUtils.split(editors, ",")) {
-      EmblPersonMatcher emblPersonMatcher = new EmblPersonMatcher(getReader());
-      if (!emblPersonMatcher.match(editor)) {
+      EmblPersonMatchHelper emblPersonMatchHelper = new EmblPersonMatchHelper(getReader());
+      if (!emblPersonMatchHelper.match(editor)) {
         error("RL.15", editor);
       } else {
-        book.addEditor(emblPersonMatcher.getPerson());
+        book.addEditor(emblPersonMatchHelper.getPerson());
       }
     }
     String bookTitle = getString(GROUP_BOOK_TITLE);

@@ -18,11 +18,11 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 public class RAReaderTest extends EmblReaderTest {
 
   public void testRead_Authors1() throws IOException {
-    initLineReader("RA   Puzio P.A., von Blau A., Ebneth M., Cook.A;\n");
+    initLineReader("RA   Puzio P.A., von Blau A., Ebneth M., Cook.A, S.Jonathan, A . Arthur;\n");
     Publication publication = lineReader.getCache().getPublication();
     ValidationResult result = (new RAReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));
-    assertEquals(4, publication.getAuthors().size());
+    assertEquals(6, publication.getAuthors().size());
     assertEquals("Puzio", publication.getAuthors().get(0).getSurname());
     assertEquals("P.A.", publication.getAuthors().get(0).getFirstName());
     assertEquals("von Blau", publication.getAuthors().get(1).getSurname());
@@ -31,16 +31,21 @@ public class RAReaderTest extends EmblReaderTest {
     assertEquals("M.", publication.getAuthors().get(2).getFirstName());
     assertNull(publication.getAuthors().get(3).getFirstName());
     assertEquals("Cook.A", publication.getAuthors().get(3).getSurname());
+    assertEquals("Jonathan", publication.getAuthors().get(4).getSurname());
+    assertEquals("S.", publication.getAuthors().get(4).getFirstName());
+    assertEquals("Arthur", publication.getAuthors().get(5).getSurname());
+    assertEquals("A .", publication.getAuthors().get(5).getFirstName());
   }
 
   public void testRead_Authors2() throws IOException {
     initLineReader(
         "RA   Antonellis ;A.,; Ayele, Ben;jamin B.. C. D., Blakesley, Boakye A.,\n"
-            + "RA   Bouffard G.G., Brinkley C.,, ,, , ,, ,, ; Brooks S., Chu G., Coleman H., Engle J.,\n");
+            + "RA   Bouffard G.G., Brinkley C.,, ,, , ,, ,, ; Brooks S., Chu G., Coleman H., Engle J.,\n"
+            + "RA   S.Jonathan, A . Arthur\n");
     Publication publication = lineReader.getCache().getPublication();
     ValidationResult result = (new RAReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));
-    assertEquals(11, publication.getAuthors().size());
+    assertEquals(13, publication.getAuthors().size());
     assertEquals("Antonellis", publication.getAuthors().get(0).getSurname());
     assertEquals("A.", publication.getAuthors().get(0).getFirstName());
     assertEquals("Ayele", publication.getAuthors().get(1).getSurname());
@@ -63,17 +68,11 @@ public class RAReaderTest extends EmblReaderTest {
     assertEquals("H.", publication.getAuthors().get(9).getFirstName());
     assertEquals("Engle", publication.getAuthors().get(10).getSurname());
     assertEquals("J.", publication.getAuthors().get(10).getFirstName());
+    assertEquals("Jonathan", publication.getAuthors().get(11).getSurname());
+    assertEquals("S.", publication.getAuthors().get(11).getFirstName());
+    assertEquals("Arthur", publication.getAuthors().get(12).getSurname());
+    assertEquals("A .", publication.getAuthors().get(12).getFirstName());
   }
-
-  /*	public void testRead_InvalidAuthors() throws IOException {
-  	initLineReader(
-     		"RA   A. B. C.\n"
-  	);
-  	Publication publication = lineReader.getCache().getPublication();
-  	ValidationResult result = (new RAReader(lineReader)).read(entry);
-  	assertEquals(1, result.count("RA.1", Severity.ERROR));
-  	assertEquals(0, publication.getAuthors().size());
-  }*/
 
   public void testRead_NoAuthors() throws IOException {
     initLineReader("RA\n");

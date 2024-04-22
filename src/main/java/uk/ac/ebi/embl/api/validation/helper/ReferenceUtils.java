@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.api.validation.dao.model.SubmissionAccount;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmissionContact;
 import uk.ac.ebi.embl.api.validation.dao.model.SubmitterReference;
 import uk.ac.ebi.embl.flatfile.FlatFileUtils;
-import uk.ac.ebi.embl.flatfile.reader.embl.EmblPersonMatcher;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblPersonMatchHelper;
 
 public class ReferenceUtils {
   /**
@@ -64,7 +64,7 @@ public class ReferenceUtils {
     List<Person> authors = new ArrayList<>();
     block = FlatFileUtils.remove(block, ';');
     for (String author : FlatFileUtils.split(block, ",")) {
-      EmblPersonMatcher personMatcher = new EmblPersonMatcher(null);
+      EmblPersonMatchHelper personMatcher = new EmblPersonMatchHelper(null);
       if (!personMatcher.match(author)) {
         authors.add(new ReferenceFactory().createPerson(author, null));
       } else {
