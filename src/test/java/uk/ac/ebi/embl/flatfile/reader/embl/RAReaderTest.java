@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.validation.ValidationResult;
 public class RAReaderTest extends EmblReaderTest {
 
   public void testRead_Authors1() throws IOException {
-    initLineReader("RA   Puzio P.A., von Blau A., Ebneth M., Cook.A, S.Jonathan, A . Arthur;\n");
+    initLineReader("RA   Puzio P.A., von Blau A., Ebneth M., Cook.A, S.Jonathan, A. Arthur;\n");
     Publication publication = lineReader.getCache().getPublication();
     ValidationResult result = (new RAReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));
@@ -34,14 +34,14 @@ public class RAReaderTest extends EmblReaderTest {
     assertEquals("Jonathan", publication.getAuthors().get(4).getSurname());
     assertEquals("S.", publication.getAuthors().get(4).getFirstName());
     assertEquals("Arthur", publication.getAuthors().get(5).getSurname());
-    assertEquals("A .", publication.getAuthors().get(5).getFirstName());
+    assertEquals("A.", publication.getAuthors().get(5).getFirstName());
   }
 
   public void testRead_Authors2() throws IOException {
     initLineReader(
         "RA   Antonellis ;A.,; Ayele, Ben;jamin B.. C. D., Blakesley, Boakye A.,\n"
             + "RA   Bouffard G.G., Brinkley C.,, ,, , ,, ,, ; Brooks S., Chu G., Coleman H., Engle J.,\n"
-            + "RA   S.Jonathan, A . Arthur\n");
+            + "RA   S.Jonathan, A. Arthur\n");
     Publication publication = lineReader.getCache().getPublication();
     ValidationResult result = (new RAReader(lineReader)).read(entry);
     assertEquals(0, result.count(Severity.ERROR));
@@ -71,7 +71,7 @@ public class RAReaderTest extends EmblReaderTest {
     assertEquals("Jonathan", publication.getAuthors().get(11).getSurname());
     assertEquals("S.", publication.getAuthors().get(11).getFirstName());
     assertEquals("Arthur", publication.getAuthors().get(12).getSurname());
-    assertEquals("A .", publication.getAuthors().get(12).getFirstName());
+    assertEquals("A.", publication.getAuthors().get(12).getFirstName());
   }
 
   public void testRead_NoAuthors() throws IOException {

@@ -10,6 +10,8 @@
  */
 package uk.ac.ebi.embl.flatfile.reader.embl;
 
+import com.google.common.base.Objects;
+import org.apache.commons.lang.ObjectUtils;
 import uk.ac.ebi.embl.api.entry.reference.Person;
 import uk.ac.ebi.embl.flatfile.reader.FlatFileLineReader;
 
@@ -31,15 +33,12 @@ public class EmblPersonMatchHelper {
     EmblPersonMatcher startInitialPersonMatcher = new EmblPersonStartInitialMatcher(reader);
     EmblPersonMatcher endInitialPersonMatcher = new EmblPersonEndInitialMatcher(reader);
 
-    if (!startInitialPersonMatcher.match(string)) {
-      if (endInitialPersonMatcher.match(string)) {
-        personMatcher = endInitialPersonMatcher;
-        return true;
-      }
-    } else {
+    if (endInitialPersonMatcher.match(string)){
+      personMatcher = endInitialPersonMatcher;
+    }else if (startInitialPersonMatcher.match(string)){
       personMatcher = startInitialPersonMatcher;
-      return true;
     }
-    return false;
+
+    return personMatcher!=null;
   }
 }
