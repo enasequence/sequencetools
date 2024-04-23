@@ -19,8 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.validation.helper.TestHelper;
-import uk.ac.ebi.embl.flatfile.reader.FeatureLocationParser;
 
 public class CompoundLocationTest {
 

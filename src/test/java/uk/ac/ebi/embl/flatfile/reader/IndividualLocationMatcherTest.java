@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.RemoteBase;
 import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 
-public class FeatureLocationMatcherTest extends TestCase {
+public class IndividualLocationMatcherTest extends TestCase {
 
   FeatureLocationParser locationParser;
 

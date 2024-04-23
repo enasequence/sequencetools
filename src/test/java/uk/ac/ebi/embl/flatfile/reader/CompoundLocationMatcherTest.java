@@ -18,7 +18,7 @@ import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
-public class FeatureLocationsMatcherTest {
+public class CompoundLocationMatcherTest {
 
   public enum Partiality {
     COMPOUND_5_PARTIAL,

@@ -14,11 +14,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.entry.location.Join;
-import uk.ac.ebi.embl.api.entry.location.Order;
+import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 
 public class SimpleFeatureFactoryTest {
 
@@ -44,12 +42,14 @@ public class SimpleFeatureFactoryTest {
   @Test
   public void testCreateFeature_Locations() {
     Feature result = factory.createFeature("feat", false);
-    result.setLocations(TestHelper.getTestCompoundLocation("1..2"));
+    CompoundLocation compoundLocation = result.getLocations();
+    compoundLocation.addLocation(new LocationFactory().createLocalRange(2L, 4L));
     result.getLocations().setFivePrimePartial(true);
     result.getLocations().setThreePrimePartial(false);
     result.getLocations().setComplement(true);
     assertEquals("feat", result.getName());
     assertNotNull(result.getLocations());
+    assertTrue(result.getLocations() instanceof Order<?>);
     assertFalse(result.getLocations().isFivePrimePartial());
     assertTrue(result.getLocations().isThreePrimePartial());
     assertTrue(result.getLocations().isComplement());
