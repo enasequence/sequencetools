@@ -17,8 +17,8 @@ public class TranslationResult implements Serializable {
 
   private static final long serialVersionUID = -3348570245845628623L;
 
-  private boolean fixedLeftPartial = false;
-  private boolean fixedRightPartial = false;
+  private boolean fixedFivePrimePartial = false;
+  private boolean fixedThreePrimePartial = false;
   private boolean fixedPseudo = false;
   private boolean fixedDegenerateStartCodon = false;
 
@@ -38,20 +38,20 @@ public class TranslationResult implements Serializable {
     this.fixedPseudo = fixedPseudo;
   }
 
-  protected void setFixedLeftPartial(boolean fixedLeftPartial) {
-    this.fixedLeftPartial = fixedLeftPartial;
+  protected void setFixedFivePrimePartial(boolean fixedFivePrimePartial) {
+    this.fixedFivePrimePartial = fixedFivePrimePartial;
   }
 
-  public boolean isFixedLeftPartial() {
-    return fixedLeftPartial;
+  public boolean isFixedFivePrimePartial() {
+    return fixedFivePrimePartial;
   }
 
-  protected void setFixedRightPartial(boolean fixedRightPartial) {
-    this.fixedRightPartial = fixedRightPartial;
+  protected void setFixedThreePrimePartial(boolean fixedThreePrimePartial) {
+    this.fixedThreePrimePartial = fixedThreePrimePartial;
   }
 
-  public boolean isFixedRightPartial() {
-    return fixedRightPartial;
+  public boolean isFixedThreePrimePartial() {
+    return fixedThreePrimePartial;
   }
 
   private Vector<Codon> codons;

@@ -134,24 +134,12 @@ public class CdsTranslator {
         return extendedTranslatorResult;
       }
 
-      // Note that if the compound location is a global complement
-      // then the left and right partiality are reversed between CdsFeature
-      // and Translator.
-
-      if (translationResult.isFixedLeftPartial()) {
-        if (!cds.getLocations().isComplement()) {
-          cds.getLocations().setLeftPartial(translator.isLeftPartial());
-        } else {
-          cds.getLocations().setRightPartial(translator.isLeftPartial());
-        }
+      if (translationResult.isFixedFivePrimePartial()) {
+        cds.getLocations().setFivePrimePartial(translator.isFivePrimePartial());
       }
 
-      if (translationResult.isFixedRightPartial()) {
-        if (!cds.getLocations().isComplement()) {
-          cds.getLocations().setRightPartial(translator.isRightPartial());
-        } else {
-          cds.getLocations().setLeftPartial(translator.isRightPartial());
-        }
+      if (translationResult.isFixedThreePrimePartial()) {
+        cds.getLocations().setThreePrimePartial(translator.isThreePrimePartial());
       }
 
       if (translationResult.isFixedPseudo()) {
@@ -439,11 +427,11 @@ public class CdsTranslator {
     // then the left and right partiality are reversed between CdsFeature
     // and Translator.
     if (compoundLocation.isComplement()) {
-      translator.setLeftPartial(compoundLocation.isRightPartial());
-      translator.setRightPartial(compoundLocation.isLeftPartial());
+      translator.setFivePrimePartial(compoundLocation.isThreePrimePartial());
+      translator.setThreePrimePartial(compoundLocation.isFivePrimePartial());
     } else {
-      translator.setLeftPartial(compoundLocation.isLeftPartial());
-      translator.setRightPartial(compoundLocation.isRightPartial());
+      translator.setFivePrimePartial(compoundLocation.isFivePrimePartial());
+      translator.setThreePrimePartial(compoundLocation.isThreePrimePartial());
     }
 
     // Set a pseudo translation.
@@ -493,8 +481,8 @@ public class CdsTranslator {
     return validationResult;
   }
 
-  public void setLeftPartial(boolean partial) {
-    translator.setLeftPartial(partial);
+  public void setFivePrimePartial(boolean partial) {
+    translator.setFivePrimePartial(partial);
   }
 
   public void translateCodons(byte[] sequenceString, TranslationResult translatorResult)

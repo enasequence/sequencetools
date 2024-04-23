@@ -21,7 +21,7 @@ import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description("Deleted gene Feature associated with {0} feature with location {1}")
 @ExcludeScope(validationScope = {ValidationScope.NCBI})
@@ -64,8 +64,7 @@ public class GeneAssociatedwithFeatureFix extends EntryValidationCheck {
                 geneAssociatedFeature.getOrigin(),
                 MESSAGE_ID,
                 geneAssociatedFeature.getName(),
-                LocationToStringCoverter.renderCompoundLocation(
-                    geneAssociatedFeature.getLocations()));
+                FeatureLocationWriter.renderCompoundLocation(geneAssociatedFeature.getLocations()));
         }
       }
     }

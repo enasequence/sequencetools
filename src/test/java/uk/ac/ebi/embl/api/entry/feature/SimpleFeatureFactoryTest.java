@@ -14,8 +14,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.entry.location.Join;
-import uk.ac.ebi.embl.api.entry.location.Order;
+import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 
@@ -36,22 +35,23 @@ public class SimpleFeatureFactoryTest {
     assertTrue(result.getLocations().getLocations().isEmpty());
     assertTrue(result.getLocations() instanceof Join<?>);
     assertFalse(result.getLocations().isComplement());
-    assertFalse(result.getLocations().isLeftPartial());
-    assertFalse(result.getLocations().isRightPartial());
+    assertFalse(result.getLocations().isFivePrimePartial());
+    assertFalse(result.getLocations().isThreePrimePartial());
   }
 
   @Test
   public void testCreateFeature_Locations() {
     Feature result = factory.createFeature("feat", false);
-    result.getLocations().setLeftPartial(true);
-    result.getLocations().setRightPartial(false);
+    CompoundLocation compoundLocation = result.getLocations();
+    compoundLocation.addLocation(new LocationFactory().createLocalRange(2L, 4L));
+    result.getLocations().setFivePrimePartial(true);
+    result.getLocations().setThreePrimePartial(false);
     result.getLocations().setComplement(true);
     assertEquals("feat", result.getName());
     assertNotNull(result.getLocations());
-    assertTrue(result.getLocations().getLocations().isEmpty());
     assertTrue(result.getLocations() instanceof Order<?>);
-    assertTrue(result.getLocations().isLeftPartial());
-    assertFalse(result.getLocations().isRightPartial());
+    assertFalse(result.getLocations().isFivePrimePartial());
+    assertTrue(result.getLocations().isThreePrimePartial());
     assertTrue(result.getLocations().isComplement());
   }
 

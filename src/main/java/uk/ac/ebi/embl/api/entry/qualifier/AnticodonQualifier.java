@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.validation.ValidationException;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationStringParser;
+import uk.ac.ebi.embl.flatfile.reader.FeatureLocationParser;
 
 public class AnticodonQualifier extends Qualifier
     implements Serializable, CompoundLocationQualifier {
@@ -41,9 +41,8 @@ public class AnticodonQualifier extends Qualifier
     }
     String locationStr = matcher.group(3);
 
-    LocationStringParser locationParser = new LocationStringParser(this);
-
-    CompoundLocation<Location> location = locationParser.getCompoundLocation(locationStr, false);
+    FeatureLocationParser locationParser = new FeatureLocationParser(this);
+    CompoundLocation<Location> location = locationParser.getCompoundLocation(locationStr);
 
     if (location == null) {
       throwValueException();

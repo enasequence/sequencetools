@@ -20,7 +20,7 @@ import uk.ac.ebi.embl.api.validation.ValidationException;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 @Description("Invalid Location:Complement ignored in transl_except")
 public class Transl_exceptLocationFix extends FeatureValidationCheck {
@@ -42,21 +42,28 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
       StringBuffer fixedValue = new StringBuffer("(pos:");
 
       try {
-        boolean isComplement = false;
-        CompoundLocation<Location> location = tQualifier.getLocations();
-        for (Location slocation : location.getLocations()) {
+        boolean fixed = false;
+        CompoundLocation<Location> compoundlocation = tQualifier.getLocations();
+
+        // Remove complement from individual location
+        for (Location slocation : compoundlocation.getLocations()) {
           if (slocation.isComplement()) {
-            isComplement = true;
+            fixed = true;
             slocation.setComplement(false);
           }
         }
 
-        location.setComplement(false);
-        String locationString = LocationToStringCoverter.renderCompoundLocation(location);
+        // Remove complement from compound location
+        if(compoundlocation.isComplement()){
+          fixed = true;
+          compoundlocation.setComplement(false);
+        }
+
+        String locationString = FeatureLocationWriter.renderCompoundLocation(compoundlocation);
         fixedValue.append(locationString);
         fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
         tQualifier.setValue(fixedValue.toString());
-        if (isComplement)
+        if (fixed)
           reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
       } catch (ValidationException e) {
 

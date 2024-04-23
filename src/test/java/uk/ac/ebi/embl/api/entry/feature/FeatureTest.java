@@ -17,11 +17,13 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.XRef;
+import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Join;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
+import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 
 public class FeatureTest {
 
@@ -41,16 +43,18 @@ public class FeatureTest {
     assertNotNull(feature.getLocations());
 
     Feature feat2 = new Feature("feat2", true);
-    feat2.getLocations().setLeftPartial(true);
-    feat2.getLocations().setRightPartial(true);
+    CompoundLocation compoundLocation = feat2.getLocations();
+    compoundLocation.addLocation(new LocationFactory().createLocalRange(2L, 4L));
+    feat2.getLocations().setFivePrimePartial(true);
+    feat2.getLocations().setThreePrimePartial(true);
     feat2.getLocations().setComplement(true);
     assertEquals("feat2", feat2.getName());
     assertTrue(feat2.getLocations() instanceof Join<?>);
     assertTrue(feat2.getQualifiers().isEmpty());
     assertTrue(feat2.getXRefs().isEmpty());
     assertNotNull(feat2.getLocations());
-    assertTrue(feat2.getLocations().isLeftPartial());
-    assertTrue(feat2.getLocations().isRightPartial());
+    assertTrue(feat2.getLocations().isFivePrimePartial());
+    assertTrue(feat2.getLocations().isThreePrimePartial());
     assertTrue(feat2.getLocations().isComplement());
   }
 

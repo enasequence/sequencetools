@@ -80,8 +80,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -105,15 +105,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
     assertEquals(Long.valueOf(156), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalSingleBaseLeftPartial() throws IOException {
@@ -131,8 +131,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -156,15 +156,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
     assertEquals(Long.valueOf(156), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteSingleBaseWithoutVersion() throws IOException {
@@ -183,8 +183,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
@@ -211,8 +211,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBase);
@@ -238,8 +238,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -263,15 +263,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalRangeLeftPartial() throws IOException {
@@ -289,8 +289,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -314,8 +314,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
@@ -339,15 +339,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalRangeLeftPartial2() throws IOException {
@@ -365,15 +365,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalRange);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteRangeWithoutVersion() throws IOException {
@@ -392,9 +392,9 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteRange);
@@ -402,7 +402,7 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertNull(((RemoteRange) location).getVersion());
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteRangeWithVersion() throws IOException {
@@ -421,9 +421,9 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteRange);
@@ -431,7 +431,7 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(Integer.valueOf(1), ((RemoteRange) location).getVersion());
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetween() throws IOException {
@@ -449,8 +449,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -474,15 +474,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetweenLeftPartial() throws IOException {
@@ -500,8 +500,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -525,8 +525,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
@@ -550,15 +550,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(4), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_LocalBetweenLeftPartial2() throws IOException {
@@ -576,15 +576,15 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBetween);
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteBetweenWithoutVersion() throws IOException {
@@ -603,9 +603,9 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBetween);
@@ -613,7 +613,7 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertNull(((RemoteBetween) location).getVersion());
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_RemoteBetweenWithVersion() throws IOException {
@@ -632,9 +632,9 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals("source", feature.getName());
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
-    assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isComplement());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(1, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof RemoteBetween);
@@ -642,7 +642,7 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     assertEquals(Integer.valueOf(1), ((RemoteBetween) location).getVersion());
     assertEquals(Long.valueOf(155), location.getBeginPosition());
     assertEquals(Long.valueOf(156), location.getEndPosition());
-    assertTrue(location.isComplement());
+    assertFalse(location.isComplement());
   }
 
   public void testRead_Join() throws IOException {
@@ -663,8 +663,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -708,8 +708,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertTrue(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -753,8 +753,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -798,8 +798,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Join<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -843,8 +843,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -888,8 +888,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertTrue(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -933,8 +933,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertTrue(locations.isLeftPartial());
-    assertFalse(locations.isRightPartial());
+    assertTrue(locations.isFivePrimePartial());
+    assertFalse(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
@@ -978,8 +978,8 @@ public class GenbankFeatureReaderTest extends GenbankReaderTest {
     CompoundLocation<Location> locations = feature.getLocations();
     assertTrue(locations instanceof Order<?>);
     assertFalse(locations.isComplement());
-    assertFalse(locations.isLeftPartial());
-    assertTrue(locations.isRightPartial());
+    assertFalse(locations.isFivePrimePartial());
+    assertTrue(locations.isThreePrimePartial());
     assertEquals(4, locations.getLocations().size());
     Location location = locations.getLocations().get(0);
     assertTrue(location instanceof LocalBase);
