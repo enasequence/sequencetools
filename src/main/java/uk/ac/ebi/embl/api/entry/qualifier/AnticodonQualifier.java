@@ -41,7 +41,7 @@ public class AnticodonQualifier extends Qualifier
     }
     String locationStr = matcher.group(3);
 
-    FeatureLocationParser locationParser = new FeatureLocationParser(this);
+    FeatureLocationParser locationParser = new FeatureLocationParser();
     CompoundLocation<Location> location = locationParser.getCompoundLocation(locationStr);
 
     if (location == null) {
