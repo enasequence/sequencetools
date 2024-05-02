@@ -23,9 +23,6 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
 
   private final List<E> locations;
 
-  private boolean leftPartial;
-  private boolean rightPartial;
-
   protected CompoundLocation() {
     this.locations = new ArrayList<E>();
   }
@@ -54,20 +51,78 @@ public abstract class CompoundLocation<E extends Location> extends AbstractLocat
     return this.locations.remove(location);
   }
 
-  public boolean isLeftPartial() {
-    return leftPartial;
+  /**
+   * Return true if the first location in the compound location is 5'
+   *
+   * @return
+   */
+  public boolean isFivePrimePartial() {
+    if (getLocations().isEmpty()) {
+      return false;
+    }
+
+    // return true if the first location or last location is 5'.
+    return isComplement()
+        ? firstLocation().isThreePrimePartial() || lastLocation().isThreePrimePartial()
+        : firstLocation().isFivePrimePartial() || lastLocation().isFivePrimePartial();
   }
 
-  public void setLeftPartial(boolean leftPartial) {
-    this.leftPartial = leftPartial;
+  /**
+   * Return true if the last location in the compound location is 3'
+   *
+   * @return
+   */
+  public boolean isThreePrimePartial() {
+    if (getLocations().isEmpty()) {
+      return false;
+    }
+
+    // return true if first location or last location is 3'.
+    return isComplement()
+        ? firstLocation().isFivePrimePartial() || lastLocation().isFivePrimePartial()
+        : firstLocation().isThreePrimePartial() || lastLocation().isThreePrimePartial();
   }
 
-  public boolean isRightPartial() {
-    return rightPartial;
+  /**
+   * Sets 5' partiality to the first location range
+   *
+   * @param partiality
+   */
+  public void setFivePrimePartial(boolean partiality) {
+    if (getLocations().isEmpty()) {
+      return;
+    }
+
+    if (isComplement()) {
+      firstLocation().setThreePrimePartial(partiality);
+    } else {
+      firstLocation().setFivePrimePartial(partiality);
+    }
   }
 
-  public void setRightPartial(boolean rightPartial) {
-    this.rightPartial = rightPartial;
+  /**
+   * Sets 3' partiality to the last location range
+   *
+   * @param partiality
+   */
+  public void setThreePrimePartial(boolean partiality) {
+    if (getLocations().isEmpty()) {
+      return;
+    }
+
+    if (isComplement()) {
+      lastLocation().setFivePrimePartial(partiality);
+    } else {
+      lastLocation().setThreePrimePartial(partiality);
+    }
+  }
+
+  public Location firstLocation() {
+    return getLocations().get(0);
+  }
+
+  public Location lastLocation() {
+    return getLocations().get(getLocations().size() - 1);
   }
 
   @Override

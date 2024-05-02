@@ -31,8 +31,8 @@ public class Translator extends AbstractTranslator {
   private int codonStart = 1;
   private boolean nonTranslating = false; // feature has /pseudo
   private boolean exception = false;
-  private boolean rightPartial = false; // 3' partial
-  private boolean leftPartial = false; // 5' partial
+  private boolean threePrimePartial = false; // 3' partial
+  private boolean fivePrimePartial = false; // 5' partial
   private boolean peptideFeature = false;
 
   private boolean fixDegenerateStartCodon =
@@ -106,20 +106,20 @@ public class Translator extends AbstractTranslator {
     this.codonStart = startCodon;
   }
 
-  public void setLeftPartial(boolean leftPartial) {
-    this.leftPartial = leftPartial;
+  public void setFivePrimePartial(boolean fivePrimePartial) {
+    this.fivePrimePartial = fivePrimePartial;
   }
 
-  public void setRightPartial(boolean rightPartial) {
-    this.rightPartial = rightPartial;
+  public void setThreePrimePartial(boolean threePrimePartial) {
+    this.threePrimePartial = threePrimePartial;
   }
 
-  public boolean isRightPartial() {
-    return rightPartial;
+  public boolean isThreePrimePartial() {
+    return threePrimePartial;
   }
 
-  public boolean isLeftPartial() {
-    return leftPartial;
+  public boolean isFivePrimePartial() {
+    return fivePrimePartial;
   }
 
   public void setNonTranslating(boolean nonTranslating) {
@@ -175,7 +175,7 @@ public class Translator extends AbstractTranslator {
     codonTranslator.translateStartCodon(codon);
     if (!applyTranslationException(codon)
         && fixDegenerateStartCodon
-        && !leftPartial
+        && !fivePrimePartial
         && !codon.getAminoAcid().equals('M')
         && codonTranslator.isDegenerateStartCodon(codon)) {
       codon.setAminoAcid('M');
@@ -204,7 +204,7 @@ public class Translator extends AbstractTranslator {
       Codon codon = new Codon();
       codon.setCodon(new String(Arrays.copyOfRange(sequence, i, i + 3)));
       codon.setPos(i + 1);
-      if ((i == codonStart - 1) && !leftPartial) {
+      if ((i == codonStart - 1) && !fivePrimePartial) {
         translateStartCodon(codon, translationResult);
       } else {
         translateOtherCodon(codon);
@@ -223,7 +223,7 @@ public class Translator extends AbstractTranslator {
       Codon codon = new Codon();
       codon.setCodon(extendCodon(new String(Arrays.copyOfRange(sequence, i, sequence.length))));
       codon.setPos(i + 1);
-      if ((i == codonStart - 1) && !leftPartial) {
+      if ((i == codonStart - 1) && !fivePrimePartial) {
         translateStartCodon(codon, translationResult);
       } else {
         translateOtherCodon(codon);
@@ -346,10 +346,10 @@ public class Translator extends AbstractTranslator {
       ValidationException.throwError("Translator-2", codonStart);
     }
     if (codonStart != 1) {
-      if (!leftPartial && !nonTranslating) {
+      if (!fivePrimePartial && !nonTranslating) {
         if (fixCodonStartNotOneMake5Partial) {
-          leftPartial = true;
-          translationResult.setFixedLeftPartial(true);
+          fivePrimePartial = true;
+          translationResult.setFixedFivePrimePartial(true);
           fixes.add("fixCodonStartNotOneMake5Partial");
         } else {
           ValidationException.throwError("Translator-3", codonStart);
@@ -436,7 +436,7 @@ public class Translator extends AbstractTranslator {
       // DQ539670, DQ519928, DQ785858,DQ785863, EF466144, EF466157,
       // EF466202.
       translationResult.setTranslationBaseCount(bases);
-      if (!leftPartial && !rightPartial) {
+      if (!fivePrimePartial && !threePrimePartial) {
         // CDS features with less than 3 bases must be 3' or 5' partial.
         ValidationException.throwError("Translator-10");
       }
@@ -450,12 +450,16 @@ public class Translator extends AbstractTranslator {
       // non mod 3 peptide features other than Cds dont throw errors as
       // there are more complex checks in
       // PeptideFeatureCheck
-      if (!peptideFeature && !leftPartial && !rightPartial && !nonTranslating && !exception) {
+      if (!peptideFeature
+          && !fivePrimePartial
+          && !threePrimePartial
+          && !nonTranslating
+          && !exception) {
         if (fixNonMultipleOfThreeMake3And5Partial) {
-          leftPartial = true;
-          rightPartial = true;
-          translationResult.setFixedRightPartial(true);
-          translationResult.setFixedLeftPartial(true);
+          fivePrimePartial = true;
+          threePrimePartial = true;
+          translationResult.setFixedThreePrimePartial(true);
+          translationResult.setFixedFivePrimePartial(true);
           fixes.add("fixNonMultipleOfThreeMake3And5Partial");
         } else {
           // CDS feature length must be a multiple of 3. Consider 5' or 3'
@@ -510,7 +514,7 @@ public class Translator extends AbstractTranslator {
     }
     if (!(translationResult.getCodons().size() == 1
         && translationResult.getTrailingBases().length() == 0
-        && leftPartial)) {
+        && fivePrimePartial)) {
       // CDS feature can have a single stop codon only
       // if it has 3 bases and is 5' partial.
       ValidationException.throwError("Translator-12");
@@ -528,13 +532,13 @@ public class Translator extends AbstractTranslator {
           ValidationException.throwError("Translator-13");
         }
       }
-      if (trailingStopCodons == 1 && rightPartial) {
+      if (trailingStopCodons == 1 && threePrimePartial) {
         if (nonTranslating) {
           return false; // no conceptual translation
         } else {
           if (fixValidStopCodonRemove3Partial) {
-            translationResult.setFixedRightPartial(true);
-            rightPartial = false;
+            translationResult.setFixedThreePrimePartial(true);
+            threePrimePartial = false;
             fixes.add("fixValidStopCodonRemove3Partial");
           } else {
             // Stop codon found at 3' partial end.
@@ -544,14 +548,14 @@ public class Translator extends AbstractTranslator {
           }
         }
       }
-      if (trailingStopCodons == 0 && !rightPartial) {
+      if (trailingStopCodons == 0 && !threePrimePartial) {
         if (nonTranslating) {
           return false; // no conceptual translation
         } else if (!peptideFeature) { // peptide features are allowed to not have stop codons
           // No stop codon at the 3' end.
           if (fixNoStopCodonMake3Partial) {
-            rightPartial = true;
-            translationResult.setFixedRightPartial(true);
+            threePrimePartial = true;
+            translationResult.setFixedThreePrimePartial(true);
             fixes.add("fixNoStopCodonMake3Partial");
           } else {
             ValidationException.throwError("Translator-15");
@@ -600,14 +604,14 @@ public class Translator extends AbstractTranslator {
 
   private boolean validateStartCodon(TranslationResult translationResult)
       throws ValidationException {
-    if (!leftPartial && !exception && !peptideFeature) {
-      if (!translationResult.getCodons().get(0).getAminoAcid().equals('M') && !leftPartial) {
+    if (!fivePrimePartial && !exception && !peptideFeature) {
+      if (!translationResult.getCodons().get(0).getAminoAcid().equals('M') && !fivePrimePartial) {
         if (nonTranslating) {
           return false; // no conceptual translation
         } else {
           if (fixNoStartCodonMake5Partial) {
-            translationResult.setFixedLeftPartial(true);
-            leftPartial = true;
+            translationResult.setFixedFivePrimePartial(true);
+            fivePrimePartial = true;
             fixes.add("fixNoStartCodonMake5Partial");
           } else {
             // The protein translation does not start with a

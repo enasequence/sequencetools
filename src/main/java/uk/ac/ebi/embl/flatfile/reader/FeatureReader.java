@@ -227,14 +227,9 @@ public class FeatureReader extends FlatFileLineReader {
       }
       lineReader.readLine();
     }
-    FeatureLocationsMatcher matcher =
-        new FeatureLocationsMatcher(this, lineReader.getReaderOptions().isIgnoreParserErrors());
-    if (!matcher.match(locationBuilder.toString())) {
-      error("FT.4"); // Invalid feature location.
-      return null;
-    }
-    CompoundLocation<Location> location = matcher.getCompoundLocation();
-    return location;
+    FeatureLocationParser locationParser =
+        new FeatureLocationParser(this, lineReader.getReaderOptions().isIgnoreParserErrors());
+    return locationParser.getCompoundLocation(locationBuilder.toString());
   }
 
   private Qualifier readQualifier() throws IOException {

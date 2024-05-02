@@ -8,7 +8,7 @@ plugins {
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.20.0'
+version = '2.20.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -63,12 +63,10 @@ repositories {
 }
 
 dependencies {
-    api( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.+' ) {
-        // uk.ac.ebi.biosamples:client transitive dependency pulls in spring/boot which causes issues. this sorts them out.
+    api( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.7.8' ){
         exclude group: 'org.springframework.boot'
-        exclude group: 'org.springframework'
     }
-    api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.+')
+    api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.10')
 
     implementation 'org.slf4j:slf4j-api:1.7.28'
 
@@ -83,7 +81,7 @@ dependencies {
     testImplementation "junit:junit:4.13.1"
     testImplementation 'org.easymock:easymock:4.2'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-web:2.2.0.RELEASE'
+    testImplementation 'org.springframework.boot:spring-boot-starter:2.2.0.RELEASE'
     testImplementation 'org.springframework.boot:spring-boot-starter-jdbc:2.2.0.RELEASE'
     testImplementation ('org.springframework.boot:spring-boot-starter-test:2.2.0.RELEASE') {
         exclude group: 'com.vaadin.external.google', module: 'android-json'

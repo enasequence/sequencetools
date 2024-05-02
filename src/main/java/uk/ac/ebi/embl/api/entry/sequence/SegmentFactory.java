@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.api.entry.location.RemoteRange;
 import uk.ac.ebi.embl.api.service.SequenceRetrievalService;
 import uk.ac.ebi.embl.api.service.SequenceToolsServices;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.helper.location.LocationToStringCoverter;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 public class SegmentFactory {
 
@@ -109,7 +109,7 @@ public class SegmentFactory {
       subSequence = service.getSequence(remoteBase).array();
     } catch (ValidationEngineException ex) {
       StringBuilder locationString = new StringBuilder();
-      LocationToStringCoverter.renderLocation(locationString, remoteBase, false, false);
+      FeatureLocationWriter.renderLocationForcePartiality(locationString, remoteBase, false, false);
       throw new IOException("Invalid Remote Base: " + locationString, ex);
     }
     return new Segment(remoteBase, subSequence);
@@ -130,7 +130,8 @@ public class SegmentFactory {
       subSequence = service.getSequence(remoteRange).array();
     } catch (ValidationEngineException ex) {
       StringBuilder locationString = new StringBuilder();
-      LocationToStringCoverter.renderLocation(locationString, remoteRange, false, false);
+      FeatureLocationWriter.renderLocationForcePartiality(
+          locationString, remoteRange, false, false);
       throw new IOException("Invalid Remote Range: " + locationString, ex);
     }
     return new Segment(remoteRange, subSequence);

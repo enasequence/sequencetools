@@ -12,7 +12,6 @@ package uk.ac.ebi.embl.flatfile.writer;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.List;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
@@ -73,7 +72,6 @@ public class FeatureLocationWriter extends FlatFileWriter {
       }
 
       if (locations.size() > 1) {
-
         if (compoundLocation instanceof Join<?>) {
           block.append("join(");
         } else if (compoundLocation instanceof Order<?>) {
@@ -81,27 +79,15 @@ public class FeatureLocationWriter extends FlatFileWriter {
         }
       }
 
-      boolean leftPartial = compoundLocation.isLeftPartial();
-      boolean rightPartial = compoundLocation.isRightPartial();
-
-      if (locations.size() == 1) {
-        renderLocation(block, locations.get(0), leftPartial, rightPartial);
-      } else { // need to be a bit clever regarding wheter to render left and right partial
-        boolean firstLocation = true;
-        Iterator<Location> iterator = locations.iterator();
-        while (iterator.hasNext()) {
-          Location location = iterator.next();
-          if (firstLocation) {
-            renderLocation(block, location, leftPartial, false);
-          } else if (!iterator.hasNext()) { // last location
-            block.append(",");
-            renderLocation(block, location, false, rightPartial);
-          } else {
-            block.append(",");
-            renderLocation(block, location, false, false);
-          }
-          firstLocation = false;
+      for (int i = 0; i < locations.size(); i++) {
+        Location location = locations.get(i);
+        if (i > 0) {
+          block.append(",");
         }
+        renderLocation(block, location);
+      }
+
+      if (locations.size() > 1) {
         block.append(")");
       }
 
@@ -112,8 +98,7 @@ public class FeatureLocationWriter extends FlatFileWriter {
     return block.toString();
   }
 
-  public static void renderLocation(
-      StringBuilder block, Location location, boolean leftPartial, boolean rightPartial) {
+  public static void renderLocation(StringBuilder block, Location location) {
     boolean isComplement = location.isComplement();
     if (isComplement) {
       // Complement location.
@@ -131,16 +116,31 @@ public class FeatureLocationWriter extends FlatFileWriter {
     }
 
     if (location instanceof Base && location.getBeginPosition() != null) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrimePartial(),
+          location.isThreePrimePartial());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() == null) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrimePartial(),
+          location.isThreePrimePartial());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() != null
         && location.getBeginPosition().equals(location.getEndPosition())) {
-      renderBase(block, location.getBeginPosition(), isComplement, leftPartial, rightPartial);
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          location.isFivePrimePartial(),
+          location.isThreePrimePartial());
     } else if (location instanceof Range
         && location.getBeginPosition() != null
         && location.getEndPosition() != null) {
@@ -149,16 +149,90 @@ public class FeatureLocationWriter extends FlatFileWriter {
           location.getBeginPosition(),
           location.getEndPosition(),
           isComplement,
-          leftPartial,
-          rightPartial);
+          location.isFivePrimePartial(),
+          location.isThreePrimePartial());
     } else if (location instanceof Between) {
       renderBetween(
           block,
           location.getBeginPosition(),
           location.getEndPosition(),
           isComplement,
-          leftPartial,
-          rightPartial);
+          location.isFivePrimePartial(),
+          location.isThreePrimePartial());
+    } else if (location instanceof Gap) {
+      renderGap(block, (Gap) location);
+    }
+
+    if (isComplement) {
+      block.append(")");
+    }
+  }
+
+  public static void renderLocationForcePartiality(
+      StringBuilder block,
+      Location location,
+      boolean fivePrimePartiality,
+      boolean threePrimePartiality) {
+    boolean isComplement = location.isComplement();
+    if (isComplement) {
+      // Complement location.
+      block.append("complement(");
+    }
+
+    if (location instanceof RemoteLocation && ((RemoteLocation) location).getAccession() != null) {
+      // Remote location.
+      block.append(((RemoteLocation) location).getAccession());
+      if (((RemoteLocation) location).getVersion() != null) {
+        block.append(".");
+        block.append(((RemoteLocation) location).getVersion());
+      }
+      block.append(":");
+    }
+
+    if (location instanceof Base && location.getBeginPosition() != null) {
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          fivePrimePartiality,
+          threePrimePartiality);
+    } else if (location instanceof Range
+        && location.getBeginPosition() != null
+        && location.getEndPosition() == null) {
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          fivePrimePartiality,
+          threePrimePartiality);
+    } else if (location instanceof Range
+        && location.getBeginPosition() != null
+        && location.getEndPosition() != null
+        && location.getBeginPosition().equals(location.getEndPosition())) {
+      renderBase(
+          block,
+          location.getBeginPosition(),
+          isComplement,
+          fivePrimePartiality,
+          threePrimePartiality);
+    } else if (location instanceof Range
+        && location.getBeginPosition() != null
+        && location.getEndPosition() != null) {
+      renderRange(
+          block,
+          location.getBeginPosition(),
+          location.getEndPosition(),
+          isComplement,
+          fivePrimePartiality,
+          threePrimePartiality);
+    } else if (location instanceof Between) {
+      renderBetween(
+          block,
+          location.getBeginPosition(),
+          location.getEndPosition(),
+          isComplement,
+          fivePrimePartiality,
+          threePrimePartiality);
     } else if (location instanceof Gap) {
       renderGap(block, (Gap) location);
     }
@@ -172,19 +246,19 @@ public class FeatureLocationWriter extends FlatFileWriter {
       StringBuilder block,
       Long position,
       boolean isComplement,
-      boolean leftPartial,
-      boolean rightPartial) {
+      boolean fivePrimePartial,
+      boolean threePrimePartial) {
     // Partiality.
     if (isComplement) {
-      if (rightPartial) {
+      if (threePrimePartial) {
         block.append("<");
-      } else if (leftPartial) {
+      } else if (fivePrimePartial) {
         block.append(">");
       }
     } else {
-      if (leftPartial) {
+      if (fivePrimePartial) {
         block.append("<");
-      } else if (rightPartial) {
+      } else if (threePrimePartial) {
         block.append(">");
       }
     }
@@ -196,10 +270,10 @@ public class FeatureLocationWriter extends FlatFileWriter {
       Long beginPosition,
       Long endPosition,
       boolean isComplement,
-      boolean leftPartial,
-      boolean rightPartial) {
+      boolean fivePrimePartial,
+      boolean threePrimePartial) {
     renderRangeOrBetween(
-        block, beginPosition, endPosition, isComplement, leftPartial, rightPartial, "..");
+        block, beginPosition, endPosition, isComplement, fivePrimePartial, threePrimePartial, "..");
   }
 
   private static void renderBetween(
@@ -207,10 +281,10 @@ public class FeatureLocationWriter extends FlatFileWriter {
       Long beginPosition,
       Long endPosition,
       boolean isComplement,
-      boolean leftPartial,
-      boolean rightPartial) {
+      boolean fivePrimePartial,
+      boolean threePrimePartial) {
     renderRangeOrBetween(
-        block, beginPosition, endPosition, isComplement, leftPartial, rightPartial, "^");
+        block, beginPosition, endPosition, isComplement, fivePrimePartial, threePrimePartial, "^");
   }
 
   private static void renderGap(StringBuilder block, Gap gap) {
@@ -230,16 +304,16 @@ public class FeatureLocationWriter extends FlatFileWriter {
       Long beginPosition,
       Long endPosition,
       boolean isComplement,
-      boolean leftPartial,
-      boolean rightPartial,
+      boolean fivePrimePartial,
+      boolean threePrimePartial,
       String separator) {
     // Partiality.
     if (isComplement) {
-      if (rightPartial) {
+      if (threePrimePartial) {
         block.append("<");
       }
     } else {
-      if (leftPartial) {
+      if (fivePrimePartial) {
         block.append("<");
       }
     }
@@ -247,11 +321,11 @@ public class FeatureLocationWriter extends FlatFileWriter {
     block.append(separator);
     // Partiality.
     if (isComplement) {
-      if (leftPartial) {
+      if (fivePrimePartial) {
         block.append(">");
       }
     } else {
-      if (rightPartial) {
+      if (threePrimePartial) {
         block.append(">");
       }
     }

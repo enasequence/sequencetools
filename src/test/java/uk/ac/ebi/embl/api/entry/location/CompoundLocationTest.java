@@ -31,22 +31,6 @@ public class CompoundLocationTest {
     location = new CompoundLocation() {};
   }
 
-  @SuppressWarnings({"unchecked", "serial"})
-  @Test
-  public void testCompoundLocation() {
-    CompoundLocation location1 = new CompoundLocation() {};
-    assertTrue(location1.getLocations().isEmpty());
-    assertFalse(location1.isLeftPartial());
-    assertFalse(location1.isRightPartial());
-
-    CompoundLocation location2 = new CompoundLocation() {};
-    location2.setLeftPartial(true);
-    location2.setRightPartial(true);
-    assertTrue(location2.getLocations().isEmpty());
-    assertTrue(location2.isLeftPartial());
-    assertTrue(location2.isRightPartial());
-  }
-
   @Test
   public void testGetLocations() {
     assertTrue(location.getLocations().isEmpty());

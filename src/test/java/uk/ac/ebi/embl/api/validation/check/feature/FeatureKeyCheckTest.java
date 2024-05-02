@@ -148,7 +148,7 @@ public class FeatureKeyCheckTest {
     LocalRange location = locationFactory.createLocalRange(1L, 3L);
     CompoundLocation<Location> join = new Join<Location>();
     join.addLocation(location);
-    join.setLeftPartial(true);
+    join.setFivePrimePartial(true);
     cdsFeature.setLocations(join);
 
     ValidationResult validationResult = check.check(cdsFeature);
@@ -157,8 +157,8 @@ public class FeatureKeyCheckTest {
     assertEquals(1, validationResult.count("FeatureKeyCheck-5", Severity.WARNING));
 
     // if right partial we are okay
-    join.setLeftPartial(false);
-    join.setRightPartial(true);
+    join.setFivePrimePartial(false);
+    join.setThreePrimePartial(true);
     validationResult = check.check(cdsFeature);
 
     assertTrue(validationResult.isValid());
