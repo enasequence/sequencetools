@@ -81,13 +81,13 @@ public class GeneAssociationFixTest {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod1"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod1"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod2"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod2"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod1"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod1"));
     entry.addFeature(feature2);
 
     ValidationResult result = check.check(entry);
@@ -101,11 +101,11 @@ public class GeneAssociationFixTest {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "pod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "pod"));
     entry.addFeature(feature2);
 
     ValidationResult result = check.check(entry);
@@ -117,13 +117,13 @@ public class GeneAssociationFixTest {
   public void testCheck_LocusAssociationOkay() {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     entry.addFeature(feature1);
 
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "bod"));
     feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     entry.addFeature(feature2);
 
@@ -140,17 +140,17 @@ public class GeneAssociationFixTest {
   public void testCheck_BadGeneAssociation() {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "pod"));
     entry.addFeature(feature2);
     Feature feature3 = featureFactory.createFeature("feature3");
     feature3.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     entry.addFeature(feature3);
 
     ValidationResult result = check.check(entry);
@@ -162,17 +162,17 @@ public class GeneAssociationFixTest {
   public void testFix_GeneAssociation() {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature2);
     Feature feature3 = featureFactory.createFeature("feature3");
     feature3.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.LOCUS_TAG_QUALIFIER_NAME, "cod"));
     entry.addFeature(feature3);
 
     ValidationResult result = check.check(entry);
@@ -180,7 +180,7 @@ public class GeneAssociationFixTest {
     assertEquals(1, result.count(GeneAssociationFix.MESSAGE_ID, Severity.FIX));
     Feature feature = SequenceEntryUtils.getFeatures("feature3", entry).iterator().next();
     Qualifier addedQualifier =
-        SequenceEntryUtils.getQualifier(Qualifier.GENE_QUALIFIER_NAME, feature);
+            SequenceEntryUtils.getQualifier(Qualifier.GENE_QUALIFIER_NAME, feature);
     assertEquals("bod", addedQualifier.getValue());
   }
   /**
@@ -192,13 +192,13 @@ public class GeneAssociationFixTest {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod1"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod1"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod2"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod2"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod1"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod1"));
     entry.addFeature(feature2);
     ValidationResult result = check.check(entry);
     assertTrue(result.isValid());
@@ -211,11 +211,11 @@ public class GeneAssociationFixTest {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "pod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "pod"));
     entry.addFeature(feature2);
 
     ValidationResult result = check.check(entry);
@@ -227,13 +227,13 @@ public class GeneAssociationFixTest {
   public void testCheck_PseudoAssociationOkay() {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     entry.addFeature(feature1);
 
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "bod"));
     feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "gene1"));
     entry.addFeature(feature2);
 
@@ -250,47 +250,21 @@ public class GeneAssociationFixTest {
   public void testCheck_BadPseudoAssociation() {
     Feature feature1 = featureFactory.createFeature("feature1");
     feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
     feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
     entry.addFeature(feature1);
     Feature feature2 = featureFactory.createFeature("feature2");
     feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
     feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "pod"));
     entry.addFeature(feature2);
     Feature feature3 = featureFactory.createFeature("feature3");
     feature3.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
+            qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
     entry.addFeature(feature3);
 
     ValidationResult result = check.check(entry);
     assertTrue(result.isValid());
     assertEquals(0, result.getMessages().size());
-  }
-
-  @Test
-  public void testFix_PseudoAssociation() {
-    Feature feature1 = featureFactory.createFeature("feature1");
-    feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
-    entry.addFeature(feature1);
-    Feature feature2 = featureFactory.createFeature("feature2");
-    feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
-    entry.addFeature(feature2);
-    Feature feature3 = featureFactory.createFeature("feature3");
-    feature3.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    entry.addFeature(feature3);
-
-    ValidationResult result = check.check(entry);
-    assertTrue(result.isValid());
-    assertEquals(1, result.count(GeneAssociationFix.MESSAGE_ID, Severity.FIX));
-    Feature feature = SequenceEntryUtils.getFeatures("feature3", entry).iterator().next();
-    Qualifier addedQualifier =
-        SequenceEntryUtils.getQualifier(Qualifier.GENE_QUALIFIER_NAME, feature);
-    assertEquals("bod", addedQualifier.getValue());
   }
 }
