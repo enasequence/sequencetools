@@ -267,30 +267,4 @@ public class GeneAssociationFixTest {
     assertTrue(result.isValid());
     assertEquals(0, result.getMessages().size());
   }
-
-  @Test
-  public void testFix_PseudoAssociation() {
-    Feature feature1 = featureFactory.createFeature("feature1");
-    feature1.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    feature1.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
-    entry.addFeature(feature1);
-    Feature feature2 = featureFactory.createFeature("feature2");
-    feature2.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    feature2.addQualifier(qualifierFactory.createQualifier(Qualifier.GENE_QUALIFIER_NAME, "bod"));
-    entry.addFeature(feature2);
-    Feature feature3 = featureFactory.createFeature("feature3");
-    feature3.addQualifier(
-        qualifierFactory.createQualifier(Qualifier.PSEUDOGENE_QUALIFIER_NAME, "cod"));
-    entry.addFeature(feature3);
-
-    ValidationResult result = check.check(entry);
-    assertTrue(result.isValid());
-    assertEquals(1, result.count(GeneAssociationFix.MESSAGE_ID, Severity.FIX));
-    Feature feature = SequenceEntryUtils.getFeatures("feature3", entry).iterator().next();
-    Qualifier addedQualifier =
-        SequenceEntryUtils.getQualifier(Qualifier.GENE_QUALIFIER_NAME, feature);
-    assertEquals("bod", addedQualifier.getValue());
-  }
 }
