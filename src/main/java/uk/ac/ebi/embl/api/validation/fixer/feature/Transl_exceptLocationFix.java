@@ -54,7 +54,7 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
         }
 
         // Remove complement from compound location
-        if(compoundlocation.isComplement()){
+        if (compoundlocation.isComplement()) {
           fixed = true;
           compoundlocation.setComplement(false);
         }
@@ -63,8 +63,7 @@ public class Transl_exceptLocationFix extends FeatureValidationCheck {
         fixedValue.append(locationString);
         fixedValue.append(",aa:" + tQualifier.getAminoAcid().getAbbreviation() + ")");
         tQualifier.setValue(fixedValue.toString());
-        if (fixed)
-          reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
+        if (fixed) reportMessage(Severity.FIX, tequalifier.getOrigin(), Transl_ExceptValueFix_ID);
       } catch (ValidationException e) {
 
       }

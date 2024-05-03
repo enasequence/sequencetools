@@ -29,23 +29,17 @@ public class LineReaderWrapper implements ILineReader {
 
   private ILineReader otherLineReader;
 
-  /**
-   * @param reader
-   */
+  /** @param reader */
   public LineReaderWrapper(BufferedReader reader) {
     this.bufferedReader = reader;
   }
 
-  /**
-   * @param raf
-   */
+  /** @param raf */
   public LineReaderWrapper(RandomAccessFile raf) {
     this.raf = raf;
   }
 
-  /**
-   * @param reader
-   */
+  /** @param reader */
   public LineReaderWrapper(ILineReader reader) {
     this.otherLineReader = reader;
   }

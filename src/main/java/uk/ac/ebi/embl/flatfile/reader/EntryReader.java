@@ -69,9 +69,7 @@ public abstract class EntryReader extends FlatFileEntryReader {
   protected int currentEntryLine = 1;
   protected int nextEntryLine = currentEntryLine;
 
-  /**
-   * @param nextEntryLine the nextEntryLine to set
-   */
+  /** @param nextEntryLine the nextEntryLine to set */
   public final void setNextEntryLine(int nextEntryLine) {
     this.nextEntryLine = nextEntryLine;
   }

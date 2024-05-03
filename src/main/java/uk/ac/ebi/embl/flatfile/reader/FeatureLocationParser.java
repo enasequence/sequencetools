@@ -114,9 +114,9 @@ public class FeatureLocationParser {
     Location location = null;
 
     if (!individualLocationMatcher.matches()) {
-      error("FT.8",locationRange); // Invalid feature location.
+      error("FT.8", locationRange); // Invalid feature location.
       return null;
-    }else{
+    } else {
       boolean isComplement =
           isValue(individualLocationMatcher.group(1)); // Group 1: (\s*complement\s*\()?
       String accession = individualLocationMatcher.group(2); // Group 2: (\w+)

@@ -16,9 +16,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.entry.EntryValidationCheck;
 
-/**
- * @author dlbower
- */
+/** @author dlbower */
 @Description("Entry has no \"source\" feature all entries must have a \"source\" feature.")
 public class SourceFeatureOnlyCheck extends EntryValidationCheck {
 

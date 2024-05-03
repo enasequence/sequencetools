@@ -23,7 +23,6 @@ import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.location.Order;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
-import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 
 public class FeatureTest {
 
