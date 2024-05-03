@@ -22,8 +22,6 @@ public class FeatureLocationParser {
   private final FlatFileLineReader reader;
   private boolean isIgnoreLocationParseError = false;
 
-  private final Object object;
-
   private static final Pattern BASE_PATTERN = Pattern.compile("(\\d+)");
   private static final Pattern RANGE_PATTERN = Pattern.compile("(\\d+)(..)(\\d+)");
 
@@ -37,11 +35,9 @@ public class FeatureLocationParser {
   public FeatureLocationParser(FlatFileLineReader reader, boolean ignoreParseError) {
     this.reader = reader;
     this.isIgnoreLocationParseError = ignoreParseError;
-    this.object = null;
   }
 
-  public FeatureLocationParser(Object object) {
-    this.object = object;
+  public FeatureLocationParser() {
     this.reader = null;
   }
 
