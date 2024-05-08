@@ -1566,4 +1566,50 @@ public class EmblFeatureReaderTest extends EmblReaderTest {
     assertEquals(7, origin.getFirstLineNumber());
     assertEquals(7, origin.getLastLineNumber());
   }
+
+  public void testXref() throws Exception {
+    String featureContent =
+        "FT   CDS             3514..4041\n"
+            + "FT                   /product=\"cytokinetic formin Cdc12\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR010472\"\n"
+            + "FT                   /db_xref=\"UniProtKB/Swiss-Prot:Q9HGP7\"\n"
+            + "FT                   /db_xref=\"GOA:Q10059\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR010472\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR010473\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR011989\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR014768\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR015425\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR016024\"\n"
+            + "FT                   /db_xref=\"InterPro:IPR042201\"";
+
+    // Test xref with flatfile.
+    initLineReader(featureContent);
+    FeatureReader flatfileFeatureReader = new FeatureReader(lineReader);
+    readXrefQualifier(flatfileFeatureReader);
+
+    // Test xref with reduced flatfile.
+    setUp();
+    initLineReader(featureContent);
+    FeatureReader reducedFlatfileFeatureReader = new FeatureReader(lineReader, true, true);
+    readXrefQualifier(reducedFlatfileFeatureReader);
+  }
+
+  public void readXrefQualifier(FeatureReader featureReader) throws IOException {
+
+    ValidationResult result = featureReader.read(entry);
+    Collection<ValidationMessage<Origin>> messages = result.getMessages();
+    for (ValidationMessage<Origin> message : messages) {
+      System.out.println(message.getMessage());
+    }
+    assertEquals(0, result.count(Severity.ERROR));
+    assertNotNull(entry.getFeatures());
+    assertEquals(1, entry.getFeatures().size());
+    Feature feature = entry.getFeatures().get(0);
+    assertEquals("CDS", feature.getName());
+    List<Qualifier> qualifiers = feature.getQualifiers();
+    assertEquals(1, qualifiers.size());
+    Qualifier qualifier = qualifiers.get(0);
+    assertEquals("product", qualifier.getName());
+    assertNotNull(qualifier.getValue());
+  }
 }

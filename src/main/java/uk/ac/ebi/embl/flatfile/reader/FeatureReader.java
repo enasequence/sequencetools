@@ -87,7 +87,9 @@ public class FeatureReader extends FlatFileLineReader {
           && !IgnoreFeatureQualifier.isIgnore(
               feature.getName(), qualifier.getName(), qualifier.getValue())) {
         if (isReducedFlatfile) {
-          feature.addQualifier(qualifier);
+          if (!qualifier.getName().equals("db_xref")) {
+            feature.addQualifier(qualifier);
+          }
         } else if (qualifier.getName().equals("organism")) {
           if (!(feature instanceof SourceFeature)) {
             error("FT.6", qualifier.getName()); // Invalid feature qualifier.
@@ -131,13 +133,6 @@ public class FeatureReader extends FlatFileLineReader {
               error("FT.6", qualifier.getName()); // Invalid feature qualifier.
             } else {
               ((SourceFeature) feature).setTaxId(taxonXrefMatcher.getTaxId());
-            }
-          } else {
-            XRefQualifierMatcher xrefQualifierMatcher = new XRefQualifierMatcher(this);
-            if (!xrefQualifierMatcher.match(qualifier.getValue())) {
-              error("FT.6", qualifier.getName()); // Invalid feature qualifier.
-            } else {
-              feature.addXRef(xrefQualifierMatcher.getXref());
             }
           }
         } else {
