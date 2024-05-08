@@ -12,7 +12,10 @@ package uk.ac.ebi.embl.flatfile.reader.genbank;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.validation.Origin;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -125,6 +128,11 @@ public class GenbankEntryReaderTest extends EmblReaderTest {
             + "      61 aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa\n"
             + "     121 aa\n"
             + "//\n";
+    List<String> nonWrittenXref =
+        Arrays.asList(
+            "/db_xref=\"InterPro:IPR001964\"\n",
+            "/db_xref=\"UniProtKB/Swiss-Prot:P09511\"\n",
+            "/db_xref=\"GI:4809045\"\n");
     setBufferedReader(entryString);
     EntryReader reader = new GenbankEntryReader(bufferedReader, "test file");
     ValidationResult result = reader.read();
@@ -136,8 +144,19 @@ public class GenbankEntryReaderTest extends EmblReaderTest {
     assertEquals(0, result.count(Severity.ERROR));
     StringWriter writer = new StringWriter();
     assertTrue(new GenbankEntryWriter(entry).write(writer));
-    // System.out.print(writer.toString());
-    assertEquals(entryString, writer.toString());
+    String outputString = writer.toString();
+    // taxon xref must be written
+    assertTrue(outputString.contains("/db_xref=\"taxon:10090\"\n"));
+
+    // remove xref from input string before comparing
+    for (String xref : nonWrittenXref) {
+      assertFalse(outputString.contains(xref));
+      // remove \n to xref value
+      Pattern pattern = Pattern.compile("[^\\n]+" + xref);
+      entryString = pattern.matcher(entryString).replaceAll("");
+    }
+
+    assertEquals(entryString, outputString);
   }
 
   public void testReadWGSEntry() throws IOException {
