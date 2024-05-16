@@ -423,16 +423,8 @@ public class CdsTranslator {
 
     CompoundLocation compoundLocation = feature.getLocations();
 
-    // Note that if the compound location is a global complement
-    // then the left and right partiality are reversed between CdsFeature
-    // and Translator.
-    if (compoundLocation.isComplement()) {
-      translator.setFivePrimePartial(compoundLocation.isThreePrimePartial());
-      translator.setThreePrimePartial(compoundLocation.isFivePrimePartial());
-    } else {
-      translator.setFivePrimePartial(compoundLocation.isFivePrimePartial());
-      translator.setThreePrimePartial(compoundLocation.isThreePrimePartial());
-    }
+    translator.setFivePrimePartial(compoundLocation.isFivePrimePartial());
+    translator.setThreePrimePartial(compoundLocation.isThreePrimePartial());
 
     // Set a pseudo translation.
     translator.setNonTranslating(feature.isPseudo());
