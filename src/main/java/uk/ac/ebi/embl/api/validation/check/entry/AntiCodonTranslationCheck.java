@@ -66,15 +66,15 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
                 feature.getQualifiers(Qualifier.ANTICODON_QUALIFIER_NAME);
             for (Qualifier qualifier : anticodonQualifiers) {
               antiCodon = new AnticodonQualifier(qualifier.getValue());
-              boolean anticodonComplement = false;
-              CompoundLocation<Location> location = antiCodon.getLocations();
-              if (location != null) {
-                for (Location anticodonLocation : location.getLocations()) {
+              CompoundLocation<Location> antiCodonCompoundLocation = antiCodon.getLocations();
+              if (antiCodonCompoundLocation != null) {
+                for (Location anticodonLocation : antiCodonCompoundLocation.getLocations()) {
                   if (anticodonLocation instanceof RemoteLocation) return result;
                 }
               }
               SegmentFactory factory = new SegmentFactory();
-              Segment segment = factory.createSegment(entry.getSequence(), location);
+              Segment segment =
+                  factory.createSegment(entry.getSequence(), antiCodonCompoundLocation);
               if (segment == null) continue;
               Sequence sequence = entry.getSequence();
               byte[] anticodonSeq =
@@ -84,11 +84,11 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
               if (sequence.getSequenceByte() == null) {
                 return result;
               }
-
-              for (Location location1 : location.getLocations()) {
-                if (location1 instanceof LocalRange) {
-                  if (location1.isComplement()) {
-                    anticodonComplement = true;
+              boolean anticodonLocationComplement = antiCodonCompoundLocation.isComplement();
+              for (Location antiCodonLocation : antiCodonCompoundLocation.getLocations()) {
+                if (antiCodonLocation instanceof LocalRange) {
+                  if (antiCodonLocation.isComplement()) {
+                    anticodonLocationComplement = true;
                   }
                 }
               }
@@ -98,25 +98,26 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
 
               /** set up the translator with the details from the cds feature */
               try {
-                if (cdsFeatures.size() != 0)
+                if (cdsFeatures.size() != 0) {
                   result.append(
                       trans.configureFromFeature(
                           cdsFeatures.get(0),
                           getEmblEntryValidationPlanProperty().taxonClient.get(),
                           entry));
-                else
+                } else {
                   result.append(
                       trans.configureFromFeature(
                           null, getEmblEntryValidationPlanProperty().taxonClient.get(), entry));
+                }
               } catch (ValidationException e) {
                 reportException(result, e, entry, cdsFeatures.get(0));
               }
               trans.setFivePrimePartial(true);
               TranslationResult translatorResult = new TranslationResult();
-              boolean flocationComplement = feature.getLocations().isComplement();
+              boolean featurelocationComplement = feature.getLocations().isComplement();
               for (Location flocation : feature.getLocations().getLocations()) {
                 if (flocation.isComplement()) {
-                  flocationComplement = true;
+                  featurelocationComplement = true;
                   break;
                 }
               }
@@ -142,8 +143,8 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
                 }
               }
 
-              if ((!flocationComplement && !anticodonComplement)
-                  || (flocationComplement && anticodonComplement)) {
+              if ((!featurelocationComplement && !anticodonLocationComplement)
+                  || (featurelocationComplement && anticodonLocationComplement)) {
                 sequenceString = segment.getReverseComplementSequenceByte();
                 trans.translateCodons(sequenceString, translatorResult);
 
@@ -153,23 +154,10 @@ public class AntiCodonTranslationCheck extends EntryValidationCheck {
               }
 
               Vector<Codon> codons = translatorResult.getCodons();
-              /*if(codons==null)
-              {
-              	return result;
-              }*/
               char resultaa = 0;
               for (Codon codon : codons) {
                 resultaa = codon.getAminoAcid();
               }
-              char letter = antiCodon.getAminoAcid().getLetter();
-
-              // System.out.println("seq string: " +
-              // sequenceString.toUpperCase() +
-              // " anticodon value:"
-              // +
-              // antiCodon.getAminoAcid().getAbbreviation().toUpperCase()
-              // + " result letter: " + resultaa
-              // + "  original seq letter: " + letter);
 
               if (antiCodon.getAminoAcid().getLetter() != resultaa) {
                 reportError(
