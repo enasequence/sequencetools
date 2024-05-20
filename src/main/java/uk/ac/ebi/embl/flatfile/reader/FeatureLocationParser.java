@@ -82,12 +82,14 @@ public class FeatureLocationParser {
         Location location = getLocation(region);
         if (null != location) {
 
-          // Log error and return when locations other than first and last have partiality.
-          if (index != 0 && index != regions.size() - 1) {
-            if (location.isThreePrimePartial() || location.isFivePrimePartial()) {
-              if (!isIgnoreLocationParseError) {
-                error("FT.8", region);
-                return null;
+          // For non order operation, log error and return when locations other than first and last have partiality.
+          if(operator!=null && !operator.equals("order")) {
+            if (index != 0 && index != regions.size() - 1) {
+              if (location.isThreePrimePartial() || location.isFivePrimePartial()) {
+                if (!isIgnoreLocationParseError) {
+                  error("FT.8", region);
+                  return null;
+                }
               }
             }
           }
