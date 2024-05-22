@@ -17,6 +17,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -81,6 +82,8 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck {
   static final int DEFAULT_SECOND = 0;
 
   private static DateTimeFormatter formatter(String pattern) {
+    // Using the US Locale, as there was a change in Java 17 where the UK locale recognizes "Sept"
+    // as the correct abbreviation for September instead of "Sep".
     return new DateTimeFormatterBuilder()
         .appendPattern(pattern)
         .parseDefaulting(ChronoField.MONTH_OF_YEAR, DEFAULT_MONTH)
@@ -88,7 +91,7 @@ public class CollectionDateQualifierCheck extends FeatureValidationCheck {
         .parseDefaulting(ChronoField.HOUR_OF_DAY, DEFAULT_HOUR)
         .parseDefaulting(ChronoField.MINUTE_OF_HOUR, DEFAULT_MINUTE)
         .parseDefaulting(ChronoField.SECOND_OF_MINUTE, DEFAULT_SECOND)
-        .toFormatter();
+        .toFormatter(Locale.US);
   }
 
   public ValidationResult check(Feature feature) {

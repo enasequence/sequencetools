@@ -16,16 +16,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.EnumSet;
-
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.EntryFactory;
 import uk.ac.ebi.embl.api.entry.location.CompoundLocation;
 import uk.ac.ebi.embl.api.entry.location.Location;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.flatfile.reader.embl.ACReader;
 import uk.ac.ebi.embl.flatfile.reader.embl.EmblLineReader;
 import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
@@ -375,8 +371,10 @@ public class CompoundLocationMatcherTest {
     FeatureReader featureReader = new FeatureReader(lineReader);
     ValidationResult result = featureReader.read(entry);
     assertFalse(result.isValid());
-    assertEquals(result.getMessages().stream().filter(m-> m.getMessageKey().equals("FT.8")).count(),1);
-    assertEquals(result.getMessages().stream().filter(m-> m.getMessageKey().equals("FT.17")).count(),1);
+    assertEquals(
+        result.getMessages().stream().filter(m -> m.getMessageKey().equals("FT.8")).count(), 1);
+    assertEquals(
+        result.getMessages().stream().filter(m -> m.getMessageKey().equals("FT.17")).count(), 1);
 
     // Location partiality in the middle location and order operation
     initLineReader("     gene            order(2,<4,5)");
@@ -386,7 +384,7 @@ public class CompoundLocationMatcherTest {
   }
 
   protected void initLineReader(String string) throws IOException {
-      lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)));
-      lineReader.readLine();
+    lineReader = new EmblLineReader(new BufferedReader(new StringReader(string)));
+    lineReader.readLine();
   }
 }

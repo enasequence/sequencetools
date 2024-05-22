@@ -110,6 +110,7 @@ public class CollectionDateQualifierCheckTest {
   @Test
   public void testValidDate() {
     testValidDate("21-Oct-1952", LocalDateTime.of(1952, 10, 21, DEFAULT_HOUR, DEFAULT_MINUTE));
+    testValidDate("23-Sep-2021", LocalDateTime.of(2021, 9, 23, DEFAULT_HOUR, DEFAULT_MINUTE));
     testValidDate(
         "Oct-1952", LocalDateTime.of(1952, 10, DEFAULT_DAY, DEFAULT_HOUR, DEFAULT_MINUTE));
     testValidDate(
