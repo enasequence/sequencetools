@@ -61,10 +61,10 @@ public enum ValidationUnit {
       StrainQualifierValueFix.class,
       Lat_lonValueFix.class,
       QualifierValueFix.class,
+      FeatureQualifierRenameFix.class,
       CountryQualifierFix.class,
       MoleculeTypeAndQualifierFix.class,
       ExclusiveQualifierTransformToNoteQualifierFix.class,
-      FeatureQualifierRenameFix.class,
       TaxonomicDivisionNotQualifierFix.class,
       // ENA-6041: Removing the fix as created issue in putff.
       // This fix can be totally removed if there is no use of it
