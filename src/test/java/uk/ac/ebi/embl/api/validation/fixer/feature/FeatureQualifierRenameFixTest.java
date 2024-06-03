@@ -87,7 +87,7 @@ public class FeatureQualifierRenameFixTest {
 
   @Test
   public void testCheck_geo_loc_name_QualifierName() {
-    feature.setSingleQualifier(Qualifier.GEO_LOCATION_NAME);
+    feature.setSingleQualifier(Qualifier.GEO_LOCATION_NAME_QUALIFIER);
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("FeatureQualifierRenameFix", Severity.FIX));
   }
