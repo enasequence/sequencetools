@@ -23,9 +23,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.validation.*;
 
-public class CountryQualifierFixTest {
+public class GeoLocationQualifierFixTest {
 
-  private CountryQualifierFix check;
+  private GeoLocationQualifierFix check;
   public FeatureFactory featureFactory;
 
   @Before
@@ -46,7 +46,7 @@ public class CountryQualifierFixTest {
         GlobalDataSetFile.FEATURE_REGEX_GROUPS,
         feature_regex_groups_row1,
         feature_regex_groups_row2);
-    check = new CountryQualifierFix();
+    check = new GeoLocationQualifierFix();
   }
 
   @After
@@ -74,39 +74,39 @@ public class CountryQualifierFixTest {
   @Test
   public void testCheckCountryQualifierWithValidValue() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Brazil");
-    assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Brazil");
+    assertEquals(1, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
     assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
   public void testCheckCountryQualifierWithValidValueWithComma() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Micronesia, Federated States of");
-    assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Micronesia, Federated States of");
+    assertEquals(1, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
     assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
   public void testCheckCountryQualifierWithRegionCounty() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "USA:Washington,Spokane County");
-    assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "USA:Washington,Spokane County");
+    assertEquals(1, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
     assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
   public void testCheckCountryQualifierWithRegion() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Mexico: Mexico City");
-    assertEquals(1, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Mexico: Mexico City");
+    assertEquals(1, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
     assertEquals(0, check.check(feature).getMessages().size());
   }
 
   @Test
   public void testCheckCountryQualifierWithInvalidValue() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Switz");
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Switz");
     assertEquals(0, feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).size());
     ValidationResult result = check.check(feature);
     // note has been added
@@ -114,28 +114,28 @@ public class CountryQualifierFixTest {
     assertEquals("Switz", feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).get(0).getValue());
     assertEquals(1, result.getMessages().size());
     // Country has been removed
-    assertEquals(1, result.count("CountryQualifierFix_1", Severity.FIX));
-    assertEquals(0, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    assertEquals(1, result.count("GeoLocationQualifierFix_1", Severity.FIX));
+    assertEquals(0, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
   }
 
   @Test
   public void testCheckCountryQualifierWithColonChar() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan: ");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Japan:");
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Japan: ");
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Japan:");
 
-    assertEquals(2, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    assertEquals(2, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
     assertEquals(2, check.check(feature).getMessages().size());
     assertEquals(
-        "Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(0).getValue());
+        "Japan", feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).get(0).getValue());
     assertEquals(
-        "Japan", feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).get(1).getValue());
+        "Japan", feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).get(1).getValue());
   }
 
   @Test
   public void testCheckCountryQualifierInvalidWithNoteInFeature() {
     Feature feature = featureFactory.createFeature("source");
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Switz");
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Switz");
     QualifierFactory qualifierFactory = new QualifierFactory();
     Qualifier noteQualifier =
         qualifierFactory.createQualifier(Qualifier.NOTE_QUALIFIER_NAME, "existing note");
@@ -150,7 +150,7 @@ public class CountryQualifierFixTest {
         feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME).get(0).getValue());
     assertEquals(1, result.getMessages().size());
     // Country has been removed
-    assertEquals(1, result.count("CountryQualifierFix_1", Severity.FIX));
-    assertEquals(0, feature.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME).size());
+    assertEquals(1, result.count("GeoLocationQualifierFix_1", Severity.FIX));
+    assertEquals(0, feature.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME).size());
   }
 }

@@ -2,3 +2,4 @@
 
 mobile_element	mobile_element_type
 label	note
+country	geo_loc_name

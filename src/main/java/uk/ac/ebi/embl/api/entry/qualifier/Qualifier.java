@@ -87,6 +87,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
   public static final String HOST_QUALIFIER_NAME = "host";
   public static final String OPERON_QUALIFIER_NAME = "operon";
   public static final String COUNTRY_QUALIFIER_NAME = "country";
+  public static final String GEO_LOCATION_QUALIFIER_NAME = "geo_loc_name";
   public static final String REGULATORY_CLASS_QUALIFIER_NAME = "regulatory_class";
   public static final String ALTITUDE_QUALIFIER_NAME = "altitude";
   public static final String ARTIFICIAL_LOCATION = "artificial_location";

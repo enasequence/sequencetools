@@ -34,7 +34,7 @@ public class SourceFeatureUtilsTest {
         "2020-03-09",
         source.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
     assertEquals(
-        "Spain:Valencia", source.getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME).getValue());
+        "Spain:Valencia", source.getSingleQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME).getValue());
     // expects direction (N) added to latitude, and longitude with existing direction returned as it
     // is - both cases checked
     assertEquals(

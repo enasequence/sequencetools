@@ -64,7 +64,7 @@ public class Isolation_sourceQualifierFix extends FeatureValidationCheck {
 
     // country values
     for (DataRow dataRow : qualifierValueSet.getRows()) {
-      if (dataRow.getString(0).equals(Qualifier.COUNTRY_QUALIFIER_NAME)) {
+      if (dataRow.getString(0).equals(Qualifier.GEO_LOCATION_QUALIFIER_NAME)) {
         countryList = Arrays.asList(dataRow.getStringArray(3));
       }
     }
@@ -73,7 +73,7 @@ public class Isolation_sourceQualifierFix extends FeatureValidationCheck {
     for (DataRow dataRow : qualifierRegexSet.getRows()) {
       if (dataRow.getString(0).equals(Qualifier.LAT_LON_QUALIFIER_NAME)) {
         latLonRegex = dataRow.getString(4);
-      } else if (dataRow.getString(0).equals(Qualifier.COUNTRY_QUALIFIER_NAME)) {
+      } else if (dataRow.getString(0).equals(Qualifier.GEO_LOCATION_QUALIFIER_NAME)) {
         countryRegex = dataRow.getString(4);
       }
     }
@@ -93,7 +93,7 @@ public class Isolation_sourceQualifierFix extends FeatureValidationCheck {
         if (countryPattern != null
             && (matcher = countryPattern.matcher(isolationQualifierValue)).matches()
             && countryList.contains(matcher.group(1))) {
-          feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, isolationQualifierValue);
+          feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, isolationQualifierValue);
           feature.removeQualifier(isolation_sourceQualifier);
           reportMessage(
               Severity.FIX,

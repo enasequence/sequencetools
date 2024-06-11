@@ -174,7 +174,7 @@ public class SubmissionValidatorTest {
     assertEquals(
         "Estonia:Järva maakond",
         source
-            .getSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME)
+            .getSingleQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME)
             .getValue()); // non-ascii not fixed at this point
 
     for (uk.ac.ebi.embl.api.validation.submission.SubmissionFile f :

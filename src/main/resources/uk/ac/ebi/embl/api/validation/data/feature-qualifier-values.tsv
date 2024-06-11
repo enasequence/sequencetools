@@ -24,6 +24,7 @@ collected_by	N	Y	Y	(null)	25	(null)
 collection_date	N	Y	Y	(null)	26	DD-Mmm-YYYY, Mmm-YYYY or YYYY, e.g. 21-Oct-1952, Oct-1952, 1952  
 compare	N	Y	N	\s*([^.]+)(?:(\.)(\d+)){0,1}\s*$	66	(null)
 country	N	Y	Y	^\s*([^:]+)(?:\s*(:)\s*([^,]+)(?:\s*(,)\s*(.+)){0,1}){0,1}\s*$	21	(null)
+geo_loc_name	N	Y	Y	^\s*([^:]+)(?:\s*(:)\s*([^,]+)(?:\s*(,)\s*(.+)){0,1}){0,1}\s*$	21	(null)
 cultivar	N	Y	Y	(null)	15	(null)
 culture_collection	N	Y	Y	^\s*([^:]+)\s*(:)(?:([^:]+)\s*(:)){0,1}\s*([^:]+)\s*$	96	(null)
 db_xref	N	N	Y	(null)	86	(null)

@@ -38,9 +38,10 @@ public class FeatureQualifierRenameFixTest {
     DataRow dataRow1 = new DataRow("organism", "qualifier1");
     DataRow dataRow2 = new DataRow("strain", "qualifier2");
     DataRow dataRow3 = new DataRow("label", "note");
+    DataRow dataRow4 = new DataRow("country", "geo_loc_name");
 
     GlobalDataSets.addTestDataSet(
-        GlobalDataSetFile.FEATURE_QUALIFIER_RENAME, dataRow1, dataRow2, dataRow3);
+        GlobalDataSetFile.FEATURE_QUALIFIER_RENAME, dataRow1, dataRow2, dataRow3,dataRow4);
     check = new FeatureQualifierRenameFix();
   }
 
@@ -80,6 +81,13 @@ public class FeatureQualifierRenameFixTest {
   public void testCheck_labelQualifierName() {
 
     feature.setSingleQualifier(Qualifier.LABEL_QUALIFIER_NAME);
+    ValidationResult validationResult = check.check(feature);
+    assertEquals(1, validationResult.count("FeatureQualifierRenameFix", Severity.FIX));
+  }
+
+  @Test
+  public void testCheck_geo_loc_name_QualifierName() {
+    feature.setSingleQualifier(Qualifier.COUNTRY_QUALIFIER_NAME);
     ValidationResult validationResult = check.check(feature);
     assertEquals(1, validationResult.count("FeatureQualifierRenameFix", Severity.FIX));
   }

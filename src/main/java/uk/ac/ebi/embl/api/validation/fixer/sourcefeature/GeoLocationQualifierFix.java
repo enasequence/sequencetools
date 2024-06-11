@@ -44,9 +44,9 @@ import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
       ValidationScope.EPO_PEPTIDE,
       ValidationScope.INSDC
     })
-public class CountryQualifierFix extends FeatureValidationCheck {
-  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_1 = "CountryQualifierFix_1";
-  private static final String COUNTRY_QUALIFIER_VALUE_FIX_ID_2 = "CountryQualifierFix_2";
+public class GeoLocationQualifierFix extends FeatureValidationCheck {
+  private static final String GEO_LOCATION_QUALIFIER_FIX_1 = "GeoLocationQualifierFix_1";
+  private static final String GEO_LOCATION_QUALIFIER_FIX_2 = "GeoLocationQualifierFix_2";
   private static final Pattern TRAILING_COLON_PATTERN =
       Pattern.compile("[\\s!@#$%^&*(),.?\":{}|<>_+=\\[\\]-]+$");
 
@@ -75,7 +75,7 @@ public class CountryQualifierFix extends FeatureValidationCheck {
     if (null != feature && feature instanceof SourceFeature) {
 
       SourceFeature source = (SourceFeature) feature;
-      List<Qualifier> countryQualifiers = source.getQualifiers(Qualifier.COUNTRY_QUALIFIER_NAME);
+      List<Qualifier> countryQualifiers = source.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME);
       for (Qualifier countryQualifier : countryQualifiers) {
         String countryQualifierValue = countryQualifier.getValue();
         if (countries.contains(countryQualifierValue.toLowerCase())) {
@@ -89,8 +89,8 @@ public class CountryQualifierFix extends FeatureValidationCheck {
           reportMessage(
               Severity.FIX,
               countryQualifier.getOrigin(),
-              COUNTRY_QUALIFIER_VALUE_FIX_ID_2,
-              Qualifier.COUNTRY_QUALIFIER_NAME,
+                  GEO_LOCATION_QUALIFIER_FIX_2,
+              Qualifier.GEO_LOCATION_QUALIFIER_NAME,
               countryQualifier.getValue(),
               country);
         }
@@ -112,8 +112,8 @@ public class CountryQualifierFix extends FeatureValidationCheck {
           reportMessage(
               Severity.FIX,
               countryQualifier.getOrigin(),
-              COUNTRY_QUALIFIER_VALUE_FIX_ID_1,
-              Qualifier.COUNTRY_QUALIFIER_NAME,
+                  GEO_LOCATION_QUALIFIER_FIX_1,
+              Qualifier.GEO_LOCATION_QUALIFIER_NAME,
               countryQualifier.getValue());
         }
       }

@@ -42,7 +42,7 @@ public class SourceFeatureUtils {
     qualifierSynonyms.put("collection date", Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
     qualifierSynonyms.put("gisaid accession id", Qualifier.NOTE_QUALIFIER_NAME);
     covid19RequiredQuals.add(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.COUNTRY_QUALIFIER_NAME);
+    covid19RequiredQuals.add(Qualifier.GEO_LOCATION_QUALIFIER_NAME);
     covid19RequiredQuals.add(Qualifier.LAT_LON_QUALIFIER_NAME);
     covid19RequiredQuals.add(Qualifier.HOST_QUALIFIER_NAME);
     covid19RequiredQuals.add(Qualifier.NOTE_QUALIFIER_NAME);
@@ -175,7 +175,7 @@ public class SourceFeatureUtils {
     }
     if (country != null || region != null) {
       addSourceQualifier(
-          Qualifier.COUNTRY_QUALIFIER_NAME,
+          Qualifier.GEO_LOCATION_QUALIFIER_NAME,
           country == null ? region : region == null ? country : country + ":" + region,
           sourceFeature);
     }

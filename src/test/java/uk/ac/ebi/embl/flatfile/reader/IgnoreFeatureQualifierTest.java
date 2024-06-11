@@ -24,7 +24,7 @@ public class IgnoreFeatureQualifierTest extends TestCase {
       assertTrue(
           IgnoreFeatureQualifier.isIgnore(
               Feature.SOURCE_FEATURE_NAME,
-              Qualifier.COUNTRY_QUALIFIER_NAME,
+              Qualifier.GEO_LOCATION_QUALIFIER_NAME,
               missingQualifierValue));
       assertTrue(
           IgnoreFeatureQualifier.isIgnore(
@@ -47,7 +47,7 @@ public class IgnoreFeatureQualifierTest extends TestCase {
 
     assertFalse(
         IgnoreFeatureQualifier.isIgnore(
-            Feature.SOURCE_FEATURE_NAME, Qualifier.COUNTRY_QUALIFIER_NAME, "India"));
+            Feature.SOURCE_FEATURE_NAME, Qualifier.GEO_LOCATION_QUALIFIER_NAME, "India"));
     assertFalse(
         IgnoreFeatureQualifier.isIgnore(
             Feature.SOURCE_FEATURE_NAME, Qualifier.COLLECTION_DATE_QUALIFIER_NAME, "18-May-2023"));
