@@ -33,9 +33,9 @@ public class QualifierValueFixTest {
   public void setUp() {
     ValidationMessageManager.addBundle(ValidationMessageManager.STANDARD_VALIDATION_BUNDLE);
     featureFactory = new FeatureFactory();
-    DataRow dataRow1 = new DataRow("country", "East Timor", "Timor-Leste");
-    DataRow dataRow2 = new DataRow("country", "UK", "United Kingdom");
-    DataRow dataRow3 = new DataRow("country", "Micronesia", "Micronesia, Federated States of");
+    DataRow dataRow1 = new DataRow("geo_loc_name", "East Timor", "Timor-Leste");
+    DataRow dataRow2 = new DataRow("geo_loc_name", "UK", "United Kingdom");
+    DataRow dataRow3 = new DataRow("geo_loc_name", "Micronesia", "Micronesia, Federated States of");
     GlobalDataSets.addTestDataSet(
         GlobalDataSetFile.QUALIFIER_VALUE_TO_FIX_VALUE, dataRow1, dataRow2, dataRow3);
     feature = featureFactory.createFeature(Feature.CDS_FEATURE_NAME);
@@ -101,11 +101,11 @@ public class QualifierValueFixTest {
 
   @Test
   public void testCheck_qualifierValueFixValueWithComma() {
-    feature.addQualifier(Qualifier.COUNTRY_QUALIFIER_NAME, "Micronesia");
+    feature.addQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, "Micronesia");
     ValidationResult result = check.check(feature);
     assertEquals(1, result.count("QualifierValueFix_1", Severity.FIX));
     assertEquals(
         "Micronesia, Federated States of",
-        feature.getSingleQualifierValue(Qualifier.COUNTRY_QUALIFIER_NAME));
+        feature.getSingleQualifierValue(Qualifier.GEO_LOCATION_QUALIFIER_NAME));
   }
 }

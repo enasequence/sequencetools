@@ -1080,7 +1080,7 @@ public class EmblEntryReaderTest extends EmblReaderTest {
               + "FT   source          1..335\n"
               + "FT                   /organism=\"Cauliflower mosaic virus\"\n"
               + "FT                   /mol_type=\"unassigned DNA\"\n"
-              + "FT                   /country="
+              + "FT                   /geo_loc_name="
               + missingValues
               + "\n"
               + "FT                   /collection_date="

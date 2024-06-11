@@ -22,7 +22,7 @@ public class IgnoreFeatureQualifier {
           new IgnoreFeatureQualifier(
               Feature.REPEAT_REGION, Qualifier.LOCUS_TAG_QUALIFIER_NAME, false),
           new IgnoreFeatureQualifier(
-              Feature.SOURCE_FEATURE_NAME, Qualifier.COUNTRY_QUALIFIER_NAME, true),
+              Feature.SOURCE_FEATURE_NAME, Qualifier.GEO_LOCATION_QUALIFIER_NAME, true),
           new IgnoreFeatureQualifier(
               Feature.SOURCE_FEATURE_NAME, Qualifier.COLLECTION_DATE_QUALIFIER_NAME, true),
           new IgnoreFeatureQualifier(

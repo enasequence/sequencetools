@@ -864,6 +864,7 @@ source	db_xref	N	N	N
 source	focus	N	Y	N
 source	specimen_voucher	N	N	N
 source	country	N	N	N
+source	geo_loc_name	N	N	N
 source	organelle	N	Y	N
 source	serovar	N	Y	N
 source	environmental_sample	N	Y	N
