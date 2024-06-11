@@ -53,6 +53,7 @@ public enum ValidationUnit {
       UnbalancedParenthesesCheck.class,
       ChromosomeSourceQualifierCheck.class),
   SOURCE_FEATURE_FIXES(
+      GeoLocationQualifierFix.class,
       CollectionDateQualifierFix.class,
       FeatureQualifierRenameFix.class,
       Isolation_sourceQualifierFix.class,
@@ -62,7 +63,6 @@ public enum ValidationUnit {
       StrainQualifierValueFix.class,
       Lat_lonValueFix.class,
       QualifierValueFix.class,
-      GeoLocationQualifierFix.class,
       MoleculeTypeAndQualifierFix.class,
       ExclusiveQualifierTransformToNoteQualifierFix.class,
       TaxonomicDivisionNotQualifierFix.class,
@@ -162,6 +162,7 @@ public enum ValidationUnit {
       ScaffoldComponentCheck.class, // only for scaffolds
       CircularRNAQualifierCheck.class),
   SEQUENCE_ENTRY_FIXES(
+      GeoLocationQualifierFix.class, // include for all
       HoldDateFix.class, // include for all
       ReferencePositionFix.class, // include for all
       DataclassFix.class, // include for all
@@ -193,7 +194,6 @@ public enum ValidationUnit {
       Linkage_evidenceFix.class, // exclude for master
       ObsoleteFeatureFix.class, // exclude for master
       QualifierValueFix.class, // include for all
-      GeoLocationQualifierFix.class, // include for all
       EC_numberValueFix.class, // exclude for master
       // ENA-6041: Removing the fix as created issue in putff.
       // This fix can be totally removed if there is no use of it
