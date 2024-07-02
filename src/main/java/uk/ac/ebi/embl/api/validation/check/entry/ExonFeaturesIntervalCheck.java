@@ -33,7 +33,10 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck {
 
   public ValidationResult check(Entry entry) {
     result = new ValidationResult();
+
     List<Feature> exonFeatures = SequenceEntryUtils.getFeatures(Feature.EXON_FEATURE_NAME, entry);
+    // Sorting to get the same order as in FTWriter.write()
+    Collections.sort(exonFeatures);
     List<Feature> filteredExonFeatures = new ArrayList<>();
 
     // filter non remote location exons
