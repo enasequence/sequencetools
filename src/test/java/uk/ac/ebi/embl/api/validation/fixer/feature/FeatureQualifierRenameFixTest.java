@@ -41,7 +41,7 @@ public class FeatureQualifierRenameFixTest {
     DataRow dataRow4 = new DataRow("country", "geo_loc_name");
 
     GlobalDataSets.addTestDataSet(
-        GlobalDataSetFile.FEATURE_QUALIFIER_RENAME, dataRow1, dataRow2, dataRow3,dataRow4);
+        GlobalDataSetFile.FEATURE_QUALIFIER_RENAME, dataRow1, dataRow2, dataRow3, dataRow4);
     check = new FeatureQualifierRenameFix();
   }
 

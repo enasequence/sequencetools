@@ -75,7 +75,8 @@ public class GeoLocationQualifierFix extends FeatureValidationCheck {
     if (null != feature && feature instanceof SourceFeature) {
 
       SourceFeature source = (SourceFeature) feature;
-      List<Qualifier> countryQualifiers = source.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME);
+      List<Qualifier> countryQualifiers =
+          source.getQualifiers(Qualifier.GEO_LOCATION_QUALIFIER_NAME);
       for (Qualifier countryQualifier : countryQualifiers) {
         String countryQualifierValue = countryQualifier.getValue();
         if (countries.contains(countryQualifierValue.toLowerCase())) {
@@ -89,7 +90,7 @@ public class GeoLocationQualifierFix extends FeatureValidationCheck {
           reportMessage(
               Severity.FIX,
               countryQualifier.getOrigin(),
-                  GEO_LOCATION_QUALIFIER_FIX_2,
+              GEO_LOCATION_QUALIFIER_FIX_2,
               Qualifier.GEO_LOCATION_QUALIFIER_NAME,
               countryQualifier.getValue(),
               country);
@@ -112,7 +113,7 @@ public class GeoLocationQualifierFix extends FeatureValidationCheck {
           reportMessage(
               Severity.FIX,
               countryQualifier.getOrigin(),
-                  GEO_LOCATION_QUALIFIER_FIX_1,
+              GEO_LOCATION_QUALIFIER_FIX_1,
               Qualifier.GEO_LOCATION_QUALIFIER_NAME,
               countryQualifier.getValue());
         }
