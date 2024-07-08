@@ -28,10 +28,7 @@ import uk.ac.ebi.embl.api.entry.AgpRow;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.Text;
-import uk.ac.ebi.embl.api.entry.feature.CdsFeature;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
-import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
-import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
+import uk.ac.ebi.embl.api.entry.feature.*;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
 import uk.ac.ebi.embl.api.entry.location.Location;
@@ -996,7 +993,7 @@ public abstract class FileValidationCheck {
     QualifierFactory qualifierFactory = new QualifierFactory();
     for (Feature feature : entry.getFeatures()) {
       // assign new protein_id
-      if (feature instanceof CdsFeature) {
+      if (feature instanceof CdsFeature && !(feature instanceof PeptideFeature)) {
         try {
           String proteinId =
               EntryDAOUtilsImpl.getEntryDAOUtilsImpl(getOptions().enproConnection.get())
