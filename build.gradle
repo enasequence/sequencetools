@@ -64,7 +64,7 @@ repositories {
 
 dependencies {
     api( 'uk.ac.ebi.ena.webin-cli:webin-cli-validator:1.+' )
-    api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.0.14')
+    api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.+')
 
     implementation 'org.slf4j:slf4j-api:1.7.28'
 
