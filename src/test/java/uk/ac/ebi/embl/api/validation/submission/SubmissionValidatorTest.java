@@ -44,8 +44,6 @@ public class SubmissionValidatorTest {
         new SubmissionFile(
             GenomeManifest.FileType.FASTA, new File(fasta), new File(fasta + ".report")));
     submissionFiles.add(
-        new SubmissionFile(GenomeManifest.FileType.AGP, new File(agp), new File(agp + ".report")));
-    submissionFiles.add(
         new SubmissionFile(
             GenomeManifest.FileType.UNLOCALISED_LIST,
             new File(unlocalised),
@@ -79,7 +77,7 @@ public class SubmissionValidatorTest {
     assertEquals("genomic DNA", infoEntry.getMoleculeType());
     assertEquals("SPLJ", options.locusTagPrefixes.get().get(0));
     assertEquals(Context.genome, options.context.get());
-    assertEquals(3, options.submissionFiles.get().getFiles().size());
+    assertEquals(2, options.submissionFiles.get().getFiles().size());
     assertEquals(new File("/home/reports").getAbsolutePath(), options.reportDir.get());
     assertEquals(new File("/home/process").getAbsolutePath(), options.processDir.get());
     SourceFeature source = options.source.get();
@@ -117,8 +115,6 @@ public class SubmissionValidatorTest {
     submissionFiles.add(
         new SubmissionFile(
             GenomeManifest.FileType.FASTA, new File(fasta), new File(fasta + ".report")));
-    submissionFiles.add(
-        new SubmissionFile(GenomeManifest.FileType.AGP, new File(agp), new File(agp + ".report")));
     submissionFiles.add(
         new SubmissionFile(
             GenomeManifest.FileType.UNLOCALISED_LIST,
@@ -160,7 +156,7 @@ public class SubmissionValidatorTest {
     assertEquals("genomic DNA", infoEntry.getMoleculeType());
     assertEquals("SPLJ", options.locusTagPrefixes.get().get(0));
     assertEquals(Context.genome, options.context.get());
-    assertEquals(3, options.submissionFiles.get().getFiles().size());
+    assertEquals(2, options.submissionFiles.get().getFiles().size());
     assertEquals(new File("/home/reports").getAbsolutePath(), options.reportDir.get());
     assertEquals(new File("/home/process").getAbsolutePath(), options.processDir.get());
     SourceFeature source = options.source.get();
@@ -278,8 +274,6 @@ public class SubmissionValidatorTest {
     submissionFiles.add(
         new SubmissionFile(
             GenomeManifest.FileType.FASTA, new File(fasta), new File(fasta + ".report")));
-    submissionFiles.add(
-        new SubmissionFile(GenomeManifest.FileType.AGP, new File(agp), new File(agp + ".report")));
     submissionFiles.add(
         new SubmissionFile(
             GenomeManifest.FileType.UNLOCALISED_LIST,

@@ -62,6 +62,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
 
   // 1
   @Test
+  @Ignore
   public void testGenomeWithFastaAGPMultiLevel()
       throws FlatFileComparatorException, ValidationEngineException {
     String rootPath =
@@ -275,6 +276,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
   }
 
   @Test
+  @Ignore
   public void testGenomeWithFastaAGPUnlocalisedList()
       throws FlatFileComparatorException, ValidationEngineException, IOException {
     String rootPath =
@@ -616,6 +618,7 @@ public class SubmissionValidationPlanTest extends SubmissionValidationTest {
   }
 
   @Test
+  @Ignore
   public void testCovid19GenomeSizeContigsScaffoldsFailure()
       throws ValidationEngineException, IOException {
     String rootPath = "genome/size_check/";

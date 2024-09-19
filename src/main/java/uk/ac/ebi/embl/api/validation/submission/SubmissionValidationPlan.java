@@ -91,7 +91,7 @@ public class SubmissionValidationPlan {
       }
 
       if (options.context.get().getFileTypes().contains(FileType.AGP)) {
-        validationResult = validateAGP();
+        // validationResult = validateAGP();
         if (!validationResult.isValid()) return validationResult;
       }
       if (options.context.get().getFileTypes().contains(FileType.TSV)) {

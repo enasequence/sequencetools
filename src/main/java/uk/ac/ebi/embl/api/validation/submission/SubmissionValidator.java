@@ -252,17 +252,6 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
                         file.getReportFile())));
     manifest
         .files()
-        .get(GenomeManifest.FileType.AGP)
-        .forEach(
-            file ->
-                submissionFiles.addFile(
-                    new SubmissionFile(
-                        SubmissionFile.FileType.AGP,
-                        file.getFile(),
-                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
-                        file.getReportFile())));
-    manifest
-        .files()
         .get(GenomeManifest.FileType.FLATFILE)
         .forEach(
             file ->
