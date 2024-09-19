@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
@@ -183,7 +184,7 @@ public abstract class SubmissionValidationTest {
               .toString();
       LocalDateTime localDateTime = LocalDateTime.now();
       String currentDateStr =
-          localDateTime.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")).toUpperCase();
+          localDateTime.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.US)).toUpperCase();
       String updatedFileContent =
           fileContent.replaceAll(
               "Submitted \\([0-9]{2}-[A-Za-z]{3}-[0-9]{4}\\)",

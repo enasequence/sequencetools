@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation.helper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,15 +22,14 @@ import uk.ac.ebi.embl.api.entry.Text;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
-import uk.ac.ebi.embl.api.entry.location.LocalRange;
-import uk.ac.ebi.embl.api.entry.location.Location;
-import uk.ac.ebi.embl.api.entry.location.LocationFactory;
-import uk.ac.ebi.embl.api.entry.location.Order;
+import uk.ac.ebi.embl.api.entry.location.*;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.SequenceEntryUtils;
 import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 public class EntryUtils {
 
@@ -152,13 +152,13 @@ public class EntryUtils {
       String componentId = agpRow.getComponent_id();
 
       if (agpRow.isGap()) {
-        Feature assembly_gapFeature =
+        Feature assemblyGapFeature =
             featureFactory.createFeature(Feature.ASSEMBLY_GAP_FEATURE_NAME);
         Order<Location> locations = new Order<Location>();
         LocalRange location = locationFactory.createLocalRange(object_begin, object_end);
         locations.addLocation(location);
         locations.setSimpleLocation(true);
-        assembly_gapFeature.setLocations(locations);
+        assemblyGapFeature.setLocations(locations);
         Qualifier gap_typeQualifier =
             qualifierFactory.createQualifier(Qualifier.GAP_TYPE_QUALIFIER_NAME);
         if ("repeat".equals(gap_type)) {
@@ -174,12 +174,12 @@ public class EntryUtils {
                 qualifierFactory.createQualifier(Qualifier.LINKAGE_EVIDENCE_QUALIFIER_NAME);
             String linkage_evidenceQualifierValue = linkageEvidence.get(linkage_evidence);
             linkage_evidenceQualifier.setValue(linkage_evidenceQualifierValue);
-            assembly_gapFeature.addQualifier(linkage_evidenceQualifier);
+            assemblyGapFeature.addQualifier(linkage_evidenceQualifier);
           }
         }
         String gapTypeValue = gapType.get(gap_type);
         gap_typeQualifier.setValue(gapTypeValue);
-        assembly_gapFeature.addQualifier(gap_typeQualifier);
+        assemblyGapFeature.addQualifier(gap_typeQualifier);
         Qualifier estimated_lengthQualifier =
             qualifierFactory.createQualifier(Qualifier.ESTIMATED_LENGTH_QUALIFIER_NAME);
         if ("U".equals(agpRow.getComponent_type_id())) {
@@ -189,8 +189,11 @@ public class EntryUtils {
           estimated_lengthQualifier.setValue(gap_length.toString());
           components.add(locationFactory.createGap(agpRow.getGap_length()));
         }
-        assembly_gapFeature.addQualifier(estimated_lengthQualifier);
-        entry.addFeature(assembly_gapFeature);
+        assemblyGapFeature.addQualifier(estimated_lengthQualifier);
+        // Add assembly_gap feature only if location is unique.
+        if (!isGapFeatureAvailable(assemblyGapFeature, entry)) {
+          entry.addFeature(assemblyGapFeature);
+        }
       } else {
         if (component_acc == null & componentId == null) continue;
         if (component_acc != null) {
@@ -220,6 +223,21 @@ public class EntryUtils {
     }
     entry.getSequence().addContigs(components);
     return entry;
+  }
+
+  private static boolean isGapFeatureAvailable(Feature currentGapFeature, Entry entry) {
+    String currentLocation =
+        FeatureLocationWriter.renderCompoundLocation(currentGapFeature.getLocations());
+    Collection<Feature> gapFeatures =
+        SequenceEntryUtils.getFeatures(Feature.ASSEMBLY_GAP_FEATURE_NAME, entry);
+    gapFeatures.addAll(SequenceEntryUtils.getFeatures(Feature.GAP_FEATURE_NAME, entry));
+    for (Feature existingGapFeature : gapFeatures) {
+      if (FeatureLocationWriter.renderCompoundLocation(existingGapFeature.getLocations())
+          .equals(currentLocation)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static void setKeyWords(Entry masterEntry) {

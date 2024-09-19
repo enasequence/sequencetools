@@ -15,7 +15,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-/** @author simonk */
+/**
+ * @author simonk
+ */
 public class BufferedFileLineReader implements ILineReader {
 
   // Set the buffer size to 32 M
