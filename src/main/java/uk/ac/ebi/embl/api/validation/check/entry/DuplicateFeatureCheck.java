@@ -24,6 +24,7 @@ import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.annotation.ExcludeScope;
 import uk.ac.ebi.embl.api.validation.check.feature.FeatureValidationCheck;
+import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 
 /** Checks that any duplicate features exist */
 @Description("")
@@ -104,7 +105,11 @@ public class DuplicateFeatureCheck extends EntryValidationCheck {
 
         } else if (!feature.getName().equals(Feature.CDS_FEATURE_NAME)) {
           ValidationMessage<Origin> message =
-              reportError(feature.getOrigin(), DUPLICATE_FEATURE_LOCATIONS, feature.getName());
+              reportError(
+                  feature.getOrigin(),
+                  DUPLICATE_FEATURE_LOCATIONS,
+                  feature.getName(),
+                  FeatureLocationWriter.renderCompoundLocation(feature.getLocations()));
           message.append(oldFeature.getOrigin());
 
           FeatureValidationCheck.appendLocusTadAndGeneIDToMessage(feature, message);
