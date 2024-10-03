@@ -66,6 +66,10 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         if ((sb.length() + error.getMessage().length()) > ERROR_MAX_LENGTH) break;
         sb.append(error.getMessage());
         sb.append("\n");
+        if(!error.getCuratorMessage().isEmpty()) {
+          sb.append("Curator message: ");
+          sb.append(error.getCuratorMessage());
+        }
       }
       throw new ValidationEngineException(
           StringUtils.chomp(sb.toString()),
