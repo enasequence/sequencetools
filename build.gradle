@@ -48,18 +48,6 @@ repositories {
             header( HttpHeaderAuthentication )
         }
     }
-    // For BioSamples client
-    maven {
-        url 'https://gitlab.ebi.ac.uk/api/v4/projects/2669/packages/maven'
-
-        credentials(HttpHeaderCredentials) {
-            name = "Private-Token"
-            value = biosamples_gitlab_private_token
-        }
-        authentication {
-            header(HttpHeaderAuthentication)
-        }
-    }
 }
 
 dependencies {
