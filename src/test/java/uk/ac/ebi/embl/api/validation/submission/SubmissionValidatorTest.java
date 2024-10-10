@@ -133,11 +133,14 @@ public class SubmissionValidatorTest {
     sample.setOrganism("Homo sapiens");
     sample.setTaxId(2697049);
     List<Attribute> attributes = new ArrayList<>();
-    attributes.add(new Attribute("collection date", "2021-03-22"));
-    attributes.add(new Attribute("geographic location (latitude)", "58.9099"));
-    attributes.add(new Attribute("geographic location (longitude)", "25.6174"));
-    attributes.add(new Attribute("geographic location (country and/or sea)", "Estonia"));
-    attributes.add(new Attribute("geographic location (region and locality)", "Järva maakond"));
+    attributes.add(new Attribute("collection date", "2021-03-22", null, null, null));
+    attributes.add(new Attribute("geographic location (latitude)", "58.9099", null, null, null));
+    attributes.add(new Attribute("geographic location (longitude)", "25.6174", null, null, null));
+    attributes.add(
+        new Attribute("geographic location (country and/or sea)", "Estonia", null, null, null));
+    attributes.add(
+        new Attribute(
+            "geographic location (region and locality)", "Järva maakond", null, null, null));
     sample.setAttributes(attributes);
     manifest.setSample(sample);
 

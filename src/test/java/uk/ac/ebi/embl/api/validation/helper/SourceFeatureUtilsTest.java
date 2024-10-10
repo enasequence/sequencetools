@@ -64,22 +64,30 @@ public class SourceFeatureUtilsTest {
     sample.setTaxId(2697049);
 
     List<Attribute> attributes = new ArrayList<>();
-    attributes.add(new Attribute("sample_description", "hCoV-19/Spain/Valencia27/2020"));
-    attributes.add(new Attribute("collection date", "2020-03-09")); // 1
-    attributes.add(new Attribute("geographic location (latitude)", "39.47")); // 3
-    attributes.add(new Attribute("geographic location (longitude)", "0.38 E")); // 3
-    attributes.add(new Attribute("geographic location (region and locality)", "Valencia")); // 2
-    attributes.add(new Attribute("host common name", "Human"));
-    attributes.add(new Attribute("geographic location (country and/or sea)", "Spain")); // 2
-    attributes.add(new Attribute("host subject id", "18218863"));
-    attributes.add(new Attribute("host age", "81"));
-    attributes.add(new Attribute("host health state", "not provided"));
-    attributes.add(new Attribute("host sex", "male"));
-    attributes.add(new Attribute("host scientific name", "Homo sapiens")); // 4
-    attributes.add(new Attribute("isolate", "hCoV-19/Spain/Valencia27/2020")); // 5
-    attributes.add(new Attribute("GISAID Accession ID", "GISAID123")); // 6
-    attributes.add(new Attribute("isolation source host-associated", "Nasopharyngeal exudate"));
-    attributes.add(new Attribute("ENA-CHECKLIST", "ERC000033"));
+    attributes.add(
+        new Attribute("sample_description", "hCoV-19/Spain/Valencia27/2020", null, null, null));
+    attributes.add(new Attribute("collection date", "2020-03-09", null, null, null)); // 1
+    attributes.add(new Attribute("geographic location (latitude)", "39.47", null, null, null)); // 3
+    attributes.add(
+        new Attribute("geographic location (longitude)", "0.38 E", null, null, null)); // 3
+    attributes.add(
+        new Attribute(
+            "geographic location (region and locality)", "Valencia", null, null, null)); // 2
+    attributes.add(new Attribute("host common name", "Human", null, null, null));
+    attributes.add(
+        new Attribute("geographic location (country and/or sea)", "Spain", null, null, null)); // 2
+    attributes.add(new Attribute("host subject id", "18218863", null, null, null));
+    attributes.add(new Attribute("host age", "81", null, null, null));
+    attributes.add(new Attribute("host health state", "not provided", null, null, null));
+    attributes.add(new Attribute("host sex", "male", null, null, null));
+    attributes.add(new Attribute("host scientific name", "Homo sapiens", null, null, null)); // 4
+    attributes.add(
+        new Attribute("isolate", "hCoV-19/Spain/Valencia27/2020", null, null, null)); // 5
+    attributes.add(new Attribute("GISAID Accession ID", "GISAID123", null, null, null)); // 6
+    attributes.add(
+        new Attribute(
+            "isolation source host-associated", "Nasopharyngeal exudate", null, null, null));
+    attributes.add(new Attribute("ENA-CHECKLIST", "ERC000033", null, null, null));
 
     sample.setAttributes(attributes);
 
