@@ -15,12 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.dbutils.DbUtils;
@@ -56,6 +51,17 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
   private final HashMap<String, Entry> masterCache = new HashMap<String, Entry>();
 
   private final SampleService sampleService;
+  private static List<String> nullQualifierValues =
+      List.of("not applicable", "not collected", "not provided", "restricted access", "missing");
+  private static List<String> noValueQualifiers =
+      List.of(
+          Qualifier.GERMLINE_QUALIFIER_NAME,
+          Qualifier.MACRONUCLEAR_QUALIFIER_NAME,
+          Qualifier.PROVIRAL_QUALIFIER_NAME,
+          Qualifier.REARRANGED_QUALIFIER_NAME,
+          Qualifier.FOCUS_QUALIFIER_NAME,
+          Qualifier.TRANSGENIC_QUALIFIER_NAME,
+          Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
 
   public enum MASTERSOURCEQUALIFIERS {
     ecotype,
@@ -70,9 +76,11 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
     serovar,
     environmental_sample,
     metagenome_source,
-    isolation_source;
+    isolation_source,
+    collection_date,
+    geo_loc_name;
 
-    public static boolean isValid(String qualifier) {
+    public static boolean isValidQualifier(String qualifier) {
       try {
         if (!qualifier.equalsIgnoreCase("PCR_primers")) {
           valueOf(qualifier.toLowerCase());
@@ -83,28 +91,13 @@ public class EraproDAOUtilsImpl implements EraproDAOUtils {
       return true;
     }
 
-    public static boolean isNoValue(String qualifier) {
-      List<String> noValueQualifiers = new ArrayList<String>();
-      noValueQualifiers.add(Qualifier.GERMLINE_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.PROVIRAL_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.REARRANGED_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.FOCUS_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.TRANSGENIC_QUALIFIER_NAME);
-      noValueQualifiers.add(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME);
-
+    public static boolean isNoValueQualifiers(String qualifier) {
       return noValueQualifiers.contains(qualifier);
     }
 
     public static boolean isNullValue(String qualifierValue) {
-      List<String> nullValueCV = new ArrayList<String>();
-      nullValueCV.add("not applicable");
-      nullValueCV.add("not collected");
-      nullValueCV.add("not provided");
-      nullValueCV.add("restricted access");
-      nullValueCV.add("missing");
-      if (qualifierValue == null || qualifierValue.isEmpty()) return true;
-      return nullValueCV.contains(qualifierValue.toLowerCase());
+      return StringUtils.isEmpty(qualifierValue)
+          || nullQualifierValues.contains(qualifierValue.toLowerCase());
     }
   }
 

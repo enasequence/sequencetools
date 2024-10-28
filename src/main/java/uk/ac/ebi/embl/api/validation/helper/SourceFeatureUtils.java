@@ -10,11 +10,10 @@
  */
 package uk.ac.ebi.embl.api.validation.helper;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
@@ -28,12 +27,17 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SourceFeatureUtils {
 
-  private Qualifier isolationSourceQualifier = null;
-  private final String isolation_source_regex = "^\\s*environment\\s*\\(material\\)\\s*$";
-  private final Pattern isolation_sourcePattern = Pattern.compile(isolation_source_regex);
-  private boolean addUniqueName = true;
-  private final Map<String, String> qualifierSynonyms = new HashMap<>();
-  private final Set<String> covid19RequiredQuals = new HashSet<>();
+  private static final Pattern isolation_sourcePattern =
+      Pattern.compile("^\\s*environment\\s*\\(material\\)\\s*$");
+  private static final Pattern latLonPattern = Pattern.compile("\\d+(\\.\\d+)?");
+  private static final Map<String, String> qualifierSynonyms = new HashMap<>();
+  private static final Set<String> covid19RequiredQuals =
+      Set.of(
+          Qualifier.COLLECTION_DATE_QUALIFIER_NAME,
+          Qualifier.GEO_LOCATION_QUALIFIER_NAME,
+          Qualifier.LAT_LON_QUALIFIER_NAME,
+          Qualifier.HOST_QUALIFIER_NAME,
+          Qualifier.NOTE_QUALIFIER_NAME);
   private final MasterSourceQualifierValidator masterSourceQualifierValidator;
 
   public SourceFeatureUtils() {
@@ -41,13 +45,6 @@ public class SourceFeatureUtils {
     qualifierSynonyms.put("host scientific name", Qualifier.HOST_QUALIFIER_NAME);
     qualifierSynonyms.put("collection date", Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
     qualifierSynonyms.put("gisaid accession id", Qualifier.NOTE_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.COLLECTION_DATE_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.GEO_LOCATION_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.LAT_LON_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.HOST_QUALIFIER_NAME);
-    covid19RequiredQuals.add(Qualifier.NOTE_QUALIFIER_NAME);
-
-    isolationSourceQualifier = null;
     masterSourceQualifierValidator = new MasterSourceQualifierValidator();
   }
 
@@ -67,47 +64,47 @@ public class SourceFeatureUtils {
     if (tag.equals(Qualifier.COLLECTION_DATE_QUALIFIER_NAME)
         && !masterSourceQualifierValidator.isValid(
             Qualifier.COLLECTION_DATE_QUALIFIER_NAME, value)) {
-      // we have to do similar check for other qualifier as well.
+      // return if not valid date
       return;
     }
 
-    if (isolation_sourcePattern.matcher(tag).matches()) {
-      tag = Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME;
-      if (value != null && !value.isEmpty())
-        isolationSourceQualifier = (new QualifierFactory()).createQualifier(tag, value);
-    } else {
-      if (MASTERSOURCEQUALIFIERS.isValid(tag)) {
+    if (MASTERSOURCEQUALIFIERS.isValidQualifier(tag)) {
 
-        if (!MASTERSOURCEQUALIFIERS.isNoValue(tag) && MASTERSOURCEQUALIFIERS.isNullValue(value))
-          return;
+      if (!MASTERSOURCEQUALIFIERS.isNoValueQualifiers(tag)
+          && MASTERSOURCEQUALIFIERS.isNullValue(value)) {
+        return;
+      }
 
-        if (Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME.equals(tag)
-            || Qualifier.STRAIN_QUALIFIER_NAME.equals(tag)
-            || Qualifier.ISOLATE_QUALIFIER_NAME.equals(tag)) {
-          addUniqueName = false;
+      if (MASTERSOURCEQUALIFIERS.isNoValueQualifiers(tag)) {
+        if (!"NO".equalsIgnoreCase(value)) {
+          source.addQualifier(new QualifierFactory().createQualifier(tag));
         }
-
-        if (MASTERSOURCEQUALIFIERS.isNoValue(tag)) {
-          if (!"NO".equalsIgnoreCase(value))
-            source.addQualifier(new QualifierFactory().createQualifier(tag));
-        } else source.addQualifier(new QualifierFactory().createQualifier(tag, value));
-      } else if (isCovidTaxId(source.getTaxId()) && covid19RequiredQuals.contains(tag)) {
+      } else {
         source.addQualifier(new QualifierFactory().createQualifier(tag, value));
       }
+    } else if (isCovidTaxId(source.getTaxId()) && covid19RequiredQuals.contains(tag)) {
+      source.addQualifier(new QualifierFactory().createQualifier(tag, value));
     }
   }
 
   public void addExtraSourceQualifiers(
       SourceFeature source, TaxonomyClient taxonomyClient, String uniqueName) {
-    if (addUniqueName
+    if (addUniqueName(source)
         && taxonomyClient.isProkaryotic(source.getScientificName())
         && source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size() == 0) {
       source.addQualifier(
           new QualifierFactory().createQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, uniqueName));
     }
+  }
 
-    if (source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).size() == 0
-        && isolationSourceQualifier != null) source.addQualifier(isolationSourceQualifier);
+  private boolean addUniqueName(SourceFeature source) {
+    List<Qualifier> sourceQualifiers = source.getQualifiers();
+    if (sourceQualifiers.contains(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME)
+        || sourceQualifiers.contains(Qualifier.STRAIN_QUALIFIER_NAME)
+        || sourceQualifiers.contains(Qualifier.ISOLATE_QUALIFIER_NAME)) {
+      return false;
+    }
+    return true;
   }
 
   public SourceFeature constructSourceFeature(Sample sample, TaxonomyClient taxonomyClient) {
@@ -134,58 +131,98 @@ public class SourceFeatureUtils {
     String longitude = null;
     String country = null;
     String region = null;
+    String isolationSource = null;
     for (Attribute attribute : sample.getAttributes()) {
-      String tag = attribute.getName();
-      String value = attribute.getValue();
-      if (isCovidTaxId(sourceFeature.getTaxId()) && tag != null) {
-        // Master source qualifiers values created from multiple sample fields are constructed here.
-        if (tag.toLowerCase().contains("latitude")) {
-          latitude = value;
-        } else if (tag.toLowerCase().contains("longitude")) {
-          longitude = value;
-        } else if (tag.trim().equalsIgnoreCase("geographic location (country and/or sea)")) {
-          country = value;
-        } else if (tag.trim().equalsIgnoreCase("geographic location (region and locality)")) {
-          region = value;
-        } else {
-          addSourceQualifier(tag, value, sourceFeature);
-        }
-      } else {
-        addSourceQualifier(tag, value, sourceFeature);
+      String qualifier = attribute.getName().trim();
+      String value = attribute.getValue().trim();
+
+      switch (categorizeQualifiers(qualifier)) {
+        case COUNTRY -> country = value;
+        case REGION -> region = value;
+        case LATITUDE -> latitude = value;
+        case LONGITUDE -> longitude = value;
+        case ISOLATION_SOURCE -> isolationSource = value;
+        case OTHER -> addSourceQualifier(qualifier, value, sourceFeature);
       }
     }
 
+    setLatLonQualifier(sourceFeature, latitude, longitude);
+    setGeoLocationQualifier(sourceFeature, country, region);
+    setIsolationSourceQualifier(sourceFeature, isolationSource);
+    setSourceFeatureTaxon(sourceFeature, sample, taxonomyClient);
+    addExtraSourceQualifiers(sourceFeature, taxonomyClient, sample.getName());
+  }
+
+  private SpecialQualifiers categorizeQualifiers(String qualifier) {
+    if (qualifier.equals("geographic location (country and/or sea)")) {
+      return SpecialQualifiers.COUNTRY;
+    } else if (qualifier.equals("geographic location (region and locality)")) {
+      return SpecialQualifiers.REGION;
+    } else if (qualifier.contains("latitude")) {
+      return SpecialQualifiers.LATITUDE;
+    } else if (qualifier.contains("longitude")) {
+      return SpecialQualifiers.LONGITUDE;
+    } else if (isolation_sourcePattern.matcher(qualifier).matches()) {
+      return SpecialQualifiers.ISOLATION_SOURCE;
+    } else {
+      return SpecialQualifiers.OTHER;
+    }
+  }
+
+  public void setGeoLocationQualifier(SourceFeature sourceFeature, String country, String region) {
+    String geoLocationValue;
+    if (country != null && region != null) {
+      geoLocationValue = country + ":" + region;
+    } else {
+      geoLocationValue = country != null ? country : region;
+    }
+
+    if (StringUtils.isNotEmpty(geoLocationValue)) {
+      addSourceQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME, geoLocationValue, sourceFeature);
+    }
+  }
+
+  public void setIsolationSourceQualifier(SourceFeature source, String isolationSource) {
+    if (StringUtils.isNotEmpty(isolationSource)) {
+      addSourceQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, isolationSource, source);
+    }
+  }
+
+  public void setLatLonQualifier(SourceFeature sourceFeature, String latitude, String longitude) {
     if (latitude != null && longitude != null) {
-      String latValue = latitude;
-      String lonValue = longitude;
-      try {
-        double lat = Double.parseDouble(latitude);
-        latValue += " " + (lat < 0 ? "S" : "N");
-      } catch (NumberFormatException ex) {
-        // ignore
+      Matcher latitudeMatcher = latLonPattern.matcher(latitude);
+      Matcher longitudeMatcher = latLonPattern.matcher(longitude);
+      latitude = latitudeMatcher.find() ? latitudeMatcher.group() : latitude;
+      longitude = longitudeMatcher.find() ? longitudeMatcher.group() : longitude;
+      String latLonValue = "";
+      if (latitude != null && longitude != null) {
+        try {
+          latLonValue += latitude + " " + (Double.parseDouble(latitude) < 0 ? "S" : "N") + " ";
+          latLonValue += longitude + " " + (Double.parseDouble(longitude) < 0 ? "W" : "E");
+          addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latLonValue, sourceFeature);
+        } catch (NumberFormatException ex) {
+          // ignore lat_lon qualifier if its values are not valid number.
+        }
       }
-      try {
-        double lon = Double.parseDouble(longitude);
-        lonValue += " " + (lon < 0 ? "W" : "E");
-      } catch (NumberFormatException ex) {
-        // ignore
-      }
-      String latLonValue = latValue + " " + lonValue;
-      addSourceQualifier(Qualifier.LAT_LON_QUALIFIER_NAME, latLonValue, sourceFeature);
     }
-    if (country != null || region != null) {
-      addSourceQualifier(
-          Qualifier.GEO_LOCATION_QUALIFIER_NAME,
-          country == null ? region : region == null ? country : country + ":" + region,
-          sourceFeature);
-    }
+  }
 
+  public void setSourceFeatureTaxon(
+      SourceFeature sourceFeature, Sample sample, TaxonomyClient taxonomyClient) {
     Taxon taxon =
         taxonomyClient.getTaxonByTaxid(
             sample.getTaxId() == null ? null : sample.getTaxId().longValue());
     if (taxon != null) {
       sourceFeature.setTaxon(taxon);
     }
-    addExtraSourceQualifiers(sourceFeature, taxonomyClient, sample.getName());
+  }
+
+  enum SpecialQualifiers {
+    COUNTRY,
+    REGION,
+    LATITUDE,
+    LONGITUDE,
+    ISOLATION_SOURCE,
+    OTHER
   }
 }

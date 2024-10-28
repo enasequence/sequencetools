@@ -25,7 +25,7 @@ public class TranslExceptQualifierTest {
   public void testValidQualifier1() throws ValidationException {
     TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213..215,aa:Phe)");
     assertEquals(qual.getAminoAcid().getAbbreviation(), "Phe");
-    assertEquals(qual.getAminoAcid().getLetter(), new Character('F'));
+    assertEquals(qual.getAminoAcid().getLetter(), Character.valueOf('F'));
     assertEquals(qual.getLocations().getMinPosition(), Long.valueOf(213));
     assertEquals(qual.getLocations().getMaxPosition(), Long.valueOf(215));
   }
@@ -34,7 +34,7 @@ public class TranslExceptQualifierTest {
   public void testValidQualifier2() throws ValidationException {
     TranslExceptQualifier qual = new TranslExceptQualifier("(pos:213,aa:TERM)");
     assertEquals(qual.getAminoAcid().getAbbreviation(), "TERM");
-    assertEquals(qual.getAminoAcid().getLetter(), new Character('*'));
+    assertEquals(qual.getAminoAcid().getLetter(), Character.valueOf('*'));
     assertEquals(qual.getLocations().getMinPosition(), Long.valueOf(213));
     assertEquals(qual.getLocations().getMaxPosition(), Long.valueOf(213));
   }

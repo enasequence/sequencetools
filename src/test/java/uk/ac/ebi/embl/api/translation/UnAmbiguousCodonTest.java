@@ -33,7 +33,7 @@ public class UnAmbiguousCodonTest {
     UnAmbiguousCodon codon = new UnAmbiguousCodon();
     assertNull(codon.getAminoAcid());
     codon.setAminoAcid('A');
-    assertEquals(new Character('A'), codon.getAminoAcid());
+    assertEquals(Character.valueOf('A'), codon.getAminoAcid());
   }
 
   @Test

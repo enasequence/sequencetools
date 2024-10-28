@@ -25,7 +25,7 @@ public class CodonQualifierTest {
   public void testValidQualifier() throws ValidationException {
     CodonQualifier qual = new CodonQualifier("(seq:\"agt\",aa:Ser)");
     assertEquals(qual.getAminoAcid().getAbbreviation(), "Ser");
-    assertEquals(qual.getAminoAcid().getLetter(), new Character('S'));
+    assertEquals(qual.getAminoAcid().getLetter(), Character.valueOf('S'));
     assertEquals(qual.getCodon(), "agt");
   }
 

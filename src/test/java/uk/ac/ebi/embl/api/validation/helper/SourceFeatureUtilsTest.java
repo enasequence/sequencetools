@@ -10,7 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.helper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,8 @@ import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SourceFeatureUtilsTest {
+
+  private TaxonomyClient taxonomyClient = new TaxonomyClient();
 
   @Test
   public void constructSourceFeature() {
@@ -91,6 +93,109 @@ public class SourceFeatureUtilsTest {
 
     sample.setAttributes(attributes);
 
+    return sample;
+  }
+
+  @Test
+  public void testAddQualifiersWithCommonAttributes() {
+
+    List<Attribute> attributes =
+        List.of(
+            new Attribute("collection date", "2020-03-09", null, null, null),
+            new Attribute("geographic location (latitude)", "39.47 N", null, null, null),
+            new Attribute("geographic location (longitude)", "0.38 E", null, null, null),
+            new Attribute("geographic location (country and/or sea)", "Spain", null, null, null),
+            new Attribute(
+                "geographic location (region and locality)", "Valencia", null, null, null),
+            new Attribute("host common name", "Human", null, null, null),
+            new Attribute("host scientific name", "Homo sapiens", null, null, null),
+            new Attribute("environment (material)", "QCRA", null, null, null),
+            // Test no value qualifier
+            new Attribute(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME, "", null, null, null),
+            new Attribute(Qualifier.STRAIN_QUALIFIER_NAME, "", null, null, null));
+
+    Sample sample = createSampleWithAttributes(attributes);
+    SourceFeature sourceFeature =
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+
+    assertEquals(
+        "2020-03-09",
+        sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "Spain:Valencia",
+        sourceFeature.getSingleQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "QCRA",
+        sourceFeature.getSingleQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).getValue());
+    assertNotNull(sourceFeature.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+    assertNull(
+        sourceFeature.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME).getValue());
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME));
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.HOST_QUALIFIER_NAME));
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME));
+  }
+
+  @Test
+  public void testAddQualifiersWithCovid19Attributes() {
+    List<Attribute> attributes =
+        List.of(
+            new Attribute("collection date", "2020-03-09", null, null, null),
+            new Attribute("geographic location (latitude)", "39.47", null, null, null),
+            new Attribute("geographic location (longitude)", "0.38 E", null, null, null),
+            new Attribute("geographic location (country and/or sea)", "Spain", null, null, null),
+            new Attribute(
+                "geographic location (region and locality)", "Valencia", null, null, null),
+            new Attribute("host scientific name", "Homo sapiens", null, null, null),
+            new Attribute("GISAID Accession ID", "GISAID123", null, null, null),
+            new Attribute("metagenome_source", "metagenome value", null, null, null),
+            new Attribute("environmental_sample", "", null, null, null));
+
+    Sample sample = createSampleWithAttributes(attributes);
+    sample.setTaxId(2697049); // Covid-19 Tax ID
+    SourceFeature sourceFeature =
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+    assertEquals(
+        "2020-03-09",
+        sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "Spain:Valencia",
+        sourceFeature.getSingleQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "39.47 N 0.38 E",
+        sourceFeature.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "Homo sapiens", sourceFeature.getSingleQualifier(Qualifier.HOST_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "GISAID123", sourceFeature.getSingleQualifier(Qualifier.NOTE_QUALIFIER_NAME).getValue());
+    assertEquals(
+        "metagenome value",
+        sourceFeature.getSingleQualifier(Qualifier.METAGENOME_SOURCE_QUALIFIER_NAME).getValue());
+    assertNotNull(sourceFeature.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME));
+    assertNull(
+        sourceFeature.getSingleQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME).getValue());
+  }
+
+  @Test
+  public void testAddQualifiersWithInvalidAttributes() {
+    List<Attribute> attributes =
+        List.of(
+            new Attribute("collection date", "Invalid Date", null, null, null),
+            new Attribute("geographic location (latitude)", "Invalid Latitude", null, null, null),
+            new Attribute(
+                "geographic location (longitude)", "Invalid Longitude", null, null, null));
+
+    Sample sample = createSampleWithAttributes(attributes);
+    SourceFeature sourceFeature =
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME));
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.GEO_LOCATION_QUALIFIER_NAME));
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME));
+  }
+
+  private Sample createSampleWithAttributes(List<Attribute> attributes) {
+    Sample sample = new Sample();
+    sample.setOrganism("Test Organism");
+    sample.setAttributes(attributes);
     return sample;
   }
 }
