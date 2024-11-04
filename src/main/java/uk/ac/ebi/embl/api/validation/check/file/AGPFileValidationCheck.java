@@ -136,6 +136,7 @@ public class AGPFileValidationCheck extends FileValidationCheck {
             .sequenceNumber
             .set(getOptions().getEntryValidationPlanProperty().sequenceNumber.get() + 1);
         validationPlan = new EmblEntryValidationPlan(getOptions().getEntryValidationPlanProperty());
+        constructAGPSequence(entry);
         ValidationResult planResult = validationPlan.execute(entry);
         validationResult.append(planResult);
 
