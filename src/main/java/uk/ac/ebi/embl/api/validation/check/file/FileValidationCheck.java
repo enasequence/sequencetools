@@ -776,15 +776,12 @@ public abstract class FileValidationCheck {
         EmblEntryWriter emblEntryWriter = new EmblEntryWriter(entry);
         emblEntryWriter.write(fixedFileWriter);
       } else {
-        if (isAGP) { // TODO: do not do this for webin-cli
-          constructAGPSequence(entry);
-        }
         writeEntryToFile(entry, submissionFile);
       }
     }
   }
 
-  private void constructAGPSequence(Entry conEntry) throws ValidationEngineException {
+  public void constructAGPSequence(Entry conEntry) throws ValidationEngineException {
     try {
       ByteBuffer sequenceBuffer =
           ByteBuffer.wrap(new byte[Long.valueOf(conEntry.getSequence().getLength()).intValue()]);
@@ -836,6 +833,7 @@ public abstract class FileValidationCheck {
                       "N".toLowerCase(), sequencePlacedInCONEntry.getGap_length().intValue())
                   .getBytes());
       }
+      // Sequence is set here
       conEntry.getSequence().setSequence(sequenceBuffer);
 
       // check if the current object(scaffold) is placed(will be a component) on another
