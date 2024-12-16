@@ -192,6 +192,24 @@ public class SourceFeatureUtilsTest {
     assertNull(sourceFeature.getSingleQualifier(Qualifier.LAT_LON_QUALIFIER_NAME));
   }
 
+  @Test
+  public void testIsolationSource() {
+
+    List<Attribute> attributes =
+            List.of(
+                    new Attribute("environment (material)", "QCRA", null, null, null),
+                    new Attribute("isolation_source", "mantle tissue", null, null, null));
+
+    Sample sample = createSampleWithAttributes(attributes);
+    SourceFeature sourceFeature =
+            new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+
+    assertEquals(
+            "mantle tissue",
+            sourceFeature.getSingleQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).getValue());
+  }
+
+
   private Sample createSampleWithAttributes(List<Attribute> attributes) {
     Sample sample = new Sample();
     sample.setOrganism("Test Organism");

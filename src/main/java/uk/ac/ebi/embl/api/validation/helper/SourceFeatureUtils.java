@@ -183,7 +183,7 @@ public class SourceFeatureUtils {
   }
 
   public void setIsolationSourceQualifier(SourceFeature source, String isolationSource) {
-    if (StringUtils.isNotEmpty(isolationSource)) {
+    if (StringUtils.isNotEmpty(isolationSource) && source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).isEmpty()) {
       addSourceQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, isolationSource, source);
     }
   }
