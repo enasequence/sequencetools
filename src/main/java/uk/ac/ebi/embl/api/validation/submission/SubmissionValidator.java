@@ -69,6 +69,11 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         if (StringUtils.isNotEmpty(error.getCuratorMessage())) {
           sb.append("Curator message: ");
           sb.append(error.getCuratorMessage());
+          sb.append("\n");
+        }
+        if (StringUtils.isNotEmpty(error.getReportMessage())) {
+          sb.append("Report message: ");
+          sb.append(error.getReportMessage());
         }
       }
       throw new ValidationEngineException(

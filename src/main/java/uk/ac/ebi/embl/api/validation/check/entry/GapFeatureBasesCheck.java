@@ -77,10 +77,10 @@ public class GapFeatureBasesCheck extends EntryValidationCheck {
       if (start < 0 || end > sequenceByte.length) {
         return result;
       }
-      int beginPosition = start.intValue();
-      int endPosition = end.intValue();
+      int nBeginPosition = start.intValue() - 1; // as sequenceByte are from 0 and location are from exact position
+      int nEndPosition = end.intValue(); // Nothing needs to be done as we are iterating till i < nEndPosition
 
-      for (int i = beginPosition; i < endPosition; i++) {
+      for (int i = nBeginPosition; i < nEndPosition; i++) {
         if ('n' != (char) sequenceByte[i]) {
           ValidationMessage<Origin> message = reportError(gapFeature.getOrigin(), MESSAGE_ID);
           String report = ValidationMessageManager.getString(FAULTY_SEQUENCE_MESSAGE, start, end);
