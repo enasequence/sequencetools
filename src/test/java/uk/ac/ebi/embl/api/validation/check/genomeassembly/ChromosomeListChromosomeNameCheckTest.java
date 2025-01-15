@@ -69,7 +69,8 @@ public class ChromosomeListChromosomeNameCheckTest {
 
   @Test
   public void testRejectInvalidChromosomeName() throws ValidationEngineException {
-    for (String name : new String[] {"Un", "chrUn", "random", "rnd", "unknown","contig","scaffold"}) {
+    for (String name :
+        new String[] {"Un", "chrUn", "random", "rnd", "unknown", "contig", "scaffold"}) {
       ChromosomeEntry entry = new ChromosomeEntry();
       entry.setAnalysisId("ERZ00000");
       entry.setObjectName("chromosome");
@@ -79,7 +80,9 @@ public class ChromosomeListChromosomeNameCheckTest {
     }
 
     for (String name :
-        new String[] {"nameUn", "chrUnName", "somerandom", "rndChr", "unknownchrom","contig_1","scaffold_1"}) {
+        new String[] {
+          "nameUn", "chrUnName", "somerandom", "rndChr", "unknownchrom", "contig_1", "scaffold_1"
+        }) {
       ChromosomeEntry entry = new ChromosomeEntry();
       entry.setAnalysisId("ERZ00000");
       entry.setObjectName("chromosome");

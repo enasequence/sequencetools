@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -197,36 +196,34 @@ public class SourceFeatureUtilsTest {
   public void testIsolationSource() {
 
     List<Attribute> attributes =
-            List.of(
-                    new Attribute("environment (material)", "QCRA", null, null, null),
-                    new Attribute("isolation_source", "mantle tissue", null, null, null));
+        List.of(
+            new Attribute("environment (material)", "QCRA", null, null, null),
+            new Attribute("isolation_source", "mantle tissue", null, null, null));
 
     Sample sample = createSampleWithAttributes(attributes);
     SourceFeature sourceFeature =
-            new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
 
     assertEquals(
-            "mantle tissue",
-            sourceFeature.getSingleQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).getValue());
+        "mantle tissue",
+        sourceFeature.getSingleQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).getValue());
   }
-
 
   @Test
   public void testAttributesWithNullKeyAndValue() {
 
     List<Attribute> attributes =
-            List.of(
-                    new Attribute("collection date", null, null, null, null),
-                    new Attribute(null, "mantle tissue", null, null, null));
+        List.of(
+            new Attribute("collection date", null, null, null, null),
+            new Attribute(null, "mantle tissue", null, null, null));
 
     Sample sample = createSampleWithAttributes(attributes);
     SourceFeature sourceFeature =
-            new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
 
     assertNull(sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME));
-    assertEquals(1,sourceFeature.getQualifiers().size());
+    assertEquals(1, sourceFeature.getQualifiers().size());
   }
-
 
   private Sample createSampleWithAttributes(List<Attribute> attributes) {
     Sample sample = new Sample();

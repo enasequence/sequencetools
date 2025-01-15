@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -168,16 +167,19 @@ public class GapFeatureBasesCheckTest {
   @Test
   public void testCheck_MultipleLocation() {
 
-    test("aaanaaa", getLocationOrder(List.of(getLocation(4,4))),true);
-    test("aaannnnaaa", getLocationOrder(List.of(getLocation(4,7))),true);
-    test("aaannnnaannnnnnaaannnn", getLocationOrder(List.of(getLocation(4,7),getLocation(10,15),getLocation(19,22))),true);
-    test("anaaa", getLocationOrder(List.of(getLocation(1,1))),false);
-    test("aaaaaannnnaaaa", getLocationOrder(List.of(getLocation(7,10))),true);
-    test("annaannnaa", getLocationOrder(List.of(getLocation(2,3),getLocation(6,8))),true);
-    test("annaannnaa", getLocationOrder(List.of(getLocation(2,3),getLocation(6,9))),false);
+    test("aaanaaa", getLocationOrder(List.of(getLocation(4, 4))), true);
+    test("aaannnnaaa", getLocationOrder(List.of(getLocation(4, 7))), true);
+    test(
+        "aaannnnaannnnnnaaannnn",
+        getLocationOrder(List.of(getLocation(4, 7), getLocation(10, 15), getLocation(19, 22))),
+        true);
+    test("anaaa", getLocationOrder(List.of(getLocation(1, 1))), false);
+    test("aaaaaannnnaaaa", getLocationOrder(List.of(getLocation(7, 10))), true);
+    test("annaannnaa", getLocationOrder(List.of(getLocation(2, 3), getLocation(6, 8))), true);
+    test("annaannnaa", getLocationOrder(List.of(getLocation(2, 3), getLocation(6, 9))), false);
   }
 
-  private void test(String sequenceString,Order<Location> locations, boolean valid) {
+  private void test(String sequenceString, Order<Location> locations, boolean valid) {
     Entry testEntry = getEntry(sequenceString);
     for (Location location : locations.getLocations()) {
       Order<Location> locationOrder = new Order<>();
@@ -192,11 +194,15 @@ public class GapFeatureBasesCheckTest {
     } else {
       ValidationResult result = check.check(testEntry);
       assertFalse(result.isValid());
-      assertTrue(((ValidationMessage<Origin>)((List)result.getMessages()).get(0)).getMessage().contains("\"gap\" or \"assembly_gap\" features must span a set of bases that are only \"n\""));
+      assertTrue(
+          ((ValidationMessage<Origin>) ((List) result.getMessages()).get(0))
+              .getMessage()
+              .contains(
+                  "\"gap\" or \"assembly_gap\" features must span a set of bases that are only \"n\""));
     }
   }
 
-  private Entry getEntry(String sequenceStr){
+  private Entry getEntry(String sequenceStr) {
     SequenceFactory sequenceFactory = new SequenceFactory();
     Sequence sequence = sequenceFactory.createSequence();
     ByteBuffer sequenceBuffer = ByteBuffer.wrap(sequenceStr.getBytes());
@@ -207,15 +213,18 @@ public class GapFeatureBasesCheckTest {
     return entry;
   }
 
-  private Location getLocation(long begin, long end){
+  private Location getLocation(long begin, long end) {
     return locationFactory.createLocalRange(begin, end);
   }
 
   private Order<Location> getLocationOrder(List<Location> locationList) {
     Order<Location> locationOrder = new Order<Location>();
-    locationList.forEach(location -> {
-      locationOrder.addLocation(locationFactory.createLocalRange(location.getBeginPosition(), location.getEndPosition()));
-    });
+    locationList.forEach(
+        location -> {
+          locationOrder.addLocation(
+              locationFactory.createLocalRange(
+                  location.getBeginPosition(), location.getEndPosition()));
+        });
 
     return locationOrder;
   }

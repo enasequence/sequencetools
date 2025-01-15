@@ -77,8 +77,10 @@ public class GapFeatureBasesCheck extends EntryValidationCheck {
       if (start < 0 || end > sequenceByte.length) {
         return result;
       }
-      int nBeginPosition = start.intValue() - 1; // as sequenceByte are from 0 and location are from exact position
-      int nEndPosition = end.intValue(); // Nothing needs to be done as we are iterating till i < nEndPosition
+      int nBeginPosition =
+          start.intValue() - 1; // as sequenceByte are from 0 and location are from exact position
+      int nEndPosition =
+          end.intValue(); // Nothing needs to be done as we are iterating till i < nEndPosition
 
       for (int i = nBeginPosition; i < nEndPosition; i++) {
         if ('n' != (char) sequenceByte[i]) {
