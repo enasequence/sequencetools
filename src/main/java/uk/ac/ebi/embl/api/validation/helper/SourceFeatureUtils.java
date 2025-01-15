@@ -133,16 +133,18 @@ public class SourceFeatureUtils {
     String region = null;
     String isolationSource = null;
     for (Attribute attribute : sample.getAttributes()) {
-      String qualifier = attribute.getName().trim();
-      String value = attribute.getValue().trim();
+      if (attribute.getName() != null && attribute.getValue() != null) {
+        String qualifier = attribute.getName().trim();
+        String value = attribute.getValue().trim();
 
-      switch (categorizeQualifiers(qualifier)) {
-        case COUNTRY -> country = value;
-        case REGION -> region = value;
-        case LATITUDE -> latitude = value;
-        case LONGITUDE -> longitude = value;
-        case ISOLATION_SOURCE -> isolationSource = value;
-        case OTHER -> addSourceQualifier(qualifier, value, sourceFeature);
+        switch (categorizeQualifiers(qualifier)) {
+          case COUNTRY -> country = value;
+          case REGION -> region = value;
+          case LATITUDE -> latitude = value;
+          case LONGITUDE -> longitude = value;
+          case ISOLATION_SOURCE -> isolationSource = value;
+          case OTHER -> addSourceQualifier(qualifier, value, sourceFeature);
+        }
       }
     }
 
@@ -183,7 +185,8 @@ public class SourceFeatureUtils {
   }
 
   public void setIsolationSourceQualifier(SourceFeature source, String isolationSource) {
-    if (StringUtils.isNotEmpty(isolationSource) && source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).isEmpty()) {
+    if (StringUtils.isNotEmpty(isolationSource)
+        && source.getQualifiers(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME).isEmpty()) {
       addSourceQualifier(Qualifier.ISOLATION_SOURCE_QUALIFIER_NAME, isolationSource, source);
     }
   }
