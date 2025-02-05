@@ -37,6 +37,9 @@ public class CSVReader {
   private static final Pattern CHECKLIST_ID_LINE_PATTERN =
       Pattern.compile("^[^\\s]+\\s+(ERT\\d+).*");
 
+  private static final Pattern POLYSAMPLE_HEADER_LINE_PATTERN =
+      Pattern.compile("^Sequence id\\tSample id\\tFrequency$");
+
   public CSVReader(
       final InputStream inputReader,
       final List<TemplateTokenInfo> allTokens,
@@ -217,5 +220,10 @@ public class CSVReader {
       return m.group(1);
     }
     return null;
+  }
+
+  public static boolean isPolySample(String line) {
+    Matcher m = POLYSAMPLE_HEADER_LINE_PATTERN.matcher(line);
+    return m.matches();
   }
 }

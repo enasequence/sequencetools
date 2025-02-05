@@ -15,15 +15,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import uk.ac.ebi.embl.common.CommonUtil;
+import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
+import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.template.*;
 
@@ -37,13 +43,52 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
   @Override
   public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException {
+
+    File tsvFile = getSubmitedFileByType(SubmissionFile.FileType.TSV);
+
+    if (isPolySampleTsvFile(tsvFile)) {
+      return validatePolySampleSubmission(submissionFile);
+    } else {
+      return validateTemplateSubmission(submissionFile);
+    }
+  }
+
+  public ValidationResult validatePolySampleSubmission(SubmissionFile submissionFile)
+      throws ValidationEngineException {
+    ValidationResult validationResult = new ValidationResult();
+
+    File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
+    File tsv = getSubmitedFileByType(SubmissionFile.FileType.TSV);
+
+    Set<String> submitedAcc = getSubmittedAcc(tsv);
+
+    try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
+      FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
+      ValidationResult parseResult = reader.read();
+      validationResult.append(parseResult);
+      while (reader.isEntry()) {
+        Entry entry = reader.getEntry();
+        if (!submitedAcc.contains(entry.getSubmitterAccession())) {
+          throw new ValidationEngineException(
+              "Accession: " + submitedAcc + " is not found in the Fasta file.");
+        }
+      }
+    } catch (Exception e) {
+      throw new ValidationEngineException("Error while reading fasta file", e);
+    }
+    return validationResult;
+  }
+
+  public ValidationResult validateTemplateSubmission(SubmissionFile submissionFile)
+          throws ValidationEngineException {
     ValidationResult validationResult = new ValidationResult();
     try (PrintWriter fixedFileWriter = getFixedFileWriter(submissionFile)) {
       clearReportFile(getReportFile(submissionFile));
+
       String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
       if (StringUtils.isBlank(templateId)) {
         throw new ValidationEngineException(
-            "Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+                "Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
 
       File submittedDataFile = submissionFile.getFile();
@@ -52,8 +97,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       TemplateLoader templateLoader = new TemplateLoader();
       if (!submittedDataFile.exists())
         throw new ValidationEngineException(
-            submittedDataFile.getAbsolutePath() + " file does not exist",
-            ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+                submittedDataFile.getAbsolutePath() + " file does not exist",
+                ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
       options.setTemplateId(templateId);
       TemplateProcessor templateProcessor;
@@ -165,5 +210,72 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       e.printStackTrace();
     }
     return templateId;
+  }
+
+  private boolean isPolySampleTsvFile(File tsvFile) throws ValidationEngineException {
+
+    try (BufferedReader reader =
+        new BufferedReader(
+            new InputStreamReader(
+                new GZIPInputStream(new FileInputStream(tsvFile)), StandardCharsets.UTF_8))) {
+      return reader
+          .lines()
+          .limit(10)
+          .map(line -> CSVReader.isPolySample(line))
+          .findFirst()
+          .get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
+
+    try {
+      return getPolySamples(tsv).stream()
+              .map(polySample -> polySample.submitterAccession)
+              .collect(Collectors.toSet());
+
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
+  }
+
+  public List<PolySample> getPolySamples(File tsv) throws ValidationEngineException {
+    try {
+      TSVReader reader = new TSVReader("\\t", "#");
+      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
+      return dataSet.getRows().stream()
+              .map(
+                      dataRow ->
+                              new PolySample(
+                                      dataRow.getString(0),
+                                      dataRow.getString(1),
+                                      Long.parseLong(dataRow.getString(2))))
+              .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
+  }
+
+  class PolySample {
+    String submitterAccession;
+    String SampleId;
+    long frequency;
+
+    PolySample(String accession, String sampleId, long frequency) {
+      this.submitterAccession = accession;
+      this.SampleId = sampleId;
+      this.frequency = frequency;
+    }
+  }
+
+  public File getSubmitedFileByType(SubmissionFile.FileType fileType) {
+    return options
+            .submissionFiles
+            .map(files -> files.getFiles(fileType))
+            .filter(list -> !list.isEmpty())
+            .map(list -> list.get(0).getFile())
+            .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
   }
 }
