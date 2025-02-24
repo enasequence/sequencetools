@@ -60,8 +60,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
     File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
     File tsv = getSubmitedFileByType(SubmissionFile.FileType.TSV);
 
+    // Validate submitted accession found in fasta
     Set<String> submitedAcc = getSubmittedAcc(tsv);
-
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
       FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
       ValidationResult parseResult = reader.read();
@@ -76,6 +76,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
     } catch (Exception e) {
       throw new ValidationEngineException("Error while reading fasta file", e);
     }
+
+
     return validationResult;
   }
 
@@ -229,6 +231,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
     }
   }
 
+
   public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
 
     try {
@@ -253,6 +256,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
                                       dataRow.getString(1),
                                       Long.parseLong(dataRow.getString(2))))
               .collect(Collectors.toList());
+    }catch(NumberFormatException nfe){
+      throw new ValidationEngineException("Frequency must be a valid number");
     } catch (Exception e) {
       throw new ValidationEngineException(e);
     }
