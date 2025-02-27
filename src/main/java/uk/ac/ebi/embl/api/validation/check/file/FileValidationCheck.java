@@ -957,6 +957,8 @@ public abstract class FileValidationCheck {
         new LinkedHashMap<>(); // key is uppercase submitter accessio
     public final Map<String, AssemblySequenceInfo> flatfileInfo =
         new LinkedHashMap<>(); // key is uppercase submitter accessio
+    public final Map<String, String> polysampleInfo =
+            new LinkedHashMap<>();
     public final Map<String, AssemblySequenceInfo> agpInfo =
         new LinkedHashMap<>(); // key is uppercase submitter accessio
     public final List<String> duplicateEntryNames =

@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -72,17 +70,18 @@ public class TSVFileValidationCheck extends FileValidationCheck {
           throw new ValidationEngineException(
               "Accession: " + submitedAcc + " is not found in the Fasta file.");
         }
+        sharedInfo.sequenceCount++;
+        reader.read();
       }
     } catch (Exception e) {
       throw new ValidationEngineException("Error while reading fasta file", e);
     }
 
-
     return validationResult;
   }
 
   public ValidationResult validateTemplateSubmission(SubmissionFile submissionFile)
-          throws ValidationEngineException {
+      throws ValidationEngineException {
     ValidationResult validationResult = new ValidationResult();
     try (PrintWriter fixedFileWriter = getFixedFileWriter(submissionFile)) {
       clearReportFile(getReportFile(submissionFile));
@@ -90,7 +89,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
       if (StringUtils.isBlank(templateId)) {
         throw new ValidationEngineException(
-                "Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            "Missing template id", ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       }
 
       File submittedDataFile = submissionFile.getFile();
@@ -99,8 +98,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       TemplateLoader templateLoader = new TemplateLoader();
       if (!submittedDataFile.exists())
         throw new ValidationEngineException(
-                submittedDataFile.getAbsolutePath() + " file does not exist",
-                ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+            submittedDataFile.getAbsolutePath() + " file does not exist",
+            ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
       TemplateInfo templateInfo = templateLoader.loadTemplateFromFile(templateFile);
       options.setTemplateId(templateId);
       TemplateProcessor templateProcessor;
@@ -218,69 +217,33 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
     try (BufferedReader reader =
         new BufferedReader(
-            new InputStreamReader(
-                new GZIPInputStream(new FileInputStream(tsvFile)), StandardCharsets.UTF_8))) {
-      return reader
-          .lines()
-          .limit(10)
-          .map(line -> CSVReader.isPolySample(line))
-          .findFirst()
-          .get();
+            new InputStreamReader(new FileInputStream(tsvFile), StandardCharsets.UTF_8))) {
+      return reader.lines().limit(10).map(line -> CSVReader.isPolySample(line)).findFirst().get();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-
   public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
 
     try {
-      return getPolySamples(tsv).stream()
-              .map(polySample -> polySample.submitterAccession)
-              .collect(Collectors.toSet());
+      return new CSVReader().getPolySamples(tsv).stream()
+          .map(polySample -> polySample.getSubmittedAccession())
+          .collect(Collectors.toSet());
 
     } catch (Exception e) {
       throw new ValidationEngineException(e);
     }
   }
 
-  public List<PolySample> getPolySamples(File tsv) throws ValidationEngineException {
-    try {
-      TSVReader reader = new TSVReader("\\t", "#");
-      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
-      return dataSet.getRows().stream()
-              .map(
-                      dataRow ->
-                              new PolySample(
-                                      dataRow.getString(0),
-                                      dataRow.getString(1),
-                                      Long.parseLong(dataRow.getString(2))))
-              .collect(Collectors.toList());
-    }catch(NumberFormatException nfe){
-      throw new ValidationEngineException("Frequency must be a valid number");
-    } catch (Exception e) {
-      throw new ValidationEngineException(e);
-    }
-  }
 
-  class PolySample {
-    String submitterAccession;
-    String SampleId;
-    long frequency;
-
-    PolySample(String accession, String sampleId, long frequency) {
-      this.submitterAccession = accession;
-      this.SampleId = sampleId;
-      this.frequency = frequency;
-    }
-  }
 
   public File getSubmitedFileByType(SubmissionFile.FileType fileType) {
     return options
-            .submissionFiles
-            .map(files -> files.getFiles(fileType))
-            .filter(list -> !list.isEmpty())
-            .map(list -> list.get(0).getFile())
-            .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
+        .submissionFiles
+        .map(files -> files.getFiles(fileType))
+        .filter(list -> !list.isEmpty())
+        .map(list -> list.get(0).getFile())
+        .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
   }
 }
