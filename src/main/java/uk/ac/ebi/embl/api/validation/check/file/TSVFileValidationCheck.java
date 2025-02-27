@@ -44,7 +44,7 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
     File tsvFile = getSubmitedFileByType(SubmissionFile.FileType.TSV);
 
-    if (isPolySampleTsvFile(tsvFile)) {
+    if (tsvFile != null && isPolySampleTsvFile(tsvFile)) {
       return validatePolySampleSubmission(submissionFile);
     } else {
       return validateTemplateSubmission(submissionFile);
@@ -239,11 +239,15 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
 
   public File getSubmitedFileByType(SubmissionFile.FileType fileType) {
-    return options
-        .submissionFiles
-        .map(files -> files.getFiles(fileType))
-        .filter(list -> !list.isEmpty())
-        .map(list -> list.get(0).getFile())
-        .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
-  }
+    if(options.submissionFiles.map(files -> files.getFiles(fileType)).isEmpty()) {
+      return null;
+    }
+      return options
+              .submissionFiles
+              .map(files -> files.getFiles(fileType))
+              .filter(list -> !list.isEmpty())
+              .map(list -> list.get(0).getFile())
+              .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
+    }
+
 }
