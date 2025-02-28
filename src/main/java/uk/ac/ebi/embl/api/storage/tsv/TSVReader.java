@@ -11,6 +11,9 @@
 package uk.ac.ebi.embl.api.storage.tsv;
 
 import java.io.*;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 
@@ -57,7 +60,17 @@ public class TSVReader {
       throw new IOException("Failed to load file for resource: " + fileName);
     }
 
-    InputStreamReader streamReader = new FileReader(file);
+
+    InputStreamReader streamReader;
+    if(GzipUtils.isCompressedFilename(file.getName())){
+      FileInputStream submittedDataFis = new FileInputStream(file);
+      BufferedInputStream bufferedInputStrem =
+              new BufferedInputStream(new GZIPInputStream(submittedDataFis));
+      streamReader = new InputStreamReader(bufferedInputStrem);
+    }else{
+      streamReader = new FileReader(file);
+    }
+
     return readTSV(streamReader);
   }
 

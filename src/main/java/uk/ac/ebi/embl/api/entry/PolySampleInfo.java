@@ -10,13 +10,12 @@
  */
 package uk.ac.ebi.embl.api.entry;
 
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public class PolySampleInfo implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -55,7 +54,7 @@ public class PolySampleInfo implements Serializable {
   }
 
   public static void writeMapObject(
-          Map<String, String> polysampleInfo, String outputDir, String fileName)
+      Map<String, String> polysampleInfo, String outputDir, String fileName)
       throws ValidationEngineException {
 
     try {

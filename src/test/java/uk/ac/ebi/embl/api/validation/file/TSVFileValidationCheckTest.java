@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
@@ -190,6 +191,32 @@ public class TSVFileValidationCheckTest {
     }
   }
 
+  private void checkPolySample(
+      String tsvFile, String fastaFile, boolean isValid, String expectedMesage) throws Exception {
+
+    SubmissionFiles submissionFiles = new SubmissionFiles();
+    submissionFiles.addFile(
+        new SubmissionFile(
+            SubmissionFile.FileType.TSV,
+            new File(reportsPath + File.separator + tsvFile),
+            sequenceFixedFilePath.toFile()));
+
+    submissionFiles.addFile(
+        new SubmissionFile(
+            SubmissionFile.FileType.TSV,
+            new File(reportsPath + File.separator + fastaFile),
+            sequenceFixedFilePath.toFile()));
+
+    options.submissionFiles = Optional.of(submissionFiles);
+    boolean valid = fileValidationCheck.check(submissionFile).isValid();
+    if (isValid) {
+      assertTrue(valid);
+    } else {
+      assertFalse(valid);
+      checkReport(new File(reportsPath + File.separator + tsvFile + ".report"), expectedMesage);
+    }
+  }
+
   @Test
   public void singleCDSInvalidLocation() throws Exception {
     checkTSV(
@@ -230,5 +257,10 @@ public class TSVFileValidationCheckTest {
         "Sequence-mandatory-field-missing.tsv.gz",
         false,
         "ERROR: The following mandatory field(s) are missing SEDIMENT - All headers are capitalised. [Sequence: 1 ]");
+  }
+
+  @Test
+  public void testPolySampleTSV() throws Exception {
+    checkTSV("poly_sample_valid.tsv", true, "");
   }
 }

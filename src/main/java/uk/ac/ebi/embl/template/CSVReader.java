@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.storage.DataSet;
@@ -51,7 +52,7 @@ public class CSVReader {
     readHeader(expectedMatchNumber, allTokens);
   }
 
-  public CSVReader(){
+  public CSVReader() {
     lineReader = null;
   }
 
@@ -243,14 +244,27 @@ public class CSVReader {
       }
 
       // Skip the header row and collect rest.
-      return dataSet.getRows().stream().skip(1)
-              .map(
-                      dataRow ->
-                              new PolySample(
-                                      dataRow.getString(0),
-                                      dataRow.getString(1),
-                                      Long.parseLong(dataRow.getString(2))))
-              .collect(Collectors.toList());
+      return dataSet.getRows().stream()
+          .skip(1)
+          .map(
+              dataRow ->
+                  new PolySample(
+                      dataRow.getString(0),
+                      dataRow.getString(1),
+                      Long.parseLong(dataRow.getString(2))))
+          .collect(Collectors.toList());
+
+    } catch (NumberFormatException nfe) {
+      throw new ValidationEngineException("Polysample Frequency must be a valid number");
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
+  }
+
+  public DataSet getPolySampleDataSet(File tsv) throws ValidationEngineException {
+    try {
+      TSVReader reader = new TSVReader("\\t", "#");
+      return reader.readDataSetAsFile(tsv.getAbsolutePath());
 
     } catch (NumberFormatException nfe) {
       throw new ValidationEngineException("Frequency must be a valid number");

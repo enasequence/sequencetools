@@ -63,9 +63,9 @@ public class FastaFileWriter {
                 entry.getSequence().getAccessionwithVersion(),
                 entry.getDescription().getText());
         break;
-        case POLYSAMPLE_HEADER_FORMAT:
-          header =
-                  String.format(">%s|%s", entry.getPrimaryAccession(), entry.getSubmitterAccession());
+      case POLYSAMPLE_HEADER_FORMAT:
+        header =
+            String.format(">%s|%s", entry.getPrimaryAccession(), entry.getSubmitterAccession());
       default:
         break;
     }
