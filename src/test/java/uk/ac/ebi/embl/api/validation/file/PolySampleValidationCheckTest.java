@@ -10,31 +10,21 @@
  */
 package uk.ac.ebi.embl.api.validation.file;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.ebi.embl.api.validation.Severity;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
-import uk.ac.ebi.embl.api.validation.ValidationResult;
-import uk.ac.ebi.embl.api.validation.annotation.Description;
-import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.PolySampleValidationCheck;
-import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
-import uk.ac.ebi.embl.api.validation.submission.Context;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
-import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.annotation.Description;
+import uk.ac.ebi.embl.api.validation.check.file.PolySampleValidationCheck;
+import uk.ac.ebi.embl.api.validation.submission.Context;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
 public class PolySampleValidationCheckTest {
@@ -52,7 +42,8 @@ public class PolySampleValidationCheckTest {
     options.isWebinCLI = true;
     options.reportDir = Optional.of(reportsPath);
     options.context = Optional.of(Context.sequence);
-    polySampleValidationCheck = new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
+    polySampleValidationCheck =
+        new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
   }
 
   private void checkReport(File file, String s) throws Exception {
@@ -70,16 +61,13 @@ public class PolySampleValidationCheckTest {
     if (!isFound) assertEquals(s, lines.toString());
   }
 
-
   private void checkPolySample(
       String tsvFile, String fastaFile, boolean isValid, String expectedMesage) throws Exception {
 
     SubmissionFiles submissionFiles = new SubmissionFiles();
     submissionFiles.addFile(
         new SubmissionFile(
-            SubmissionFile.FileType.TSV,
-            new File(reportsPath + File.separator + tsvFile),
-            null));
+            SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + tsvFile), null));
 
     submissionFiles.addFile(
         new SubmissionFile(
@@ -87,36 +75,47 @@ public class PolySampleValidationCheckTest {
             new File(reportsPath + File.separator + fastaFile),
             null));
 
-
     options = new SubmissionOptions();
     options.submissionFiles = Optional.of(submissionFiles);
     options.isWebinCLI = true;
     options.reportDir = Optional.of(reportsPath);
     options.context = Optional.of(Context.sequence);
-    polySampleValidationCheck = new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
+    polySampleValidationCheck =
+        new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
 
-
-   ValidationResult result = polySampleValidationCheck.check();
+    ValidationResult result = polySampleValidationCheck.check();
     if (isValid) {
       assertTrue(result.isValid());
     } else {
       assertFalse(result.isValid());
-      result.getMessages().stream().forEach(message -> {
-        assertTrue(message.getMessage().contains(expectedMesage));
-      });
-
+      result.getMessages().stream()
+          .forEach(
+              message -> {
+                assertTrue(message.getMessage().contains(expectedMesage));
+              });
     }
   }
 
-
-
   @Test
   public void testPolySampleTSV() throws Exception {
-    checkPolySample("poly_sample_valid.tsv", "poly_sample_fasta_valid.txt",true, "");
+    checkPolySample("poly_sample_valid.tsv", "poly_sample_fasta_valid.txt", true, "");
   }
 
   @Test
   public void testPolySampleInvalidFrequency() throws Exception {
-    checkPolySample("poly_sample_invalid_frequency.tsv", "poly_sample_fasta_valid.txt",false, "Missing message: uk.ac.ebi.embl.api.validation.ValidationEngineException: Polysample Frequency must be a valid number");
+    checkPolySample(
+        "poly_sample_invalid_frequency.tsv",
+        "poly_sample_fasta_valid.txt",
+        false,
+        "Missing message: uk.ac.ebi.embl.api.validation.ValidationEngineException: Polysample Frequency must be a valid number");
+  }
+
+  @Test
+  public void testPolySampleInvalidSequenceId() throws Exception {
+    checkPolySample(
+        "poly_sample_invalid_sequence_id.tsv",
+        "poly_sample_fasta_valid.txt",
+        false,
+        "Missing message: Accession: ENTRY_NAME3 is not mapped in the TSV file.");
   }
 }

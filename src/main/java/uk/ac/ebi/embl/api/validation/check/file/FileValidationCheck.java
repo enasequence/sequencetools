@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapdb.DB;
 import uk.ac.ebi.embl.api.contant.AnalysisType;
@@ -43,6 +41,7 @@ import uk.ac.ebi.embl.api.entry.sequence.ReverseComplementer;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
@@ -63,7 +62,6 @@ import uk.ac.ebi.embl.flatfile.reader.genbank.GenbankEntryReader;
 import uk.ac.ebi.embl.flatfile.validation.FlatFileValidations;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter;
 import uk.ac.ebi.embl.flatfile.writer.embl.EmblReducedFlatFileWriter;
-import uk.ac.ebi.embl.template.CSVReader;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public abstract class FileValidationCheck {
@@ -1032,14 +1030,13 @@ public abstract class FileValidationCheck {
   }
 
   public boolean isPolySampleSubmission(SubmissionFile submissionFile)
-          throws ValidationEngineException {
+      throws ValidationEngineException {
 
-
-    DataSet polysampleDataSet = new CSVReader().getPolySampleDataSet(submissionFile.getFile());
+    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
 
     if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
       throw new ValidationEngineException(
-              "Submitted file is not a valid TSV file: " + submissionFile.getFile());
+          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
     }
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
@@ -1048,7 +1045,7 @@ public abstract class FileValidationCheck {
             && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
             && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
             && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency")
-            ? true
-            : false;
+        ? true
+        : false;
   }
 }

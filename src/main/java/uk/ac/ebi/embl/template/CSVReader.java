@@ -13,17 +13,14 @@ package uk.ac.ebi.embl.template;
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_NAME_TOKEN;
 import static uk.ac.ebi.embl.template.TemplateProcessorConstants.ORGANISM_TOKEN;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.lang.StringUtils;
-import uk.ac.ebi.embl.api.storage.DataSet;
-import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
-import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 
 public class CSVReader {
   private String currentLine;
@@ -40,9 +37,6 @@ public class CSVReader {
   private static final Pattern CHECKLIST_ID_LINE_PATTERN =
       Pattern.compile("^[^\\s]+\\s+(ERT\\d+).*");
 
-  private static final Pattern POLYSAMPLE_HEADER_LINE_PATTERN =
-      Pattern.compile("^Sequence_id\\tSample_id\\tFrequency$");
-
   public CSVReader(
       final InputStream inputReader,
       final List<TemplateTokenInfo> allTokens,
@@ -50,10 +44,6 @@ public class CSVReader {
       throws Exception {
     lineReader = new BufferedReader(new InputStreamReader(inputReader));
     readHeader(expectedMatchNumber, allTokens);
-  }
-
-  public CSVReader() {
-    lineReader = null;
   }
 
   public CSVLine readTemplateSpreadsheetLine() throws Exception {
@@ -227,49 +217,5 @@ public class CSVReader {
       return m.group(1);
     }
     return null;
-  }
-
-  public static boolean isPolySample(String line) {
-    Matcher m = POLYSAMPLE_HEADER_LINE_PATTERN.matcher(line);
-    return m.matches();
-  }
-
-  public List<PolySample> getPolySamples(File tsv) throws ValidationEngineException {
-    try {
-      TSVReader reader = new TSVReader("\\t", "#");
-      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
-
-      if (dataSet == null || dataSet.getRows().size() <= 1) {
-        return Collections.emptyList();
-      }
-
-      // Skip the header row and collect rest.
-      return dataSet.getRows().stream()
-          .skip(1)
-          .map(
-              dataRow ->
-                  new PolySample(
-                      dataRow.getString(0),
-                      dataRow.getString(1),
-                      Long.parseLong(dataRow.getString(2))))
-          .collect(Collectors.toList());
-
-    } catch (NumberFormatException nfe) {
-      throw new ValidationEngineException("Polysample Frequency must be a valid number");
-    } catch (Exception e) {
-      throw new ValidationEngineException(e);
-    }
-  }
-
-  public DataSet getPolySampleDataSet(File tsv) throws ValidationEngineException {
-    try {
-      TSVReader reader = new TSVReader("\\t", "#");
-      return reader.readDataSetAsFile(tsv.getAbsolutePath());
-
-    } catch (NumberFormatException nfe) {
-      throw new ValidationEngineException("Frequency must be a valid number");
-    } catch (Exception e) {
-      throw new ValidationEngineException(e);
-    }
   }
 }

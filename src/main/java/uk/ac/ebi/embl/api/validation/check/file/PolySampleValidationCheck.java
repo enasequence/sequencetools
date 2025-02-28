@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.stream.Collectors;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
@@ -24,7 +25,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
-import uk.ac.ebi.embl.template.CSVReader;
+
 
 public class PolySampleValidationCheck extends FileValidationCheck {
   public PolySampleValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
@@ -41,13 +42,13 @@ public class PolySampleValidationCheck extends FileValidationCheck {
     return validatePolySampleSubmission();
   }
 
+  // PolySample FASTA is validated to ensure that the submitted_acc exists in the TSV file.
   public ValidationResult validatePolySampleSubmission() throws ValidationEngineException {
 
     ValidationResult validationResult = new ValidationResult();
 
     File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
     File tsv = getSubmitedFileByType(SubmissionFile.FileType.TSV);
-
 
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
       FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
@@ -58,16 +59,21 @@ public class PolySampleValidationCheck extends FileValidationCheck {
       while (reader.isEntry()) {
         Entry entry = reader.getEntry();
         if (!submitedAcc.contains(entry.getSubmitterAccession())) {
-          throw new ValidationEngineException(
-              "Accession: " + submitedAcc + " is not found in the Fasta file.");
+          validationResult.append(
+              new ValidationMessage<>(
+                  Severity.ERROR,
+                  "Accession: "
+                      + entry.getSubmitterAccession()
+                      + " is not mapped in the TSV file."));
         }
+
+        // sequenceCount is used for setting the accession range.
         sharedInfo.sequenceCount++;
+
         reader.read();
       }
     } catch (Exception e) {
-      validationResult.append(
-              new ValidationMessage(
-                      Severity.ERROR, e.getMessage()));
+      validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
     }
 
     return validationResult;
@@ -88,7 +94,7 @@ public class PolySampleValidationCheck extends FileValidationCheck {
   public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
 
     try {
-      return new CSVReader()
+      return new TSVReader()
           .getPolySamples(tsv).stream()
               .map(polySample -> polySample.getSubmittedAccession())
               .collect(Collectors.toSet());

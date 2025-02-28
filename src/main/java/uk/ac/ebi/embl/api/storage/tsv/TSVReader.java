@@ -11,11 +11,16 @@
 package uk.ac.ebi.embl.api.storage.tsv;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.template.PolySample;
 
 /**
  * A file with rows with tab (\t) separated values. Comment lines starting with a hash (#) and empty
@@ -60,14 +65,13 @@ public class TSVReader {
       throw new IOException("Failed to load file for resource: " + fileName);
     }
 
-
     InputStreamReader streamReader;
-    if(GzipUtils.isCompressedFilename(file.getName())){
+    if (GzipUtils.isCompressedFilename(file.getName())) {
       FileInputStream submittedDataFis = new FileInputStream(file);
       BufferedInputStream bufferedInputStrem =
-              new BufferedInputStream(new GZIPInputStream(submittedDataFis));
+          new BufferedInputStream(new GZIPInputStream(submittedDataFis));
       streamReader = new InputStreamReader(bufferedInputStrem);
-    }else{
+    } else {
       streamReader = new FileReader(file);
     }
 
@@ -94,5 +98,44 @@ public class TSVReader {
     // fail
     reader.close();
     return result;
+  }
+
+  public List<PolySample> getPolySamples(File tsv) throws ValidationEngineException {
+    try {
+      TSVReader reader = new TSVReader();
+      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
+
+      if (dataSet == null || dataSet.getRows().size() <= 1) {
+        return Collections.emptyList();
+      }
+
+      // Skip the header row and collect rest.
+      return dataSet.getRows().stream()
+              .skip(1)
+              .map(
+                      dataRow ->
+                              new PolySample(
+                                      dataRow.getString(0),
+                                      dataRow.getString(1),
+                                      Long.parseLong(dataRow.getString(2))))
+              .collect(Collectors.toList());
+
+    } catch (NumberFormatException nfe) {
+      throw new ValidationEngineException("Polysample Frequency must be a valid number");
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
+  }
+
+  public DataSet getPolySampleDataSet(File tsv) throws ValidationEngineException {
+    try {
+      TSVReader reader = new TSVReader("\\t", "#");
+      return reader.readDataSetAsFile(tsv.getAbsolutePath());
+
+    } catch (NumberFormatException nfe) {
+      throw new ValidationEngineException("Frequency must be a valid number");
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
   }
 }

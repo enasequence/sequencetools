@@ -356,8 +356,9 @@ public class SubmissionValidationPlan {
           if (options.isWebinCLI) throwValidationCheckException(FileType.TSV, tsvFile);
           return result;
         }
-        if(check.isPolySampleSubmission(tsvFile)){
-          PolySampleValidationCheck polySampleCheck = new PolySampleValidationCheck(options, sharedInfo);
+        if (check.isPolySampleSubmission(tsvFile)) {
+          PolySampleValidationCheck polySampleCheck =
+              new PolySampleValidationCheck(options, sharedInfo);
           polySampleCheck.check();
         }
       }

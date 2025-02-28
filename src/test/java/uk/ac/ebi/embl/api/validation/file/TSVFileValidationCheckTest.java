@@ -191,32 +191,6 @@ public class TSVFileValidationCheckTest {
     }
   }
 
-  private void checkPolySample(
-      String tsvFile, String fastaFile, boolean isValid, String expectedMesage) throws Exception {
-
-    SubmissionFiles submissionFiles = new SubmissionFiles();
-    submissionFiles.addFile(
-        new SubmissionFile(
-            SubmissionFile.FileType.TSV,
-            new File(reportsPath + File.separator + tsvFile),
-            sequenceFixedFilePath.toFile()));
-
-    submissionFiles.addFile(
-        new SubmissionFile(
-            SubmissionFile.FileType.TSV,
-            new File(reportsPath + File.separator + fastaFile),
-            sequenceFixedFilePath.toFile()));
-
-    options.submissionFiles = Optional.of(submissionFiles);
-    boolean valid = fileValidationCheck.check(submissionFile).isValid();
-    if (isValid) {
-      assertTrue(valid);
-    } else {
-      assertFalse(valid);
-      checkReport(new File(reportsPath + File.separator + tsvFile + ".report"), expectedMesage);
-    }
-  }
-
   @Test
   public void singleCDSInvalidLocation() throws Exception {
     checkTSV(
