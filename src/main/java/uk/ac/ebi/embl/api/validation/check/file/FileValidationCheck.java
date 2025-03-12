@@ -39,6 +39,9 @@ import uk.ac.ebi.embl.api.entry.qualifier.QualifierFactory;
 import uk.ac.ebi.embl.api.entry.reference.*;
 import uk.ac.ebi.embl.api.entry.sequence.ReverseComplementer;
 import uk.ac.ebi.embl.api.entry.sequence.Sequence;
+import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
@@ -957,6 +960,7 @@ public abstract class FileValidationCheck {
         new LinkedHashMap<>(); // key is uppercase submitter accessio
     public final Map<String, AssemblySequenceInfo> flatfileInfo =
         new LinkedHashMap<>(); // key is uppercase submitter accessio
+    public final Map<String, String> polysampleInfo = new LinkedHashMap<>();
     public final Map<String, AssemblySequenceInfo> agpInfo =
         new LinkedHashMap<>(); // key is uppercase submitter accessio
     public final List<String> duplicateEntryNames =
@@ -1023,5 +1027,25 @@ public abstract class FileValidationCheck {
                 + String.join(",", unFoundUnlocalisedNames),
             ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
     }
+  }
+
+  public boolean isPolySampleSubmission(SubmissionFile submissionFile)
+      throws ValidationEngineException {
+
+    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+
+    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
+      throw new ValidationEngineException(
+          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
+    }
+
+    DataRow headerRow = polysampleDataSet.getRows().get(0);
+
+    return headerRow.getLength() == 3
+            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
+            && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
+            && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency")
+        ? true
+        : false;
   }
 }

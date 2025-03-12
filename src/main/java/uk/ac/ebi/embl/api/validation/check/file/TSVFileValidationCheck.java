@@ -15,10 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.storage.DataRow;
+import uk.ac.ebi.embl.api.storage.DataSet;
+import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.submission.Context;
@@ -37,9 +41,20 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
   @Override
   public ValidationResult check(SubmissionFile submissionFile) throws ValidationEngineException {
+
+    if (isPolySampleSubmission(submissionFile)) {
+      return validatePolySampleTSV(submissionFile);
+    } else {
+      return validateTemplateSubmission(submissionFile);
+    }
+  }
+
+  public ValidationResult validateTemplateSubmission(SubmissionFile submissionFile)
+      throws ValidationEngineException {
     ValidationResult validationResult = new ValidationResult();
     try (PrintWriter fixedFileWriter = getFixedFileWriter(submissionFile)) {
       clearReportFile(getReportFile(submissionFile));
+
       String templateId = getTemplateIdFromTsvFile(submissionFile.getFile());
       if (StringUtils.isBlank(templateId)) {
         throw new ValidationEngineException(
@@ -165,5 +180,59 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       e.printStackTrace();
     }
     return templateId;
+  }
+
+  // Polysample TSV is validated in this method.
+  private ValidationResult validatePolySampleTSV(SubmissionFile submissionFile)
+      throws ValidationEngineException {
+
+    ValidationResult validationResult = new ValidationResult();
+    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+
+    // If TSV file is not valid
+    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
+      throw new ValidationEngineException(
+          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
+    }
+
+    DataRow headerRow = polysampleDataSet.getRows().get(0);
+    List<PolySample> polySampleList = new ArrayList<>();
+    if (isValidPolySampleHeader(headerRow)) {
+      try {
+        // Validate tsv content by building PolySample object
+        polySampleList.addAll(
+            polysampleDataSet.getRows().stream()
+                .skip(1)
+                .map(
+                    dataRow ->
+                        new PolySample(
+                            dataRow.getString(0),
+                            dataRow.getString(1),
+                            Long.parseLong(dataRow.getString(2))))
+                .collect(Collectors.toList()));
+
+      } catch (NumberFormatException e) {
+        validationResult.append(
+            new ValidationMessage(
+                Severity.ERROR, "Invalid frequency value in polysample submission: "));
+        throw new ValidationEngineException(
+            "Invalid frequency value in polysample submission: ", e);
+      }
+    }
+    if (polySampleList.isEmpty()) {
+      validationResult.append(
+          new ValidationMessage(Severity.ERROR, "Empty polysample submission "));
+    }
+    return validationResult;
+  }
+
+  public boolean isValidPolySampleHeader(DataRow headerRow) {
+
+    return headerRow.getLength() == 3
+            && headerRow.getColumn(0).equals("Sequence_id")
+            && headerRow.getColumn(1).equals("Sample_id")
+            && headerRow.getColumn(2).equals("Frequency")
+        ? true
+        : false;
   }
 }

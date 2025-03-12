@@ -22,7 +22,8 @@ public class FastaFileWriter {
   public enum FastaHeaderFormat {
     DEFAULT_HEADER_FORMAT,
     ANALYSIS_HEADER_FORMAT,
-    ENA_HEADER_FORMAT
+    ENA_HEADER_FORMAT,
+    POLYSAMPLE_HEADER_FORMAT
   }
 
   public FastaFileWriter(Entry entry, Writer writer) {
@@ -62,6 +63,9 @@ public class FastaFileWriter {
                 entry.getSequence().getAccessionwithVersion(),
                 entry.getDescription().getText());
         break;
+      case POLYSAMPLE_HEADER_FORMAT:
+        header =
+            String.format(">%s|%s", entry.getPrimaryAccession(), entry.getSubmitterAccession());
       default:
         break;
     }

@@ -31,6 +31,7 @@ import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.TSVFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
+import uk.ac.ebi.embl.api.validation.submission.SubmissionFiles;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 
 @Description("")
@@ -230,5 +231,10 @@ public class TSVFileValidationCheckTest {
         "Sequence-mandatory-field-missing.tsv.gz",
         false,
         "ERROR: The following mandatory field(s) are missing SEDIMENT - All headers are capitalised. [Sequence: 1 ]");
+  }
+
+  @Test
+  public void testPolySampleTSV() throws Exception {
+    checkTSV("poly_sample_valid.tsv", true, "");
   }
 }
