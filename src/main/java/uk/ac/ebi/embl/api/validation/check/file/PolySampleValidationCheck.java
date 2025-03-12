@@ -26,7 +26,6 @@ import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 
-
 public class PolySampleValidationCheck extends FileValidationCheck {
   public PolySampleValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
     super(options, sharedInfo);

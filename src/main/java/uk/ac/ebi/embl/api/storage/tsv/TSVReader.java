@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
@@ -111,14 +110,14 @@ public class TSVReader {
 
       // Skip the header row and collect rest.
       return dataSet.getRows().stream()
-              .skip(1)
-              .map(
-                      dataRow ->
-                              new PolySample(
-                                      dataRow.getString(0),
-                                      dataRow.getString(1),
-                                      Long.parseLong(dataRow.getString(2))))
-              .collect(Collectors.toList());
+          .skip(1)
+          .map(
+              dataRow ->
+                  new PolySample(
+                      dataRow.getString(0),
+                      dataRow.getString(1),
+                      Long.parseLong(dataRow.getString(2))))
+          .collect(Collectors.toList());
 
     } catch (NumberFormatException nfe) {
       throw new ValidationEngineException("Polysample Frequency must be a valid number");
