@@ -8,7 +8,7 @@ plugins {
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.23.8.SNAPSHOT'
+version = '2.24.1'
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -126,6 +126,6 @@ publishing {
             authentication {
                 header( HttpHeaderAuthentication )
             }
-        }       
+        }
     }
 }
