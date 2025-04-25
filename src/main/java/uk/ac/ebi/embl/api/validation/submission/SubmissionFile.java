@@ -20,6 +20,8 @@ public class SubmissionFile {
     FLATFILE,
     AGP,
     TSV,
+    SAMPLE_TSV,
+    TAX_TSV,
     CHROMOSOME_LIST,
     UNLOCALISED_LIST,
     MASTER,

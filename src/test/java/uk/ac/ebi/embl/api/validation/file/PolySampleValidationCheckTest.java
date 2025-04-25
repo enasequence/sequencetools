@@ -67,7 +67,9 @@ public class PolySampleValidationCheckTest {
     SubmissionFiles submissionFiles = new SubmissionFiles();
     submissionFiles.addFile(
         new SubmissionFile(
-            SubmissionFile.FileType.TSV, new File(reportsPath + File.separator + tsvFile), null));
+            SubmissionFile.FileType.SAMPLE_TSV,
+            new File(reportsPath + File.separator + tsvFile),
+            null));
 
     submissionFiles.addFile(
         new SubmissionFile(

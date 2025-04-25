@@ -47,7 +47,7 @@ public class PolySampleValidationCheck extends FileValidationCheck {
     ValidationResult validationResult = new ValidationResult();
 
     File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
-    File tsv = getSubmitedFileByType(SubmissionFile.FileType.TSV);
+    File tsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
 
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
       FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));

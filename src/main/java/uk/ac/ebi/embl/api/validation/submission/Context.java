@@ -16,6 +16,7 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public enum Context {
   sequence(FileType.FLATFILE, FileType.TSV),
+  ploysample(FileType.FLATFILE, FileType.SAMPLE_TSV, FileType.TAX_TSV),
   transcriptome(FileType.FASTA, FileType.FLATFILE, FileType.MASTER),
   genome(
       FileType.FASTA,

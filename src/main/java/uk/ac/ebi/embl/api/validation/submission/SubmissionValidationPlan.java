@@ -95,7 +95,17 @@ public class SubmissionValidationPlan {
         if (!validationResult.isValid()) return validationResult;
       }
       if (options.context.get().getFileTypes().contains(FileType.TSV)) {
-        validationResult = validateTsvfile();
+        validationResult = validateTsvfile(options.submissionFiles.get().getFiles(FileType.TSV));
+        if (!validationResult.isValid()) return validationResult;
+      }
+      if (options.context.get().getFileTypes().contains(FileType.SAMPLE_TSV)) {
+        validationResult =
+            validateTsvfile(options.submissionFiles.get().getFiles(FileType.SAMPLE_TSV));
+        if (!validationResult.isValid()) return validationResult;
+      }
+      if (options.context.get().getFileTypes().contains(FileType.TAX_TSV)) {
+        validationResult =
+            validateTsvfile(options.submissionFiles.get().getFiles(FileType.TAX_TSV));
         if (!validationResult.isValid()) return validationResult;
       }
 
@@ -344,12 +354,13 @@ public class SubmissionValidationPlan {
     return result;
   }
 
-  private ValidationResult validateTsvfile() throws ValidationEngineException {
+  private ValidationResult validateTsvfile(List<SubmissionFile> tsvFiles)
+      throws ValidationEngineException {
     String fileName = null;
     ValidationResult result = new ValidationResult();
     try {
       check = new TSVFileValidationCheck(options, sharedInfo);
-      for (SubmissionFile tsvFile : options.submissionFiles.get().getFiles(FileType.TSV)) {
+      for (SubmissionFile tsvFile : tsvFiles) {
         fileName = tsvFile.getFile().getName();
         result = check.check(tsvFile);
         if (!result.isValid()) {
