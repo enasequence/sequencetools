@@ -12,7 +12,9 @@ package uk.ac.ebi.embl.api.storage.tsv;
 
 import java.io.*;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
@@ -20,6 +22,7 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.template.PolySample;
+import uk.ac.ebi.embl.template.SampleTax;
 
 /**
  * A file with rows with tab (\t) separated values. Comment lines starting with a hash (#) and empty
@@ -121,6 +124,34 @@ public class TSVReader {
 
     } catch (NumberFormatException nfe) {
       throw new ValidationEngineException("Polysample Frequency must be a valid number");
+    } catch (Exception e) {
+      throw new ValidationEngineException(e);
+    }
+  }
+
+  public Map<String, SampleTax> getSampleTax(File tsv) throws ValidationEngineException {
+    try {
+      TSVReader reader = new TSVReader();
+      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
+
+      if (dataSet == null || dataSet.getRows().size() <= 1) {
+        return Collections.emptyMap();
+      }
+
+      Map<String, SampleTax> result = new HashMap<>();
+
+      for (DataRow dataRow : dataSet.getRows().subList(1, dataSet.getRows().size())) {
+        String sampleId = dataRow.getString(0);
+        String taxId = dataRow.getString(1);
+
+        if (result.containsKey(sampleId)) {
+          throw new ValidationEngineException("Duplicate sampleId found: " + sampleId);
+        }
+
+        result.put(sampleId, new SampleTax(sampleId, taxId));
+      }
+
+      return result;
     } catch (Exception e) {
       throw new ValidationEngineException(e);
     }

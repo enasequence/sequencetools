@@ -12,6 +12,8 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -25,6 +27,8 @@ import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
+import uk.ac.ebi.embl.template.PolySample;
+import uk.ac.ebi.embl.template.SampleTax;
 
 public class PolySampleValidationCheck extends FileValidationCheck {
   public PolySampleValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
@@ -42,34 +46,57 @@ public class PolySampleValidationCheck extends FileValidationCheck {
   }
 
   // PolySample FASTA is validated to ensure that the submitted_acc exists in the TSV file.
-  public ValidationResult validatePolySampleSubmission() throws ValidationEngineException {
+  public ValidationResult validatePolySampleSubmission() {
 
     ValidationResult validationResult = new ValidationResult();
 
     File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
-    File tsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
+    File sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
 
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
       FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
       ValidationResult parseResult = reader.read();
       validationResult.append(parseResult);
       // Validate submitted accession found in fasta
-      Set<String> submitedAcc = getSubmittedAcc(tsv);
+      List<PolySample> polySamples = new TSVReader().getPolySamples(sampleTsv);
+      Set<String> submittedAcc =
+          polySamples.stream()
+              .map(polySample -> polySample.getSubmittedAccession())
+              .collect(Collectors.toSet());
+
       while (reader.isEntry()) {
         Entry entry = reader.getEntry();
-        if (!submitedAcc.contains(entry.getSubmitterAccession())) {
+        if (!submittedAcc.contains(entry.getSubmitterAccession())) {
           validationResult.append(
               new ValidationMessage<>(
                   Severity.ERROR,
                   "Accession: "
                       + entry.getSubmitterAccession()
-                      + " is not mapped in the TSV file."));
+                      + " is not mapped in the sample TSV file."));
         }
 
         // sequenceCount is used for setting the accession range.
         sharedInfo.sequenceCount++;
 
         reader.read();
+      }
+
+      File taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
+      Map<String, SampleTax> sampleTaxMap = new TSVReader().getSampleTax(taxTsv);
+
+      Set<String> polySampleIds =
+          polySamples.stream().map(PolySample::getSampleId).collect(Collectors.toSet());
+
+      List<SampleTax> missing =
+          sampleTaxMap.values().stream()
+              .filter(t -> !polySampleIds.contains(t.sampleId()))
+              .toList();
+
+      for (SampleTax entry : missing) {
+        validationResult.append(
+            new ValidationMessage<>(
+                Severity.ERROR,
+                "Sample: " + entry.sampleId() + " is not mapped in the sample TSV file."));
       }
     } catch (Exception e) {
       validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
@@ -88,18 +115,5 @@ public class PolySampleValidationCheck extends FileValidationCheck {
         .filter(list -> !list.isEmpty())
         .map(list -> list.get(0).getFile())
         .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
-  }
-
-  public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
-
-    try {
-      return new TSVReader()
-          .getPolySamples(tsv).stream()
-              .map(polySample -> polySample.getSubmittedAccession())
-              .collect(Collectors.toSet());
-
-    } catch (Exception e) {
-      throw new ValidationEngineException(e);
-    }
   }
 }
