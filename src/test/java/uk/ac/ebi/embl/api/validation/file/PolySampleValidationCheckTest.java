@@ -109,7 +109,7 @@ public class PolySampleValidationCheckTest {
         "poly_sample_invalid_frequency.tsv",
         "poly_sample_fasta_valid.txt",
         false,
-        "Missing message: uk.ac.ebi.embl.api.validation.ValidationEngineException: Polysample Frequency must be a valid number");
+        "Missing message: Polysample Frequency must be a valid number");
   }
 
   @Test
@@ -118,6 +118,6 @@ public class PolySampleValidationCheckTest {
         "poly_sample_invalid_sequence_id.tsv",
         "poly_sample_fasta_valid.txt",
         false,
-        "Missing message: Accession: ENTRY_NAME3 is not mapped in the TSV file.");
+        "Missing message: Sequence: ENTRY_NAME3 is not mapped in the sample TSV file.");
   }
 }

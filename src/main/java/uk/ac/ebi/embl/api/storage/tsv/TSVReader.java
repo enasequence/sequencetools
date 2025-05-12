@@ -22,7 +22,7 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.template.PolySample;
-import uk.ac.ebi.embl.template.SampleTax;
+import uk.ac.ebi.embl.template.SequenceTax;
 
 /**
  * A file with rows with tab (\t) separated values. Comment lines starting with a hash (#) and empty
@@ -129,7 +129,7 @@ public class TSVReader {
     }
   }
 
-  public Map<String, SampleTax> getSampleTax(File tsv) throws ValidationEngineException {
+  public Map<String, SequenceTax> getSequenceTax(File tsv) throws ValidationEngineException {
     try {
       TSVReader reader = new TSVReader();
       DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
@@ -138,17 +138,17 @@ public class TSVReader {
         return Collections.emptyMap();
       }
 
-      Map<String, SampleTax> result = new HashMap<>();
+      Map<String, SequenceTax> result = new HashMap<>();
 
       for (DataRow dataRow : dataSet.getRows().subList(1, dataSet.getRows().size())) {
-        String sampleId = dataRow.getString(0);
+        String sequenceId = dataRow.getString(0);
         String taxId = dataRow.getString(1);
 
-        if (result.containsKey(sampleId)) {
-          throw new ValidationEngineException("Duplicate sampleId found: " + sampleId);
+        if (result.containsKey(sequenceId)) {
+          throw new ValidationEngineException("Duplicate sequenceId found: " + sequenceId);
         }
 
-        result.put(sampleId, new SampleTax(sampleId, taxId));
+        result.put(sequenceId, new SequenceTax(sequenceId, taxId));
       }
 
       return result;

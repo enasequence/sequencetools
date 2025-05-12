@@ -28,7 +28,7 @@ import uk.ac.ebi.embl.common.CommonUtil;
 import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.template.PolySample;
-import uk.ac.ebi.embl.template.SampleTax;
+import uk.ac.ebi.embl.template.SequenceTax;
 
 public class PolySampleValidationCheck extends FileValidationCheck {
   public PolySampleValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
@@ -45,13 +45,20 @@ public class PolySampleValidationCheck extends FileValidationCheck {
     return validatePolySampleSubmission();
   }
 
-  // PolySample FASTA is validated to ensure that the submitted_acc exists in the TSV file.
+  // PolySample FASTA is validated to ensure that the submitted_acc exists in the TSV files.
   public ValidationResult validatePolySampleSubmission() {
 
     ValidationResult validationResult = new ValidationResult();
 
     File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
     File sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
+    File taxTsv = null;
+
+    boolean isTaxTsvPresent =
+        options.context.get().getFileTypes().contains(SubmissionFile.FileType.TAX_TSV);
+    if (isTaxTsvPresent) {
+      taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
+    }
 
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
       FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
@@ -59,44 +66,39 @@ public class PolySampleValidationCheck extends FileValidationCheck {
       validationResult.append(parseResult);
       // Validate submitted accession found in fasta
       List<PolySample> polySamples = new TSVReader().getPolySamples(sampleTsv);
-      Set<String> submittedAcc =
+      Set<String> submittedSampleAcc =
           polySamples.stream()
               .map(polySample -> polySample.getSubmittedAccession())
               .collect(Collectors.toSet());
 
       while (reader.isEntry()) {
         Entry entry = reader.getEntry();
-        if (!submittedAcc.contains(entry.getSubmitterAccession())) {
+
+        if (!submittedSampleAcc.contains(entry.getSubmitterAccession())) {
           validationResult.append(
               new ValidationMessage<>(
                   Severity.ERROR,
-                  "Accession: "
+                  "Sequence: "
                       + entry.getSubmitterAccession()
                       + " is not mapped in the sample TSV file."));
+        }
+
+        if (isTaxTsvPresent) {
+          Map<String, SequenceTax> sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
+          if (!sequenceTaxMap.containsKey(entry.getSubmitterAccession())) {
+            validationResult.append(
+                new ValidationMessage<>(
+                    Severity.ERROR,
+                    "Sequence: "
+                        + entry.getSubmitterAccession()
+                        + " is not mapped in the tax TSV file."));
+          }
         }
 
         // sequenceCount is used for setting the accession range.
         sharedInfo.sequenceCount++;
 
         reader.read();
-      }
-
-      File taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
-      Map<String, SampleTax> sampleTaxMap = new TSVReader().getSampleTax(taxTsv);
-
-      Set<String> polySampleIds =
-          polySamples.stream().map(PolySample::getSampleId).collect(Collectors.toSet());
-
-      List<SampleTax> missing =
-          sampleTaxMap.values().stream()
-              .filter(t -> !polySampleIds.contains(t.sampleId()))
-              .toList();
-
-      for (SampleTax entry : missing) {
-        validationResult.append(
-            new ValidationMessage<>(
-                Severity.ERROR,
-                "Sample: " + entry.sampleId() + " is not mapped in the sample TSV file."));
       }
     } catch (Exception e) {
       validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));

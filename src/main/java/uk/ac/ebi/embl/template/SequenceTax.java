@@ -10,4 +10,4 @@
  */
 package uk.ac.ebi.embl.template;
 
-public record SampleTax(String sampleId, String taxId) {}
+public record SequenceTax(String sequenceId, String taxId) {}

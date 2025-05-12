@@ -18,10 +18,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.mapdb.DBMaker;
 import uk.ac.ebi.embl.api.entry.AssemblySequenceInfo;
@@ -94,19 +91,18 @@ public class SubmissionValidationPlan {
         validationResult = validateAGP();
         if (!validationResult.isValid()) return validationResult;
       }
-      if (options.context.get().getFileTypes().contains(FileType.TSV)) {
-        validationResult = validateTsvfile(options.submissionFiles.get().getFiles(FileType.TSV));
-        if (!validationResult.isValid()) return validationResult;
-      }
-      if (options.context.get().getFileTypes().contains(FileType.SAMPLE_TSV)) {
-        validationResult =
-            validateTsvfile(options.submissionFiles.get().getFiles(FileType.SAMPLE_TSV));
-        if (!validationResult.isValid()) return validationResult;
-      }
-      if (options.context.get().getFileTypes().contains(FileType.TAX_TSV)) {
-        validationResult =
-            validateTsvfile(options.submissionFiles.get().getFiles(FileType.TAX_TSV));
-        if (!validationResult.isValid()) return validationResult;
+      if (options.context.get().getFileTypes().contains(FileType.TSV)
+          || options.context.get().getFileTypes().contains(FileType.SAMPLE_TSV)
+          || options.context.get().getFileTypes().contains(FileType.TAX_TSV)) {
+        List<SubmissionFile> tsvFiles = new ArrayList<>();
+        tsvFiles.addAll(options.submissionFiles.get().getFiles(FileType.TSV));
+        tsvFiles.addAll(options.submissionFiles.get().getFiles(FileType.SAMPLE_TSV));
+        tsvFiles.addAll(options.submissionFiles.get().getFiles(FileType.TAX_TSV));
+
+        validationResult = validateTsvfile(tsvFiles);
+        if (!validationResult.isValid()) {
+          return validationResult;
+        }
       }
 
       validateDuplicateEntryNames(sharedInfo);
@@ -358,24 +354,27 @@ public class SubmissionValidationPlan {
       throws ValidationEngineException {
     String fileName = null;
     ValidationResult result = new ValidationResult();
+    FileType currentType = FileType.TSV;
+    boolean isPolySample = false;
     try {
       check = new TSVFileValidationCheck(options, sharedInfo);
       for (SubmissionFile tsvFile : tsvFiles) {
         fileName = tsvFile.getFile().getName();
+        currentType = tsvFile.getFileType();
         result = check.check(tsvFile);
         if (!result.isValid()) {
-          if (options.isWebinCLI) throwValidationCheckException(FileType.TSV, tsvFile);
+          if (options.isWebinCLI) throwValidationCheckException(tsvFile.getFileType(), tsvFile);
           return result;
         }
-        if (check.isPolySampleSubmission(tsvFile)) {
-          PolySampleValidationCheck polySampleCheck =
-              new PolySampleValidationCheck(options, sharedInfo);
-          polySampleCheck.check();
-        }
+        isPolySample |= check.isPolySampleSubmission(tsvFile);
       }
-
+      if (isPolySample) {
+        PolySampleValidationCheck polySampleCheck =
+            new PolySampleValidationCheck(options, sharedInfo);
+        polySampleCheck.check();
+      }
     } catch (Exception e) {
-      throwValidationEngineException(FileType.TSV.name(), e, fileName);
+      throwValidationEngineException(currentType.name(), e, fileName);
     }
     return result;
   }
