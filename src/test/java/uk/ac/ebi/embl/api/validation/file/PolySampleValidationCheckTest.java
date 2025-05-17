@@ -62,26 +62,42 @@ public class PolySampleValidationCheckTest {
   }
 
   private void checkPolySample(
-      String tsvFile, String fastaFile, boolean isValid, String expectedMesage) throws Exception {
+      Context context,
+      String tsvFile,
+      String taxFile,
+      String fastaFile,
+      boolean isValid,
+      String expectedMesage)
+      throws Exception {
 
     SubmissionFiles submissionFiles = new SubmissionFiles();
-    submissionFiles.addFile(
-        new SubmissionFile(
-            SubmissionFile.FileType.SAMPLE_TSV,
-            new File(reportsPath + File.separator + tsvFile),
-            null));
-
-    submissionFiles.addFile(
-        new SubmissionFile(
-            SubmissionFile.FileType.FASTA,
-            new File(reportsPath + File.separator + fastaFile),
-            null));
+    if (tsvFile != null) {
+      submissionFiles.addFile(
+          new SubmissionFile(
+              SubmissionFile.FileType.SAMPLE_TSV,
+              new File(reportsPath + File.separator + tsvFile),
+              null));
+    }
+    if (taxFile != null) {
+      submissionFiles.addFile(
+          new SubmissionFile(
+              SubmissionFile.FileType.TAX_TSV,
+              new File(reportsPath + File.separator + taxFile),
+              null));
+    }
+    if (fastaFile != null) {
+      submissionFiles.addFile(
+          new SubmissionFile(
+              SubmissionFile.FileType.FASTA,
+              new File(reportsPath + File.separator + fastaFile),
+              null));
+    }
 
     options = new SubmissionOptions();
     options.submissionFiles = Optional.of(submissionFiles);
     options.isWebinCLI = true;
     options.reportDir = Optional.of(reportsPath);
-    options.context = Optional.of(Context.sequence);
+    options.context = Optional.of(context);
     polySampleValidationCheck =
         new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
 
@@ -99,14 +115,38 @@ public class PolySampleValidationCheckTest {
   }
 
   @Test
+  public void testTaxTSV() throws Exception {
+    checkPolySample(Context.ploysample_tax, null, "tax_valid.tsv", null, true, "");
+  }
+
+  @Test
+  public void testPolySampleTaxTSV() throws Exception {
+    checkPolySample(
+        Context.ploysample_full,
+        "poly_sample_valid.tsv",
+        "tax_valid.tsv",
+        "poly_sample_fasta_valid.txt",
+        true,
+        "");
+  }
+
+  @Test
   public void testPolySampleTSV() throws Exception {
-    checkPolySample("poly_sample_valid.tsv", "poly_sample_fasta_valid.txt", true, "");
+    checkPolySample(
+        Context.ploysample_fastq_sample,
+        "poly_sample_valid.tsv",
+        null,
+        "poly_sample_fasta_valid.txt",
+        true,
+        "");
   }
 
   @Test
   public void testPolySampleInvalidFrequency() throws Exception {
     checkPolySample(
+        Context.ploysample_fastq_sample,
         "poly_sample_invalid_frequency.tsv",
+        null,
         "poly_sample_fasta_valid.txt",
         false,
         "Missing message: Polysample Frequency must be a valid number");
@@ -115,7 +155,9 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testPolySampleInvalidSequenceId() throws Exception {
     checkPolySample(
+        Context.ploysample_fastq_sample,
         "poly_sample_invalid_sequence_id.tsv",
+        null,
         "poly_sample_fasta_valid.txt",
         false,
         "Missing message: Sequence: ENTRY_NAME3 is not mapped in the sample TSV file.");

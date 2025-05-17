@@ -22,6 +22,7 @@ import uk.ac.ebi.embl.api.validation.Severity;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
+import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionOptions;
 import uk.ac.ebi.embl.common.CommonUtil;
@@ -50,14 +51,19 @@ public class PolySampleValidationCheck extends FileValidationCheck {
 
     ValidationResult validationResult = new ValidationResult();
 
-    File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
-    File sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
+    File fasta = null;
+    File sampleTsv = null;
     File taxTsv = null;
 
-    boolean isTaxTsvPresent =
-        options.context.get().getFileTypes().contains(SubmissionFile.FileType.TAX_TSV);
-    if (isTaxTsvPresent) {
+    if (Context.ploysample_full.equals(options.context.get())) {
+      fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
+      sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
       taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
+    } else if (Context.ploysample_fastq_sample.equals(options.context.get())) {
+      fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
+      sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
+    } else { // nothing to validate against
+      return validationResult;
     }
 
     try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
@@ -83,7 +89,7 @@ public class PolySampleValidationCheck extends FileValidationCheck {
                       + " is not mapped in the sample TSV file."));
         }
 
-        if (isTaxTsvPresent) {
+        if (Context.ploysample_full.equals(options.context.get())) {
           Map<String, SequenceTax> sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
           if (!sequenceTaxMap.containsKey(entry.getSubmitterAccession())) {
             validationResult.append(

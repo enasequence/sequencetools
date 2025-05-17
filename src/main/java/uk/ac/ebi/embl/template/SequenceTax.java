@@ -10,4 +10,28 @@
  */
 package uk.ac.ebi.embl.template;
 
-public record SequenceTax(String sequenceId, String taxId) {}
+public class SequenceTax {
+  private String sequenceId;
+  private String taxId;
+
+  public SequenceTax(String sequenceId, String taxId) {
+    this.sequenceId = sequenceId;
+    this.taxId = taxId;
+  }
+
+  public String getSequenceId() {
+    return sequenceId;
+  }
+
+  public void setSequenceId(String sequenceId) {
+    this.sequenceId = sequenceId;
+  }
+
+  public String getTaxId() {
+    return taxId;
+  }
+
+  public void setTaxId(String taxId) {
+    this.taxId = taxId;
+  }
+}
