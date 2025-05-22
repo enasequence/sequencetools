@@ -41,7 +41,7 @@ public class PolySampleValidationCheckTest {
     options = new SubmissionOptions();
     options.isWebinCLI = true;
     options.reportDir = Optional.of(reportsPath);
-    options.context = Optional.of(Context.sequence);
+    options.context = Optional.of(Context.ploysample_fastq_sample);
     polySampleValidationCheck =
         new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
   }
@@ -117,6 +117,11 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testTaxTSV() throws Exception {
     checkPolySample(Context.ploysample_tax, null, "tax_valid.tsv", null, true, "");
+  }
+
+  @Test
+  public void testInvalidTaxTSV() throws Exception {
+    checkPolySample(Context.ploysample_tax, null, "tax_invalid.tsv", null, false, "");
   }
 
   @Test

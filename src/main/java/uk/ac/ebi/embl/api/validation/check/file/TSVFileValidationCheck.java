@@ -44,6 +44,8 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
     if (isPolySampleSubmission(submissionFile)) {
       return validatePolySampleTSV(submissionFile);
+    } else if (isSequenceTaxSubmission(submissionFile)) {
+      return validateSequenceTaxTSV(submissionFile);
     } else {
       return validateTemplateSubmission(submissionFile);
     }
@@ -199,7 +201,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
     List<PolySample> polySampleList = new ArrayList<>();
     if (isValidPolySampleHeader(headerRow)) {
       try {
-        // Validate tsv content by building PolySample object
         polySampleList.addAll(
             polysampleDataSet.getRows().stream()
                 .skip(1)
@@ -210,7 +211,6 @@ public class TSVFileValidationCheck extends FileValidationCheck {
                             dataRow.getString(1),
                             Long.parseLong(dataRow.getString(2))))
                 .collect(Collectors.toList()));
-
       } catch (NumberFormatException e) {
         validationResult.append(
             new ValidationMessage(
@@ -226,13 +226,45 @@ public class TSVFileValidationCheck extends FileValidationCheck {
     return validationResult;
   }
 
-  public boolean isValidPolySampleHeader(DataRow headerRow) {
+  // Sequence tax TSV is validated in this method.
+  private ValidationResult validateSequenceTaxTSV(SubmissionFile submissionFile)
+      throws ValidationEngineException {
 
-    return headerRow.getLength() == 3
-            && headerRow.getColumn(0).equals("Sequence_id")
-            && headerRow.getColumn(1).equals("Sample_id")
-            && headerRow.getColumn(2).equals("Frequency")
-        ? true
-        : false;
+    ValidationResult validationResult = new ValidationResult();
+    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+
+    // If TSV file is not valid
+    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
+      throw new ValidationEngineException(
+          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
+    }
+
+    DataRow headerRow = polysampleDataSet.getRows().get(0);
+    List<SequenceTax> sequenceTaxList = new ArrayList<>();
+    if (isValidSequenceTaxHeader(headerRow)) {
+      sequenceTaxList.addAll(
+          polysampleDataSet.getRows().stream()
+              .skip(1)
+              .map(dataRow -> new SequenceTax(dataRow.getString(0), dataRow.getString(1)))
+              .collect(Collectors.toList()));
+    }
+    if (sequenceTaxList.isEmpty()) {
+      validationResult.append(
+          new ValidationMessage(Severity.ERROR, "Empty sequence tax submission "));
+    }
+    return validationResult;
+  }
+
+  public boolean isValidPolySampleHeader(DataRow headerRow) {
+    return (headerRow.getLength() == 3
+        && headerRow.getColumn(0).equals("Sequence_id")
+        && headerRow.getColumn(1).equals("Sample_id")
+        && headerRow.getColumn(2).equals("Frequency"));
+  }
+
+  public boolean isValidSequenceTaxHeader(DataRow headerRow) {
+    return (headerRow.getLength() == 2
+        && headerRow.getColumn(0).equals("Sequence_id")
+        && headerRow.getColumn(1).equals("Tax_id"));
   }
 }

@@ -1042,11 +1042,25 @@ public abstract class FileValidationCheck {
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
     return (headerRow.getLength() == 3
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
-            && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency"))
-        || (headerRow.getLength() == 2
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"));
+        && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
+        && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
+        && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency"));
+  }
+
+  public boolean isSequenceTaxSubmission(SubmissionFile submissionFile)
+      throws ValidationEngineException {
+
+    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+
+    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
+      throw new ValidationEngineException(
+          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
+    }
+
+    DataRow headerRow = polysampleDataSet.getRows().get(0);
+
+    return (headerRow.getLength() == 2
+        && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
+        && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"));
   }
 }

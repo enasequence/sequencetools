@@ -366,7 +366,8 @@ public class SubmissionValidationPlan {
           if (options.isWebinCLI) throwValidationCheckException(tsvFile.getFileType(), tsvFile);
           return result;
         }
-        isPolySample |= check.isPolySampleSubmission(tsvFile);
+        isPolySample |=
+            (check.isPolySampleSubmission(tsvFile) || check.isSequenceTaxSubmission(tsvFile));
       }
       if (isPolySample) {
         PolySampleValidationCheck polySampleCheck =
