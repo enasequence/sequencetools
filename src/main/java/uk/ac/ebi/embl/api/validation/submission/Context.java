@@ -15,7 +15,7 @@ import java.util.List;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public enum Context {
-  sequence(FileType.FLATFILE, FileType.TSV),
+  sequence(FileType.FLATFILE, FileType.TSV, FileType.FASTA),
   transcriptome(FileType.FASTA, FileType.FLATFILE, FileType.MASTER),
   genome(
       FileType.FASTA,

@@ -341,6 +341,28 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
                         file.getFile(),
                         new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
                         file.getReportFile())));
+    manifest
+        .files()
+        .get(SequenceManifest.FileType.SAMPLE_TSV)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    manifest
+        .files()
+        .get(SequenceManifest.FileType.TAX_TSV)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
     return submissionFiles;
   }
 

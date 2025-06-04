@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -42,43 +43,47 @@ public class PolySampleValidationCheck extends FileValidationCheck {
   }
 
   // PolySample FASTA is validated to ensure that the submitted_acc exists in the TSV file.
-  public ValidationResult validatePolySampleSubmission() throws ValidationEngineException {
+  public ValidationResult validatePolySampleSubmission() {
 
     ValidationResult validationResult = new ValidationResult();
 
-    File fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
-    File tsv = getSubmitedFileByType(SubmissionFile.FileType.TSV);
+    File fasta = getSubmittedFileByType(SubmissionFile.FileType.FASTA);
+    List<File> tsvs = getSubmittedFilesByType(SubmissionFile.FileType.TSV);
 
-    try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
-      FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
-      ValidationResult parseResult = reader.read();
-      validationResult.append(parseResult);
-      // Validate submitted accession found in fasta
-      Set<String> submitedAcc = getSubmittedAcc(tsv);
-      while (reader.isEntry()) {
-        Entry entry = reader.getEntry();
-        if (!submitedAcc.contains(entry.getSubmitterAccession())) {
-          validationResult.append(
-              new ValidationMessage<>(
-                  Severity.ERROR,
-                  "Accession: "
-                      + entry.getSubmitterAccession()
-                      + " is not mapped in the TSV file."));
+    for (final File tsv : tsvs) {
+      try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
+        FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
+        ValidationResult parseResult = reader.read();
+        validationResult.append(parseResult);
+        // Validate submitted accession found in fasta
+        Set<String> submitedAcc = getSubmittedAcc(tsv);
+
+        while (reader.isEntry()) {
+          Entry entry = reader.getEntry();
+
+          if (!submitedAcc.contains(entry.getSubmitterAccession())) {
+            validationResult.append(
+                new ValidationMessage<>(
+                    Severity.ERROR,
+                    "Accession: "
+                        + entry.getSubmitterAccession()
+                        + " is not mapped in the TSV file."));
+          }
+
+          // sequenceCount is used for setting the accession range.
+          sharedInfo.sequenceCount++;
+
+          reader.read();
         }
-
-        // sequenceCount is used for setting the accession range.
-        sharedInfo.sequenceCount++;
-
-        reader.read();
+      } catch (Exception e) {
+        validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
       }
-    } catch (Exception e) {
-      validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
     }
 
     return validationResult;
   }
 
-  public File getSubmitedFileByType(SubmissionFile.FileType fileType) {
+  public File getSubmittedFileByType(SubmissionFile.FileType fileType) {
     if (options.submissionFiles.map(files -> files.getFiles(fileType)).isEmpty()) {
       return null;
     }
@@ -88,6 +93,20 @@ public class PolySampleValidationCheck extends FileValidationCheck {
         .filter(list -> !list.isEmpty())
         .map(list -> list.get(0).getFile())
         .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"));
+  }
+
+  public List<File> getSubmittedFilesByType(SubmissionFile.FileType fileType) {
+    if (options.submissionFiles.map(files -> files.getFiles(fileType)).isEmpty()) {
+      return null;
+    }
+
+    return options
+        .submissionFiles
+        .map(files -> files.getFiles(fileType))
+        .orElseThrow(() -> new IllegalStateException("No " + fileType.name() + " file found"))
+        .stream()
+        .map(SubmissionFile::getFile)
+        .collect(Collectors.toList());
   }
 
   public Set<String> getSubmittedAcc(File tsv) throws ValidationEngineException {
