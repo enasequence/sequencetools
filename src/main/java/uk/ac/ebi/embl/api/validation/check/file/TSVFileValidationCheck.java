@@ -241,12 +241,20 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
     List<SequenceTax> sequenceTaxList = new ArrayList<>();
-    if (isValidSequenceTaxHeader(headerRow)) {
-      sequenceTaxList.addAll(
-          polysampleDataSet.getRows().stream()
-              .skip(1)
-              .map(dataRow -> new SequenceTax(dataRow.getString(0), dataRow.getString(1)))
-              .collect(Collectors.toList()));
+    try {
+      if (isValidSequenceTaxHeader(headerRow)) {
+        sequenceTaxList.addAll(
+            polysampleDataSet.getRows().stream()
+                .skip(1)
+                .map(dataRow -> new SequenceTax(dataRow.getString(0), dataRow.getString(1)))
+                .collect(Collectors.toList()));
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      validationResult.append(
+          new ValidationMessage(
+              Severity.ERROR, "Invalid file structure in polysample submission: "));
+      //      throw new ValidationEngineException(
+      //              "Invalid file structure in polysample submission: ", e);
     }
     if (sequenceTaxList.isEmpty()) {
       validationResult.append(

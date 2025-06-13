@@ -236,4 +236,9 @@ public class TSVFileValidationCheckTest {
   public void testPolySampleTSV() throws Exception {
     checkTSV("poly_sample_valid.tsv", true, "");
   }
+
+  @Test
+  public void testTaxTSV() throws Exception {
+    checkTSV("tax_valid.tsv", true, "");
+  }
 }

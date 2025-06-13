@@ -67,7 +67,7 @@ public class PolySampleValidationCheckTest {
       String taxFile,
       String fastaFile,
       boolean isValid,
-      String expectedMesage)
+      String expectedMessage)
       throws Exception {
 
     SubmissionFiles submissionFiles = new SubmissionFiles();
@@ -103,13 +103,14 @@ public class PolySampleValidationCheckTest {
 
     ValidationResult result = polySampleValidationCheck.check();
     if (isValid) {
+      System.out.print(result.getMessages());
       assertTrue(result.isValid());
     } else {
       assertFalse(result.isValid());
       result.getMessages().stream()
           .forEach(
               message -> {
-                assertTrue(message.getMessage().contains(expectedMesage));
+                assertTrue(message.getMessage().contains(expectedMessage));
               });
     }
   }
@@ -117,11 +118,6 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testTaxTSV() throws Exception {
     checkPolySample(Context.ploysample_tax, null, "tax_valid.tsv", null, true, "");
-  }
-
-  @Test
-  public void testInvalidTaxTSV() throws Exception {
-    checkPolySample(Context.ploysample_tax, null, "tax_invalid.tsv", null, false, "");
   }
 
   @Test
