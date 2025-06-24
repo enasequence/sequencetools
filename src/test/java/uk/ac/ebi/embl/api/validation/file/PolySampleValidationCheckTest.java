@@ -41,7 +41,7 @@ public class PolySampleValidationCheckTest {
     options = new SubmissionOptions();
     options.isWebinCLI = true;
     options.reportDir = Optional.of(reportsPath);
-    options.context = Optional.of(Context.ploysample_fastq_sample);
+    options.context = Optional.of(Context.polysample_fasta_sample);
     polySampleValidationCheck =
         new PolySampleValidationCheck(options, new PolySampleValidationCheck.SharedInfo());
   }
@@ -117,13 +117,13 @@ public class PolySampleValidationCheckTest {
 
   @Test
   public void testTaxTSV() throws Exception {
-    checkPolySample(Context.ploysample_tax, null, "tax_valid.tsv", null, true, "");
+    checkPolySample(Context.polysample_tax, null, "tax_valid.tsv", null, true, "");
   }
 
   @Test
   public void testPolySampleTaxTSV() throws Exception {
     checkPolySample(
-        Context.ploysample_full,
+        Context.polysample_full,
         "poly_sample_valid.tsv",
         "tax_valid.tsv",
         "poly_sample_fasta_valid.txt",
@@ -134,7 +134,7 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testPolySampleTSV() throws Exception {
     checkPolySample(
-        Context.ploysample_fastq_sample,
+        Context.polysample_fasta_sample,
         "poly_sample_valid.tsv",
         null,
         "poly_sample_fasta_valid.txt",
@@ -145,7 +145,7 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testPolySampleInvalidFrequency() throws Exception {
     checkPolySample(
-        Context.ploysample_fastq_sample,
+        Context.polysample_fasta_sample,
         "poly_sample_invalid_frequency.tsv",
         null,
         "poly_sample_fasta_valid.txt",
@@ -156,7 +156,7 @@ public class PolySampleValidationCheckTest {
   @Test
   public void testPolySampleInvalidSequenceId() throws Exception {
     checkPolySample(
-        Context.ploysample_fastq_sample,
+        Context.polysample_fasta_sample,
         "poly_sample_invalid_sequence_id.tsv",
         null,
         "poly_sample_fasta_valid.txt",

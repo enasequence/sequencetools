@@ -321,17 +321,6 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
                         file.getReportFile())));
     manifest
         .files()
-        .get(SequenceManifest.FileType.FASTA)
-        .forEach(
-            file ->
-                submissionFiles.addFile(
-                    new SubmissionFile(
-                        SubmissionFile.FileType.FASTA,
-                        file.getFile(),
-                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
-                        file.getReportFile())));
-    manifest
-        .files()
         .get(SequenceManifest.FileType.TAB)
         .forEach(
             file ->

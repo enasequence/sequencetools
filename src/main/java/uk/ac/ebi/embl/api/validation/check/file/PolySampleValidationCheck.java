@@ -55,11 +55,11 @@ public class PolySampleValidationCheck extends FileValidationCheck {
     File sampleTsv = null;
     File taxTsv = null;
 
-    if (Context.ploysample_full.equals(options.context.get())) {
+    if (Context.polysample_full.equals(options.context.get())) {
       fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
       sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
       taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
-    } else if (Context.ploysample_fastq_sample.equals(options.context.get())) {
+    } else if (Context.polysample_fasta_sample.equals(options.context.get())) {
       fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
       sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
     } else { // nothing to validate against
@@ -89,7 +89,7 @@ public class PolySampleValidationCheck extends FileValidationCheck {
                       + " is not mapped in the sample TSV file."));
         }
 
-        if (Context.ploysample_full.equals(options.context.get())) {
+        if (Context.polysample_full.equals(options.context.get())) {
           Map<String, SequenceTax> sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
           if (!sequenceTaxMap.containsKey(entry.getSubmitterAccession())) {
             validationResult.append(
