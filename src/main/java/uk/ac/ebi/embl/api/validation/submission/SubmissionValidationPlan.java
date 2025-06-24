@@ -77,7 +77,10 @@ public class SubmissionValidationPlan {
           return validationResult;
         }
       }
-      if (options.context.get().getFileTypes().contains(FileType.FASTA)) {
+      if (options.context.get().getFileTypes().contains(FileType.FASTA)
+          && !Context.polysample_full.equals(options.context.get())
+          && !Context.polysample_fasta_sample.equals(
+              options.context.get())) { // polysample fasta is validated along with its tsv
         validationResult = validateFasta();
         if (!validationResult.isValid()) return validationResult;
       }
