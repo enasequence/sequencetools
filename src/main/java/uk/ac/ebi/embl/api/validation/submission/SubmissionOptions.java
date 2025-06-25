@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
@@ -90,8 +91,10 @@ public class SubmissionOptions {
     if (!assemblyInfoEntry.isPresent() && isWebinCLI)
       throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
     if (!source.isPresent() && isWebinCLI) {
-      if (Context.sequence != context.get())
+      if (Set.of(Context.sequence, Context.polysample_full).stream()
+          .noneMatch(con -> context.get() == con)) {
         throw new ValidationEngineException("SubmissionOptions:source must be provided");
+      }
     }
     if (!reportDir.isPresent())
       throw new ValidationEngineException("SubmissionOptions:reportDir must be provided");

@@ -29,10 +29,7 @@ import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.*;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 public class SubmissionValidator implements Validator<Manifest, ValidationResponse> {
@@ -192,6 +189,9 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
       options.context = Optional.of(Context.transcriptome);
       options.submissionFiles =
           Optional.of(setTranscriptomeOptions((TranscriptomeManifest) manifest, assemblyInfo));
+    } else if (manifest instanceof PolySampleManifest) {
+      options.context = Optional.of(Context.polysample_full);
+      options.submissionFiles = Optional.of(setPolysampleOptions((PolySampleManifest) manifest));
     } else {
       options.context = Optional.of(Context.sequence);
       options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
@@ -322,6 +322,44 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
     manifest
         .files()
         .get(SequenceManifest.FileType.TAB)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    return submissionFiles;
+  }
+
+  private SubmissionFiles setPolysampleOptions(PolySampleManifest manifest) {
+    SubmissionFiles submissionFiles = new SubmissionFiles();
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.FASTA)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.FASTA,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.SAMPLE_TSV)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.TAX_TSV)
         .forEach(
             file ->
                 submissionFiles.addFile(
