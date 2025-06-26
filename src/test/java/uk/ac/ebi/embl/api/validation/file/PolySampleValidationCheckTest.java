@@ -117,16 +117,16 @@ public class PolySampleValidationCheckTest {
 
   @Test
   public void testTaxTSV() throws Exception {
-    checkPolySample(Context.polysample_tax, null, "tax_valid.tsv", null, true, "");
+    checkPolySample(Context.polysample_tax, null, "tax_valid.tsv.gz", null, true, "");
   }
 
   @Test
   public void testPolySampleTaxTSV() throws Exception {
     checkPolySample(
         Context.polysample_full,
-        "poly_sample_valid.tsv",
-        "tax_valid.tsv",
-        "poly_sample_fasta_valid.txt",
+        "poly_sample_valid.tsv.gz",
+        "tax_valid.tsv.gz",
+        "poly_sample_fasta_valid.fasta.gz",
         true,
         "");
   }
@@ -135,9 +135,9 @@ public class PolySampleValidationCheckTest {
   public void testPolySampleTSV() throws Exception {
     checkPolySample(
         Context.polysample_fasta_sample,
-        "poly_sample_valid.tsv",
+        "poly_sample_valid.tsv.gz",
         null,
-        "poly_sample_fasta_valid.txt",
+        "poly_sample_fasta_valid.fasta.gz",
         true,
         "");
   }
@@ -148,7 +148,7 @@ public class PolySampleValidationCheckTest {
         Context.polysample_fasta_sample,
         "poly_sample_invalid_frequency.tsv",
         null,
-        "poly_sample_fasta_valid.txt",
+        "poly_sample_fasta_valid.fasta.gz",
         false,
         "Missing message: Polysample Frequency must be a valid number");
   }
@@ -159,7 +159,7 @@ public class PolySampleValidationCheckTest {
         Context.polysample_fasta_sample,
         "poly_sample_invalid_sequence_id.tsv",
         null,
-        "poly_sample_fasta_valid.txt",
+        "poly_sample_fasta_valid.fasta.gz",
         false,
         "Missing message: Sequence: ENTRY_NAME3 is not mapped in the sample TSV file.");
   }
