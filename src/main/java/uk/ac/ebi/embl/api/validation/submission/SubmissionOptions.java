@@ -91,7 +91,12 @@ public class SubmissionOptions {
     if (!assemblyInfoEntry.isPresent() && isWebinCLI)
       throw new ValidationEngineException("SubmissionOptions:assemblyinfoentry must be provided");
     if (!source.isPresent() && isWebinCLI) {
-      if (Set.of(Context.sequence, Context.polysample_full).stream()
+      if (Set.of(
+              Context.sequence,
+              Context.polysample_full,
+              Context.polysample_tax,
+              Context.polysample_fasta_sample)
+          .stream()
           .noneMatch(con -> context.get() == con)) {
         throw new ValidationEngineException("SubmissionOptions:source must be provided");
       }
