@@ -10,10 +10,9 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
-import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
@@ -29,10 +28,7 @@ import uk.ac.ebi.embl.flatfile.reader.FeatureReader;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.Manifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.SequenceManifest;
-import uk.ac.ebi.ena.webin.cli.validator.manifest.TranscriptomeManifest;
+import uk.ac.ebi.ena.webin.cli.validator.manifest.*;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
 
 public class SubmissionValidator implements Validator<Manifest, ValidationResponse> {
@@ -192,6 +188,11 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
       options.context = Optional.of(Context.transcriptome);
       options.submissionFiles =
           Optional.of(setTranscriptomeOptions((TranscriptomeManifest) manifest, assemblyInfo));
+    } else if (manifest instanceof PolySampleManifest) {
+      final PolySampleManifest polySampleManifest = (PolySampleManifest) manifest;
+
+      options.context = getPolySampleContext(polySampleManifest);
+      options.submissionFiles = Optional.of(setPolysampleOptions(polySampleManifest));
     } else {
       options.context = Optional.of(Context.sequence);
       options.submissionFiles = Optional.of(setSequenceOptions((SequenceManifest) manifest));
@@ -211,6 +212,42 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
     }
 
     return options;
+  }
+
+  private Optional<Context> getPolySampleContext(final PolySampleManifest manifest) {
+    final uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles<PolySampleManifest.FileType>
+        submissionFiles = manifest.files();
+    final Set<PolySampleManifest.FileType> presentFileTypes =
+        Set.of(
+                PolySampleManifest.FileType.FASTA,
+                PolySampleManifest.FileType.SAMPLE_TSV,
+                PolySampleManifest.FileType.TAX_TSV)
+            .stream()
+            .filter(
+                type -> {
+                  final List<
+                          uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile<
+                              PolySampleManifest.FileType>>
+                      files = submissionFiles.get(type);
+
+                  return files != null && !files.isEmpty();
+                })
+            .collect(Collectors.toSet());
+
+    if (presentFileTypes.containsAll(
+        Set.of(
+            PolySampleManifest.FileType.FASTA,
+            PolySampleManifest.FileType.SAMPLE_TSV,
+            PolySampleManifest.FileType.TAX_TSV))) {
+      return Optional.of(Context.polysample_full);
+    } else if (presentFileTypes.containsAll(
+        Set.of(PolySampleManifest.FileType.FASTA, PolySampleManifest.FileType.SAMPLE_TSV))) {
+      return Optional.of(Context.polysample_fasta_sample);
+    } else if (presentFileTypes.contains(PolySampleManifest.FileType.TAX_TSV)) {
+      return Optional.of(Context.polysample_tax);
+    } else {
+      return Optional.empty();
+    }
   }
 
   private Map<String, String> attributesListToMap(List<Attribute> attributesList) {
@@ -330,6 +367,46 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
                         file.getFile(),
                         new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
                         file.getReportFile())));
+    return submissionFiles;
+  }
+
+  private SubmissionFiles setPolysampleOptions(PolySampleManifest manifest) {
+    SubmissionFiles submissionFiles = new SubmissionFiles();
+
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.FASTA)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.FASTA,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.SAMPLE_TSV)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.SAMPLE_TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+    manifest
+        .files()
+        .get(PolySampleManifest.FileType.TAX_TSV)
+        .forEach(
+            file ->
+                submissionFiles.addFile(
+                    new SubmissionFile(
+                        SubmissionFile.FileType.TAX_TSV,
+                        file.getFile(),
+                        new File(file.getFile() + SequenceEntryUtils.FIXED_FILE_SUFFIX),
+                        file.getReportFile())));
+
     return submissionFiles;
   }
 
