@@ -47,7 +47,7 @@ public class Utils {
   private static final int MIN_SCAFFOLD_CNT = 1;
   private static final int MAX_SCAFFOLD_CNT = 1000000;
   private static final int MIN_CHROMOSOME_CNT = 1;
-  private static final int MAX_CHROMOSOME_CNT = 1260;
+  private static final int MAX_CHROMOSOME_CNT = 10000;
 
   private static final DataManager dataManager = new CachedFileDataManager();
   private static final CheckFileManager tsvFileManager = new CheckFileManager();
