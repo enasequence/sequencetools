@@ -8,7 +8,7 @@ plugins {
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
 
-version = '2.26.0'
+version = '2.26.3'
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -55,7 +55,6 @@ dependencies {
     api(group: 'uk.ac.ebi.ena.taxonomy', name: 'webin-taxonomy-sdk', version: '1.+')
 
     implementation 'org.slf4j:slf4j-api:2.0.7'
-
     implementation 'commons-collections:commons-collections:3.2.2'
     implementation 'commons-dbutils:commons-dbutils:1.5'
     implementation 'commons-lang:commons-lang:2.6'
