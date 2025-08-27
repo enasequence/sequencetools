@@ -110,18 +110,50 @@ public class SourceFeatureUtils {
   public SourceFeature constructSourceFeature(Sample sample, TaxonomyClient taxonomyClient) {
     FeatureFactory featureFactory = new FeatureFactory();
     SourceFeature sourceFeature = featureFactory.createSourceFeature();
-    sourceFeature.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
+    sourceFeature.setTaxId(getTaxId(sample, taxonomyClient));
     sourceFeature.setScientificName(sample.getOrganism());
     sourceFeature.setMasterLocation();
     addQualifiers(sourceFeature, sample, taxonomyClient);
     return sourceFeature;
   }
 
+  /**
+   * Attempts to resolve the taxonomy ID for a given {@link Sample}.
+   *
+   * <p>The method checks in order:
+   *
+   * <ol>
+   *   <li>If the sample already has a taxId set, return it.
+   *   <li>If not, and the sample has an organism name, query the {@link TaxonomyClient} for a
+   *       matching {@link Taxon} by scientific name.
+   *   <li>If a {@link Taxon} is found, return its taxId.
+   *   <li>Otherwise, return {@code null}.
+   * </ol>
+   *
+   * @param sample the sample to extract or resolve the taxonomy ID from
+   * @param taxonomyClient the client used to look up taxonomy information by scientific name
+   * @return the taxonomy ID if found, or {@code null} if unavailable
+   */
+  private Long getTaxId(Sample sample, TaxonomyClient taxonomyClient) {
+    if (sample.getTaxId() != null) {
+      return sample.getTaxId().longValue();
+    }
+
+    if (sample.getOrganism() == null) {
+      return null;
+    }
+
+    final Taxon taxon = taxonomyClient.getTaxonByScientificName(sample.getOrganism());
+
+    return (taxon != null) ? taxon.getTaxId() : null;
+  }
+
   public SourceFeature updateSourceFeature(
       SourceFeature sourceFeature, Sample sample, TaxonomyClient taxonomyClient) {
-    sourceFeature.setTaxId(sample.getTaxId() == null ? null : sample.getTaxId().longValue());
+    sourceFeature.setTaxId(getTaxId(sample, taxonomyClient));
     sourceFeature.setScientificName(sample.getOrganism());
     addQualifiers(sourceFeature, sample, taxonomyClient);
+
     return sourceFeature;
   }
 
