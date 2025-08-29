@@ -272,7 +272,11 @@ public class TSVFileValidationCheck extends FileValidationCheck {
 
   public boolean isValidSequenceTaxHeader(DataRow headerRow) {
     return (headerRow.getLength() == 2
-        && headerRow.getColumn(0).equals("Sequence_id")
-        && headerRow.getColumn(1).equals("Tax_id"));
+            && headerRow.getColumn(0).equals("Sequence_id")
+            && headerRow.getColumn(1).equals("Tax_id"))
+        || (headerRow.getLength() == 3
+            && headerRow.getColumn(0).equals("Sequence_id")
+            && headerRow.getColumn(1).equals("Tax_id")
+            && headerRow.getColumn(2).equals("Scientific_name"));
   }
 }
