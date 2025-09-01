@@ -1060,7 +1060,11 @@ public abstract class FileValidationCheck {
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
     return (headerRow.getLength() == 2
-        && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-        && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"));
+            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
+            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"))
+        || (headerRow.getLength() == 3
+            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
+            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id")
+            && headerRow.getColumn(2).toString().equalsIgnoreCase("Scientific_name"));
   }
 }
