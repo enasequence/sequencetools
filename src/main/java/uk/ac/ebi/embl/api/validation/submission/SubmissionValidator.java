@@ -30,6 +30,7 @@ import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.*;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SubmissionValidator implements Validator<Manifest, ValidationResponse> {
 
@@ -186,12 +187,23 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
       }
 
       if (options.assemblyType.equals(AssemblyType.METAGENOME_ASSEMBLEDGENOME)) {
-        final String organism = manifest.getSample().getOrganism();
+        final Sample sample = manifest.getSample();
+        boolean isSampleOrganismMetagenome = false;
 
-        if (taxonomyClient.isOrganismMetagenome(organism)) {
-          String msg =
+        if (sample.getOrganism() != null) {
+          isSampleOrganismMetagenome = taxonomyClient.isOrganismMetagenome(sample.getOrganism());
+        } else if (sample.getTaxId() != null) {
+          isSampleOrganismMetagenome =
+              taxonomyClient.isMetagenomic(
+                  taxonomyClient.getTaxonByTaxid(sample.getTaxId().longValue()));
+        }
+
+        if (isSampleOrganismMetagenome) {
+          final String msg =
               "Assembly type: MAG (METAGENOME-ASSEMBLED GENOME) cannot reference a sample having a metagenome taxonomy";
+
           reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, msg);
+
           throw new ValidationEngineException(
               msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
         }
