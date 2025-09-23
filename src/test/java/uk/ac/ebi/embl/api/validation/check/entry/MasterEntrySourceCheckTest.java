@@ -68,6 +68,24 @@ public class MasterEntrySourceCheckTest {
   }
 
   @Test
+  public void testCheck_invalidSourcefeature_nonBinomialOrganism() throws SQLException {
+    EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+    property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
+    TaxonomyClient taxonClient = new TaxonomyClient();
+    property.taxonClient.set(taxonClient);
+
+    check.setEmblEntryValidationPlanProperty(property);
+    SourceFeature source = (new FeatureFactory()).createSourceFeature();
+    source.addQualifier(Qualifier.STRAIN_QUALIFIER_NAME, "dfgh");
+    source.addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "rgd");
+    source.addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "goat gut metagenome");
+    source.addQualifier(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME, "YES");
+    entry.addFeature(source);
+    ValidationResult result = check.check(entry);
+    assertTrue(result.isValid());
+  }
+
+  @Test
   public void testCheck_InvalidSourcefeature() throws SQLException {
     EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
     property.validationScope.set(ValidationScope.ASSEMBLY_MASTER);
