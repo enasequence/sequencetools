@@ -69,7 +69,7 @@ public class FastaFileWriter {
             String.format(">%s|%s", entry.getPrimaryAccession(), entry.getSubmitterAccession());
         break;
       case TRANSLATION_HEADER_FORMAT:
-            header = String.format(">%s", entry.getPrimaryAccession());
+        header = String.format(">%s", entry.getPrimaryAccession());
       default:
         break;
     }
