@@ -13,10 +13,7 @@ package uk.ac.ebi.embl.flatfile.reader.genomeassembly;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.genomeassembly.ChromosomeEntry;
@@ -47,6 +44,7 @@ public class ChromosomeListFileReader extends GCSEntryReader {
   private final Set<String> chromosomeNames = new HashSet<String>();
   private final Set<String> objectNames = new HashSet<String>();
   List<ChromosomeEntry> chromosomeEntries = new ArrayList<ChromosomeEntry>();
+  Map<String, Long> chromosomeLocationCount = new HashMap<>();
 
   public ChromosomeListFileReader(File file) {
     this.file = file;
@@ -97,7 +95,15 @@ public class ChromosomeListFileReader extends GCSEntryReader {
             chromosomeEntry.setChromosomeType(topologyAndChrType[0]);
           }
           if (numberOfColumns == MAX_NUMBER_OF_COLUMNS) {
-            chromosomeEntry.setChromosomeLocation(fields[CHROMOSOME_LOCATION_COLUMN].toLowerCase());
+            String location = fields[CHROMOSOME_LOCATION_COLUMN].toLowerCase();
+
+            chromosomeEntry.setChromosomeLocation(location);
+
+            if (chromosomeLocationCount.containsKey(location)) {
+              chromosomeLocationCount.put(location, chromosomeLocationCount.get(location) + 1L);
+            } else {
+              chromosomeLocationCount.put(location, 1L);
+            }
           }
           chromosomeEntry.setOrigin(new FlatFileOrigin(lineNumber));
           if (!chromosomeNames.add(chromosomeEntry.getChromosomeName().toLowerCase()))
@@ -135,6 +141,10 @@ public class ChromosomeListFileReader extends GCSEntryReader {
 
   public List<ChromosomeEntry> getentries() {
     return chromosomeEntries;
+  }
+
+  public Map<String, Long> getChromosomeLocationCount() {
+    return chromosomeLocationCount;
   }
 
   public boolean isSingleChromosome() {

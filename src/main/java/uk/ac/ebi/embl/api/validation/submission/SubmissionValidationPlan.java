@@ -10,7 +10,9 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
+import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.MACRONUCLEAR_QUALIFIER_NAME;
 import static uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck.*;
+import static uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -119,11 +121,12 @@ public class SubmissionValidationPlan {
         String assemblyType =
             options.assemblyInfoEntry.map(AssemblyInfoEntry::getAssemblyType).orElse(null);
         throwValidationResult(
-            uk.ac.ebi.embl.api.validation.helper.Utils.validateAssemblySequenceCount(
+            validateAssemblySequenceCount(
                 options.ignoreErrors,
                 getSequencecount(0),
                 getSequencecount(1),
                 getSequencecount(2),
+                sharedInfo.chromosomeLocationCount.getOrDefault(MACRONUCLEAR_QUALIFIER_NAME, 0L),
                 assemblyType));
 
         if (!options.isWebinCLI && !EntryUtils.excludeDistribution(sharedInfo.assemblyType)) {
