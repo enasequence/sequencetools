@@ -11,6 +11,7 @@
 package uk.ac.ebi.embl.api.validation;
 
 import static org.junit.Assert.*;
+import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.MACRONUCLEAR_QUALIFIER_NAME;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -464,6 +465,27 @@ public class UtilsTest {
         "ARZB01000115",
         output.get(output.size() - 1).getText()); // Note, one leading reduced 4 2 7 become 4 2 6
     assertEquals("ARZB01000114", output.get(output.size() - 2).getText());
+  }
+
+  @Test
+  public void validateAssemblySequenceCount() {
+    ValidationResult vr = Utils.validateAssemblySequenceCount(
+            false,
+            0,
+            0,
+            30000,
+            29000,
+            "clone or isolate");
+    assertTrue(vr.isValid());
+
+    vr = Utils.validateAssemblySequenceCount(
+            false,
+            0,
+            0,
+            30002,
+            30001,
+            "clone or isolate");
+    assertFalse(vr.isValid());
   }
 
   private Text[] getSecondaryAccnListAsArray(String... accns) {

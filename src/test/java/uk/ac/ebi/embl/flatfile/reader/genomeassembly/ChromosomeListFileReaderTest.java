@@ -15,6 +15,9 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
+
 import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 
@@ -31,6 +34,11 @@ public class ChromosomeListFileReaderTest {
     ValidationResult parseResult = reader.read();
     assertTrue(parseResult.isValid());
     assertEquals(2, reader.getentries().size());
+
+    Map<String, Long> clc = reader.getChromosomeLocationCount();
+    assertEquals(1, clc.size());
+    long v = clc.get("mitochondrion");
+    assertEquals(1L, v);
   }
 
   @Test
