@@ -16,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-import java.util.Optional;
-
 import org.junit.Test;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 

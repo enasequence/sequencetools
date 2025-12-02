@@ -11,7 +11,6 @@
 package uk.ac.ebi.embl.api.validation;
 
 import static org.junit.Assert.*;
-import static uk.ac.ebi.embl.api.entry.qualifier.Qualifier.MACRONUCLEAR_QUALIFIER_NAME;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -469,22 +468,11 @@ public class UtilsTest {
 
   @Test
   public void validateAssemblySequenceCount() {
-    ValidationResult vr = Utils.validateAssemblySequenceCount(
-            false,
-            0,
-            0,
-            30000,
-            29000,
-            "clone or isolate");
+    ValidationResult vr =
+        Utils.validateAssemblySequenceCount(false, 0, 0, 30000, 29000, "clone or isolate");
     assertTrue(vr.isValid());
 
-    vr = Utils.validateAssemblySequenceCount(
-            false,
-            0,
-            0,
-            30002,
-            30001,
-            "clone or isolate");
+    vr = Utils.validateAssemblySequenceCount(false, 0, 0, 30002, 30001, "clone or isolate");
     assertFalse(vr.isValid());
   }
 
