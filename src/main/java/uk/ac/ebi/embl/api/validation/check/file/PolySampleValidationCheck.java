@@ -12,6 +12,7 @@ package uk.ac.ebi.embl.api.validation.check.file;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import uk.ac.ebi.embl.fasta.reader.FastaFileReader;
 import uk.ac.ebi.embl.fasta.reader.FastaLineReader;
 import uk.ac.ebi.embl.template.PolySample;
 import uk.ac.ebi.embl.template.SequenceTax;
+import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
 public class PolySampleValidationCheck extends FileValidationCheck {
   public PolySampleValidationCheck(SubmissionOptions options, SharedInfo sharedInfo) {
@@ -62,55 +64,97 @@ public class PolySampleValidationCheck extends FileValidationCheck {
     } else if (Context.polysample_fasta_sample.equals(options.context.get())) {
       fasta = getSubmitedFileByType(SubmissionFile.FileType.FASTA);
       sampleTsv = getSubmitedFileByType(SubmissionFile.FileType.SAMPLE_TSV);
-    } else { // nothing to validate against
+    } else if (Context.polysample_tax.equals(options.context.get())) {
+      taxTsv = getSubmitedFileByType(SubmissionFile.FileType.TAX_TSV);
+    } else {
+      validationResult.append(
+          new ValidationMessage<>(Severity.ERROR, "Invalid context: " + options.context.get()));
       return validationResult;
     }
 
-    try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
-      FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
-      ValidationResult parseResult = reader.read();
-      validationResult.append(parseResult);
-      // Validate submitted accession found in fasta
-      List<PolySample> polySamples = new TSVReader().getPolySamples(sampleTsv);
-      Set<String> submittedSampleAcc =
-          polySamples.stream()
-              .map(polySample -> polySample.getSubmittedAccession())
-              .collect(Collectors.toSet());
+    if (Context.polysample_full.equals(options.context.get())
+        || Context.polysample_fasta_sample.equals(options.context.get())) {
 
-      while (reader.isEntry()) {
-        Entry entry = reader.getEntry();
+      try (BufferedReader fileReader = CommonUtil.bufferedReaderFromFile(fasta)) {
+        FastaFileReader reader = new FastaFileReader(new FastaLineReader(fileReader));
+        ValidationResult parseResult = reader.read();
+        validationResult.append(parseResult);
+        // Validate submitted accession found in fasta
+        List<PolySample> polySamples = new TSVReader().getPolySamples(sampleTsv);
+        Set<String> submittedSampleAcc =
+            polySamples.stream()
+                .map(polySample -> polySample.getSubmittedAccession())
+                .collect(Collectors.toSet());
 
-        if (!submittedSampleAcc.contains(entry.getSubmitterAccession())) {
-          validationResult.append(
-              new ValidationMessage<>(
-                  Severity.ERROR,
-                  "Sequence: "
-                      + entry.getSubmitterAccession()
-                      + " is not mapped in the sample TSV file."));
+        Map<String, SequenceTax> sequenceTaxMap = new HashMap<>();
+        if (Context.polysample_full.equals(options.context.get())) {
+          sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
+
+          checkForSubmittableTaxId(sequenceTaxMap, validationResult);
         }
 
-        if (Context.polysample_full.equals(options.context.get())) {
-          Map<String, SequenceTax> sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
-          if (!sequenceTaxMap.containsKey(entry.getSubmitterAccession())) {
+        while (reader.isEntry()) {
+          Entry entry = reader.getEntry();
+
+          if (!submittedSampleAcc.contains(entry.getSubmitterAccession())) {
             validationResult.append(
                 new ValidationMessage<>(
                     Severity.ERROR,
                     "Sequence: "
                         + entry.getSubmitterAccession()
-                        + " is not mapped in the tax TSV file."));
+                        + " is not mapped in the sample TSV file."));
           }
+
+          if (Context.polysample_full.equals(options.context.get())) {
+            if (!sequenceTaxMap.containsKey(entry.getSubmitterAccession())) {
+              validationResult.append(
+                  new ValidationMessage<>(
+                      Severity.ERROR,
+                      "Sequence: "
+                          + entry.getSubmitterAccession()
+                          + " is not mapped in the tax TSV file."));
+            }
+          }
+
+          // sequenceCount is used for setting the accession range.
+          sharedInfo.sequenceCount++;
+
+          reader.read();
         }
-
-        // sequenceCount is used for setting the accession range.
-        sharedInfo.sequenceCount++;
-
-        reader.read();
+      } catch (Exception e) {
+        validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
       }
-    } catch (Exception e) {
-      validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
+    }
+
+    if (Context.polysample_tax.equals(options.context.get())) {
+      try {
+        Map<String, SequenceTax> sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
+        checkForSubmittableTaxId(sequenceTaxMap, validationResult);
+      } catch (Exception e) {
+        validationResult.append(new ValidationMessage(Severity.ERROR, e.getLocalizedMessage()));
+      }
     }
 
     return validationResult;
+  }
+
+  private static void checkForSubmittableTaxId(
+      Map<String, SequenceTax> sequenceTaxMap, ValidationResult validationResult) {
+    TaxonomyClient taxonomyClient = new TaxonomyClient();
+    // TODO: get all taxas in one call from a newer API
+    for (SequenceTax sequenceTax : sequenceTaxMap.values()) {
+      try {
+        Long taxId = Long.valueOf(sequenceTax.getTaxId());
+        if (null == taxonomyClient.getSubmittableTaxonByTaxId(taxId)) {
+          validationResult.append(
+              new ValidationMessage<>(
+                  Severity.ERROR, "Taxon id " + taxId + " is not submittable."));
+        }
+      } catch (NumberFormatException ingored) {
+        validationResult.append(
+            new ValidationMessage<>(Severity.ERROR, "Invalid tax id: " + sequenceTax.getTaxId()));
+      }
+    }
   }
 
   public File getSubmitedFileByType(SubmissionFile.FileType fileType) {
