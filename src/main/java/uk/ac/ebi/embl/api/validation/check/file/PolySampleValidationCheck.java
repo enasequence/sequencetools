@@ -74,6 +74,10 @@ public class PolySampleValidationCheck extends FileValidationCheck {
       // check if all the tax ids are numbers and submittable
       try {
         sequenceTaxMap = new TSVReader().getSequenceTax(taxTsv);
+        if (sequenceTaxMap.size() <= 0) {
+          validationResult.append(
+              new ValidationMessage<>(Severity.ERROR, "Empty sequence tax map"));
+        }
 
         TaxonomyClient taxonomyClient = new TaxonomyClient();
         List<Taxon> taxons =
@@ -115,6 +119,9 @@ public class PolySampleValidationCheck extends FileValidationCheck {
         validationResult.append(parseResult);
         // Validate submitted accession found in fasta
         List<PolySample> polySamples = new TSVReader().getPolySamples(sampleTsv);
+        if (polySamples.size() <= 0) {
+          validationResult.append(new ValidationMessage<>(Severity.ERROR, "Empty sample map"));
+        }
         Set<String> submittedSampleAcc =
             polySamples.stream()
                 .map(polySample -> polySample.getSubmittedAccession())
@@ -147,6 +154,9 @@ public class PolySampleValidationCheck extends FileValidationCheck {
           sharedInfo.sequenceCount++;
 
           reader.read();
+        }
+        if (sharedInfo.sequenceCount <= 0) {
+          validationResult.append(new ValidationMessage<>(Severity.ERROR, "Empty sequence file"));
         }
       } catch (Exception e) {
         validationResult.append(new ValidationMessage<>(Severity.ERROR, e.getLocalizedMessage()));
