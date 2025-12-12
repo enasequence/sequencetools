@@ -106,6 +106,11 @@ public class PolySampleValidationCheck extends FileValidationCheck {
                 new ValidationMessage<>(
                     Severity.ERROR, "Taxon id " + t.getTaxId() + " is not submittable."));
           }
+          if (t.isMetagenome()) {
+            validationResult.append(
+                new ValidationMessage<>(
+                    Severity.ERROR, "Taxon id " + t.getTaxId() + " is a metagenome."));
+          }
         }
       } catch (Exception e) {
         validationResult.append(new ValidationMessage<>(Severity.ERROR, e.getLocalizedMessage()));
