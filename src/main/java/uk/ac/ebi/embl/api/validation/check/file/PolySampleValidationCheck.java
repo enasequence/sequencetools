@@ -129,7 +129,7 @@ public class PolySampleValidationCheck extends FileValidationCheck {
         }
         Set<String> submittedSampleAcc =
             polySamples.stream()
-                .map(polySample -> polySample.getSubmittedAccession())
+                .map(polySample -> polySample.getSubmittedId())
                 .collect(Collectors.toSet());
 
         while (reader.isEntry()) {
