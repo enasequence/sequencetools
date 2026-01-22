@@ -57,6 +57,7 @@ public class Qualifier implements HasOrigin, Serializable, Comparable<Qualifier>
   public static final String COLLECTION_DATE_QUALIFIER_NAME = "collection_date";
   public static final String ANTICODON_QUALIFIER_NAME = "anticodon";
   public static final String RPT_UNIT_RANGE_QUALIFIER_NAME = "rpt_unit_range";
+  public static final String RPT_UNIT_SEQ_QUALIFIER_NAME = "rpt_unit_seq";
   public static final String TAG_PEPTIDE_QUALIFIER_NAME = "tag_peptide";
   public static final String PROVIRAL_QUALIFIER_NAME = "proviral";
   public static final String ORGANELLE_QUALIFIER_NAME = "organelle";

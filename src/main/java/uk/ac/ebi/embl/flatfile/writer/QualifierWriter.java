@@ -27,10 +27,11 @@ public class QualifierWriter extends FlatFileWriter {
     this.header = header;
     if (qualifier != null) {
       wrapChar = WrapChar.WRAP_CHAR_SPACE;
-      if (qualifier.getName().equals("replace")
-          || qualifier.getName().equals("rpt_unit_seq")
-          || qualifier.getName().equals("PCR_primers")
-          || qualifier.getName().equals("translation")) {
+      if (qualifier.getName().equals(Qualifier.REPLACE_QUALIFIER_NAME)
+          || qualifier.getName().equals(Qualifier.RPT_UNIT_SEQ_QUALIFIER_NAME)
+          || qualifier.getName().equals(Qualifier.PCR_PRIMERS_QUALIFIER_NAME)
+          || qualifier.getName().equals(Qualifier.TRANSLATION_QUALIFIER_NAME)
+          || qualifier.getName().equals(Qualifier.SEROVAR_QUALIFIER_NAME)) {
         setForceLineBreak(true);
       } else if (qualifier.getName().equals(Qualifier.NOTE_QUALIFIER_NAME)) {
         setMaximumLineLength(NOTE_MAX_LINE_LENGTH);
