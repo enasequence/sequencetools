@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,6 +44,7 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException.ReportErrorType;
 import uk.ac.ebi.embl.api.validation.dao.EntryDAOUtilsImpl;
 import uk.ac.ebi.embl.api.validation.dao.EraproDAOUtils;
@@ -1031,6 +1033,27 @@ public abstract class FileValidationCheck {
     }
   }
 
+  protected boolean isValidPolySampleHeader(DataRow headerRow) {
+    return headerRow.getLength() == 3
+        && "Sequence_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(0)))
+        && "Sample_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(1)))
+        && "Frequency".equalsIgnoreCase(String.valueOf(headerRow.getColumn(2)));
+  }
+
+  protected boolean isValidSequenceTaxHeader(DataRow headerRow) {
+    int length = headerRow.getLength();
+    if (length == 2) {
+      return "Sequence_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(0)))
+          && "Tax_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(1)));
+    }
+    if (length == 3) {
+      return "Sequence_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(0)))
+          && "Tax_id".equalsIgnoreCase(String.valueOf(headerRow.getColumn(1)))
+          && "Scientific_name".equalsIgnoreCase(String.valueOf(headerRow.getColumn(2)));
+    }
+    return false;
+  }
+
   public boolean isPolySampleSubmission(SubmissionFile submissionFile)
       throws ValidationEngineException {
 
@@ -1043,10 +1066,7 @@ public abstract class FileValidationCheck {
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
-    return (headerRow.getLength() == 3
-        && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-        && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
-        && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency"));
+    return isValidPolySampleHeader(headerRow);
   }
 
   public boolean isSequenceTaxSubmission(SubmissionFile submissionFile)
@@ -1061,12 +1081,6 @@ public abstract class FileValidationCheck {
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
-    return (headerRow.getLength() == 2
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"))
-        || (headerRow.getLength() == 3
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id")
-            && headerRow.getColumn(2).toString().equalsIgnoreCase("Scientific_name"));
+    return isValidSequenceTaxHeader(headerRow);
   }
 }

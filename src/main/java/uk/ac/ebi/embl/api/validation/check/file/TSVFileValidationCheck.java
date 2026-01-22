@@ -16,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +26,10 @@ import uk.ac.ebi.embl.api.storage.DataRow;
 import uk.ac.ebi.embl.api.storage.DataSet;
 import uk.ac.ebi.embl.api.storage.tsv.TSVReader;
 import uk.ac.ebi.embl.api.validation.*;
+import uk.ac.ebi.embl.api.validation.Severity;
+import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationMessage;
+import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.submission.Context;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile;
@@ -231,52 +237,82 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       throws ValidationEngineException {
 
     ValidationResult validationResult = new ValidationResult();
-    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+    DataSet dataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
 
-    // If TSV file is not valid
-    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
-      throw new ValidationEngineException(
-          "Submitted file is not a valid TSV file: " + submissionFile.getFile());
-    }
-
-    DataRow headerRow = polysampleDataSet.getRows().get(0);
-    List<SequenceTax> sequenceTaxList = new ArrayList<>();
-    try {
-      if (isValidSequenceTaxHeader(headerRow)) {
-        sequenceTaxList.addAll(
-            polysampleDataSet.getRows().stream()
-                .skip(1)
-                .map(dataRow -> new SequenceTax(dataRow.getString(0), dataRow.getString(1)))
-                .collect(Collectors.toList()));
-      }
-    } catch (ArrayIndexOutOfBoundsException e) {
+    if (dataSet == null || dataSet.getRows() == null || dataSet.getRows().size() <= 1) {
       validationResult.append(
           new ValidationMessage(
-              Severity.ERROR, "Invalid file structure in polysample submission: "));
-      //      throw new ValidationEngineException(
-      //              "Invalid file structure in polysample submission: ", e);
+              Severity.ERROR,
+              "Submitted file is not a valid TSV file: " + submissionFile.getFile()));
+      return validationResult;
     }
-    if (sequenceTaxList.isEmpty()) {
+
+    List<DataRow> rows = dataSet.getRows();
+    DataRow header = rows.get(0);
+
+    int headerLength = header.getLength();
+    boolean hasScientificName = headerLength == 3;
+
+    if (!isValidSequenceTaxHeader(header)) {
       validationResult.append(
-          new ValidationMessage(Severity.ERROR, "Empty sequence tax submission "));
+          new ValidationMessage(Severity.ERROR, "Invalid header for sequence tax submission"));
+      return validationResult;
     }
+
+    Pattern sequenceIdPattern = Pattern.compile("^[A-Za-z0-9]+$");
+    Pattern taxIdPattern = Pattern.compile("^\\d+$");
+
+    boolean hasAnyDataRow = false;
+
+    for (int rowIndex = 1; rowIndex < rows.size(); rowIndex++) {
+      hasAnyDataRow = true;
+
+      DataRow row = rows.get(rowIndex);
+      int lineNumber = rowIndex + 1;
+
+      if (row.getLength() < 2) {
+        validationResult.append(
+            new ValidationMessage(
+                Severity.ERROR, "Invalid row " + lineNumber + ": expected at least 2 columns"));
+        continue;
+      }
+
+      String sequenceId = row.getString(0);
+      String taxId = row.getString(1);
+
+      if (sequenceId == null || !sequenceIdPattern.matcher(sequenceId).matches()) {
+        validationResult.append(
+            new ValidationMessage(
+                Severity.ERROR, "Invalid Sequence_id at row " + lineNumber + ": " + sequenceId));
+      }
+
+      if (taxId == null || !taxIdPattern.matcher(taxId).matches()) {
+        validationResult.append(
+            new ValidationMessage(
+                Severity.ERROR, "Invalid Tax_id at row " + lineNumber + ": " + taxId));
+      }
+
+      if (hasScientificName) {
+        if (row.getLength() < 3) {
+          validationResult.append(
+              new ValidationMessage(
+                  Severity.ERROR, "Invalid row " + lineNumber + ": expected 3 columns"));
+          continue;
+        }
+        String scientificName = row.getString(2);
+        if (scientificName == null || scientificName.trim().isEmpty()) {
+          validationResult.append(
+              new ValidationMessage(
+                  Severity.ERROR, "Invalid Scientific_name at row " + lineNumber));
+        }
+      }
+    }
+
+    if (!hasAnyDataRow) {
+      validationResult.append(
+          new ValidationMessage(Severity.ERROR, "Empty sequence tax submission"));
+    }
+
     return validationResult;
-  }
-
-  public boolean isValidPolySampleHeader(DataRow headerRow) {
-    return (headerRow.getLength() == 3
-        && headerRow.getColumn(0).equals("Sequence_id")
-        && headerRow.getColumn(1).equals("Sample_id")
-        && headerRow.getColumn(2).equals("Frequency"));
-  }
-
-  public boolean isValidSequenceTaxHeader(DataRow headerRow) {
-    return (headerRow.getLength() == 2
-            && headerRow.getColumn(0).equals("Sequence_id")
-            && headerRow.getColumn(1).equals("Tax_id"))
-        || (headerRow.getLength() == 3
-            && headerRow.getColumn(0).equals("Sequence_id")
-            && headerRow.getColumn(1).equals("Tax_id")
-            && headerRow.getColumn(2).equals("Scientific_name"));
   }
 }

@@ -10,7 +10,15 @@
  */
 package uk.ac.ebi.embl.api.storage.tsv;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +32,6 @@ import uk.ac.ebi.embl.api.validation.ValidationEngineException;
 import uk.ac.ebi.embl.template.PolySample;
 import uk.ac.ebi.embl.template.SequenceTax;
 
-/**
- * A file with rows with tab (\t) separated values. Comment lines starting with a hash (#) and empty
- * lines will be ignored.
- */
 public class TSVReader {
 
   public String separator = "\t";
@@ -43,22 +47,20 @@ public class TSVReader {
 
   public DataSet readDataSetAsStream(String fileName) throws IOException {
     InputStream stream = this.getClass().getResourceAsStream(fileName);
-
     if (stream == null) {
       throw new IOException("Failed to load stream for resource: " + fileName);
     }
-
     return readDataSetAsStream(stream);
   }
 
   public DataSet readDataSetAsStream(InputStream stream) throws IOException {
-
     if (stream == null) {
       throw new IOException("stream is null");
     }
-
-    InputStreamReader streamReader = new InputStreamReader(stream);
-    return readTSV(streamReader);
+    try (InputStream closeableStream = stream;
+        Reader reader = new InputStreamReader(closeableStream, StandardCharsets.UTF_8)) {
+      return readTSV(reader);
+    }
   }
 
   public DataSet readDataSetAsFile(String fileName) throws IOException {
@@ -67,51 +69,61 @@ public class TSVReader {
       throw new IOException("Failed to load file for resource: " + fileName);
     }
 
-    InputStreamReader streamReader;
-    if (GzipUtils.isCompressedFilename(file.getName())) {
-      FileInputStream submittedDataFis = new FileInputStream(file);
-      BufferedInputStream bufferedInputStrem =
-          new BufferedInputStream(new GZIPInputStream(submittedDataFis));
-      streamReader = new InputStreamReader(bufferedInputStrem);
-    } else {
-      streamReader = new FileReader(file);
+    try (InputStream stream = openFileStream(file);
+        Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+      return readTSV(reader);
     }
-
-    return readTSV(streamReader);
   }
 
-  private DataSet readTSV(InputStreamReader streamReader) throws IOException {
-    BufferedReader reader = new BufferedReader(streamReader);
-    DataSet result = new DataSet();
-    while (true) {
-      String line = reader.readLine();
-      if (line == null) {
-        break;
-      }
-      if (line.trim().length() == 0) {
-        continue; // ignore empty lines
-      }
-      if (line.startsWith(comment)) {
-        continue; // ignore comment lines
-      }
-      result.addRow(new DataRow(line.split(separator)));
+  private InputStream openFileStream(File file) throws IOException {
+    InputStream fileStream = new FileInputStream(file);
+    InputStream bufferedStream = new BufferedInputStream(fileStream);
+    if (GzipUtils.isCompressedFilename(file.getName())) {
+      return new GZIPInputStream(bufferedStream);
     }
-    // Need to close the stream as eventually load stream for resource will
-    // fail
-    reader.close();
+    return bufferedStream;
+  }
+
+  private DataSet readTSV(Reader reader) throws IOException {
+    String separatorRegex = normalizeSeparatorRegex(separator);
+    String commentPrefix = comment == null ? "" : comment;
+
+    DataSet result = new DataSet();
+
+    try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+      String line;
+      while ((line = bufferedReader.readLine()) != null) {
+        if (line.trim().isEmpty()) {
+          continue;
+        }
+        if (!commentPrefix.isEmpty() && line.startsWith(commentPrefix)) {
+          continue;
+        }
+        result.addRow(new DataRow(line.split(separatorRegex, -1)));
+      }
+    }
+
     return result;
+  }
+
+  private String normalizeSeparatorRegex(String separator) {
+    if (separator == null || separator.isEmpty()) {
+      return "\t";
+    }
+    if ("\\t".equals(separator)) {
+      return "\t";
+    }
+    return separator;
   }
 
   public List<PolySample> getPolySamples(File tsv) throws ValidationEngineException {
     try {
-      TSVReader reader = new TSVReader();
-      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
+      DataSet dataSet = readDataSetAsFile(tsv.getAbsolutePath());
 
       if (dataSet == null || dataSet.getRows().size() <= 1) {
         return Collections.emptyList();
       }
 
-      // Skip the header row and collect rest.
       return dataSet.getRows().stream()
           .skip(1)
           .map(
@@ -122,7 +134,7 @@ public class TSVReader {
                       Long.parseLong(dataRow.getString(2))))
           .collect(Collectors.toList());
 
-    } catch (NumberFormatException nfe) {
+    } catch (NumberFormatException e) {
       throw new ValidationEngineException("Polysample Frequency must be a valid number");
     } catch (Exception e) {
       throw new ValidationEngineException(e);
@@ -131,8 +143,7 @@ public class TSVReader {
 
   public Map<String, SequenceTax> getSequenceTax(File tsv) throws ValidationEngineException {
     try {
-      TSVReader reader = new TSVReader();
-      DataSet dataSet = reader.readDataSetAsFile(tsv.getAbsolutePath());
+      DataSet dataSet = readDataSetAsFile(tsv.getAbsolutePath());
 
       if (dataSet == null || dataSet.getRows().size() <= 1) {
         return Collections.emptyMap();
@@ -145,7 +156,7 @@ public class TSVReader {
         String taxId = dataRow.getString(1);
 
         if (result.containsKey(sequenceId)) {
-          throw new ValidationEngineException("Duplicate sequenceId found: " + sequenceId);
+          throw new ValidationEngineException("DuplicateDuplicate sequenceId found: " + sequenceId);
         }
 
         result.put(sequenceId, new SequenceTax(sequenceId, taxId));
@@ -159,11 +170,7 @@ public class TSVReader {
 
   public DataSet getPolySampleDataSet(File tsv) throws ValidationEngineException {
     try {
-      TSVReader reader = new TSVReader("\\t", "#");
-      return reader.readDataSetAsFile(tsv.getAbsolutePath());
-
-    } catch (NumberFormatException nfe) {
-      throw new ValidationEngineException("Frequency must be a valid number");
+      return readDataSetAsFile(tsv.getAbsolutePath());
     } catch (Exception e) {
       throw new ValidationEngineException(e);
     }
