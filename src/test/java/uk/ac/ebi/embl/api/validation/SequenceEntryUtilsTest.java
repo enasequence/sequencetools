@@ -328,4 +328,104 @@ public class SequenceEntryUtilsTest {
 
     assertFalse(SequenceEntryUtils.isCircularBoundary(feature.getLocations(), sequenceLength));
   }
+
+  @Test
+  public void testGetOrganelleValue_Mitochondrion() {
+    assertEquals("mitochondrion", SequenceEntryUtils.getOrganelleValue("mitochondrion"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Chloroplast() {
+    assertEquals("plastid:chloroplast", SequenceEntryUtils.getOrganelleValue("chloroplast"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Kinetoplast() {
+    assertEquals("mitochondrion:kinetoplast", SequenceEntryUtils.getOrganelleValue("kinetoplast"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Plastid() {
+    assertEquals("plastid", SequenceEntryUtils.getOrganelleValue("plastid"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Nucleomorph() {
+    assertEquals("nucleomorph", SequenceEntryUtils.getOrganelleValue("nucleomorph"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Hydrogenosome() {
+    assertEquals("hydrogenosome", SequenceEntryUtils.getOrganelleValue("hydrogenosome"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Chromatophore() {
+    assertEquals("chromatophore", SequenceEntryUtils.getOrganelleValue("chromatophore"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Macronuclear_ReturnsNull() {
+    // Macronuclear should NOT be treated as an organelle
+    assertNull(SequenceEntryUtils.getOrganelleValue("macronuclear"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_InvalidLocation() {
+    assertNull(SequenceEntryUtils.getOrganelleValue("invalid_location"));
+  }
+
+  @Test
+  public void testGetOrganelleValue_Null() {
+    assertNull(SequenceEntryUtils.getOrganelleValue(null));
+  }
+
+  @Test
+  public void testGetOrganelleId_Mitochondrion() {
+    assertEquals(Integer.valueOf(1), SequenceEntryUtils.getOrganelleId("mitochondrion"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Chloroplast() {
+    // getOrganelleId uses the organelle value, not the chromosome location
+    // So we pass the organelle value "plastid:chloroplast" to get its ID
+    // But there's no ID for plastid:chloroplast, only for "chloroplast"
+    assertEquals(Integer.valueOf(2), SequenceEntryUtils.getOrganelleId("chloroplast"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Kinetoplast() {
+    assertEquals(Integer.valueOf(3), SequenceEntryUtils.getOrganelleId("kinetoplast"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Plastid() {
+    assertEquals(Integer.valueOf(9), SequenceEntryUtils.getOrganelleId("plastid"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Nucleomorph() {
+    assertEquals(Integer.valueOf(10), SequenceEntryUtils.getOrganelleId("nucleomorph"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Chromatophore() {
+    assertEquals(Integer.valueOf(12), SequenceEntryUtils.getOrganelleId("chromatophore"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Macronuclear_ReturnsNull() {
+    // Macronuclear should NOT have an organelle ID
+    assertNull(SequenceEntryUtils.getOrganelleId("macronuclear"));
+  }
+
+  @Test
+  public void testGetOrganelleId_InvalidLocation() {
+    assertNull(SequenceEntryUtils.getOrganelleId("invalid_location"));
+  }
+
+  @Test
+  public void testGetOrganelleId_Null() {
+    assertNull(SequenceEntryUtils.getOrganelleId(null));
+  }
 }
