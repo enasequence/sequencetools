@@ -1,0 +1,4 @@
+Sequence_id	Tax_id	Scientific_name	percent_match	percent_query_cover
+ENTRY_NAME1	10004	Homo sapiens	99.8	100
+ENTRY_NAME2	10090	Mus musculus	98.7-99.2	98.5-99.0
+ENTRY_NAME3	9606	Homo sapiens	100	99.9

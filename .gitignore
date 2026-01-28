@@ -6,4 +6,6 @@
 build
 gradle.properties
 src/test/resources/uk/ac/ebi/embl/api/validation/file/template/sequenceFixed.txt
+src/test/resources/uk/ac/ebi/embl/api/validation/file/template/TEMPLATE_ERT*
+src/test/resources/uk/ac/ebi/embl/api/validation/file/template/*.report
 pom.xml

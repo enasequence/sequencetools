@@ -23,15 +23,14 @@ import uk.ac.ebi.embl.api.validation.check.file.validator.SequenceIdValidator;
 import uk.ac.ebi.embl.api.validation.check.file.validator.TaxIdValidator;
 
 /**
- * Header definition for SequenceTax TSV files.
- * Expected formats:
- * - 2 columns: Sequence_id, Tax_id
- * - 3 columns: Sequence_id, Tax_id, Scientific_name
- * - 4 columns: Sequence_id, Tax_id, Scientific_name, percent_match
- * - 5 columns: Sequence_id, Tax_id, Scientific_name, percent_match, percent_query_cover
- * - 6 columns: Sequence_id, Tax_id, Scientific_name, percent_match, percent_query_cover, confidence_score
+ * Header definition for SequenceTax TSV files. Expected formats: - 2 columns: Sequence_id, Tax_id -
+ * 3 columns: Sequence_id, Tax_id, Scientific_name - 4 columns: Sequence_id, Tax_id,
+ * Scientific_name, percent_match - 5 columns: Sequence_id, Tax_id, Scientific_name, percent_match,
+ * percent_query_cover - 6 columns: Sequence_id, Tax_id, Scientific_name, percent_match,
+ * percent_query_cover, confidence_score
  *
- * The first two columns are required. Scientific_name and the three metadata columns are optional.
+ * <p>The first two columns are required. Scientific_name and the three metadata columns are
+ * optional.
  */
 public class SequenceTaxHeaderDefinition extends TSVHeaderDefinition {
 
@@ -165,8 +164,7 @@ public class SequenceTaxHeaderDefinition extends TSVHeaderDefinition {
     }
 
     if (hasPercentQueryCover) {
-      result.append(
-          new PercentQueryCoverValidator().validate(dataRow.getString(4), rowNumber, 4));
+      result.append(new PercentQueryCoverValidator().validate(dataRow.getString(4), rowNumber, 4));
     }
 
     if (hasConfidenceScore) {
