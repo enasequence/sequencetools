@@ -1043,10 +1043,9 @@ public abstract class FileValidationCheck {
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
-    return (headerRow.getLength() == 3
-        && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-        && headerRow.getColumn(1).toString().equalsIgnoreCase("Sample_id")
-        && headerRow.getColumn(2).toString().equalsIgnoreCase("Frequency"));
+    // Use the header definition for validation
+    PolySampleHeaderDefinition headerDef = new PolySampleHeaderDefinition();
+    return headerDef.validateHeader(headerRow).isValid();
   }
 
   public boolean isSequenceTaxSubmission(SubmissionFile submissionFile)
@@ -1061,12 +1060,8 @@ public abstract class FileValidationCheck {
 
     DataRow headerRow = polysampleDataSet.getRows().get(0);
 
-    return (headerRow.getLength() == 2
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id"))
-        || (headerRow.getLength() == 3
-            && headerRow.getColumn(0).toString().equalsIgnoreCase("Sequence_id")
-            && headerRow.getColumn(1).toString().equalsIgnoreCase("Tax_id")
-            && headerRow.getColumn(2).toString().equalsIgnoreCase("Scientific_name"));
+    // Use the header definition for validation
+    SequenceTaxHeaderDefinition headerDef = new SequenceTaxHeaderDefinition();
+    return headerDef.validateHeader(headerRow).isValid();
   }
 }

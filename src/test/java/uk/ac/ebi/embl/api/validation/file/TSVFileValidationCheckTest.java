@@ -241,4 +241,34 @@ public class TSVFileValidationCheckTest {
   public void testTaxTSV() throws Exception {
     checkTSV("tax_valid.tsv", true, "");
   }
+
+  @Test
+  public void testTaxTSVWithScientificName() throws Exception {
+    checkTSV("tax_valid_with_scientific_name.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVWithPercentMatch() throws Exception {
+    checkTSV("tax_valid_with_percent_match.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVWithPercentQueryCover() throws Exception {
+    checkTSV("tax_valid_with_percent_query_cover.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVWithAllMetadata() throws Exception {
+    checkTSV("tax_valid_with_all_metadata.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVInvalidPercentMatch() throws Exception {
+    checkTSV("tax_invalid_percent_match.tsv", false, "Row 2, column 3 (percent_match)");
+  }
+
+  @Test
+  public void testTaxTSVInvalidConfidenceScore() throws Exception {
+    checkTSV("tax_invalid_confidence_score.tsv", false, "Row 2, column 5 (confidence_score)");
+  }
 }

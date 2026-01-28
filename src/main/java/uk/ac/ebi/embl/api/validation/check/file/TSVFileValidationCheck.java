@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.embl.api.entry.Entry;
@@ -197,32 +196,60 @@ public class TSVFileValidationCheck extends FileValidationCheck {
           "Submitted file is not a valid TSV file: " + submissionFile.getFile());
     }
 
+    PolySampleHeaderDefinition headerDef = new PolySampleHeaderDefinition();
     DataRow headerRow = polysampleDataSet.getRows().get(0);
+
+    // Validate header
+    ValidationResult headerResult = headerDef.validateHeader(headerRow);
+    if (!headerResult.isValid()) {
+      validationResult.append(headerResult);
+      if (getOptions().reportDir.isPresent()) {
+        getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+      }
+      throw new ValidationEngineException("Invalid PolySample header structure");
+    }
+
     List<PolySample> polySampleList = new ArrayList<>();
-    if (isValidPolySampleHeader(headerRow)) {
-      try {
-        polySampleList.addAll(
-            polysampleDataSet.getRows().stream()
-                .skip(1)
-                .map(
-                    dataRow ->
-                        new PolySample(
-                            dataRow.getString(0),
-                            dataRow.getString(1),
-                            Long.parseLong(dataRow.getString(2))))
-                .collect(Collectors.toList()));
-      } catch (NumberFormatException e) {
-        validationResult.append(
-            new ValidationMessage(
-                Severity.ERROR, "Invalid frequency value in polysample submission: "));
-        throw new ValidationEngineException(
-            "Invalid frequency value in polysample submission: ", e);
+
+    // Validate each data row
+    for (int i = 1; i < polysampleDataSet.getRows().size(); i++) {
+      DataRow dataRow = polysampleDataSet.getRows().get(i);
+
+      // Validate values
+      ValidationResult rowResult = headerDef.validateRow(dataRow, i + 1);
+      validationResult.append(rowResult);
+
+      // If valid, create PolySample object
+      if (rowResult.isValid()) {
+        try {
+          polySampleList.add(
+              new PolySample(
+                  dataRow.getString(0),
+                  dataRow.getString(1),
+                  Long.parseLong(dataRow.getString(2))));
+        } catch (NumberFormatException e) {
+          // This should not happen if validator works correctly, but handle it anyway
+          ValidationMessage<Origin> message =
+              new ValidationMessage<>(Severity.ERROR, ValidationMessage.NO_KEY);
+          message.setMessage(
+              String.format("Row %d: Invalid frequency value '%s'", i + 1, dataRow.getString(2)));
+          validationResult.append(message);
+        }
       }
     }
-    if (polySampleList.isEmpty()) {
-      validationResult.append(
-          new ValidationMessage(Severity.ERROR, "Empty polysample submission "));
+
+    if (polySampleList.isEmpty() && validationResult.isValid()) {
+      ValidationMessage<Origin> message =
+          new ValidationMessage<>(Severity.ERROR, ValidationMessage.NO_KEY);
+      message.setMessage("Empty polysample submission");
+      validationResult.append(message);
     }
+
+    // Write errors to report file
+    if (!validationResult.isValid() && getOptions().reportDir.isPresent()) {
+      getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+    }
+
     return validationResult;
   }
 
@@ -231,52 +258,55 @@ public class TSVFileValidationCheck extends FileValidationCheck {
       throws ValidationEngineException {
 
     ValidationResult validationResult = new ValidationResult();
-    DataSet polysampleDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
+    DataSet sequenceTaxDataSet = new TSVReader().getPolySampleDataSet(submissionFile.getFile());
 
     // If TSV file is not valid
-    if (polysampleDataSet == null || polysampleDataSet.getRows().size() <= 1) {
+    if (sequenceTaxDataSet == null || sequenceTaxDataSet.getRows().size() <= 1) {
       throw new ValidationEngineException(
           "Submitted file is not a valid TSV file: " + submissionFile.getFile());
     }
 
-    DataRow headerRow = polysampleDataSet.getRows().get(0);
-    List<SequenceTax> sequenceTaxList = new ArrayList<>();
-    try {
-      if (isValidSequenceTaxHeader(headerRow)) {
-        sequenceTaxList.addAll(
-            polysampleDataSet.getRows().stream()
-                .skip(1)
-                .map(dataRow -> new SequenceTax(dataRow.getString(0), dataRow.getString(1)))
-                .collect(Collectors.toList()));
+    SequenceTaxHeaderDefinition headerDef = new SequenceTaxHeaderDefinition();
+    DataRow headerRow = sequenceTaxDataSet.getRows().get(0);
+
+    // Validate header
+    ValidationResult headerResult = headerDef.validateHeader(headerRow);
+    if (!headerResult.isValid()) {
+      validationResult.append(headerResult);
+      if (getOptions().reportDir.isPresent()) {
+        getReporter().writeToFile(getReportFile(submissionFile), validationResult);
       }
-    } catch (ArrayIndexOutOfBoundsException e) {
-      validationResult.append(
-          new ValidationMessage(
-              Severity.ERROR, "Invalid file structure in polysample submission: "));
-      //      throw new ValidationEngineException(
-      //              "Invalid file structure in polysample submission: ", e);
+      throw new ValidationEngineException("Invalid SequenceTax header structure");
     }
-    if (sequenceTaxList.isEmpty()) {
-      validationResult.append(
-          new ValidationMessage(Severity.ERROR, "Empty sequence tax submission "));
+
+    List<SequenceTax> sequenceTaxList = new ArrayList<>();
+
+    // Validate each data row
+    for (int i = 1; i < sequenceTaxDataSet.getRows().size(); i++) {
+      DataRow dataRow = sequenceTaxDataSet.getRows().get(i);
+
+      // Validate values
+      ValidationResult rowResult = headerDef.validateRow(dataRow, i + 1);
+      validationResult.append(rowResult);
+
+      // If valid, create SequenceTax object
+      if (rowResult.isValid()) {
+        sequenceTaxList.add(new SequenceTax(dataRow.getString(0), dataRow.getString(1)));
+      }
     }
+
+    if (sequenceTaxList.isEmpty() && validationResult.isValid()) {
+      ValidationMessage<Origin> message =
+          new ValidationMessage<>(Severity.ERROR, ValidationMessage.NO_KEY);
+      message.setMessage("Empty sequence tax submission");
+      validationResult.append(message);
+    }
+
+    // Write errors to report file
+    if (!validationResult.isValid() && getOptions().reportDir.isPresent()) {
+      getReporter().writeToFile(getReportFile(submissionFile), validationResult);
+    }
+
     return validationResult;
-  }
-
-  public boolean isValidPolySampleHeader(DataRow headerRow) {
-    return (headerRow.getLength() == 3
-        && headerRow.getColumn(0).equals("Sequence_id")
-        && headerRow.getColumn(1).equals("Sample_id")
-        && headerRow.getColumn(2).equals("Frequency"));
-  }
-
-  public boolean isValidSequenceTaxHeader(DataRow headerRow) {
-    return (headerRow.getLength() == 2
-            && headerRow.getColumn(0).equals("Sequence_id")
-            && headerRow.getColumn(1).equals("Tax_id"))
-        || (headerRow.getLength() == 3
-            && headerRow.getColumn(0).equals("Sequence_id")
-            && headerRow.getColumn(1).equals("Tax_id")
-            && headerRow.getColumn(2).equals("Scientific_name"));
   }
 }
