@@ -271,4 +271,35 @@ public class TSVFileValidationCheckTest {
   public void testTaxTSVInvalidConfidenceScore() throws Exception {
     checkTSV("tax_invalid_confidence_score.tsv", false, "Row 2, column 5 (confidence_score)");
   }
+
+  @Test
+  public void testTaxTSVWithPartialMetadata() throws Exception {
+    // Test that metadata columns are optional - file has only 4 columns instead of all 6
+    checkTSV("tax_valid_with_empty_metadata.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVFloatsOnly() throws Exception {
+    checkTSV("tax_valid_floats_only.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVRangesOnly() throws Exception {
+    checkTSV("tax_valid_ranges_only.tsv", true, "");
+  }
+
+  @Test
+  public void testTaxTSVInvalidRangeFormats() throws Exception {
+    checkTSV("tax_invalid_range_formats.tsv", false, "Row 2, column 3 (percent_match)");
+  }
+
+  @Test
+  public void testTaxTSVInvalidOutOfRange() throws Exception {
+    checkTSV("tax_invalid_out_of_range.tsv", false, "Row 2, column 3 (percent_match)");
+  }
+
+  @Test
+  public void testTaxTSVInvalidPercentQueryCover() throws Exception {
+    checkTSV("tax_invalid_percent_query_cover.tsv", false, "Row 2, column 4 (percent_query_cover)");
+  }
 }

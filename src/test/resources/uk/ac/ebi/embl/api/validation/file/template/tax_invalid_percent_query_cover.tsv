@@ -1,0 +1,4 @@
+Sequence_id	Tax_id	Scientific_name	percent_match	percent_query_cover	confidence_score
+ENTRY_NAME1	10004	Homo sapiens	99.8	150	0.997
+ENTRY_NAME2	10090	Mus musculus	99.8	invalid	0.998
+ENTRY_NAME3	9606	Homo sapiens	99.8	-10	0.999
