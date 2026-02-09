@@ -47,7 +47,8 @@ public class Utils {
   private static final int MIN_SCAFFOLD_CNT = 1;
   private static final int MAX_SCAFFOLD_CNT = 1000000;
   private static final int MIN_CHROMOSOME_CNT = 1;
-  private static final int MAX_CHROMOSOME_CNT = 10000;
+  private static final int MAX_CHROMOSOME_CNT = 2000;
+  private static final int MAX_CHROMOSOME_MACRONUCLEAR_CNT = 30000;
 
   private static final DataManager dataManager = new CachedFileDataManager();
   private static final CheckFileManager tsvFileManager = new CheckFileManager();
@@ -932,6 +933,7 @@ public class Utils {
       long contigCount,
       long scaffoldCount,
       long chromosomeCount,
+      long macronuclearCount,
       String assemblyType) {
 
     ValidationResult result = new ValidationResult();
@@ -1002,7 +1004,7 @@ public class Utils {
               MAX_SCAFFOLD_CNT);
       result.append(message);
     }
-    if (chromosomeCount != 0 && chromosomeCount > MAX_CHROMOSOME_CNT) {
+    if (chromosomeCount != 0 && chromosomeCount - macronuclearCount > MAX_CHROMOSOME_CNT) {
       ValidationMessage<Origin> message =
           EntryValidations.createMessage(
               new FlatFileOrigin(1),
@@ -1011,6 +1013,17 @@ public class Utils {
               chromosomeCount,
               "CHROMOSOME",
               MAX_CHROMOSOME_CNT);
+      result.append(message);
+    }
+    if (macronuclearCount > MAX_CHROMOSOME_MACRONUCLEAR_CNT) {
+      ValidationMessage<Origin> message =
+          EntryValidations.createMessage(
+              new FlatFileOrigin(1),
+              Severity.ERROR,
+              MESSAGE_KEY_MAX_NUMBER_OF_SEQUENCES_ERROR,
+              macronuclearCount,
+              "CHROMOSOME_MACRONUCLEAR",
+              MAX_CHROMOSOME_MACRONUCLEAR_CNT);
       result.append(message);
     }
 

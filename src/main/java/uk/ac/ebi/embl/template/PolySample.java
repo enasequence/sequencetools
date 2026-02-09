@@ -11,39 +11,39 @@
 package uk.ac.ebi.embl.template;
 
 public class PolySample {
-  String assignedAcc;
-  String submittedAccession;
+  String sequenceAcc;
+  String submittedId;
   String SampleId;
   long frequency;
 
-  public PolySample(String assignedAcc, String accession, String sampleId, long frequency) {
-    this.assignedAcc = assignedAcc;
-    this.submittedAccession = accession;
+  public PolySample(String sequenceAcc, String accession, String sampleId, long frequency) {
+    this.sequenceAcc = sequenceAcc;
+    this.submittedId = accession;
     this.SampleId = sampleId;
     this.frequency = frequency;
   }
 
   public PolySample(String accession, String sampleId, long frequency) {
-    this.assignedAcc = null;
-    this.submittedAccession = accession;
+    this.sequenceAcc = null;
+    this.submittedId = accession;
     this.SampleId = sampleId;
     this.frequency = frequency;
   }
 
-  public String getAssignedAcc() {
-    return assignedAcc;
+  public String getSequenceAcc() {
+    return sequenceAcc;
   }
 
-  public void setAssignedAcc(String assignedAcc) {
-    this.assignedAcc = assignedAcc;
+  public void setSequenceAcc(String sequenceAcc) {
+    this.sequenceAcc = sequenceAcc;
   }
 
-  public String getSubmittedAccession() {
-    return submittedAccession;
+  public String getSubmittedId() {
+    return submittedId;
   }
 
-  public void setSubmittedAccession(String submittedAccession) {
-    this.submittedAccession = submittedAccession;
+  public void setSubmittedId(String submittedId) {
+    this.submittedId = submittedId;
   }
 
   public String getSampleId() {

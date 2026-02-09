@@ -68,6 +68,7 @@ public class ChromosomeListFileValidationCheck extends FileValidationCheck {
           sharedInfo.chromosomeNames.add(entry.getChromosomeName().toUpperCase());
       }
 
+      sharedInfo.chromosomeLocationCount.putAll(reader.getChromosomeLocationCount());
     } catch (ValidationEngineException e) {
       getReporter()
           .writeToFile(getReportFile(submissionFile), Severity.ERROR, e.getMessage(), origin);

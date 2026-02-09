@@ -46,6 +46,15 @@ public class CSVReader {
     readHeader(expectedMatchNumber, allTokens);
   }
 
+  public CSVReader(
+      BufferedReader inputReader,
+      final List<TemplateTokenInfo> allTokens,
+      final int expectedMatchNumber)
+      throws Exception {
+    lineReader = inputReader;
+    readHeader(expectedMatchNumber, allTokens);
+  }
+
   public CSVLine readTemplateSpreadsheetLine() throws Exception {
     skipEmptyLinesAndComments();
     if (currentLine != null) {

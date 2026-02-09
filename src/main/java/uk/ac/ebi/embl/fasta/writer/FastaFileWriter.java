@@ -23,7 +23,8 @@ public class FastaFileWriter {
     DEFAULT_HEADER_FORMAT,
     ANALYSIS_HEADER_FORMAT,
     ENA_HEADER_FORMAT,
-    POLYSAMPLE_HEADER_FORMAT
+    POLYSAMPLE_HEADER_FORMAT,
+    TRANSLATION_HEADER_FORMAT
   }
 
   public FastaFileWriter(Entry entry, Writer writer) {
@@ -66,6 +67,9 @@ public class FastaFileWriter {
       case POLYSAMPLE_HEADER_FORMAT:
         header =
             String.format(">%s|%s", entry.getPrimaryAccession(), entry.getSubmitterAccession());
+        break;
+      case TRANSLATION_HEADER_FORMAT:
+        header = String.format(">%s", entry.getPrimaryAccession());
       default:
         break;
     }

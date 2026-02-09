@@ -974,6 +974,8 @@ public abstract class FileValidationCheck {
         new HashSet<>(); // key is uppercase submitter accessio
     public final Set<String> unlocalisedEntryNames =
         new HashSet<>(); // key is uppercase submitter accessio
+    public final Map<String, Long> chromosomeLocationCount =
+        new HashMap<>(); // key is lowercase chromosome location
     public PrintWriter contigsReducedFileWriter = null;
     public PrintWriter scaffoldsReducedFileWriter = null;
     public PrintWriter chromosomesFileWriter = null;

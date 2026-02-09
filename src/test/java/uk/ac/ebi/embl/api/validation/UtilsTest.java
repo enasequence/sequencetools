@@ -466,6 +466,16 @@ public class UtilsTest {
     assertEquals("ARZB01000114", output.get(output.size() - 2).getText());
   }
 
+  @Test
+  public void validateAssemblySequenceCount() {
+    ValidationResult vr =
+        Utils.validateAssemblySequenceCount(false, 0, 0, 30000, 29000, "clone or isolate");
+    assertTrue(vr.isValid());
+
+    vr = Utils.validateAssemblySequenceCount(false, 0, 0, 30002, 30001, "clone or isolate");
+    assertFalse(vr.isValid());
+  }
+
   private Text[] getSecondaryAccnListAsArray(String... accns) {
     List<Text> list = getSecondaryAccnList(accns);
     Text[] array = new Text[list.size()];
