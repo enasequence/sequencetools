@@ -190,12 +190,11 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         final Sample sample = manifest.getSample();
         boolean isSampleOrganismMetagenome = false;
 
-        if (sample.getOrganism() != null) {
-          isSampleOrganismMetagenome = taxonomyClient.isOrganismMetagenome(sample.getOrganism());
-        } else if (sample.getTaxId() != null) {
+        if (sample.getTaxId() != null) {
           isSampleOrganismMetagenome =
-              taxonomyClient.isMetagenomic(
-                  taxonomyClient.getTaxonByTaxid(sample.getTaxId().longValue()));
+              taxonomyClient.getTaxonByTaxid(sample.getTaxId().longValue()).isMetagenome();
+        } else if (sample.getOrganism() != null) {
+          isSampleOrganismMetagenome = taxonomyClient.isOrganismMetagenome(sample.getOrganism());
         }
 
         if (isSampleOrganismMetagenome) {
