@@ -30,17 +30,22 @@ import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.api.Validator;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.*;
 import uk.ac.ebi.ena.webin.cli.validator.reference.Attribute;
+import uk.ac.ebi.ena.webin.cli.validator.reference.Sample;
 
 public class SubmissionValidator implements Validator<Manifest, ValidationResponse> {
 
   private SubmissionOptions options;
   private static final int ERROR_MAX_LENGTH = 2000;
   private static final Integer COVID_19_OUTBREAK_TAX_ID = 2697049;
+  private final TaxonomyClient taxonomyClient;
 
-  public SubmissionValidator() {}
+  public SubmissionValidator() {
+    this.taxonomyClient = new TaxonomyClient();
+  }
 
   public SubmissionValidator(SubmissionOptions options) {
     this.options = options;
+    this.taxonomyClient = new TaxonomyClient();
   }
 
   public void validate() throws ValidationEngineException {
@@ -179,6 +184,28 @@ public class SubmissionValidator implements Validator<Manifest, ValidationRespon
         reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, msg);
         throw new ValidationEngineException(
             msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+      }
+
+      if (options.assemblyType.equals(AssemblyType.METAGENOME_ASSEMBLEDGENOME)) {
+        final Sample sample = manifest.getSample();
+        boolean isSampleOrganismMetagenome = false;
+
+        if (sample.getTaxId() != null) {
+          isSampleOrganismMetagenome =
+              taxonomyClient.getTaxonByTaxid(sample.getTaxId().longValue()).isMetagenome();
+        } else if (sample.getOrganism() != null) {
+          isSampleOrganismMetagenome = taxonomyClient.isOrganismMetagenome(sample.getOrganism());
+        }
+
+        if (isSampleOrganismMetagenome) {
+          final String msg =
+              "Assembly type: MAG (METAGENOME-ASSEMBLED GENOME) cannot reference a sample having a metagenome taxonomy";
+
+          reporter.writeToFile(manifest.getReportFile(), Severity.ERROR, msg);
+
+          throw new ValidationEngineException(
+              msg, ValidationEngineException.ReportErrorType.VALIDATION_ERROR);
+        }
       }
 
       options.context = Optional.of(Context.genome);
