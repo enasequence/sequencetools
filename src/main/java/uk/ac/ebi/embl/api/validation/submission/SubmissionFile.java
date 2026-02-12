@@ -25,7 +25,8 @@ public class SubmissionFile {
     CHROMOSOME_LIST,
     UNLOCALISED_LIST,
     MASTER,
-    ANNOTATION_ONLY_FLATFILE
+    ANNOTATION_ONLY_FLATFILE,
+    GFF3
   }
 
   private final FileType fileType;
