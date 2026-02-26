@@ -77,14 +77,21 @@ public class SourceFeatureUtils {
 
       if (MASTERSOURCEQUALIFIERS.isNoValueQualifiers(tag)) {
         if (!"NO".equalsIgnoreCase(value)) {
-          source.addQualifier(new QualifierFactory().createQualifier(tag));
+          enforceQualifierFromSample(source, tag, null);
         }
       } else {
-        source.addQualifier(new QualifierFactory().createQualifier(tag, value));
+        enforceQualifierFromSample(source, tag, value);
       }
     } else if (isCovidTaxId(source.getTaxId()) && covid19RequiredQuals.contains(tag)) {
-      source.addQualifier(new QualifierFactory().createQualifier(tag, value));
+      enforceQualifierFromSample(source, tag, value);
     }
+  }
+
+  public void enforceQualifierFromSample(SourceFeature source, String tag, String value) {
+    if(!source.getQualifiers(tag).isEmpty()){
+      source.removeQualifier(tag);
+    }
+    source.addQualifier(new QualifierFactory().createQualifier(tag, value));
   }
 
   public void addExtraSourceQualifiers(
