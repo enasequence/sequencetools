@@ -63,7 +63,6 @@ public class SequenceEntryUtils {
       chromosomeLocationToOrganelleValue.put("nucleomorph", "nucleomorph");
       chromosomeLocationToOrganelleValue.put("hydrogenosome", "hydrogenosome");
       chromosomeLocationToOrganelleValue.put("chromatophore", "chromatophore");
-      chromosomeLocationToOrganelleValue.put("macronuclear", "macronuclear");
     }
     return chromosomeLocationToOrganelleValue.getId(chromosomeLocation);
   }
