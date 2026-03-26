@@ -984,34 +984,37 @@ public abstract class FileValidationCheck {
 
   void assignProteinAccession(Entry entry) throws ValidationEngineException {
 
-    // isRemote == isWebinCLI
-    if (getOptions().getEntryValidationPlanProperty().isRemote.get()
-        || !(getOptions().getEntryValidationPlanProperty().validationScope.get()
-                == ValidationScope.ASSEMBLY_CONTIG
-            || getOptions().getEntryValidationPlanProperty().validationScope.get()
-                == ValidationScope.ASSEMBLY_SCAFFOLD
-            || getOptions().context.get() == Context.transcriptome)) {
+      // isRemote == isWebinCLI
+    if (getOptions().getEntryValidationPlanProperty().isRemote.get()) {
       return;
     }
 
-    QualifierFactory qualifierFactory = new QualifierFactory();
-    for (Feature feature : entry.getFeatures()) {
-      // assign new protein_id
-      if (feature instanceof CdsFeature && !(feature instanceof PeptideFeature)) {
-        try {
-          String proteinId =
-              EntryDAOUtilsImpl.getEntryDAOUtilsImpl(getOptions().enproConnection.get())
-                  .getNewProteinId();
-          if (null == proteinId) {
-            throw new ValidationEngineException("Unknown issue, could not assign new protein_id");
+    if (requiresProteinIdAssignment()) {
+      QualifierFactory qualifierFactory = new QualifierFactory();
+      for (Feature feature : entry.getFeatures()) {
+        if (feature instanceof CdsFeature && !(feature instanceof PeptideFeature)) {
+          try {
+            String proteinId =
+                EntryDAOUtilsImpl.getEntryDAOUtilsImpl(getOptions().enproConnection.get())
+                    .getNewProteinId();
+            if (proteinId == null) {
+              throw new ValidationEngineException("Unknown issue, could not assign new protein_id");
+            }
+            feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId + ".1"));
+          } catch (SQLException e) {
+            throw new ValidationEngineException(e);
           }
-          feature.addQualifier(qualifierFactory.createProteinIdQualifier(proteinId + ".1"));
-
-        } catch (SQLException e) {
-          throw new ValidationEngineException(e);
         }
       }
     }
+  }
+
+  private boolean requiresProteinIdAssignment() {
+    ValidationScope scope = getOptions().getEntryValidationPlanProperty().validationScope.get();
+    return scope == ValidationScope.ASSEMBLY_CONTIG
+        || scope == ValidationScope.ASSEMBLY_SCAFFOLD
+        || scope == ValidationScope.EMBL_TEMPLATE
+        || getOptions().context.get() == Context.transcriptome;
   }
 
   public static void validateUnlocalisedEntryNames(SharedInfo sharedInfo)
