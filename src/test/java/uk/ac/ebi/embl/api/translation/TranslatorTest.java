@@ -126,6 +126,21 @@ public class TranslatorTest {
             "RAAVAADRGIIGGYGLGAPYGLAGGYGLEVPYGLAGYADYRYPAGACGIDAYGGIGEGNVAVAGELPVAGTTAVAGQVPIMGAVKFGGDVCAAGSVSIAGKCACGCGDYGYGYGLGAPYLY"));
   }
 
+    @Test
+    public void testValidTranslationNonRightPartialOneTrailingBase11() throws ValidationException {
+        TranslatorTester test = new TranslatorTester();
+        test.setTranslationTable(11);
+        test.setCodonStart(1);
+        test.setFixInternalStopCodonMakePseudo(true);
+
+        //test.setFivePrimePartial(true);
+        //test.setFixDeleteTrailingBasesAfterStopCodon(true);
+        assertTrue(
+                test.testValidTranslation(
+                        "tcaggctgccagatcatcgtttccgatggaagcataataagctttttctgcttctgccggaggagtatggcccagccttcccagcaatcgtcgattgttataccagtccacccacgttagtgtggccagttccacttctgcacggtttttccagctcttacggtgtattacctccgctttgtaaagaccattgatgctctcagccatcgcgttgtcatacgagtcgcctgtactccctgttgatgccagtaatccggcttcttttagtcgctccgtataggccagtgacacatactgagagcctttatcgctgtgatggatggtgccagacggacgacgggcccacaacgcctgctccagcgcatccagcacgaatgtcgtttccatagacgatgagacccgccaccccacgatgtatccggcaaacacatcaatgataaacgccacatagacgaagccctgccatgtgctgacgtaagtaaaatcagccacccacagctggtcaggtcgttctgccacgaactgacggtttacgcggtcgcctgcggcaacggctttccggctgatggtcgtacggacctttttaccccggagaacaccggcaagtcccataaccgccatgagacgtgccactgtacatctggccaccctgattccttcccgtaacaactgacgccagactttacgcacaccgtacacctgatgattttcatcgtatacgcgctgtatctctctcttcagccagtcgtcgtgctgcgcacgggcactgcgtttatccggatgatgtcgctgttgctgacaatggtaatacgttgacggggcaatatgcagttcgctgcataccggtccgaccccgtactgctcacgcagcttatccagcagtggcatca",
+                        "MTKNTRFSPEVRQRAIRMVLESQDEYDSQWAAICSIAPKIGCTPETLRVWVRQHERDTGGGDGGLTSAERQRLKELERENRELRRSNDILRQASAYFAKAEFDRLWKKLMPLLDKLREQYGVGPVCSELHIAPSTYYHCQQQRHHPDKRSARAQHDDWLKREIQRVYDENHQVYGVRKVWRQLLREGIRVARCTVARLMAVMGLAGVLRGKKVRTTISRKAVAAGDRVNRQFVAERPDQLWVADFTYVSTWQGFVYVAFIIDVFAGYIVGWRVSSSMETTFVLDALEQALWARRPSGTIHHSDKGSQYVSLAYTERLKEAGLLASTGSTGDSYDNAMAESINGLYKAEVIHRKSWKNRAEVELATLTWVDWYNNRRLLGRLGHTPPAEAEKAYYASIGNDDLAA"));
+    }
+
   @Test
   public void testValidTranslationRightPartialOneTrailingBase1() throws ValidationException {
     TranslatorTester test = new TranslatorTester();
