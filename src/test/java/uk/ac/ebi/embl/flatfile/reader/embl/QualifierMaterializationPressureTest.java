@@ -60,8 +60,7 @@ public class QualifierMaterializationPressureTest {
   private Entry parseAssemblyEntry(String entryText) throws Exception {
     BufferedReader reader = new BufferedReader(new StringReader(entryText));
     EntryReader entryReader =
-        new EmblEntryReader(
-            reader, EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT, "synthetic.embl");
+        new EmblEntryReader(reader, EmblEntryReader.Format.ASSEMBLY_FILE_FORMAT, "synthetic.embl");
 
     ValidationResult parseResult = entryReader.read();
     assertTrue("Synthetic test entry should parse as one entry", entryReader.isEntry());

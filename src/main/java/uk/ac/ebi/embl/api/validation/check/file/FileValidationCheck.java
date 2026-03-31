@@ -984,7 +984,7 @@ public abstract class FileValidationCheck {
 
   void assignProteinAccession(Entry entry) throws ValidationEngineException {
 
-      // isRemote == isWebinCLI
+    // isRemote == isWebinCLI
     if (getOptions().getEntryValidationPlanProperty().isRemote.get()) {
       return;
     }
@@ -1010,7 +1010,7 @@ public abstract class FileValidationCheck {
   }
 
   private boolean requiresProteinIdAssignment() {
-    //ENA-6938 assign protein_id to EMBL_TEMPLATE also
+    // ENA-6938 assign protein_id to EMBL_TEMPLATE also
     ValidationScope scope = getOptions().getEntryValidationPlanProperty().validationScope.get();
     return scope == ValidationScope.ASSEMBLY_CONTIG
         || scope == ValidationScope.ASSEMBLY_SCAFFOLD
