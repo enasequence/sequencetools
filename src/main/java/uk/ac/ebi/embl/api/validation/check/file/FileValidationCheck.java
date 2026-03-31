@@ -1013,7 +1013,7 @@ public abstract class FileValidationCheck {
     ValidationScope scope = getOptions().getEntryValidationPlanProperty().validationScope.get();
     return scope == ValidationScope.ASSEMBLY_CONTIG
         || scope == ValidationScope.ASSEMBLY_SCAFFOLD
-        || scope == ValidationScope.EMBL_TEMPLATE
+        || scope == ValidationScope.EMBL_TEMPLATE // ENA-6938
         || getOptions().context.get() == Context.transcriptome;
   }
 
