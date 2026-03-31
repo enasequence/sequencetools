@@ -1010,6 +1010,7 @@ public abstract class FileValidationCheck {
   }
 
   private boolean requiresProteinIdAssignment() {
+    //ENA-6938 assign protein_id to EMBL_TEMPLATE also
     ValidationScope scope = getOptions().getEntryValidationPlanProperty().validationScope.get();
     return scope == ValidationScope.ASSEMBLY_CONTIG
         || scope == ValidationScope.ASSEMBLY_SCAFFOLD
