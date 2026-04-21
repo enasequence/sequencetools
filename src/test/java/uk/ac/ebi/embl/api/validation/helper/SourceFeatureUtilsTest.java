@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.Mockito;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -223,6 +224,45 @@ public class SourceFeatureUtilsTest {
 
     assertNull(sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME));
     assertEquals(1, sourceFeature.getQualifiers().size());
+  }
+
+  @Test
+  public void testConstructSourceFeatureAddsIsolateFromSampleNameForProkaryote() {
+    TaxonomyClient taxonomyClient = Mockito.mock(TaxonomyClient.class);
+    Mockito.when(taxonomyClient.isProkaryotic("Escherichia coli")).thenReturn(true);
+
+    Sample sample = new Sample();
+    sample.setName("sample-1");
+    sample.setOrganism("Escherichia coli");
+    sample.setTaxId(562);
+    sample.setAttributes(List.of());
+
+    SourceFeature sourceFeature =
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+
+    assertEquals(
+        "sample-1",
+        sourceFeature.getSingleQualifier(Qualifier.ISOLATE_QUALIFIER_NAME).getValue());
+  }
+
+  @Test
+  public void testConstructSourceFeatureDoesNotAddIsolateWhenStrainExists() {
+    TaxonomyClient taxonomyClient = Mockito.mock(TaxonomyClient.class);
+    Mockito.when(taxonomyClient.isProkaryotic("Escherichia coli")).thenReturn(true);
+
+    Sample sample = new Sample();
+    sample.setName("sample-1");
+    sample.setOrganism("Escherichia coli");
+    sample.setTaxId(562);
+    sample.setAttributes(
+        List.of(new Attribute(Qualifier.STRAIN_QUALIFIER_NAME, "K12", null, null, null)));
+
+    SourceFeature sourceFeature =
+        new SourceFeatureUtils().constructSourceFeature(sample, taxonomyClient);
+
+    assertNull(sourceFeature.getSingleQualifier(Qualifier.ISOLATE_QUALIFIER_NAME));
+    assertEquals(
+        "K12", sourceFeature.getSingleQualifier(Qualifier.STRAIN_QUALIFIER_NAME).getValue());
   }
 
   private Sample createSampleWithAttributes(List<Attribute> attributes) {

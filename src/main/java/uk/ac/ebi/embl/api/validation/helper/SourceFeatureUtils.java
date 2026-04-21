@@ -98,13 +98,9 @@ public class SourceFeatureUtils {
   }
 
   private boolean addUniqueName(SourceFeature source) {
-    List<Qualifier> sourceQualifiers = source.getQualifiers();
-    if (sourceQualifiers.contains(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME)
-        || sourceQualifiers.contains(Qualifier.STRAIN_QUALIFIER_NAME)
-        || sourceQualifiers.contains(Qualifier.ISOLATE_QUALIFIER_NAME)) {
-      return false;
-    }
-    return true;
+    return source.getQualifiers(Qualifier.ENVIRONMENTAL_SAMPLE_QUALIFIER_NAME).isEmpty()
+        && source.getQualifiers(Qualifier.STRAIN_QUALIFIER_NAME).isEmpty()
+        && source.getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).isEmpty();
   }
 
   public SourceFeature constructSourceFeature(Sample sample, TaxonomyClient taxonomyClient) {

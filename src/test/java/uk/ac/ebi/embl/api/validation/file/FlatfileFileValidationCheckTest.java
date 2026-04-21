@@ -19,7 +19,14 @@ import java.util.Collections;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ebi.embl.api.entry.Entry;
+import uk.ac.ebi.embl.api.entry.EntryFactory;
+import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
+import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
+import uk.ac.ebi.embl.api.validation.FileType;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.embl.api.validation.ValidationScope;
 import uk.ac.ebi.embl.api.validation.annotation.Description;
 import uk.ac.ebi.embl.api.validation.check.file.FastaFileValidationCheck;
 import uk.ac.ebi.embl.api.validation.check.file.FileValidationCheck;
@@ -142,6 +149,53 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
   }
 
   @Test
+  public void testAppendHeaderReplacesSubmittedIsolateWithMasterSource() throws Exception {
+    sharedInfo = new FileValidationCheck.SharedInfo();
+
+    validateMaster(Context.genome);
+    options.context = Optional.of(Context.genome);
+    options.getEntryValidationPlanProperty().fileType.set(FileType.EMBL);
+    options
+        .getEntryValidationPlanProperty()
+        .validationScope
+        .set(ValidationScope.ASSEMBLY_CONTIG);
+
+    Entry entry = new EntryFactory().createEntry();
+    entry.setSubmitterAccession("ENTRY_NAME1");
+    entry.setSequence(new SequenceFactory().createSequenceofLength(20, 'a'));
+    FeatureFactory featureFactory = new FeatureFactory();
+    entry.addFeature(featureFactory.createSourceFeature());
+    entry
+        .getPrimarySourceFeature()
+        .addQualifier(Qualifier.ORGANISM_QUALIFIER_NAME, "Submitted organism");
+    entry
+        .getPrimarySourceFeature()
+        .addQualifier(Qualifier.ISOLATE_QUALIFIER_NAME, "submitted-isolate");
+    entry
+        .getPrimarySourceFeature()
+        .addQualifier(Qualifier.SUBMITTER_SEQID_QUALIFIER_NAME, "AAAA02:E1");
+
+    TestFlatfileFileValidationCheck check = new TestFlatfileFileValidationCheck(options, sharedInfo);
+    assertTrue(
+        entry.getPrimarySourceFeature()
+            .getSingleQualifierValue(Qualifier.ISOLATE_QUALIFIER_NAME)
+            .equals("submitted-isolate"));
+
+    check.appendHeaderForTest(entry);
+
+    assertFalse(
+        entry.getPrimarySourceFeature().getQualifiers(Qualifier.ISOLATE_QUALIFIER_NAME).size() > 0);
+    assertTrue(
+        entry.getPrimarySourceFeature()
+            .getSingleQualifierValue(Qualifier.ORGANISM_QUALIFIER_NAME)
+            .equals("Micrococcus sp. 5"));
+    assertTrue(
+        entry.getPrimarySourceFeature()
+            .getSingleQualifierValue(Qualifier.STRAIN_QUALIFIER_NAME)
+            .equals("PR1"));
+  }
+
+  @Test
   public void testTemplateFixedvalidFlatFile()
       throws ValidationEngineException, FlatFileComparatorException {
     /*SubmissionFile file=initSubmissionFixedTestFile(".txt",SubmissionFile.FileType.FLATFILE);
@@ -154,5 +208,16 @@ public class FlatfileFileValidationCheckTest extends SubmissionValidationTest {
     FlatfileFileValidationCheck check = new FlatfileFileValidationCheck(options);
     assertTrue(check.check(file));
           assertTrue(compareOutputFiles(file.getFile()));*/
+  }
+
+  private static class TestFlatfileFileValidationCheck extends FlatfileFileValidationCheck {
+    TestFlatfileFileValidationCheck(
+        SubmissionOptions options, FileValidationCheck.SharedInfo sharedInfo) {
+      super(options, sharedInfo);
+    }
+
+    void appendHeaderForTest(Entry entry) throws ValidationEngineException {
+      appendHeader(entry);
+    }
   }
 }
