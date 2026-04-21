@@ -60,6 +60,7 @@ public enum ValidationUnit {
       HostQualifierFix.class,
       SourceQualifierMissingFix.class,
       SourceQualifierFix.class,
+      MacronuclearQualifierFix.class,
       StrainQualifierValueFix.class,
       Lat_lonValueFix.class,
       QualifierValueFix.class,
@@ -176,6 +177,7 @@ public enum ValidationUnit {
       HostQualifierFix.class, // include for all
       SourceQualifierMissingFix.class, // include for all
       SourceQualifierFix.class,
+      MacronuclearQualifierFix.class, // include for all
       StrainQualifierValueFix.class, // include for all
       Lat_lonValueFix.class, // include for all
       MoleculeTypeAndQualifierFix.class, // include for all
