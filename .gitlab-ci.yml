@@ -27,7 +27,6 @@ before_script:
 build:
   stage: build
   script:
-    - chmod u+x gradlew
     - ./gradlew clean build --info -x test
   tags:
     - ena-dcap-gitlab-runner
@@ -38,7 +37,6 @@ build:
 test:
   stage: test
   script:
-    - chmod u+x gradlew
     - gradle test --info
   tags:
     - ena-dcap-gitlab-runner
@@ -52,7 +50,6 @@ publish:
     - job: build
       artifacts: true
   script:
-    - chmod u+x gradlew
     - ./gradlew publish
   tags:
     - ena-dcap-gitlab-runner
