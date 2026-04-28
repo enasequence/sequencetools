@@ -57,3 +57,4 @@ publish:
   tags:
     - ena-dcap-gitlab-runner
   when: manual
+
