@@ -15,7 +15,7 @@ variables:
 
 stages:
   - build
-  - test  # Test case errors need to be fixed
+  - test
   - deploy
 cache:
   paths:
@@ -51,6 +51,9 @@ test:
 
 publish:
   stage: deploy
+  needs:
+    - job: build
+      artifacts: true
   script:
     - chmod u+x gradlew
     - ./gradlew publish
