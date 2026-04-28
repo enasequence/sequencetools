@@ -89,26 +89,26 @@ test {
     if( System.env.webin_password ) {
         environment 'webin-password', System.env.webin_password
     } else {
-        environment 'webin-password', webinPassword
+        environment 'webin-password', project.hasProperty('webinPassword') ? webinPassword : ''
     }
 
     if( System.env.webin_username ) {
         environment 'webin-username', System.env.webin_username
     } else {
-        environment 'webin-username', webinUsername
+        environment 'webin-username', project.hasProperty('webinUsername') ? webinUsername : ''
     }
 
     // Biosamples Webin account
     if( System.env.biosamples_webin_password ) {
         environment 'biosamples-webin-password', System.env.biosamples_webin_password
     } else {
-        environment 'biosamples-webin-password', biosamplesWebinPassword
+        environment 'biosamples-webin-password', project.hasProperty('biosamplesWebinPassword') ? biosamplesWebinPassword : ''
     }
 
     if( System.env.biosamples_webin_username ) {
         environment 'biosamples-webin-username', System.env.biosamples_webin_username
     } else {
-        environment 'biosamples-webin-username', biosamplesWebinUsername
+        environment 'biosamples-webin-username', project.hasProperty('biosamplesWebinUsername') ? biosamplesWebinUsername : ''
     }
 }
 
