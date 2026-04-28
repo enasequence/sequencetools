@@ -2,7 +2,7 @@
 # This is the Gradle build system for JVM applications
 # https://gradle.org/
 # https://github.com/gradle/gradle
-image: gradle:5.2.1-jdk8
+image: openjdk:17.0.2-slim-bullseye
 
 # Disable the Gradle daemon for Continuous Integration servers as correctness
 # is usually a priority over speed in CI environments. Using a fresh
@@ -37,7 +37,7 @@ build:
 test:
   stage: test
   script:
-    - gradle test --info
+    - ./gradlew test --info
   tags:
     - ena-dcap-gitlab-runner
   dependencies:
