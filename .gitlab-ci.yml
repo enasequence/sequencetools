@@ -30,7 +30,7 @@ build:
     - chmod u+x gradlew
     - ./gradlew clean build --info -x test
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   artifacts:
     reports:
       dotenv: build.env  # This makes $PROJECT_NAME available to other jobs
@@ -44,7 +44,7 @@ test:
     - chmod u+x gradlew
     - gradle test --info
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   dependencies:
     - build
   allow_failure: true
@@ -58,5 +58,5 @@ publish:
     - chmod u+x gradlew
     - ./gradlew publish
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   when: manual
