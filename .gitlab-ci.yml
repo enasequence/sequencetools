@@ -32,11 +32,8 @@ build:
   tags:
     - ena-dcap-gitlab-runner
   artifacts:
-    reports:
-      dotenv: build.env  # This makes $PROJECT_NAME available to other jobs
     paths:
       - build/libs/${APP_NAME}-${APP_VERSION}.jar
-
 
 test:
   stage: test
