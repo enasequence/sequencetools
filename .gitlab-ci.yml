@@ -9,26 +9,53 @@ image: gradle:5.2.1-jdk8
 # runtime for each build is more reliable since the runtime is completely
 # isolated from any previous builds.
 variables:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+  APP_NAME: 'sequencetools'
+  APP_VERSION: "2.33.4"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+
+stages:
+  - build
+  - test  # Test case errors need to be fixed
+  - deploy
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 build:
   stage: build
-  script: gradle --build-cache assemble
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
+  script:
+    - chmod u+x gradlew
+    - ./gradlew clean build --info -x test
+  tags:
+    - dcap-gitlab-runner
+  artifacts:
+    reports:
+      dotenv: build.env  # This makes $PROJECT_NAME available to other jobs
     paths:
-      - ./build
-      - ./.gradle
+      - build/libs/${APP_NAME}-${APP_VERSION}.jar
 
 
 test:
   stage: test
   script:
+    - chmod u+x gradlew
     - gradle test --info
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    paths:
-      - ./build
-      - ./.gradle
+  tags:
+    - dcap-gitlab-runner
+  dependencies:
+    - build_prod
+  allow_failure: true
+
+publish:
+  stage: deploy
+  script:
+    - chmod u+x gradlew
+    - ./gradlew publish
+  tags:
+    - dcap-gitlab-runner
+  dependencies:
+    - build_prod
+  when: manual

@@ -7,11 +7,14 @@ plugins {
 
 archivesBaseName = 'sequencetools'
 group = 'uk.ac.ebi.ena.sequence'
-
-version = '2.33.3'
+version = System.getenv("APP_VERSION")
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
+
+def gitlabHeaderName = System.getenv('CI_JOB_TOKEN') ? 'Job-Token' : 'Private-Token'
+def gitlabHeaderValue = System.getenv('CI_JOB_TOKEN') ? System.getenv('CI_JOB_TOKEN') :
+        (project.hasProperty('gitlab_private_token') ? project.property('gitlab_private_token') : gitlab_private_token)
 
 spotless {
     encoding 'UTF-8'
@@ -41,8 +44,8 @@ repositories {
         url "https://gitlab.ebi.ac.uk/api/v4/groups/enasequence/-/packages/maven"
 
         credentials(HttpHeaderCredentials) {
-            name = "Private-Token"
-            value = gitlab_private_token
+            name = gitlabHeaderName
+            value = gitlabHeaderValue
         }
         authentication {
             header( HttpHeaderAuthentication )
@@ -119,8 +122,8 @@ publishing {
         maven {
             url "https://gitlab.ebi.ac.uk/api/v4/projects/965/packages/maven"
             credentials(HttpHeaderCredentials) {
-                name = "Private-Token"
-                value = gitlab_private_token
+                name = gitlabHeaderName
+                value = gitlabHeaderValue
             }
             authentication {
                 header( HttpHeaderAuthentication )
