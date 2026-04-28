@@ -2,7 +2,7 @@
 # This is the Gradle build system for JVM applications
 # https://gradle.org/
 # https://github.com/gradle/gradle
-image: gradle:5.2.1-jdk8
+image: openjdk:17.0.2-slim-bullseye
 
 # Disable the Gradle daemon for Continuous Integration servers as correctness
 # is usually a priority over speed in CI environments. Using a fresh
@@ -27,24 +27,19 @@ before_script:
 build:
   stage: build
   script:
-    - chmod u+x gradlew
-    - ./gradlew clean build --info -x test
+    - ./gradlew clean clean assemble --info
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   artifacts:
-    reports:
-      dotenv: build.env  # This makes $PROJECT_NAME available to other jobs
     paths:
       - build/libs/${APP_NAME}-${APP_VERSION}.jar
-
 
 test:
   stage: test
   script:
-    - chmod u+x gradlew
-    - gradle test --info
+    - ./gradlew test --info
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   dependencies:
     - build
   allow_failure: true
@@ -55,8 +50,8 @@ publish:
     - job: build
       artifacts: true
   script:
-    - chmod u+x gradlew
     - ./gradlew publish
   tags:
-    - dcap-gitlab-runner
+    - ena-dcap-gitlab-runner
   when: manual
+
