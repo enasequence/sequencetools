@@ -46,7 +46,7 @@ test:
   tags:
     - dcap-gitlab-runner
   dependencies:
-    - build_prod
+    - build
   allow_failure: true
 
 publish:
@@ -59,6 +59,4 @@ publish:
     - ./gradlew publish
   tags:
     - dcap-gitlab-runner
-  dependencies:
-    - build_prod
   when: manual
