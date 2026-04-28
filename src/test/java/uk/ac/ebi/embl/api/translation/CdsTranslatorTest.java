@@ -13,9 +13,10 @@ package uk.ac.ebi.embl.api.translation;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.RepositoryException;
@@ -27,6 +28,7 @@ import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.location.LocalRange;
 import uk.ac.ebi.embl.api.entry.location.LocationFactory;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
+import uk.ac.ebi.embl.api.entry.sequence.Sequence;
 import uk.ac.ebi.embl.api.entry.sequence.SequenceFactory;
 import uk.ac.ebi.embl.api.validation.ExtendedResult;
 import uk.ac.ebi.embl.api.validation.Severity;
@@ -34,6 +36,7 @@ import uk.ac.ebi.embl.api.validation.ValidationMessage;
 import uk.ac.ebi.embl.api.validation.ValidationResult;
 import uk.ac.ebi.embl.api.validation.helper.TestHelper;
 import uk.ac.ebi.embl.api.validation.plan.EmblEntryValidationPlanProperty;
+import uk.ac.ebi.embl.flatfile.reader.embl.EmblEntryReader;
 import uk.ac.ebi.embl.flatfile.writer.FeatureLocationWriter;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
 
@@ -218,7 +221,88 @@ public class CdsTranslatorTest {
     }
   }
 
-  @Test
+    @Test
+    public void translateFromEmblFileWithExternalSequence() throws Exception {
+        // Read EMBL file (no sequence in this file)
+        InputStream emblIs = Files.newInputStream(Path.of("/Users/rajkumar/IdeaProjects/gff3tools/src/test/resources/demo/test.embl"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(emblIs));
+        EmblEntryReader entryReader = new EmblEntryReader(
+                reader, EmblEntryReader.Format.EMBL_FORMAT, null);
+        entryReader.read();
+        Entry parsedEntry = entryReader.getEntry();
+        assertNotNull("Entry should not be null", parsedEntry);
+
+        // Load sequence from external file
+        InputStream seqIs = Files.newInputStream(Path.of("/Users/rajkumar/IdeaProjects/gff3tools/src/test/resources/demo/test.seq"));
+        String sequenceStr = new String(seqIs.readAllBytes())
+                .replaceAll("\\s+", "")   // remove spaces/newlines
+                .toLowerCase();
+        Sequence sequence = sequenceFactory.createSequenceByte(sequenceStr.getBytes());
+        parsedEntry.setSequence(sequence);
+
+        // Get CDS feature
+        CdsFeature cds = parsedEntry.getFeatures().stream()
+                .filter(f -> f instanceof CdsFeature)
+                .map(f -> (CdsFeature) f)
+                .findFirst().orElse(null);
+        assertNotNull("CDS feature should be present", cds);
+
+        // Translate
+        EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+        property.taxonClient.set(createMock(TaxonomyClient.class));
+        CdsTranslator translator = new CdsTranslator(property);
+
+        ExtendedResult<TranslationResult> result = translator.translate(cds, parsedEntry);
+
+        assertTrue("Translation should be valid", result.isValid());
+        assertNotNull("Translation should not be null", cds.getTranslation());
+
+        System.out.println(cds.getTranslation());
+    }
+
+    /**
+     * Tests that a complement join CDS with the 5' partial marker ('>') on the last/highest
+     * coordinate segment (complement(join(1..3,4..>9))) is correctly detected as 5'-partial,
+     * causing CTG to be translated as Leu (L) rather than Met (M).
+     *
+     * Sequence: ctaaaacag (9 bp)
+     * RC:       ctgttttag  → CTG=L(partial), TTT=F, TAG=stop
+     */
+    @Test
+    public void testComplementJoinFivePrimePartialOnLastSegmentTranslatesCTGasL() throws Exception {
+        InputStream emblIs = Files.newInputStream(
+                Path.of("/Users/rajkumar/IdeaProjects/gff3tools/src/test/resources/demo/trans-test.embl"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(emblIs));
+        EmblEntryReader entryReader = new EmblEntryReader(
+                reader, EmblEntryReader.Format.EMBL_FORMAT, null);
+        entryReader.read();
+        Entry parsedEntry = entryReader.getEntry();
+        assertNotNull("Entry should not be null", parsedEntry);
+
+        CdsFeature cds = parsedEntry.getFeatures().stream()
+                .filter(f -> f instanceof CdsFeature)
+                .map(f -> (CdsFeature) f)
+                .findFirst().orElse(null);
+        assertNotNull("CDS feature should be present", cds);
+
+        // Verify the compound location is detected as 5'-partial
+        assertTrue("CDS compound location should be 5'-partial", cds.getLocations().isFivePrimePartial());
+
+        EmblEntryValidationPlanProperty property = TestHelper.testEmblEntryValidationPlanProperty();
+        property.taxonClient.set(createMock(TaxonomyClient.class));
+        CdsTranslator translator = new CdsTranslator(property);
+
+        ExtendedResult<TranslationResult> result = translator.translate(cds, parsedEntry);
+
+        assertTrue("Translation should be valid", result.isValid());
+        assertNotNull("Translation should not be null", cds.getTranslation());
+        assertTrue(
+                "CTG on 5'-partial complement CDS should translate as L, not M, got: " + cds.getTranslation(),
+                cds.getTranslation().startsWith("L"));
+        System.out.println("Translation: " + cds.getTranslation());
+    }
+
+    @Test
   public void testTranslate1() {
     setSequenceAndOrganismForJcPolyomavirus();
     cdsFeature.setStartCodon(1);
