@@ -25,6 +25,7 @@ public class SourceQualifierFix extends EntryValidationCheck {
   private static final String QUALIFIER_NAME_CHANGE = "QualifierNameChange";
   private static final String QUALIFIER_VALUE_CHANGE = "QualifierValueChange";
   private static final String QUALIFIER_DELETED = "QualifierDeleted";
+  private static final String SEROTYPE_QUALIFIER_DELETED ="SerotypeQualifierDeleted";
 
   public ValidationResult check(Entry entry) {
     result = new ValidationResult();
@@ -38,9 +39,21 @@ public class SourceQualifierFix extends EntryValidationCheck {
     SourceFeature source = entry.getPrimarySourceFeature();
     String scientificName = source.getScientificName();
 
+    Qualifier seroVarQual =
+            entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROVAR_QUALIFIER_NAME);
+    Qualifier seroTypeQual =
+            entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROTYPE_QUALIFIER_NAME);
+    if (seroTypeQual != null && seroVarQual != null) {
+      entry.getPrimarySourceFeature().removeQualifier(seroTypeQual);
+      reportMessage(
+              Severity.FIX,
+              source.getOrigin(),
+              SEROTYPE_QUALIFIER_DELETED);
+    }
+
+
     if (scientificName != null && scientificName.toLowerCase().contains("salmonella")) {
-      Qualifier seroTypeQual =
-          entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROTYPE_QUALIFIER_NAME);
+
       if (seroTypeQual != null) {
         QualifierFactory qualFactory = new QualifierFactory();
         qualFactory.createQualifier(Qualifier.SEROVAR_QUALIFIER_NAME, seroTypeQual.getValue());
@@ -54,8 +67,7 @@ public class SourceQualifierFix extends EntryValidationCheck {
             Qualifier.SEROTYPE_QUALIFIER_NAME,
             Qualifier.SEROVAR_QUALIFIER_NAME);
       }
-      Qualifier seroVarQual =
-          entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROVAR_QUALIFIER_NAME);
+
       if (seroVarQual != null) {
         String oldVal = seroVarQual.getValue();
         if (oldVal.toLowerCase().contains("serotype")) {
