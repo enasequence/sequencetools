@@ -39,6 +39,13 @@ public class UtilsTest {
         "masterDescription, submitterAccession",
         Utils.getChromosomeDescription(feature, "masterDescription", "submitterAccession"));
 
+    SourceFeature macronuclearFeature = new FeatureFactory().createSourceFeature();
+    macronuclearFeature.addQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
+    Assert.assertEquals(
+        "masterDescription, organelle: macronuclear",
+        Utils.getChromosomeDescription(
+            macronuclearFeature, "masterDescription", "submitterAccession"));
+
     feature.addQualifier(Qualifier.SEGMENT_QUALIFIER_NAME, "segment value");
     Assert.assertEquals(
         "masterDescription, segment: segment value",
@@ -58,5 +65,16 @@ public class UtilsTest {
     Assert.assertEquals(
         "masterDescription, plasmid: plasmid value",
         Utils.getChromosomeDescription(feature, "masterDescription", "submitterAccession"));
+  }
+
+  @Test
+  public void getChromosomeNonSampleSourceQualifiers() {
+    SourceFeature feature = new FeatureFactory().createSourceFeature();
+    feature.addQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
+
+    Assert.assertEquals(1, Utils.getChromosomeNonSampleSourceQualifiers(feature).size());
+    Assert.assertEquals(
+        Qualifier.MACRONUCLEAR_QUALIFIER_NAME,
+        Utils.getChromosomeNonSampleSourceQualifiers(feature).get(0).getName());
   }
 }
