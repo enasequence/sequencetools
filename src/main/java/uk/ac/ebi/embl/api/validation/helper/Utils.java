@@ -1063,6 +1063,7 @@ public class Utils {
     Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
     Qualifier chromosome = feature.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME);
     Qualifier organelle = feature.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME);
+    Qualifier macronuclear = feature.getSingleQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
     Qualifier segment = feature.getSingleQualifier(Qualifier.SEGMENT_QUALIFIER_NAME);
     List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME);
 
@@ -1072,6 +1073,9 @@ public class Utils {
       return String.format("%s, chromosome: %s", masterDescription, chromosome.getValue());
     } else if (null != organelle && null != organelle.getValue()) {
       return String.format("%s, organelle: %s", masterDescription, organelle.getValue());
+    } else if (null != macronuclear) {
+      return String.format(
+          "%s, organelle: %s", masterDescription, Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
     } else if (null != segment && null != segment.getValue()) {
       return String.format("%s, segment: %s", masterDescription, segment.getValue());
     } else if (note != null && note.size() != 0) {
@@ -1099,6 +1103,7 @@ public class Utils {
     Qualifier plasmid = feature.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME);
     Qualifier chromosome = feature.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME);
     Qualifier organelle = feature.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME);
+    Qualifier macronuclear = feature.getSingleQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME);
     Qualifier segment = feature.getSingleQualifier(Qualifier.SEGMENT_QUALIFIER_NAME);
     List<Qualifier> note = feature.getQualifiers(Qualifier.NOTE_QUALIFIER_NAME);
 
@@ -1108,6 +1113,8 @@ public class Utils {
       chrQualifiers.add(chromosome);
     } else if (null != organelle) {
       chrQualifiers.add(organelle);
+    } else if (null != macronuclear) {
+      chrQualifiers.add(macronuclear);
     } else if (null != segment) {
       chrQualifiers.add(segment);
     } else if (note != null && note.size() != 0) {

@@ -78,6 +78,8 @@ public class ChromosomeSourceQualifierCheck extends FeatureValidationCheck {
 
     if (source.getSingleQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME) != null) cnt++;
 
+    if (source.getSingleQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME) != null) cnt++;
+
     if (source.getSingleQualifier(Qualifier.CHROMOSOME_QUALIFIER_NAME) != null) cnt++;
 
     if (source.getSingleQualifier(Qualifier.PLASMID_QUALIFIER_NAME) != null) cnt++;
