@@ -10,7 +10,7 @@ image: openjdk:17.0.2-slim-bullseye
 # isolated from any previous builds.
 variables:
   APP_NAME: 'sequencetools'
-  APP_VERSION: "2.33.5"
+  APP_VERSION: "2.34.0"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
 stages:

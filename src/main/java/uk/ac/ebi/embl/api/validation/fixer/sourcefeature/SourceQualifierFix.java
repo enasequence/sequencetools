@@ -25,7 +25,7 @@ public class SourceQualifierFix extends EntryValidationCheck {
   private static final String QUALIFIER_NAME_CHANGE = "QualifierNameChange";
   private static final String QUALIFIER_VALUE_CHANGE = "QualifierValueChange";
   private static final String QUALIFIER_DELETED = "QualifierDeleted";
-  private static final String SEROTYPE_QUALIFIER_DELETED ="SerotypeQualifierDeleted";
+  private static final String SEROTYPE_QUALIFIER_DELETED = "SerotypeQualifierDeleted";
 
   public ValidationResult check(Entry entry) {
     result = new ValidationResult();
@@ -40,17 +40,13 @@ public class SourceQualifierFix extends EntryValidationCheck {
     String scientificName = source.getScientificName();
 
     Qualifier seroVarQual =
-            entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROVAR_QUALIFIER_NAME);
+        entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROVAR_QUALIFIER_NAME);
     Qualifier seroTypeQual =
-            entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROTYPE_QUALIFIER_NAME);
+        entry.getPrimarySourceFeature().getSingleQualifier(Qualifier.SEROTYPE_QUALIFIER_NAME);
     if (seroTypeQual != null && seroVarQual != null) {
       entry.getPrimarySourceFeature().removeQualifier(seroTypeQual);
-      reportMessage(
-              Severity.FIX,
-              source.getOrigin(),
-              SEROTYPE_QUALIFIER_DELETED);
+      reportMessage(Severity.FIX, source.getOrigin(), SEROTYPE_QUALIFIER_DELETED);
     }
-
 
     if (scientificName != null && scientificName.toLowerCase().contains("salmonella")) {
 
