@@ -12,6 +12,9 @@ package uk.ac.ebi.embl.fasta.writer;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
@@ -72,13 +75,35 @@ public class FastaFileWriter {
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
       case JSON_FASTA_HEADER:
+        String description = entry.getDescription() != null ? entry.getDescription().getText() : null;
+        String moleculeType = null;
+        String topology = null;
+        if (entry.getSequence() != null) {
+          moleculeType = entry.getSequence().getMoleculeType();
+          topology = entry.getSequence().getTopology() == null? null : entry.getSequence().getTopology().toString();
+        }
+
+        //make json
+        List<String> jsonFields = new ArrayList<>();
+        if (description != null) {
+          jsonFields.add(String.format("\"description\":\"%s\"", description));
+        }
+        if (moleculeType != null) {
+          jsonFields.add(String.format("\"molecule_type\":\"%s\"", moleculeType));
+        }
+        if (topology != null) {
+          jsonFields.add(String.format("\"topology\":\"%s\"", topology));
+        }
+        String jsonPart = jsonFields.isEmpty()
+                ? "{}"
+                : "{ " + String.join(", ", jsonFields) + " }";
+
+        //
         header =
-            String.format(
-                ">%s | { \"description\":\"%s\", \"molecule_type\":\"%s\", \"topology\":\"%s\"}",
-                getEffectiveAccession(entry), // same logic as in Gff3Tools
-                entry.getDescription().getText(),
-                entry.getSequence().getMoleculeType(),
-                entry.getSequence().getTopology());
+                String.format(
+                        ">%s | %s",
+                        getEffectiveAccession(entry), // same logic as in Gff3Tools
+                        jsonPart);
 
       default:
         break;
@@ -112,4 +137,6 @@ public class FastaFileWriter {
     }
     return entry.getSubmitterAccession();
   }
+
+
 }
