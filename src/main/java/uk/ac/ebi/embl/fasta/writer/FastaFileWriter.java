@@ -75,7 +75,7 @@ public class FastaFileWriter {
         header =
             String.format(
                 ">%s | { \"description\":\"%s\", \"molecule_type\":\"%s\", \"topology\":\"%s\"}",
-                getEffectiveAccession(entry), //same logic as in Gff3Tools
+                getEffectiveAccession(entry), // same logic as in Gff3Tools
                 entry.getDescription().getText(),
                 entry.getSequence().getMoleculeType(),
                 entry.getSequence().getTopology());
@@ -91,12 +91,11 @@ public class FastaFileWriter {
   }
 
   /**
-   * Gets the effective accession for an Entry, falling back to submitter accession if
-   * the sequence accession is not available.
+   * Gets the effective accession for an Entry, falling back to submitter accession if the sequence
+   * accession is not available.
    *
-   * <p>This is useful for TSV-based entries where the sequence accession is not set
-   * (assigned after submission), but the submitter accession (ENTRYNUMBER) is available.
-   *
+   * <p>This is useful for TSV-based entries where the sequence accession is not set (assigned after
+   * submission), but the submitter accession (ENTRYNUMBER) is available.
    *
    * @param entry the Entry to get the accession from
    * @return the effective accession, or null if neither is available
@@ -113,5 +112,4 @@ public class FastaFileWriter {
     }
     return entry.getSubmitterAccession();
   }
-
 }

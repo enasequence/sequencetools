@@ -71,17 +71,14 @@ public class FastaFileWriterTest {
 
   @Test
   public void testwriteJsonHeader_analysisEntry() throws IOException {
-    //arrange sequence
+    // arrange sequence
     Sequence sequence = new SequenceFactory().createSequence();
-    sequence.setSequence(
-            ByteBuffer.wrap(
-                    "AAA"
-                            .getBytes()));
+    sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
     sequence.setTopology(Sequence.Topology.LINEAR);
     sequence.setMoleculeType("genomicDNA");
     sequence.setAccession("ad0897987");
     sequence.setVersion(1);
-    //arrange entry
+    // arrange entry
     StringWriter writer = new StringWriter();
     Entry entry = new EntryFactory().createEntry();
     entry.setPrimaryAccession("1234");
@@ -90,12 +87,13 @@ public class FastaFileWriterTest {
     entry.setDataClass(Entry.STD_DATACLASS);
     entry.setSequence(sequence);
 
-    FastaFileWriter fileWriter = new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
+    FastaFileWriter fileWriter =
+        new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
     fileWriter.write();
 
-    //assert
+    // assert
     String output =
-            ">ad0897987 | { \"description\":\"hihi\", \"molecule_type\":\"genomicDNA\", \"topology\":\"LINEAR\"}\nAAA\n";
+        ">ad0897987 | { \"description\":\"hihi\", \"molecule_type\":\"genomicDNA\", \"topology\":\"LINEAR\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
