@@ -13,7 +13,12 @@ package uk.ac.ebi.embl.fasta.writer;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.embl.api.entry.Entry;
 
@@ -75,14 +80,8 @@ public class FastaFileWriter {
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
       case JSON_FASTA_HEADER:
-        String jsonPart = getJsonPart();
-
         // make header
-        header =
-            String.format(
-                ">%s | %s",
-                getEffectiveAccession(entry), // same logic as in Gff3Tools
-                jsonPart);
+        header = getJsonFastaHeader(entry);
 
       default:
         break;
@@ -94,32 +93,29 @@ public class FastaFileWriter {
     writer.write("\n");
   }
 
-  @NotNull
-  private String getJsonPart() {
-    String description = entry.getDescription() != null ? entry.getDescription().getText() : null;
-    String moleculeType = null;
-    String topology = null;
-    if (entry.getSequence() != null) {
-      moleculeType = entry.getSequence().getMoleculeType();
-      topology =
-          entry.getSequence().getTopology() == null
-              ? null
-              : entry.getSequence().getTopology().toString();
+  private String getJsonFastaHeader(Entry entry) {
+    Map<String, String> json = new LinkedHashMap<>();
+
+    if (entry.getDescription() != null) {
+      json.put("description", entry.getDescription().getText());
     }
 
-    // make json
-    List<String> jsonFields = new ArrayList<>();
-    if (description != null) {
-      jsonFields.add(String.format("\"description\":\"%s\"", description));
+    if (entry.getSequence() != null) {
+      if (entry.getSequence().getMoleculeType() != null) {
+        json.put("molecule_type", entry.getSequence().getMoleculeType());
+      }
+      if (entry.getSequence().getTopology() != null) {
+        json.put("topology", entry.getSequence().getTopology().toString());
+      }
     }
-    if (moleculeType != null) {
-      jsonFields.add(String.format("\"molecule_type\":\"%s\"", moleculeType));
+
+    try {
+      ObjectMapper MAPPER = new ObjectMapper();
+      String jsonPart = MAPPER.writeValueAsString(json);
+      return String.format(">%s | %s", getEffectiveAccession(entry), jsonPart);
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException("Failed to build JSON part", e);
     }
-    if (topology != null) {
-      jsonFields.add(String.format("\"topology\":\"%s\"", topology));
-    }
-    String jsonPart = jsonFields.isEmpty() ? "{}" : "{ " + String.join(", ", jsonFields) + " }";
-    return jsonPart;
   }
 
   /**
