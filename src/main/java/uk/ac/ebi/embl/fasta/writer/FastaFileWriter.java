@@ -24,7 +24,8 @@ public class FastaFileWriter {
     ANALYSIS_HEADER_FORMAT,
     ENA_HEADER_FORMAT,
     POLYSAMPLE_HEADER_FORMAT,
-    TRANSLATION_HEADER_FORMAT
+    TRANSLATION_HEADER_FORMAT,
+    JSON_FASTA_HEADER,
   }
 
   public FastaFileWriter(Entry entry, Writer writer) {
@@ -70,12 +71,47 @@ public class FastaFileWriter {
         break;
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
+      case JSON_FASTA_HEADER:
+        header =
+            String.format(
+                ">%s | { \"description\":\"%s\", \"molecule_type\":\"%s\", \"topology\":\"%s\"}",
+                getEffectiveAccession(entry), //same logic as in Gff3Tools
+                entry.getDescription().getText(),
+                entry.getSequence().getMoleculeType(),
+                entry.getSequence().getTopology());
+
       default:
         break;
     }
+
     FastaSequenceWriter sequenceWriter = new FastaSequenceWriter(writer, entry);
     writer.write(header + "\n");
     sequenceWriter.write();
     writer.write("\n");
   }
+
+  /**
+   * Gets the effective accession for an Entry, falling back to submitter accession if
+   * the sequence accession is not available.
+   *
+   * <p>This is useful for TSV-based entries where the sequence accession is not set
+   * (assigned after submission), but the submitter accession (ENTRYNUMBER) is available.
+   *
+   *
+   * @param entry the Entry to get the accession from
+   * @return the effective accession, or null if neither is available
+   */
+  public static String getEffectiveAccession(Entry entry) {
+    if (entry == null) {
+      return null;
+    }
+    if (entry.getSequence() != null) {
+      String accession = entry.getSequence().getAccession();
+      if (accession != null && !accession.isEmpty()) {
+        return accession;
+      }
+    }
+    return entry.getSubmitterAccession();
+  }
+
 }
