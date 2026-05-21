@@ -10,16 +10,12 @@
  */
 package uk.ac.ebi.embl.fasta.writer;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
