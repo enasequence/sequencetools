@@ -10,8 +10,12 @@
  */
 package uk.ac.ebi.embl.fasta.writer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
@@ -24,7 +28,8 @@ public class FastaFileWriter {
     ANALYSIS_HEADER_FORMAT,
     ENA_HEADER_FORMAT,
     POLYSAMPLE_HEADER_FORMAT,
-    TRANSLATION_HEADER_FORMAT
+    TRANSLATION_HEADER_FORMAT,
+    JSON_FASTA_HEADER,
   }
 
   public FastaFileWriter(Entry entry, Writer writer) {
@@ -70,12 +75,65 @@ public class FastaFileWriter {
         break;
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
+      case JSON_FASTA_HEADER:
+        // make header
+        header = getJsonFastaHeader(entry);
+
       default:
         break;
     }
+
     FastaSequenceWriter sequenceWriter = new FastaSequenceWriter(writer, entry);
     writer.write(header + "\n");
     sequenceWriter.write();
     writer.write("\n");
+  }
+
+  private String getJsonFastaHeader(Entry entry) {
+    Map<String, String> json = new LinkedHashMap<>();
+
+    if (entry.getDescription() != null) {
+      json.put("description", entry.getDescription().getText());
+    }
+
+    if (entry.getSequence() != null) {
+      if (entry.getSequence().getMoleculeType() != null) {
+        json.put("molecule_type", entry.getSequence().getMoleculeType());
+      }
+      if (entry.getSequence().getTopology() != null) {
+        json.put("topology", entry.getSequence().getTopology().toString());
+      }
+    }
+
+    try {
+      ObjectMapper MAPPER = new ObjectMapper();
+      String jsonPart = MAPPER.writeValueAsString(json);
+      return String.format(">%s | %s", getEffectiveAccession(entry), jsonPart);
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException("Failed to build JSON part", e);
+    }
+  }
+
+  /**
+   * Gets the effective accession for an Entry, falling back to submitter accession if the sequence
+   * accession is not available.
+   *
+   * <p>This is useful for TSV-based entries where the sequence accession is not set (assigned after
+   * submission), but the submitter accession (ENTRYNUMBER) is available.
+   *
+   * @param entry the Entry to get the accession from
+   * @return the effective accession, or null if neither is available
+   */
+  public static String getEffectiveAccession(Entry entry) {
+    if (entry == null) {
+      return null;
+    }
+    if (entry.getSequence() != null) {
+      String accession = entry.getSequence().getAccession();
+      if (accession != null && !accession.isEmpty()) {
+        return accession;
+      }
+    }
+    return entry.getSubmitterAccession();
   }
 }
