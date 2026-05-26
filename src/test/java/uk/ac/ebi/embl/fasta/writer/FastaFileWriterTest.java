@@ -77,7 +77,7 @@ public class FastaFileWriterTest {
     sequence.setTopology(Sequence.Topology.LINEAR);
     sequence.setMoleculeType("genomicDNA");
     sequence.setAccession("ad0897987");
-    sequence.setVersion(1);
+    sequence.setVersion(3);
     // arrange entry
     StringWriter writer = new StringWriter();
     Entry entry = new EntryFactory().createEntry();
@@ -93,7 +93,7 @@ public class FastaFileWriterTest {
 
     // assert
     String output =
-        ">ad0897987 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"LINEAR\"}\nAAA\n";
+        ">ad0897987.3 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"LINEAR\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
@@ -105,7 +105,6 @@ public class FastaFileWriterTest {
     sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
     sequence.setMoleculeType("genomicDNA");
     sequence.setAccession("ad0897987");
-    sequence.setVersion(1);
     // arrange entry
     StringWriter writer = new StringWriter();
     Entry entry = new EntryFactory().createEntry();
@@ -121,7 +120,7 @@ public class FastaFileWriterTest {
 
     // assert
     String output =
-        ">ad0897987 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+        ">ad0897987.1 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
@@ -108,7 +109,7 @@ public class FastaFileWriter {
     try {
       ObjectMapper MAPPER = new ObjectMapper();
       String jsonPart = MAPPER.writeValueAsString(json);
-      return String.format(">%s | %s", getEffectiveAccession(entry), jsonPart);
+      return String.format(">%s | %s", getFullAccession(entry), jsonPart);
     } catch (JsonProcessingException e) {
       throw new IllegalStateException("Failed to build JSON part", e);
     }
@@ -135,5 +136,46 @@ public class FastaFileWriter {
       }
     }
     return entry.getSubmitterAccession();
+  }
+
+  /**
+   * Gets the sequenceVersion as decoded from either main accession of the entry.sequence.version
+   * field
+   *
+   * @param entry the Entry to get the sequence version from
+   * @return the effective accession, or null if neither is available
+   */
+  private static Optional<Integer> getSequenceVersion(Entry entry) {
+    String accession =
+        Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
+    ;
+    if (accession == null || accession.isEmpty()) {
+      return Optional.empty();
+    }
+    String[] parts = accession.split("[.]");
+    Optional<Integer> sequenceVersion;
+    if (parts.length == 2) {
+      sequenceVersion = Optional.of(Integer.parseInt(parts[1]));
+    } else if (entry.getSequence() != null && entry.getSequence().getVersion() != null) {
+      // version from ID line.
+      sequenceVersion = Optional.of(entry.getSequence().getVersion());
+    } else {
+      sequenceVersion = Optional.of(1);
+    }
+    return sequenceVersion;
+  }
+
+  /**
+   * Gets the full accession as will be present in the corresponding gff3
+   *
+   * @param entry the Entry to get the accession from
+   * @return the effective accession, or null if neither is available
+   */
+  public static String getFullAccession(Entry entry) {
+    String baseAccession = getEffectiveAccession(entry);
+    Optional<Integer> sequenceVersion = getSequenceVersion(entry);
+
+    String versionSuffix = sequenceVersion.map(v -> "." + v).orElse("");
+    return baseAccession + versionSuffix;
   }
 }
