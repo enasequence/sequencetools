@@ -139,8 +139,7 @@ public class FastaFileWriter {
   }
 
   private static String getBaseAccession(Entry entry) {
-    String accession =
-        Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
+    String accession = getEffectiveAccession(entry);
     if (accession == null || accession.isEmpty()) {
       throw new IllegalStateException("No accession found for entry " + entry);
     }
@@ -156,8 +155,7 @@ public class FastaFileWriter {
    * @return the effective accession, or null if neither is available
    */
   private static Optional<Integer> getSequenceVersion(Entry entry) {
-    String accession =
-        Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
+    String accession = getEffectiveAccession(entry);
     if (accession == null || accession.isEmpty()) {
       return Optional.empty();
     }

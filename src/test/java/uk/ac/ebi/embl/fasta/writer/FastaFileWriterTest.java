@@ -70,7 +70,7 @@ public class FastaFileWriterTest {
   }
 
   @Test
-  public void testwriteJsonHeader_withSequenceVersin() throws IOException {
+  public void testwriteJsonHeader_withSequenceVersion() throws IOException {
     // arrange sequence
     Sequence sequence = new SequenceFactory().createSequence();
     sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
