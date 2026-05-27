@@ -140,7 +140,7 @@ public class FastaFileWriter {
 
   private static String getBaseAccession(Entry entry) {
     String accession =
-            Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
+        Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
     if (accession == null || accession.isEmpty()) {
       throw new IllegalStateException("No accession found for entry " + entry);
     }

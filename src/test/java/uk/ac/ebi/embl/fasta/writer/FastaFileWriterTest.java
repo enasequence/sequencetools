@@ -142,12 +142,12 @@ public class FastaFileWriterTest {
     entry.setSequence(sequence);
 
     FastaFileWriter fileWriter =
-            new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
+        new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
     fileWriter.write();
 
     // assert
     String output =
-            ">ad0897987.4 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+        ">ad0897987.4 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
