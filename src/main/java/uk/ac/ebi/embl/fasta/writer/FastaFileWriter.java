@@ -76,10 +76,12 @@ public class FastaFileWriter {
         break;
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
+        break;
       case JSON_FASTA_HEADER:
         // make header
-        header = getJsonFastaHeader(entry);
-
+        String id = getFullAccession(entry);
+        header = getJsonFastaHeader(id, entry);
+        break;
       default:
         break;
     }
@@ -90,7 +92,24 @@ public class FastaFileWriter {
     writer.write("\n");
   }
 
-  private String getJsonFastaHeader(Entry entry) {
+  public void writeJsonHeaderWithAccession(String accession, Entry entry) throws IOException {
+    String header = null;
+    switch (headerFormat) {
+      case JSON_FASTA_HEADER:
+        header = getJsonFastaHeader(accession, entry);
+        break;
+      default:
+        throw new UnsupportedOperationException(
+            "This operation is not supported for the header format: " + headerFormat);
+    }
+
+    FastaSequenceWriter sequenceWriter = new FastaSequenceWriter(writer, entry);
+    writer.write(header + "\n");
+    sequenceWriter.write();
+    writer.write("\n");
+  }
+
+  private String getJsonFastaHeader(String id, Entry entry) {
     Map<String, String> json = new LinkedHashMap<>();
 
     if (entry.getDescription() != null) {
@@ -109,7 +128,7 @@ public class FastaFileWriter {
     try {
       ObjectMapper MAPPER = new ObjectMapper();
       String jsonPart = MAPPER.writeValueAsString(json);
-      return String.format(">%s | %s", getFullAccession(entry), jsonPart);
+      return String.format(">%s | %s", id, jsonPart);
     } catch (JsonProcessingException e) {
       throw new IllegalStateException("Failed to build JSON part", e);
     }
