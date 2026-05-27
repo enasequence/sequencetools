@@ -151,4 +151,31 @@ public class FastaFileWriterTest {
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
+
+  @Test
+  public void testwriteJsonHeader_withExternallySuppliedAccession() throws IOException {
+    // arrange sequence
+    Sequence sequence = new SequenceFactory().createSequence();
+    sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
+    sequence.setMoleculeType("genomicDNA");
+    sequence.setAccession("ad0897987.4");
+    // arrange entry
+    StringWriter writer = new StringWriter();
+    Entry entry = new EntryFactory().createEntry();
+    entry.setPrimaryAccession("1234");
+    entry.setDivision("XXX");
+    entry.setDescription(new Text("hihi"));
+    entry.setDataClass(Entry.STD_DATACLASS);
+    entry.setSequence(sequence);
+
+    FastaFileWriter fileWriter =
+        new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
+    fileWriter.writeWithId("HIHI HAHA HEHE");
+
+    // assert
+    String output =
+        ">HIHI HAHA HEHE | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+    String actualOutput = writer.toString();
+    assertEquals(output, actualOutput);
+  }
 }

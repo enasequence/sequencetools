@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import uk.ac.ebi.embl.api.entry.Entry;
 
 public class FastaFileWriter {
@@ -92,11 +91,11 @@ public class FastaFileWriter {
     writer.write("\n");
   }
 
-  public void writeJsonHeaderWithAccession(String accession, Entry entry) throws IOException {
+  public void writeWithId(String id) throws IOException {
     String header = null;
     switch (headerFormat) {
       case JSON_FASTA_HEADER:
-        header = getJsonFastaHeader(accession, entry);
+        header = getJsonFastaHeader(id, entry);
         break;
       default:
         throw new UnsupportedOperationException(
@@ -135,6 +134,36 @@ public class FastaFileWriter {
   }
 
   /**
+   * Mimics the gff3tools logic for constructing an accession for Gff3Annotation out of Entry.
+   * Supplying the id externally should be preffered for this case.
+   *
+   * @param entry the Entry to get the accession from
+   * @return the effective accession, or null if neither is available
+   */
+  public static String getFullAccession(Entry entry) {
+    String accession = getEffectiveAccession(entry);
+    if (accession == null || accession.isEmpty()) {
+      throw new IllegalStateException("No accession found for entry " + entry);
+    }
+    String[] parts = accession.split("[.]");
+
+    // get base accession
+    String baseAccession = parts[0];
+    // get sequence version, aka second part of accession
+    Integer sequenceVersion;
+    if (parts.length == 2) {
+      sequenceVersion = Integer.parseInt(parts[1]);
+    } else if (entry.getSequence() != null && entry.getSequence().getVersion() != null) {
+      sequenceVersion = entry.getSequence().getVersion();
+    } else {
+      sequenceVersion = 1;
+    }
+
+    String versionSuffix = "." + sequenceVersion;
+    return baseAccession + versionSuffix;
+  }
+
+  /**
    * Gets the effective accession for an Entry, falling back to submitter accession if the sequence
    * accession is not available.
    *
@@ -144,7 +173,7 @@ public class FastaFileWriter {
    * @param entry the Entry to get the accession from
    * @return the effective accession, or null if neither is available
    */
-  public static String getEffectiveAccession(Entry entry) {
+  private static String getEffectiveAccession(Entry entry) {
     if (entry == null) {
       return null;
     }
@@ -155,53 +184,5 @@ public class FastaFileWriter {
       }
     }
     return entry.getSubmitterAccession();
-  }
-
-  private static String getBaseAccession(Entry entry) {
-    String accession = getEffectiveAccession(entry);
-    if (accession == null || accession.isEmpty()) {
-      throw new IllegalStateException("No accession found for entry " + entry);
-    }
-    String[] parts = accession.split("[.]");
-    return parts[0];
-  }
-
-  /**
-   * Gets the sequenceVersion as decoded from either main accession of the entry.sequence.version
-   * field
-   *
-   * @param entry the Entry to get the sequence version from
-   * @return the effective accession, or null if neither is available
-   */
-  private static Optional<Integer> getSequenceVersion(Entry entry) {
-    String accession = getEffectiveAccession(entry);
-    if (accession == null || accession.isEmpty()) {
-      return Optional.empty();
-    }
-    String[] parts = accession.split("[.]");
-    Optional<Integer> sequenceVersion;
-    if (parts.length == 2) {
-      sequenceVersion = Optional.of(Integer.parseInt(parts[1]));
-    } else if (entry.getSequence() != null && entry.getSequence().getVersion() != null) {
-      // version from ID line.
-      sequenceVersion = Optional.of(entry.getSequence().getVersion());
-    } else {
-      sequenceVersion = Optional.of(1);
-    }
-    return sequenceVersion;
-  }
-
-  /**
-   * Gets the full accession as will be present in the corresponding gff3
-   *
-   * @param entry the Entry to get the accession from
-   * @return the effective accession, or null if neither is available
-   */
-  public static String getFullAccession(Entry entry) {
-    String baseAccession = getBaseAccession(entry);
-    Optional<Integer> sequenceVersion = getSequenceVersion(entry);
-
-    String versionSuffix = sequenceVersion.map(v -> "." + v).orElse("");
-    return baseAccession + versionSuffix;
   }
 }
