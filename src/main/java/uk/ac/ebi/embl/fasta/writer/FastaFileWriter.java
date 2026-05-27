@@ -140,7 +140,7 @@ public class FastaFileWriter {
    * @param entry the Entry to get the accession from
    * @return the effective accession, or null if neither is available
    */
-  public static String getFullAccession(Entry entry) {
+  private static String getFullAccession(Entry entry) {
     String accession = getEffectiveAccession(entry);
     if (accession == null || accession.isEmpty()) {
       throw new IllegalStateException("No accession found for entry " + entry);
