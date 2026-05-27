@@ -138,6 +138,16 @@ public class FastaFileWriter {
     return entry.getSubmitterAccession();
   }
 
+  private static String getBaseAccession(Entry entry) {
+    String accession =
+            Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
+    if (accession == null || accession.isEmpty()) {
+      throw new IllegalStateException("No accession found for entry " + entry);
+    }
+    String[] parts = accession.split("[.]");
+    return parts[0];
+  }
+
   /**
    * Gets the sequenceVersion as decoded from either main accession of the entry.sequence.version
    * field
@@ -148,7 +158,6 @@ public class FastaFileWriter {
   private static Optional<Integer> getSequenceVersion(Entry entry) {
     String accession =
         Optional.ofNullable(getEffectiveAccession(entry)).orElseThrow(NullPointerException::new);
-    ;
     if (accession == null || accession.isEmpty()) {
       return Optional.empty();
     }
@@ -172,7 +181,7 @@ public class FastaFileWriter {
    * @return the effective accession, or null if neither is available
    */
   public static String getFullAccession(Entry entry) {
-    String baseAccession = getEffectiveAccession(entry);
+    String baseAccession = getBaseAccession(entry);
     Optional<Integer> sequenceVersion = getSequenceVersion(entry);
 
     String versionSuffix = sequenceVersion.map(v -> "." + v).orElse("");
