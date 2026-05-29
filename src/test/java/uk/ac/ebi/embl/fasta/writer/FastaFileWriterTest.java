@@ -70,14 +70,14 @@ public class FastaFileWriterTest {
   }
 
   @Test
-  public void testwriteJsonHeader_analysisEntry() throws IOException {
+  public void testwriteJsonHeader_withSequenceVersion() throws IOException {
     // arrange sequence
     Sequence sequence = new SequenceFactory().createSequence();
     sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
     sequence.setTopology(Sequence.Topology.LINEAR);
     sequence.setMoleculeType("genomicDNA");
     sequence.setAccession("ad0897987");
-    sequence.setVersion(1);
+    sequence.setVersion(3);
     // arrange entry
     StringWriter writer = new StringWriter();
     Entry entry = new EntryFactory().createEntry();
@@ -93,19 +93,18 @@ public class FastaFileWriterTest {
 
     // assert
     String output =
-        ">ad0897987 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"LINEAR\"}\nAAA\n";
+        ">ad0897987.3 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"LINEAR\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
 
   @Test
-  public void testwriteJsonHeader_analysisEntry_topologyNull() throws IOException {
+  public void testwriteJsonHeader_withoutSequenceRegion() throws IOException {
     // arrange sequence
     Sequence sequence = new SequenceFactory().createSequence();
     sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
     sequence.setMoleculeType("genomicDNA");
     sequence.setAccession("ad0897987");
-    sequence.setVersion(1);
     // arrange entry
     StringWriter writer = new StringWriter();
     Entry entry = new EntryFactory().createEntry();
@@ -121,7 +120,61 @@ public class FastaFileWriterTest {
 
     // assert
     String output =
-        ">ad0897987 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+        ">ad0897987.1 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+    String actualOutput = writer.toString();
+    assertEquals(output, actualOutput);
+  }
+
+  @Test
+  public void testwriteJsonHeader_withDecimalAccession() throws IOException {
+    // arrange sequence
+    Sequence sequence = new SequenceFactory().createSequence();
+    sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
+    sequence.setMoleculeType("genomicDNA");
+    sequence.setAccession("ad0897987.4");
+    // arrange entry
+    StringWriter writer = new StringWriter();
+    Entry entry = new EntryFactory().createEntry();
+    entry.setPrimaryAccession("1234");
+    entry.setDivision("XXX");
+    entry.setDescription(new Text("hihi"));
+    entry.setDataClass(Entry.STD_DATACLASS);
+    entry.setSequence(sequence);
+
+    FastaFileWriter fileWriter =
+        new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
+    fileWriter.write();
+
+    // assert
+    String output =
+        ">ad0897987.4 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
+    String actualOutput = writer.toString();
+    assertEquals(output, actualOutput);
+  }
+
+  @Test
+  public void testwriteJsonHeader_withExternallySuppliedAccession() throws IOException {
+    // arrange sequence
+    Sequence sequence = new SequenceFactory().createSequence();
+    sequence.setSequence(ByteBuffer.wrap("AAA".getBytes()));
+    sequence.setMoleculeType("genomicDNA");
+    sequence.setAccession("ad0897987.4");
+    // arrange entry
+    StringWriter writer = new StringWriter();
+    Entry entry = new EntryFactory().createEntry();
+    entry.setPrimaryAccession("1234");
+    entry.setDivision("XXX");
+    entry.setDescription(new Text("hihi"));
+    entry.setDataClass(Entry.STD_DATACLASS);
+    entry.setSequence(sequence);
+
+    FastaFileWriter fileWriter =
+        new FastaFileWriter(entry, writer, FastaFileWriter.FastaHeaderFormat.JSON_FASTA_HEADER);
+    fileWriter.writeWithId("HIHI HAHA HEHE");
+
+    // assert
+    String output =
+        ">HIHI HAHA HEHE | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }

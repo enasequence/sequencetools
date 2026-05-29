@@ -75,10 +75,12 @@ public class FastaFileWriter {
         break;
       case TRANSLATION_HEADER_FORMAT:
         header = String.format(">%s", entry.getPrimaryAccession());
+        break;
       case JSON_FASTA_HEADER:
         // make header
-        header = getJsonFastaHeader(entry);
-
+        String id = getFullAccession(entry);
+        header = getJsonFastaHeader(id, entry);
+        break;
       default:
         break;
     }
@@ -89,7 +91,24 @@ public class FastaFileWriter {
     writer.write("\n");
   }
 
-  private String getJsonFastaHeader(Entry entry) {
+  public void writeWithId(String id) throws IOException {
+    String header = null;
+    switch (headerFormat) {
+      case JSON_FASTA_HEADER:
+        header = getJsonFastaHeader(id, entry);
+        break;
+      default:
+        throw new UnsupportedOperationException(
+            "This operation is not supported for the header format: " + headerFormat);
+    }
+
+    FastaSequenceWriter sequenceWriter = new FastaSequenceWriter(writer, entry);
+    writer.write(header + "\n");
+    sequenceWriter.write();
+    writer.write("\n");
+  }
+
+  private String getJsonFastaHeader(String id, Entry entry) {
     Map<String, String> json = new LinkedHashMap<>();
 
     if (entry.getDescription() != null) {
@@ -108,10 +127,40 @@ public class FastaFileWriter {
     try {
       ObjectMapper MAPPER = new ObjectMapper();
       String jsonPart = MAPPER.writeValueAsString(json);
-      return String.format(">%s | %s", getEffectiveAccession(entry), jsonPart);
+      return String.format(">%s | %s", id, jsonPart);
     } catch (JsonProcessingException e) {
       throw new IllegalStateException("Failed to build JSON part", e);
     }
+  }
+
+  /**
+   * Mimics the gff3tools logic for constructing an accession for Gff3Annotation out of Entry.
+   * Supplying the id externally should be preffered for this case.
+   *
+   * @param entry the Entry to get the accession from
+   * @return the effective accession, or null if neither is available
+   */
+  private static String getFullAccession(Entry entry) {
+    String accession = getEffectiveAccession(entry);
+    if (accession == null || accession.isEmpty()) {
+      throw new IllegalStateException("No accession found for entry " + entry);
+    }
+    String[] parts = accession.split("[.]");
+
+    // get base accession
+    String baseAccession = parts[0];
+    // get sequence version, aka second part of accession
+    Integer sequenceVersion;
+    if (parts.length == 2) {
+      sequenceVersion = Integer.parseInt(parts[1]);
+    } else if (entry.getSequence() != null && entry.getSequence().getVersion() != null) {
+      sequenceVersion = entry.getSequence().getVersion();
+    } else {
+      sequenceVersion = 1;
+    }
+
+    String versionSuffix = "." + sequenceVersion;
+    return baseAccession + versionSuffix;
   }
 
   /**
@@ -124,7 +173,7 @@ public class FastaFileWriter {
    * @param entry the Entry to get the accession from
    * @return the effective accession, or null if neither is available
    */
-  public static String getEffectiveAccession(Entry entry) {
+  private static String getEffectiveAccession(Entry entry) {
     if (entry == null) {
       return null;
     }
