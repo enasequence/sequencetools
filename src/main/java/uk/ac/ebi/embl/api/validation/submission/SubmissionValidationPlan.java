@@ -130,6 +130,7 @@ public class SubmissionValidationPlan {
                 assemblyType));
 
         if (!options.isWebinCLI && !EntryUtils.excludeDistribution(sharedInfo.assemblyType)) {
+          populateNonAgpUnplacedEntryNames();
           writeUnplacedList();
         }
       } else {
@@ -435,6 +436,20 @@ public class SubmissionValidationPlan {
     return sharedInfo.sequenceInfo.values().stream()
         .filter(p -> p.getAssemblyLevel() == assemblyLevel)
         .count();
+  }
+
+  private void populateNonAgpUnplacedEntryNames() {
+    if (sharedInfo.hasAgp) {
+      return;
+    }
+
+    for (String entryName : sharedInfo.sequenceInfo.keySet()) {
+      String entryNameUpper = entryName.toUpperCase();
+      if (!sharedInfo.chromosomeNameQualifiers.containsKey(entryNameUpper)
+          && !sharedInfo.unlocalisedEntryNames.contains(entryNameUpper)) {
+        sharedInfo.unplacedEntryNames.add(entryNameUpper);
+      }
+    }
   }
 
   private void writeUnplacedList() throws ValidationEngineException {
