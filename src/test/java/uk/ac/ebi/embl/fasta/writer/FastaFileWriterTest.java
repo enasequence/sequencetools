@@ -93,7 +93,7 @@ public class FastaFileWriterTest {
 
     // assert
     String output =
-        ">ad0897987.3 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"LINEAR\"}\nAAA\n";
+        ">ad0897987.3 | {\"description\":\"hihi\",\"molecule_type\":\"genomicDNA\",\"topology\":\"linear\"}\nAAA\n";
     String actualOutput = writer.toString();
     assertEquals(output, actualOutput);
   }
