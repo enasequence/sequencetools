@@ -42,7 +42,6 @@ repositories {
     mavenCentral()
     maven {
         url "https://gitlab.ebi.ac.uk/api/v4/groups/enasequence/-/packages/maven"
-
         credentials(HttpHeaderCredentials) {
             name = gitlabHeaderName
             value = gitlabHeaderValue

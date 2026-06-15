@@ -120,7 +120,7 @@ public class FastaFileWriter {
         json.put("molecule_type", entry.getSequence().getMoleculeType());
       }
       if (entry.getSequence().getTopology() != null) {
-        json.put("topology", entry.getSequence().getTopology().toString());
+        json.put("topology", entry.getSequence().getTopology().toString().toLowerCase());
       }
     }
 
