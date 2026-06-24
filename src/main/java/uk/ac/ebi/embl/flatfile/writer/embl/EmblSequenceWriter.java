@@ -105,6 +105,10 @@ public class EmblSequenceWriter extends FlatFileWriter {
   }
 
   private boolean writeStreaming(Writer writer) throws IOException {
+    if (totalBases == 0) {
+      return false;
+    }
+
     long aCount = countFor('a');
     long cCount = countFor('c');
     long gCount = countFor('g');
