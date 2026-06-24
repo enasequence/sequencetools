@@ -79,7 +79,10 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
   public void testEquivalence_WithCrc() throws IOException {
     String seq = "acgt".repeat(20);
     long crc = 0xDEADBEEFL;
-    assertEquals(runBytePathWithCrc(seq, crc), runStreamingPath(seq, crc));
+    String byteOut = runBytePathWithCrc(seq, crc);
+    String streamOut = runStreamingPath(seq, crc);
+    assertEquals(byteOut, streamOut);
+    assertTrue("CRC32 field missing from output", byteOut.contains(crc + " CRC32;"));
   }
 
   /** Both paths return false and write nothing for a zero-length sequence. */
