@@ -48,11 +48,17 @@ public class EmblSequenceWriter extends FlatFileWriter {
 
   public EmblSequenceWriter(
       Entry entry, long totalBases, Map<Character, Long> baseCounts, Reader reader) {
+    this(entry, totalBases, baseCounts, reader, 0);
+  }
+
+  public EmblSequenceWriter(
+      Entry entry, long totalBases, Map<Character, Long> baseCounts, Reader reader, long crc) {
     super(entry);
     this.sequence = null;
     this.totalBases = totalBases;
     this.baseCounts = baseCounts;
     this.reader = reader;
+    this.crc = crc;
   }
 
   public boolean write(Writer writer) throws IOException {

@@ -20,18 +20,20 @@ The existing `byte[]` path and all current callers are unchanged.
 
 ## Streaming API
 
-**Constructor:**
+**Constructors:**
 
 ```java
 EmblSequenceWriter(Entry entry, long totalBases,
                    Map<Character, Long> baseCounts, Reader reader)
+EmblSequenceWriter(Entry entry, long totalBases,
+                   Map<Character, Long> baseCounts, Reader reader, long crc)
 ```
 
 - `totalBases` — sequence length; used for the `SQ` header `BP;` count and the final position counter.
 - `baseCounts` — lowercase `a/c/g/t` → count. `other` is derived as `totalBases − (a+c+g+t)`, not by summing non-acgt map entries, so the map may be incomplete.
 - `reader` — positioned at the start of the sequence. **Not closed by `write()`**; the caller retains ownership.
+- `crc` — optional CRC32 value; emitted as `<crc> CRC32;` in the `SQ` header when non-zero. Omit (4-arg constructor) to suppress it.
 - `write()` returns `false` and writes nothing when `totalBases == 0`.
-- CRC32 is not supported on the streaming path (no current caller uses it).
 
 **Hook:**
 
@@ -47,7 +49,7 @@ Default implementation calls the existing byte-path constructor. Override to inj
 - `EmblReducedFlatFileWriter` — not modified; holds the full sequence by design.
 - `Sequence.java` — unchanged; the streaming path bypasses `getSequenceByte()` entirely.
 - gff3tools implementation — separate repo, consumes this API.
-- CRC32 on the streaming path — no caller passes a non-zero crc.
+- gff3tools CRC32 source — callers are responsible for supplying a precomputed value (e.g. from a single-pass scan in fastareader).
 
 ## Design Constraints
 
@@ -56,5 +58,5 @@ Default implementation calls the existing byte-path constructor. Override to inj
 
 ## Tests
 
-- `EmblSequenceWriterStreamingTest` — parameterized equivalence test: multi-line (130 bases), partial-line (75 bases), zero-length. Both paths run against the same sequence; output asserted identical.
+- `EmblSequenceWriterStreamingTest` — equivalence tests: multi-line (130 bases), partial-line (75 bases), zero-length, and CRC32 field. Both paths run against the same sequence and crc; output asserted identical.
 - Existing `SequenceWriterTest`, `EmblEntryWriterTest`, `EmblEntryRoundTripTest` — unmodified, all pass.

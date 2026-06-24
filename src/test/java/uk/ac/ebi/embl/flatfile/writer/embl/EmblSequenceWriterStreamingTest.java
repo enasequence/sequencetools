@@ -44,10 +44,22 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
   }
 
   private String runStreamingPath(String seq) throws IOException {
+    return runStreamingPath(seq, 0);
+  }
+
+  private String runStreamingPath(String seq, long crc) throws IOException {
     StringWriter w = new StringWriter();
     assertTrue(
-        new EmblSequenceWriter(entry, (long) seq.length(), countBases(seq), new StringReader(seq))
+        new EmblSequenceWriter(
+                entry, (long) seq.length(), countBases(seq), new StringReader(seq), crc)
             .write(w));
+    return w.toString();
+  }
+
+  private String runBytePathWithCrc(String seq, long crc) throws IOException {
+    entry.setSequence(new SequenceFactory().createSequenceByte(seq.getBytes()));
+    StringWriter w = new StringWriter();
+    assertTrue(new EmblSequenceWriter(entry, entry.getSequence(), crc).write(w));
     return w.toString();
   }
 
@@ -61,6 +73,13 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
   public void testEquivalence_PartialLine() throws IOException {
     String seq = "acgt".repeat(18) + "acg";
     assertEquals(runBytePath(seq), runStreamingPath(seq));
+  }
+
+  /** CRC32 field is emitted identically on both paths when crc != 0. */
+  public void testEquivalence_WithCrc() throws IOException {
+    String seq = "acgt".repeat(20);
+    long crc = 0xDEADBEEFL;
+    assertEquals(runBytePathWithCrc(seq, crc), runStreamingPath(seq, crc));
   }
 
   /** Both paths return false and write nothing for a zero-length sequence. */
