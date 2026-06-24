@@ -93,7 +93,8 @@ public class EmblSequenceWriter extends FlatFileWriter {
       }
     }
 
-    boolean protein = writeHeader(writer, sequence.getLength(), ACount, CCount, GCount, TCount, OtherCount);
+    boolean protein =
+        writeHeader(writer, sequence.getLength(), ACount, CCount, GCount, TCount, OtherCount);
 
     LineFormatter formatter = new LineFormatter(writer, protein);
     for (byte base : sequenceByte) {
@@ -131,7 +132,13 @@ public class EmblSequenceWriter extends FlatFileWriter {
 
   /** Writes the {@code SQ} header line. Returns whether the entry is a protein dataclass. */
   private boolean writeHeader(
-      Writer writer, long length, long aCount, long cCount, long gCount, long tCount, long otherCount)
+      Writer writer,
+      long length,
+      long aCount,
+      long cCount,
+      long gCount,
+      long tCount,
+      long otherCount)
       throws IOException {
     writer.write(EmblTag.SQ_TAG);
     writer.write("   ");
