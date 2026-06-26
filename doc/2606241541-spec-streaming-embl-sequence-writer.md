@@ -13,20 +13,20 @@
 
 Allow a consumer (gff3tools) to write an arbitrarily large sequence to an EMBL flat file with peak heap in the tens of MB by:
 
-1. A streaming constructor on `EmblSequenceWriter` that accepts precomputed base counts and a `java.io.Reader` instead of a `byte[]`.
-2. A protected `writeSequence(Writer)` hook on `EmblEntryWriter` that a subclass can override to supply the streaming path.
+1. A new `EmblSequenceStreamWriter` class that accepts precomputed base counts and a `java.io.Reader` instead of a `byte[]`.
+2. A protected `writeSequence(Writer)` hook and a public `writeStreamingSequence(...)` method on `EmblEntryWriter`.
 
-The existing `byte[]` path and all current callers are unchanged.
+`EmblSequenceWriter` is not modified; its existing `byte[]` path and all current callers are unchanged.
 
 ## Streaming API
 
-**Constructors:**
+**`EmblSequenceStreamWriter` constructors:**
 
 ```java
-EmblSequenceWriter(Entry entry, long totalBases,
-                   Map<Character, Long> baseCounts, Reader reader)
-EmblSequenceWriter(Entry entry, long totalBases,
-                   Map<Character, Long> baseCounts, Reader reader, long crc)
+EmblSequenceStreamWriter(Entry entry, long totalBases,
+                         Map<Character, Long> baseCounts, Reader reader)
+EmblSequenceStreamWriter(Entry entry, long totalBases,
+                         Map<Character, Long> baseCounts, Reader reader, long crc)
 ```
 
 - `totalBases` — sequence length; used for the `SQ` header `BP;` count and the final position counter.
@@ -35,14 +35,17 @@ EmblSequenceWriter(Entry entry, long totalBases,
 - `crc` — optional CRC32 value; emitted as `<crc> CRC32;` in the `SQ` header when non-zero. Omit (4-arg constructor) to suppress it.
 - `write()` returns `false` and writes nothing when `totalBases == 0`.
 
-**Hook:**
+**`EmblEntryWriter` additions:**
 
 ```java
-// EmblEntryWriter
+// Override hook — default delegates to EmblSequenceWriter (byte path)
 protected void writeSequence(Writer writer) throws IOException
-```
 
-Default implementation calls the existing byte-path constructor. Override to inject the streaming path.
+// Direct streaming entry point
+public void writeStreamingSequence(
+    Writer writer, long totalBases, Map<Character, Long> baseCounts,
+    Reader reader, long crc) throws IOException
+```
 
 ## Out of Scope
 
