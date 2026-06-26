@@ -50,7 +50,7 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
   private String runStreamingPath(String seq, long crc) throws IOException {
     StringWriter w = new StringWriter();
     assertTrue(
-        new EmblSequenceWriter(
+        new EmblSequenceStreamWriter(
                 entry, (long) seq.length(), countBases(seq), new StringReader(seq), crc)
             .write(w));
     return w.toString();
@@ -94,7 +94,7 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
 
     StringWriter streamWriter = new StringWriter();
     assertFalse(
-        new EmblSequenceWriter(entry, 0L, new HashMap<>(), new StringReader(""))
+        new EmblSequenceStreamWriter(entry, 0L, new HashMap<>(), new StringReader(""))
             .write(streamWriter));
     assertEquals("", streamWriter.toString());
   }

@@ -11,8 +11,10 @@
 package uk.ac.ebi.embl.flatfile.writer.embl;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.HashSet;
+import java.util.Map;
 import uk.ac.ebi.embl.api.entry.Entry;
 import uk.ac.ebi.embl.api.entry.feature.Feature;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
@@ -137,6 +139,12 @@ public class EmblEntryWriter extends EntryWriter {
 
   protected void writeSequence(Writer writer) throws IOException {
     new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
+  }
+
+  public void writeStreamingSequence(
+      Writer writer, long totalBases, Map<Character, Long> baseCounts, Reader reader, long crc)
+      throws IOException {
+    new EmblSequenceStreamWriter(entry, totalBases, baseCounts, reader, crc).write(writer);
   }
 
   @Override
