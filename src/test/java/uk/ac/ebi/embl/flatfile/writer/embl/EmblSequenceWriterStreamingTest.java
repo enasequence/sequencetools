@@ -85,6 +85,23 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
     assertTrue("CRC32 field missing from output", byteOut.contains(crc + " CRC32;"));
   }
 
+  /** writeStreamingSequence on EmblEntryWriter delegates to EmblSequenceStreamWriter. */
+  public void testWriteStreamingSequence_MatchesDirectWriter() throws IOException {
+    String seq = "acgt".repeat(20);
+    Map<Character, Long> counts = countBases(seq);
+    long crc = 0xDEADBEEFL;
+
+    StringWriter direct = new StringWriter();
+    new EmblSequenceStreamWriter(entry, (long) seq.length(), counts, new StringReader(seq), crc)
+        .write(direct);
+
+    StringWriter via = new StringWriter();
+    new EmblEntryWriter(entry)
+        .writeStreamingSequence(via, (long) seq.length(), counts, new StringReader(seq), crc);
+
+    assertEquals(direct.toString(), via.toString());
+  }
+
   /** Both paths return false and write nothing for a zero-length sequence. */
   public void testEquivalence_ZeroLength() throws IOException {
     entry.setSequence(null);

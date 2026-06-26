@@ -108,7 +108,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
   private static final class LineFormatter {
     private final Writer writer;
     private final boolean protein;
-    private final StringBuffer line = new StringBuffer();
+    private final StringBuilder line = new StringBuilder();
     private int blockNumber = 0;
     private int charNumber = 0;
     private int lineNumber = 1;
