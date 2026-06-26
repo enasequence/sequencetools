@@ -61,5 +61,9 @@ public void writeStreamingSequence(
 
 ## Tests
 
-- `EmblSequenceWriterStreamingTest` — equivalence tests: multi-line (130 bases), partial-line (75 bases), zero-length, and CRC32 field. Both paths run against the same sequence and crc; output asserted identical.
+- `EmblSequenceWriterStreamingTest` — equivalence tests:
+  - multi-line (130 bases), partial-line (75 bases), zero-length, CRC32 field
+  - cross-chunk boundary (8400 bases > STREAM_CHUNK=8192): exercises LineFormatter state across buffer reads
+  - non-acgt bases (100 bases including `n`): validates `other` count derived by subtraction equals byte-path iteration
+  - `writeStreamingSequence_MatchesDirectWriter`: covers `EmblEntryWriter.writeStreamingSequence()` passthrough
 - Existing `SequenceWriterTest`, `EmblEntryWriterTest`, `EmblEntryRoundTripTest` — unmodified, all pass.

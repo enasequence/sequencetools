@@ -85,6 +85,31 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
     assertTrue("CRC32 field missing from output", byteOut.contains(crc + " CRC32;"));
   }
 
+  /**
+   * 8400 bases (> STREAM_CHUNK=8192, not aligned to 60): exercises LineFormatter state carried
+   * across buffer-read boundaries.
+   */
+  public void testEquivalence_CrossChunkBoundary() throws IOException {
+    String seq = "acgt".repeat(2100); // 8400 chars, straddles the 8192-char buffer
+    assertEquals(runBytePath(seq), runStreamingPath(seq));
+  }
+
+  /**
+   * Sequence containing non-acgt bases: verifies the streaming path derives 'other' correctly via
+   * subtraction (totalBases - a - c - g - t) rather than by counting from the reader.
+   */
+  public void testEquivalence_WithOtherBases() throws IOException {
+    String seq = "acgtn".repeat(20); // 100 chars, 20 'n' (other)
+    Map<Character, Long> counts = countBases(seq); // only counts a/c/g/t
+    String byteOut = runBytePath(seq);
+    StringWriter w = new StringWriter();
+    assertTrue(
+        new EmblSequenceStreamWriter(
+                entry, (long) seq.length(), counts, new StringReader(seq), 0)
+            .write(w));
+    assertEquals(byteOut, w.toString());
+  }
+
   /** writeStreamingSequence on EmblEntryWriter delegates to EmblSequenceStreamWriter. */
   public void testWriteStreamingSequence_MatchesDirectWriter() throws IOException {
     String seq = "acgt".repeat(20);

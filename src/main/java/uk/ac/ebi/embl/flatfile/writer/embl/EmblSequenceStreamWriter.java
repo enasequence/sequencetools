@@ -34,6 +34,10 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
     this(entry, totalBases, baseCounts, reader, 0);
   }
 
+  /**
+   * @param baseCounts must not be null when {@code totalBases > 0}; map keys are lowercase
+   *     {@code a/c/g/t} — other bases are derived as {@code totalBases − (a+c+g+t)}.
+   */
   public EmblSequenceStreamWriter(
       Entry entry, long totalBases, Map<Character, Long> baseCounts, Reader reader, long crc) {
     super(entry);
@@ -111,7 +115,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
     private final StringBuilder line = new StringBuilder();
     private int blockNumber = 0;
     private int charNumber = 0;
-    private int lineNumber = 1;
+    private long lineNumber = 1;
 
     LineFormatter(Writer writer, boolean protein) {
       this.writer = writer;
@@ -127,7 +131,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
       if (blockNumber == 6) {
         writer.write(EmblPadding.SEQUENCE_PADDING);
         writer.write(protein ? line.toString().toUpperCase() : line.toString());
-        String baseCount = Integer.toString(60 * lineNumber);
+        String baseCount = Long.toString(60L * lineNumber);
         int baseCountPadding = 10 - baseCount.length();
         for (int j = 1; j < baseCountPadding; j++) {
           writer.write(" ");
@@ -146,7 +150,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
       writer.write(EmblPadding.SEQUENCE_PADDING);
       writer.write(protein ? line.toString().toUpperCase() : line.toString());
       String baseCount =
-          Integer.toString(60 * (lineNumber - 1) + (10 * blockNumber) + charNumber);
+          Long.toString(60L * (lineNumber - 1) + (10 * blockNumber) + charNumber);
       int baseCountPadding = 76 - line.length() - baseCount.length();
       for (int j = 1; j < baseCountPadding; j++) {
         writer.write(" ");
