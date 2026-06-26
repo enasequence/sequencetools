@@ -35,8 +35,8 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
   }
 
   /**
-   * @param baseCounts must not be null when {@code totalBases > 0}; map keys are lowercase
-   *     {@code a/c/g/t} - other bases are derived as {@code totalBases - (a+c+g+t)}.
+   * @param baseCounts must not be null when {@code totalBases > 0}; map keys are lowercase {@code
+   *     a/c/g/t} - other bases are derived as {@code totalBases - (a+c+g+t)}.
    */
   public EmblSequenceStreamWriter(
       Entry entry, long totalBases, Map<Character, Long> baseCounts, Reader reader, long crc) {
