@@ -43,6 +43,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
     this.crc = crc;
   }
 
+  @Override
   public boolean write(Writer writer) throws IOException {
     if (totalBases == 0) {
       return false;
