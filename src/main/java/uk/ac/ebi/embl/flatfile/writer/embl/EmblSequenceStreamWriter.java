@@ -36,7 +36,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
 
   /**
    * @param baseCounts must not be null when {@code totalBases > 0}; map keys are lowercase
-   *     {@code a/c/g/t} — other bases are derived as {@code totalBases − (a+c+g+t)}.
+   *     {@code a/c/g/t} - other bases are derived as {@code totalBases - (a+c+g+t)}.
    */
   public EmblSequenceStreamWriter(
       Entry entry, long totalBases, Map<Character, Long> baseCounts, Reader reader, long crc) {
@@ -149,8 +149,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
     void finish() throws IOException {
       writer.write(EmblPadding.SEQUENCE_PADDING);
       writer.write(protein ? line.toString().toUpperCase() : line.toString());
-      String baseCount =
-          Long.toString(60L * (lineNumber - 1) + (10 * blockNumber) + charNumber);
+      String baseCount = Long.toString(60L * (lineNumber - 1) + (10 * blockNumber) + charNumber);
       int baseCountPadding = 76 - line.length() - baseCount.length();
       for (int j = 1; j < baseCountPadding; j++) {
         writer.write(" ");

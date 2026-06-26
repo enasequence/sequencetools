@@ -104,8 +104,7 @@ public class EmblSequenceWriterStreamingTest extends EmblWriterTest {
     String byteOut = runBytePath(seq);
     StringWriter w = new StringWriter();
     assertTrue(
-        new EmblSequenceStreamWriter(
-                entry, (long) seq.length(), counts, new StringReader(seq), 0)
+        new EmblSequenceStreamWriter(entry, (long) seq.length(), counts, new StringReader(seq), 0)
             .write(w));
     assertEquals(byteOut, w.toString());
   }
