@@ -1,0 +1,8 @@
+STUDY           PRJEB96464
+SAMPLE          SAMEA8527690
+ASSEMBLYNAME    test_Mgnify_reported1
+ASSEMBLY_TYPE   clone or isolate
+COVERAGE        80
+PROGRAM         TODO
+PLATFORM        ILLUMINA
+FASTA           testchrfile.fa.gz

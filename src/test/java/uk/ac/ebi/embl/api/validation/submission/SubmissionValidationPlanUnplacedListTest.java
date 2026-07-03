@@ -10,6 +10,7 @@
  */
 package uk.ac.ebi.embl.api.validation.submission;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,6 +49,8 @@ import uk.ac.ebi.embl.api.validation.file.SubmissionValidationTest;
 import uk.ac.ebi.embl.api.validation.submission.SubmissionFile.FileType;
 
 public class SubmissionValidationPlanUnplacedListTest extends SubmissionValidationTest {
+
+  private static final String REAL_DATA_ROOT = "genome/non_agp_unplaced/";
 
   @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -161,6 +165,21 @@ public class SubmissionValidationPlanUnplacedListTest extends SubmissionValidati
   }
 
   @Test
+  public void writesUnplacedListForRealNonAgpFastaWithUnlocalisedList() throws Exception {
+    Path processDir = temporaryFolder.newFolder("real-data-process").toPath();
+
+    options = createInternalGenomeOptions(processDir, null);
+    options.submissionFiles = Optional.of(realDataFastaWithChromosomeAndUnlocalisedLists());
+
+    ValidationResult result = new SubmissionValidationPlan(options).execute();
+
+    assertTrue(result.getMessages().toString(), result.isValid());
+    Set<?> unplacedEntryNames = readUnplacedList(processDir.resolve("unplaced.txt"));
+    assertEquals(readRealDataExpectedUnplacedNames(), unplacedEntryNames);
+    assertFalse(unplacedEntryNames.contains("HAP1_CHROMOSOME_10"));
+  }
+
+  @Test
   public void skipsUnplacedListForInternalNonAgpExcludedDistributionSubmission() throws Exception {
     Path processDir = temporaryFolder.newFolder("excluded-process").toPath();
 
@@ -258,6 +277,29 @@ public class SubmissionValidationPlanUnplacedListTest extends SubmissionValidati
     submissionFiles.addFile(
         initSubmissionTestFile("valid_AnnotationOnlyFlatfile.txt", FileType.FLATFILE));
     return submissionFiles;
+  }
+
+  private SubmissionFiles realDataFastaWithUnlocalisedList() {
+    SubmissionFiles submissionFiles = new SubmissionFiles();
+    submissionFiles.addFile(
+        initSubmissionTestFile(REAL_DATA_ROOT, "test_imp_fasta.fa.gz", FileType.FASTA));
+    submissionFiles.addFile(
+        initSubmissionTestFile(
+            REAL_DATA_ROOT, "test_imp_unlocalisedfile.txt.gz", FileType.UNLOCALISED_LIST));
+    return submissionFiles;
+  }
+
+  private SubmissionFiles realDataFastaWithChromosomeAndUnlocalisedLists() {
+    SubmissionFiles submissionFiles = realDataFastaWithUnlocalisedList();
+    submissionFiles.addFile(
+        initSubmissionTestFile(
+            REAL_DATA_ROOT, "test_imp_chrlistfile.txt.gz", FileType.CHROMOSOME_LIST));
+    return submissionFiles;
+  }
+
+  private Set<String> readRealDataExpectedUnplacedNames() throws Exception {
+    return new HashSet<>(
+        Files.readAllLines(initFile(REAL_DATA_ROOT, "test_imp_expected_unplaced.txt").toPath()));
   }
 
   private Entry createMasterEntry() {
