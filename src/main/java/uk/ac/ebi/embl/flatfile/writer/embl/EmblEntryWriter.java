@@ -130,15 +130,11 @@ public class EmblEntryWriter extends EntryWriter {
       new MasterCONWriter(entry, wrapType).write(writer);
     }
 
-    if (!entry.isNonExpandedCON()) writeSequence(writer);
+    if (!entry.isNonExpandedCON()) new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
     writer.write(TERMINATOR_LINE);
 
     writer.flush();
     return true;
-  }
-
-  protected void writeSequence(Writer writer) throws IOException {
-    new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
   }
 
   public void writeStreamingSequence(

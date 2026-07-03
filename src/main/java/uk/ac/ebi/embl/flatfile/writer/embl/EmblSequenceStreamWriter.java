@@ -149,7 +149,7 @@ public class EmblSequenceStreamWriter extends FlatFileWriter {
     void finish() throws IOException {
       writer.write(EmblPadding.SEQUENCE_PADDING);
       writer.write(protein ? line.toString().toUpperCase() : line.toString());
-      String baseCount = Long.toString(60L * (lineNumber - 1) + (10 * blockNumber) + charNumber);
+      String baseCount = Long.toString(60L * (lineNumber - 1) + (10L * blockNumber) + charNumber);
       int baseCountPadding = 76 - line.length() - baseCount.length();
       for (int j = 1; j < baseCountPadding; j++) {
         writer.write(" ");
