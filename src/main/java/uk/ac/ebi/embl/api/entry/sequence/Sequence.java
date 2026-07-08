@@ -194,10 +194,23 @@ public class Sequence extends AbstractSequence implements HasOrigin, Serializabl
         }
       }
       return this.agpLength;
-    } else return 0;
+    }
+    // No in-memory sequence, contigs or AGP rows: fall back to an explicitly supplied length.
+    // This supports entries whose sequence is streamed rather than materialised as a byte[]
+    // (see EmblEntryWriter#writeStreamingSequence); the length is set via setLength(long).
+    // Defaults to 0, so entries that never call setLength() are unaffected.
+    else return length;
   }
 
-  @Deprecated
+  /**
+   * Sets the sequence length explicitly.
+   *
+   * <p>Normally the length is derived from the in-memory byte[], contigs or AGP rows and this does
+   * not need to be called. It is used when the sequence is not held in memory - e.g. when it is
+   * streamed to the flat file via {@link
+   * uk.ac.ebi.embl.flatfile.writer.embl.EmblEntryWriter#writeStreamingSequence} - so that {@link
+   * #getLength()} (and hence the ID line "n BP" count) still reports the correct length.
+   */
   public void setLength(long length) {
     this.length = length;
   }
