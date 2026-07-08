@@ -99,22 +99,16 @@ public class EmblEntryWriter extends EntryWriter {
       writer.write(SEPARATOR_LINE);
     }
     // Not expanded entry
-    if (null == entry.getSequence()
-        || null == entry.getSequence().getSequenceByte()
-        || entry.isNonExpandedCON()) writeFeatures(writer);
+    if (!isExpandedEntry()) writeFeatures(writer);
 
     if (new COWriter(entry, wrapType).write(writer)) {
-      if (entry.getSequence() != null
-          && entry.getSequence().getSequenceByte() != null
-          && !entry.isNonExpandedCON()) {
+      if (isExpandedEntry()) {
         writer.write(SEPARATOR_LINE);
       }
     }
 
     // Expanded entry
-    if (null != entry.getSequence()
-        && null != entry.getSequence().getSequenceByte()
-        && !entry.isNonExpandedCON()) writeFeatures(writer);
+    if (isExpandedEntry()) writeFeatures(writer);
 
     if (new MasterWGSWriter(entry, wrapType).write(writer)) {
       writer.write(SEPARATOR_LINE);
@@ -130,11 +124,41 @@ public class EmblEntryWriter extends EntryWriter {
       new MasterCONWriter(entry, wrapType).write(writer);
     }
 
-    if (!entry.isNonExpandedCON()) new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
+    if (!entry.isNonExpandedCON()) writeSequence(writer);
     writer.write(TERMINATOR_LINE);
 
     writer.flush();
     return true;
+  }
+
+  /**
+   * Writes the sequence body (the {@code SQ} header and the sequence lines). The default
+   * implementation writes the in-memory {@code byte[]} held by {@link Entry#getSequence()} through
+   * {@link EmblSequenceWriter}.
+   *
+   * <p>This is an override hook: subclasses that stream an arbitrarily large sequence from a {@link
+   * Reader} override it (typically delegating to {@link #writeStreamingSequence}) so the sequence
+   * never has to be held in memory as a {@code byte[]}. Overriding this keeps the surrounding
+   * {@link #write} logic (ID/AC/DE/features/terminator) intact instead of duplicating it.
+   */
+  protected void writeSequence(Writer writer) throws IOException {
+    new EmblSequenceWriter(entry, entry.getSequence()).write(writer);
+  }
+
+  /**
+   * Returns {@code true} when the entry carries inline sequence content and is therefore written in
+   * the "expanded" layout, where the feature table is emitted after the {@code CO} line rather than
+   * before it.
+   *
+   * <p>The default decision is based on the presence of an in-memory sequence {@code byte[]}.
+   * Subclasses that stream the sequence from a {@link Reader} never populate the {@code byte[]}, so
+   * they override this to report the expanded layout and keep the feature ordering identical to the
+   * in-memory path.
+   */
+  protected boolean isExpandedEntry() {
+    return entry.getSequence() != null
+        && entry.getSequence().getSequenceByte() != null
+        && !entry.isNonExpandedCON();
   }
 
   public void writeStreamingSequence(
