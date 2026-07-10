@@ -52,12 +52,14 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck {
 
     if (filteredExonFeatures.size() == 0) return result;
 
-    List<Feature> sortedFeatures = getSortedExonFeatures(filteredExonFeatures);
+    // Sorting to get the same order as in FTWriter.write()
+    Collections.sort(filteredExonFeatures);
+
     String prevLocusTag = null;
     String prevGene = null;
     Long prevEndLocation = null;
 
-    for (Feature feature : sortedFeatures) {
+    for (Feature feature : filteredExonFeatures) {
       String currLocusTag = feature.getSingleQualifierValue(Qualifier.LOCUS_TAG_QUALIFIER_NAME);
       String currGene = feature.getSingleQualifierValue(Qualifier.GENE_QUALIFIER_NAME);
 
@@ -98,18 +100,5 @@ public class ExonFeaturesIntervalCheck extends EntryValidationCheck {
     }
 
     return result;
-  }
-
-  public List<Feature> getSortedExonFeatures(List<Feature> exonFeatures) {
-    Collections.sort(
-        exonFeatures,
-        (feature1, feature2) ->
-            (feature1.getLocations().getMinPosition() < feature2.getLocations().getMinPosition())
-                ? -1
-                : (feature1.getLocations().getMinPosition()
-                        > feature2.getLocations().getMinPosition())
-                    ? 1
-                    : 0);
-    return exonFeatures;
   }
 }
