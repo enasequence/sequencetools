@@ -47,7 +47,7 @@ public class ChromosomeListFileValidationCheckTest extends SubmissionValidationT
     ChromosomeListFileValidationCheck check =
         new ChromosomeListFileValidationCheck(options, sharedInfo);
     assertTrue(check.check(file).isValid());
-    assertEquals(check.getChromosomeQualifiers().size(), 2);
+    assertEquals(check.getChromosomeQualifiers().size(), 3);
     List<Qualifier> qualifiers = new ArrayList<>();
     for (String key : check.getChromosomeQualifiers().keySet()) {
       for (Qualifier qual : check.getChromosomeQualifiers().get(key).setAndGetQualifiers(false)) {
@@ -62,6 +62,15 @@ public class ChromosomeListFileValidationCheckTest extends SubmissionValidationT
         qualifiers.contains(
             new QualifierFactory()
                 .createQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME, "mitochondrion")));
+    // Verify macronuclear is created as a standalone qualifier (not organelle)
+    assertTrue(
+        qualifiers.contains(
+            new QualifierFactory().createQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME)));
+    // Verify macronuclear is NOT created as an organelle qualifier
+    assertFalse(
+        qualifiers.contains(
+            new QualifierFactory()
+                .createQualifier(Qualifier.ORGANELLE_QUALIFIER_NAME, "macronuclear")));
   }
 
   @Test

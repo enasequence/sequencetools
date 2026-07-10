@@ -99,6 +99,12 @@ public class ChromosomeEntry extends GCSEntry {
     if (!chromosomeQualifeirs.isEmpty()) {
       return chromosomeQualifeirs;
     }
+    // Handle macronuclear as a standalone qualifier (not an organelle)
+    if (chromosomeLocation != null && chromosomeLocation.equalsIgnoreCase("macronuclear")) {
+      chromosomeQualifeirs.add(
+          new QualifierFactory().createQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME));
+      return chromosomeQualifeirs;
+    }
     if (chromosomeLocation != null
         && !chromosomeLocation.isEmpty()
         && !virus

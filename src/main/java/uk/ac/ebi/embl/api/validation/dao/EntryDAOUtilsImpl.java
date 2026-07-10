@@ -73,6 +73,12 @@ public class EntryDAOUtilsImpl implements EntryDAOUtils {
       String chromosomeLocation = rs.getString(2);
       String chromosomeName = rs.getString(1);
 
+      // Handle macronuclear as a standalone qualifier (not an organelle)
+      if (chromosomeLocation != null && chromosomeLocation.equalsIgnoreCase("macronuclear")) {
+        qualifiers.add(qualifierFactory.createQualifier(Qualifier.MACRONUCLEAR_QUALIFIER_NAME));
+        return qualifiers;
+      }
+
       if (chromosomeLocation != null
           && !chromosomeLocation.isEmpty()
           && !virus
