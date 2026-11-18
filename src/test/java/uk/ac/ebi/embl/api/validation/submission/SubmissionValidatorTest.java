@@ -13,15 +13,21 @@ package uk.ac.ebi.embl.api.validation.submission;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyInfoEntry;
 import uk.ac.ebi.embl.api.entry.genomeassembly.AssemblyType;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.embl.api.validation.ValidationEngineException;
+import uk.ac.ebi.ena.webin.cli.validator.api.ValidationResponse;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFile;
 import uk.ac.ebi.ena.webin.cli.validator.file.SubmissionFiles;
 import uk.ac.ebi.ena.webin.cli.validator.manifest.GenomeManifest;
@@ -323,5 +329,57 @@ public class SubmissionValidatorTest {
     }
 
     assertNull(SubmissionValidator.getAssemblyType("Invalid"));
+  }
+
+  @Test
+  public void testGenomeValidationWithSampleHavingMultipleSynonymousAttributes() throws IOException {
+    Path processDir = Files.createTempDirectory("temp-");
+
+    System.out.println("process dir : " + processDir.toString());
+
+    SubmissionFiles submissionFiles = new SubmissionFiles();
+    submissionFiles.add(getSubmissionFile(
+            processDir,
+            "uk/ac/ebi/embl/api/validation/file/valid_genome_fasta_2.txt",
+            GenomeManifest.FileType.FASTA));
+    submissionFiles.add(getSubmissionFile(
+            processDir,
+            "uk/ac/ebi/embl/api/validation/file/chromosome_list_2.txt",
+            GenomeManifest.FileType.CHROMOSOME_LIST));
+
+    Sample sample = new Sample();
+    sample.setBioSampleId("SAMN61898831");
+    sample.setOrganism("Arnica montana");
+    // the synonymous attributes
+    sample.addAttribute(new Attribute("collection_date", "2022-10-28", null, null, null));
+    sample.addAttribute(new Attribute("collection date", "2022-10-28", null, null, null));
+
+    GenomeManifest manifest = new GenomeManifest();
+    manifest.setName("test_manifest");
+    manifest.setProcessDir(processDir.toFile());
+    manifest.setReportFile(Files.createTempFile(processDir, "temp-report-", ".tmp").toFile());
+    manifest.setSample(sample);
+    manifest.setAssemblyType("isolate");
+    manifest.setFiles(submissionFiles);
+
+    SubmissionValidator validator = new SubmissionValidator();
+
+    ValidationResponse response = validator.validate(manifest);
+
+    Assert.assertEquals(ValidationResponse.status.VALIDATION_ERROR, response.getStatus());
+    Assert.assertEquals(
+            "ERROR: Qualifier \"collection_date\" may occur only once for feature \"source\", not \"2\".\n",
+            getMasterReportContent(processDir));
+  }
+
+  private SubmissionFile getSubmissionFile(Path dir, String filePath, Enum fileType) throws IOException {
+    return new SubmissionFile(
+            fileType,
+            new File(SubmissionValidatorTest.class.getClassLoader().getResource(filePath).getPath()),
+            Files.createTempFile(dir, "temp-" + fileType.toString().toLowerCase() + "-report-", ".tmp").toFile());
+  }
+
+  private String getMasterReportContent(Path dir) throws IOException {
+    return Files.readString(dir.resolve("MASTER.report"));
   }
 }
