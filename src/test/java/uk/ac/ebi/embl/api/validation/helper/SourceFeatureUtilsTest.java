@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import uk.ac.ebi.embl.api.entry.feature.FeatureFactory;
 import uk.ac.ebi.embl.api.entry.feature.SourceFeature;
 import uk.ac.ebi.embl.api.entry.qualifier.Qualifier;
 import uk.ac.ebi.ena.taxonomy.client.TaxonomyClient;
@@ -223,6 +224,18 @@ public class SourceFeatureUtilsTest {
 
     assertNull(sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME));
     assertEquals(1, sourceFeature.getQualifiers().size());
+  }
+
+  @Test
+  public void testEnforceQualifierFromSample() {
+
+    FeatureFactory featureFactory = new FeatureFactory();
+    SourceFeature sourceFeature = featureFactory.createSourceFeature();
+    sourceFeature.addQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME,"2025-02-05");
+    assertEquals( sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue(),"2025-02-05");
+    //Enforce qualifier value from sample
+    new SourceFeatureUtils().enforceQualifierFromSample(sourceFeature, Qualifier.COLLECTION_DATE_QUALIFIER_NAME,"2020-02-10");
+    assertEquals( sourceFeature.getSingleQualifier(Qualifier.COLLECTION_DATE_QUALIFIER_NAME).getValue(),"2020-02-10");
   }
 
   private Sample createSampleWithAttributes(List<Attribute> attributes) {
